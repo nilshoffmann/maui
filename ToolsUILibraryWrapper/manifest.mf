@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: maltcms.alib.toolsui
+OpenIDE-Module-Localizing-Bundle: maltcms/alib/toolsui/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
