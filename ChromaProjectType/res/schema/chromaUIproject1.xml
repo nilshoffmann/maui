@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:project xmlns:tns="http://maltcms.sourceforge.net/chromaUIproject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maltcms.sourceforge.net/chromaUIproject chromaUIproject.xsd ">
+  <tns:configResource type="" uri="http://tempuri.org">
+    <tns:attributes>
+      <tns:attribute name="" xsi:type="tns:attributeType"/>
+    </tns:attributes>
+  </tns:configResource>
+  <tns:attributes>
+    <tns:attribute name="" xsi:type="tns:attributeType"/>
+  </tns:attributes>
+  <tns:resources xsi:type="tns:resourcesType">
+    <tns:resource type="" uri="http://tempuri.org">
+      <tns:attributes>
+        <tns:attribute name="" xsi:type="tns:attributeType"/><tns:attribute >tns:stringAttribute</tns:attribute>
+      </tns:attributes>
+    </tns:resource>
+  </tns:resources>
+  <tns:processingPipelines>
+    <tns:processingPipeline>
+      <tns:configResource type="" uri="http://tempuri.org">
+        <tns:attributes>
+          <tns:attribute name="" xsi:type="tns:attributeType"/>
+        </tns:attributes>
+      </tns:configResource>
+      <tns:pipelineElements>
+        <tns:pipelineElement tns:classAttribute="">
+          <tns:configResource type="" uri="http://tempuri.org">
+            <tns:attributes>
+              <tns:attribute name="" xsi:type="tns:attributeType"/>
+            </tns:attributes>
+          </tns:configResource>
+        </tns:pipelineElement>
+      </tns:pipelineElements>
+      <tns:processingResults>
+        <tns:resource type="" uri="http://tempuri.org">
+          <tns:attributes>
+            <tns:attribute name="" xsi:type="tns:attributeType"/>
+          </tns:attributes>
+        </tns:resource>
+      </tns:processingResults>
+    </tns:processingPipeline>
+  </tns:processingPipelines>
+  <tns:reports>
+    <tns:resource type="" uri="http://tempuri.org">
+      <tns:attributes>
+        <tns:attribute name="" xsi:type="tns:attributeType"/>
+      </tns:attributes>
+    </tns:resource>
+  </tns:reports>
+</tns:project>

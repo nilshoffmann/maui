@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://maltcms.sourceforge.net/chromaUIproject" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://maltcms.sourceforge.net/chromaUIproject">
+
+    <attributeGroup name="resourceAttributes">
+    	<attribute name="type" type="string"></attribute>
+    	<attribute name="uri" type="anyURI"></attribute>
+    </attributeGroup>
+
+    <attribute name="floatAttribute" type="float"></attribute>
+
+    <attribute name="doubleAttribute" type="double"></attribute>
+
+    <attribute name="intAttribute" type="int"></attribute>
+
+    <attribute name="booleanAttribute" type="boolean"></attribute>
+
+    <attribute name="stringAttribute" type="string"></attribute>
+
+
+    <complexType name="attributeType">
+    	<attribute name="name" type="string"></attribute>
+    </complexType>
+
+    <element name="project">
+    	<complexType>
+	    	<sequence>
+                <element ref="tns:configResource" maxOccurs="1" minOccurs="1"></element>
+                <element ref="tns:attributes" maxOccurs="1"
+	    			minOccurs="1">
+	    		</element>
+	    		<element ref="tns:resources" maxOccurs="1"
+	    			minOccurs="1">
+	    		</element>
+	    		<element ref="tns:processingPipelines"
+	    			maxOccurs="1" minOccurs="1">
+	    		</element>
+	    		<element ref="tns:reports" maxOccurs="1"
+	    			minOccurs="1">
+	    		</element>
+	    	</sequence>
+    	</complexType>
+    </element>
+    
+    <element name="resource" type="tns:resourceType"></element>
+
+
+    <element name="processingResults" type="tns:processingResultsType"></element>
+
+    <element name="reports" type="tns:reportsType"></element>
+
+
+    <element name="resources" type="tns:resourcesType"></element>
+    
+    <complexType name="resourcesType">
+    	<sequence>
+    		<element ref="tns:resource" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="resourceType">
+
+    	<sequence>
+    		<element ref="tns:attributes" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    	<attributeGroup ref="tns:resourceAttributes"></attributeGroup>
+    </complexType>
+
+    <complexType name="floatAttributeType">
+    	<complexContent>
+    		<extension base="tns:attributeType">
+    			<attribute ref="tns:floatAttribute"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="doubleAttributeType">
+    	<complexContent>
+    		<extension base="tns:attributeType">
+    			<attribute ref="tns:doubleAttribute"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="intAttributeType">
+    	<complexContent>
+    		<extension base="tns:attributeType">
+    			<attribute ref="tns:intAttribute"></attribute>
+
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="stringAttributeType">
+    	<complexContent>
+    		<extension base="tns:attributeType">
+    			<attribute ref="tns:stringAttribute"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="booleanAttributeType">
+    	<complexContent>
+    		<extension base="tns:attributeType">
+    			<attribute ref="tns:booleanAttribute"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+
+    <element name="attribute" type="tns:attributeType"></element>
+
+    <complexType name="reportsType">
+    	<complexContent>
+    		<extension base="tns:resourcesType">
+    			<sequence></sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+
+    <complexType name="processingResultsType">
+    	<complexContent>
+    		<extension base="tns:resourcesType"></extension>
+    	</complexContent>
+    </complexType>
+
+
+    <complexType name="pipelineElementType">
+    	<sequence>
+    		<element ref="tns:configResource" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    	<attribute ref="tns:classAttribute"></attribute>
+    </complexType>
+
+    <attribute name="classAttribute" type="string"></attribute>
+
+    <complexType name="configResourceType">
+    	<complexContent>
+    		<extension base="tns:resourceType"></extension>
+    	</complexContent>
+    </complexType>
+
+    <element name="pipelineElement" type="tns:pipelineElementType"></element>
+
+    <element name="configResource" type="tns:configResourceType"></element>
+
+
+    <complexType name="processingPipelineType">
+    	<sequence>
+    		<element ref="tns:configResource" maxOccurs="1" minOccurs="0"></element>
+    		<element ref="tns:pipelineElements" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element ref="tns:processingResults" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <element name="pipelineElements" type="tns:pipelineElementsType"></element>
+    
+    <complexType name="pipelineElementsType">
+    	<sequence>
+    		<element ref="tns:pipelineElement" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="attributesType">
+    	<sequence>
+    		<element ref="tns:attribute" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="classAttributeType">
+    	<complexContent>
+    		<extension base="tns:attributeType">
+    			<attribute ref="tns:classAttribute"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <element name="attributes" type="tns:attributesType"></element>
+
+
+
+    <complexType name="processingPipelinesType">
+    	<sequence>
+    		<element ref="tns:processingPipeline" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    <element name="processingPipeline"
+    	type="tns:processingPipelineType">
+    </element>
+
+    <element name="processingPipelines"
+    	type="tns:processingPipelinesType">
+    </element>
+</schema>

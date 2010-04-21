@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: maltcms.ui.nb
+OpenIDE-Module-Localizing-Bundle: maltcms/ui/nb/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
