@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sourceforge.maltcms.chromauiproject
+OpenIDE-Module-Localizing-Bundle: net/sourceforge/maltcms/chromauiproject/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
