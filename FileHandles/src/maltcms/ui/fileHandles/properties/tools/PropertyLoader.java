@@ -22,6 +22,8 @@ import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
 import maltcms.ui.fileHandles.properties.wizards.HashTableModel;
 import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
@@ -113,58 +115,49 @@ public class PropertyLoader {
     }
 
     public static Map<String, String> getHash(String filename) {
-        Maltcms m = Maltcms.getInstance();
-        // set up Maltcms configuration
-        CompositeConfiguration cfg = m.parseCommandLine(new String[]{"-c", filename});
+        try {
+            Maltcms m = Maltcms.getInstance();
+            // set up Maltcms configuration
+            final CompositeConfiguration cfg = new CompositeConfiguration();
+            cfg.addConfiguration(new PropertiesConfiguration(filename));
 
-        Map<String, String> hash = new HashMap<String, String>();
+            //CompositeConfiguration cfg = m.parseCommandLine(new String[]{"-c", filename});
 
-        Iterator<String> i = cfg.getKeys();
-        String key;
-        String[] values;
-        String value;
-        while (i.hasNext()) {
-            key = i.next();
-            values = cfg.getStringArray(key);
-            value = "";
-            for (int j = 0; j < values.length; j++) {
-                value += values[j];
-                if (j < values.length - 1) {
-                    value += ",";
+            Map<String, String> hash = new HashMap<String, String>();
+            Iterator<String> i = cfg.getKeys();
+            String key;
+            String[] values;
+            String value;
+            while (i.hasNext()) {
+                key = i.next();
+                values = cfg.getStringArray(key);
+                value = "";
+                for (int j = 0; j < values.length; j++) {
+                    value += values[j];
+                    if (j < values.length - 1) {
+                        value += ",";
+                    }
                 }
+                hash.put(key, value);
             }
-            hash.put(key, value);
+            //System.out.println("PIPELINE: " + cfg.getString("pipeline"));
+            return hash;
+        } catch (ConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
         }
-
-        //System.out.println("PIPELINE: " + cfg.getString("pipeline"));
-
-        return hash;
+        return null;
     }
 
     public static TableModel getModel(Map<String, String> properties) {
-
         Vector<String> header = new Vector<String>();
         header.add("Key");
         header.add("Value");
-
-        Vector<Vector<String>> columns = new Vector<Vector<String>>();
-
-        for (String k : properties.keySet()) {
-            if (!k.equals(PropertyLoader.REQUIRED_VARS)
-                    && !k.equals(PropertyLoader.OPTIONAL_VARS)
-                    && !k.equals(PropertyLoader.PROVIDED_VARS)) {
-                Vector<String> entry = new Vector<String>();
-                entry.add(k);
-                entry.add(properties.get(k));
-                columns.add(entry);
-            }
-        }
-
+        System.out.println("properties: " + properties);
         return new HashTableModel(header, properties);
     }
 
     public static TableModel getModel(String filename) {
-        System.out.println("GEtting model for: " + filename);
+        System.out.println("Getting model for: " + filename);
         return PropertyLoader.getModel(PropertyLoader.getHash(filename));
     }
 
@@ -175,57 +168,74 @@ public class PropertyLoader {
         int dy = 150;
 
         Map<String, String> hash = getHash(filename);
-        String pipeline = hash.get("pipeline");
-        String pipelineProperty = hash.get("pipeline.properties");
-        pipeline = pipeline.substring(1, pipeline.length() - 1);
-        pipelineProperty = pipelineProperty.substring(1, pipelineProperty.length() - 1);
-        pipeline.replaceAll(" ", "");
-        pipelineProperty.replaceAll(" ", "");
-        String[] pipes = pipeline.split(",");
-        String[] pipesProps = pipelineProperty.split(",");
+        if (hash != null && hash.get("pipeline") != null) {
+            String pipeline = hash.get("pipeline");
+            String pipelineProperty = hash.get("pipeline.properties");
+            pipeline = pipeline.substring(1, pipeline.length() - 1);
+            pipelineProperty = pipelineProperty.substring(1, pipelineProperty.length() - 1);
+            pipeline.replaceAll(" ", "");
+            pipelineProperty.replaceAll(" ", "");
+            String[] pipes = pipeline.split(",");
+            String[] pipesProps = pipelineProperty.split(",");
 
-        String lastNode = null;
-        String edge;
-        int edgeCounter = 0;
-        for (int i = 0; i < pipes.length; i++) {
+            String lastNode = null;
+            String edge;
+            int edgeCounter = 0;
+            Map<String, String> pipeHash = new HashMap<String, String>();
+            for (int i = 0; i < pipes.length; i++) {
 //        for (String pipe : pipes) {
-            PipelineElementWidget node = (PipelineElementWidget) scene.addNode(pipes[i]);
-            node.setPropertyFile(pipesProps[i]);
-            scene.validate();
-            scene.getSceneAnimator().animatePreferredLocation(node, new Point(x, y));
-            scene.validate();
+                PipelineElementWidget node = (PipelineElementWidget) scene.addNode(pipes[i]);
+                node.setPropertyFile(pipesProps[i]);
+                scene.validate();
+                scene.getSceneAnimator().animatePreferredLocation(node, new Point(x, y));
+                scene.validate();
 
-            node.setClassName(pipes[i]);
-            node.setCurrentClassProperties();
-            Map<String, String> prop = node.getProperties();
-            for (String key : prop.keySet()) {
-                if (hash.containsKey(key)) {
-                    prop.put(key, hash.get(key));
-                    hash.remove(key);
+                node.setClassName(pipes[i]);
+                node.setCurrentClassProperties();
+                node.setPropertyFile(pipesProps[i]);
+                Map<String, String> prop = node.getProperties();
+                pipeHash = PropertyLoader.getHash(getPropertyFileForClass(filename, pipes[i], i));
+                for (String key : pipeHash.keySet()) {
+                    prop.put(key, pipeHash.get(key));
+                }
+                //node.setProperties(prop);
+
+                if (lastNode != null) {
+                    edge = "edge" + edgeCounter++;
+                    scene.addEdge(edge);
+                    scene.setEdgeSource(edge, lastNode);
+                    scene.setEdgeTarget(edge, pipes[i]);
+                    scene.validate();
+                }
+                x += dx;
+                y += dy;
+                lastNode = pipes[i];
+            }
+
+            PipelineGeneralConfigWidget gnode = (PipelineGeneralConfigWidget) scene.getGeneral();
+            for (String key : hash.keySet()) {
+                if (!key.equalsIgnoreCase("pipeline") && !key.equalsIgnoreCase("pipeline.properties")) {
+                    gnode.setPorperty(key, hash.get(key));
                 }
             }
 
-            if (lastNode != null) {
-                edge = "edge" + edgeCounter++;
-                scene.addEdge(edge);
-                scene.setEdgeSource(edge, lastNode);
-                scene.setEdgeTarget(edge, pipes[i]);
-                scene.validate();
-            }
-            x += dx;
-            y += dy;
-            lastNode = pipes[i];
+            scene.validate();
+
+            return scene;
+        } else {
+            return null;
         }
+    }
 
-        PipelineGeneralConfigWidget gnode = (PipelineGeneralConfigWidget) scene.getGeneral();
-        for (String key : hash.keySet()) {
-            if (!key.equalsIgnoreCase("pipeline") && !key.equalsIgnoreCase("pipeline.properties")) {
-                gnode.setPorperty(key, hash.get(key));
-            }
+    private static String getPropertyFileForClass(String filename, String className, int count) {
+        String[] b = filename.split("/");
+        String s = "";
+        for (int i = 0; i < b.length - 2; i++) {
+            s += b[i] + "/";
+
         }
+        String[] c = className.split("\\.");
 
-        scene.validate();
-
-        return scene;
+        return s + "0" + count + "_" + c[c.length - 1] + "/" + c[c.length - 1] + ".properties";
     }
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Vector;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import org.openide.util.NotImplementedException;
 
 /**
@@ -32,15 +33,24 @@ public class HashTableModel implements TableModel {
 //        this.property = property;
 //        this.editable = editable;
 //    }
-
     @Override
     public int getRowCount() {
-        return this.property.size() - 3;
+        int size = this.property.size();
+        if (this.property.containsKey(PropertyLoader.OPTIONAL_VARS)) {
+            size--;
+        }
+        if (this.property.containsKey(PropertyLoader.REQUIRED_VARS)) {
+            size--;
+        }
+        if (this.property.containsKey(PropertyLoader.PROVIDED_VARS)) {
+            size--;
+        }
+        return size;
     }
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return this.header.size();
     }
 
     @Override

@@ -55,6 +55,7 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
     }
 
     public void setCurrentClassProperties() {
+        System.out.println("SetCurrentClassProperties " + this.className);
         Tuple2D<Map<String, String>, Map<String, String>> v = PropertyLoader.handleShowProperties(this.className, this.getClass());
         if (v != null) {
             this.properties = v.getFirst();
