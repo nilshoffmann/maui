@@ -62,6 +62,7 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     private SceneLayout layout;
     //private PipelineInputWidget root;
     private PipelineGeneralConfigWidget general;
+    private boolean shortLabel = false;
 
     public PipelineGraphScene() {
         mainLayer = new LayerWidget(this);
@@ -99,8 +100,13 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         } else {
             label = new PipelineElementWidget(this);
         }
+        if (this.shortLabel) {
+            String[] tmp = node.split("\\.");
+            label.setLabel(tmp[tmp.length - 1]);
+        } else {
+            label.setLabel(node);
+        }
         label.setToolTipText("Hold 'Ctrl'+'Mouse Right Button' to create Edge");
-        label.setLabel(node);
         label.setImage(IMAGE);
         label.getActions().addAction(connectAction);
         label.getActions().addAction(moveAction);
@@ -186,13 +192,6 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         this.layout = layout;
     }
 
-//    public boolean hasRootNode() {
-//        return this.root != null;
-//    }
-//
-//    public Widget getRoot() {
-//        return this.root;
-//    }
     public boolean hasGeneralNode() {
         return this.general != null;
     }
@@ -210,5 +209,30 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         this.getSceneAnimator().animatePreferredLocation(w, new Point(10, 300));
         this.validate();
         return w;
+    }
+
+    public void setShortLabelActive(boolean activateShortLabel) {
+        if (activateShortLabel) {
+            this.shortLabel = true;
+            for (Widget w : this.mainLayer.getChildren()) {
+                if (w instanceof PipelineElementWidget) {
+                    PipelineElementWidget wt = (PipelineElementWidget) w;
+                    String[] tmp = wt.getClassName().split("\\.");
+                    wt.getLabelWidget().setLabel(tmp[tmp.length - 1]);
+                }
+            }
+        } else {
+            this.shortLabel = false;
+            for (Widget w : this.mainLayer.getChildren()) {
+                if (w instanceof PipelineElementWidget) {
+                    PipelineElementWidget wt = (PipelineElementWidget) w;
+                    wt.getLabelWidget().setLabel(wt.getClassName());
+                }
+            }
+        }
+    }
+
+    public LayerWidget getMainLAyer() {
+        return this.mainLayer;
     }
 }

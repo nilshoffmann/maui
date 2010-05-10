@@ -7,14 +7,14 @@ package maltcms.ui.fileHandles.properties.tools;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
-import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.util.Exceptions;
 
 /**
@@ -28,132 +28,92 @@ public class SceneExporter {
     private PipelineGraphScene scene;
     private String name;
 
+    public SceneExporter(String directory, String name, PipelineGraphScene scene) {
+        this(directory, name, false, scene);
+    }
+
     public SceneExporter(String directory, String name,
             boolean exportToOneFile, PipelineGraphScene scene) {
         this.file = new File(directory);
-        this.name = name;
+        if (name.endsWith(".properties")) {
+            this.name = name.substring(0, name.lastIndexOf(".properties"));
+        } else {
+            this.name = name;
+        }
         this.oneFile = exportToOneFile;
         this.scene = scene;
     }
 
-    public void export() {
-        Widget pipelinesLayer = null, connectionLayer = null;
-        for (Widget w : this.scene.getChildren()) {
-            if (w.getChildren().size() > 0) {
-                Widget w1 = w.getChildren().get(0);
-                if (w1 instanceof PipelineElementWidget || w1 instanceof PipelineGeneralConfigWidget) {
-                    pipelinesLayer = w;
-                }
-                if (w1 instanceof ConnectionWidget) {
-                    connectionLayer = w;
-                }
-            }
+    public boolean export() {
+        Widget pipelinesLayer = SceneParser.getPipelinesLayer(this.scene), connectionLayer = SceneParser.getConnectionLayer(this.scene);
+        if (connectionLayer != null && pipelinesLayer != null) {
+            createConfigFiles(SceneParser.getPipeline(this.scene), SceneParser.getGeneralConfig(pipelinesLayer));
         }
 
-        if (connectionLayer != null && pipelinesLayer != null) {
-            createConfigFiles(getPipeline(connectionLayer, pipelinesLayer), getGeneralConfig(pipelinesLayer));
-        }
+        return true;
     }
 
     private void createConfigFiles(List<PipelineElementWidget> pipeline, PipelineGeneralConfigWidget general) {
         try {
-            PrintStream ps = new PrintStream(this.file.getAbsolutePath() + System.getProperty("file.separator") + this.name + ".properties");
+            File f = new File(this.file.getAbsolutePath() + System.getProperty("file.separator") + this.name + ".properties");
+            PrintStream psM = new PrintStream(f);
+            PrintStream psS = null;
+            if (this.oneFile) {
+                psS = psM;
+            }
 //            System.out.println("pipeline.cfg:");
             for (String k : general.getProperties().keySet()) {
-                ps.println("" + k + "=" + general.getProperty(k));
+                psM.println("" + k + "=" + general.getProperty(k));
             }
             String pipelineS = "";
             String pipelinePropertiesS = "";
             for (PipelineElementWidget pw : pipeline) {
                 pipelineS += "" + pw.getClassName() + ",";
-                pipelinePropertiesS += pw.getPropertyFile() + ",";
+//                pipelinePropertiesS += pw.getPropertyFile() + ",";
+            }
+            for (PipelineElementWidget pw : pipeline) {
+                if (!this.oneFile) {
+                    if (psS != null) {
+                        psS.close();
+                    }
+                    f = new File(this.file.getAbsolutePath() + System.getProperty("file.separator") + this.name + "_" + new File(pw.getPropertyFile()).getName());
+                    psS = new PrintStream(f);
+                }
+                for (String k : pw.getProperties().keySet()) {
+                    psS.println("" + k + "=" + pw.getProperty(k));
+                }
+                pipelinePropertiesS += f.getName() + ",";
             }
             pipelineS = pipelineS.substring(0, pipelineS.length() - 1);
             pipelinePropertiesS = pipelinePropertiesS.substring(0, pipelinePropertiesS.length() - 1);
-            ps.println("pipeline=" + pipelineS);
-            ps.println("pipeline.properties=" + pipelinePropertiesS);
-            for (PipelineElementWidget pw : pipeline) {
-                if (!this.oneFile) {
-                    ps = new PrintStream(new File(this.file.getAbsolutePath() + System.getProperty("file.separator") + this.name + "_" + pw.getPropertyFile()));
-                }
-                for (String k : pw.getProperties().keySet()) {
-                    ps.println("" + k + "=" + pw.getProperty(k));
-                }
+            psM.println("pipeline=" + pipelineS);
+            psM.println("pipeline.properties=" + pipelinePropertiesS);
+            psM.close();
+
+            psM.close();
+            if (!this.oneFile) {
+                psS.close();
             }
         } catch (FileNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
-    private List<PipelineElementWidget> getPipeline(Widget connectionLayer, Widget pipelinesLayer) {
-        List<PipelineElementWidget> pipeline = new ArrayList<PipelineElementWidget>();
-        List<Widget> connectionWidgetList = new ArrayList<Widget>(connectionLayer.getChildren());
-
-//        System.out.println("Trying to find starting Widget");
-        Widget startingW = null;
-        for (Widget w : pipelinesLayer.getChildren()) {
-            if (w instanceof PipelineElementWidget) {
-                if (getConnectionWidgetWhereTargetEquals(connectionWidgetList, w) == null) {
-                    if (startingW == null) {
-//                        System.out.println("Setting starting Widget to" + ((PipelineElementWidget) w).getLabelWidget().getLabel());
-                        startingW = w;
-                    } else {
-                        System.out.println("ERROR");
-                    }
-                }
-            }
-        }
-
-//        System.out.println("Following Connections to get pipeline direction");
-        ConnectionWidget cw = null;
-        while (connectionWidgetList.size() > 0) {
-//            System.out.println("WIDGET: " + ((PipelineElementWidget) startingW).getLabelWidget().getLabel());
-            pipeline.add((PipelineElementWidget) startingW);
-            cw = getConnectionWidgetWhereSourceEquals(connectionWidgetList, startingW);
-            if (cw != null) {
-                startingW = cw.getTargetAnchor().getRelatedWidget();
-                //connectionWidgetList.remove(cw);
+    public static void showSaveDialog(PipelineGraphScene scene) {
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "property files", "properties");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showSaveDialog(scene.getView());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final SceneExporter exporter = new SceneExporter(chooser.getSelectedFile().getParent() + System.getProperty("file.separator"), chooser.getSelectedFile().getName(), scene);
+            if (exporter.export()) {
+                JOptionPane.showMessageDialog(scene.getView(), "Configuration saved!",
+                        "Confirmation", 1);
             } else {
-                if (pipelinesLayer.getChildren().size() - 1 == pipeline.size()) {
-                    return pipeline;
-                }
-                System.out.println("ERROR");
-                break;
+                JOptionPane.showMessageDialog(scene.getView(), "Configuration not saved! An Error Occured.",
+                        "Saving Failed", 1);
             }
         }
-
-        return pipeline;
-    }
-
-    private ConnectionWidget getConnectionWidgetWhereTargetEquals(List<Widget> connectionWidgetList, Widget target) {
-        ConnectionWidget cw;
-        for (Widget s : connectionWidgetList) {
-            cw = (ConnectionWidget) s;
-            if (cw.getTargetAnchor().getRelatedWidget() == target) {
-                return cw;
-            }
-        }
-        return null;
-    }
-
-    private ConnectionWidget getConnectionWidgetWhereSourceEquals(List<Widget> connectionWidgetList, Widget target) {
-        ConnectionWidget cw;
-        for (Widget s : connectionWidgetList) {
-            cw = (ConnectionWidget) s;
-            if (cw.getSourceAnchor().getRelatedWidget() == target) {
-                return cw;
-            }
-        }
-        return null;
-    }
-
-    private PipelineGeneralConfigWidget getGeneralConfig(Widget pipeliesLayer) {
-        for (Widget w : pipeliesLayer.getChildren()) {
-            if (w instanceof PipelineGeneralConfigWidget
-                    && ((IconNodeWidget) w).getLabelWidget().getLabel().equalsIgnoreCase(PipelineGraphScene.GENERAL_WIDGET)) {
-                return (PipelineGeneralConfigWidget) w;
-            }
-        }
-        return null;
     }
 }

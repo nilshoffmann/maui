@@ -25,6 +25,7 @@ import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 import java.awt.*;
+import maltcms.ui.fileHandles.properties.tools.SceneParser;
 
 /**
  *
@@ -45,7 +46,10 @@ public class SceneConnectProvider implements ConnectProvider {
     public boolean isSourceWidget(Widget sourceWidget) {
         Object object = scene.findObject(sourceWidget);
         source = scene.isNode(object) ? (String) object : null;
-        return source != null;
+        if (source != null) {
+            return !SceneParser.hasOutgoingEdge(scene, sourceWidget);
+        }
+        return false;
     }
 
     @Override
@@ -53,6 +57,9 @@ public class SceneConnectProvider implements ConnectProvider {
         Object object = scene.findObject(targetWidget);
         target = scene.isNode(object) ? (String) object : null;
         if (target != null) {
+            if (SceneParser.hasIncomingEdge(scene, targetWidget)) {
+                return ConnectorState.REJECT_AND_STOP;
+            }
             return !source.equals(target) ? ConnectorState.ACCEPT : ConnectorState.REJECT_AND_STOP;
         }
         return object != null ? ConnectorState.REJECT_AND_STOP : ConnectorState.REJECT;

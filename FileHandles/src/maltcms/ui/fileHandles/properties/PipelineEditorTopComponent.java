@@ -9,7 +9,11 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
+import maltcms.ui.fileHandles.properties.tools.SceneExporter;
+import maltcms.ui.fileHandles.properties.tools.SceneLayouter;
+import maltcms.ui.fileHandles.properties.tools.SceneValidator;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -33,6 +37,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     private static final String PREFERRED_ID = "PipelineEditorTopComponent";
     private SceneLayout layout;
     private PipelineGraphScene scene;
+    private SceneValidator sceneValidator;
     protected JComponent view;
     private double zoomSteps = 0.2d;
 
@@ -66,6 +71,8 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         setName(NbBundle.getMessage(PipelineEditorTopComponent.class, "CTL_PipelineEditorTopComponent"));
         setToolTipText(NbBundle.getMessage(PipelineEditorTopComponent.class, "HINT_PipelineEditorTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+
+        this.sceneValidator = new SceneValidator(this.scene);
     }
 
     public void setPipelineGraphScene(PipelineGraphScene scene) {
@@ -86,9 +93,20 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
 
         jToolBar1 = new javax.swing.JToolBar();
         GridsToggleButton = new javax.swing.JToggleButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
+        jButton8 = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        jSeparator5 = new javax.swing.JToolBar.Separator();
+        jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane(this.view);
 
         setLayout(new java.awt.BorderLayout());
@@ -103,6 +121,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
             }
         });
         jToolBar1.add(GridsToggleButton);
+        jToolBar1.add(jSeparator1);
 
         org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton1.text")); // NOI18N
         jButton1.setFocusable(false);
@@ -136,6 +155,76 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
             }
         });
         jToolBar1.add(jButton3);
+        jToolBar1.add(jSeparator2);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton5, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton5.text")); // NOI18N
+        jButton5.setFocusable(false);
+        jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton5);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton6, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton6.text")); // NOI18N
+        jButton6.setFocusable(false);
+        jButton6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton6.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton6);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton7, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton7.text")); // NOI18N
+        jButton7.setFocusable(false);
+        jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton7);
+        jToolBar1.add(jSeparator3);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton8, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton8.text")); // NOI18N
+        jButton8.setFocusable(false);
+        jButton8.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton8.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton8);
+        jToolBar1.add(jSeparator4);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton1, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jToggleButton1.text")); // NOI18N
+        jToggleButton1.setFocusable(false);
+        jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jToggleButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jToggleButton1);
+        jToolBar1.add(jSeparator5);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton4, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton4.text")); // NOI18N
+        jButton4.setFocusable(false);
+        jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton4);
 
         add(jToolBar1, java.awt.BorderLayout.NORTH);
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -170,12 +259,50 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         this.layout.invokeLayout();
         this.scene.validate();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        SceneLayouter.layoutHorizontal(this.scene);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        SceneLayouter.layoutVertical(this.scene);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        String message = this.sceneValidator.validate();
+        JOptionPane.showMessageDialog(this, message,
+                "Validation message", 1);
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        this.scene.setShortLabelActive(this.jToggleButton1.isSelected());
+        this.scene.validate();
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        SceneExporter.showSaveDialog(this.scene);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        SceneLayouter.layoutDiagonal(this.scene);
+    }//GEN-LAST:event_jButton7ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton GridsToggleButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JToolBar.Separator jSeparator4;
+    private javax.swing.JToolBar.Separator jSeparator5;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 

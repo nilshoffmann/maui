@@ -166,7 +166,6 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
     private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField4ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
@@ -199,14 +198,20 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
             properties = tmp.getFirst();
             variables = tmp.getSecond();
         }
-        this.jTable1.setModel(PropertyLoader.getModel(properties));
-
+        this.node.setLabel(className);
         this.node.setClassName(className);
+        this.node.setProperties(properties);
+//        this.jTable1.setModel(PropertyLoader.getModel(properties));
+
+        // TODO remove dirty style
+        HashTableModel htm = PropertyLoader.getModel(this.node.getProperties());
+        htm.setPipelineElementWidgetNode(this.node);
+        this.jTable1.setModel(htm);
+        htm.setJTabel(this.jTable1);
+
 //        if (className.length() > 17) {
 //            this.node.setLabel(className.substring(17, className.length()));
 //        }
-        this.node.setLabel(className);
-        this.node.setProperties(properties);
         this.jTextField1.setText(variables.get(PropertyLoader.REQUIRED_VARS));
         this.jTextField2.setText(variables.get(PropertyLoader.OPTIONAL_VARS));
         this.jTextField3.setText(variables.get(PropertyLoader.PROVIDED_VARS));

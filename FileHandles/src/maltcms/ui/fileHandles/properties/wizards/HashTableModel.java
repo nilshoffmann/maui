@@ -6,8 +6,10 @@ package maltcms.ui.fileHandles.properties.wizards;
 
 import java.util.Map;
 import java.util.Vector;
+import javax.swing.JTable;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import org.openide.util.NotImplementedException;
 
@@ -21,6 +23,8 @@ public class HashTableModel implements TableModel {
     private Map<String, String> property;
     private boolean simplePropertyStyle = false;
     private boolean editable = true;
+    private PipelineElementWidget w = null;
+    private JTable table = null;
 
     public HashTableModel(Vector<String> header, Map<String, String> property) {
         this.header = header;
@@ -103,7 +107,14 @@ public class HashTableModel implements TableModel {
         if (columnIndex == 0) {
             throw new NotImplementedException("No use");
         } else {
-            this.property.put(this.property.keySet().toArray(new String[]{})[rowIndex], aValue.toString());
+            if (this.w == null) {
+                this.property.put(this.property.keySet().toArray(new String[]{})[rowIndex], aValue.toString());
+            } else {
+                this.w.setPorperty(this.property.keySet().toArray(new String[]{})[rowIndex], aValue.toString());
+            }
+            if (this.table != null) {
+                this.table.repaint();
+            }
         }
     }
 
@@ -121,5 +132,14 @@ public class HashTableModel implements TableModel {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    // TODO remove dirty style
+    public void setPipelineElementWidgetNode(PipelineElementWidget w) {
+        this.w = w;
+    }
+
+    public void setJTabel(JTable t) {
+        this.table = t;
     }
 }

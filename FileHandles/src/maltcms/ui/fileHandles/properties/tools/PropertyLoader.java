@@ -148,7 +148,7 @@ public class PropertyLoader {
         return null;
     }
 
-    public static TableModel getModel(Map<String, String> properties) {
+    public static HashTableModel getModel(Map<String, String> properties) {
         Vector<String> header = new Vector<String>();
         header.add("Key");
         header.add("Value");
@@ -162,21 +162,29 @@ public class PropertyLoader {
     }
 
     public static PipelineGraphScene parseIntoScene(String filename, PipelineGraphScene scene) {
-        int x = 10;
-        int dx = 100;
-        int y = 10;
-        int dy = 150;
+//        int x = 10;
+//        int dx = 100;
+//        int y = 10;
+//        int dy = 100;
 
         Map<String, String> hash = getHash(filename);
         if (hash != null && hash.get("pipeline") != null) {
             String pipeline = hash.get("pipeline");
-            String pipelineProperty = hash.get("pipeline.properties");
             pipeline = pipeline.substring(1, pipeline.length() - 1);
-            pipelineProperty = pipelineProperty.substring(1, pipelineProperty.length() - 1);
             pipeline.replaceAll(" ", "");
-            pipelineProperty.replaceAll(" ", "");
             String[] pipes = pipeline.split(",");
-            String[] pipesProps = pipelineProperty.split(",");
+
+            String[] pipesProps = new String[pipes.length];
+            if (filename.endsWith("runtime.properties")) {
+                for (int i = 0; i < pipes.length; i++) {
+                    pipesProps[i] = getPropertyFileForClass(filename, pipes[i], i);
+                }
+            } else {
+                String pipelineProperty = hash.get("pipeline.properties");
+                pipelineProperty = pipelineProperty.substring(1, pipelineProperty.length() - 1);
+                pipelineProperty.replaceAll(" ", "");
+                pipesProps = pipelineProperty.split(",");
+            }
 
             String lastNode = null;
             String edge;
@@ -187,14 +195,14 @@ public class PropertyLoader {
                 PipelineElementWidget node = (PipelineElementWidget) scene.addNode(pipes[i]);
                 node.setPropertyFile(pipesProps[i]);
                 scene.validate();
-                scene.getSceneAnimator().animatePreferredLocation(node, new Point(x, y));
-                scene.validate();
+//                scene.getSceneAnimator().animatePreferredLocation(node, new Point(x, y));
+//                scene.validate();
 
                 node.setClassName(pipes[i]);
                 node.setCurrentClassProperties();
-                node.setPropertyFile(pipesProps[i]);
                 Map<String, String> prop = node.getProperties();
-                pipeHash = PropertyLoader.getHash(getPropertyFileForClass(filename, pipes[i], i));
+                pipeHash = PropertyLoader.getHash(pipesProps[i]);
+                node.setPropertyFile(pipesProps[i]);
                 for (String key : pipeHash.keySet()) {
                     prop.put(key, pipeHash.get(key));
                 }
@@ -207,8 +215,8 @@ public class PropertyLoader {
                     scene.setEdgeTarget(edge, pipes[i]);
                     scene.validate();
                 }
-                x += dx;
-                y += dy;
+//                x += dx;
+//                y += dy;
                 lastNode = pipes[i];
             }
 
@@ -220,7 +228,7 @@ public class PropertyLoader {
             }
 
             scene.validate();
-
+            SceneLayouter.layoutDiagonal(scene);
             return scene;
         } else {
             return null;
@@ -236,6 +244,7 @@ public class PropertyLoader {
         }
         String[] c = className.split("\\.");
 
+        // FIXME
         return s + "0" + count + "_" + c[c.length - 1] + "/" + c[c.length - 1] + ".properties";
     }
 }

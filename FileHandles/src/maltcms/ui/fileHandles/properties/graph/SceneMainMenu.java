@@ -25,6 +25,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import maltcms.ui.fileHandles.properties.tools.SceneExporter;
 import maltcms.ui.fileHandles.properties.wizards.PipelinePropertiesWizardAction;
 import org.openide.util.actions.CallableSystemAction;
@@ -118,9 +119,7 @@ public class SceneMainMenu implements PopupMenuProvider, ActionListener {
                 System.out.println("Scene already has general node");
             }
         } else if (EXPORT_SCENE.equals(e.getActionCommand())) {
-//            final SceneExporter exporter = new SceneExporter("/home/mwilhelm/test.properties", true, this.scene);
-            final SceneExporter exporter = new SceneExporter("/home/mwilhelm/maltcms/mw/03-09-2010_17-29-33", "test", false, this.scene);
-            exporter.export();
+            SceneExporter.showSaveDialog(this.scene);
         }
     }
 }
