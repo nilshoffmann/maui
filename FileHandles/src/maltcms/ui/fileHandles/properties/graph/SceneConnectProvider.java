@@ -58,7 +58,7 @@ public class SceneConnectProvider implements ConnectProvider {
         target = scene.isNode(object) ? (String) object : null;
         if (target != null) {
             if (SceneParser.hasIncomingEdge(scene, targetWidget)) {
-                return ConnectorState.REJECT_AND_STOP;
+                return ConnectorState.REJECT;
             }
             return !source.equals(target) ? ConnectorState.ACCEPT : ConnectorState.REJECT_AND_STOP;
         }

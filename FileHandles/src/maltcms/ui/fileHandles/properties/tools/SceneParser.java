@@ -127,7 +127,7 @@ public class SceneParser {
         ConnectionWidget cw;
         for (Widget s : connectionWidgetList) {
             cw = (ConnectionWidget) s;
-            if (cw.getSourceAnchor().getRelatedWidget() == target) {
+            if (cw.getSourceAnchor() != null && cw.getSourceAnchor().getRelatedWidget() == target) {
                 return cw;
             }
         }

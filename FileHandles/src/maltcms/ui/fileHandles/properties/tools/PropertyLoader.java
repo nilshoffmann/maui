@@ -209,7 +209,7 @@ public class PropertyLoader {
                 //node.setProperties(prop);
 
                 if (lastNode != null) {
-                    edge = "edge" + edgeCounter++;
+                    edge = "Ledge" + edgeCounter++;
                     scene.addEdge(edge);
                     scene.setEdgeSource(edge, lastNode);
                     scene.setEdgeTarget(edge, pipes[i]);
