@@ -25,9 +25,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import maltcms.ui.fileHandles.properties.tools.SceneExporter;
 import maltcms.ui.fileHandles.properties.wizards.PipelinePropertiesWizardAction;
+import org.openide.awt.StatusDisplayer;
 import org.openide.util.actions.CallableSystemAction;
 
 /**
@@ -40,6 +40,8 @@ public class SceneMainMenu implements PopupMenuProvider, ActionListener {
     private static final String ADD_NEW_INPUT_ACTION = "addNewInputAction"; // NOI18N
     private static final String ADD_NEW_GENERAL_ACTION = "addNewGeneralAction"; // NOI18N
     private static final String EXPORT_SCENE = "exportScene";
+    public static final String CONNECTION_MODE = "connect";
+    public static final String MOVE_MODE = "select";
     private PipelineGraphScene scene;
     private JPopupMenu menu;
     private Point point;
@@ -71,6 +73,18 @@ public class SceneMainMenu implements PopupMenuProvider, ActionListener {
         item.setActionCommand(EXPORT_SCENE);
         item.addActionListener(this);
         menu.add(item);
+
+//        menu.addSeparator();
+//
+//        item = new JMenuItem("Connection Mode");
+//        item.setActionCommand(CONNECTION_MODE);
+//        item.addActionListener(this);
+//        menu.add(item);
+//
+//        item = new JMenuItem("Move Mode");
+//        item.setActionCommand(MOVE_MODE);
+//        item.addActionListener(this);
+//        menu.add(item);
     }
 
     @Override
@@ -120,6 +134,12 @@ public class SceneMainMenu implements PopupMenuProvider, ActionListener {
             }
         } else if (EXPORT_SCENE.equals(e.getActionCommand())) {
             SceneExporter.showSaveDialog(this.scene);
+        } else if (CONNECTION_MODE.equals(e.getActionCommand())) {
+            this.scene.setActiveTool(CONNECTION_MODE);
+            StatusDisplayer.getDefault().setStatusText("Connection Mode");
+        } else if (MOVE_MODE.equals(e.getActionCommand())) {
+            this.scene.setActiveTool(MOVE_MODE);
+            StatusDisplayer.getDefault().setStatusText("Move Mode");
         }
     }
 }

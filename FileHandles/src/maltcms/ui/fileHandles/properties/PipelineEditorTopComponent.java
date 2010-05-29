@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
+import maltcms.ui.fileHandles.properties.graph.SceneMainMenu;
 import maltcms.ui.fileHandles.properties.tools.SceneExporter;
 import maltcms.ui.fileHandles.properties.tools.SceneLayouter;
 import maltcms.ui.fileHandles.properties.tools.SceneValidator;
@@ -107,6 +108,8 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         jToggleButton1 = new javax.swing.JToggleButton();
         jSeparator5 = new javax.swing.JToolBar.Separator();
         jButton4 = new javax.swing.JButton();
+        jSeparator6 = new javax.swing.JToolBar.Separator();
+        jToggleButton2 = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane(this.view);
 
         setLayout(new java.awt.BorderLayout());
@@ -225,6 +228,18 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
             }
         });
         jToolBar1.add(jButton4);
+        jToolBar1.add(jSeparator6);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton2, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jToggleButton2.text")); // NOI18N
+        jToggleButton2.setFocusable(false);
+        jToggleButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jToggleButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToggleButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton2ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jToggleButton2);
 
         add(jToolBar1, java.awt.BorderLayout.NORTH);
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -286,6 +301,15 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         SceneLayouter.layoutDiagonal(this.scene);
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
+        if (this.jToggleButton2.isSelected()) {
+            this.scene.setActiveTool(SceneMainMenu.CONNECTION_MODE);
+        } else {
+            this.scene.setActiveTool(SceneMainMenu.MOVE_MODE);
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jToggleButton2ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton GridsToggleButton;
     private javax.swing.JButton jButton1;
@@ -302,7 +326,9 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
+    private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 

@@ -37,6 +37,7 @@ import java.util.Collections;
 import org.netbeans.api.visual.action.EditProvider;
 import org.netbeans.api.visual.layout.SceneLayout;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
+import org.openide.awt.StatusDisplayer;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -47,13 +48,15 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     public static final Image IMAGE = ImageUtilities.loadImage("maltcms/ui/fileHandles/properties/resources/node.png"); // NOI18N
     public static final String INPUT_WIDGET = "Pipeline Input";
     public static final String GENERAL_WIDGET = "General Configuration";
-    private LayerWidget mainLayer;
+    private LayerWidget mainLayer = new LayerWidget(this);
     private LayerWidget connectionLayer;
     private LayerWidget interractionLayer = new LayerWidget(this);
     private LayerWidget backgroundLayer = new LayerWidget(this);
-    private WidgetAction moveAction = ActionFactory.createMoveAction();
+//    private WidgetAction moveAction = ActionFactory.createMoveAction();
+    private WidgetAction moveAction = ActionFactory.createAlignWithMoveAction(mainLayer, interractionLayer, null);
     private Router router = RouterFactory.createFreeRouter();
-    private WidgetAction connectAction = ActionFactory.createExtendedConnectAction(interractionLayer, new SceneConnectProvider(this));
+//    private WidgetAction connectAction = ActionFactory.createExtendedConnectAction(interractionLayer, new SceneConnectProvider(this));
+    private WidgetAction connectAction = ActionFactory.createConnectAction(interractionLayer, new SceneConnectProvider(this));
     private WidgetAction reconnectAction = ActionFactory.createReconnectAction(new SceneReconnectProvider(this));
     private WidgetAction moveControlPointAction = ActionFactory.createFreeMoveControlPointAction();
     private WidgetAction selectAction = ActionFactory.createSelectAction(new ObjectSelectProvider());
@@ -65,7 +68,7 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     private boolean shortLabel = false;
 
     public PipelineGraphScene() {
-        mainLayer = new LayerWidget(this);
+//        mainLayer = new LayerWidget(this);
         addChild(mainLayer);
 
         //root = (PipelineInputWidget) addNode(INPUT_WIDGET);
@@ -88,6 +91,9 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
 
 //        setToolTipText("Left mouse click for creating a new Node");
         initGrids();
+
+        setActiveTool(SceneMainMenu.MOVE_MODE);
+        StatusDisplayer.getDefault().setStatusText("Selection Mode");
     }
 
     @Override
@@ -108,8 +114,8 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         }
         label.setToolTipText("Hold 'Ctrl'+'Mouse Right Button' to create Edge");
         label.setImage(IMAGE);
-        label.getActions().addAction(connectAction);
-        label.getActions().addAction(moveAction);
+        label.createActions(SceneMainMenu.CONNECTION_MODE).addAction(connectAction);
+        label.createActions(SceneMainMenu.MOVE_MODE).addAction(moveAction);
         mainLayer.addChild(label);
         label.getActions().addAction(ActionFactory.createPopupMenuAction(nodeMenu));
         return label;
