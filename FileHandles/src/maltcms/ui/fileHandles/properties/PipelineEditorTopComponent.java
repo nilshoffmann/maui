@@ -4,14 +4,25 @@
  */
 package maltcms.ui.fileHandles.properties;
 
+import org.netbeans.api.wizard.WizardDisplayer;
+import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardPage;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.Map;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
 import maltcms.ui.fileHandles.properties.graph.SceneMainMenu;
+import maltcms.ui.fileHandles.properties.pipelineWizard.AlignmentPane;
+import maltcms.ui.fileHandles.properties.pipelineWizard.AnchorDefinitionPane;
+import maltcms.ui.fileHandles.properties.pipelineWizard.FileInputOutputPane;
+import maltcms.ui.fileHandles.properties.pipelineWizard.PipelineWizardResultProducer;
+import maltcms.ui.fileHandles.properties.pipelineWizard.PreprocessingPane;
+import maltcms.ui.fileHandles.properties.pipelineWizard.VisualizationPane;
+import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import maltcms.ui.fileHandles.properties.tools.SceneExporter;
 import maltcms.ui.fileHandles.properties.tools.SceneLayouter;
 import maltcms.ui.fileHandles.properties.tools.SceneValidator;
@@ -110,6 +121,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         jButton4 = new javax.swing.JButton();
         jSeparator6 = new javax.swing.JToolBar.Separator();
         jToggleButton2 = new javax.swing.JToggleButton();
+        jButton9 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane(this.view);
 
         setLayout(new java.awt.BorderLayout());
@@ -241,6 +253,17 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         });
         jToolBar1.add(jToggleButton2);
 
+        org.openide.awt.Mnemonics.setLocalizedText(jButton9, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton9.text")); // NOI18N
+        jButton9.setFocusable(false);
+        jButton9.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton9.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton9);
+
         add(jToolBar1, java.awt.BorderLayout.NORTH);
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -310,6 +333,19 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_jToggleButton2ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        this.scene.clearScene();
+        WizardPage.WizardResultProducer rp = new PipelineWizardResultProducer();
+        Wizard w = WizardPage.createWizard(new Class[]{
+                    FileInputOutputPane.class, AnchorDefinitionPane.class,
+                    PreprocessingPane.class, AlignmentPane.class,
+                    VisualizationPane.class}, rp);
+
+        Map<String, String> gatheredSettings = (Map<String, String>) WizardDisplayer.showWizard(w);
+
+        PropertyLoader.parseIntoScene(null, gatheredSettings, this.scene);
+    }//GEN-LAST:event_jButton9ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton GridsToggleButton;
     private javax.swing.JButton jButton1;
@@ -320,6 +356,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;

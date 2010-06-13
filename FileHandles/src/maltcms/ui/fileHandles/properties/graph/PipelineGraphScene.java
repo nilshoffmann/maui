@@ -34,6 +34,7 @@ import org.netbeans.api.visual.widget.Widget;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
+import maltcms.ui.fileHandles.properties.tools.SceneParser;
 import org.netbeans.api.visual.action.EditProvider;
 import org.netbeans.api.visual.layout.SceneLayout;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
@@ -68,6 +69,10 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     private boolean shortLabel = false;
 
     public PipelineGraphScene() {
+        init();
+    }
+
+    private void init() {
 //        mainLayer = new LayerWidget(this);
         addChild(mainLayer);
 
@@ -129,7 +134,7 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         connection.setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
         connection.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         connection.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
-        connectionLayer.addChild(connection);
+        this.connectionLayer.addChild(connection);
         connection.getActions().addAction(reconnectAction);
         connection.getActions().addAction(createSelectAction());
         connection.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
@@ -240,5 +245,10 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
 
     public LayerWidget getMainLAyer() {
         return this.mainLayer;
+    }
+
+    public void clearScene() {
+        SceneParser.getConnectionLayer(this).removeChildren();
+        SceneParser.getPipelinesLayer(this).removeChildren();
     }
 }

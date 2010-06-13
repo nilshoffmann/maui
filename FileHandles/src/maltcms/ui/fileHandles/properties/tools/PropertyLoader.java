@@ -7,7 +7,6 @@ package maltcms.ui.fileHandles.properties.tools;
 import apps.Maltcms;
 import cross.annotations.AnnotationInspector;
 import cross.datastructures.tuple.Tuple2D;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import maltcms.ui.fileHandles.properties.wizards.HashTableModel;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
 /**
@@ -162,12 +160,11 @@ public class PropertyLoader {
     }
 
     public static PipelineGraphScene parseIntoScene(String filename, PipelineGraphScene scene) {
-//        int x = 10;
-//        int dx = 100;
-//        int y = 10;
-//        int dy = 100;
-
         Map<String, String> hash = getHash(filename);
+        return parseIntoScene(filename, hash, scene);
+    }
+
+    public static PipelineGraphScene parseIntoScene(String filename, Map<String, String> hash, PipelineGraphScene scene) {
         if (hash != null && hash.get("pipeline") != null) {
             String pipeline = hash.get("pipeline");
             pipeline = pipeline.substring(1, pipeline.length() - 1);
@@ -175,7 +172,7 @@ public class PropertyLoader {
             String[] pipes = pipeline.split(",");
 
             String[] pipesProps = new String[pipes.length];
-            if (filename.endsWith("runtime.properties")) {
+            if (filename != null && filename.endsWith("runtime.properties")) {
                 for (int i = 0; i < pipes.length; i++) {
                     pipesProps[i] = getPropertyFileForClass(filename, pipes[i], i);
                 }
