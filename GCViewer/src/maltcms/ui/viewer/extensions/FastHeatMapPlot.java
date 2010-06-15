@@ -703,8 +703,8 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
 
             int r = 5;
             g2.setColor(Color.BLACK);
-            int rx = (int) this.getDomainCrosshairValue();
-            int ry = (int) this.getRangeCrosshairValue();
+            int rx = (int) getDomainAxis().valueToJava2D(this.getDomainCrosshairValue(), dataArea, RectangleEdge.BOTTOM);
+            int ry = (int) getRangeAxis().valueToJava2D(this.getRangeCrosshairValue(), dataArea, RectangleEdge.LEFT);
             System.out.println("CH: " + rx + "," + ry);
             g2.drawOval(rx - r, ry - r, 2 * r, 2 * r);
         } else {
