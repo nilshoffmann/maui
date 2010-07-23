@@ -8,6 +8,7 @@ import cross.datastructures.tuple.Tuple2D;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
@@ -15,6 +16,7 @@ import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 public final class PipelinePropertiesVisualPanel1 extends JPanel implements ItemListener {
 
     private PipelineElementWidget node;
+    private final String[] serviceProviders = PropertyLoader.getListServiceProviders("cross.commands.fragments.AFragmentCommand");
 
     /** Creates new form PipelinePropertiesVisualPanel1 */
     public PipelinePropertiesVisualPanel1(PipelineElementWidget node) {
@@ -25,12 +27,13 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
         this.jTextField2.setEditable(false);
         this.jTextField3.setEditable(false);
         this.jTextField4.setEditable(false);
+        this.jTextField5.setEditable(true);
 
         if (!this.node.getClassName().equals("")) {
             this.jComboBox1.setSelectedItem(node.getClassName());
         }
         this.jComboBox1.addItemListener(this);
-        refreshTableModel(this.jComboBox1.getSelectedItem().toString());
+        refreshTableModel(getSelectedClassName());
     }
 
     @Override
@@ -59,6 +62,9 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
         jTextField3 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PipelinePropertiesVisualPanel1.class, "PipelinePropertiesVisualPanel1.jLabel1.text")); // NOI18N
 
@@ -105,6 +111,27 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel7, org.openide.util.NbBundle.getMessage(PipelinePropertiesVisualPanel1.class, "PipelinePropertiesVisualPanel1.jLabel7.text")); // NOI18N
+
+        jTextField5.setText(org.openide.util.NbBundle.getMessage(PipelinePropertiesVisualPanel1.class, "PipelinePropertiesVisualPanel1.jTextField5.text")); // NOI18N
+        jTextField5.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                jTextField5CaretUpdate(evt);
+            }
+        });
+        jTextField5.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField5KeyTyped(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(PipelinePropertiesVisualPanel1.class, "PipelinePropertiesVisualPanel1.jCheckBox1.text")); // NOI18N
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -112,20 +139,34 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, 0, 442, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                            .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel7))
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jComboBox1, 0, 439, Short.MAX_VALUE)
+                                .addGap(3, 3, 3))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jCheckBox1)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -133,29 +174,35 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jLabel7)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox1)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -166,7 +213,23 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
     private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField4ActionPerformed
+
+    private void jTextField5CaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextField5CaretUpdate
+        if(!jTextField5.getText().isEmpty()) {
+            jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(PropertyLoader.filterByPackageName(this.serviceProviders, jTextField5.getText())));
+        }
+    }//GEN-LAST:event_jTextField5CaretUpdate
+
+    private void jTextField5KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyTyped
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(PropertyLoader.filterByPackageName(this.serviceProviders, jTextField5.getText())));
+}//GEN-LAST:event_jTextField5KeyTyped
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        refreshTableModel(getSelectedClassName());
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -174,47 +237,61 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void itemStateChanged(final ItemEvent e) {
-        refreshTableModel(e.getItem().toString());
+
+        refreshTableModel(getSelectedClassName());
+
+    }
+
+    private String getSelectedClassName() {
+        return this.jTextField5.getText()+this.jComboBox1.getSelectedItem().toString();
     }
 
     private void refreshTableModel(String className) {
-        Map<String, String> properties;
-        Map<String, String> variables;
-        if (className.equals(this.node.getClassName()) && !this.node.getProperties().isEmpty()) {
-            properties = this.node.getProperties();
-            variables = this.node.getVariables();
-        } else {
-            Tuple2D<Map<String, String>, Map<String, String>> tmp = PropertyLoader.handleShowProperties(className, this.getClass());
-            properties = tmp.getFirst();
-            variables = tmp.getSecond();
+        try {
+            Class<?> c = Class.forName(className);
+            Map<String, String> properties;
+            Map<String, String> variables;
+            if (className.equals(this.node.getClassName()) && !this.node.getProperties().isEmpty()) {
+                properties = this.node.getProperties();
+                variables = this.node.getVariables();
+            } else {
+                Tuple2D<Map<String, String>, Map<String, String>> tmp = PropertyLoader.handleShowProperties(className, this.getClass());
+                properties = tmp.getFirst();
+                variables = tmp.getSecond();
+            }
+            this.node.setLabel(className);
+            this.node.setClassName(className);
+            this.node.setProperties(properties);
+            //        this.jTable1.setModel(PropertyLoader.getModel(properties));
+
+            // TODO remove dirty style
+            HashTableModel htm = PropertyLoader.getModel(this.node.getProperties(), c);
+            htm.setPipelineElementWidgetNode(this.node);
+            this.jTable1.setModel(htm);
+            htm.setJTable(this.jTable1);
+            htm.setSimplePropertyStyle(this.jCheckBox1.isSelected());
+
+            //        if (className.length() > 17) {
+            //            this.node.setLabel(className.substring(17, className.length()));
+            //        }
+            this.jTextField1.setText(variables.get(PropertyLoader.REQUIRED_VARS));
+            this.jTextField2.setText(variables.get(PropertyLoader.OPTIONAL_VARS));
+            this.jTextField3.setText(variables.get(PropertyLoader.PROVIDED_VARS));
+            this.jTextField4.setText(this.node.getPropertyFile());
+        } catch (ClassNotFoundException e) {
+            Logger.getLogger(getClass().getName()).warning("Could not refresh table model for class: " + className);
         }
-        this.node.setLabel(className);
-        this.node.setClassName(className);
-        this.node.setProperties(properties);
-//        this.jTable1.setModel(PropertyLoader.getModel(properties));
-
-        // TODO remove dirty style
-        HashTableModel htm = PropertyLoader.getModel(this.node.getProperties());
-        htm.setPipelineElementWidgetNode(this.node);
-        this.jTable1.setModel(htm);
-        htm.setJTabel(this.jTable1);
-
-//        if (className.length() > 17) {
-//            this.node.setLabel(className.substring(17, className.length()));
-//        }
-        this.jTextField1.setText(variables.get(PropertyLoader.REQUIRED_VARS));
-        this.jTextField2.setText(variables.get(PropertyLoader.OPTIONAL_VARS));
-        this.jTextField3.setText(variables.get(PropertyLoader.PROVIDED_VARS));
-        this.jTextField4.setText(this.node.getPropertyFile());
     }
 }

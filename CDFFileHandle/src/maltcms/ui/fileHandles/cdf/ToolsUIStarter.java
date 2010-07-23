@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+import ucar.nc2.ui.DatasetViewer;
 import ucar.nc2.ui.ToolsUI;
 import ucar.util.prefs.PreferencesExt;
 import ucar.util.prefs.XMLStore;
@@ -72,34 +73,35 @@ public class ToolsUIStarter {
             System.out.println("XMLStore Creation failed " + e);
         }
 
-        frame = new JFrame("NetCDF (4.0) Tools");
-        ui = new ToolsUI(prefs, frame);
+        //frame = new JFrame("NetCDF (4.0) Tools");
+        DatasetViewer dv = new DatasetViewer(prefs);
+        //ui = new ToolsUI(prefs, frame);
 
-        frame.setIconImage(BAMutil.getImage("netcdfUI"));
+        //frame.setIconImage(BAMutil.getImage("netcdfUI"));
 
-        frame.addWindowListener(new WindowAdapter() {
+//        frame.addWindowListener(new WindowAdapter() {
+//
+//            @Override
+//            public void windowActivated(WindowEvent e) {
+//                splash.setVisible(false);
+//                splash.dispose();
+//            }
+//
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//                if (!done) {
+//                    exit();
+//                }
+//            }
+//        });
 
-            @Override
-            public void windowActivated(WindowEvent e) {
-                splash.setVisible(false);
-                splash.dispose();
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (!done) {
-                    exit();
-                }
-            }
-        });
-
-        frame.getContentPane().add(ui);
-        Rectangle bounds = (Rectangle) prefs.getBean(FRAME_SIZE, new Rectangle(50, 50, 800, 450));
-        frame.setBounds(bounds);
-
-        frame.pack();
-        frame.setBounds(bounds);
-        frame.setVisible(true);
+//        frame.getContentPane().add(ui);
+//        Rectangle bounds = (Rectangle) prefs.getBean(FRAME_SIZE, new Rectangle(50, 50, 800, 450));
+//        frame.setBounds(bounds);
+//
+//        frame.pack();
+//        frame.setBounds(bounds);
+//        frame.setVisible(true);
 
     }
 

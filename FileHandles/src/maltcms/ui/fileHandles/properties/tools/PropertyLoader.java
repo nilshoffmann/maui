@@ -61,6 +61,38 @@ public class PropertyLoader {
     }
 
     /**
+     * Keeps only service providers, whose package name
+     * starts with any of the Strings contained in names.
+     * @param sps
+     * @return
+     */
+    public static String[] filterByPackageName(String[] sps, String... names) {
+        int[] matches = new int[sps.length];
+        int matchcnt = 0;
+        for (int i = 0; i < sps.length; i++) {
+            for (int j = 0; j < names.length; j++) {
+                if (sps[i].startsWith(names[j])) {
+                    matches[i] = j+1;
+                    matchcnt++;
+                    break;
+                }
+            }
+        }
+//        if(matchcnt==0) {
+//            return sps;
+//        }
+        String[] ret = new String[matchcnt];
+        int retIdx = 0;
+        for (int i = 0; i < matches.length; i++) {
+            if (matches[i] > 0) {
+                String name = names[matches[i]-1];
+                ret[retIdx++] = sps[i].substring(name.length(), sps[i].length());
+            }
+        }
+        return ret;
+    }
+
+    /**
      * @param optionValues
      */
     public static Tuple2D<Map<String, String>, Map<String, String>> handleShowProperties(String optionValues, Class loader) {
@@ -146,17 +178,22 @@ public class PropertyLoader {
         return null;
     }
 
-    public static HashTableModel getModel(Map<String, String> properties) {
+    public static HashTableModel getModel(Map<String, String> properties, Class<?> c) {
         Vector<String> header = new Vector<String>();
         header.add("Key");
         header.add("Value");
         System.out.println("properties: " + properties);
-        return new HashTableModel(header, properties);
+        return new HashTableModel(header, properties, c);
+    }
+
+    public static TableModel getModel(String filename, Class<?> c) {
+        System.out.println("Getting model for: " + filename);
+        return PropertyLoader.getModel(PropertyLoader.getHash(filename), c);
     }
 
     public static TableModel getModel(String filename) {
         System.out.println("Getting model for: " + filename);
-        return PropertyLoader.getModel(PropertyLoader.getHash(filename));
+        return PropertyLoader.getModel(PropertyLoader.getHash(filename), null);
     }
 
     public static PipelineGraphScene parseIntoScene(String filename, PipelineGraphScene scene) {
@@ -220,7 +257,7 @@ public class PropertyLoader {
             PipelineGeneralConfigWidget gnode = (PipelineGeneralConfigWidget) scene.getGeneral();
             for (String key : hash.keySet()) {
                 if (!key.equalsIgnoreCase("pipeline") && !key.equalsIgnoreCase("pipeline.properties")) {
-                    gnode.setPorperty(key, hash.get(key));
+                    gnode.setProperty(key, hash.get(key));
                 }
             }
 

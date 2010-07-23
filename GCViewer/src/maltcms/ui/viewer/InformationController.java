@@ -84,7 +84,7 @@ public class InformationController {
     public void changeMS(Point p) {
         if (p != null) {
             this.msp.changeMS(p);
-            this.listener.updateCrossHair(p);
+            //this.listener.updateCrossHair(p);
         }
     }
 

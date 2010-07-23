@@ -5,7 +5,9 @@
 package maltcms.ui.fileHandles.properties.tools;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
@@ -64,6 +66,7 @@ public class SceneParser {
                 if (w1 == w2) {
                     e = true;
                 }
+                
             }
             if (!e) {
                 ret.add(w1);
@@ -91,7 +94,20 @@ public class SceneParser {
             }
         }
 
+        Set<Widget> nodes = new HashSet<Widget>();
+        for(Widget cw : connectionWidgetList) {
+            if(cw instanceof ConnectionWidget) {
+                Widget source = ((ConnectionWidget)cw).getSourceAnchor().getRelatedWidget();
+                nodes.add(source);
+                Widget target = ((ConnectionWidget)cw).getTargetAnchor().getRelatedWidget();
+                if(nodes.contains(target)) {
+                    throw new IllegalArgumentException("Cycle detected on component: "+target);
+                }
+            }
+        }
+
 //        System.out.println("Following Connections to get pipeline direction");
+        
         ConnectionWidget cw = null;
         while (connectionWidgetList.size() > 0) {
 //            System.out.println("WIDGET: " + ((PipelineElementWidget) startingW).getLabelWidget().getLabel());
@@ -104,6 +120,7 @@ public class SceneParser {
                 if (pipelinesLayer.getChildren().size() - 1 == pipeline.size()) {
                     return pipeline;
                 }
+                
                 System.out.println("ERROR");
                 break;
             }
@@ -145,11 +162,14 @@ public class SceneParser {
     }
 
     public static boolean hasOutgoingEdge(GraphScene.StringGraph scene, Widget w) {
+        if (w == null || scene == null || getConnectionLayer(scene) == null) {
+            return false;
+        }
         return getConnectionWidgetWhereSourceEquals(getConnectionLayer(scene).getChildren(), w) != null;
     }
 
     public static boolean hasIncomingEdge(GraphScene.StringGraph scene, Widget w) {
-        if (w == null) {
+        if (w == null || scene == null || getConnectionLayer(scene) == null) {
             return false;
         }
         return getConnectionWidgetWhereTargetEquals(getConnectionLayer(scene).getChildren(), w) != null;

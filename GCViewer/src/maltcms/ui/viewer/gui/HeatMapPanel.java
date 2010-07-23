@@ -64,6 +64,11 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 //        ChartPanelMouseListener cpml = new ChartPanelMouseListener(cpt);
 //        cpml.addListener(XYaa);
 //        cpt.addChartMouseListener(cpml);
+        PaintScaleDialogAction psda = new PaintScaleDialogAction("Set Color Map",this.alpha,this.beta);
+        System.out.println("Adding PaintScaleDialogAction");
+        psda.addPaintScaleTarget(this);
+        System.out.println("Adding PaintScaleDialogAction");
+        psda.setParent(this);
         cpt.addChartMouseListener(this);
     }
 
@@ -72,10 +77,11 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
                 && cmevent.getTrigger().getButton() == 1) {
             if (this.cp.getChart().getPlot() instanceof XYPlot) {
                 final XYPlot plot = (XYPlot) this.cp.getChart().getPlot();
-                final Point imagePoint = ChartTools.translatePointToImageCoord(plot,
+                final Point dataPoint = ChartTools.translatePointToImageCoord(plot,
                         cmevent.getTrigger().getPoint(), this.cp.getScreenDataArea());
-                if (imagePoint != null) {
-                    this.ic.changeMS(imagePoint);
+                if (dataPoint != null) {
+                    this.ic.changeMS(dataPoint);
+                    this.ic.changePoint(dataPoint);
                 }
             }
         }
@@ -83,10 +89,10 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             System.out.println("Shift is down");
             if (this.cp.getChart().getPlot() instanceof XYPlot) {
                 final XYPlot plot = (XYPlot) this.cp.getChart().getPlot();
-                final Point imagePoint = ChartTools.translatePointToImageCoord(plot,
+                final Point dataPoint = ChartTools.translatePointToImageCoord(plot,
                         cmevent.getTrigger().getPoint(), this.cp.getScreenDataArea());
-                if (imagePoint != null) {
-                    this.ic.changePoint(imagePoint);
+                if (dataPoint != null) {
+                    this.ic.changePoint(dataPoint);
                 }
             }
         }
@@ -106,10 +112,11 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         if (cmevent.getTrigger().isShiftDown()) {
             if (this.cp.getChart().getPlot() instanceof XYPlot) {
                 final XYPlot plot = (XYPlot) this.cp.getChart().getPlot();
-                final Point imagePoint = ChartTools.translatePointToImageCoord(plot,
+//                System.out.println("Click at global: "+cmevent.getTrigger().getPoint());
+                final Point dataPoint = ChartTools.translatePointToImageCoord(plot,
                         cmevent.getTrigger().getPoint(), this.cp.getScreenDataArea());
-                if (imagePoint != null) {
-                    this.ic.changePoint(imagePoint);
+                if (dataPoint != null) {
+                    this.ic.changePoint(dataPoint);
                 }
             }
         }
@@ -222,7 +229,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     public void setPaintScale(PaintScale ps) {
         if (ps != null && ps instanceof GradientPaintScale) {
             GradientPaintScale sps = (GradientPaintScale) ps;
-            ChartTools.changePainScale((XYPlot) this.cp.getChart().getPlot(), sps);
+            ChartTools.changePaintScale((XYPlot) this.cp.getChart().getPlot(), sps);
             this.alpha = (int) sps.getAlpha();
             this.beta = (int) sps.getBeta();
         }

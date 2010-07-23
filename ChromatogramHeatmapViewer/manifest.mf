@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: maltcms.ui
+OpenIDE-Module-Layer: maltcms/ui/layer.xml
+OpenIDE-Module-Localizing-Bundle: maltcms/ui/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

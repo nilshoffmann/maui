@@ -123,7 +123,7 @@ public class PipelinePropertiesVisualPanel2 extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        this.node.setPorperty("Blub", "blub");
+        this.node.setProperty("Blub", "blub");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -147,7 +147,7 @@ public class PipelinePropertiesVisualPanel2 extends javax.swing.JPanel {
             property = this.node.getProperties();
         }
 
-        this.jTable1.setModel(PropertyLoader.getModel(property));
+        this.jTable1.setModel(PropertyLoader.getModel(property,null));
 
     }
 }

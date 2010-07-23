@@ -13,6 +13,13 @@
                 <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
             </file>
         </folder>
+        <folder name="Window">
+            <file name="maltcms-ui-fileHandles-cdf-CDFViewAction.instance">
+                <attr name="component" methodvalue="maltcms.ui.fileHandles.cdf.CDFViewTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.cdf.Bundle#CTL_CDFViewAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+        </folder>
     </folder>
     <folder name="Loaders">
         <folder name="application">
@@ -86,6 +93,13 @@
             </folder>
         </folder>
     </folder>
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="CDFViewAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-fileHandles-cdf-CDFViewAction.instance"/>
+            </file>
+        </folder>
+    </folder>
     <folder name="Services">
         <folder name="MIMEResolver">
             <file name="CDFResolver.xml" url="CDFResolver.xml">
@@ -99,6 +113,16 @@
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.cdf.Bundle#Templates/Other/CDFTemplate.cdf"/>
                 <attr name="template" boolvalue="true"/>
             </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="CDFViewTopComponent.settings" url="CDFViewTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="output">
+                <file name="CDFViewTopComponent.wstcref" url="CDFViewTopComponentWstcref.xml"/>
+            </folder>
         </folder>
     </folder>
 </filesystem>

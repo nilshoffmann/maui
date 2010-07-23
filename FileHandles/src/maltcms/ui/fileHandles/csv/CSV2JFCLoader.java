@@ -4,9 +4,15 @@
  */
 package maltcms.ui.fileHandles.csv;
 
+import cross.datastructures.tuple.Tuple2D;
 import cross.tools.ImageTools;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.fileHandles.serialized.JFCTopComponent;
@@ -24,6 +30,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.XYZDataset;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Task;
@@ -35,7 +42,7 @@ import ucar.ma2.ArrayDouble;
  */
 public class CSV2JFCLoader implements Runnable {
 
-    private InputStream is = null;
+    private FileObject is = null;
     private ProgressHandle ph = null;
     private JFCTopComponent jtc = null;
     private String title = "";
@@ -49,11 +56,8 @@ public class CSV2JFCLoader implements Runnable {
     public void load(CSVDataObject m, JFCTopComponent jtc) {
         System.out.println("Load");
         this.ph = ProgressHandleFactory.createHandle("Loading file " + m.getPrimaryFile().getName());
-        try {
-            this.is = m.getPrimaryFile().getInputStream();
-        } catch (FileNotFoundException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        this.is = m.getPrimaryFile();
+
         this.title = m.getPrimaryFile().getName();
         if (this.title.equals("pairwise_distances")) {
             this.mode = CHART.MATRIX;
@@ -66,7 +70,7 @@ public class CSV2JFCLoader implements Runnable {
 
     @Override
     public void run() {
-        CSV2ListLoader tl = new CSV2ListLoader(this.is, this.ph);
+        CSV2ListLoader tl = new CSV2ListLoader(this.ph, this.is);
 
         DefaultTableModel dtm;
         try {
@@ -94,14 +98,17 @@ public class CSV2JFCLoader implements Runnable {
                 System.out.println("creating chart done");
             } else if (this.mode == CHART.MATRIX) {
                 DefaultXYZDataset cd = new DefaultXYZDataset();
-                System.out.println("Storing " + (dtm.getColumnCount() - 1) * dtm.getRowCount() + " elements!");
-                double[][] data = new double[3][(dtm.getColumnCount() - 1) * dtm.getRowCount()];
-                ArrayDouble.D1 dt = new ArrayDouble.D1((dtm.getColumnCount() - 1) * dtm.getRowCount());
+                dtm = removeColumn(dtm, 0);
+                dtm = sort(dtm);
+                System.out.println("Storing " + (dtm.getColumnCount()) * dtm.getRowCount() + " elements!");
+                double[][] data = new double[3][(dtm.getColumnCount()) * dtm.getRowCount()];
+                ArrayDouble.D1 dt = new ArrayDouble.D1((dtm.getColumnCount()) * dtm.getRowCount());
                 double min = Double.POSITIVE_INFINITY;
                 double max = Double.NEGATIVE_INFINITY;
+
                 int k = 0;
                 for (int i = 0; i < dtm.getRowCount(); i++) {
-                    for (int j = 1; j < dtm.getColumnCount(); j++) {
+                    for (int j = 0; j < dtm.getColumnCount(); j++) {
 
                         Object o = dtm.getValueAt(i, j);
                         try {
@@ -113,7 +120,7 @@ public class CSV2JFCLoader implements Runnable {
                                 max = d;
                             }
                             data[0][k] = (double) i;
-                            data[1][k] = (double) j - 1;
+                            data[1][k] = (double) j;
                             data[2][k] = d;
                             dt.set(k, d);
                             k++;
@@ -128,9 +135,9 @@ public class CSV2JFCLoader implements Runnable {
                 GradientPaintScale ps = new GradientPaintScale(ImageTools.createSampleTable(256), ImageTools.getBreakpoints(dt, 256, Double.NEGATIVE_INFINITY), "res/colorRamps/bcgyr.csv", min, max);
 
                 xyb.setPaintScale(ps);
-                final String[] colnames = new String[dtm.getColumnCount() - 1];
+                final String[] colnames = new String[dtm.getColumnCount()];
                 for (int i = 0; i < colnames.length; i++) {
-                    colnames[i] = dtm.getColumnName(i + 1);
+                    colnames[i] = dtm.getColumnName(i);
                 }
                 NumberAxis na = new SymbolAxis("category", colnames);
                 na.setVerticalTickLabels(true);
@@ -151,5 +158,134 @@ public class CSV2JFCLoader implements Runnable {
         }
 
         ph.finish();
+    }
+
+    private DefaultTableModel sort(DefaultTableModel dtm) {
+        DefaultTableModel tmp = dtm;
+        for (int i = 0; i < tmp.getRowCount(); i++) {
+            int[] permutation = getRanksDescending(tmp, i);
+            //System.out.println("Cost of permutation: " + getPermutationCost(permutation) + " on column " + i);
+            //System.out.println("Permutation: "+Arrays.toString(permutation));
+            tmp = sortByRows(tmp, permutation);
+            tmp = sortByColumns(tmp, permutation);
+        }
+        return tmp;
+    }
+
+    private int[] getMinCostPermutation(DefaultTableModel dtm, int from) {
+        int minPermCost = Integer.MAX_VALUE;
+        int[] minPerm = null;
+        for (int i = 0; i < dtm.getRowCount(); i++) {
+            int[] permutation = getRanksDescending(dtm, i);
+            int pc = getPermutationCost(permutation);
+
+            //System.out.println("Permutation: "+Arrays.toString(permutation));
+
+            //exclude trivial case of identity permutation
+            if (pc < minPermCost && pc > 0 && i >= from) {
+                //System.out.println("Cost of permutation: "+pc+ " on column "+i);
+                minPermCost = pc;
+                minPerm = permutation;
+            }
+        }
+        return minPerm;
+    }
+
+    private int getPermutationCost(int[] permutation) {
+        int s = 0;
+        for (int i = 0; i < permutation.length; i++) {
+            s += (Math.abs(i - permutation[i]));
+        }
+        return s;
+    }
+
+    private int[] getRanksDescending(DefaultTableModel dtm, int column) {
+        int rows = dtm.getRowCount();
+
+        int[] ranks = new int[rows];
+        List<Tuple2D<Double, Integer>> valueToIndex = new ArrayList<Tuple2D<Double, Integer>>();
+        for (int i = 0; i < rows; i++) {
+            Object o = dtm.getValueAt(i, column);
+            if (o instanceof Double) {
+                Double d = (Double) o;
+                valueToIndex.add(new Tuple2D<Double, Integer>(d, Integer.valueOf(i)));
+            } else if (o instanceof String) {
+                Double d = Double.parseDouble((String) o);
+                valueToIndex.add(new Tuple2D<Double, Integer>(d, Integer.valueOf(i)));
+            }
+        }
+
+        Collections.sort(valueToIndex, new Comparator<Tuple2D<Double, Integer>>() {
+
+            @Override
+            public int compare(Tuple2D<Double, Integer> t, Tuple2D<Double, Integer> t1) {
+                return t.getFirst().compareTo(t1.getFirst());
+            }
+        });
+
+        for (int i = 0; i < ranks.length; i++) {
+            ranks[i] = valueToIndex.get(i).getSecond();
+        }
+
+        return ranks;
+    }
+
+    private DefaultTableModel sortByRows(DefaultTableModel dtm, int[] permutation) {
+        Object[][] modelByRows = new Object[dtm.getRowCount()][dtm.getColumnCount()];
+        for (int i = 0; i < dtm.getRowCount(); i++) {
+            modelByRows[i] = new Object[dtm.getColumnCount()];
+            for (int j = 0; j < dtm.getColumnCount(); j++) {
+                Object o = dtm.getValueAt(permutation[i], j);
+                //if(o instanceof Double) {
+                modelByRows[i][j] = o;
+                //}
+            }
+        }
+        Object[] names = new Object[dtm.getRowCount()];
+        for (int i = 0; i < dtm.getRowCount(); i++) {
+            names[i] = dtm.getColumnName(i);
+        }
+        System.out.println("TAble model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
+        return new DefaultTableModel(modelByRows, names);
+    }
+
+    private DefaultTableModel sortByColumns(DefaultTableModel dtm, int[] permutation) {
+        Object[][] modelByRows = new Object[dtm.getRowCount()][dtm.getColumnCount()];
+        for (int i = 0; i < dtm.getRowCount(); i++) {
+            modelByRows[i] = new Object[dtm.getColumnCount()];
+            for (int j = 0; j < dtm.getColumnCount(); j++) {
+                Object o = dtm.getValueAt(i, permutation[j]);
+                //if(o instanceof Double) {
+                modelByRows[i][j] = o;
+                //}
+            }
+        }
+        Object[] names = new Object[dtm.getRowCount()];
+        for (int i = 0; i < dtm.getRowCount(); i++) {
+            names[i] = dtm.getColumnName(permutation[i]);
+        }
+        System.out.println("TAble model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
+        return new DefaultTableModel(modelByRows, names);
+    }
+
+    private DefaultTableModel removeColumn(DefaultTableModel dtm, int column) {
+        Object[][] data = new Object[dtm.getRowCount()][dtm.getColumnCount() - 1];
+        Object[] names = new Object[dtm.getColumnCount() - 1];
+        int cnt = 0;
+        for (int j = 0; j < dtm.getColumnCount(); j++) {
+            if (j != column) {
+                names[cnt++] = dtm.getColumnName(j);
+            }
+        }
+        for (int i = 0; i < dtm.getRowCount(); i++) {
+            cnt = 0;
+            for (int j = 0; j < dtm.getColumnCount(); j++) {
+                if (j != column) {
+                    data[i][cnt++] = dtm.getValueAt(i, j);
+                }
+            }
+        }
+        System.out.println("TAble model has " + data.length + " rows and " + data[0].length + " columns with " + names.length + " labels");
+        return new DefaultTableModel(data, names);
     }
 }

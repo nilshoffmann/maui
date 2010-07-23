@@ -4,8 +4,29 @@
  */
 package maltcms.ui.fileHandles.csv;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
+import maltcms.ui.fileHandles.serialized.JFCTopComponent;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -18,23 +39,60 @@ import org.openide.windows.CloneableTopComponent;
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui.fileHandles.csv//CSV2List//EN",
 autostore = false)
-public final class CSV2ListTopComponent extends CloneableTopComponent {
+public final class CSV2ListTopComponent extends CloneableTopComponent implements ListSelectionListener, MouseListener {
 
     private static CSV2ListTopComponent instance;
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "CSV2ListTopComponent";
+    private JFCTopComponent jfctc = null;
+    private int domainColumn = -1;
+    private Set<Integer> columnsToPlot = new LinkedHashSet<Integer>();
+    private int activeColumn = -1;
 
     public CSV2ListTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(CSV2ListTopComponent.class, "CTL_CSV2ListTopComponent"));
         setToolTipText(NbBundle.getMessage(CSV2ListTopComponent.class, "HINT_CSV2ListTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+        this.jTable1.setAutoCreateRowSorter(true);
+        this.jTable1.setColumnSelectionAllowed(true);
+        this.jTable1.setCellSelectionEnabled(true);
+        this.jTable1.setUpdateSelectionOnSort(true);
+        //FIXME refactor into multiview component
+        this.jfctc = new JFCTopComponent();
+        JFrame jf = new JFrame();
+        jf.add(jfctc);
+        jf.setVisible(true);
+        this.jTable1.addMouseListener(this);
+        this.jTable1.getColumnModel().getSelectionModel().addListSelectionListener(this);
+        this.jTable1.getColumnModel().setColumnSelectionAllowed(true);
+
 
     }
 
     public void setTableModel(TableModel tm) {
         this.jTable1.setModel(tm);
+        for (int i = 0; i < tm.getColumnCount(); i++) {
+            this.jTable1.getColumnModel().getColumn(i).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
+        }
+        JTableCustomizer.changeComperatorToDoubleIfPossible(this.jTable1);
+        JTableCustomizer.fitAllColumnWidth(this.jTable1);
+        this.jTable1.getTableHeader().addMouseListener(new MouseAdapter() {
+
+            public void mouseReleased(MouseEvent e) {
+                if (e.getButton() == 3) {
+                    activeColumn = jTable1.getTableHeader().columnAtPoint(e.getPoint());
+                    jTable1.setRowSelectionAllowed(false);
+                    jTable1.setColumnSelectionInterval(activeColumn, activeColumn);
+                    createAndShowPopupMenu(e);
+                }
+            }
+        });
+    }
+
+    public void setChartTarget(JFCTopComponent jfctc) {
+        this.jfctc = jfctc;
     }
 
     /** This method is called from within the constructor to
@@ -108,6 +166,17 @@ public final class CSV2ListTopComponent extends CloneableTopComponent {
         return getDefault();
     }
 
+    public void logTransformColumn(int j, double base) {
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            Object o = jTable1.getValueAt(i, j);
+            if (o instanceof Double) {
+                jTable1.setValueAt(Double.valueOf(Math.log10(((Double) o).doubleValue()) / Math.log10(base)), i, j);
+            } else if (o instanceof Float) {
+                jTable1.setValueAt(Double.valueOf(Math.log10(((Double) o).doubleValue()) / Math.log10(base)).floatValue(), i, j);
+            }
+        }
+    }
+
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_ALWAYS;
@@ -146,5 +215,169 @@ public final class CSV2ListTopComponent extends CloneableTopComponent {
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        int[] selectedColumns = this.jTable1.getColumnModel().getSelectedColumns();
+        int[] selectedRows = this.jTable1.getSelectedRows();
+    }
+
+    private void createAndShowPopupMenu(MouseEvent me) {
+        if (me.getButton() == MouseEvent.BUTTON3 && this.jTable1.getSelectedRowCount() > 0 && this.jfctc != null) {
+
+            JPopupMenu jpm = new JPopupMenu();
+            if (jTable1.getSelectedColumnCount() > 0) {
+                jpm.add(new AbstractAction("Add to chart") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        for (int col : jTable1.getSelectedColumns()) {
+                            columnsToPlot.add(col);
+                            jTable1.getColumnModel().getColumn(col).setCellRenderer(new ColorColumnRenderer(new Color(238, 187, 0, 128)));
+                        }
+                        jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                    }
+                });
+                jpm.add(new AbstractAction("Log10 transform") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        final int[] cols = jTable1.getSelectedColumns();
+                        for (int i = 0; i < jTable1.getSelectedColumnCount(); i++) {
+                            logTransformColumn(cols[i], 10.0d);
+                        }
+
+                    }
+                });
+            }
+            if (jTable1.getSelectedColumnCount() == 1 && domainColumn == -1) {
+                jpm.add(new AbstractAction("Set column name as domain label") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        domainColumn = jTable1.getSelectedColumn();
+                        jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 0, 0, 128)));
+                        jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                    }
+                });
+                jpm.add(new AbstractAction("Log10 transform") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        final int[] cols = jTable1.getSelectedColumns();
+                        for (int i = 0; i < jTable1.getSelectedColumnCount(); i++) {
+                            logTransformColumn(cols[i], 10.0d);
+                        }
+
+                    }
+                });
+            }
+            if (domainColumn != -1) {
+                jpm.add(new AbstractAction("Reset domain column") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
+                        domainColumn = -1;
+                        jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                    }
+                });
+            }
+            for (final int col : jTable1.getSelectedColumns()) {
+                if (columnsToPlot.contains(Integer.valueOf(col))) {
+                    jpm.add(new AbstractAction("Remove from chart") {
+
+                        @Override
+                        public void actionPerformed(ActionEvent ae) {
+                            jTable1.getColumnModel().getColumn(Integer.valueOf(col)).setCellRenderer(new ColorColumnRenderer(Color.WHITE));
+                            columnsToPlot.remove(Integer.valueOf(col));
+                            jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        }
+                    });
+                    break;
+                }
+            }
+
+
+            jpm.show(me.getComponent(), me.getX(), me.getY());
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent me) {
+        createAndShowPopupMenu(me);
+    }
+
+    public JFreeChart buildChart(int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
+        XYSeriesCollection xysc = new XYSeriesCollection();
+        List<Integer> selectedColumns = new LinkedList<Integer>(selectedColumns1);
+        for (int i = 0; i < selectedColumns.size(); i++) {
+
+            XYSeries xys = new XYSeries(jTable1.getColumnName(selectedColumns.get(i)));
+            System.out.println("Creating XYSeries: " + jTable1.getColumnName(selectedColumns.get(i)));
+            for (int j = 0; j < selectedRows.length; j++) {
+
+                if (domainColumn != -1) {
+                    System.out.println("Domain column set");
+                    Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
+                    Number domainValue = Double.valueOf(0);
+                    System.out.println("Class of object: " + o.getClass().getName());
+                    if (o instanceof Number) {
+                        System.out.println("domain instanceof Number");
+                        domainValue = ((Number) o);
+                    }
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    if (val instanceof Number) {
+                        System.out.println("instanceof Number");
+                        Number rangeValue = ((Number) val);
+                        xys.add(domainValue, rangeValue);
+                    }
+                } else {
+                    System.out.println("No domain column set");
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    if (val instanceof Number) {
+                        System.out.println("instanceof Number");
+                        Number rangeValue = ((Number) val);
+                        xys.add(j, rangeValue);
+                    }
+                }
+
+            }
+            xysc.addSeries(xys);
+        }
+        String xaxisLabel = domainColumn == -1 ? "row" : jTable1.getModel().getColumnName(domainColumn);
+        String yaxisLabel = "";
+        if (selectedColumns.isEmpty()) {
+            yaxisLabel = "value";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (Integer i : selectedColumns) {
+                sb.append(jTable1.getModel().getColumnName(i) + " ");
+            }
+            yaxisLabel = sb.toString();
+        }
+        JFreeChart jfc = ChartFactory.createXYLineChart(getDisplayName(), xaxisLabel, yaxisLabel, xysc, PlotOrientation.VERTICAL, true, true, true);
+        return jfc;
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+
+        if (jTable1.getSelectedColumn() != activeColumn) {
+            jTable1.setRowSelectionAllowed(true);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
     }
 }

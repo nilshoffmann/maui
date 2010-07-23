@@ -16,7 +16,13 @@ public final class CDF2ToolsUIOpenAction implements ActionListener {
         this.context = context;
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
-        new ToolsUIStarter();
+        
+            //FIXME vorher gucken, ob es nicht schon offen ist!
+            CDFOpenSupport ms = new CDFOpenSupport(((CDFDataObject) context).getPrimaryEntry());
+            ms.open();
+        
+//        new ToolsUIStarter();
     }
 }

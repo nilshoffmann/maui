@@ -37,7 +37,7 @@ public class PipelineGeneralConfigWidget extends IconNodeWidget {
         }
     }
 
-    public boolean setPorperty(String key, String value) {
+    public boolean setProperty(String key, String value) {
         this.properties.put(key, value);
         return true;
     }

@@ -38,13 +38,13 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
     }
 
     @Override
-    public boolean setPorperty(String key, String value) {
+    public boolean setProperty(String key, String value) {
         System.out.println("Changing Key " + key);
         if (this.properties.containsKey(key) && key.endsWith(CLASS_NAME)) {
             System.out.println("Have to remove old properties for " + key + ":" + this.properties.get(key));
             removeKeysForClassNameKey(this.properties.get(key));
         }
-        boolean ret = super.setPorperty(key, value);
+        boolean ret = super.setProperty(key, value);
         checkFurtherClassNames();
 
         return ret;

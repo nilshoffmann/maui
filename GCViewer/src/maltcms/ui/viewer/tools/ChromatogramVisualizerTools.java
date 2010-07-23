@@ -23,15 +23,18 @@ import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.ui.charts.AChart;
 import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
-import maltcms.ui.viewer.datastructures.TicProvider;
+import maltcms.ui.viewer.datastructures.Tic2DProvider;
 import maltcms.ui.viewer.extensions.FastHeatMapPlot;
 import maltcms.ui.viewer.extensions.XYNoBlockRenderer;
+import maltcms.ui.viewer.gui.ModTimeAndScanRatePanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYSeries;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
@@ -79,9 +82,9 @@ public class ChromatogramVisualizerTools {
 
     public static XYPlot createScanlinePlot(int mod, boolean horizontal, boolean noiseReduced, String filename) {
         Array tic = null;
-        TicProvider tp = null;
+        Tic2DProvider tp = null;
         try {
-            tp = TicProvider.getInstance(filename);
+            tp = Tic2DProvider.getInstance(filename);
         } catch (IOException ex) {
             Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -262,11 +265,32 @@ public class ChromatogramVisualizerTools {
         double mt = 0;
         System.out.println("Asking for parameters: "
                 + askForParameters);
-        Array sra = scanRate.getArray();
-        sr = sra.getDouble(Array.scalarIndex);
-        Array mta = modTime.getArray();
-        mt = mta.getDouble(Array.scalarIndex);
-        System.out.println("Set parameters on arrays");
+
+        if (askForParameters) {
+            ModTimeAndScanRatePanel mtsrp = new ModTimeAndScanRatePanel();
+            javax.swing.JOptionPane.showMessageDialog(null, mtsrp);
+            sr = mtsrp.getScanRateValue();
+            mt = mtsrp.getModulationTimeValue();
+            final ArrayDouble.D0 sra = new ArrayDouble.D0();
+            sra.set(sr);
+            final ArrayDouble.D0 mta = new ArrayDouble.D0();
+            mta.set(mt);
+            scanRate.setArray(sra);
+            modTime.setArray(mta);
+            System.out.println("Set parameters on arrays with dialog");
+        } else {
+            Array sra = scanRate.getArray();
+            sr = sra.getDouble(Array.scalarIndex);
+            Array mta = modTime.getArray();
+            mt = mta.getDouble(Array.scalarIndex);
+            System.out.println("Set parameters on arrays");
+        }
+
+//        Array sra = scanRate.getArray();
+//        sr = sra.getDouble(Array.scalarIndex);
+//        Array mta = modTime.getArray();
+//        mt = mta.getDouble(Array.scalarIndex);
+//        System.out.println("Set parameters on arrays");
 
         final Array tic = origFragment.getChild("total_intensity").getArray();
         final int spm = (int) (sr * mt);
@@ -300,6 +324,7 @@ public class ChromatogramVisualizerTools {
         PaintScale ps = new GradientPaintScale(st, bp, mm.min, mm.max);
 
         XYNoBlockRenderer xybr = new XYNoBlockRenderer();
+//        XYBlockRenderer xybr = new XYBlockRenderer();
         xybr.setPaintScale(ps);
         //xybr.setDefaultEntityRadius(5);
         //xybr.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(rt, sl, spm));

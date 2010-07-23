@@ -21,15 +21,17 @@ public class HashTableModel implements TableModel {
 
     private Vector<String> header;
     private Map<String, String> property;
-    private boolean simplePropertyStyle = false;
+    private boolean simplePropertyStyle = true;
     private boolean editable = true;
     private PipelineElementWidget w = null;
     private JTable table = null;
+    private Class<?> c = null;
 
-    public HashTableModel(Vector<String> header, Map<String, String> property) {
+    public HashTableModel(Vector<String> header, Map<String, String> property, Class<?> c) {
         this.header = header;
         this.property = property;
         this.editable = true;
+        this.c = c;
     }
 
 //    public HashTableModel(Vector<String> header, Map<String, String> property, final boolean editable) {
@@ -88,9 +90,15 @@ public class HashTableModel implements TableModel {
         if (columnIndex == 0) {
             String key = this.property.keySet().toArray(new String[]{})[rowIndex];
             if (this.simplePropertyStyle) {
-                String[] tmp = key.split("\\.");
-                if (tmp.length > 0) {
-                    return tmp[tmp.length - 1];
+                System.out.println("Using short property names for class: "+this.c);
+                System.out.println("Key: "+key);
+                if (c != null && key.startsWith(c.getName())) {
+                    String[] tmp = key.split("\\.");
+                    if (tmp.length > 0) {
+                        return tmp[tmp.length - 1];
+                    } else {
+                        return key;
+                    }
                 } else {
                     return key;
                 }
@@ -110,7 +118,7 @@ public class HashTableModel implements TableModel {
             if (this.w == null) {
                 this.property.put(this.property.keySet().toArray(new String[]{})[rowIndex], aValue.toString());
             } else {
-                this.w.setPorperty(this.property.keySet().toArray(new String[]{})[rowIndex], aValue.toString());
+                this.w.setProperty(this.property.keySet().toArray(new String[]{})[rowIndex], aValue.toString());
             }
             if (this.table != null) {
                 this.table.repaint();
@@ -139,7 +147,7 @@ public class HashTableModel implements TableModel {
         this.w = w;
     }
 
-    public void setJTabel(JTable t) {
+    public void setJTable(JTable t) {
         this.table = t;
     }
 }

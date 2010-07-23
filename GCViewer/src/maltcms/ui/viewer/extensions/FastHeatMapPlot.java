@@ -703,9 +703,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
 
             int r = 5;
             g2.setColor(Color.BLACK);
-            int rx = (int) getDomainAxis().valueToJava2D(this.getDomainCrosshairValue(), dataArea, RectangleEdge.BOTTOM);
-            int ry = (int) getRangeAxis().valueToJava2D(this.getRangeCrosshairValue(), dataArea, RectangleEdge.LEFT);
-            System.out.println("CH: " + rx + "," + ry);
+            int rx = (int) this.domainAxis.valueToJava2D(this.getDomainCrosshairValue(),dataArea,RectangleEdge.BOTTOM);
+            int ry = (int) this.rangeAxis.valueToJava2D(this.getRangeCrosshairValue(),dataArea,RectangleEdge.LEFT);
+            //System.out.println("CH: " + rx + "," + ry);
+
             g2.drawOval(rx - r, ry - r, 2 * r, 2 * r);
         } else {
             createImage();
@@ -719,8 +720,8 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
                 : 1.0f / (float) getDatasetCount();
         for (int i = 0; i < getDatasetCount(); i++) {
             XYBlockRenderer xybr = (XYBlockRenderer) getRenderer(i);
-            System.out.println("alpha in plot " + ((GradientPaintScale) xybr.getPaintScale()).getAlpha());
-            System.out.println("beta in plot " + ((GradientPaintScale) xybr.getPaintScale()).getBeta());
+//            System.out.println("alpha in plot " + ((GradientPaintScale) xybr.getPaintScale()).getAlpha());
+//            System.out.println("beta in plot " + ((GradientPaintScale) xybr.getPaintScale()).getBeta());
 //            System.out.println("ramp in plot " + Arrays.toString(((GradientPaintScale) xybr.getPaintScale()).getRamp()));
             XYZDataset xyzd = (XYZDataset) getDataset(i);
             BufferedImage bi2 = prepareData(xyzd, this.width, this.height,

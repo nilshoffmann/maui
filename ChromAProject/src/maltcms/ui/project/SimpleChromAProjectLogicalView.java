@@ -58,6 +58,12 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
             //read-only filesystem or something evil happened
             return new AbstractNode(Children.LEAF);
         }
+
+    }
+
+    @Override
+    public Node findPath(Node node, Object o) {
+        return null;
     }
 
     /** This is the node you actually see in the project tab for the project */
@@ -101,11 +107,5 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
         public String getDisplayName() {
             return project.getProjectDirectory().getName();
         }
-    }
-
-    @Override
-    public Node findPath(Node root, Object target) {
-        //leave unimplemented for now
-        return null;
     }
 }

@@ -47,7 +47,7 @@ public class NodeMenu implements PopupMenuProvider, ActionListener {
         elementMenu = new JPopupMenu("Pipeline element Menu");
         JMenuItem item;
 
-        item = new JMenuItem("Edit Porperties");
+        item = new JMenuItem("Edit Properties");
         item.setActionCommand(EDIT_PROPERTIES_ACTION);
         item.addActionListener(this);
         elementMenu.add(item);

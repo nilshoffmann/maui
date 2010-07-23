@@ -96,7 +96,7 @@ public class ChartTools {
         return plot;
     }
 
-    public static void changePainScale(XYPlot p, GradientPaintScale sps) {
+    public static void changePaintScale(XYPlot p, GradientPaintScale sps) {
         if (p.getRenderer() instanceof XYNoBlockRenderer) {
             XYNoBlockRenderer renderer = (XYNoBlockRenderer) p.getRenderer();
             if (renderer.getPaintScale() instanceof GradientPaintScale) {

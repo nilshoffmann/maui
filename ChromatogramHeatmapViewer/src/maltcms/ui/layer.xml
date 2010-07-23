@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="File">
+            <file name="maltcms-ui-ChromatogramViewOpenAction.instance">
+                <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
+                <attr name="displayName" bundlevalue="maltcms.ui.Bundle#CTL_ChromatogramViewOpenAction"/>
+                <attr name="injectable" stringvalue="maltcms.ui.ChromatogramViewOpenAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
+            </file>
+        </folder>
+        <folder name="Window">
+            <file name="maltcms-ui-ChromatogramViewAction.instance">
+                <attr name="component" methodvalue="maltcms.ui.ChromatogramViewTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="maltcms.ui.Bundle#CTL_ChromatogramViewAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Loaders">
+        <folder name="application">
+            <folder name="x-cdf">
+                <folder name="Actions">
+                    <file name="maltcms-ui-ChromatogramViewOpenAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/File/maltcms-ui-ChromatogramViewOpenAction.instance"/>
+                        <attr name="position" intvalue="-200"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="ChromatogramViewAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-ChromatogramViewAction.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="ChromatogramViewTopComponent.settings" url="ChromatogramViewTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="ChromatogramViewTopComponent.wstcref" url="ChromatogramViewTopComponentWstcref.xml"/>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

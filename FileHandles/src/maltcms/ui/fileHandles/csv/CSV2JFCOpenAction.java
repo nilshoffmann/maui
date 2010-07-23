@@ -18,10 +18,15 @@ public final class CSV2JFCOpenAction implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent ev) {
-        for (DataObject dataObject : context) {
-            //FIXME vorher gucken, ob es nicht schon offen ist!
-            CSV2JFCOpenSupport ms = new CSV2JFCOpenSupport(((CSVDataObject) dataObject).getPrimaryEntry());
-            ms.open();
+        boolean collate = false;
+        if (collate) {
+            
+        } else {
+            for (DataObject dataObject : context) {
+                //FIXME vorher gucken, ob es nicht schon offen ist!
+                CSV2JFCOpenSupport ms = new CSV2JFCOpenSupport(((CSVDataObject) dataObject).getPrimaryEntry());
+                ms.open();
+            }
         }
     }
 }

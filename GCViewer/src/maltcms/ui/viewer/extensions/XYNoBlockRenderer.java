@@ -153,11 +153,11 @@ public class XYNoBlockRenderer extends XYBlockRenderer {
 //        g2.fill(block);
 //        g2.setStroke(new BasicStroke(1.0f));
 //        g2.draw(block);
-//
+
         EntityCollection entities = state.getEntityCollection();
         if (entities != null) {
             //System.out.println("Adding entity");
-//            addEntity(xyPoints, block, dataset, series, item, 0.0, 0.0);
+//            addEntity(entities, block, dataset, series, item, block.getCenterX(), block.getCenterY());
         }
 
     }

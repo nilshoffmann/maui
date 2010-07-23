@@ -138,11 +138,11 @@ public class SimpleChromAProject implements Project {
         }
 
         public List<FileObject> getMetadataFiles() {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         public List<FileObject> getDataFiles() {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         public void notifyCopying() throws IOException {

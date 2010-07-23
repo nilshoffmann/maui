@@ -6,19 +6,18 @@
 package maltcms.ui.nb;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import net.sourceforge.maltcms.chromauiproject.AttributesType;
+import net.sourceforge.maltcms.chromauiproject.AttributeType;
 import net.sourceforge.maltcms.chromauiproject.ConfigResourceType;
-import net.sourceforge.maltcms.chromauiproject.ProcessingPipelinesType;
+import net.sourceforge.maltcms.chromauiproject.ProcessingPipelineType;
 import net.sourceforge.maltcms.chromauiproject.ReportsType;
-import net.sourceforge.maltcms.chromauiproject.ResourcesType;
+import net.sourceforge.maltcms.chromauiproject.ResourceType;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -75,16 +74,16 @@ public class ChromaProject implements Project{
      * Delegate method to underlying bound xml file.
      * @return the <code>resources</code> node of this project
      */
-    public ResourcesType getResources() {
-        return getProject().getResources();
+    public List<ResourceType> getResources() {
+        return getProject().getResources().getResource();
     }
 
     /**
      * Delegate method to underlying bound xml file.
      * @return the <code>attributes</code> node of this project
      */
-    public AttributesType getAttributes() {
-        return getProject().getAttributes();
+    public List<AttributeType> getAttributes() {
+        return getProject().getAttributes().getAttribute();
     }
 
     /**
@@ -99,8 +98,8 @@ public class ChromaProject implements Project{
      * Delegate method to underlying bound xml file.
      * @return the <code>processingPipelines</code> node of this project
      */
-    public ProcessingPipelinesType getProcessingPipelines() {
-        return getProject().getProcessingPipelines();
+    public List<ProcessingPipelineType> getProcessingPipelines() {
+        return getProject().getProcessingPipelines().getProcessingPipeline();
     }
 
     /**
@@ -109,6 +108,57 @@ public class ChromaProject implements Project{
      */
     public ReportsType getReports() {
         return getProject().getReports();
+    }
+
+    /**
+     * Delegate method to underlying bound xml file.
+     * If you want to add ResourceType instances, call
+     * <code>addResources</code>
+     * @param the <code>resources</code> to set for this project
+     */
+    public void setResources(List<ResourceType> rt) {
+        getProject().getResources().getResource().clear();
+        addResources(rt);
+    }
+
+    /**
+     * Delegate method to underlying bound xml file.
+     * @param rt the <code>resources</code> to add to this project.
+     */
+    public void addResources(List<ResourceType> rt) {
+        getProject().getResources().getResource().addAll(rt);
+    }
+
+
+    public void setAttributes(List<AttributeType> at) {
+        getProject().getAttributes().getAttribute().clear();
+        addAttributes(at);
+    }
+
+    public void addAttributes(List<AttributeType> at) {
+        getProject().getAttributes().getAttribute().addAll(at);
+    }
+
+    public void setConfigResource(ConfigResourceType crt) {
+        getProject().setConfigResource(crt);
+    }
+
+    public void setProcessingPipelines(List<ProcessingPipelineType> ppt) {
+        getProject().getProcessingPipelines().getProcessingPipeline().clear();
+        addProcessingPipelines(ppt);
+    }
+
+    public void addProcessingPipelines(List<ProcessingPipelineType> ppt) {
+        getProject().getProcessingPipelines().getProcessingPipeline().addAll(ppt);
+    }
+
+    public void setReports(List<ResourceType> rt) {
+        getProject().getReports().getResource().clear();
+        addReports(rt);
+    }
+
+    public void addReports(List<ResourceType> rt) {
+        getProject().getReports().getResource().addAll(rt);
     }
 
     @Override
@@ -144,6 +194,8 @@ public class ChromaProject implements Project{
 
         @Override
         public void addPropertyChangeListener(PropertyChangeListener pcl) {
+            
+
         }
 
         @Override

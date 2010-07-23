@@ -36,6 +36,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import maltcms.ui.fileHandles.properties.tools.SceneParser;
 import org.netbeans.api.visual.action.EditProvider;
+import org.netbeans.api.visual.action.HoverProvider;
 import org.netbeans.api.visual.layout.SceneLayout;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.awt.StatusDisplayer;
@@ -47,6 +48,7 @@ import org.openide.util.ImageUtilities;
 public class PipelineGraphScene extends GraphScene.StringGraph {
 
     public static final Image IMAGE = ImageUtilities.loadImage("maltcms/ui/fileHandles/properties/resources/node.png"); // NOI18N
+    public static Image SELIMAGE;
     public static final String INPUT_WIDGET = "Pipeline Input";
     public static final String GENERAL_WIDGET = "General Configuration";
     private LayerWidget mainLayer = new LayerWidget(this);
@@ -67,12 +69,25 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     //private PipelineInputWidget root;
     private PipelineGeneralConfigWidget general;
     private boolean shortLabel = false;
+    private IconNodeWidget activeIconNode = null;
 
     public PipelineGraphScene() {
         init();
     }
 
+    private Image createHoverImage(Image original) {
+        BufferedImage bi = new BufferedImage(original.getWidth(null), original.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics g = bi.getGraphics();
+
+        g.drawImage(original, 0, 0, null);
+        g.setColor(new Color(164, 164, 255, 92));
+        g.fillRect(0, 0, bi.getWidth(null), bi.getHeight(null));
+        return bi;
+    }
+
     private void init() {
+        SELIMAGE = createHoverImage(IMAGE);
 //        mainLayer = new LayerWidget(this);
         addChild(mainLayer);
 
@@ -119,10 +134,27 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         }
         label.setToolTipText("Hold 'Ctrl'+'Mouse Right Button' to create Edge");
         label.setImage(IMAGE);
+
         label.createActions(SceneMainMenu.CONNECTION_MODE).addAction(connectAction);
         label.createActions(SceneMainMenu.MOVE_MODE).addAction(moveAction);
         mainLayer.addChild(label);
+        //label.getActions().addAction(selectAction);
+        label.getActions().addAction(ActionFactory.createHoverAction(new HoverProvider() {
+
+            @Override
+            public void widgetHovered(Widget widget) {
+                if (widget instanceof IconNodeWidget) {
+                    if (activeIconNode != null) {
+                        activeIconNode.setImage(IMAGE);
+                    }
+                    activeIconNode = ((IconNodeWidget) widget);
+                    activeIconNode.setImage(SELIMAGE);
+
+                }
+            }
+        }));
         label.getActions().addAction(ActionFactory.createPopupMenuAction(nodeMenu));
+        //activeIconNode = label;
         return label;
     }
 
@@ -177,6 +209,7 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
                 if (getSelectedObjects().contains(object)) {
                     return;
                 }
+
                 userSelectionSuggested(Collections.singleton(object), invertSelection);
             } else {
                 userSelectionSuggested(Collections.emptySet(), invertSelection);
@@ -248,7 +281,11 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     }
 
     public void clearScene() {
-        SceneParser.getConnectionLayer(this).removeChildren();
-        SceneParser.getPipelinesLayer(this).removeChildren();
+        if (SceneParser.getConnectionLayer(this) != null) {
+            SceneParser.getConnectionLayer(this).removeChildren();
+        }
+        if (SceneParser.getPipelinesLayer(this) != null) {
+            SceneParser.getPipelinesLayer(this).removeChildren();
+        }
     }
 }

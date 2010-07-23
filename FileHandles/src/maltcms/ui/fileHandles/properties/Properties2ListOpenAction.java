@@ -20,9 +20,11 @@ public final class Properties2ListOpenAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         for (DataObject dataObject : context) {
-            System.out.println(dataObject.getPrimaryFile().getPath());
-            Properties2ListOpenSupport ms = new Properties2ListOpenSupport(((PropertiesDataObject) dataObject).getPrimaryEntry());
-            ms.open();
+            if(!dataObject.getPrimaryFile().isFolder()) {
+                System.out.println(dataObject.getPrimaryFile().getPath());
+                Properties2ListOpenSupport ms = new Properties2ListOpenSupport(((PropertiesDataObject) dataObject).getPrimaryEntry());
+                ms.open();
+            }
         }
     }
 }
