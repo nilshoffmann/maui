@@ -5,11 +5,9 @@
 package maltcms.ui.fileHandles.csv;
 
 import cross.datastructures.tuple.Tuple2D;
+import cross.io.csv.ColorRampReader;
 import cross.tools.ImageTools;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -132,7 +130,7 @@ public class CSV2JFCLoader implements Runnable {
                 }
                 cd.addSeries(this.title, data);
                 XYBlockRenderer xyb = new XYBlockRenderer();
-                GradientPaintScale ps = new GradientPaintScale(ImageTools.createSampleTable(256), ImageTools.getBreakpoints(dt, 256, Double.NEGATIVE_INFINITY), "res/colorRamps/bcgyr.csv", min, max);
+                GradientPaintScale ps = new GradientPaintScale(ImageTools.createSampleTable(256), min, max, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp("res/colorRamps/bcgyr.csv")));
 
                 xyb.setPaintScale(ps);
                 final String[] colnames = new String[dtm.getColumnCount()];

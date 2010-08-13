@@ -43,6 +43,7 @@ public class PropertyLoader {
         Class<?> c;
         try {
             c = Class.forName(optionValue);
+            System.out.println("Loading service: "+c.getName());
             ServiceLoader<?> sl = ServiceLoader.load(c);
             for (Object o : sl) {
                 if (o != null) {
@@ -51,6 +52,10 @@ public class PropertyLoader {
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } catch (Error err) {
+            err.printStackTrace();
         }
 
         if (ret.size() == 0) {

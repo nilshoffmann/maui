@@ -24,11 +24,13 @@ public class PaintScaleDialogAction extends AbstractAction {
     private List<PaintScaleTarget> targets = new LinkedList<PaintScaleTarget>();
     private Component parent = null;
     private int alpha, beta;
+    private PaintScale ps = null;
 
-    public PaintScaleDialogAction(String name, int alpha, int beta) {
+    public PaintScaleDialogAction(String name, int alpha, int beta, PaintScale ps) {
         super(name);
         this.alpha = alpha;
         this.beta = beta;
+        this.ps = ps;
     }
 
     public PaintScaleDialogAction(String name, Icon icon) {
@@ -38,6 +40,7 @@ public class PaintScaleDialogAction extends AbstractAction {
     public void actionPerformed(ActionEvent ae) {
         Runnable r = new Runnable() {
 
+            @Override
             public void run() {
                 PaintScale ps = showPaintScaleDialog();
                 for (PaintScaleTarget pst : targets) {
@@ -57,7 +60,7 @@ public class PaintScaleDialogAction extends AbstractAction {
     }
 
     public PaintScale showPaintScaleDialog() {
-        final PaintScalePanel psp = new PaintScalePanel(this.alpha, this.beta);
+        final PaintScalePanel psp = new PaintScalePanel(this.ps,this.alpha, this.beta);
         int val = JOptionPane.showConfirmDialog(this.parent, psp);
         if (val == JOptionPane.OK_OPTION) {
             return psp.getPaintScale();

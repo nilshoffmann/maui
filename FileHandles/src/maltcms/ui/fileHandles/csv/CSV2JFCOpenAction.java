@@ -17,6 +17,7 @@ public final class CSV2JFCOpenAction implements ActionListener {
         this.context = context;
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         boolean collate = false;
         if (collate) {

@@ -19,8 +19,8 @@ import javax.swing.table.TableCellRenderer;
 
 public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
 
-    private Color colorSelected = new Color(0, 0, 255,128);
-    private Color colorFocus = new Color(0, 0, 200,128);
+    private Color colorSelected = new Color(0, 0, 200,128).brighter();
+    private Color colorFocus = new Color(0, 0, 255,128).brighter();
     private Color colorNormal;
 
     public ColorColumnRenderer(Color color) {
@@ -40,18 +40,18 @@ public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
 
     private Color reduceBrightness(Color c, int amount) {
         Color ret = new Color(darker(c.getRed(),amount),darker(c.getGreen(),amount),darker(c.getBlue(),amount));
-        System.out.println("Color before: "+c+" color after: "+ret);
+//        System.out.println("Color before: "+c+" color after: "+ret);
         return ret;
     }
 
     private Color increaseBrightness(Color c, int amount) {
         Color ret = new Color(brighter(c.getRed(),amount),brighter(c.getGreen(),amount),brighter(c.getBlue(),amount));
-        System.out.println("Color before: "+c+" color after: "+ret);
+//        System.out.println("Color before: "+c+" color after: "+ret);
         return ret;
     }
 
     private int darker(int band, int amount) {
-        System.out.println("Band value: "+band+" amount: "+amount);
+//        System.out.println("Band value: "+band+" amount: "+amount);
         return Math.max(0,band-amount);
     }
 

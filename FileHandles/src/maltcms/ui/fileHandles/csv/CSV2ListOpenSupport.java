@@ -4,6 +4,7 @@
  */
 package maltcms.ui.fileHandles.csv;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -24,6 +25,7 @@ import org.openide.windows.CloneableTopComponent;
 /**
  *
  * @author mw
+ * @author nils.hoffmann@cebitec.uni-bielefeld.de
  */
 public class CSV2ListOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
 
@@ -33,7 +35,17 @@ public class CSV2ListOpenSupport extends OpenSupport implements OpenCookie, Clos
         super(entry);
     }
 
-    public void addDataObjects(List<DataObject> l) {
+    public CSV2ListOpenSupport(CSVDataObject.Entry entry, DataObject...auxDataObjects) {
+        this(entry);
+        addDataObjects(Arrays.asList(auxDataObjects));
+    }
+
+    public CSV2ListOpenSupport(CSVDataObject.Entry entry, List<DataObject> auxDataObjects) {
+        this(entry);
+        addDataObjects(auxDataObjects);
+    }
+
+    private void addDataObjects(List<DataObject> l) {
         for (DataObject dobj : l) {
             if (dobj instanceof CSVDataObject) {
                 auxDataObjects.add((CSVDataObject) dobj);
@@ -49,7 +61,7 @@ public class CSV2ListOpenSupport extends OpenSupport implements OpenCookie, Clos
 
         final ProgressHandle ph = ProgressHandleFactory.createHandle("Loading file " + dobj.getPrimaryFile().getName());
         final ExecutorService es = Executors.newSingleThreadExecutor();
-        FileObject[] files = new FileObject[1 + auxDataObjects.size()];
+        final FileObject[] files = new FileObject[1 + auxDataObjects.size()];
         for (int i = 0; i < files.length; i++) {
             if (i == 0) {
                 files[0] = dobj.getPrimaryFile();
@@ -62,10 +74,8 @@ public class CSV2ListOpenSupport extends OpenSupport implements OpenCookie, Clos
             tc.setTableModel(f.get());
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
-            ph.finish();
         } catch (ExecutionException ex) {
             Exceptions.printStackTrace(ex);
-            ph.finish();
         }
         ph.finish();
         return tc;

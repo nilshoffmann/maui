@@ -47,7 +47,7 @@ import org.openide.util.ImageUtilities;
  */
 public class PipelineGraphScene extends GraphScene.StringGraph {
 
-    public static final Image IMAGE = ImageUtilities.loadImage("maltcms/ui/fileHandles/properties/resources/node.png"); // NOI18N
+    public static final Image IMAGE = ImageUtilities.loadImage("maltcms/ui/fileHandles/properties/resources/run48x48.png"); // NOI18N
     public static Image SELIMAGE;
     public static final String INPUT_WIDGET = "Pipeline Input";
     public static final String GENERAL_WIDGET = "General Configuration";

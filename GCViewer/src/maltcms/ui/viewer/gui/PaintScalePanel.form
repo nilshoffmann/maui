@@ -100,16 +100,16 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="361" max="32767" attributes="0"/>
+                          <EmptySpace pref="373" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="368" max="32767" attributes="0"/>
+                          <EmptySpace pref="383" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jSlider1" alignment="1" pref="389" max="32767" attributes="1"/>
-                              <Component id="jSlider2" alignment="1" pref="389" max="32767" attributes="1"/>
+                              <Component id="jSlider1" alignment="1" pref="403" max="32767" attributes="1"/>
+                              <Component id="jSlider2" alignment="1" pref="403" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>

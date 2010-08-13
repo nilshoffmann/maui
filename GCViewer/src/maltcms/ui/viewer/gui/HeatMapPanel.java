@@ -11,11 +11,11 @@
 package maltcms.ui.viewer.gui;
 
 import java.awt.Point;
-import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.events.PaintScaleDialogAction;
 import maltcms.ui.viewer.events.PaintScaleTarget;
 import maltcms.ui.viewer.extensions.FastHeatMapPlot;
+import maltcms.ui.viewer.extensions.GradientPaintScale;
 import maltcms.ui.viewer.tools.ChartTools;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import org.jfree.chart.ChartMouseEvent;
@@ -34,6 +34,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     private InformationController ic;
     private int oldTreshold;
     private int alpha = 0, beta = 1;
+    private PaintScale ps = null;
 
     /** Creates new form HeatMapPanel */
     public HeatMapPanel(InformationController ic) {
@@ -64,14 +65,15 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 //        ChartPanelMouseListener cpml = new ChartPanelMouseListener(cpt);
 //        cpml.addListener(XYaa);
 //        cpt.addChartMouseListener(cpml);
-        PaintScaleDialogAction psda = new PaintScaleDialogAction("Set Color Map",this.alpha,this.beta);
-        System.out.println("Adding PaintScaleDialogAction");
-        psda.addPaintScaleTarget(this);
-        System.out.println("Adding PaintScaleDialogAction");
-        psda.setParent(this);
+//        PaintScaleDialogAction psda = new PaintScaleDialogAction("Set Color Map", this.alpha, this.beta, this.ps);
+//        System.out.println("Adding PaintScaleDialogAction");
+//        psda.addPaintScaleTarget(this);
+//        System.out.println("Adding PaintScaleDialogAction");
+//        psda.setParent(this);
         cpt.addChartMouseListener(this);
     }
 
+    @Override
     public void chartMouseClicked(ChartMouseEvent cmevent) {
         if (cmevent.getTrigger().getClickCount() == 2
                 && cmevent.getTrigger().getButton() == 1) {
@@ -98,6 +100,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         }
     }
 
+    @Override
     public void chartMouseMoved(ChartMouseEvent cmevent) {
 //        if (cmevent.getTrigger().isMetaDown()) {
 //            if (this.cp.getChart().getPlot() instanceof XYPlot) {
@@ -110,14 +113,12 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 //            }
 //        }
         if (cmevent.getTrigger().isShiftDown()) {
-            if (this.cp.getChart().getPlot() instanceof XYPlot) {
-                final XYPlot plot = (XYPlot) this.cp.getChart().getPlot();
+            final XYPlot plot = this.cp.getChart().getXYPlot();
 //                System.out.println("Click at global: "+cmevent.getTrigger().getPoint());
-                final Point dataPoint = ChartTools.translatePointToImageCoord(plot,
-                        cmevent.getTrigger().getPoint(), this.cp.getScreenDataArea());
-                if (dataPoint != null) {
-                    this.ic.changePoint(dataPoint);
-                }
+            final Point dataPoint = ChartTools.translatePointToImageCoord(plot,
+                    cmevent.getTrigger().getPoint(), this.cp.getScreenDataArea());
+            if (dataPoint != null) {
+                this.ic.changePoint(dataPoint);
             }
         }
     }
@@ -155,7 +156,9 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         });
         jToolBar2.add(jButton1);
 
-        jSlider1.setMaximum(255);
+        jSlider1.setMajorTickSpacing(10);
+        jSlider1.setMinorTickSpacing(1);
+        jSlider1.setPaintTicks(true);
         jSlider1.setValue(0);
         jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -195,7 +198,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        PaintScaleDialogAction psda = new PaintScaleDialogAction("New Paintscale", this.alpha, this.beta);
+        PaintScaleDialogAction psda = new PaintScaleDialogAction("New Paintscale", this.alpha, this.beta, this.ps);
         psda.addPaintScaleTarget(this);
         psda.actionPerformed(evt);
 
@@ -226,12 +229,16 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     private javax.swing.JToolBar jToolBar2;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     public void setPaintScale(PaintScale ps) {
-        if (ps != null && ps instanceof GradientPaintScale) {
+        System.out.println("Set paint scale called on HeatmapPanel");
+//        if (ps != null && ps instanceof GradientPaintScale) {
+            System.out.println("Paint scale using!");
+            this.ps = ps;
             GradientPaintScale sps = (GradientPaintScale) ps;
             ChartTools.changePaintScale((XYPlot) this.cp.getChart().getPlot(), sps);
             this.alpha = (int) sps.getAlpha();
             this.beta = (int) sps.getBeta();
-        }
+//        }
     }
 }

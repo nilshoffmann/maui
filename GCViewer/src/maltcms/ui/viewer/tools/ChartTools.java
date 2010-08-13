@@ -10,15 +10,16 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYBPlot;
-import maltcms.ui.viewer.extensions.XYNoBlockRenderer;
+import maltcms.ui.viewer.extensions.FastHeatMapPlot;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.PaintScale;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
 
 /**
  *
@@ -96,21 +97,29 @@ public class ChartTools {
         return plot;
     }
 
-    public static void changePaintScale(XYPlot p, GradientPaintScale sps) {
-        if (p.getRenderer() instanceof XYNoBlockRenderer) {
-            XYNoBlockRenderer renderer = (XYNoBlockRenderer) p.getRenderer();
-            if (renderer.getPaintScale() instanceof GradientPaintScale) {
-                System.out.println("NEU");
-//                GradientPaintScale tps = (GradientPaintScale) renderer.getPaintScale();
-//                tps.setAlpha(sps.getAlpha());
-//                tps.setBeta(sps.getAlpha());
-//                tps.setRamp(sps.getRamp());
-                System.out.println("alpha: " + sps.getAlpha());
-                System.out.println("beta: " + sps.getBeta());
-                renderer.setPaintScale(sps);
-//                System.out.println(((GradientPaintScale) renderer.getPaintScale()).getRamp());
-                //p.notifyListeners(new PlotChangeEvent(p));
+    public static void changePaintScale(XYPlot p, PaintScale sps) {
+        if (p.getRenderer() instanceof XYBlockRenderer) {
+            XYBlockRenderer renderer = (XYBlockRenderer) p.getRenderer();
+            System.out.println("Setting paintscale");
+            renderer.setPaintScale(sps);
+            if(p instanceof FastHeatMapPlot) {
+                System.out.println("Resetting data image");
+                FastHeatMapPlot fhp = (FastHeatMapPlot)p;
+                fhp.resetDataImage();
             }
+//            if (renderer.getPaintScale() instanceof GradientPaintScale) {
+////                System.out.println("NEU");
+////                GradientPaintScale tps = (GradientPaintScale) renderer.getPaintScale();
+////                tps.setAlpha(sps.getAlpha());
+////                tps.setBeta(sps.getAlpha());
+////                tps.setRamp(sps.getRamp());
+////                System.out.println("alpha: " + sps.getAlpha());
+////                System.out.println("beta: " + sps.getBeta());
+//
+////                System.out.println(((GradientPaintScale) renderer.getPaintScale()).getRamp());
+//                //p.notifyListeners(new PlotChangeEvent(p));
+//            }
+            
         }
     }
 }

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: maltcms.ui.heatmap3Dviewer
+OpenIDE-Module-Layer: maltcms/ui/heatmap3Dviewer/layer.xml
+OpenIDE-Module-Localizing-Bundle: maltcms/ui/heatmap3Dviewer/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

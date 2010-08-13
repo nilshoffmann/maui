@@ -11,6 +11,7 @@
 
 package maltcms.ui.views;
 
+import cross.io.csv.ColorRampReader;
 import cross.tools.ImageTools;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -62,7 +63,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         st = getSampleTable(256);
         bp = getBreakpointTable(256);
         System.out.println("Sample table: "+Arrays.toString(st));
-        gps = new GradientPaintScale(st, bp, (String)dcbm.getSelectedItem(),0,1);
+        gps = new GradientPaintScale(st, 0,1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp((String)dcbm.getSelectedItem())));
     }
 
     /** This method is called from within the constructor to
@@ -228,7 +229,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         String s = (String)this.jComboBox1.getSelectedItem();
         System.out.println("Sample table: "+Arrays.toString(st));
-        this.gps = new GradientPaintScale(getSampleTable(256), getBreakpointTable(256), s,0,1);
+        this.gps = new GradientPaintScale(st,0,1,ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(s)));
         System.out.println(this.gps==null?"gps null":"gps not null");
         modifyPaintScale(this.gps);
     }//GEN-LAST:event_jComboBox1ActionPerformed
@@ -367,7 +368,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
     }
 
     public PaintScale getDefaultPaintScale() {
-        return new GradientPaintScale(st, bp, "res/colorRamps/bcgyr.csv", 0, 1);
+        return new GradientPaintScale(st,0,1,ImageTools.rampToColorArray(new ColorRampReader().readColorRamp("res/colorRamps/bcgyr.csv")));
     }
 
 }

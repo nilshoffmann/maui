@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
-import maltcms.ui.charts.GradientPaintScale;
-
 import org.jfree.chart.axis.AxisSpace;
 import org.jfree.chart.axis.AxisState;
 import org.jfree.chart.axis.ValueAxis;
@@ -138,6 +136,19 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             final int spm, final XYBlockRenderer xybr) {
         long start = System.currentTimeMillis();
         final PaintScale ps = xybr.getPaintScale();
+        double minz = Double.POSITIVE_INFINITY, maxz = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < xyz.getSeriesCount(); i++) {
+            final int items = xyz.getItemCount(i);
+            for (int j = 0; j < items; j++) {
+                minz = Math.min(xyz.getZValue(i, j), minz);
+                maxz = Math.max(xyz.getZValue(i, j), maxz);
+            }
+        }
+        if (ps instanceof GradientPaintScale) {
+            ((GradientPaintScale) ps).setUpperBound(maxz);
+            ((GradientPaintScale) ps).setLowerBound(minz);
+        }
         BufferedImage bi;
 //        if (this.getOrientation() == PlotOrientation.VERTICAL) {
         bi = createCompatibleImage(sl, spm);
@@ -149,15 +160,15 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         g2.fillRect(0, 0, sl, spm);
 
         double threshold = 0.0d;
-        int[][] ramp = ((GradientPaintScale) ps).getRamp();
-        double delta = 10.0d;
-        Color to = new Color(ramp[this.threshholdCutOff][0], ramp[this.threshholdCutOff][1], ramp[this.threshholdCutOff][2]);
-        for (;; threshold += delta) {
-            if (((Color) ps.getPaint(threshold)).equals(to)) {
-                threshold -= delta;
-                break;
-            }
-        }
+//        int[][] ramp = ((GradientPaintScale) ps).getRamp();
+//        double delta = 10.0d;
+//        Color to = new Color(ramp[this.threshholdCutOff][0], ramp[this.threshholdCutOff][1], ramp[this.threshholdCutOff][2]);
+//        for (;; threshold += delta) {
+//            if (((Color) ps.getPaint(threshold)).equals(to)) {
+//                threshold -= delta;
+//                break;
+//            }
+//        }
 
         // System.out.println("Using Threshold: " + threshold);
 
@@ -166,7 +177,8 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             final int items = xyz.getItemCount(i);
             for (int j = 0; j < items; j++) {
                 final double tmp = xyz.getZValue(i, j);
-                if (tmp > threshold) {
+                if (tmp > (minz+(threshold*(maxz-minz)))) {
+                    //if(j%50==0)System.out.println("Value > threshold: "+tmp);
                     final Paint p = ps.getPaint(tmp);
                     if (p instanceof Color) {
                         final Color c = (Color) p;
@@ -206,6 +218,11 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         this.xDataRange = xrange;
         this.yDataRange = yrange;
         // System.out.println("Firing change event");
+        fireChangeEvent();
+    }
+
+    public void resetDataImage() {
+        this.dataImage = null;
         fireChangeEvent();
     }
 
@@ -703,8 +720,8 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
 
             int r = 5;
             g2.setColor(Color.BLACK);
-            int rx = (int) this.domainAxis.valueToJava2D(this.getDomainCrosshairValue(),dataArea,RectangleEdge.BOTTOM);
-            int ry = (int) this.rangeAxis.valueToJava2D(this.getRangeCrosshairValue(),dataArea,RectangleEdge.LEFT);
+            int rx = (int) this.domainAxis.valueToJava2D(this.getDomainCrosshairValue(), dataArea, RectangleEdge.BOTTOM);
+            int ry = (int) this.rangeAxis.valueToJava2D(this.getRangeCrosshairValue(), dataArea, RectangleEdge.LEFT);
             //System.out.println("CH: " + rx + "," + ry);
 
             g2.drawOval(rx - r, ry - r, 2 * r, 2 * r);
@@ -720,9 +737,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
                 : 1.0f / (float) getDatasetCount();
         for (int i = 0; i < getDatasetCount(); i++) {
             XYBlockRenderer xybr = (XYBlockRenderer) getRenderer(i);
-//            System.out.println("alpha in plot " + ((GradientPaintScale) xybr.getPaintScale()).getAlpha());
-//            System.out.println("beta in plot " + ((GradientPaintScale) xybr.getPaintScale()).getBeta());
-//            System.out.println("ramp in plot " + Arrays.toString(((GradientPaintScale) xybr.getPaintScale()).getRamp()));
+            System.out.println("alpha in plot " + ((GradientPaintScale) xybr.getPaintScale()).getAlpha());
+            System.out.println("beta in plot " + ((GradientPaintScale) xybr.getPaintScale()).getBeta());
+            ((GradientPaintScale) xybr.getPaintScale()).setAlphaBeta(0, 1);
+            System.out.println("ramp in plot " + Arrays.deepToString(((GradientPaintScale) xybr.getPaintScale()).getRamp()));
             XYZDataset xyzd = (XYZDataset) getDataset(i);
             BufferedImage bi2 = prepareData(xyzd, this.width, this.height,
                     xybr);
@@ -731,8 +749,8 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
                     AlphaComposite.SRC_OVER, alpha));
             gg2.drawImage(bi2, 0, 0, null);
         }
-        setDataImage(bi, new Range(0, this.width),
-                new Range(0, this.height));
+        setDataImage(bi, new Range(0, this.width - 1),
+                new Range(0, this.height - 1));
     }
 
     /**

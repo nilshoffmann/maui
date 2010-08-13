@@ -48,6 +48,55 @@ public class JTableCustomizer {
         }
     }
 
+    public static void changeComparators(JTable table) {
+        TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(table.getModel());
+        table.setRowSorter(rowSorter);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            Class<?> c = table.getColumnClass(i);
+            if(c.equals(Long.class)) {
+                rowSorter.setComparator(i, new Comparator<Long>() {
+
+                    @Override
+                    public int compare(Long s1, Long s2) {
+                        return s1.compareTo(s2);
+                    }
+                });
+            }else if(c.equals(Integer.class)) {
+                rowSorter.setComparator(i, new Comparator<Integer>() {
+
+                    @Override
+                    public int compare(Integer s1, Integer s2) {
+                        return s1.compareTo(s2);
+                    }
+                });
+            }else if(c.equals(Double.class)) {
+                rowSorter.setComparator(i, new Comparator<Double>() {
+
+                    @Override
+                    public int compare(Double s1, Double s2) {
+                        return s1.compareTo(s2);
+                    }
+                });
+            }else if(c.equals(Float.class)) {
+                rowSorter.setComparator(i, new Comparator<Float>() {
+
+                    @Override
+                    public int compare(Float s1, Float s2) {
+                        return s1.compareTo(s2);
+                    }
+                });
+            }else{
+                rowSorter.setComparator(i, new Comparator<Object>() {
+
+                    @Override
+                    public int compare(Object s1, Object s2) {
+                        return s1.toString().compareTo(s2.toString());
+                    }
+                });
+            }
+        }
+    }
+
     public static void fitAllColumnWidth(JTable table) {
         table.setAutoResizeMode(0);
         int size = table.getColumnCount();

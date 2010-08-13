@@ -10,6 +10,7 @@
  */
 package maltcms.ui.viewer.gui;
 
+import cross.io.csv.ColorRampReader;
 import cross.tools.ImageTools;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.RepaintManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import maltcms.ui.charts.GradientPaintScale;
+import maltcms.ui.viewer.extensions.GradientPaintScale;
 import org.jfree.chart.renderer.PaintScale;
 
 /**
@@ -34,16 +35,17 @@ import org.jfree.chart.renderer.PaintScale;
  */
 public class PaintScalePanel extends javax.swing.JPanel implements ChangeListener {
 
-    private GradientPaintScale gps;
+    private PaintScale gps;
     private String paintScaleLocation = "res/colorRamps/bcgyr.csv";
     private Vector<String> elements = new Vector<String>();
     private DefaultComboBoxModel dcbm = null;
     private double[] st;
     private double[] bp;
     private int alpha, beta;
+    private int samples = 2048;
 
     /** Creates new form PaintScalePanel */
-    public PaintScalePanel(int alpha, int beta) {
+    public PaintScalePanel(PaintScale activePaintScale, int alpha, int beta) {
         this.alpha = alpha;
         this.beta = beta;
 
@@ -55,13 +57,23 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         }
         dcbm = new DefaultComboBoxModel(elements);
         jComboBox1.setModel(dcbm);
-        jComboBox1.setSelectedIndex(0);
         jSlider1.addChangeListener(this);
         jSlider2.addChangeListener(this);
-        st = getSampleTable(256);
-        bp = getBreakpointTable(256);
+        st = getSampleTable(samples);
+        bp = getBreakpointTable(samples);
         System.out.println("Sample table: " + Arrays.toString(st));
-        gps = new GradientPaintScale(st, bp, (String) dcbm.getSelectedItem(), 0, 1);
+        if (activePaintScale == null) {
+            gps = new GradientPaintScale(getSampleTable(samples), 0, 1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp((String) jComboBox1.getSelectedItem())));
+        } else {
+            elements.add(0, "Active paint scale");
+            gps = activePaintScale;
+        }
+
+        jComboBox1.setSelectedIndex(0);
+        if(gps instanceof GradientPaintScale) {
+            ((GradientPaintScale)gps).setAlphaBeta(this.alpha, this.beta);
+        }
+        modifyPaintScale((GradientPaintScale) gps);
     }
 
     /** This method is called from within the constructor to
@@ -226,10 +238,15 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         String s = (String) this.jComboBox1.getSelectedItem();
-        System.out.println("Sample table: " + Arrays.toString(st));
-        this.gps = new GradientPaintScale(getSampleTable(256), getBreakpointTable(256), s, 0, 1);
-        System.out.println(this.gps == null ? "gps null" : "gps not null");
-        modifyPaintScale(this.gps);
+        if (!s.equals("Active paint scale")) {
+            System.out.println("Sample table: " + Arrays.toString(st));
+            this.gps = new GradientPaintScale(getSampleTable(samples), 0, 1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(s)));
+            System.out.println(this.gps == null ? "gps null" : "gps not null");
+            modifyPaintScale((GradientPaintScale) this.gps);
+        }else{
+            this.jSlider1.setValue(convertAlphaToSlider(((GradientPaintScale)this.gps).getAlpha()));
+            this.jSlider2.setValue(convertBetaToSlider(((GradientPaintScale)this.gps).getBeta()));
+        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -259,9 +276,9 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
     }
 
     public double[] getBreakpointTable(int size) {
-        double[] bpt = new double[256];
-        for (int i = 0; i < 256; i++) {
-            bpt[i] = ((double) (i)) / ((double) 255);
+        double[] bpt = new double[size];
+        for (int i = 0; i < size; i++) {
+            bpt[i] = ((double) (i)) / ((double) size - 1);
         }
         System.out.println("BP table: " + Arrays.toString(bpt));
         return bpt;
@@ -305,36 +322,34 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
                 double height = 0.9 * getHeight() - (getInsets().bottom + getInsets().top);
                 //System.out.println("Width of label: "+w+"Number of segments: "+this.segments+" segmentWidth "+segmentWidth+" height: "+height);
                 Graphics2D g2 = (Graphics2D) g;
-                Paint p = g2.getPaint();
-                for (int i = 0; i < this.segments; i++) {
-                    double x = (((double) i) * segmentWidth);
-                    Paint c = this.ps.getPaint(lb + (((double) i) / segments));
-                    g2.setPaint(c);
-                    Rectangle2D.Double r2d = new Rectangle2D.Double(x, 0, x + (segmentWidth), height);
-                    g2.fill(r2d);
+                if (this.ps instanceof GradientPaintScale) {
+                    g2.drawImage(((GradientPaintScale) ps).getLookupImage(), 0, 0, w, (int) height, null);
+                } else {
+
+                    Paint p = g2.getPaint();
+                    for (int i = 0; i < this.segments; i++) {
+                        double x = (((double) i) * segmentWidth);
+                        Paint c = this.ps.getPaint(lb + (((double) i) / segments));
+                        g2.setPaint(c);
+                        Rectangle2D.Double r2d = new Rectangle2D.Double(x, 0, x + (segmentWidth), height);
+                        g2.fill(r2d);
+                    }
+                    g2.setPaint(p);
                 }
-                g2.setPaint(p);
             }
         }
     }
 
+    @Override
     public void stateChanged(ChangeEvent ce) {
-        if (ce.getSource() == this.jSlider1) {
-            double val = getAlpha();
+        if (ce.getSource() == this.jSlider1 || ce.getSource() == this.jSlider2) {
             PaintScale psc = ((PaintScaleLabel) this.jLabel4).getPaintScale();
             if (psc instanceof GradientPaintScale) {
-                ((GradientPaintScale) psc).setAlpha(val);
+                ((GradientPaintScale) psc).setAlphaBeta(getAlpha(),getBeta());
                 RepaintManager.currentManager(this.jLabel4).markCompletelyDirty(this.jLabel4);
             }
         }
-        if (ce.getSource() == this.jSlider2) {
-            double val = getBeta();
-            PaintScale psc = ((PaintScaleLabel) this.jLabel4).getPaintScale();
-            if (psc instanceof GradientPaintScale) {
-                ((GradientPaintScale) psc).setBeta(val);
-                RepaintManager.currentManager(this.jLabel4).markCompletelyDirty(this.jLabel4);
-            }
-        }
+
         System.out.println("Alpha value: " + getAlpha());
         System.out.println("Beta value: " + getBeta());
     }
@@ -356,11 +371,19 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         return val;
     }
 
+    public int convertAlphaToSlider(double value) {
+        return (int)(value*((double)(this.jSlider1.getMaximum()-this.jSlider1.getMinimum()))/2.0d);
+    }
+
+    public int convertBetaToSlider(double value) {
+        return (int)((value*((double)(this.jSlider2.getMaximum()-this.jSlider2.getMinimum()))/9.0d)-1.0d);
+    }
+
     public PaintScale getPaintScale() {
         return this.gps;
     }
 
     public PaintScale getDefaultPaintScale() {
-        return new GradientPaintScale(st, bp, "res/colorRamps/bcgyr.csv", 0, 1);
+        return new GradientPaintScale(st, 0, 1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp("res/colorRamps/bcgyr.csv")));
     }
 }

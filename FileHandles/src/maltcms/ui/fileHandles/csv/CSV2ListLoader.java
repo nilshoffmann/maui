@@ -64,7 +64,9 @@ public class CSV2ListLoader implements Callable<DefaultTableModel> {
                 tmp++;
             }
         }
-        this.dtm.addColumn("Filename", filenames);
+        if(f.length>1) {
+            this.dtm.addColumn("Filename", filenames);
+        }
         ph.progress("Done",100);
         ph.finish();
         return this.dtm;
@@ -94,41 +96,59 @@ public class CSV2ListLoader implements Callable<DefaultTableModel> {
         return new Tuple2D<Vector<Vector<String>>, Vector<String>>(v, headers);
     }
 
-    private Class<?> getClassForColumn(Vector<String> col) {
+    private Class<?> getClassForColumn(String colName, Vector<String> col) {
         Class<?> c = null;
         for (String s : col) {
+            final String val = replaceNAs(s);
+            
             try {
-                Long.valueOf(s);
-                c = Long.class;
-                break;
+                Long.valueOf(val);
+                System.out.println("Class for column "+colName+" is: Long");
+                return Long.class;
+//                break;
             } catch (NumberFormatException nfe) {
             }
 
             try {
-                Double.valueOf(s);
-                c = Double.class;
-                break;
+                Double.valueOf(val);
+//                c = Double.class;
+                System.out.println("Class for column "+colName+" is: Double");
+                return Double.class;
             } catch (NumberFormatException nfe) {
             }
 
             if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false")) {
-                c = Boolean.class;
-                break;
+//                c = Boolean.class;
+                System.out.println("Class for column "+colName+" is: Boolean");
+                return Boolean.class;
             } else {
-                c = String.class;
+//                c = String.class;
+                System.out.println("Class for column "+colName+" is: String");
+                return String.class;
             }
-            break;
+//            break;
         }
-        System.out.println("Class for column is: "+c.getName());
-        return c;
+        
+//        return c;
+        System.out.println("Class for column "+colName+" is String");
+        return String.class;
     }
 
     private Vector<Vector<?>> convertColumns(Vector<Vector<String>> v) {
         Vector<Vector<?>> r = new Vector<Vector<?>>();
+        int i = 0;
         for (Vector<String> vs : v) {
-            r.add(convertColumn(vs, getClassForColumn(vs)));
+            r.add(convertColumn(vs, getClassForColumn(i+"",vs)));
+            i++;
         }
         return r;
+    }
+
+    private String replaceNAs(String s) {
+        if(s.equalsIgnoreCase("NA")||s.equals("-")) {
+                return "NaN";
+        }
+        return s;
     }
 
     private Vector<?> convertColumn(Vector<String> v, Class<?> c) {
@@ -137,21 +157,23 @@ public class CSV2ListLoader implements Callable<DefaultTableModel> {
             System.out.println("Converting to Long/Integer");
             Vector<Long> ret = new Vector<Long>();
             for (String s : v) {
-                ret.add(Long.valueOf(s));
+                final String tmp = replaceNAs(s);
+                ret.add(Long.valueOf(tmp.equals("NaN")?"-1":tmp));
             }
             return ret;
         } else if (c.equals(Double.class) || c.equals(Float.class)) {
             System.out.println("Converting to Double/Float");
             Vector<Double> ret = new Vector<Double>();
             for (String s : v) {
-                ret.add(Double.valueOf(s));
+                ret.add(Double.valueOf(replaceNAs(s)));
             }
             return ret;
         } else if (c.equals(Boolean.class)) {
             System.out.println("Converting to boolean");
             Vector<Boolean> ret = new Vector<Boolean>();
             for (String s : v) {
-                ret.add(Boolean.valueOf(s));
+                final String tmp = replaceNAs(s);
+                ret.add(Boolean.valueOf(tmp.equals("NaN")?"false":tmp));
             }
             return ret;
         }else if (c.equals(String.class)){

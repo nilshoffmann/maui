@@ -10,6 +10,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
@@ -47,6 +51,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
     private static final String PREFERRED_ID = "CSV2ListTopComponent";
     private JFCTopComponent jfctc = null;
     private int domainColumn = -1;
+    private int labelColumn = -1;
     private Set<Integer> columnsToPlot = new LinkedHashSet<Integer>();
     private int activeColumn = -1;
 
@@ -76,15 +81,17 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
         for (int i = 0; i < tm.getColumnCount(); i++) {
             this.jTable1.getColumnModel().getColumn(i).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
         }
-        JTableCustomizer.changeComperatorToDoubleIfPossible(this.jTable1);
+        JTableCustomizer.changeComparators(this.jTable1);
         JTableCustomizer.fitAllColumnWidth(this.jTable1);
         this.jTable1.getTableHeader().addMouseListener(new MouseAdapter() {
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == 3) {
                     activeColumn = jTable1.getTableHeader().columnAtPoint(e.getPoint());
                     jTable1.setRowSelectionAllowed(false);
                     jTable1.setColumnSelectionInterval(activeColumn, activeColumn);
+                    jTable1.setRowSelectionInterval(0, jTable1.getRowCount()-1);
                     createAndShowPopupMenu(e);
                 }
             }
@@ -177,6 +184,17 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
         }
     }
 
+    public void inverseLogTransformColumn(int j, double base) {
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            Object o = jTable1.getValueAt(i, j);
+            if (o instanceof Double) {
+                jTable1.setValueAt(Double.valueOf(Math.pow(base, ((Double) o).doubleValue())), i, j);
+            } else if (o instanceof Float) {
+                jTable1.setValueAt(Double.valueOf(Math.pow(base, ((Double) o).doubleValue())).floatValue(), i, j);
+            }
+        }
+    }
+
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_ALWAYS;
@@ -227,6 +245,8 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
         if (me.getButton() == MouseEvent.BUTTON3 && this.jTable1.getSelectedRowCount() > 0 && this.jfctc != null) {
 
             JPopupMenu jpm = new JPopupMenu();
+
+            //more than one column selected
             if (jTable1.getSelectedColumnCount() > 0) {
                 jpm.add(new AbstractAction("Add to chart") {
 
@@ -236,9 +256,25 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
                             columnsToPlot.add(col);
                             jTable1.getColumnModel().getColumn(col).setCellRenderer(new ColorColumnRenderer(new Color(238, 187, 0, 128)));
                         }
-                        jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
+                //selected rows
+                for (final int col : jTable1.getSelectedColumns()) {
+                    if (columnsToPlot.contains(Integer.valueOf(col))) {
+                        jpm.add(new AbstractAction("Remove from chart") {
+
+                            @Override
+                            public void actionPerformed(ActionEvent ae) {
+                                jTable1.getColumnModel().getColumn(Integer.valueOf(col)).setCellRenderer(new ColorColumnRenderer(Color.WHITE));
+                                columnsToPlot.remove(Integer.valueOf(col));
+                                jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                            }
+                        });
+                        break;
+                    }
+                }
+                jpm.add(new JPopupMenu.Separator());
                 jpm.add(new AbstractAction("Log10 transform") {
 
                     @Override
@@ -250,29 +286,33 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
 
                     }
                 });
+                jpm.add(new AbstractAction("Inverse Log10 transform") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        final int[] cols = jTable1.getSelectedColumns();
+                        for (int i = 0; i < jTable1.getSelectedColumnCount(); i++) {
+                            inverseLogTransformColumn(cols[i], 10.0d);
+                        }
+
+                    }
+                });
             }
+            jpm.add(new JPopupMenu.Separator());
+            //exactly one selected column, no domain column
             if (jTable1.getSelectedColumnCount() == 1 && domainColumn == -1) {
-                jpm.add(new AbstractAction("Set column name as domain label") {
+                jpm.add(new AbstractAction("Set as domain values") {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
                         domainColumn = jTable1.getSelectedColumn();
                         jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 0, 0, 128)));
-                        jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
-                jpm.add(new AbstractAction("Log10 transform") {
 
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        final int[] cols = jTable1.getSelectedColumns();
-                        for (int i = 0; i < jTable1.getSelectedColumnCount(); i++) {
-                            logTransformColumn(cols[i], 10.0d);
-                        }
-
-                    }
-                });
             }
+            //one domainColumn
             if (domainColumn != -1) {
                 jpm.add(new AbstractAction("Reset domain column") {
 
@@ -280,25 +320,22 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
                     public void actionPerformed(ActionEvent ae) {
                         jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
                         domainColumn = -1;
-                        jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
             }
-            for (final int col : jTable1.getSelectedColumns()) {
-                if (columnsToPlot.contains(Integer.valueOf(col))) {
-                    jpm.add(new AbstractAction("Remove from chart") {
 
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
-                            jTable1.getColumnModel().getColumn(Integer.valueOf(col)).setCellRenderer(new ColorColumnRenderer(Color.WHITE));
-                            columnsToPlot.remove(Integer.valueOf(col));
-                            jfctc.setChart(buildChart(domainColumn, columnsToPlot, jTable1.getSelectedRows()));
-                        }
-                    });
-                    break;
-                }
+            if (jTable1.getSelectedColumnCount() == 1 && labelColumn == -1) {
+                jpm.add(new AbstractAction("Set as series labels") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        labelColumn = jTable1.getSelectedColumn();
+                        jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 0, 128)));
+                        jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                    }
+                });
             }
-
 
             jpm.show(me.getComponent(), me.getX(), me.getY());
         }
@@ -309,12 +346,15 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
         createAndShowPopupMenu(me);
     }
 
-    public JFreeChart buildChart(int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
+    public JFreeChart buildChart(int labelColumn, int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
+        if(labelColumn!=-1) {
+            return buildChartWithLabels(labelColumn,domainColumn,selectedColumns1, selectedRows);
+        }
         XYSeriesCollection xysc = new XYSeriesCollection();
         List<Integer> selectedColumns = new LinkedList<Integer>(selectedColumns1);
         for (int i = 0; i < selectedColumns.size(); i++) {
 
-            XYSeries xys = new XYSeries(jTable1.getColumnName(selectedColumns.get(i)));
+            XYSeries xys = new XYSeries(jTable1.getColumnName(selectedColumns.get(i)),true,true);
             System.out.println("Creating XYSeries: " + jTable1.getColumnName(selectedColumns.get(i)));
             for (int j = 0; j < selectedRows.length; j++) {
 
@@ -345,6 +385,76 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
 
             }
             xysc.addSeries(xys);
+        }
+        String xaxisLabel = domainColumn == -1 ? "row" : jTable1.getModel().getColumnName(domainColumn);
+        String yaxisLabel = "";
+        if (selectedColumns.isEmpty()) {
+            yaxisLabel = "value";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (Integer i : selectedColumns) {
+                sb.append(jTable1.getModel().getColumnName(i) + " ");
+            }
+            yaxisLabel = sb.toString();
+        }
+        JFreeChart jfc = ChartFactory.createXYLineChart(getDisplayName(), xaxisLabel, yaxisLabel, xysc, PlotOrientation.VERTICAL, true, true, true);
+        return jfc;
+    }
+
+    private HashMap<String, Integer> getLabelToIndex(JTable jt, int labelColumn) {
+        HashSet<String> hm = new LinkedHashSet<String>();
+        for (int i = 0; i < jt.getRowCount(); i++) {
+            hm.add(String.valueOf(jt.getModel().getValueAt(i, labelColumn)));
+        }
+        HashMap<String, Integer> placeMap = new LinkedHashMap<String, Integer>();
+        int cnt = 0;
+        for (String s : hm) {
+            System.out.println("Label: "+s);
+            placeMap.put(s, cnt++);
+        }
+        return placeMap;
+    }
+
+    public JFreeChart buildChartWithLabels(int labelColumn, int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
+        XYSeriesCollection xysc = new XYSeriesCollection();
+        List<Integer> selectedColumns = new LinkedList<Integer>();
+        selectedColumns.addAll(selectedColumns1);
+        //if an additional label column is defined, we use this to further partition
+        //the table by group labels
+        HashMap<String, Integer> labelToIndex = getLabelToIndex(jTable1, labelColumn);
+
+        for (int i = 0; i < selectedColumns.size(); i++) {
+            for (String label : labelToIndex.keySet()) {
+                xysc.addSeries(new XYSeries(label+"-"+jTable1.getColumnName(selectedColumns.get(i)), true, true));
+            }
+            for (int j = 0; j < selectedRows.length; j++) {
+                XYSeries xys = xysc.getSeries((String) jTable1.getModel().getValueAt(selectedRows[j], labelColumn)+"-"+jTable1.getColumnName(selectedColumns.get(i)));
+                if (domainColumn != -1) {
+                    System.out.println("Domain column set");
+                    Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
+                    Number domainValue = Double.valueOf(0);
+                    System.out.println("Class of object: " + o.getClass().getName());
+                    if (o instanceof Number) {
+                        System.out.println("domain instanceof Number");
+                        domainValue = ((Number) o);
+                    }
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    if (val instanceof Number) {
+                        System.out.println("instanceof Number");
+                        Number rangeValue = ((Number) val);
+                        xys.add(domainValue, rangeValue);
+                    }
+                } else {
+                    System.out.println("No domain column set");
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    if (val instanceof Number) {
+                        System.out.println("instanceof Number");
+                        Number rangeValue = ((Number) val);
+                        xys.add(j, rangeValue);
+                    }
+                }
+
+            }
         }
         String xaxisLabel = domainColumn == -1 ? "row" : jTable1.getModel().getColumnName(domainColumn);
         String yaxisLabel = "";

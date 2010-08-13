@@ -11,6 +11,7 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
+import cross.io.csv.ColorRampReader;
 import cross.tools.ImageTools;
 import java.awt.Point;
 import java.io.File;
@@ -21,11 +22,10 @@ import java.util.logging.Logger;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.ui.charts.AChart;
-import maltcms.ui.charts.GradientPaintScale;
+import maltcms.ui.viewer.extensions.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
 import maltcms.ui.viewer.datastructures.Tic2DProvider;
 import maltcms.ui.viewer.extensions.FastHeatMapPlot;
-import maltcms.ui.viewer.extensions.XYNoBlockRenderer;
 import maltcms.ui.viewer.gui.ModTimeAndScanRatePanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -280,9 +280,9 @@ public class ChromatogramVisualizerTools {
             System.out.println("Set parameters on arrays with dialog");
         } else {
             Array sra = scanRate.getArray();
-            sr = sra.getDouble(Array.scalarIndex);
+            sr = sra.getDouble(Index.scalarIndexImmutable);
             Array mta = modTime.getArray();
-            mt = mta.getDouble(Array.scalarIndex);
+            mt = mta.getDouble(Index.scalarIndexImmutable);
             System.out.println("Set parameters on arrays");
         }
 
@@ -294,7 +294,7 @@ public class ChromatogramVisualizerTools {
 
         final Array tic = origFragment.getChild("total_intensity").getArray();
         final int spm = (int) (sr * mt);
-        final int sl = (int) (tic.getShape()[0] / (spm));
+        final int sl = (tic.getShape()[0] / (spm));
 
         XYPlot p = createHeatMap(sl, spm, tic, origFragment.getName(), "rt1", "rt2");
         return p;
@@ -321,10 +321,10 @@ public class ChromatogramVisualizerTools {
         //System.out.println("Retrieving breakpoints");
         final double[] bp = ImageTools.getBreakpoints(tic, 256, Double.NEGATIVE_INFINITY);
         MinMax mm = MAMath.getMinMax(tic);
-        PaintScale ps = new GradientPaintScale(st, bp, mm.min, mm.max);
+        PaintScale ps = new GradientPaintScale(ImageTools.createSampleTable(256), mm.min, mm.max, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp("res/colorRamps/bcgyr.csv")));
 
-        XYNoBlockRenderer xybr = new XYNoBlockRenderer();
-//        XYBlockRenderer xybr = new XYBlockRenderer();
+        //XYNoBlockRenderer xybr = new XYNoBlockRenderer();
+        XYBlockRenderer xybr = new XYBlockRenderer();
         xybr.setPaintScale(ps);
         //xybr.setDefaultEntityRadius(5);
         //xybr.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(rt, sl, spm));

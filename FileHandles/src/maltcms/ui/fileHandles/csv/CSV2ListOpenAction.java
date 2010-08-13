@@ -18,9 +18,9 @@ public final class CSV2ListOpenAction implements ActionListener {
         this.context = new LinkedList<DataObject>(context);
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
-        CSV2ListOpenSupport ms = new CSV2ListOpenSupport(((CSVDataObject) context.remove(0)).getPrimaryEntry());
-        ms.addDataObjects(context);
+        CSV2ListOpenSupport ms = new CSV2ListOpenSupport(((CSVDataObject) context.remove(0)).getPrimaryEntry(),context);
         ms.open();
     }
 }
