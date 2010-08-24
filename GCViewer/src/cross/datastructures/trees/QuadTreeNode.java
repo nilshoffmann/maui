@@ -13,8 +13,6 @@ import cross.exception.ConstraintViolationException;
 import cross.exceptions.ElementNotFoundException;
 import cross.tools.EvalTools;
 import java.awt.geom.Ellipse2D;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * @author Nils.Hoffmann@CeBiTec.Uni-Bielefeld.DE

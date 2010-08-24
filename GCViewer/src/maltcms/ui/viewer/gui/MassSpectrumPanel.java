@@ -15,6 +15,7 @@ import cross.datastructures.fragments.CachedList;
 import cross.datastructures.fragments.VariableFragment;
 import java.awt.Point;
 import maltcms.ui.viewer.InformationController;
+import maltcms.ui.viewer.extensions.MetricNumberFormatter;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -49,7 +50,9 @@ public class MassSpectrumPanel extends PanelE {
         this.sc.addSeries(s);
         XYBarDataset d = new XYBarDataset(sc, 0.5d);
         XYBarRenderer renderer = new XYBarRenderer(0.1d);
-        XYPlot p = new XYPlot(d, new NumberAxis("mz"), new NumberAxis("intensity"), renderer);
+        NumberAxis intensityAxis = new NumberAxis("intensity");
+        intensityAxis.setNumberFormatOverride(new MetricNumberFormatter());
+        XYPlot p = new XYPlot(d, new NumberAxis("mz"), intensityAxis, renderer);
         JFreeChart msChart = new JFreeChart(p);
 
         Factory.getInstance().getConfiguration().setProperty(VariableFragment.class.getName()
@@ -129,15 +132,15 @@ public class MassSpectrumPanel extends PanelE {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

@@ -20,23 +20,23 @@ import ucar.ma2.IndexIterator;
  *
  * @author mw
  */
-public class Tic2DProvider {
+public class TicProvider {
 
-    private static Map<String, Tic2DProvider> statics = new HashMap<String, Tic2DProvider>();
+    private static Map<String, TicProvider> statics = new HashMap<String, TicProvider>();
     private IFileFragment ff;
     private IVariableFragment tic = null;
     private IVariableFragment vtic = null;
 
-    public static Tic2DProvider getInstance(String filename) throws IOException {
+    public static TicProvider getInstance(String filename) throws IOException {
         if (statics.containsKey(filename)) {
             return statics.get(filename);
         }
-        Tic2DProvider tmp = new Tic2DProvider(filename);
+        TicProvider tmp = new TicProvider(filename);
         statics.put(filename, tmp);
         return tmp;
     }
 
-    private Tic2DProvider(String filename) throws IOException {
+    private TicProvider(String filename) throws IOException {
         this.ff = ChromatogramVisualizerTools.getFragments(filename).getFirst();
     }
 

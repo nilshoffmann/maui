@@ -11,11 +11,12 @@
 package maltcms.ui.viewer.gui;
 
 import java.awt.Point;
+import javax.swing.SwingUtilities;
+import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.events.PaintScaleDialogAction;
 import maltcms.ui.viewer.events.PaintScaleTarget;
 import maltcms.ui.viewer.extensions.FastHeatMapPlot;
-import maltcms.ui.viewer.extensions.GradientPaintScale;
 import maltcms.ui.viewer.tools.ChartTools;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import org.jfree.chart.ChartMouseEvent;
@@ -45,7 +46,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     }
 
     private void initChartComponents() {
-        XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getFilename());
+        this.showVTIC.setSelected(false);
+        XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getFilename(), this.showVTIC.isSelected());
         JFreeChart jfc = new JFreeChart(p);
         ChartPanel cpt = new ChartPanel(jfc);
         this.cp = cpt;
@@ -135,6 +137,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
+        showVTIC = new javax.swing.JToggleButton();
         jButton1 = new javax.swing.JButton();
         jSlider1 = new javax.swing.JSlider();
         jPanel2 = new javax.swing.JPanel();
@@ -143,6 +146,17 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
         jToolBar2.setFloatable(false);
         jToolBar2.setRollover(true);
+
+        showVTIC.setText(org.openide.util.NbBundle.getMessage(HeatMapPanel.class, "HeatMapPanel.showVTIC.text")); // NOI18N
+        showVTIC.setFocusable(false);
+        showVTIC.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        showVTIC.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        showVTIC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showVTICActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(showVTIC);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("maltcms/ui/viewer/Bundle"); // NOI18N
         jButton1.setText(bundle.getString("HeatMapPanel.jButton1.text")); // NOI18N
@@ -220,6 +234,14 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         }
 
     }//GEN-LAST:event_jSlider1StateChanged
+
+    private void showVTICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showVTICActionPerformed
+
+        initChartComponents();
+        SwingUtilities.updateComponentTreeUI(this);
+
+    }//GEN-LAST:event_showVTICActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
@@ -227,6 +249,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     private javax.swing.JSlider jSlider1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JToggleButton showVTIC;
     // End of variables declaration//GEN-END:variables
 
     @Override

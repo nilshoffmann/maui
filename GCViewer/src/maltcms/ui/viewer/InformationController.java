@@ -166,10 +166,10 @@ public class InformationController {
         AdditionalInformationTypes[] options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE};
         switch (pos) {
             case NorthWest:
-                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.HORIZONTAL_GLOBAL_TIC, AdditionalInformationTypes.HORIZONTAL_GLOBAL_VTIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_TIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_VTIC, AdditionalInformationTypes.HORIZONTAL_MAXMS, AdditionalInformationTypes.HORIZONTAL_MEANMS, AdditionalInformationTypes.HORIZONTAL_SCANLINE};
+                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.HORIZONTAL_GLOBAL_TIC, AdditionalInformationTypes.HORIZONTAL_GLOBAL_VTIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_TIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_VTIC, AdditionalInformationTypes.HORIZONTAL_MAXMS, AdditionalInformationTypes.HORIZONTAL_MEANMS};
                 break;
             case SouthEast:
-                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.VERTICAL_GLOBAL_TIC, AdditionalInformationTypes.VERTICAL_GLOBAL_VTIC, AdditionalInformationTypes.VERTICAL_LOCAL_TIC, AdditionalInformationTypes.VERTICAL_LOCAL_VTIC, AdditionalInformationTypes.VERTICAL_MAXMS, AdditionalInformationTypes.VERTICAL_MEANMS, AdditionalInformationTypes.VERTICAL_SCANLINE, AdditionalInformationTypes.PEAKLIST};
+                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.VERTICAL_GLOBAL_TIC, AdditionalInformationTypes.VERTICAL_GLOBAL_VTIC, AdditionalInformationTypes.VERTICAL_LOCAL_TIC, AdditionalInformationTypes.VERTICAL_LOCAL_VTIC, AdditionalInformationTypes.VERTICAL_MAXMS, AdditionalInformationTypes.VERTICAL_MEANMS, AdditionalInformationTypes.PEAKLIST};
                 break;
             default:
                 break;

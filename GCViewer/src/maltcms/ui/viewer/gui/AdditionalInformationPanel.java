@@ -12,6 +12,7 @@ package maltcms.ui.viewer.gui;
 
 import cross.exception.ResourceNotAvailableException;
 import java.awt.Point;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import maltcms.ui.viewer.InformationController;
@@ -98,20 +99,26 @@ public class AdditionalInformationPanel extends PanelE {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        System.out.println("Changing Information in " + this.position);
+//        System.out.println("Changing Information in " + this.position);
         this.jPanel2.removeAll();
         AdditionalInformationTypes newInformation = (AdditionalInformationTypes) this.jComboBox1.getSelectedItem();
         try {
-            JPanel ret = AdditionalInformationFactory.createAdditionalPanel(newInformation);
-            if (ret instanceof ChartPanel) {
-                this.cp = (ChartPanel) ret;
-                this.ic.changeXYPlot(this.position, (XYPlot) (this.cp).getChart().getPlot());
+            JPanel ret = AdditionalInformationFactory.createAdditionalPanel(newInformation, this.ic.getFilename());
+            if (ret != null) {
+                if (ret instanceof ChartPanel) {
+                    this.cp = (ChartPanel) ret;
+                    this.ic.changeXYPlot(this.position, (XYPlot) (this.cp).getChart().getPlot());
+                } else {
+                    this.cp = null;
+                }
+                this.jPanel2.add(ret);
             } else {
-                this.cp = null;
+                JOptionPane.showMessageDialog(this, "Can not add null Panel to View.", "Unkown Problem.", JOptionPane.ERROR_MESSAGE);
             }
-            this.jPanel2.add(ret);
         } catch (ResourceNotAvailableException e) {
-            System.out.println("Hier muss ne errormsg kommen");
+//            System.out.println("Hier muss ne errormsg kommen");
+            JOptionPane.showMessageDialog(this, "Could not find required variable.", "Resource not Available.", JOptionPane.ERROR_MESSAGE);
+
         } finally {
             SwingUtilities.updateComponentTreeUI(this);
         }

@@ -11,7 +11,6 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
-import cross.io.csv.ColorRampReader;
 import cross.tools.ImageTools;
 import java.awt.Point;
 import java.io.File;
@@ -22,15 +21,15 @@ import java.util.logging.Logger;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.ui.charts.AChart;
-import maltcms.ui.viewer.extensions.GradientPaintScale;
+import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
-import maltcms.ui.viewer.datastructures.Tic2DProvider;
+import maltcms.ui.viewer.datastructures.TicProvider;
 import maltcms.ui.viewer.extensions.FastHeatMapPlot;
+import maltcms.ui.viewer.extensions.XYNoBlockRenderer;
 import maltcms.ui.viewer.gui.ModTimeAndScanRatePanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYSeries;
 import ucar.ma2.Array;
@@ -82,9 +81,9 @@ public class ChromatogramVisualizerTools {
 
     public static XYPlot createScanlinePlot(int mod, boolean horizontal, boolean noiseReduced, String filename) {
         Array tic = null;
-        Tic2DProvider tp = null;
+        TicProvider tp = null;
         try {
-            tp = Tic2DProvider.getInstance(filename);
+            tp = TicProvider.getInstance(filename);
         } catch (IOException ex) {
             Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -216,7 +215,7 @@ public class ChromatogramVisualizerTools {
         width = a.size();
         height = a.get(0).getShape()[0];
 
-        XYPlot p = createHeatMap(width, height, tic, name, xAxis, yAxis);
+        XYPlot p = createHeatMap(width, height, 0, tic, name, xAxis, yAxis);
 
         if (horizontal) {
             p = ChartTools.getPlot2(p);
@@ -227,7 +226,7 @@ public class ChromatogramVisualizerTools {
         return p;
     }
 
-    public static XYPlot getTICHeatMap(String filename) {
+    public static XYPlot getTICHeatMap(String filename, boolean noiseReduced) {
         IFileFragment origFragment = null, fragment = null;
 
         try {
@@ -263,9 +262,9 @@ public class ChromatogramVisualizerTools {
         }
         double sr = 0;
         double mt = 0;
+
         System.out.println("Asking for parameters: "
                 + askForParameters);
-
         if (askForParameters) {
             ModTimeAndScanRatePanel mtsrp = new ModTimeAndScanRatePanel();
             javax.swing.JOptionPane.showMessageDialog(null, mtsrp);
@@ -287,20 +286,40 @@ public class ChromatogramVisualizerTools {
         }
 
 //        Array sra = scanRate.getArray();
-//        sr = sra.getDouble(Array.scalarIndex);
+////        sr = sra.getDouble(Index.scalarIndexImmutable);
+//        sr = ((ArrayDouble.D1) (sra)).get(0);
 //        Array mta = modTime.getArray();
-//        mt = mta.getDouble(Array.scalarIndex);
-//        System.out.println("Set parameters on arrays");
+////        mt = mta.getDouble(Index.scalarIndexImmutable);
+//        mt = ((ArrayDouble.D1) (mta)).get(0);
+        System.out.println("Set parameters on arrays");
 
-        final Array tic = origFragment.getChild("total_intensity").getArray();
+        TicProvider tp = null;
+        try {
+            tp = TicProvider.getInstance(filename);
+        } catch (IOException ex) {
+            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        Array tic;
+        if (noiseReduced) {
+            try {
+                tic = tp.getTIC();
+            } catch (ResourceNotAvailableException rnae) {
+                rnae.printStackTrace();
+                tic = tp.getVTIC();
+            }
+        } else {
+            tic = tp.getTIC();
+        }
+
         final int spm = (int) (sr * mt);
         final int sl = (tic.getShape()[0] / (spm));
 
-        XYPlot p = createHeatMap(sl, spm, tic, origFragment.getName(), "rt1", "rt2");
+        XYPlot p = createHeatMap(sl, spm, mt, tic, origFragment.getName(), "rt1", "rt2");
         return p;
     }
 
-    public static XYPlot createHeatMap(int width, int height, Array tic, String name, String xAxis, String yAxis) {
+    public static XYPlot createHeatMap(int width, int height, double modulationTime, Array tic, String name, String xAxis, String yAxis) {
         Index ticIdx = tic.getIndex();
         double[][] tic2ddata = new double[3][tic.getShape()[0]];
         int cnt = 0;
@@ -321,19 +340,26 @@ public class ChromatogramVisualizerTools {
         //System.out.println("Retrieving breakpoints");
         final double[] bp = ImageTools.getBreakpoints(tic, 256, Double.NEGATIVE_INFINITY);
         MinMax mm = MAMath.getMinMax(tic);
-        PaintScale ps = new GradientPaintScale(ImageTools.createSampleTable(256), mm.min, mm.max, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp("res/colorRamps/bcgyr.csv")));
 
-        //XYNoBlockRenderer xybr = new XYNoBlockRenderer();
-        XYBlockRenderer xybr = new XYBlockRenderer();
+        XYNoBlockRenderer xybr = new XYNoBlockRenderer();
+        PaintScale ps = new GradientPaintScale(st, bp, mm.min, mm.max);
         xybr.setPaintScale(ps);
-        //xybr.setDefaultEntityRadius(5);
-        //xybr.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(rt, sl, spm));
+        xybr.setDefaultEntityRadius(5);
+        xybr.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(rt, sl, spm));
 
         NumberAxis rt1 = new NumberAxis(xAxis);
         //rt1.setAutoRange(true);
         rt1.setRange(0, width - 1);
         NumberAxis rt2 = new NumberAxis(yAxis);
         rt2.setRange(0, height - 1);
+//        Das kann benutzt werden, um Zeiten anstelle von scanindex anzuzeigen
+//        Aktuelles Problem: Zeit auf der erten Achse beginnt nicht zwingend bei 0
+//        if (modulationTime > 0) {
+//            double scanrate = modulationTime;
+//            rt1.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate, "#0"));
+//            scanrate = modulationTime / (double) height;
+//            rt2.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate));
+//        }
 
         XYPlot heatmapPlot = new FastHeatMapPlot(xyz, width, height, rt1, rt2, xybr);
         heatmapPlot.getDomainAxis().setFixedAutoRange(width);

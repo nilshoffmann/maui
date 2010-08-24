@@ -114,7 +114,9 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>maltcms.ui.fileHandles.csv</package>
+            </public-packages>
         </data>
     </configuration>
 </project>
