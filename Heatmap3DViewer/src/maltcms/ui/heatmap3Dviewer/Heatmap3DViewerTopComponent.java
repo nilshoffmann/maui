@@ -45,16 +45,23 @@ public final class Heatmap3DViewerTopComponent extends CloneableTopComponent {
     }
 
     private void setupHeatmap3DViewer(URL u) {
-        hv = new Heatmap3DViewer(this);
-        addComponentListener(hv);
-        addFocusListener(hv);
-        add(hv,BorderLayout.CENTER);
-        try {
-            hv.setSurfaceFile(new File(u.toURI()).getAbsolutePath());
-        } catch (URISyntaxException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        hv.init();
+//        try {
+//            hv = new Heatmap3DViewer();
+//            hv.setFile(new File(u.toURI()));
+                    hv = new Heatmap3DViewer(this);
+                    addComponentListener(hv);
+                    addFocusListener(hv);
+                    add(hv,BorderLayout.CENTER);
+                    try {
+                        hv.setSurfaceFile(new File(u.toURI()).getAbsolutePath());
+                    } catch (URISyntaxException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                    hv.init();
+            //        hv.init();
+//        } catch (URISyntaxException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
     }
 
     public Heatmap3DViewerTopComponent() {
