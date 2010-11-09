@@ -43,7 +43,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
     private double[] st;
     private double[] bp;
     private int alpha, beta;
-    private int samples = 256;
+    private int samples = 2048;
 
     /** Creates new form PaintScalePanel */
     public PaintScalePanel(PaintScale activePaintScale, int alpha, int beta) {
@@ -285,11 +285,11 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         return bpt;
     }
 
-    public void modifyPaintScale(GradientPaintScale gps) {
+    public void modifyPaintScale(PaintScale gps) {
         System.out.println("Alpha value: " + getAlpha());
         System.out.println("Beta value: " + getBeta());
-        gps.setAlpha(getAlpha());
-        gps.setBeta(getBeta());
+        //gps.setAlpha(getAlpha());
+        //gps.setBeta(getBeta());
         ((PaintScaleLabel) this.jLabel4).setPaintScale(gps);
     }
 
