@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="File">
+            <file name="maltcms-io-xml-ws-meltdb-PeakImportWizardAction.instance">
+                <attr name="delegate" newvalue="maltcms.io.xml.ws.meltdb.PeakImportWizardAction"/>
+                <attr name="iconBase" stringvalue="maltcms/io/xml/ws/meltdb/meltdb-logo-32.png"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="noIconInMenu" stringvalue="false"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Toolbars">
+        <folder name="File">
+            <file name="maltcms-io-xml-ws-meltdb-PeakImportWizardAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/File/maltcms-io-xml-ws-meltdb-PeakImportWizardAction.instance"/>
+                <attr name="position" intvalue="500"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>
+
