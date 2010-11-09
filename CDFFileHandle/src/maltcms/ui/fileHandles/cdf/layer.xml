@@ -3,6 +3,15 @@
 <filesystem>
     <folder name="Actions">
         <folder name="Edit">
+            <file name="maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.instance">
+                <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
+                <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.cdf.Bundle#CTL_CDF2ChartOpenAction"/>
+                <attr name="injectable" stringvalue="maltcms.ui.fileHandles.cdf.CDF2ChartOpenAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="selectionType" stringvalue="ANY"/>
+                <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
+            </file>
             <file name="maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.instance">
                 <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.cdf.Bundle#CTL_CDF2ToolsUIOpenAction"/>
@@ -25,6 +34,10 @@
         <folder name="application">
             <folder name="x-cdf">
                 <folder name="Actions">
+                    <file name="maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.instance"/>
+                        <attr name="position" intvalue="-300"/>
+                    </file>
                     <file name="maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.instance"/>
                         <attr name="position" intvalue="0"/>

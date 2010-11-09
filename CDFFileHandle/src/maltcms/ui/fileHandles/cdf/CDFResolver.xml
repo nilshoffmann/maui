@@ -8,6 +8,8 @@ and open the template in the editor.
     <file>
         <ext name="cdf"/>
         <ext name="CDF"/>
+        <ext name="nc"/>
+        <ext name="NC"/>
         <resolver mime="application/x-cdf"/>
     </file>
 </MIME-resolver>
