@@ -11,7 +11,6 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
-import cross.tools.ImageTools;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
@@ -20,12 +19,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
+import maltcms.io.csv.ColorRampReader;
+import maltcms.tools.ImageTools;
 import maltcms.ui.charts.AChart;
 import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
 import maltcms.ui.viewer.datastructures.TicProvider;
-import maltcms.ui.viewer.extensions.FastHeatMapPlot;
-import maltcms.ui.viewer.extensions.XYNoBlockRenderer;
+import net.sf.maltcms.chromaui.charts.XYNoBlockRenderer;
 import maltcms.ui.viewer.gui.ModTimeAndScanRatePanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -60,21 +60,21 @@ public class ChromatogramVisualizerTools {
 
         XYSeries s = new XYSeries(imagePoint.x + ", " + imagePoint.y);
 
-//        Tuple2D<Array, Array> ms = scanlineCache.getSparseMassSpectra(imagePoint);
-//        IndexIterator mz = ms.getFirst().getIndexIterator();
-//        IndexIterator inten = ms.getSecond().getIndexIterator();
+        Tuple2D<Array, Array> ms = scanlineCache.getSparseMassSpectra(imagePoint);
+        IndexIterator mz = ms.getFirst().getIndexIterator();
+        IndexIterator inten = ms.getSecond().getIndexIterator();
 //
-//        while (mz.hasNext() && inten.hasNext()) {
-//            s.add(mz.getDoubleNext(), inten.getDoubleNext());
-//        }
-
-        for (int i = 0; i < 750; i++) {
-            if (((int) (Math.random() * 10.0d)) == 1) {
-                s.add(i, Math.random() * 1000000);
-            } else {
-                s.add(i, Math.random() * 500);
-            }
+        while (mz.hasNext() && inten.hasNext()) {
+            s.add(mz.getDoubleNext(), inten.getDoubleNext());
         }
+
+//        for (int i = 0; i < 750; i++) {
+//            if (((int) (Math.random() * 10.0d)) == 1) {
+//                s.add(i, Math.random() * 1000000);
+//            } else {
+//                s.add(i, Math.random() * 500);
+//            }
+//        }
 
         return s;
     }
@@ -342,10 +342,10 @@ public class ChromatogramVisualizerTools {
         MinMax mm = MAMath.getMinMax(tic);
 
         XYNoBlockRenderer xybr = new XYNoBlockRenderer();
-        PaintScale ps = new GradientPaintScale(st, bp, mm.min, mm.max);
+        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max, ImageTools.rampToColorArray(new ColorRampReader().getDefaultRamp()));
         xybr.setPaintScale(ps);
         xybr.setDefaultEntityRadius(5);
-        xybr.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(rt, sl, spm));
+//        xybr.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(rt, sl, spm));
 
         NumberAxis rt1 = new NumberAxis(xAxis);
         //rt1.setAutoRange(true);
@@ -361,7 +361,7 @@ public class ChromatogramVisualizerTools {
 //            rt2.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate));
 //        }
 
-        XYPlot heatmapPlot = new FastHeatMapPlot(xyz, width, height, rt1, rt2, xybr);
+        XYPlot heatmapPlot = new XYPlot(xyz, rt1, rt2, xybr);
         heatmapPlot.getDomainAxis().setFixedAutoRange(width);
         heatmapPlot.getRangeAxis().setFixedAutoRange(height);
 

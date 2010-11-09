@@ -6,9 +6,12 @@ package maltcms.ui.viewer.datastructures.tree;
 import java.awt.geom.Point2D;
 
 import cross.datastructures.tuple.Tuple2D;
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author Nils.Hoffmann@CeBiTec.Uni-Bielefeld.DE
@@ -94,6 +97,53 @@ public class QuadTree<T>{
         QuadTreeNodeDepthFirstVisitor<T> qtn = new QuadTreeNodeDepthFirstVisitor<T>(root);
         LinkedList<T> l = new LinkedList<T>();
         return qtn.visit(l).iterator();
+    }
+
+    public static void main(String[] args) {
+        double maxx =Math.pow(2.0d, 64.0d);
+        QuadTree<String> qt = new QuadTree<String>(0,0,maxx,maxx,5);
+        Random x = new Random(System.nanoTime());
+        Random y = new Random(System.nanoTime());
+        int npoints = (int)(Integer.MAX_VALUE*(Math.random())/10000);
+        System.out.println("Creating quad tree for "+npoints+" points");
+        long start = 0;
+        double tdiff = 0;
+        List<Point2D> l = new LinkedList<Point2D>();
+        for(int i = 0;i<npoints;i++) {
+            Point2D p = new Point2D.Double((x.nextDouble()*maxx),(y.nextDouble()*maxx));
+//            System.out.println("Adding item at point: "+p);
+            qt.put(p, ""+i);
+            l.add(p);
+            
+        }
+        System.out.println("Done");
+        System.out.println("Timing get operation!");
+        for(int i = 0;i<npoints;i++) {
+//            Point2D p = new Point2D.Double((x.nextDouble()*maxx),(y.nextDouble()*maxx));
+//            System.out.println("Adding item at point: "+p);
+//            qt.put(p, ""+i);
+//            l.add(p);
+            Point2D p = l.get(i);
+            start = System.nanoTime();
+            String s = qt.get(p);
+            tdiff+=(System.nanoTime()-start);
+        }
+
+        System.out.println("Average time for tree point retrieval: "+(tdiff/(double)npoints));
+
+        tdiff = 0;
+        for(int i = 0;i<npoints;i++) {
+//            Point2D p = new Point2D.Double((x.nextDouble()*maxx),(y.nextDouble()*maxx));
+//            System.out.println("Adding item at point: "+p);
+//            qt.put(p, ""+i);
+//            l.add(p);
+            Point2D p = l.get(i);
+            start = System.nanoTime();
+            String s = qt.get(p);
+            tdiff+=(System.nanoTime()-start);
+        }
+
+        System.out.println("Average time for list point retrieval: "+(tdiff/(double)npoints));
     }
 
    

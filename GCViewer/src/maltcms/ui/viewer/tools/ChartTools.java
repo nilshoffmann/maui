@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import maltcms.ui.charts.XYBPlot;
-import maltcms.ui.viewer.extensions.FastHeatMapPlot;
+import net.sf.maltcms.chromaui.charts.FastHeatMapPlot;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;

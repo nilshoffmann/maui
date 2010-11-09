@@ -10,7 +10,7 @@ import java.util.List;
 
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ConstraintViolationException;
-import cross.tools.EvalTools;
+import cross.datastructures.tools.EvalTools;
 import java.awt.geom.Ellipse2D;
 
 /**

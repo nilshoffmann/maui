@@ -9,6 +9,7 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import maltcms.ui.viewer.datastructures.AdditionalInformationTypes;
 import maltcms.ui.viewer.datastructures.TrippleChangeListener;
 import maltcms.ui.viewer.gui.AdditionalInformationPanel;
@@ -81,23 +82,54 @@ public class InformationController {
         return p;
     }
 
-    public void changeMS(Point p) {
+    public void changeMS(final Point p) {
         if (p != null) {
+            Runnable r = new Runnable() {
+
+                @Override
+                public void run() {
+                    listener.updateCrossHair(p);
+                }
+
+            };
+            SwingUtilities.invokeLater(r);
             this.msp.changeMS(p);
-            //this.listener.updateCrossHair(p);
+            
         }
     }
 
-    public void changePoint(Point p) {
+    public void changePoint(final Point p) {
         if (p != null) {
-            this.aip1.changePoint(p);
-            this.aip2.changePoint(p);
-            this.listener.updateCrossHair(p);
+            Runnable r1 = new Runnable() {
+
+                @Override
+                public void run() {
+                    aip1.changePoint(p);  
+                }
+            };
+            Runnable r2 = new Runnable() {
+
+                @Override
+                public void run() {
+                    aip2.changePoint(p);
+                }
+                
+            };
+            Runnable r3 = new Runnable() {
+
+                @Override
+                public void run() {
+                    listener.updateCrossHair(p);
+                }
+
+            };
+            SwingUtilities.invokeLater(r1);
+            SwingUtilities.invokeLater(r2);
+            SwingUtilities.invokeLater(r3);
         }
     }
 
     public void changePointForAIP(Point p) {
-
     }
 
     public void changeXYPlot(ChartPositions pos, XYPlot plot) {

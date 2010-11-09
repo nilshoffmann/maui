@@ -103,7 +103,7 @@ public class AdditionalInformationPanel extends PanelE {
         this.jPanel2.removeAll();
         AdditionalInformationTypes newInformation = (AdditionalInformationTypes) this.jComboBox1.getSelectedItem();
         try {
-            JPanel ret = AdditionalInformationFactory.createAdditionalPanel(newInformation, this.ic.getFilename());
+            JPanel ret = AdditionalInformationFactory.createAdditionalPanel(this.ic, newInformation);
             if (ret != null) {
                 if (ret instanceof ChartPanel) {
                     this.cp = (ChartPanel) ret;
@@ -160,7 +160,7 @@ public class AdditionalInformationPanel extends PanelE {
                 break;
         }
         if (p != null) {
-            this.cp.getChart().getLegend().setVisible(false);
+            this.cp.getChart().getLegend().setVisible(true);
             this.jPanel2.removeAll();
             this.jPanel2.add(this.cp);
             this.ic.changeXYPlot(this.position, p);

@@ -12,7 +12,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import maltcms.ui.viewer.gui.PaintScalePanel;
+import net.sf.maltcms.chromaui.ui.PaintScalePanel;
 import org.jfree.chart.renderer.PaintScale;
 
 /**

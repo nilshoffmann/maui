@@ -17,6 +17,7 @@ public final class GCViewerOpenAction implements ActionListener {
         this.context = context;
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         GCViewerOpenSupport os = new GCViewerOpenSupport(((CDFDataObject) context).getPrimaryEntry());
         os.open();
