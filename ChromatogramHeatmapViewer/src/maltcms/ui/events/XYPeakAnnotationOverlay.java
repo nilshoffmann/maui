@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-import maltcms.ui.views.XYPeakAnnotation;
+import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
 
 import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.entity.XYItemEntity;
@@ -48,15 +48,15 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
 
     private boolean visible = true;
 
-    private final QuadTree<XYPeakAnnotation> qt;
-    private XYPeakAnnotation activeInstance = null;
+    private final QuadTree<XYSelectableShapeAnnotation<Peak2D>> qt;
+    private XYSelectableShapeAnnotation<Peak2D> activeInstance = null;
     private ExecutorService es = Executors.newCachedThreadPool();
     private EventSource<XYAnnotation> esource = new EventSource<XYAnnotation>(1);
-    private final ArrayList<XYPeakAnnotation> annotations = new ArrayList<XYPeakAnnotation>();
+    private final ArrayList<XYSelectableShapeAnnotation<Peak2D>> annotations = new ArrayList<XYSelectableShapeAnnotation<Peak2D>>();
     private final ChartPanel cp;
 
     public XYPeakAnnotationOverlay(String name, boolean visible, Point2D min, Point2D max, ChartPanel cp) {
-        this.qt = new QuadTree<XYPeakAnnotation>(min.getX(),min.getY(),max.getX()-min.getX(), max.getY()-min.getY(), 3);
+        this.qt = new QuadTree<XYSelectableShapeAnnotation<Peak2D>>(min.getX(),min.getY(),max.getX()-min.getX(), max.getY()-min.getY(), 3);
         this.cp = cp;
         this.name = name;
         this.visible = visible;
@@ -78,7 +78,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
 
     protected void paint(Graphics g, XYPlot xyp, Rectangle2D dataArea, ValueAxis domainAxis, ValueAxis rangeAxis, RectangleEdge domainEdge, RectangleEdge rangeEdge, ChartPanel cp) {
             //System.out.println("Painting " + this.xyaa.getPeakAnnotations().size() + " annotations");
-            for (XYPeakAnnotation xypa : getPeakAnnotations()) {
+            for (XYSelectableShapeAnnotation<Peak2D> xypa : getPeakAnnotations()) {
                 //Peak2D peak = xypa.getPeak();
                 //Point seed = peak.getPeakArea().getSeedPoint();
                 //if(roi.contains(seed)) {
@@ -150,7 +150,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
         throw new CloneNotSupportedException();
     }
 
-    public XYPeakAnnotation getAnnotation(Point2D p) {
+    public XYSelectableShapeAnnotation<Peak2D> getAnnotation(Point2D p) {
         try {
             return this.qt.getClosestInRadius(p, 20.0).getSecond();
         } catch (ElementNotFoundException enfe) {
@@ -159,12 +159,12 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
         }
     }
 
-    public List<XYPeakAnnotation> getPeakAnnotations() {
+    public List<XYSelectableShapeAnnotation<Peak2D>> getPeakAnnotations() {
         return this.annotations;
     }
 
     public void removeAnnotation(Point2D point) {
-        final XYPeakAnnotation xypa = getAnnotation(point);
+        final XYSelectableShapeAnnotation<Peak2D> xypa = getAnnotation(point);
         if (xypa != null) {
             this.qt.remove(point);
             AEvent<XYAnnotation> e = new AEvent<XYAnnotation>(xypa, this, "XYANNOTATION_REMOVE");
@@ -192,7 +192,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
      * @param label
      * @param notify
      */
-    public XYPeakAnnotation addXYPeakAnnotation(final double xd, final double yd, final Peak2D p, final boolean notify) {
+    public XYSelectableShapeAnnotation<Peak2D> addXYPeakAnnotation(final double xd, final double yd, final Peak2D p, final boolean notify) {
         //System.out.println("Adding XY Peak Annotation");
         Peak2D peak = (p == null ? new Peak2D() : p);
         PeakArea2D pa = peak.getPeakArea();
@@ -206,7 +206,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
                 pa.setSeedPoint(s);
             }
         }
-        final XYPeakAnnotation xypa = new XYPeakAnnotation(xd, yd, getCrosshairShape(xd, yd, 5, 5), "Peak @" + xd + "," + yd + " idx: " + peak.getIndex(), TextAnchor.BOTTOM_LEFT, peak);
+        final XYSelectableShapeAnnotation<Peak2D> xypa = new XYSelectableShapeAnnotation<Peak2D>(xd, yd, getCrosshairShape(xd, yd, 5, 5), "Peak @" + xd + "," + yd + " idx: " + peak.getIndex(), TextAnchor.BOTTOM_LEFT, peak);
         if (activeInstance != null) {
             activeInstance.setActive(false);
         }
@@ -245,7 +245,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
                 @Override
                 public void run() {
                     Point2D p = getPoint(v);
-                    XYPeakAnnotation xypa = getAnnotation(p);
+                    XYSelectableShapeAnnotation<Peak2D> xypa = getAnnotation(p);
                     selectAnnotation(xypa);
                 }
             };
@@ -284,7 +284,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
      * @param xyds
      * @param xypa
      */
-    private void selectAnnotation(final XYPeakAnnotation xypa) {
+    private void selectAnnotation(final XYSelectableShapeAnnotation<Peak2D> xypa) {
         if (activeInstance != null) {
             activeInstance.setActive(false);
         }

@@ -4,55 +4,38 @@
  */
 package maltcms.ui;
 
+import cross.datastructures.fragments.IFileFragment;
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import maltcms.ui.views.ChromMSHeatmapPanel;
+import maltcms.ui.events.ChartPanelMouseListener;
+import maltcms.ui.views.MassSpectrumChartPanel;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//maltcms.ui//ChromatogramView//EN",
+@ConvertAsProperties(dtd = "-//maltcms.ui//MassSpectrumView//EN",
 autostore = false)
-public final class ChromatogramViewTopComponent extends CloneableTopComponent {
+public final class MassSpectrumViewTopComponent extends TopComponent {
 
-    private static ChromatogramViewTopComponent instance;
+    private static MassSpectrumViewTopComponent instance;
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
-    private static final String PREFERRED_ID = "ChromatogramViewTopComponent";
-    private volatile String filename;
-    private MassSpectrumViewTopComponent secondaryView;
+    private static final String PREFERRED_ID = "MassSpectrumViewTopComponent";
 
-    public ChromatogramViewTopComponent(String filename, MassSpectrumViewTopComponent secondaryView) {
-        this();
-        this.filename = filename;
-//        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        if (filename != null) {
-            this.secondaryView = secondaryView;
-            System.out.println("Filename given: " + filename);
-            load();
-//            this.jPanel1.add(load());
-        }
-    }
-
-    public ChromatogramViewTopComponent() {
+    public MassSpectrumViewTopComponent() {
         initComponents();
-        setName(NbBundle.getMessage(ChromatogramViewTopComponent.class, "CTL_ChromatogramViewTopComponent"));
-        setToolTipText(NbBundle.getMessage(ChromatogramViewTopComponent.class, "HINT_ChromatogramViewTopComponent"));
+        setName(NbBundle.getMessage(MassSpectrumViewTopComponent.class, "CTL_MassSpectrumViewTopComponent"));
+        setToolTipText(NbBundle.getMessage(MassSpectrumViewTopComponent.class, "HINT_MassSpectrumViewTopComponent"));
     }
 
-    private void load() {
-        System.out.println("Running loader");
-        SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(this, this.filename);
-        sw.execute();
+    public void setMSData(final IFileFragment f, final ChartPanelMouseListener cpml) {
+        MassSpectrumChartPanel mscp = new MassSpectrumChartPanel(cpml,f);
+        add(mscp,BorderLayout.CENTER);
     }
 
     /** This method is called from within the constructor to
@@ -65,35 +48,35 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
 
         setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files only,
      * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
      * To obtain the singleton instance, use {@link #findInstance}.
      */
-    public static synchronized ChromatogramViewTopComponent getDefault() {
+    public static synchronized MassSpectrumViewTopComponent getDefault() {
         if (instance == null) {
-            instance = new ChromatogramViewTopComponent();
+            instance = new MassSpectrumViewTopComponent();
         }
         return instance;
     }
 
     /**
-     * Obtain the ChromatogramViewTopComponent instance. Never call {@link #getDefault} directly!
+     * Obtain the MassSpectrumViewTopComponent instance. Never call {@link #getDefault} directly!
      */
-    public static synchronized ChromatogramViewTopComponent findInstance() {
+    public static synchronized MassSpectrumViewTopComponent findInstance() {
         TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
         if (win == null) {
-            Logger.getLogger(ChromatogramViewTopComponent.class.getName()).warning(
+            Logger.getLogger(MassSpectrumViewTopComponent.class.getName()).warning(
                     "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
             return getDefault();
         }
-        if (win instanceof ChromatogramViewTopComponent) {
-            return (ChromatogramViewTopComponent) win;
+        if (win instanceof MassSpectrumViewTopComponent) {
+            return (MassSpectrumViewTopComponent) win;
         }
-        Logger.getLogger(ChromatogramViewTopComponent.class.getName()).warning(
+        Logger.getLogger(MassSpectrumViewTopComponent.class.getName()).warning(
                 "There seem to be multiple components with the '" + PREFERRED_ID
                 + "' ID. That is a potential source of errors and unexpected behavior.");
         return getDefault();
@@ -132,23 +115,6 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
-    }
-
-    public void setPanel(final ChromMSHeatmapPanel jp) {
-        final TopComponent tc = this;
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run() {
-                add(jp,BorderLayout.CENTER);
-                if(secondaryView!=null) {
-                    System.out.println("Setting ms data!");
-                    secondaryView.setMSData(jp.getFileFragment(), jp.getChartPanelMouseListener());
-                }
-                SwingUtilities.updateComponentTreeUI(tc);
-            }
-        };
-        SwingUtilities.invokeLater(r);
     }
 
     @Override

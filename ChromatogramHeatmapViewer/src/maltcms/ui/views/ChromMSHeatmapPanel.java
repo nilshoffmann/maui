@@ -17,9 +17,16 @@ import cross.event.EventSource;
 import cross.event.IEvent;
 import cross.event.IEventSource;
 import cross.event.IListener;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
-import javax.swing.RepaintManager;
+import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.Chromatogram1D;
 import maltcms.datastructures.ms.Experiment1D;
@@ -27,6 +34,8 @@ import maltcms.ui.events.ChartPanelMouseListener;
 import maltcms.ui.events.Chromatogram1DMSProvider;
 import maltcms.ui.events.DomainMarkerKeyListener;
 import maltcms.ui.events.MSChartHandler;
+import maltcms.ui.viewer.events.PaintScaleDialogAction;
+import maltcms.ui.viewer.events.PaintScaleTarget;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -34,18 +43,24 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.Range;
+import org.jfree.data.general.DatasetUtilities;
 
 /**
  *
  * @author nilshoffmann
  */
-public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSource<XYItemEntity> {
+public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSource<XYItemEntity>, PaintScaleTarget {
 
     private XYPlot ticplot, heatmapplot, eicplot, msplot;
     private ChartPanel cdxpanel, eicpanel, mspanel;
     private final IFileFragment f;
     private EventSource<XYItemEntity> es = new EventSource<XYItemEntity>();
+    private ChartPanelMouseListener cpml;
 
     /** Creates new form ChromMSHeatmapPanel */
     public ChromMSHeatmapPanel(IFileFragment f, XYPlot ticplot, XYPlot heatmapplot, XYPlot eicplot) {
@@ -74,23 +89,49 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSou
 //        jp.add(jp2);
     }
 
+    public ChartPanelMouseListener getChartPanelMouseListener() {
+        return this.cpml;
+    }
+
+    public IFileFragment getFileFragment() {
+        return this.f;
+    }
+
     private void prepareCharts() {
         System.out.println("Heatmap plot");
         final JFreeChart hmchart = new JFreeChart(getHeatmapPlot());
         hmchart.setBackgroundPaint(Color.WHITE);
-        cdxpanel = new ChartPanel(hmchart);
-        System.out.println("TIC plot");
-        final JFreeChart ticchart = new JFreeChart(getTICPlot());
-        ticchart.setBackgroundPaint(Color.WHITE);
-        final ChartPanel ticPanel = new ChartPanel(ticchart);
-        ChartPanelMouseListener cpml = new ChartPanelMouseListener(cdxpanel);
-        ChartPanelMouseListener cpml2 = new ChartPanelMouseListener(ticPanel);
-        ticPanel.addChartMouseListener(cpml2);
+//        cdxpanel = new ChartPanel(hmchart);
+        CombinedDomainXYPlot cdxyp = getCombinedDomainPlot();
+        final JFreeChart combinedChart = new JFreeChart(cdxyp);
+        combinedChart.setBackgroundPaint(Color.WHITE);
+        cdxpanel = new ChartPanel(combinedChart);
+//        System.out.println("TIC plot");
+//        final JFreeChart ticchart = new JFreeChart(getTICPlot());
+//        ticchart.setBackgroundPaint(Color.WHITE);
+//        final ChartPanel ticPanel = new ChartPanel(ticchart);
+        cpml = new ChartPanelMouseListener(cdxpanel);
+//        ChartPanelMouseListener cpml2 = new ChartPanelMouseListener(ticPanel);
+//        ticPanel.addChartMouseListener(cpml2);
         cdxpanel.addChartMouseListener(cpml);
         cdxpanel.addKeyListener(new DomainMarkerKeyListener(getTICPlot()));
-        
+        final JPanel heatmapPanel = new JPanel(new BorderLayout());
+        JToolBar jhmtb = new JToolBar();
+        XYItemRenderer xyir = getHeatmapPlot().getRenderer();
+        if (xyir instanceof XYBlockRenderer) {
+            XYBlockRenderer xybr = (XYBlockRenderer) xyir;
+            PaintScale ps = xybr.getPaintScale();
+            PaintScaleDialogAction psda = new PaintScaleDialogAction("Set color scale", 0, 1, ps);
+            psda.addPaintScaleTarget(this);
+            jhmtb.add(psda);
+        }
+        heatmapPanel.add(jhmtb, BorderLayout.NORTH);
+        heatmapPanel.add(cdxpanel, BorderLayout.CENTER);
         System.out.println("MS plot");
-        mspanel = new ChartPanel(getMSChart1D(cpml, this.f));
+//        final JFreeChart jfc = getMSChart1D(cpml, this.f);
+//        mspanel = new ChartPanel(jfc);
+//        final JPanel mschart = new JPanel(new BorderLayout());
+        //final JPanel mschart = new MassSpectrumChartPanel(cpml, this.f);
         //add(cdxpanel);
         //add(Box.createVerticalGlue());
         System.out.println("EIC plot");
@@ -102,41 +143,22 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSou
             @Override
             public void run() {
                 System.out.println("Updating");
-                add(ticPanel);
-                add(mspanel);
-                add(cdxpanel);
-                add(eicpanel);
-                
+//                add(ticPanel);
+                jSplitPane1.setLeftComponent(heatmapPanel);
+//                add(cdxpanel);
+                JPanel jp = new JPanel();
+                jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+                //jp.add(mschart);
+                jp.add(new JTextArea("TODO"));
+//                add(jp);
+                jSplitPane1.setRightComponent(jp);
+                jSplitPane1.setOneTouchExpandable(true);
+//                add(mspanel);
+//                add(eicpanel);
+
             }
         };
         SwingUtilities.invokeLater(r);
-    }
-
-    private JFreeChart getMSChart1D(ChartPanelMouseListener cpml, IFileFragment f) {
-        XYPlot xyp = new XYPlot();
-        XYBarRenderer xyb = new XYBarRenderer(0);
-        xyb.setShadowVisible(false);
-        xyb.setDrawBarOutline(false);
-        xyp.setRenderer(xyb);
-        NumberAxis na = new NumberAxis("m/z");
-        xyp.setDomainAxis(na);
-        na.setNumberFormatOverride(new DecimalFormat("###0.0000"));
-        NumberAxis inten = new NumberAxis("Intensity");
-        inten.setNumberFormatOverride(new DecimalFormat("###0.0000"));
-        xyp.setRangeAxis(inten);
-        xyb.setBaseSeriesVisibleInLegend(false);
-        xyp.setDomainAxisLocation(AxisLocation.getOpposite(xyp.getDomainAxisLocation()));
-        xyp.setRangeAxisLocation(AxisLocation.getOpposite(xyp.getRangeAxisLocation()));
-        xyp.setBackgroundPaint(Color.WHITE);
-//		JFreeChart msChart = ChartFactory.createXYBarChart("", "m/z", false, "intensity", null, PlotOrientation.VERTICAL, true, true, true);
-        JFreeChart msChart = new JFreeChart(xyp);
-        Factory.getInstance().getConfiguration().setProperty(VariableFragment.class.getName()
-                + ".useCachedList", true);
-        Chromatogram1DMSProvider cmsp = new Chromatogram1DMSProvider(new Chromatogram1D(new Experiment1D(f)));
-        MSChartHandler xyeh2d = new MSChartHandler(cmsp, xyp);
-        cpml.addListener(xyeh2d);
-        msChart.setBackgroundPaint(Color.WHITE);
-        return msChart;
     }
 
     private void setTICPlot(XYPlot ticplot) {
@@ -146,7 +168,15 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSou
     private CombinedDomainXYPlot getCombinedDomainPlot() {
         CombinedDomainXYPlot cdxy = new CombinedDomainXYPlot(getHeatmapPlot().getDomainAxis());
         cdxy.add(getTICPlot(), 1);
-        cdxy.add(getHeatmapPlot(), 1);
+        cdxy.add(getHeatmapPlot(), 2);
+        cdxy.getDomainAxis().setAutoRange(true);
+        Range r = DatasetUtilities.findDomainBounds(getTICPlot().getDataset());
+        cdxy.getDomainAxis().setDefaultAutoRange(r);
+//        cdxy.getDomainAxis().setLowerBound(r.getLowerBound()+cdxy.getDomainAxis().getLowerMargin());
+//        cdxy.getDomainAxis().setUpperBound(r.getUpperBound()+cdxy.getDomainAxis().getUpperMargin());
+//        cdxy.getDomainAxis().setRangeWithMargins(r);
+        ((NumberAxis) cdxy.getDomainAxis()).setAutoRangeIncludesZero(false);
+        System.out.println("Range for domain axis: " + r);
         return cdxy;
     }
 
@@ -183,13 +213,19 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSou
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
-        setLayout(new java.awt.GridLayout(2, 2));
+        jSplitPane1 = new javax.swing.JSplitPane();
+
+        setLayout(new java.awt.GridLayout(1, 1));
+
+        jSplitPane1.setDividerLocation(400);
+        jSplitPane1.setDividerSize(3);
+        add(jSplitPane1);
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void addListener(IListener<IEvent<XYItemEntity>> il) {
         this.es.addListener(il);
@@ -203,5 +239,13 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSou
     @Override
     public void removeListener(IListener<IEvent<XYItemEntity>> il) {
         this.es.removeListener(il);
+    }
+
+    @Override
+    public void setPaintScale(PaintScale ps) {
+        XYItemRenderer render = getHeatmapPlot().getRenderer();
+        if (render instanceof XYBlockRenderer) {
+            ((XYBlockRenderer) render).setPaintScale(ps);
+        }
     }
 }

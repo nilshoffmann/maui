@@ -7,17 +7,19 @@ package maltcms.ui;
 import cross.Factory;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
-import cross.io.csv.ColorRampReader;
-import cross.tools.ImageTools;
+import maltcms.io.csv.ColorRampReader;
+import maltcms.tools.ImageTools;
 import java.awt.Color;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import maltcms.tools.MaltcmsTools;
-import maltcms.ui.charts.GradientPaintScale;
+import net.sf.maltcms.chromaui.charts.GradientPaintScale;
+import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import maltcms.ui.views.ChromMSHeatmapPanel;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
@@ -43,7 +45,7 @@ import ucar.ma2.MAMath.MinMax;
  *
  * @author nilshoffmann
  */
-public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
+public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPanel, Void> {
 
     private final String file;
     private final ChromatogramViewTopComponent cvtc;
@@ -54,7 +56,7 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
     }
 
     @Override
-    protected JPanel doInBackground() throws Exception {
+    protected ChromMSHeatmapPanel doInBackground() throws Exception {
         System.out.println("Running Chromatogram open action!");
 
         final File f = new File(this.file);
@@ -85,6 +87,8 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
         double minInt = 0;
         double maxMass = 0;
         double minMass = 0;
+        double minDomain = 0;
+        double maxDomain = 0;
         double threshold = 0.0;
         double[] bpo = ImageTools.getBreakpoints(iv.getArray(), 256, Double.NEGATIVE_INFINITY);
         threshold = 0.0;
@@ -100,11 +104,17 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
         DefaultXYDataset ticds = new DefaultXYDataset();
         double[][] ticdata = new double[2][mass_values.size()];
 
+        double satDiff = 0;
         //threshold = bpo[0];
         for (int i = 0; i < mass_values.size(); i++) {
             IndexIterator mi = mass_values.get(i).getIndexIterator();
             IndexIterator ii = intensity_values.get(i).getIndexIterator();
             ticdata[0][i] = sat.getDouble(satidx.set(i));
+            if(i>0) {
+                satDiff += ticdata[0][i]-ticdata[0][i-1];
+            }
+            minDomain = Math.min(minDomain,ticdata[0][i]);
+            maxDomain = Math.max(maxDomain,ticdata[0][i]);
             while (mi.hasNext() && ii.hasNext()) {
                 double[] d = new double[]{ticdata[0][i], mi.getDoubleNext(), ii.getDoubleNext()};
                 ticdata[1][i] += d[2];
@@ -114,6 +124,7 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
                 }
             }
         }
+        satDiff/=(double)mass_values.size();
         ticds.addSeries(f.getName(), ticdata);
         System.out.println("Looking for min/max values");
         maxInt = 0;
@@ -180,7 +191,7 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
         XYBlockRenderer xybr = new XYBlockRenderer();
         xybr.setPaintScale(ps);
         xybr.setDataBoundsIncludesVisibleSeriesOnly(true);
-        xybr.setBlockWidth(1.0d);
+        xybr.setBlockWidth(satDiff);
         xybr.setBlockHeight(1.0d);
         System.out.println("Creating plot");
         NumberAxis mzaxis = new NumberAxis("m/z");
@@ -212,11 +223,17 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
         }
 //				        XYChart ticChart = new XYChart(f.getName(), new String[]{f.getName()}, new Array[]{fragment.getChild("total_intensity").getArray()}, "scan", "Intensity");
 
-        XYLineAndShapeRenderer rend1 = new XYLineAndShapeRenderer(true, false);
-        XYPlot ticPlot = new XYPlot(ticds, scanAxis, new NumberAxis("TIC intensity"), rend1);//ticChart.create();
+        Chromatogram1DChartProvider c1p = new Chromatogram1DChartProvider();
+        
+        XYPlot ticPlot = c1p.provide1DPlot(Arrays.asList(fragment),"total_intensity",true);
+//        XYLineAndShapeRenderer rend1 = new XYLineAndShapeRenderer(true, false);
+//        XYPlot ticPlot = new XYPlot(ticds, scanAxis, new NumberAxis("TIC intensity"), rend1);//ticChart.create();
         ticPlot.setDomainAxisLocation(AxisLocation.TOP_OR_RIGHT);
         ticPlot.setDomainCrosshairVisible(true);
         ticPlot.setDomainCrosshairLockedOnData(true);
+        ticPlot.setDomainAxis(scanAxis);
+
+        
 
 
         //scan index
@@ -245,6 +262,8 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<JPanel, Void> {
         ticPlot.setDomainZeroBaselineVisible(false);
         heatmapPlot.setRangeZeroBaselineVisible(false);
         heatmapPlot.setDomainZeroBaselineVisible(false);
+        heatmapPlot.getDomainAxis().setAutoRange(false);
+        heatmapPlot.getDomainAxis().setRangeWithMargins(minDomain,maxDomain);
         //share mz axis
         //eicPlot.setDomainAxis(mzaxis);
 //						crxy.add(heatmapPlot);

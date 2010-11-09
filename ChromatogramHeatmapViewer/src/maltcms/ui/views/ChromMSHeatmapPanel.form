@@ -15,7 +15,17 @@
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-    <Property name="columns" type="int" value="2"/>
-    <Property name="rows" type="int" value="2"/>
+    <Property name="columns" type="int" value="1"/>
+    <Property name="rows" type="int" value="1"/>
   </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JSplitPane" name="jSplitPane1">
+      <Properties>
+        <Property name="dividerLocation" type="int" value="400"/>
+        <Property name="dividerSize" type="int" value="3"/>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
+    </Container>
+  </SubComponents>
 </Form>

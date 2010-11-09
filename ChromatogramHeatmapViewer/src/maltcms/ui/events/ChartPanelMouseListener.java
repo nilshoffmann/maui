@@ -27,6 +27,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 
 import cross.event.EventSource;
+import java.util.List;
 
 public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMouseListener{
 
@@ -56,8 +57,9 @@ public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMo
      */
     @Override
     public void chartMouseClicked(final ChartMouseEvent arg0) {
-
-       // Point2D p = getDataCoordinates(arg0);
+//        XYPlot xyp = getSubplot(arg0.getChart().getXYPlot(), this.cp.getChartRenderingInfo().getPlotInfo(), arg0.getTrigger().getPoint());
+//        Point2D mapped = xyp.getDomainAxis().
+        // Point2D p = getDataCoordinates(arg0);
         //
 
         //System.out.println("Mouse click at local coordinates: "+p+" global "+arg0.getTrigger().getX()+", "+arg0.getTrigger().getY());
@@ -70,7 +72,7 @@ public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMo
                         double cx = arg0.getEntity().getArea().getBounds2D().getCenterX();
                         double cy = arg0.getEntity().getArea().getBounds2D().getCenterY();
                         Point2D.Double center = new Point2D.Double(cx,cy);
-//                updateCrosshairs(arg0.getChart().getXYPlot(),center);
+//                        updateCrosshairs(arg0.getChart().getXYPlot(),center);
                         if (arg0.getTrigger().isAltDown() && arg0.getTrigger().isShiftDown()) {
                         	System.out.println("Item removed");
                             fireEvent(new XYItemEntityRemovedEvent((XYItemEntity) arg0.getEntity(), cpml));
@@ -108,12 +110,24 @@ public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMo
         return new Point2D.Double(xyds.getXValue(seriesIndex, itemIndex),xyds.getYValue(seriesIndex, itemIndex));
     }
 
-    private void updateCrosshairs(XYPlot xy, Point2D p) {
-        xy.setDomainCrosshairValue(p.getX());
-        xy.setRangeCrosshairValue(p.getY());
-        xy.setDomainCrosshairVisible(true);
-        xy.setRangeCrosshairVisible(true);
-    }
+//    private void updateCrosshairs(XYPlot xy, Point2D p) {
+//        if (xy instanceof CombinedDomainXYPlot) {
+//            List<?> l = ((CombinedDomainXYPlot) xy).getSubplots();
+//            for(Object o:l) {
+//                XYPlot xyp = (XYPlot)o;
+//                updateCrosshairs(xyp, p);
+//            }
+//        }else if (xy instanceof CombinedRangeXYPlot) {
+//            List<?> l = ((CombinedDomainXYPlot) xyp).getSubplots();
+//
+//        }else {
+//            xy.setDomainCrosshairValue(p.getX());
+//            xy.setRangeCrosshairValue(p.getY());
+//            xy.setDomainCrosshairVisible(true);
+//            xy.setRangeCrosshairVisible(true);
+//        }
+//
+//    }
 
     /* (non-Javadoc)
      * @see org.jfree.chart.ChartMouseListener#chartMouseMoved(org.jfree.chart.ChartMouseEvent)
@@ -130,6 +144,10 @@ public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMo
 //                public void run() {
                     if (arg0.getEntity() instanceof XYItemEntity) {
                         if (arg0.getTrigger().isAltDown()) {
+                            XYPlot xyp = arg0.getChart().getXYPlot();
+                            if(xyp!=null) {
+                                fireEvent(new XYItemEntityClickedEvent((XYItemEntity) arg0.getEntity(), cpml));
+                            }
                             XYItemEntityMovedEvent xyie = new XYItemEntityMovedEvent((XYItemEntity) arg0.getEntity(), cpml);
                             fireEvent(xyie);
                         }

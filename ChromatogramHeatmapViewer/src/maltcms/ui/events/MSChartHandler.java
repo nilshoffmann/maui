@@ -29,6 +29,7 @@ import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
 import cross.datastructures.tuple.Tuple2D;
 import cross.event.IEvent;
+import java.util.WeakHashMap;
 
 public class MSChartHandler implements XYItemEntityEventListener {
 
@@ -61,10 +62,14 @@ public class MSChartHandler implements XYItemEntityEventListener {
     private double valueAxisMax = 100;
     private final MassSpectrumProvider isll;
     private final XYPlot xypl;
+    private final WeakHashMap<Double, DefaultXYDataset> cache;
+    private final WeakHashMap<Double, SortedMap<Double, Double>> valueMap;
 
     public MSChartHandler(MassSpectrumProvider isl, XYPlot xyp) {
         isll = isl;
         xypl = xyp;
+        this.cache = new WeakHashMap<Double, DefaultXYDataset>();
+        this.valueMap = new WeakHashMap<Double, SortedMap<Double, Double>>();
     }
 
     /* (non-Javadoc)
@@ -91,75 +96,85 @@ public class MSChartHandler implements XYItemEntityEventListener {
             public void run() {
                 System.out.println("MS Chart Handler: Within runnable");
                 long m = System.currentTimeMillis();
-                final DefaultXYDataset xyds = new DefaultXYDataset();
+
                 XYItemEntity e = v.get();
                 Shape shape = e.getArea();
                 Point2D p = new Point2D.Double(shape.getBounds2D().getCenterX(), shape.getBounds2D().getCenterY());
                 double x = e.getDataset().getXValue(e.getSeriesIndex(), e.getItem());
-                double y = e.getDataset().getYValue(e.getSeriesIndex(), e.getItem());
-                System.out.println("Click at " + x + " and " + y);
-                long l = System.currentTimeMillis();
-                Tuple2D<Array, Array> t;
-                if (isll instanceof Chromatogram2DMSProvider) {
-                    System.out.println("Chromatogram2DMSProvider");
-                    int x2 = (int) p.getX();//e.getDataset().getXValue(e.getSeriesIndex(), e.getItem());
-                    int y2 = (int) p.getY();//e.getDataset().getYValue(e.getSeriesIndex(),e.getItem());
-                    t = ((Chromatogram2DMSProvider) isll).getMS(x2, y2);
+                DefaultXYDataset xyds = null;
+                xypl.setDomainCrosshairValue(x);
+                if (cache.containsKey(x)) {
+                    xyds = cache.get(x);
                 } else {
-                    System.out.println("Chromatogram1DMSProvider");
-                    t = isll.getMS(isll.getIndex(x));
+                    xyds = new DefaultXYDataset();
+                    cache.put(x, xyds);
+                    double y = e.getDataset().getYValue(e.getSeriesIndex(), e.getItem());
+                    System.out.println("Click at " + x + " and " + y);
+                    long l = System.currentTimeMillis();
+                    Tuple2D<Array, Array> t;
+                    if (isll instanceof Chromatogram2DMSProvider) {
+                        System.out.println("Chromatogram2DMSProvider");
+                        int x2 = (int) p.getX();//e.getDataset().getXValue(e.getSeriesIndex(), e.getItem());
+                        int y2 = (int) p.getY();//e.getDataset().getYValue(e.getSeriesIndex(),e.getItem());
+                        t = ((Chromatogram2DMSProvider) isll).getMS(x2, y2);
+                    } else {
+                        System.out.println("Chromatogram1DMSProvider");
+                        t = isll.getMS(isll.getIndex(x));
+                    }
+                    System.out.println("Retrieved spectrum in " + (m - l));
+
+                    Array masses = t.getFirst();
+                    IndexIterator mi = masses.getIndexIterator();
+                    Array intensities = t.getSecond();
+                    IndexIterator ii = intensities.getIndexIterator();
+                    double[][] d = new double[2][t.getFirst().getShape()[0]];
+                    int i = 0;
+                    while (mi.hasNext() && ii.hasNext()) {
+                        d[0][i] = mi.getDoubleNext();
+                        d[1][i] = ii.getDoubleNext();
+                        i++;
+                    }
+                    xyds.addSeries("ms@[" + x + "," + y + "]", d);
                 }
-                System.out.println("Retrieved spectrum in " + (m - l));
-                double[][] d = new double[2][t.getFirst().getShape()[0]];
-                Array masses = t.getFirst();
-                IndexIterator mi = masses.getIndexIterator();
-                Array intensities = t.getSecond();
-                IndexIterator ii = intensities.getIndexIterator();
-                int i = 0;
-                l = System.currentTimeMillis();
-                //final double average = MathTools.average((double[])intensities.copy().get1DJavaArray(double.class),0,intensities.getShape()[0]-1);
-                m = System.currentTimeMillis();
-                //System.out.println("Found average in "+(m-l));
-                //System.out.println("Average intensity: "+average);
-                l = System.currentTimeMillis();
+
                 final SortedMap<Double, Double> tm = new TreeMap<Double, Double>();
-                while (mi.hasNext() && ii.hasNext()) {
-                    d[0][i] = mi.getDoubleNext();
-                    d[1][i] = ii.getDoubleNext();
-                    tm.put(d[1][i], d[0][i]);
-                    i++;
+                for(int i = 0;i<xyds.getItemCount(0);i++) {
+                    double mass = xyds.getXValue(0, i);
+                    double intens = xyds.getYValue(0, i);
+                    tm.put(intens, mass);
                 }
+
                 System.out.println("Adding series");
-                xyds.addSeries("ms@[" + x + "," + y + "]", d);
+
                 m = System.currentTimeMillis();
 //				        System.out.println("Created data series in "+(System.currentTimeMillis()-m));
-                Runnable s2 = new Runnable() {
-
-                    @Override
-                    public void run() {
-                        System.out.println("Setting data set");
-                        //long s = System.currentTimeMillis();
-                        //System.out.println("Created dataset in "+(m-l));
-                        xypl.setDataset(new XYBarDataset(xyds, 1.0d));
-                        xypl.setDomainCrosshairLockedOnData(true);
-                        xypl.setDomainCrosshairVisible(true);
-                        ((XYBarRenderer) xypl.getRenderer()).setShadowVisible(false);
-                        ((XYBarRenderer) xypl.getRenderer()).setDrawBarOutline(false);
-                        ((XYBarRenderer) xypl.getRenderer()).setBaseFillPaint(Color.RED);
-                        ((XYBarRenderer) xypl.getRenderer()).setBarPainter(new StandardXYBarPainter());
-                        xypl.getRenderer().setBaseItemLabelsVisible(true);
-                        xypl.getRenderer().setBaseItemLabelGenerator(new TopKItemsLabelGenerator(tm, topK));
-                        if (valueAxisFixed) {
-                            xypl.getRangeAxis().setAutoRange(false);
-                            xypl.getRangeAxis().setLowerBound(valueAxisMin);
-                            xypl.getRangeAxis().setUpperBound(valueAxisMax);
-                        } else {
-                            xypl.getRangeAxis().setAutoRange(true);
-                        }
+//                Runnable s2 = new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+                System.out.println("Setting data set");
+                //long s = System.currentTimeMillis();
+                //System.out.println("Created dataset in "+(m-l));
+                xypl.setDataset(new XYBarDataset(xyds, 1.0d));
+                xypl.setDomainCrosshairLockedOnData(true);
+                xypl.setDomainCrosshairVisible(true);
+                ((XYBarRenderer) xypl.getRenderer()).setShadowVisible(false);
+                ((XYBarRenderer) xypl.getRenderer()).setDrawBarOutline(false);
+                ((XYBarRenderer) xypl.getRenderer()).setBaseFillPaint(Color.RED);
+                ((XYBarRenderer) xypl.getRenderer()).setBarPainter(new StandardXYBarPainter());
+                xypl.getRenderer().setBaseItemLabelsVisible(true);
+                xypl.getRenderer().setBaseItemLabelGenerator(new TopKItemsLabelGenerator(tm, topK));
+//                        if (valueAxisFixed) {
+//                            xypl.getRangeAxis().setAutoRange(false);
+//                            xypl.getRangeAxis().setLowerBound(valueAxisMin);
+//                            xypl.getRangeAxis().setUpperBound(valueAxisMax);
+//                        } else {
+//                            xypl.getRangeAxis().setAutoRange(true);
+//                        }
 //								System.out.println("Set data series in "+(System.currentTimeMillis()-s));
-                    }
-                };
-                SwingUtilities.invokeLater(s2);
+//                    }
+//                };
+//                SwingUtilities.invokeLater(s2);
             }
         };
         es.submit(s);

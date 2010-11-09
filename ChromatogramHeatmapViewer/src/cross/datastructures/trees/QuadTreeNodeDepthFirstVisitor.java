@@ -25,6 +25,7 @@ public class QuadTreeNodeDepthFirstVisitor<T> implements QuadTreeNodeVisitor<T>{
         this.stack = new Stack<QuadTreeNode<T>>();
     }
 
+    @Override
     public LinkedList<T> visit(LinkedList<T> l) {
         //leaf case, simply append all elements
         if(this.root.getImmediateChildren() != null) {
