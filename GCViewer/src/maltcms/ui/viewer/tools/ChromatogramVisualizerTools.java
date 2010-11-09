@@ -22,7 +22,7 @@ import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.io.csv.ColorRampReader;
 import maltcms.tools.ImageTools;
 import maltcms.ui.charts.AChart;
-import maltcms.ui.charts.GradientPaintScale;
+import net.sf.maltcms.chromaui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
 import maltcms.ui.viewer.datastructures.TicProvider;
 import net.sf.maltcms.chromaui.charts.XYNoBlockRenderer;

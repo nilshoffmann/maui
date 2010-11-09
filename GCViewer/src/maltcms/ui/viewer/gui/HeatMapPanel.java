@@ -12,21 +12,14 @@ package maltcms.ui.viewer.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
 import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.events.PaintScaleDialogAction;
 import maltcms.ui.viewer.events.PaintScaleTarget;
-import net.sf.maltcms.chromaui.charts.FastChartPanel;
-import net.sf.maltcms.chromaui.charts.FastJFreeChart;
 import net.sf.maltcms.chromaui.charts.XYNoBlockRenderer;
 import maltcms.ui.viewer.tools.ChartTools;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
@@ -74,7 +67,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 //        JFreeChart jfc = new FastJFreeChart(p);
 //        ChartPanel cpt = new FastChartPanel(jfc, true);
         JFreeChart jfc = new JFreeChart(p);
-        ChartPanel cpt = new ChartPanel(jfc,true);
+        ChartPanel cpt = new ChartPanel(jfc, true);
         this.cp = cpt;
         this.cp.setZoomFillPaint(new Color(192, 192, 192, 96));
         this.cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
@@ -344,13 +337,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
                     GradientPaintScale gps = (GradientPaintScale) ps;
                     double min = gps.getLowerBound();
                     double max = gps.getUpperBound();
-                    gps.setLowerBoundThreshold(min + ((max-min)*((double)low/(double)(jSlider1.getMaximum()-jSlider1.getMinimum()))));
+                    gps.setLowerBoundThreshold(min + ((max - min) * ((double) low / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
                     setPaintScale(gps);
-                    if (xyb != null && xyb instanceof XYNoBlockRenderer) {
-                        XYNoBlockRenderer xynb = (XYNoBlockRenderer) xyb;
-                        xynb.setEntityThreshold(gps.getValueForIndex(low));
-                    }
-                    cp.repaint();
 //                        oldTreshold = low;
                 }
             }
@@ -369,13 +357,23 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 //        }
     }
 
+    private void updateChart() {
+        if (xyb != null && xyb instanceof XYNoBlockRenderer) {
+            XYNoBlockRenderer xynb = (XYNoBlockRenderer) xyb;
+            if(ps instanceof GradientPaintScale) {
+                GradientPaintScale gps = (GradientPaintScale)ps;
+                xynb.setEntityThreshold(gps.getValueForIndex(this.jSlider1.getValue()));
+            }
+        }
+        cp.repaint();
+    }
+
     private void showVTICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showVTICActionPerformed
 
         initChartComponents();
         SwingUtilities.updateComponentTreeUI(this);
 
     }//GEN-LAST:event_showVTICActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -398,9 +396,9 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             double ub = this.ps.getUpperBound();
             sps.setLowerBound(lb);
             sps.setUpperBound(ub);
-            Color c = (Color)sps.getPaint(ub);
-            selectionFill = new Color(c.getRed(),c.getBlue(),c.getGreen(),128);
-            selectionOutline = new Color(c.getRed(),c.getBlue(),c.getGreen()).darker();
+            Color c = (Color) sps.getPaint(ub);
+            selectionFill = new Color(c.getRed(), c.getBlue(), c.getGreen(), 128);
+            selectionOutline = new Color(c.getRed(), c.getBlue(), c.getGreen()).darker();
             this.jSlider1.setMaximum(100);
             this.jSlider1.setMinimum(0);
             this.jSlider1.setValue(0);
@@ -411,7 +409,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         ChartTools.changePaintScale((XYPlot) this.cp.getChart().getPlot(), sps);
         this.alpha = (int) sps.getAlpha();
         this.beta = (int) sps.getBeta();
-        handleSliderChange();
+        updateChart();
 //        }
     }
 

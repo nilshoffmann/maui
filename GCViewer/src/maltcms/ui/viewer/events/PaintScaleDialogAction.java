@@ -65,7 +65,10 @@ public class PaintScaleDialogAction extends AbstractAction {
         if (val == JOptionPane.OK_OPTION) {
             return psp.getPaintScale();
         }
-        return psp.getDefaultPaintScale();
+        if(this.ps==null) {
+            return psp.getDefaultPaintScale();
+        }
+        return this.ps;
     }
 }
 
