@@ -34,12 +34,14 @@ import org.netbeans.api.visual.widget.Widget;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
+import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import maltcms.ui.fileHandles.properties.tools.SceneParser;
 import org.netbeans.api.visual.action.EditProvider;
 import org.netbeans.api.visual.action.HoverProvider;
 import org.netbeans.api.visual.layout.SceneLayout;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.awt.StatusDisplayer;
+import org.openide.filesystems.FileObject;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -70,6 +72,7 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     private PipelineGeneralConfigWidget general;
     private boolean shortLabel = false;
     private IconNodeWidget activeIconNode = null;
+    private FileObject activeFile = null;
 
     public PipelineGraphScene() {
         init();
@@ -274,6 +277,16 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
                 }
             }
         }
+    }
+
+    public void setBaseFile(FileObject f) {
+        this.activeFile = f;
+        clearScene();
+        PropertyLoader.parseIntoScene(f.getPath(), this);
+    }
+
+    public FileObject getBaseFile() {
+        return this.activeFile;
     }
 
     public LayerWidget getMainLAyer() {

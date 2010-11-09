@@ -5,11 +5,11 @@
 package maltcms.ui.fileHandles.properties.graph;
 
 import cross.datastructures.tuple.Tuple2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.netbeans.api.visual.widget.Scene;
 
 /**
@@ -19,7 +19,7 @@ import org.netbeans.api.visual.widget.Scene;
 public class PipelineElementWidget extends PipelineGeneralConfigWidget {
 
     private static final String CLASS_NAME = "Class";
-    private Map<String, String> variables = new HashMap<String, String>();
+    private Configuration variables = new PropertiesConfiguration();
     private String className = "";
     private String propertyFile = "";
 
@@ -32,17 +32,17 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
     }
 
     @Override
-    public void setProperties(final Map<String, String> properties) {
+    public void setProperties(final Configuration properties) {
         super.setProperties(properties);
         checkFurtherClassNames();
     }
 
     @Override
-    public boolean setProperty(String key, String value) {
+    public boolean setProperty(String key, Object value) {
         System.out.println("Changing Key " + key);
         if (this.properties.containsKey(key) && key.endsWith(CLASS_NAME)) {
-            System.out.println("Have to remove old properties for " + key + ":" + this.properties.get(key));
-            removeKeysForClassNameKey(this.properties.get(key));
+            System.out.println("Have to remove old properties for " + key + ":" + this.properties.getProperty(key));
+            removeKeysForClassNameKey((String) this.properties.getProperty(key));
         }
         boolean ret = super.setProperty(key, value);
         checkFurtherClassNames();
@@ -62,23 +62,23 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
         }
     }
 
-    public void setVariables(Map<String, String> variables) {
+    public void setVariables(Configuration variables) {
         if (variables != null) {
             this.variables = variables;
         }
     }
 
-    public Map<String, String> getVariables() {
+    public Configuration getVariables() {
         return this.variables;
     }
 
-    public String getVariables(String key) {
-        return this.variables.get(key);
+    public Object getVariables(String key) {
+        return this.variables.getProperty(key);
     }
 
     public void setCurrentClassProperties() {
         //System.out.println("SetCurrentClassProperties " + this.className);
-        Tuple2D<Map<String, String>, Map<String, String>> v = PropertyLoader.handleShowProperties(this.className, this.getClass());
+        Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(this.className, this.getClass());
         if (v != null) {
             this.properties = v.getFirst();
             this.variables = v.getSecond();
@@ -96,19 +96,24 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
 
     private void checkFurtherClassNames() {
         System.out.println("Checking further class names");
-        List<String> keyset = new ArrayList<String>(this.properties.keySet());
-        for (String key : keyset) {
+//        List<String> keyset = new ArrayList<String>();
+        Iterator keys = this.properties.getKeys();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
             if (key.endsWith(CLASS_NAME)) {
-                System.out.println("Loading Properties for " + key + "(" + this.properties.get(key) + ")");
-                Tuple2D<Map<String, String>, Map<String, String>> v = PropertyLoader.handleShowProperties(this.properties.get(key), this.getClass());
+                System.out.println("Loading Properties for " + key + "(" + this.properties.getProperty(key) + ")");
+                Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(this.properties.getProperty(key), this.getClass());
                 if (v != null) {
-                    if (v.getFirst().size() == 0 && v.getSecond().size() == 0) {
+                    if (v.getFirst().isEmpty() && v.getSecond().isEmpty()) {
                         //maybe wrong name
+                        System.out.println("Configurations are empty!");
                     } else {
-                        for (String k1 : v.getFirst().keySet()) {
+                        Iterator firstIter = v.getFirst().getKeys();
+                        while (firstIter.hasNext()) {
+                            String k1 = (String) firstIter.next();
                             if (!this.properties.containsKey(k1)) {
-                                System.out.println("Adding Key: " + k1 + ", Value: " + v.getFirst().get(k1));
-                                this.properties.put(k1, v.getFirst().get(k1));
+                                System.out.println("Adding Key: " + k1 + ", Value: " + v.getFirst().getProperty(k1));
+                                this.properties.setProperty(k1, v.getFirst().getProperty(k1));
                             }
                         }
                         // TODO maybe "classname" has required/optional/provided vars too
@@ -119,11 +124,13 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
     }
 
     private void removeKeysForClassNameKey(String keyValue) {
-        Tuple2D<Map<String, String>, Map<String, String>> v = PropertyLoader.handleShowProperties(keyValue, this.getClass());
+        Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(keyValue, this.getClass());
         if (v != null) {
-            for (String key : v.getFirst().keySet()) {
+            Iterator keys = v.getFirst().getKeys();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
                 System.out.println("Removing Key: " + key);
-                this.properties.remove(key);
+                this.properties.clearProperty(key);
             }
             // TODO maybe "classname" has required/optional/provided vars too
         }

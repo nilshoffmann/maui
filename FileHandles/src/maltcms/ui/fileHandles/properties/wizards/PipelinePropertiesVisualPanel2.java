@@ -10,10 +10,10 @@
  */
 package maltcms.ui.fileHandles.properties.wizards;
 
-import java.util.HashMap;
-import java.util.Map;
 import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
  *
@@ -142,7 +142,7 @@ public class PipelinePropertiesVisualPanel2 extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void refreshTableModel() {
-        Map<String, String> property = new HashMap<String, String>();
+        Configuration property = new PropertiesConfiguration();
         if (!this.node.getProperties().isEmpty()) {
             property = this.node.getProperties();
         }

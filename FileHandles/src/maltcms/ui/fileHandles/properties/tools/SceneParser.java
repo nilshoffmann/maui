@@ -77,7 +77,10 @@ public class SceneParser {
 
     private static List<PipelineElementWidget> getPipeline(Widget connectionLayer, Widget pipelinesLayer) {
         List<PipelineElementWidget> pipeline = new ArrayList<PipelineElementWidget>();
-        List<Widget> connectionWidgetList = new ArrayList<Widget>(connectionLayer.getChildren());
+        List<Widget> connectionWidgetList = new ArrayList<Widget>();
+        if(connectionLayer!=null) {
+            connectionWidgetList.addAll(connectionLayer.getChildren());
+        }
 
 //        System.out.println("Trying to find starting Widget");
         Widget startingW = null;
@@ -158,7 +161,7 @@ public class SceneParser {
                 return (PipelineGeneralConfigWidget) w;
             }
         }
-        return null;
+        return new PipelineGeneralConfigWidget(pipeliesLayer.getScene());
     }
 
     public static boolean hasOutgoingEdge(GraphScene.StringGraph scene, Widget w) {

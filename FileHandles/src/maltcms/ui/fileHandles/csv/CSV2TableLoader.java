@@ -1,11 +1,15 @@
 package maltcms.ui.fileHandles.csv;
 
 import cross.datastructures.tuple.Tuple2D;
-import cross.io.csv.CSVReader;
+import maltcms.io.csv.CSVReader;
 import java.io.BufferedInputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import org.openide.filesystems.FileObject;
 import org.netbeans.api.progress.ProgressHandle;
@@ -14,14 +18,16 @@ import org.netbeans.api.progress.ProgressHandle;
  *
  * @author nilshoffmann
  */
-public class CSV2ListLoader implements Callable<DefaultTableModel> {
+public class CSV2TableLoader implements Callable<DefaultTableModel> {
 
     private final FileObject[] f;
     private final ProgressHandle ph;
     private DefaultTableModel dtm = null;
 
-    CSV2ListLoader(ProgressHandle ph, FileObject...f) {
-        this.f = f;
+    public CSV2TableLoader(ProgressHandle ph, FileObject...f) {
+        Set<FileObject> s = new LinkedHashSet<FileObject>();
+        s.addAll(Arrays.asList(f));
+        this.f = s.toArray(new FileObject[]{});
         this.ph = ph;
     }
 
@@ -29,7 +35,9 @@ public class CSV2ListLoader implements Callable<DefaultTableModel> {
     public DefaultTableModel call() throws Exception {
         ph.start(100);
         int[] lengths = new int[f.length];
+        Logger.getLogger(CSV2TableLoader.class.getName()).info("Loading "+f.length+" files!");
         for(int i = 0;i<f.length;i++) {
+            Logger.getLogger(CSV2TableLoader.class.getName()).info("Loading file "+f[i].toString());
             CSVReader csvr = new CSVReader();
             BufferedInputStream bis = new BufferedInputStream(f[i].getInputStream());
             //ph.progress("Opening file", 10*(i+1)/f.length);
@@ -40,7 +48,7 @@ public class CSV2ListLoader implements Callable<DefaultTableModel> {
             //ph.progress("Extracting columns", 50*(i+1)/f.length);
             Tuple2D<Vector<Vector<String>>, Vector<String>> columns = getColumns(hm);
             //ph.progress("Creating TableModel", 80*(i+1)/f.length);
-            lengths[i] = columns.getFirst().get(0).size();
+            
             if(this.dtm==null){
                 this.dtm = new DefaultTableModel(toRows(convertColumns(columns.getFirst())), columns.getSecond());
             }else{
@@ -49,6 +57,10 @@ public class CSV2ListLoader implements Callable<DefaultTableModel> {
                     this.dtm.addRow(row);
                 }
             }
+            if(columns.getFirst().isEmpty()) {
+                return this.dtm;
+            }
+            lengths[i] = columns.getFirst().get(0).size();
             //ph.progress("Finished!", 100*(i+1)/f.length);
             ph.progress("Reading data",100*(i+1)/f.length);
         }
@@ -65,6 +77,7 @@ public class CSV2ListLoader implements Callable<DefaultTableModel> {
             }
         }
         if(f.length>1) {
+            Logger.getLogger(CSV2TableLoader.class.getName()).info("Adding filename column!");
             this.dtm.addColumn("Filename", filenames);
         }
         ph.progress("Done",100);

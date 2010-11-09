@@ -17,58 +17,73 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.JFrame;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-import maltcms.ui.fileHandles.serialized.JFCTopComponent;
+import maltcms.ui.fileHandles.serialized.JFCView;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.netbeans.core.spi.multiview.CloseOperationState;
+import org.netbeans.core.spi.multiview.MultiViewElement;
+import org.netbeans.core.spi.multiview.MultiViewElementCallback;
+import org.openide.awt.UndoRedo;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
-import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
+import org.openide.util.lookup.Lookups;
 //import org.openide.util.ImageUtilities;
-import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.windows.CloneableTopComponent;
 
-/**
- * Top component which displays something.
- */
-@ConvertAsProperties(dtd = "-//maltcms.ui.fileHandles.csv//CSV2List//EN",
-autostore = false)
-public final class CSV2ListTopComponent extends CloneableTopComponent implements ListSelectionListener, MouseListener {
+public final class CSVTableView extends JPanel implements MultiViewElement,ListSelectionListener, MouseListener {
 
-    private static CSV2ListTopComponent instance;
+    private static CSVTableView instance;
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "CSV2ListTopComponent";
-    private JFCTopComponent jfctc = null;
+    private JFCView jfctc = null;
     private int domainColumn = -1;
     private int labelColumn = -1;
+    private int zValueColumn = -1;
     private Set<Integer> columnsToPlot = new LinkedHashSet<Integer>();
     private int activeColumn = -1;
+    private JToolBar toolbar = new JToolBar();
+    private MultiViewElementCallback callback = null;
 
-    public CSV2ListTopComponent() {
+    public CSVTableView() {
+        Action doNothing = new AbstractAction()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    //do nothing
+                }
+            };
+
+        getActionMap().put("doNothing", doNothing);
+
         initComponents();
-        setName(NbBundle.getMessage(CSV2ListTopComponent.class, "CTL_CSV2ListTopComponent"));
-        setToolTipText(NbBundle.getMessage(CSV2ListTopComponent.class, "HINT_CSV2ListTopComponent"));
+        setName(NbBundle.getMessage(CSVTableView.class, "CTL_CSV2ListTopComponent"));
+        setToolTipText(NbBundle.getMessage(CSVTableView.class, "HINT_CSV2ListTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         this.jTable1.setAutoCreateRowSorter(true);
         this.jTable1.setColumnSelectionAllowed(true);
         this.jTable1.setCellSelectionEnabled(true);
         this.jTable1.setUpdateSelectionOnSort(true);
         //FIXME refactor into multiview component
-        this.jfctc = new JFCTopComponent();
-        JFrame jf = new JFrame();
-        jf.add(jfctc);
-        jf.setVisible(true);
+//        this.jfctc = new JFCView();
+//        JFrame jf = new JFrame();
+//        jf.add(jfctc);
+//        jf.setVisible(true);
         this.jTable1.addMouseListener(this);
         this.jTable1.getColumnModel().getSelectionModel().addListSelectionListener(this);
         this.jTable1.getColumnModel().setColumnSelectionAllowed(true);
@@ -77,6 +92,10 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
     }
 
     public void setTableModel(TableModel tm) {
+        if(tm == null) {
+            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Received table model was null!");
+            return;
+        }
         this.jTable1.setModel(tm);
         for (int i = 0; i < tm.getColumnCount(); i++) {
             this.jTable1.getColumnModel().getColumn(i).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
@@ -98,8 +117,57 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
         });
     }
 
-    public void setChartTarget(JFCTopComponent jfctc) {
+    public void setChartTarget(JFCView jfctc) {
         this.jfctc = jfctc;
+    }
+
+    private JFreeChart buildChart(Collection<Integer> selectedColumns1, int[] selectedRows, int domainColumn) {
+        XYSeriesCollection xysc = new XYSeriesCollection();
+        List<Integer> selectedColumns = new LinkedList<Integer>(selectedColumns1);
+        for (int i = 0; i < selectedColumns.size(); i++) {
+            XYSeries xys = new XYSeries(jTable1.getColumnName(selectedColumns.get(i)), true, true);
+            System.out.println("Creating XYSeries: " + jTable1.getColumnName(selectedColumns.get(i)));
+            for (int j = 0; j < selectedRows.length; j++) {
+                if (domainColumn != -1) {
+                    System.out.println("Domain column set");
+                    Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
+                    Number domainValue = Double.valueOf(0);
+                    System.out.println("Class of object: " + o.getClass().getName());
+                    if (o instanceof Number) {
+                        System.out.println("domain instanceof Number");
+                        domainValue = ((Number) o);
+                    }
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    if (val instanceof Number) {
+                        System.out.println("instanceof Number");
+                        Number rangeValue = (Number) val;
+                        xys.add(domainValue, rangeValue);
+                    }
+                } else {
+                    System.out.println("No domain column set");
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    if (val instanceof Number) {
+                        System.out.println("instanceof Number");
+                        Number rangeValue = (Number) val;
+                        xys.add(j, rangeValue);
+                    }
+                }
+            }
+            xysc.addSeries(xys);
+        }
+        String xaxisLabel = domainColumn == -1 ? "row" : jTable1.getModel().getColumnName(domainColumn);
+        String yaxisLabel = "";
+        if (selectedColumns.isEmpty()) {
+            yaxisLabel = "value";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (Integer i : selectedColumns) {
+                sb.append(jTable1.getModel().getColumnName(i) + " ");
+            }
+            yaxisLabel = sb.toString();
+        }
+        JFreeChart jfc = ChartFactory.createXYLineChart(callback.getTopComponent().getDisplayName(), xaxisLabel, yaxisLabel, xysc, PlotOrientation.VERTICAL, true, true, true);
+        return jfc;
     }
 
     /** This method is called from within the constructor to
@@ -147,30 +215,11 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
      * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
      * To obtain the singleton instance, use {@link #findInstance}.
      */
-    public static synchronized CSV2ListTopComponent getDefault() {
+    public static synchronized CSVTableView getDefault() {
         if (instance == null) {
-            instance = new CSV2ListTopComponent();
+            instance = new CSVTableView();
         }
         return instance;
-    }
-
-    /**
-     * Obtain the CSV2ListTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized CSV2ListTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(CSV2ListTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof CSV2ListTopComponent) {
-            return (CSV2ListTopComponent) win;
-        }
-        Logger.getLogger(CSV2ListTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
     }
 
     public void logTransformColumn(int j, double base) {
@@ -196,11 +245,6 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
     }
 
     @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
-    }
-
-    @Override
     public void componentOpened() {
         // TODO add custom code on component opening
     }
@@ -208,31 +252,6 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
-    }
-
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
-
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
-    }
-
-    private void readPropertiesImpl(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
-    }
-
-    @Override
-    protected String preferredID() {
-        return PREFERRED_ID;
     }
 
     @Override
@@ -248,7 +267,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
 
             //more than one column selected
             if (jTable1.getSelectedColumnCount() > 0) {
-                jpm.add(new AbstractAction("Add to chart") {
+                jpm.add(new AbstractAction("Add as y-values") {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
@@ -262,7 +281,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
                 //selected rows
                 for (final int col : jTable1.getSelectedColumns()) {
                     if (columnsToPlot.contains(Integer.valueOf(col))) {
-                        jpm.add(new AbstractAction("Remove from chart") {
+                        jpm.add(new AbstractAction("Remove y-values from chart") {
 
                             @Override
                             public void actionPerformed(ActionEvent ae) {
@@ -301,7 +320,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
             jpm.add(new JPopupMenu.Separator());
             //exactly one selected column, no domain column
             if (jTable1.getSelectedColumnCount() == 1 && domainColumn == -1) {
-                jpm.add(new AbstractAction("Set as domain values") {
+                jpm.add(new AbstractAction("Set as x-values") {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
@@ -314,7 +333,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
             }
             //one domainColumn
             if (domainColumn != -1) {
-                jpm.add(new AbstractAction("Reset domain column") {
+                jpm.add(new AbstractAction("Reset x-axis values") {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
@@ -324,15 +343,27 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
                     }
                 });
             }
-
+            jpm.add(new JPopupMenu.Separator());
             if (jTable1.getSelectedColumnCount() == 1 && labelColumn == -1) {
                 jpm.add(new AbstractAction("Set as series labels") {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
                         labelColumn = jTable1.getSelectedColumn();
-                        jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 0, 128)));
+                        jTable1.getColumnModel().getColumn(labelColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 0, 128)));
                         jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                    }
+                });
+            }
+
+            if (jTable1.getSelectedColumnCount() == 1 && labelColumn != -1) {
+                jpm.add(new AbstractAction("Reset series labels") {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        jTable1.getColumnModel().getColumn(labelColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
+                        labelColumn = -1;
+                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
             }
@@ -347,17 +378,35 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
     }
 
     public JFreeChart buildChart(int labelColumn, int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
-        if(labelColumn!=-1) {
+        return buildChart(labelColumn, domainColumn, -1, selectedColumns1, selectedRows);
+    }
+
+    public JFreeChart buildChart(int labelColumn, int domainColumn, int zValuesColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
+        if(labelColumn!=-1 && zValuesColumn==-1) {
             return buildChartWithLabels(labelColumn,domainColumn,selectedColumns1, selectedRows);
         }
+        if(labelColumn!=-1 && zValuesColumn!=-1) {
+            return buildBubbleChartWithLabels(labelColumn, zValuesColumn, domainColumn, selectedColumns1, selectedRows);
+        }
+        return buildChart(selectedColumns1, selectedRows, domainColumn);
+    }
+
+    public JFreeChart buildBubbleChartWithLabels(int labelColumn, int zValuesColumn, int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
         XYSeriesCollection xysc = new XYSeriesCollection();
-        List<Integer> selectedColumns = new LinkedList<Integer>(selectedColumns1);
+        List<Integer> selectedColumns = new LinkedList<Integer>();
+        selectedColumns.addAll(selectedColumns1);
+        //if an additional label column is defined, we use this to further partition
+        //the table by group labels
+        HashMap<String, Integer> labelToIndex = getLabelToIndex(jTable1, labelColumn);
+
+        //TODO use file label and group label
+
         for (int i = 0; i < selectedColumns.size(); i++) {
-
-            XYSeries xys = new XYSeries(jTable1.getColumnName(selectedColumns.get(i)),true,true);
-            System.out.println("Creating XYSeries: " + jTable1.getColumnName(selectedColumns.get(i)));
+            for (String label : labelToIndex.keySet()) {
+                xysc.addSeries(new XYSeries(label+"-"+jTable1.getColumnName(selectedColumns.get(i)), true, true));
+            }
             for (int j = 0; j < selectedRows.length; j++) {
-
+                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString()+"-"+jTable1.getColumnName(selectedColumns.get(i)));
                 if (domainColumn != -1) {
                     System.out.println("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
@@ -384,7 +433,6 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
                 }
 
             }
-            xysc.addSeries(xys);
         }
         String xaxisLabel = domainColumn == -1 ? "row" : jTable1.getModel().getColumnName(domainColumn);
         String yaxisLabel = "";
@@ -397,7 +445,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
             }
             yaxisLabel = sb.toString();
         }
-        JFreeChart jfc = ChartFactory.createXYLineChart(getDisplayName(), xaxisLabel, yaxisLabel, xysc, PlotOrientation.VERTICAL, true, true, true);
+        JFreeChart jfc = ChartFactory.createXYLineChart(callback.getTopComponent().getDisplayName(), xaxisLabel, yaxisLabel, xysc, PlotOrientation.VERTICAL, true, true, true);
         return jfc;
     }
 
@@ -428,7 +476,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
                 xysc.addSeries(new XYSeries(label+"-"+jTable1.getColumnName(selectedColumns.get(i)), true, true));
             }
             for (int j = 0; j < selectedRows.length; j++) {
-                XYSeries xys = xysc.getSeries((String) jTable1.getModel().getValueAt(selectedRows[j], labelColumn)+"-"+jTable1.getColumnName(selectedColumns.get(i)));
+                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString()+"-"+jTable1.getColumnName(selectedColumns.get(i)));
                 if (domainColumn != -1) {
                     System.out.println("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
@@ -467,7 +515,7 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
             }
             yaxisLabel = sb.toString();
         }
-        JFreeChart jfc = ChartFactory.createXYLineChart(getDisplayName(), xaxisLabel, yaxisLabel, xysc, PlotOrientation.VERTICAL, true, true, true);
+        JFreeChart jfc = ChartFactory.createXYLineChart(callback.getTopComponent().getDisplayName(), xaxisLabel, yaxisLabel, xysc, PlotOrientation.VERTICAL, true, true, true);
         return jfc;
     }
 
@@ -489,5 +537,71 @@ public final class CSV2ListTopComponent extends CloneableTopComponent implements
 
     @Override
     public void mouseExited(MouseEvent me) {
+    }
+
+    @Override
+    public JComponent getVisualRepresentation() {
+        return this;
+    }
+
+    @Override
+    public JComponent getToolbarRepresentation() {
+        return this.toolbar;
+    }
+
+    @Override
+    public void setMultiViewCallback(MultiViewElementCallback mvec) {
+        this.callback = mvec;
+    }
+
+    @Override
+    public CloseOperationState canCloseElement() {
+        return CloseOperationState.STATE_OK;
+    }
+
+    @Override
+    public Action[] getActions() {
+//        if(callback!=null) {
+//            return callback.createDefaultActions();
+//        }else{
+//            return new Action[]{};
+//        }
+        return new Action[]{new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                
+            }
+        }};
+    }
+
+    @Override
+    public Lookup getLookup() {
+        return Lookups.singleton(this);
+    }
+
+    @Override
+    public void componentShowing() {
+        callback.updateTitle("Table view");
+    }
+
+    @Override
+    public void componentHidden() {
+        
+    }
+
+    @Override
+    public void componentActivated() {
+        callback.updateTitle("Table view");
+    }
+
+    @Override
+    public void componentDeactivated() {
+        
+    }
+
+    @Override
+    public UndoRedo getUndoRedo() {
+        return UndoRedo.NONE;
     }
 }

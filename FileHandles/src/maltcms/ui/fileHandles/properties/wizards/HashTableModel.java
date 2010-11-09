@@ -20,14 +20,14 @@ import org.openide.util.NotImplementedException;
 public class HashTableModel implements TableModel {
 
     private Vector<String> header;
-    private Map<String, String> property;
+    private Map<String, Object> property;
     private boolean simplePropertyStyle = true;
     private boolean editable = true;
     private PipelineElementWidget w = null;
     private JTable table = null;
     private Class<?> c = null;
 
-    public HashTableModel(Vector<String> header, Map<String, String> property, Class<?> c) {
+    public HashTableModel(Vector<String> header, Map<String, Object> property, Class<?> c) {
         this.header = header;
         this.property = property;
         this.editable = true;

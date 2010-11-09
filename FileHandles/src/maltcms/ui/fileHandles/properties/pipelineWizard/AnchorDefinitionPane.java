@@ -49,8 +49,8 @@ import javax.swing.table.DefaultTableModel;
 
 import org.netbeans.spi.wizard.WizardPage;
 
-import cross.io.csv.CSVReader;
-import cross.tools.EvalTools;
+import maltcms.io.csv.CSVReader;
+import cross.datastructures.tools.EvalTools;
 import cross.tools.StringTools;
 
 /**

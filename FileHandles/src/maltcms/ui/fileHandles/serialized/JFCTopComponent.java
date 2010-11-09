@@ -4,33 +4,27 @@
  */
 package maltcms.ui.fileHandles.serialized;
 
+import java.awt.BorderLayout;
 import java.util.logging.Logger;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.XYPlot;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
-import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.windows.CloneableTopComponent;
 
-/**
- * Top component which displays something.
- */
-@ConvertAsProperties(dtd = "-//maltcms.ui.fileHandles.serialized//JFC//EN",
-autostore = false)
 public final class JFCTopComponent extends CloneableTopComponent {
 
     private static JFCTopComponent instance;
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "JFCTopComponent";
-    private ChartPanel chartPanel;
+    private JFCView chartPanel = null;
 
     public JFCTopComponent() {
-        this.chartPanel = new ChartPanel(new JFreeChart(new XYPlot()));
+        this.chartPanel = new JFCView();
         initComponents();
+        add(this.chartPanel.getJFCPanel());
         setName(NbBundle.getMessage(JFCTopComponent.class, "CTL_JFCTopComponent"));
         setToolTipText(NbBundle.getMessage(JFCTopComponent.class, "HINT_JFCTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
@@ -38,9 +32,6 @@ public final class JFCTopComponent extends CloneableTopComponent {
     }
 
     public void setChart(JFreeChart chart) {
-        if (this.chartPanel == null) {
-            this.chartPanel = new ChartPanel(chart);
-        }
         this.chartPanel.setChart(chart);
     }
 
@@ -52,21 +43,10 @@ public final class JFCTopComponent extends CloneableTopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane(this.chartPanel);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -82,7 +62,7 @@ public final class JFCTopComponent extends CloneableTopComponent {
     }
 
     /**
-     * Obtain the JFCTopComponent instance. Never call {@link #getDefault} directly!
+     * Obtain the JFCPanel instance. Never call {@link #getDefault} directly!
      */
     public static synchronized JFCTopComponent findInstance() {
         TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
@@ -102,7 +82,7 @@ public final class JFCTopComponent extends CloneableTopComponent {
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
@@ -139,4 +119,5 @@ public final class JFCTopComponent extends CloneableTopComponent {
     protected String preferredID() {
         return PREFERRED_ID;
     }
+
 }

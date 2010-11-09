@@ -10,17 +10,17 @@ import java.util.LinkedList;
 import java.util.List;
 import org.openide.loaders.DataObject;
 
-public final class CSV2ListOpenAction implements ActionListener {
+public final class CSV2TableOpenAction implements ActionListener {
 
     private final List<DataObject> context;
 
-    public CSV2ListOpenAction(List<DataObject> context) {
+    public CSV2TableOpenAction(List<DataObject> context) {
         this.context = new LinkedList<DataObject>(context);
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        CSV2ListOpenSupport ms = new CSV2ListOpenSupport(((CSVDataObject) context.remove(0)).getPrimaryEntry(),context);
+        CSV2TableOpenSupport ms = new CSV2TableOpenSupport(((CSVDataObject) context.get(0)).getPrimaryEntry(),context);
         ms.open();
     }
 }

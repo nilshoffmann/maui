@@ -4,12 +4,14 @@
  */
 package maltcms.ui.fileHandles.properties;
 
+import java.io.IOException;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
@@ -26,6 +28,8 @@ import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import maltcms.ui.fileHandles.properties.tools.SceneExporter;
 import maltcms.ui.fileHandles.properties.tools.SceneLayouter;
 import maltcms.ui.fileHandles.properties.tools.SceneValidator;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -33,6 +37,8 @@ import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.api.visual.layout.SceneLayout;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
 import org.openide.windows.CloneableTopComponent;
 
@@ -50,6 +56,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     private SceneLayout layout;
     private PipelineGraphScene scene;
     private SceneValidator sceneValidator;
+    private FileObject baseFile;
     protected JComponent view;
     private double zoomSteps = 0.2d;
 
@@ -93,6 +100,14 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
 
     public PipelineGraphScene getPipelineGraphScene() {
         return this.scene;
+    }
+
+    public void setBaseFile(FileObject baseFile) {
+        if(this.baseFile!=null && !this.baseFile.getPath().equals(baseFile.getPath())) {
+            SceneExporter.showSaveDialog(this.scene);
+        }
+        this.baseFile = baseFile;
+        this.scene.setBaseFile(this.baseFile);
     }
 
     /** This method is called from within the constructor to
@@ -342,9 +357,12 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
                     PreprocessingPane.class, AlignmentPane.class,
                     VisualizationPane.class}, rp);
 
-        Map<String, String> gatheredSettings = (Map<String, String>) WizardDisplayer.showWizard(w);
-
-        PropertyLoader.parseIntoScene(null, gatheredSettings, this.scene);
+        Map<String, Object> gatheredSettings = (Map<String, Object>) WizardDisplayer.showWizard(w);
+        PropertiesConfiguration pc = new PropertiesConfiguration();
+        for(String key:gatheredSettings.keySet()) {
+            pc.setProperty(key, gatheredSettings.get(key));
+        }
+        PropertyLoader.parseIntoScene(null, pc, this.scene);
     }//GEN-LAST:event_jButton9ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton GridsToggleButton;
@@ -402,7 +420,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
@@ -419,6 +437,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
+        p.setProperty("activeFile",this.baseFile.getPath());
         // TODO store your settings
     }
 
@@ -432,6 +451,13 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
 
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
+        if(version.equals("1.0")) {
+            try {
+                setBaseFile(FileUtil.createData(new File(p.getProperty("activeFile"))));
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
         // TODO read your settings according to their version
     }
 

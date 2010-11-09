@@ -7,11 +7,12 @@ package maltcms.ui.fileHandles.properties.wizards;
 import cross.datastructures.tuple.Tuple2D;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Map;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import javax.swing.table.TableModel;
 import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
+import org.apache.commons.configuration.Configuration;
 
 public final class PipelinePropertiesVisualPanel1 extends JPanel implements ItemListener {
 
@@ -261,13 +262,13 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
     private void refreshTableModel(String className) {
         try {
             Class<?> c = Class.forName(className);
-            Map<String, String> properties;
-            Map<String, String> variables;
+            Configuration properties;
+            Configuration variables;
             if (className.equals(this.node.getClassName()) && !this.node.getProperties().isEmpty()) {
                 properties = this.node.getProperties();
                 variables = this.node.getVariables();
             } else {
-                Tuple2D<Map<String, String>, Map<String, String>> tmp = PropertyLoader.handleShowProperties(className, this.getClass());
+                Tuple2D<Configuration,Configuration> tmp = PropertyLoader.handleShowProperties(className, this.getClass());
                 properties = tmp.getFirst();
                 variables = tmp.getSecond();
             }
@@ -277,18 +278,14 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
             //        this.jTable1.setModel(PropertyLoader.getModel(properties));
 
             // TODO remove dirty style
-            HashTableModel htm = PropertyLoader.getModel(this.node.getProperties(), c);
-            htm.setPipelineElementWidgetNode(this.node);
-            this.jTable1.setModel(htm);
-            htm.setJTable(this.jTable1);
-            htm.setSimplePropertyStyle(this.jCheckBox1.isSelected());
+            TableModel htm = new HashTableModelFactory().create(this.node, this.jTable1, this.jCheckBox1.isSelected(), c);
 
             //        if (className.length() > 17) {
             //            this.node.setLabel(className.substring(17, className.length()));
             //        }
-            this.jTextField1.setText(variables.get(PropertyLoader.REQUIRED_VARS));
-            this.jTextField2.setText(variables.get(PropertyLoader.OPTIONAL_VARS));
-            this.jTextField3.setText(variables.get(PropertyLoader.PROVIDED_VARS));
+            this.jTextField1.setText(variables.getString(PropertyLoader.REQUIRED_VARS));
+            this.jTextField2.setText(variables.getString(PropertyLoader.OPTIONAL_VARS));
+            this.jTextField3.setText(variables.getString(PropertyLoader.PROVIDED_VARS));
             this.jTextField4.setText(this.node.getPropertyFile());
         } catch (ClassNotFoundException e) {
             Logger.getLogger(getClass().getName()).warning("Could not refresh table model for class: " + className);

@@ -5,6 +5,7 @@
 package maltcms.ui.fileHandles.csv;
 
 import maltcms.ui.fileHandles.serialized.JFCTopComponent;
+import maltcms.ui.fileHandles.serialized.JFCView;
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.loaders.OpenSupport;

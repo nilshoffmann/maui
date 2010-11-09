@@ -4,8 +4,11 @@
  */
 package maltcms.ui.fileHandles.properties;
 
-import maltcms.ui.fileHandles.csv.CSV2ListTopComponent;
+import javax.swing.table.DefaultTableModel;
+import maltcms.ui.fileHandles.csv.CSVTableViewDescription;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
+import org.netbeans.core.spi.multiview.MultiViewDescription;
+import org.netbeans.core.spi.multiview.MultiViewFactory;
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.loaders.OpenSupport;
@@ -24,11 +27,15 @@ public class Properties2ListOpenSupport extends OpenSupport implements OpenCooki
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
         final PropertiesDataObject dobj = (PropertiesDataObject) entry.getDataObject();
+        final CSVTableViewDescription tc = new CSVTableViewDescription();
+        MultiViewDescription[] dsc = {tc};
+//        final CSVTableView tc = new CSVTableView();
+//        tc.setDisplayName(dobj.getName());
 
-        final CSV2ListTopComponent tc = new CSV2ListTopComponent();
-        tc.setDisplayName(dobj.getName());
         tc.setTableModel(PropertyLoader.getModel(entry.getFile().getPath()));
 
-        return tc;
+        CloneableTopComponent ctc = MultiViewFactory.createCloneableMultiView(dsc, dsc[0]);
+        ctc.setDisplayName(dobj.getName());
+        return ctc;
     }
 }

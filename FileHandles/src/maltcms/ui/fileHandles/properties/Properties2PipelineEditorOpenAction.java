@@ -6,22 +6,22 @@ package maltcms.ui.fileHandles.properties;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.List;
-import org.openide.loaders.DataObject;
+import maltcms.ui.fileHandles.properties.pipeline.MaltcmsPipelineFormatDataObject;
 
 public final class Properties2PipelineEditorOpenAction implements ActionListener {
 
-    private final List<DataObject> context;
+    private final MaltcmsPipelineFormatDataObject context;
 
-    public Properties2PipelineEditorOpenAction(List<DataObject> context) {
+    public Properties2PipelineEditorOpenAction(MaltcmsPipelineFormatDataObject context) {
         this.context = context;
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
-        for (DataObject dataObject : context) {
+//        for (MaltcmsPipelineFormatDataObject dataObject : context) {
             //FIXME
-            PipelineEditorOpenSupport ms = new PipelineEditorOpenSupport(((PropertiesDataObject) dataObject).getPrimaryEntry());
+            PipelineEditorOpenSupport ms = new PipelineEditorOpenSupport(((MaltcmsPipelineFormatDataObject) context).getPrimaryEntry());
             ms.open();
-        }
+//        }
     }
 }

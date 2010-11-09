@@ -4,8 +4,8 @@
  */
 package maltcms.ui.fileHandles.properties.graph;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.netbeans.api.visual.widget.general.IconNodeWidget.TextOrientation;
@@ -16,7 +16,7 @@ import org.netbeans.api.visual.widget.general.IconNodeWidget.TextOrientation;
  */
 public class PipelineGeneralConfigWidget extends IconNodeWidget {
 
-    protected Map<String, String> properties = new HashMap<String, String>();
+    protected Configuration properties = new PropertiesConfiguration();
     protected String lastAction = "";
 
     public PipelineGeneralConfigWidget(Scene scene, TextOrientation to) {
@@ -27,24 +27,24 @@ public class PipelineGeneralConfigWidget extends IconNodeWidget {
         super(scene);
     }
 
-    public Map<String, String> getProperties() {
+    public Configuration getProperties() {
         return this.properties;
     }
 
-    public void setProperties(final Map<String, String> properties) {
+    public void setProperties(final Configuration properties) {
         if (properties != null) {
             this.properties = properties;
         }
     }
 
-    public boolean setProperty(String key, String value) {
-        this.properties.put(key, value);
+    public boolean setProperty(String key, Object value) {
+        this.properties.setProperty(key, value);
         return true;
     }
 
-    public String getProperty(final String key) {
+    public Object getProperty(final String key) {
         if (this.properties.containsKey(key)) {
-            return this.properties.get(key);
+            return this.properties.getProperty(key);
         }
         return null;
     }

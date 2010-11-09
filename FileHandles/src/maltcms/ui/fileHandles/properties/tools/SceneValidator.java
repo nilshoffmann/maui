@@ -4,9 +4,9 @@
  */
 package maltcms.ui.fileHandles.properties.tools;
 
-import apps.Maltcms;
+import net.sf.maltcms.apps.Maltcms;
 import cross.Factory;
-import cross.commands.fragments.AFragmentCommand;
+import cross.commands.fragments.IFragmentCommand;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.pipeline.CommandPipeline;
 import cross.datastructures.pipeline.ICommandSequence;
@@ -54,10 +54,10 @@ public class SceneValidator {
         Factory.getInstance().configure(cfg);
 
         ICommandSequence cs = new CommandPipeline();
-        List<AFragmentCommand> p = new ArrayList<AFragmentCommand>();
+        List<IFragmentCommand> p = new ArrayList<IFragmentCommand>();
         for (PipelineElementWidget w : pipeline) {
             try {
-                p.add((AFragmentCommand) Factory.getInstance().getObjectFactory().instantiate(Class.forName(w.getClassName())));
+                p.add((IFragmentCommand) Factory.getInstance().getObjectFactory().instantiate(Class.forName(w.getClassName())));
             } catch (ClassNotFoundException ex) {
 //                Exceptions.printStackTrace(ex);
                 return ex.getMessage();

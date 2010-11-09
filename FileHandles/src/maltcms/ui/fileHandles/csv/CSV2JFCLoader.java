@@ -5,8 +5,9 @@
 package maltcms.ui.fileHandles.csv;
 
 import cross.datastructures.tuple.Tuple2D;
-import cross.io.csv.ColorRampReader;
-import cross.tools.ImageTools;
+import cross.datastructures.tools.EvalTools;
+import maltcms.io.csv.ColorRampReader;
+import maltcms.tools.ImageTools;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -68,7 +69,7 @@ public class CSV2JFCLoader implements Runnable {
 
     @Override
     public void run() {
-        CSV2ListLoader tl = new CSV2ListLoader(this.ph, this.is);
+        CSV2TableLoader tl = new CSV2TableLoader(this.ph, this.is);
 
         DefaultTableModel dtm;
         try {
@@ -96,14 +97,37 @@ public class CSV2JFCLoader implements Runnable {
                 System.out.println("creating chart done");
             } else if (this.mode == CHART.MATRIX) {
                 DefaultXYZDataset cd = new DefaultXYZDataset();
-                dtm = removeColumn(dtm, 0);
+                System.out.println("Name of column 0: "+dtm.getColumnName(0));
+                if (dtm.getColumnName(0).isEmpty()) {
+                    System.out.println("Removing column 0");
+                    dtm = removeColumn(dtm, 0);
+                }
+                if (dtm.getColumnName(dtm.getColumnCount() - 1).equalsIgnoreCase("filename")) {
+                    dtm = removeColumn(dtm, dtm.getColumnCount() - 1);
+                }
+                StringBuilder sb = new StringBuilder();
+                for(int i = 0;i<dtm.getRowCount();i++) {
+                    for(int j = 0;j<dtm.getColumnCount();j++) {
+                        sb.append(dtm.getValueAt(i, j)+" ");
+                    }
+                    sb.append("\n");
+                }
+                System.out.println("Table before sorting: "+sb.toString());
                 dtm = sort(dtm);
-                System.out.println("Storing " + (dtm.getColumnCount()) * dtm.getRowCount() + " elements!");
+                StringBuilder sb2 = new StringBuilder();
+                for(int i = 0;i<dtm.getRowCount();i++) {
+                    for(int j = 0;j<dtm.getColumnCount();j++) {
+                        sb2.append(dtm.getValueAt(i, j)+" ");
+                    }
+                    sb2.append("\n");
+                }
+                System.out.println("Table after sorting: "+sb2.toString());
+                System.out.println("Storing " + dtm.getColumnCount() +" * "+ dtm.getRowCount() + " elements, "+(dtm.getColumnCount()*dtm.getRowCount())+" total!");
                 double[][] data = new double[3][(dtm.getColumnCount()) * dtm.getRowCount()];
                 ArrayDouble.D1 dt = new ArrayDouble.D1((dtm.getColumnCount()) * dtm.getRowCount());
                 double min = Double.POSITIVE_INFINITY;
                 double max = Double.NEGATIVE_INFINITY;
-
+                EvalTools.eqI(dtm.getRowCount(), dtm.getColumnCount(), this);
                 int k = 0;
                 for (int i = 0; i < dtm.getRowCount(); i++) {
                     for (int j = 0; j < dtm.getColumnCount(); j++) {
@@ -241,9 +265,9 @@ public class CSV2JFCLoader implements Runnable {
         }
         Object[] names = new Object[dtm.getRowCount()];
         for (int i = 0; i < dtm.getRowCount(); i++) {
-            names[i] = dtm.getColumnName(i);
+            names[i] = dtm.getColumnName(permutation[i]);
         }
-        System.out.println("TAble model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
+        System.out.println("Table model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
         return new DefaultTableModel(modelByRows, names);
     }
 
@@ -262,7 +286,7 @@ public class CSV2JFCLoader implements Runnable {
         for (int i = 0; i < dtm.getRowCount(); i++) {
             names[i] = dtm.getColumnName(permutation[i]);
         }
-        System.out.println("TAble model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
+        System.out.println("Table model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
         return new DefaultTableModel(modelByRows, names);
     }
 
@@ -283,7 +307,7 @@ public class CSV2JFCLoader implements Runnable {
                 }
             }
         }
-        System.out.println("TAble model has " + data.length + " rows and " + data[0].length + " columns with " + names.length + " labels");
+        System.out.println("Table model has " + data.length + " rows and " + data[0].length + " columns with " + names.length + " labels");
         return new DefaultTableModel(data, names);
     }
 }

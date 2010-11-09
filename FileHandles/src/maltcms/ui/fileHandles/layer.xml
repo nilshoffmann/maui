@@ -12,10 +12,10 @@
                 <attr name="selectionType" stringvalue="ANY"/>
                 <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
             </file>
-            <file name="maltcms-ui-fileHandles-csv-CSV2ListOpenAction.instance">
+            <file name="maltcms-ui-fileHandles-csv-CSV2TableOpenAction.instance">
                 <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.csv.Bundle#CTL_CSV2ListOpenAction"/>
-                <attr name="injectable" stringvalue="maltcms.ui.fileHandles.csv.CSV2ListOpenAction"/>
+                <attr name="injectable" stringvalue="maltcms.ui.fileHandles.csv.CSV2TableOpenAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="selectionType" stringvalue="ANY"/>
@@ -36,8 +36,8 @@
                 <attr name="injectable" stringvalue="maltcms.ui.fileHandles.properties.Properties2PipelineEditorOpenAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="selectionType" stringvalue="ANY"/>
-                <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr name="type" stringvalue="maltcms.ui.fileHandles.properties.pipeline.MaltcmsPipelineFormatDataObject"/>
             </file>
             <file name="maltcms-ui-fileHandles-serialized-JFCOpenAction.instance">
                 <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
@@ -51,7 +51,7 @@
         </folder>
         <folder name="Window">
             <file name="maltcms-ui-fileHandles-csv-CSV2ListAction.instance">
-                <attr name="component" methodvalue="maltcms.ui.fileHandles.csv.CSV2ListTopComponent.findInstance"/>
+                <attr name="component" methodvalue="maltcms.ui.fileHandles.csv.CSVTableView.findInstance"/>
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.csv.Bundle#CTL_CSV2ListAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
             </file>
@@ -61,7 +61,7 @@
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
             </file>
             <file name="maltcms-ui-fileHandles-serialized-JFCAction.instance">
-                <attr name="component" methodvalue="maltcms.ui.fileHandles.serialized.JFCTopComponent.findInstance"/>
+                <attr name="component" methodvalue="maltcms.ui.fileHandles.serialized.JFCPanel.findInstance"/>
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.serialized.Bundle#CTL_JFCAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
             </file>
@@ -150,7 +150,7 @@
                         <attr name="position" intvalue="50"/>
                     </file>
                     <file name="maltcms-ui-fileHandles-csv-CSV2ListOpenAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-csv-CSV2ListOpenAction.instance"/>
+                        <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-csv-CSV2TableOpenAction.instance"/>
                         <attr name="position" intvalue="0"/>
                     </file>
                     <file name="org-openide-actions-CopyAction.shadow">
@@ -229,10 +229,6 @@
                         <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-properties-Properties2ListOpenAction.instance"/>
                         <attr name="position" intvalue="0"/>
                     </file>
-                    <file name="maltcms-ui-fileHandles-properties-Properties2PipelineEditorOpenAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-properties-Properties2PipelineEditorOpenAction.instance"/>
-                        <attr name="position" intvalue="25"/>
-                    </file>
                     <file name="org-openide-actions-CopyAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CopyAction.instance"/>
                         <attr name="position" intvalue="400"/>
@@ -299,6 +295,82 @@
                     </file>
                 </folder>
             </folder>
+            <folder name="x-pipeline">
+                <folder name="Actions">
+                    <file name="maltcms-ui-fileHandles-properties-Properties2PipelineEditorOpenAction-separatorAfter.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="50"/>
+                    </file>
+                    <file name="maltcms-ui-fileHandles-properties-Properties2PipelineEditorOpenAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-properties-Properties2PipelineEditorOpenAction.instance"/>
+                        <attr name="position" intvalue="25"/>
+                    </file>
+                    <file name="org-openide-actions-CopyAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CopyAction.instance"/>
+                        <attr name="position" intvalue="400"/>
+                    </file>
+                    <file name="org-openide-actions-CutAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CutAction.instance"/>
+                        <attr name="position" intvalue="300"/>
+                    </file>
+                    <file name="org-openide-actions-DeleteAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-DeleteAction.instance"/>
+                        <attr name="position" intvalue="600"/>
+                    </file>
+                    <file name="org-openide-actions-FileSystemAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-FileSystemAction.instance"/>
+                        <attr name="position" intvalue="1100"/>
+                    </file>
+                    <file name="org-openide-actions-OpenAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-OpenAction.instance"/>
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                    <file name="org-openide-actions-PropertiesAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-PropertiesAction.instance"/>
+                        <attr name="position" intvalue="1400"/>
+                    </file>
+                    <file name="org-openide-actions-RenameAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-RenameAction.instance"/>
+                        <attr name="position" intvalue="700"/>
+                    </file>
+                    <file name="org-openide-actions-SaveAsTemplateAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAsTemplateAction.instance"/>
+                        <attr name="position" intvalue="900"/>
+                    </file>
+                    <file name="org-openide-actions-ToolsAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-ToolsAction.instance"/>
+                        <attr name="position" intvalue="1300"/>
+                    </file>
+                    <file name="sep-1.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="200"/>
+                    </file>
+                    <file name="sep-2.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="500"/>
+                    </file>
+                    <file name="sep-3.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="800"/>
+                    </file>
+                    <file name="sep-4.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="1000"/>
+                    </file>
+                    <file name="sep-5.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="1200"/>
+                    </file>
+                </folder>
+                <folder name="Factories">
+                    <file name="MaltcmsPipelineFormatDataLoader.instance">
+                        <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/maltcms/ui/fileHandles/properties/pipeline/maltcms-pipeline.png"/>
+                        <attr name="dataObjectClass" stringvalue="maltcms.ui.fileHandles.properties.pipeline.MaltcmsPipelineFormatDataObject"/>
+                        <attr name="instanceCreate" methodvalue="org.openide.loaders.DataLoaderPool.factory"/>
+                        <attr name="mimeType" stringvalue="text/x-pipeline"/>
+                    </file>
+                </folder>
+            </folder>
         </folder>
     </folder>
     <folder name="Menu">
@@ -322,6 +394,9 @@
             <file name="JFCResolver.xml" url="serialized/JFCResolver.xml">
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.Bundle#Services/MIMEResolver/JFCResolver.xml"/>
             </file>
+            <file name="MaltcmsPipelineFormatResolver.xml" url="MaltcmsPipelineFormatResolver.xml">
+                <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.Bundle#Services/MIMEResolver/MaltcmsPipelineFormatResolver.xml"/>
+            </file>
             <file name="PropertiesResolver.xml" url="properties/PropertiesResolver.xml">
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.Bundle#Services/MIMEResolver/PropertiesResolver.xml"/>
             </file>
@@ -335,6 +410,10 @@
             </file>
             <file name="JFCTemplate.serialized" url="serialized/JFCTemplate.serialized">
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.Bundle#Templates/Other/JFCTemplate.serialized"/>
+                <attr name="template" boolvalue="true"/>
+            </file>
+            <file name="MaltcmsPipelineFormatTemplate.mpl" url="MaltcmsPipelineFormatTemplate.mpl">
+                <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.Bundle#Templates/Other/MaltcmsPipelineFormatTemplate.mpl"/>
                 <attr name="template" boolvalue="true"/>
             </file>
             <file name="PropertiesTemplate.properties" url="properties/PropertiesTemplate.properties">
