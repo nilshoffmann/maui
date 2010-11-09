@@ -35,9 +35,10 @@ public class ChromaProjectFactory implements ProjectFactory {
 
     @Override
     public org.netbeans.api.project.Project loadProject(FileObject fo, ProjectState ps) throws IOException {
-        System.out.println("Loading project from "+fo.getPath());
+        
         if(isProject(fo)) {
-            ChromaProject cp = new ChromaProject(fo, ps, unmarshall(new File(fo.getPath(),PROJECT_FILE)));
+            System.out.println("Loading project from "+fo.getPath());
+            ChromaProject cp = new ChromaProject(fo.getFileObject(PROJECT_FILE), ps, unmarshall(new File(fo.getPath(),PROJECT_FILE)));
             return cp;
         }else{
             return null;

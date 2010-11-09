@@ -4,9 +4,15 @@
  */
 package maltcms.ui.nb;
 
+import java.awt.Component;
 import java.io.File;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -47,6 +53,11 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
         browseButton = new javax.swing.JButton();
         createdFolderLabel = new javax.swing.JLabel();
         createdFolderTextField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         projectNameLabel.setLabelFor(projectNameTextField);
         org.openide.awt.Mnemonics.setLocalizedText(projectNameLabel, org.openide.util.NbBundle.getMessage(chromaUIProjectPanelVisual.class, "chromaUIProjectPanelVisual.projectNameLabel.text")); // NOI18N
@@ -67,6 +78,27 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
 
         createdFolderTextField.setEditable(false);
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(chromaUIProjectPanelVisual.class, "chromaUIProjectPanelVisual.jLabel1.text")); // NOI18N
+
+        jList1.setModel(getListModel());
+        jScrollPane1.setViewportView(jList1);
+        jList1.setModel(getListModel());
+        jList1.setCellRenderer(new FileListCellRenderer());
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(chromaUIProjectPanelVisual.class, "chromaUIProjectPanelVisual.jButton1.text")); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(chromaUIProjectPanelVisual.class, "chromaUIProjectPanelVisual.jButton2.text")); // NOI18N
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -76,14 +108,23 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(projectNameLabel)
                     .add(projectLocationLabel)
-                    .add(createdFolderLabel))
+                    .add(createdFolderLabel)
+                    .add(jLabel1))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, projectNameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, projectLocationTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, createdFolderTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(browseButton)
+                    .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, projectNameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, projectLocationTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, createdFolderTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(browseButton))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(jButton2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(jButton1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -102,7 +143,15 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(createdFolderLabel)
                     .add(createdFolderTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(213, Short.MAX_VALUE))
+                .add(18, 18, 18)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel1)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(layout.createSequentialGroup()
+                        .add(jButton1)
+                        .add(18, 18, 18)
+                        .add(jButton2)))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -128,15 +177,45 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
         }
 
     }//GEN-LAST:event_browseButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        JFileChooser jfc = new JFileChooser();
+        jfc.setMultiSelectionEnabled(true);
+        int st = jfc.showOpenDialog(this.getTopLevelAncestor());
+        if (st == JFileChooser.APPROVE_OPTION) { 
+            for(File f:jfc.getSelectedFiles()) {
+                getListModel().addElement(f);
+            }
+            panel.fireChangeEvent();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        jList1.remove(jList1.getSelectedIndex());
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JLabel createdFolderLabel;
     private javax.swing.JTextField createdFolderTextField;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JList jList1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel projectLocationLabel;
     private javax.swing.JTextField projectLocationTextField;
     private javax.swing.JLabel projectNameLabel;
     private javax.swing.JTextField projectNameTextField;
     // End of variables declaration//GEN-END:variables
+    private DefaultListModel dlm = null;
+
+    private DefaultListModel getListModel() {
+        if (dlm == null) {
+            dlm = new DefaultListModel();
+        }
+        return dlm;
+    }
 
     @Override
     public void addNotify() {
@@ -184,6 +263,28 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
                     "Project Folder already exists and is not empty.");
             return false;
         }
+
+        System.out.println("valid called, number of elements in list model: "+getListModel().size());
+        if(getListModel().isEmpty()) {
+            wizardDescriptor.putProperty("WizardPanel_errorMessage",
+                    "No input data files selected.");
+            return false;
+        }
+
+        for(Object o :getListModel().toArray()) {
+            File of = (File)o;
+            if(!of.exists()) {
+                wizardDescriptor.putProperty("WizardPanel_errorMessage",
+                    "Input data file: "+of.getAbsolutePath()+" does not exist.");
+                return false;
+            }
+            if(!of.canRead()) {
+                wizardDescriptor.putProperty("WizardPanel_errorMessage",
+                    "Input data file: "+of.getAbsolutePath()+" can not be read, check file permissions.");
+                return false;
+            }
+        }
+
         wizardDescriptor.putProperty("WizardPanel_errorMessage", "");
         return true;
     }
@@ -194,6 +295,14 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
 
         d.putProperty("projdir", new File(folder));
         d.putProperty("name", name);
+        StringBuilder sb = new StringBuilder();
+        for(Object o :getListModel().toArray()) {
+            File of = (File)o;
+            sb.append(FileUtil.normalizeFile(of).getAbsolutePath()+",");
+        }
+        if(sb.length()>0) {
+            d.putProperty("input.dataInfo",sb.substring(0, sb.length()-2));
+        }
     }
 
     void read(WizardDescriptor settings) {
@@ -211,6 +320,14 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
         }
         this.projectNameTextField.setText(projectName);
         this.projectNameTextField.selectAll();
+
+        String inputFiles = ((String)settings.getProperty("input.dataInfo"));
+        if(inputFiles!=null) {
+            String[] ifs = inputFiles.split(",");
+            for(String s:ifs) {
+                getListModel().addElement(new File(s));
+            }
+        }
     }
 
     void validate(WizardDescriptor d) throws WizardValidationException {
@@ -256,5 +373,21 @@ public class chromaUIProjectPanelVisual extends JPanel implements DocumentListen
 
         }
         panel.fireChangeEvent(); // Notify that the panel changed
+    }
+
+    class FileListCellRenderer implements ListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(JList jlist, Object o, int i, boolean bln, boolean bln1) {
+            if(o instanceof File) {
+                String filename = ((File)o).getName();
+                JLabel jl = new JLabel(filename);
+                jl.setToolTipText(((File)o).getAbsolutePath());
+                return jl;
+            }else{
+                return new DefaultListCellRenderer().getListCellRendererComponent(jlist, o, i, bln, bln1);
+            }
+        }
+
     }
 }

@@ -17,6 +17,7 @@ import net.sourceforge.maltcms.chromauiproject.ResourceType;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
+import org.openide.actions.PropertiesAction;
 import org.openide.filesystems.FileObject;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
@@ -35,7 +36,7 @@ import org.openide.util.lookup.Lookups;
  */
 public class ChromaProject implements Project{
 
-    private FileObject projectDir;
+    private FileObject projectFile;
 
     private ProjectState state;
 
@@ -50,15 +51,19 @@ public class ChromaProject implements Project{
      * @param state
      * @param project
      */
-    public ChromaProject(FileObject projectDir, ProjectState state, net.sourceforge.maltcms.chromauiproject.Project project) {
-        this.projectDir = projectDir;
+    public ChromaProject(FileObject projectFile, ProjectState state, net.sourceforge.maltcms.chromauiproject.Project project) {
+        this.projectFile = projectFile;
         this.state = state;
         this.project = project;
     }
 
     @Override
     public FileObject getProjectDirectory() {
-        return this.projectDir;
+        return this.projectFile.getParent();
+    }
+
+    public FileObject getProjectFile() {
+        return this.projectFile;
     }
 
     /**
