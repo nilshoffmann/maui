@@ -4,17 +4,19 @@
  */
 package net.sf.maltcms.chromaui.project.api;
 
+import net.sf.maltcms.chromaui.db.api.ICrudProvider;
+
 /**
  *
  * @author hoffmann
  */
-public class AContainer implements IContainer {
+public class ADatabaseBackedContainer implements IContainer {
 
     private String name = getClass().getSimpleName();
     private int precedence = 0;
     private final ICrudProvider cp;
 
-    public AContainer(ICrudProvider db) {
+    public ADatabaseBackedContainer(ICrudProvider db) {
         this.cp = db;
     }
 

@@ -5,7 +5,7 @@
 package net.sf.maltcms.chromaui.project.api;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.types.IDatabase;
+import net.sf.maltcms.chromaui.db.api.IDatabase;
 
 /**
  *

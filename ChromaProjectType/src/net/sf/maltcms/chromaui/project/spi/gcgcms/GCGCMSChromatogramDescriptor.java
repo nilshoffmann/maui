@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.maltcms.chromaui.project.spi;
+package net.sf.maltcms.chromaui.project.spi.gcgcms;
 
 import cross.datastructures.fragments.FileFragment;
 import java.io.File;
@@ -44,9 +44,9 @@ public class GCGCMSChromatogramDescriptor<T extends IChromatogram2D> implements 
     }
 
     @Override
-    public IChromatogram getChromatogram() {
+    public T getChromatogram() {
         ChromatogramFactory cf = new ChromatogramFactory();
-        return cf.createChromatogram2D(new FileFragment(new File(getResourceLocation())));
+        return (T)cf.createChromatogram2D(new FileFragment(new File(getResourceLocation())));
     }
 
 }

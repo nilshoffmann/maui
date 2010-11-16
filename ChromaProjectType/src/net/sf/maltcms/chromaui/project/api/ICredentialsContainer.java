@@ -5,16 +5,12 @@
 
 package net.sf.maltcms.chromaui.project.api;
 
+import net.sf.maltcms.chromaui.db.api.ICredentials;
+
 /**
  *
  * @author hoffmann
  */
-public interface IChromAUIProject {
-
-    void addContainer(IContainer ic);
-
-    void removeContainer(IContainer ic);
-
-    IContainer getContainer(Class<IContainer> c);
+public interface ICredentialsContainer<T extends ICredentials> {
 
 }
