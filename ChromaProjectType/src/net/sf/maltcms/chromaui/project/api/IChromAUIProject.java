@@ -5,16 +5,21 @@
 
 package net.sf.maltcms.chromaui.project.api;
 
+import java.util.Collection;
+import net.sf.maltcms.chromaui.db.api.ICrudProvider;
+
 /**
  *
  * @author hoffmann
  */
 public interface IChromAUIProject {
 
-    void addContainer(IContainer ic);
+    void addContainer(IContainer... ic);
 
-    void removeContainer(IContainer ic);
+    void removeContainer(IContainer... ic);
 
-    IContainer getContainer(Class<IContainer> c);
+    <T extends IContainer> Collection<T> getContainer(Class<T> c);
+
+    ICrudProvider getCrudProvider();
 
 }

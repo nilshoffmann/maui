@@ -10,18 +10,15 @@ import java.io.File;
 import java.net.URI;
 import maltcms.datastructures.ms.ChromatogramFactory;
 import maltcms.datastructures.ms.IChromatogram;
-import maltcms.datastructures.ms.IChromatogram2D;
 import net.sf.maltcms.chromaui.project.api.types.IChromatogramDescriptor;
 
 /**
  *
  * @author hoffmann
  */
-public class GCGCMSChromatogramDescriptor<T extends IChromatogram2D> implements IChromatogramDescriptor<T>{
+public class GCGCMSChromatogramDescriptor implements IChromatogramDescriptor{
 
     private URI resourceLocation;
-
-    private Class<T> type;
 
     @Override
     public URI getResourceLocation() {
@@ -34,19 +31,14 @@ public class GCGCMSChromatogramDescriptor<T extends IChromatogram2D> implements 
     }
 
     @Override
-    public Class<T> getType() {
-        return this.type;
-    }
-
-    @Override
-    public void setType(Class<T> c) {
-        this.type = c;
-    }
-
-    @Override
-    public T getChromatogram() {
+    public IChromatogram getChromatogram() {
         ChromatogramFactory cf = new ChromatogramFactory();
-        return (T)cf.createChromatogram2D(new FileFragment(new File(getResourceLocation())));
+        return cf.createChromatogram2D(new FileFragment(new File(getResourceLocation())));
+    }
+
+    @Override
+    public String toString() {
+        return "GCGCMSChromatogramDescriptor{" + "resourceLocation=" + resourceLocation +'}';
     }
 
 }

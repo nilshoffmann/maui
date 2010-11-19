@@ -11,6 +11,6 @@ import net.sf.maltcms.chromaui.db.api.ICredentials;
  *
  * @author hoffmann
  */
-public interface ICredentialsContainer<T extends ICredentials> {
+public interface ICredentialsContainer<T extends ICredentials> extends IContainer {
 
 }

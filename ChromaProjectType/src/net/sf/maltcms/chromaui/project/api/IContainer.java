@@ -6,7 +6,6 @@
 package net.sf.maltcms.chromaui.project.api;
 
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
-import net.sf.maltcms.chromaui.db.spi.DB4oCrudProvider;
 
 /**
  *

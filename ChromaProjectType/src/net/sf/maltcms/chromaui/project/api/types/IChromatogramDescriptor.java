@@ -12,15 +12,11 @@ import maltcms.datastructures.ms.IChromatogram;
  *
  * @author hoffmann
  */
-public interface IChromatogramDescriptor<T extends IChromatogram> {
+public interface IChromatogramDescriptor {
 
     URI getResourceLocation();
 
     void setResourceLocation(URI u);
-
-    Class<T> getType();
-
-    void setType(Class<T> c);
 
     IChromatogram getChromatogram();
 

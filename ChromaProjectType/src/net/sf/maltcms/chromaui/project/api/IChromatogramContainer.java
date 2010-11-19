@@ -11,7 +11,7 @@ import net.sf.maltcms.chromaui.project.api.types.IChromatogramDescriptor;
  *
  * @author hoffmann
  */
-public interface IChromatogramContainer<T extends IChromatogramDescriptor> {
+public interface IChromatogramContainer<T extends IChromatogramDescriptor> extends IContainer {
 
     Collection<T> getInputFiles();
 

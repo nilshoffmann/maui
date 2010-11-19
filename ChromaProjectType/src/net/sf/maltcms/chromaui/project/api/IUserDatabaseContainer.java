@@ -11,7 +11,7 @@ import net.sf.maltcms.chromaui.db.api.IDatabase;
  *
  * @author hoffmann
  */
-public interface IUserDatabaseContainer<T extends IDatabase> {
+public interface IUserDatabaseContainer<T extends IDatabase> extends IContainer{
 
     Collection<T> getUserDatabases();
 

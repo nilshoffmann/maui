@@ -9,7 +9,7 @@ package net.sf.maltcms.chromaui.project.api;
  *
  * @author hoffmann
  */
-public interface IUserRIDatabaseContainer {
+public interface IUserRIDatabaseContainer extends IContainer{
 
     
 

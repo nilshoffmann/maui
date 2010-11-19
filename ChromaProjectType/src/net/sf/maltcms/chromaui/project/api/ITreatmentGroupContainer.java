@@ -11,7 +11,7 @@ import net.sf.maltcms.chromaui.project.api.types.ITreatmentGroupDescriptor;
  *
  * @author hoffmann
  */
-public interface ITreatmentGroupContainer<T extends ITreatmentGroupDescriptor>{
+public interface ITreatmentGroupContainer<T extends ITreatmentGroupDescriptor> extends IContainer{
 
     Collection<T> getTreatmentGroups();
 

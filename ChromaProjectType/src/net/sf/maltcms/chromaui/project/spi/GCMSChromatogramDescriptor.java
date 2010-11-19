@@ -16,10 +16,9 @@ import net.sf.maltcms.chromaui.project.api.types.IChromatogramDescriptor;
  *
  * @author hoffmann
  */
-public class GCMSChromatogramDescriptor<T extends IChromatogram1D> implements IChromatogramDescriptor<T> {
+public class GCMSChromatogramDescriptor implements IChromatogramDescriptor {
 
-    private URI resourceLocation;
-    private Class<T> type;
+     private URI resourceLocation;
 
     @Override
     public URI getResourceLocation() {
@@ -32,18 +31,13 @@ public class GCMSChromatogramDescriptor<T extends IChromatogram1D> implements IC
     }
 
     @Override
-    public Class<T> getType() {
-        return this.type;
-    }
-
-    @Override
-    public void setType(Class<T> c) {
-        this.type = c;
-    }
-
-    @Override
     public IChromatogram getChromatogram() {
         ChromatogramFactory cf = new ChromatogramFactory();
         return cf.createChromatogram1D(new FileFragment(new File(getResourceLocation())));
+    }
+
+    @Override
+    public String toString() {
+        return "GCMSChromatogramDescriptor{" + "resourceLocation=" + resourceLocation +'}';
     }
 }

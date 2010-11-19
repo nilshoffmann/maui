@@ -14,8 +14,6 @@ import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.ITreatmentGroup;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.types.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.db.spi.DB4oCrudProvider;
-import net.sf.maltcms.chromaui.project.spi.TreatmentGroupDescriptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;

@@ -5,20 +5,24 @@
 
 package net.sf.maltcms.chromaui.project.api.types;
 
-import maltcms.datastructures.ms.ITreatmentGroup;
+import java.util.Collection;
 
 /**
  *
  * @author hoffmann
  */
-public interface ITreatmentGroupDescriptor<T extends ITreatmentGroup> {
+public interface ITreatmentGroupDescriptor<T extends IChromatogramDescriptor> {
+
+    Collection<T> getMembers();
+
+    void setMembers(T... t);
+
+    void addMembers(T... t);
+
+    void deleteMembers(T... t);
 
     String getName();
 
-    void setName(String s);
-
-    T getTreatmentGroup();
-
-    void setTreatmentGroup(T t);
+    void setName(String name);
 
 }

@@ -12,7 +12,7 @@ import net.sf.maltcms.chromaui.project.api.types.IUserAnnotation;
  *
  * @author hoffmann
  */
-public interface IUserAnnotationContainer<T extends IUserAnnotation> {
+public interface IUserAnnotationContainer<T extends IUserAnnotation> extends IContainer{
 
     Collection<T> getUserAnnotations();
 
