@@ -26,6 +26,7 @@
             <public-packages>
                 <package>net.sf.maltcms.chromaui.db.api</package>
                 <package>net.sf.maltcms.chromaui.db.api.exceptions</package>
+                <package>net.sf.maltcms.chromaui.db.spi</package>
             </public-packages>
         </data>
     </configuration>

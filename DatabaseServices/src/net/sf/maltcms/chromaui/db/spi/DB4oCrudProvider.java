@@ -7,6 +7,7 @@ package net.sf.maltcms.chromaui.db.spi;
 import com.db4o.Db4oEmbedded;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import com.db4o.EmbeddedObjectContainer;
+import com.db4o.ObjectContainer;
 import java.io.File;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
@@ -19,7 +20,7 @@ import net.sf.maltcms.chromaui.db.api.ICredentials;
 public final class DB4oCrudProvider implements ICrudProvider {
 
     private EmbeddedObjectContainer eoc;
-    private File projectDBLocation;
+    private final File projectDBLocation;
     private final ICredentials ic;
 
     /**
@@ -47,6 +48,7 @@ public final class DB4oCrudProvider implements ICrudProvider {
     public void open() {
         authenticate();
         if (eoc == null) {
+            System.out.println("Opening ObjectContainer at "+projectDBLocation.getAbsolutePath());
             eoc = Db4oEmbedded.openFile(projectDBLocation.getAbsolutePath());
         }
     }
@@ -68,6 +70,6 @@ public final class DB4oCrudProvider implements ICrudProvider {
     @Override
     public final ICrudSession createSession() {
         authenticate();
-        return new DB4oCrudSession(ic,eoc.openSession());
+        return new DB4oCrudSession(ic,eoc);
     }
 }
