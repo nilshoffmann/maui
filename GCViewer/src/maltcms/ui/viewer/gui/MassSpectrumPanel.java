@@ -10,12 +10,17 @@
  */
 package maltcms.ui.viewer.gui;
 
+import cross.datastructures.tuple.Tuple2D;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.SwingUtilities;
+import maltcms.datastructures.ms.IMetabolite;
 import maltcms.ui.viewer.InformationController;
+import maltcms.ui.viewer.extensions.PeakIdentification;
 import net.sf.maltcms.chromaui.charts.MetricNumberFormatter;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import org.jfree.chart.ChartPanel;
@@ -27,6 +32,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import ucar.ma2.Array;
 
 /**
  *
@@ -38,6 +44,7 @@ public class MassSpectrumPanel extends PanelE {
     private XYSeriesCollection sc, tmp;
     private HashMap<Comparable, Double> scales = new HashMap<Comparable, Double>();
     private ExecutorService es = Executors.newFixedThreadPool(1);
+    private List<Point> selectedPoints = new ArrayList<Point>();
 
     /** Creates new form MassSpectrumPanel */
     public MassSpectrumPanel(InformationController ic) {
@@ -81,6 +88,7 @@ public class MassSpectrumPanel extends PanelE {
     }
 
     public void changeMS(final Point imagePoint) {
+        this.selectedPoints.add(imagePoint);
         Runnable s = new Runnable() {
 
             @Override
@@ -103,8 +111,42 @@ public class MassSpectrumPanel extends PanelE {
         };
         es.submit(s);
 
-
 //        this.cp.getChart().getPlot().datasetChanged(new DatasetChangeEvent(this, this.sc));
+    }
+
+    public void addIdentification() {
+        Runnable s = new Runnable() {
+
+            @Override
+            public void run() {
+
+                Point l = selectedPoints.get(selectedPoints.size() - 1);
+                System.out.println("Identification for " + l);
+                Array ms = ChromatogramVisualizerTools.getMS(l, ic.getFilename());
+
+                PeakIdentification pi = PeakIdentification.getInstance();
+                System.out.println("Start");
+                Tuple2D<Array, Tuple2D<Double, IMetabolite>> bestHit = pi.getBest(ms);
+                System.out.println("Done");
+
+                XYSeries s = ChromatogramVisualizerTools.convertToSeries(ms, bestHit.getSecond(), ic.getFilename());
+                sc = new XYSeriesCollection();
+                sc.addSeries(ChromatogramVisualizerTools.convertToSeries(bestHit.getFirst(), l.x + ", " + l.y));
+                try {
+                    sc.getSeries(s.getKey());
+                } catch (Exception e) {
+                    sc.addSeries(s);
+                }
+                ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
+//                } else {
+//                    sc = new XYSeriesCollection();
+//                    sc.addSeries(s);
+//                    //cp.repaint();
+//                    ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
+//                }
+            }
+        };
+        es.submit(s);
     }
 
     /** This method is called from within the constructor to
@@ -121,6 +163,8 @@ public class MassSpectrumPanel extends PanelE {
         jButton1 = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
         jToggleButton2 = new javax.swing.JToggleButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
 
         jToolBar1.setFloatable(false);
@@ -161,21 +205,43 @@ public class MassSpectrumPanel extends PanelE {
         });
         jToolBar1.add(jToggleButton2);
 
+        jButton2.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jButton2.text")); // NOI18N
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton2);
+
+        jButton3.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jButton3.text")); // NOI18N
+        jButton3.setFocusable(false);
+        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton3);
+
         jPanel2.setLayout(new java.awt.GridLayout(1, 0));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -205,23 +271,23 @@ public class MassSpectrumPanel extends PanelE {
         System.out.println("Normalizing mass spectra");
         if (jToggleButton2.isSelected()) {
             for (int i = 0; i < sc.getSeriesCount(); i++) {
-                System.out.println("Normalizing series "+(i+1)+"/"+sc.getSeriesCount());
+                System.out.println("Normalizing series " + (i + 1) + "/" + sc.getSeriesCount());
                 XYSeries xys = sc.getSeries(i);
                 XYSeries xys2 = new XYSeries(xys.getKey());
                 double scale = (xys.getMaxY() - xys.getMinY());
                 scales.put(xys.getKey(), scale);
-                System.out.println("Processing "+xys.getItemCount()+" items");
+                System.out.println("Processing " + xys.getItemCount() + " items");
                 for (int j = 0; j < xys.getItemCount(); i++) {
-                    System.out.println("Processing item "+(j+1)+"/"+xys.getItemCount());
+                    System.out.println("Processing item " + (j + 1) + "/" + xys.getItemCount());
                     //xys2.add(xys.getX(j), xys.getY(j).doubleValue() / scale);
                 }
                 ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
                 this.cp.repaint();
             }
         } else {
-            
+
             for (int i = 0; i < sc.getSeriesCount(); i++) {
-                System.out.println("DeNormalizing series "+(i+1)+"/"+sc.getSeriesCount());
+                System.out.println("DeNormalizing series " + (i + 1) + "/" + sc.getSeriesCount());
                 XYSeries xys = sc.getSeries(i);
                 double scale = scales.get(xys.getKey());
                 for (int j = 0; j < xys.getItemCount(); i++) {
@@ -232,8 +298,24 @@ public class MassSpectrumPanel extends PanelE {
             }
         }
     }//GEN-LAST:event_jToggleButton2ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        System.out.println("IDentifying");
+        addIdentification();
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JToggleButton jToggleButton1;

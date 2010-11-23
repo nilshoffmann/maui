@@ -14,11 +14,13 @@ import cross.exception.ResourceNotAvailableException;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
+import maltcms.datastructures.ms.IMetabolite;
 import maltcms.io.csv.ColorRampReader;
 import maltcms.tools.ImageTools;
 import maltcms.ui.charts.AChart;
@@ -48,6 +50,69 @@ public class ChromatogramVisualizerTools {
 
     public static XYPlot getMSPlot() {
         return createBarChart();
+    }
+
+    public static Array getMS(Point imagePoint, String filename) {
+        final IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(Factory.getInstance().getFileFragmentFactory().create(filename));
+
+        return scanlineCache.getMassSpectra(imagePoint);
+    }
+
+    public static XYSeries convertToSeries(Array oms, Tuple2D<Double, IMetabolite> hit, String name) {
+
+        IndexIterator iter = oms.getIndexIterator();
+        int max = Integer.MIN_VALUE;
+        int i = 0;
+        List<Integer> masq = new ArrayList<Integer>();
+//        for (int j = 50; j <70; j++) {
+//            masq.add(j);
+//        }
+//        masq.add(73);
+//        masq.add(74);
+//        masq.add(75);
+//        masq.add(147);
+//        masq.add(148);
+//        masq.add(149);
+        while (iter.hasNext()) {
+            if (!masq.contains(i)) {
+                if (max < iter.getIntNext()) {
+                    System.out.println("max at " + i);
+                    max = iter.getIntCurrent();
+                }
+            } else {
+                iter.getIntNext();
+            }
+            i++;
+        }
+        max = max / 1000;
+
+        XYSeries s = new XYSeries(hit.getSecond().getName() + "(+" + hit.getFirst() + ")");
+
+        Tuple2D<ArrayDouble.D1, ArrayInt.D1> ms = hit.getSecond().getMassSpectrum();
+        IndexIterator mz = ms.getFirst().getIndexIterator();
+        IndexIterator inten = ms.getSecond().getIndexIterator();
+        while (mz.hasNext() && inten.hasNext()) {
+            s.add(mz.getDoubleNext(), inten.getDoubleNext() * max);
+        }
+
+        return s;
+    }
+
+    public static XYSeries convertToSeries(Array ms, String name) {
+        XYSeries s = new XYSeries(name);
+
+        IndexIterator mz = ms.getIndexIterator();
+//
+        int i = 0;
+        int v;
+        while (mz.hasNext()) {
+            v = mz.getIntNext();
+            if (v != 0) {
+                s.add(i, v);
+            }
+            i++;
+        }
+        return s;
     }
 
     public static XYSeries getMSSeries(Point imagePoint, String filename) {
