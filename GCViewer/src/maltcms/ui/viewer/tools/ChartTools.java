@@ -16,6 +16,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.event.PlotChangeEvent;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
@@ -107,6 +108,7 @@ public class ChartTools {
                 FastHeatMapPlot fhp = (FastHeatMapPlot)p;
                 fhp.resetDataImage();
             }
+            p.notifyListeners(new PlotChangeEvent(p));
 //            if (renderer.getPaintScale() instanceof GradientPaintScale) {
 ////                System.out.println("NEU");
 ////                GradientPaintScale tps = (GradientPaintScale) renderer.getPaintScale();
