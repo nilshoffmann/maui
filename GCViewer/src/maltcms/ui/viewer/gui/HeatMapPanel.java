@@ -58,8 +58,9 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     private void initChartComponents() {
         this.showVTIC.setSelected(false);
         XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getFilename(), this.showVTIC.isSelected());
+        PaintScale ps = null;
         if (p.getRenderer() instanceof XYBlockRenderer) {
-            this.ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
+            ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
             this.xyb = ((XYBlockRenderer) p.getRenderer());
         }
         p.setDomainGridlinesVisible(false);
@@ -72,7 +73,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         this.cp.setZoomFillPaint(new Color(192, 192, 192, 96));
         this.cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
         this.cp.setFillZoomRectangle(true);
-        this.cp.getChart().getLegend().setVisible(false);
+        this.cp.getChart().getLegend().setVisible(true);
         this.cp.setBackground(Color.WHITE);
         this.cp.addKeyListener(this);
         this.cp.setFocusable(true);
@@ -99,8 +100,11 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 //        System.out.println("Adding PaintScaleDialogAction");
 //        psda.setParent(this);
         cpt.addChartMouseListener(this);
-        this.jSlider1.setValue(0);
-        handleSliderChange();
+
+        //this.jSlider1.setValue(0);
+        if (ps != null) {
+            setPaintScale(ps);
+        }
     }
 
     private void setDataPoint(Point p) {
@@ -140,12 +144,14 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
                         if (box != null) {
                             plot.removeAnnotation(box);
                         }
-
-                        box = new XYBoxAnnotation(dataPoint.x - 1, dataPoint.y - 1, dataPoint.x + 1, dataPoint.y + 1, new BasicStroke(), selectionOutline, selectionFill);
+                        float[] dashPattern = new float[]{10,5};
+                        box = new XYBoxAnnotation(dataPoint.x - 1, dataPoint.y - 1, dataPoint.x + 1, dataPoint.y + 1, new BasicStroke(2), selectionOutline, selectionFill);
                         plot.addAnnotation(box, false);
                         plot.setDomainCrosshairPaint(selectionOutline.darker());
+                        plot.setDomainCrosshairStroke(new BasicStroke(2,BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 1f, dashPattern, 0));
                         plot.setDomainCrosshairValue(dataPoint.x, false);
                         plot.setRangeCrosshairPaint(selectionOutline.darker());
+                        plot.setRangeCrosshairStroke(new BasicStroke(2,BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 1f, dashPattern, 0));
                         plot.setRangeCrosshairValue(dataPoint.y, true);
                         ic.changePoint(dataPoint);
                     }
@@ -325,9 +331,14 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
     }//GEN-LAST:event_jSlider1StateChanged
 
+    private void showVTICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showVTICActionPerformed
+
+        initChartComponents();
+        SwingUtilities.updateComponentTreeUI(this);
+    }//GEN-LAST:event_showVTICActionPerformed
+
     private void handleSliderChange() {
         final int low = this.jSlider1.getValue();
-//        if (this.oldTreshold != low) {
         Runnable r = new Runnable() {
 
             @Override
@@ -338,42 +349,25 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
                     double min = gps.getLowerBound();
                     double max = gps.getUpperBound();
                     gps.setLowerBoundThreshold(min + ((max - min) * ((double) low / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
-                    setPaintScale(gps);
-//                        oldTreshold = low;
                 }
+                updateChart();
             }
         };
         SwingUtilities.invokeLater(r);
-//            if (this.cp.getChart().getPlot() instanceof FastHeatMapPlot) {
-//                new Runnable() {
-//
-//                    public void run() {
-        //((FastHeatMapPlot) cp.getChart().getXYPlot()).setThresholdCutOff(t);
-
-//                    }
-//                }.run();
-//            }
-
-//        }
     }
 
     private void updateChart() {
         if (xyb != null && xyb instanceof XYNoBlockRenderer) {
             XYNoBlockRenderer xynb = (XYNoBlockRenderer) xyb;
-            if(ps instanceof GradientPaintScale) {
-                GradientPaintScale gps = (GradientPaintScale)ps;
+            if (ps instanceof GradientPaintScale) {
+                GradientPaintScale gps = (GradientPaintScale) ps;
                 xynb.setEntityThreshold(gps.getValueForIndex(this.jSlider1.getValue()));
             }
         }
+        ChartTools.changePaintScale((XYPlot) this.cp.getChart().getPlot(), this.ps);
         cp.repaint();
     }
 
-    private void showVTICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showVTICActionPerformed
-
-        initChartComponents();
-        SwingUtilities.updateComponentTreeUI(this);
-
-    }//GEN-LAST:event_showVTICActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -396,20 +390,18 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             double ub = this.ps.getUpperBound();
             sps.setLowerBound(lb);
             sps.setUpperBound(ub);
-            Color c = (Color) sps.getPaint(ub);
-            selectionFill = new Color(c.getRed(), c.getBlue(), c.getGreen(), 128);
-            selectionOutline = new Color(c.getRed(), c.getBlue(), c.getGreen()).darker();
-            this.jSlider1.setMaximum(100);
-            this.jSlider1.setMinimum(0);
-            this.jSlider1.setValue(0);
+            //this.jSlider1.setValue(0);
         }
+        this.alpha = (int)sps.getAlpha();
+        this.beta = (int)sps.getBeta();
         this.ps = sps;
-
-
-        ChartTools.changePaintScale((XYPlot) this.cp.getChart().getPlot(), sps);
-        this.alpha = (int) sps.getAlpha();
-        this.beta = (int) sps.getBeta();
-        updateChart();
+        Color c = (Color) sps.getPaint(this.ps.getUpperBound());
+        cp.getChart().getXYPlot().setBackgroundPaint(sps.getPaint(this.ps.getLowerBound()));
+        selectionFill = new Color(c.getRed(), c.getBlue(), c.getGreen(), 192);
+        selectionOutline = new Color(c.getRed(), c.getBlue(), c.getGreen()).darker();
+        this.jSlider1.setMaximum(100);
+        this.jSlider1.setMinimum(0);
+        handleSliderChange();
 //        }
     }
 
