@@ -11,6 +11,7 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
+import java.awt.Color;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
@@ -280,7 +281,7 @@ public class ChromatogramVisualizerTools {
         width = a.size();
         height = a.get(0).getShape()[0];
 
-        XYPlot p = createHeatMap(width, height, 0, tic, name, xAxis, yAxis);
+        XYPlot p = createHeatMap(width, height, 0, 0, tic, name, xAxis, yAxis);
 
         if (horizontal) {
             p = ChartTools.getPlot2(p);
@@ -377,14 +378,16 @@ public class ChromatogramVisualizerTools {
             tic = tp.getTIC();
         }
 
+        double offset = origFragment.getChild("scan_acquisition_time").getArray().getDouble(0);
+
         final int spm = (int) (sr * mt);
         final int sl = (tic.getShape()[0] / (spm));
 
-        XYPlot p = createHeatMap(sl, spm, mt, tic, origFragment.getName(), "rt1", "rt2");
+        XYPlot p = createHeatMap(sl, spm, mt, offset, tic, origFragment.getName(), "rt1", "rt2");
         return p;
     }
 
-    public static XYPlot createHeatMap(int width, int height, double modulationTime, Array tic, String name, String xAxis, String yAxis) {
+    public static XYPlot createHeatMap(int width, int height, double modulationTime, double rtoffset, Array tic, String name, String xAxis, String yAxis) {
         Index ticIdx = tic.getIndex();
         double[][] tic2ddata = new double[3][tic.getShape()[0]];
         int cnt = 0;
@@ -407,7 +410,8 @@ public class ChromatogramVisualizerTools {
         MinMax mm = MAMath.getMinMax(tic);
 
         XYNoBlockRenderer xybr = new XYNoBlockRenderer();
-        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max, ImageTools.rampToColorArray(new ColorRampReader().getDefaultRamp()));
+        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max, GradientPaintScale.getDefaultColorRamp());
+//        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max, c);
         xybr.setPaintScale(ps);
         xybr.setDefaultEntityRadius(5);
 //        xybr.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(rt, sl, spm));
@@ -420,10 +424,10 @@ public class ChromatogramVisualizerTools {
 //        Das kann benutzt werden, um Zeiten anstelle von scanindex anzuzeigen
 //        Aktuelles Problem: Zeit auf der erten Achse beginnt nicht zwingend bei 0
 //        if (modulationTime > 0) {
-//            double scanrate = modulationTime;
-//            rt1.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate, "#0"));
-//            scanrate = modulationTime / (double) height;
-//            rt2.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate));
+            
+            rt1.setNumberFormatOverride(new RetentionTimeNumberFormatter(modulationTime, rtoffset, "#0"));
+            double scanrate = modulationTime / (double) height;
+            rt2.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate, 0, "#0.000"));
 //        }
 
         XYPlot heatmapPlot = new XYPlot(xyz, rt1, rt2, xybr);
