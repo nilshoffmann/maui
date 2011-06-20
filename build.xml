@@ -5,4 +5,34 @@
 <project name="ChromAUI" basedir=".">
     <description>Builds the module suite ChromAUI.</description>
     <import file="nbproject/build-impl.xml"/>
+    <target name="upload-credentials" description="Ask for user credentials">
+        <input addproperty="upload.username">Please enter username for upload:</input>
+                <!--<input message="Please supply password for user ${sf.username}:" addproperty="sf.username.password">
+                        <handler type="secure"/>
+                </input>-->
+    </target>
+
+    <target name="upload-updatecenter" description="Upload results of build" depends="upload-credentials">
+                <!--<echo message="Do not forget to supply -Dusername -Dpassword to ant when running the upload target!" />-->
+                <!--<scp todir="${sf.username},maltcms@web.sourceforge.net:htdocs/" password="${sf.username.password}" sftp="true" trust="true" verbose="true">
+                        <fileset dir="${release_dir}/site/" />
+                </scp>-->
+        <exec command="rsync" inputstring="">
+            <arg value="-avtruP"/>
+            <arg value="-e ssh "/>
+            <arg value="build/updates/"/>
+            <arg value="${upload.username}@porta.cebitec.uni-bielefeld.de:/prj/chromaui/apache/htdocs/updatecenter/"/>
+        </exec>
+    </target>
+    <target name="upload-build" description="Deploys zip distribution and macosx app" depends="upload-credentials, build-zip, build-mac">
+        <tstamp>
+            <format property="deploy.time" pattern="yyyy-MM-dd"/>
+        </tstamp>
+        <exec command="rsync" inputstring="">
+            <arg value="-avtruP"/>
+            <arg value="-e ssh "/>
+            <arg value="dist/"/>
+            <arg value="${upload.username}@porta.cebitec.uni-bielefeld.de:/prj/chromaui/apache/htdocs/download/${deploy.time}"/>
+        </exec>    
+    </target>
 </project>
