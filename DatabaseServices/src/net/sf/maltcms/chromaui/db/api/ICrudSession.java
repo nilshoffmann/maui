@@ -20,6 +20,8 @@ public interface ICrudSession {
     void delete(Collection<? extends Object> o) throws AuthenticationException;
 
     <T> Collection<T> retrieve(Class<T> c) throws AuthenticationException;
+    
+    <T> Collection<T> retrieveByExample(T c) throws AuthenticationException;
 
     void update(Collection<? extends Object> o) throws AuthenticationException;
 
