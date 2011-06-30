@@ -24,10 +24,10 @@ import org.openide.util.lookup.ServiceProvider;
 public class DB4oCrudProviderFactory implements ICrudProviderFactory {
 
     @Override
-    public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic) {
+    public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
         DB4oCrudProvider dbcp;
         try {
-            dbcp = new DB4oCrudProvider(new File(databaseLocation.toURI()), ic, this.getClass().getClassLoader());
+            dbcp = new DB4oCrudProvider(new File(databaseLocation.toURI()), ic, cl);
             return dbcp;
         } catch (URISyntaxException ex) {
             Logger.getLogger(DB4oCrudProviderFactory.class.getName()).

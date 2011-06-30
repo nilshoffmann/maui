@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import org.openide.filesystems.FileObject;
 import java.util.Comparator;
-import cross.datastructures.tuple.Tuple2D;
 import java.util.Arrays;
 import java.io.File;
 import org.openide.filesystems.FileUtil;
@@ -34,6 +33,36 @@ public class DB4oCrudProviderTest {
 
         public IntStringTuple(Integer itg, String str) {
             super(itg, str);
+        }
+    }
+
+    class Tuple2D<T,U> {
+        private T first;
+        private U second;
+        public Tuple2D(T t, U u) {
+            this.first = t;
+            this.second = u;
+        }
+
+        public T getFirst() {
+            return first;
+        }
+
+        public void setFirst(T first) {
+            this.first = first;
+        }
+
+        public U getSecond() {
+            return second;
+        }
+
+        public void setSecond(U second) {
+            this.second = second;
+        }
+
+        @Override
+        public String toString() {
+            return "["+first+","+second+"]";
         }
     }
 

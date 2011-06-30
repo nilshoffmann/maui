@@ -54,6 +54,7 @@ public final class DB4oCrudProvider implements ICrudProvider {
         if (eoc == null) {
             System.out.println("Opening ObjectContainer at " + projectDBLocation.getAbsolutePath());
             EmbeddedConfiguration ec = com.db4o.Db4oEmbedded.newConfiguration();
+            ec.common().activationDepth(Integer.MAX_VALUE);
             ec.common().reflectWith(new JdkReflector(this.domainClassLoader));
             eoc = Db4oEmbedded.openFile(ec,projectDBLocation.getAbsolutePath());
         }
