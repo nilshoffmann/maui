@@ -22,10 +22,11 @@ public class CDFOpenSupport extends OpenSupport implements OpenCookie, CloseCook
 
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
-        CDFDataObject dobj = (CDFDataObject) entry.getDataObject();
-        System.out.println("Selected data object: "+dobj);
-        CDFViewTopComponent jtc = new CDFViewTopComponent();
-        jtc.setFile(dobj);
-        return jtc;
+//        CDFDataObject dobj = (CDFDataObject) entry.getDataObject();
+//        System.out.println("Selected data object: "+dobj);
+//        CDFViewTopComponent jtc = new CDFViewTopComponent();
+//        jtc.setFile(dobj);
+//        return jtc;
+        return null;
     }
 }

@@ -12,6 +12,7 @@
                 <attr name="selectionType" stringvalue="ANY"/>
                 <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
             </file>
+            <!--
             <file name="maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.instance">
                 <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.cdf.Bundle#CTL_CDF2ToolsUIOpenAction"/>
@@ -20,15 +21,16 @@
                 <attr name="noIconInMenu" boolvalue="false"/>
                 <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
                 <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
-            </file>
+            </file>-->
         </folder>
+        <!--
         <folder name="Window">
             <file name="maltcms-ui-fileHandles-cdf-CDFViewAction.instance">
                 <attr name="component" methodvalue="maltcms.ui.fileHandles.cdf.CDFViewTopComponent.findInstance"/>
                 <attr name="displayName" bundlevalue="maltcms.ui.fileHandles.cdf.Bundle#CTL_CDFViewAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
             </file>
-        </folder>
+        </folder>-->
     </folder>
     <folder name="Loaders">
         <folder name="application">
@@ -38,10 +40,11 @@
                         <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.instance"/>
                         <attr name="position" intvalue="-300"/>
                     </file>
+                    <!--
                     <file name="maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.instance"/>
                         <attr name="position" intvalue="0"/>
-                    </file>
+                    </file>-->
                     <file name="org-openide-actions-CopyAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CopyAction.instance"/>
                         <attr name="position" intvalue="300"/>
@@ -106,11 +109,22 @@
             </folder>
         </folder>
     </folder>
+    <!--
     <folder name="Menu">
         <folder name="Window">
             <file name="CDFViewAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-fileHandles-cdf-CDFViewAction.instance"/>
             </file>
+        </folder>
+    </folder>-->
+    
+    <folder name="Navigator">
+        <folder name="Panels">
+            <folder name="application">
+                <folder name="x-cdf">
+                        <file name="maltcms-ui-fileHandles-cdf-CDFViewTopComponent.instance"/>
+                </folder>
+            </folder>
         </folder>
     </folder>
     <folder name="Services">
@@ -128,6 +142,7 @@
             </file>
         </folder>
     </folder>
+    <!--
     <folder name="Windows2">
         <folder name="Components">
             <file name="CDFViewTopComponent.settings" url="CDFViewTopComponentSettings.xml"/>
@@ -138,4 +153,5 @@
             </folder>
         </folder>
     </folder>
+    -->
 </filesystem>

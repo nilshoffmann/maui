@@ -17,14 +17,15 @@ public final class CDF2ChartOpenAction implements ActionListener {
         this.context = context;
     }
 
-    
-
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        CDF2ChartOpenSupport cdf2 = new CDF2ChartOpenSupport(((CDFDataObject) context.get(0)).getPrimaryEntry(),context);
-        cdf2.open();
+        CDF2ChartOpenSupport cdf2 = new CDF2ChartOpenSupport(((CDFDataObject) context.get(0)).getPrimaryEntry(), context);
+        try {
+            cdf2.open();
+        } catch (NullPointerException npe) {
+        }
     }
 }

@@ -5,17 +5,20 @@
 package maltcms.io.xml.ws.meltdb.ui;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
-public class PeakImportWizardPanel2 implements WizardDescriptor.Panel {
+public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyChangeListener {
 
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
      */
-    private Component component;
+    private PeakImportVisualPanel2 component;
+    private WizardDescriptor model;
 
     // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
@@ -79,8 +82,26 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel {
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
+        if (settings instanceof WizardDescriptor) {
+//            ((PeakImportVisualPanel1) getComponent()).setNameField(((WizardDescriptor) settings).getProperty(PeakImportVisualPanel1.PROP_USERNAME));
+            getComponent().addPropertyChangeListener(this);
+            this.model = ((WizardDescriptor) settings);
+            if(this.component!=null) {
+                this.component.setUserName((String)this.model.getProperty(PeakImportVisualPanel1.PROP_USERNAME));
+                this.component.setPassword((char[])this.model.getProperty(PeakImportVisualPanel1.PROP_PASSWORD));
+            }
+        }
     }
 
     public void storeSettings(Object settings) {
+//        if (model != null) {
+//            model.putProperty(PeakImportVisualPanel1.PROP_USERNAME, ((PeakImportVisualPanel1) getComponent()).getNameField());
+//            model.putProperty(PeakImportVisualPanel1.PROP_PASSWORD, ((PeakImportVisualPanel1) getComponent()).getPasswordField());
+//        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 }

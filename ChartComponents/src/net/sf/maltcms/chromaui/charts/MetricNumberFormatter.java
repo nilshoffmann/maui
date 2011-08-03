@@ -30,7 +30,8 @@ public class MetricNumberFormatter extends NumberFormat {
         }
 
         NumberFormat formatter = NumberFormat.getInstance();
-        formatter.setMaximumFractionDigits(1);
+        formatter.setMaximumFractionDigits(2);
+        formatter.setMinimumFractionDigits(0);
 
         StringBuffer sb = new StringBuffer(formatter.format(number) + e);
 //                    System.out.println("after: " + sb);

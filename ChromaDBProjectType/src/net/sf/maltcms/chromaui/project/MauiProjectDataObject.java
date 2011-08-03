@@ -21,19 +21,15 @@ public class MauiProjectDataObject extends MultiDataObject {
 
     public MauiProjectDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-
     }
 
     @Override
     protected Node createNodeDelegate() {
         try {
-            IChromAUIProject p = (IChromAUIProject) ProjectManager.getDefault().findProject(this.getPrimaryFile());
+            IChromAUIProject p = (IChromAUIProject) ProjectManager.getDefault().findProject(this.getPrimaryFile().getParent());
             return p.getLookup().lookup(ChromAUIProjectLogicalView.class).createLogicalView();
-//            return new DataNode(this, getProjectDirectory() , getLookup());
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
-//        } catch (IllegalArgumentException ex) {
-//            Exceptions.printStackTrace(ex);
         } catch (NullPointerException npe) {
             Exceptions.printStackTrace(npe);
         }

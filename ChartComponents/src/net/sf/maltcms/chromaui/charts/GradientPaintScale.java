@@ -336,4 +336,9 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         }
 
     }
+
+    public static Color[] getDefaultColorRamp() {
+        Color[] c = new Color[]{Color.BLUE,Color.MAGENTA,Color.RED,Color.ORANGE,Color.YELLOW,Color.WHITE};
+        return c;
+    }
 }

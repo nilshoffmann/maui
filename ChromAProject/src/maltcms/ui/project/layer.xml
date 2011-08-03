@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
-    <folder name="Projects">
-        <folder name="maltcms-ui-nb-chromaproject">
-            <folder name="Lookup">
-                <file name="maltcms.ui.project.LookupProviderImpl.instance"/>
-            </folder>
-
-            <folder name="Nodes">
-                <file name="maltcms.ui.project.ProcessingPipelineResultNodeFactory.instance"/>
-            </folder>
-        </folder>
-    </folder>
     <folder name="Templates">
         <folder name="Project">
             <folder name="Standard">

@@ -5,12 +5,14 @@
 
 package net.sf.maltcms.chromaui.project.api;
 
+import java.beans.PropertyChangeListener;
+import net.sf.maltcms.chromaui.project.spi.container.DatabaseContainer;
+import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import java.net.URL;
 import java.util.Collection;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
-import net.sf.maltcms.chromaui.project.api.types.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.types.ITreatmentGroupDescriptor;
-import net.sf.maltcms.chromaui.project.api.types.IUserAnnotation;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
@@ -19,9 +21,11 @@ import org.openide.filesystems.FileObject;
  *
  * @author hoffmann
  */
-public interface IChromAUIProject extends Project{
+public interface IChromAUIProject extends Project, PropertyChangeListener {
 
     void addContainer(IContainer... ic);
+    
+    void updateContainer(IContainer... ic);
 
     void removeContainer(IContainer... ic);
 
@@ -44,5 +48,11 @@ public interface IChromAUIProject extends Project{
     void setOutputDir(FileObject f);
 
     FileObject getLocation();
+    
+    void addToLookup(Object... obj);
+    
+    void openSession();
+    
+    void closeSession();
 
 }

@@ -7,6 +7,7 @@ package net.sf.maltcms.chromaui.db.spi.db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.query.Query;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
@@ -16,7 +17,7 @@ import net.sf.maltcms.chromaui.db.api.ICrudSession;
  * Implementation of ICrudSession for DB4o.
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class DB4oCrudSession implements ICrudSession {
+public final class DB4oCrudSession implements ICrudSession {
 
     private final ObjectContainer oc;
     private final ICredentials ic;
@@ -119,5 +120,20 @@ public class DB4oCrudSession implements ICrudSession {
     @Override
     public final void open() throws AuthenticationException {
         authenticate(ic);
+    }
+
+    @Override
+    public final void create(Object... o) throws AuthenticationException {
+        create(Arrays.asList(o));
+    }
+
+    @Override
+    public final void delete(Object... o) throws AuthenticationException {
+        delete(Arrays.asList(o));
+    }
+
+    @Override
+    public final void update(Object... o) throws AuthenticationException {
+        update(Arrays.asList(o));
     }
 }

@@ -34,6 +34,10 @@ public class RetentionTimeNumberFormatter extends NumberFormat {
     @Override
     public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
         double newnumber = number * this.timePerScanIndex;
+        this.formatter.setMinimumFractionDigits(0);
+        this.formatter.setMaximumFractionDigits(4);
+        this.formatter.setMinimumIntegerDigits(1);
+//        this.
         StringBuffer sb = new StringBuffer();
         sb.append(this.formatter.format(newnumber));
         return sb;

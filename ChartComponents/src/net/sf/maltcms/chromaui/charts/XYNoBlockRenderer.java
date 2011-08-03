@@ -35,7 +35,7 @@ public class XYNoBlockRenderer extends XYBlockRenderer {
      */
     public XYNoBlockRenderer() {
         super();
-        setBaseCreateEntities(false);
+        setBaseCreateEntities(true);
     }
 
     /**

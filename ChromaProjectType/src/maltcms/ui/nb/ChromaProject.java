@@ -17,8 +17,8 @@ import net.sourceforge.maltcms.chromauiproject.ResourceType;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
-import org.openide.actions.PropertiesAction;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -125,6 +125,21 @@ public class ChromaProject implements Project{
         getProject().getResources().getResource().clear();
         addResources(rt);
     }
+
+    public void addInputFiles(FileObject... fo) {
+        List<ResourceType> l = getProject().getResources().getResource();
+        for(FileObject fobj:fo) {
+            ResourceType rtype = new ResourceType();
+            rtype.setType("inputFile");
+            rtype.setUri(FileUtil.toFile(fobj).toURI().toASCIIString());
+            l.add(rtype);
+        }
+    }
+
+//    public List<FileObject> getInputFiles() {
+//        List<FileObject> fos = new LinkedList<FileObject>();
+//        List<ResourceType> l = getProject().getResources().getResource();
+//    }
 
     /**
      * Delegate method to underlying bound xml file.

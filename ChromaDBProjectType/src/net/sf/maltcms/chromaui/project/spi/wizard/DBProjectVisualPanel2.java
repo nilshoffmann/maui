@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -469,10 +471,14 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
     protected void removeGroup(String group, int idx) {
         getGroupListModel().removeElementAt(idx);
         Set<Entry<File, String>> es = fileToGroup.entrySet();
+        List<File> toRemove = new LinkedList<File>();
         for (Entry<File, String> e : es) {
             if (e.getValue().equals(group)) {
-                fileToGroup.remove(e.getKey());
+                toRemove.add(e.getKey());
             }
+        }
+        for(File file:toRemove) {
+            fileToGroup.remove(file);
         }
         fileToGroupList.setCellRenderer(new FileListCellRenderer());
 //        fileToGroup.containsValue(s);

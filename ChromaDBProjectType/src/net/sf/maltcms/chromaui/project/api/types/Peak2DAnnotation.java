@@ -5,24 +5,26 @@
 
 package net.sf.maltcms.chromaui.project.api.types;
 
+import net.sf.maltcms.chromaui.project.api.annotations.IAnnotation;
 import maltcms.datastructures.peak.Peak2D;
+import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 
 /**
  *
  * @author nilshoffmann
  */
-public class Peak2DAnnotation implements IUserAnnotation<Peak2D>{
+public class Peak2DAnnotation extends Annotatable implements IAnnotation<Peak2D>{
 
     private Peak2D peak;
     private String displayName;
 
     @Override
-    public void setUserAnnotationType(Peak2D t) {
+    public void setAnnotation(Peak2D t) {
         this.peak = t;
     }
 
     @Override
-    public Peak2D getUserAnnotationType() {
+    public Peak2D getAnnotation() {
         return this.peak;
     }
 

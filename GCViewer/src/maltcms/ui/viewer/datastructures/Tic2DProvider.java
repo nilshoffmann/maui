@@ -6,12 +6,12 @@ package maltcms.ui.viewer.datastructures;
 
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
-import cross.exception.ResourceNotAvailableException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.IndexIterator;
@@ -22,12 +22,12 @@ import ucar.ma2.IndexIterator;
  */
 public class Tic2DProvider {
 
-    private static Map<String, Tic2DProvider> statics = new HashMap<String, Tic2DProvider>();
+    private static Map<IChromatogramDescriptor, Tic2DProvider> statics = new HashMap<IChromatogramDescriptor, Tic2DProvider>();
     private IFileFragment ff;
     private IVariableFragment tic = null;
     private IVariableFragment vtic = null;
 
-    public static Tic2DProvider getInstance(String filename) throws IOException {
+    public static Tic2DProvider getInstance(IChromatogramDescriptor filename) throws IOException {
         if (statics.containsKey(filename)) {
             return statics.get(filename);
         }
@@ -36,7 +36,7 @@ public class Tic2DProvider {
         return tmp;
     }
 
-    private Tic2DProvider(String filename) throws IOException {
+    private Tic2DProvider(IChromatogramDescriptor filename) throws IOException {
         this.ff = ChromatogramVisualizerTools.getFragments(filename).getFirst();
     }
 

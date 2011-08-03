@@ -11,7 +11,7 @@ import org.openide.util.Lookup;
  *
  * @author nilshoffmann
  */
-public class TypeFactory {
+public final class TypeFactory {
 
     public static Collection<? extends ISeparationType> getAvailableSeparationTypes() {
         return Lookup.getDefault().lookupAll(ISeparationType.class);
@@ -20,4 +20,5 @@ public class TypeFactory {
     public static Collection<? extends IDetectorType> getAvailableDetectorTypes() {
         return Lookup.getDefault().lookupAll(IDetectorType.class);
     }
+    
 }

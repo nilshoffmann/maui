@@ -4,35 +4,51 @@
  */
 package net.sf.maltcms.chromaui.project.spi;
 
+import org.junit.Test;
+import org.netbeans.junit.NbModuleSuite;
 import net.sf.maltcms.chromaui.db.spi.db4o.DB4oCrudProvider;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import java.util.ArrayList;
 import java.util.Collections;
-import org.openide.filesystems.FileObject;
 import java.util.Comparator;
 import java.util.Arrays;
 import java.io.File;
-import org.openide.filesystems.FileUtil;
 import java.util.Collection;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.netbeans.junit.NbTestCase;
 import static org.junit.Assert.*;
 
 /**
  *
  * @author hoffmann
  */
-public class DB4oCrudProviderTest {
+public class DB4oCrudProviderTest extends NbTestCase {
 
-    public class IntStringTuple extends Tuple2D<Integer, String> {
+    public class IntStringTuple {
 
+        private Integer first;
+        private String second;
+        
         public IntStringTuple(Integer itg, String str) {
-            super(itg, str);
+            this.first = first;
+            this.second = second;
+        }
+
+        public Integer getFirst() {
+            return first;
+        }
+
+        public void setFirst(Integer first) {
+            this.first = first;
+        }
+
+        public String getSecond() {
+            return second;
+        }
+
+        public void setSecond(String second) {
+            this.second = second;
         }
     }
 
@@ -69,6 +85,12 @@ public class DB4oCrudProviderTest {
     public DB4oCrudProviderTest() {
     }
 
+    public static junit.framework.Test suite() {
+        return NbModuleSuite.create(NbModuleSuite.createConfiguration(DB4oCrudProviderTest.class));
+    }
+
+//    public DB4oCrudProviderTest() {
+//    }
     /**
      * Test of create method, of class DB4oCrudProvider.
      */
@@ -82,7 +104,7 @@ public class DB4oCrudProviderTest {
         File f = new File("test/db4oCrud/chromauiproject.db4o");
         f.getParentFile().mkdirs();
         f.deleteOnExit();
-        if(f.exists()) {
+        if (f.exists()) {
             f.delete();
         }
         //END SETUP
@@ -90,7 +112,8 @@ public class DB4oCrudProviderTest {
         //Credentials
         ICredentials ic = new NoAuthCredentials();
         //CrudProvider
-        DB4oCrudProvider instance = new DB4oCrudProvider(f, ic, this.getClass().getClassLoader());
+        DB4oCrudProvider instance = new DB4oCrudProvider(f, ic, this.getClass().
+                getClassLoader());
         try {
             //initialize and open database
             instance.open();
@@ -104,10 +127,12 @@ public class DB4oCrudProviderTest {
                 System.out.println("retrieve");
                 Collection<IntStringTuple> expResult = Arrays.asList(a, b, c);
                 //RETRIEVE
-                Collection<IntStringTuple> result = icr.retrieve(IntStringTuple.class);
+                Collection<IntStringTuple> result = icr.retrieve(
+                        IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result), new ComparatorImpl());
+                Collections.sort(new ArrayList<IntStringTuple>(result),
+                        new ComparatorImpl());
                 assertEquals(expResult, result);
                 //UPDATE
                 b.setSecond("b");
@@ -115,21 +140,23 @@ public class DB4oCrudProviderTest {
                 result = icr.retrieve(IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result), new ComparatorImpl());
+                Collections.sort(new ArrayList<IntStringTuple>(result),
+                        new ComparatorImpl());
                 assertEquals(expResult, result);
 
                 //DELETE
-                expResult = Arrays.asList(b,c);
+                expResult = Arrays.asList(b, c);
                 icr.delete(Arrays.asList(a));
                 result = icr.retrieve(IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result), new ComparatorImpl());
+                Collections.sort(new ArrayList<IntStringTuple>(result),
+                        new ComparatorImpl());
                 assertEquals(expResult, result);
             } finally {
                 icr.close();
             }
-            
+
         } finally {
             instance.close();
         }

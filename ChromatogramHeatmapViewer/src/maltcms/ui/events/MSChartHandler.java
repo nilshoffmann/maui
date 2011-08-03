@@ -3,27 +3,22 @@
  */
 package maltcms.ui.events;
 
+import net.sf.maltcms.chromaui.charts.TopKItemsLabelGenerator;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.SwingUtilities;
 
 import org.jfree.chart.entity.XYItemEntity;
-import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYBarDataset;
-import org.jfree.data.xy.XYDataset;
 
 import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
@@ -178,27 +173,5 @@ public class MSChartHandler implements XYItemEntityEventListener {
             }
         };
         es.submit(s);
-    }
-
-    public class TopKItemsLabelGenerator implements XYItemLabelGenerator {
-
-        private final SortedMap<Double, Double> sm;
-        private final Set<Double> ks;
-
-        public TopKItemsLabelGenerator(SortedMap<Double, Double> sm, int k) {
-            this.sm = sm;
-            this.ks = new TreeSet<Double>(new ArrayList<Double>(this.sm.keySet()).subList(Math.max(0, sm.size() - k), sm.size()));
-        }
-
-        @Override
-        public String generateLabel(XYDataset arg0, int arg1, int arg2) {
-            if (this.ks.contains(arg0.getYValue(arg1, arg2))) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.format("%.2f", arg0.getXValue(arg1, arg2)));
-                return sb.toString();
-            }
-
-            return null;
-        }
     }
 }

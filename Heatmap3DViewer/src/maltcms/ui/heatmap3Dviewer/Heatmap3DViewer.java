@@ -91,7 +91,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
     @Override
     public void setup() {
         try {
-            size(startWidth, startHeight, P3D);
+            size(startWidth, startHeight, PApplet.P3D);
         } catch (RendererChangeException rce) {
             //rce.printStackTrace();
         }
@@ -114,8 +114,9 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
     public void draw() {
         background(0);
         if (animate) {
-            double incr = (2 * Math.random() - 1);
-            animateUpdate(rho + incr, phi + incr, theta + incr);
+            double incr = 0.001;
+            animateUpdate(rho + incr, phi, theta);
+//            animateUpdate(rho + incr, phi + incr, theta + incr);
         }
         //model transformations
         pushMatrix();
@@ -429,7 +430,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
             if (STEP_SIZE < 1) {
                 STEP_SIZE = 1;
             }
-            translate(-width / 2, -height / 2, ZZ);
+            translate(-(width/STEP_SIZE) / 2, -(height/STEP_SIZE) / 2, ZZ);
             int maxx = 0;
             int maxy = 0;
             for (X = 0; X < (values.length - STEP_SIZE); X += STEP_SIZE) {

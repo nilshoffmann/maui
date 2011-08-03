@@ -20,7 +20,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
+import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.netbeans.spi.project.ui.templates.support.Templates;
 import org.openide.WizardDescriptor;
@@ -82,6 +84,27 @@ public class chromaUIProjectWizardIterator implements WizardDescriptor./*Progres
         if (parent != null && parent.exists()) {
             ProjectChooser.setProjectsFolder(parent);
         }
+        ChromaProjectFactory cpf = new ChromaProjectFactory();
+        ChromaProject cp = (ChromaProject)cpf.loadProject(dir.getFileObject("chromaUIProject.xml"), new ProjectState() {
+
+            @Override
+            public void markModified() {
+
+            }
+
+            @Override
+            public void notifyDeleted() throws IllegalStateException {
+                
+            }
+        });
+        File[] files = (File[])wiz.getProperty("inputFiles");
+        FileObject[] fos = new FileObject[files.length];
+        int i = 0;
+        for(File f:files) {
+            fos[i++] = FileUtil.createData(f);
+        }
+        cp.addInputFiles(fos);
+        
 
         return resultSet;
     }
@@ -114,6 +137,8 @@ public class chromaUIProjectWizardIterator implements WizardDescriptor./*Progres
     public void uninitialize(WizardDescriptor wiz) {
         this.wiz.putProperty("projdir", null);
         this.wiz.putProperty("name", null);
+        this.wiz.putProperty("input.dataInfo", null);
+        this.wiz.putProperty("output.basedir", null);
         this.wiz = null;
         panels = null;
     }

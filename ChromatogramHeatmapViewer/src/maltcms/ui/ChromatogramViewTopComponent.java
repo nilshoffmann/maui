@@ -15,6 +15,7 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.util.RequestProcessor;
 import org.openide.windows.CloneableTopComponent;
 
 /**
@@ -52,7 +53,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
     private void load() {
         System.out.println("Running loader");
         SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(this, this.filename);
-        sw.execute();
+        RequestProcessor.getDefault().post(sw); 
     }
 
     /** This method is called from within the constructor to

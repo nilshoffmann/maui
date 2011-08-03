@@ -3,21 +3,36 @@
 <filesystem>
     <folder name="Actions">
         <folder name="File">
+            <file name="maltcms-io-xml-ws-meltdb-ui-MeltDBSynchronizeAction.instance">
+                <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
+                <attr name="displayName" bundlevalue="maltcms.io.xml.ws.meltdb.ui.Bundle#CTL_MeltDBSynchronizeAction"/>
+                <attr name="iconBase" stringvalue="maltcms/io/xml/ws/meltdb/meltdb-logo-24.png"/>
+                <attr name="injectable" stringvalue="maltcms.io.xml.ws.meltdb.ui.MeltDBSynchronizeAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
+<!--                <attr name="type" stringvalue="org.netbeans.api.project.Project"/>-->
+            </file>
+            <!--
             <file name="maltcms-io-xml-ws-meltdb-PeakImportWizardAction.instance">
                 <attr name="delegate" newvalue="maltcms.io.xml.ws.meltdb.PeakImportWizardAction"/>
                 <attr name="iconBase" stringvalue="maltcms/io/xml/ws/meltdb/meltdb-logo-32.png"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
                 <attr name="noIconInMenu" stringvalue="false"/>
-            </file>
+            </file>-->
         </folder>
     </folder>
     <folder name="Toolbars">
         <folder name="File">
-            <file name="maltcms-io-xml-ws-meltdb-PeakImportWizardAction.shadow">
+            <!--<file name="maltcms-io-xml-ws-meltdb-PeakImportWizardAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/File/maltcms-io-xml-ws-meltdb-PeakImportWizardAction.instance"/>
                 <attr name="position" intvalue="500"/>
+            </file>-->
+            <file name="maltcms-io-xml-ws-meltdb-ui-MeltDBSynchronizeAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/File/maltcms-io-xml-ws-meltdb-ui-MeltDBSynchronizeAction.instance"/>
+                <attr name="position" intvalue="450"/>
             </file>
         </folder>
     </folder>
 </filesystem>
-

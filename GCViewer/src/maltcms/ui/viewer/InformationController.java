@@ -20,8 +20,13 @@ import maltcms.ui.viewer.gui.Viewer1Panel;
 import maltcms.ui.viewer.gui.Viewer2Panel;
 import maltcms.ui.viewer.gui.Viewer3Panel;
 import maltcms.ui.viewer.gui.Viewer4Panel;
+import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.charts.MSSeries;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.openide.util.lookup.InstanceContent;
 
 /**
  *
@@ -34,10 +39,13 @@ public class InformationController {
     private AdditionalInformationPanel aip1;
     private AdditionalInformationPanel aip2;
     private TrippleChangeListener listener;
-    private String filename;
+    private IChromatogramDescriptor filename;
+    private IChromAUIProject icp;
 
-    public InformationController(String filename) {
-        this.filename = filename;
+    public InformationController(IChromAUIProject project, IChromatogramDescriptor descriptor) {
+//        System.out.println("Lookup of DataObject contained: "+lkp.lookupAll(Object.class));
+        this.filename = descriptor;
+        this.icp = project;
         this.listener = new TrippleChangeListener();
 
         this.hmp = new HeatMapPanel(this);
@@ -93,6 +101,10 @@ public class InformationController {
 
             };
             SwingUtilities.invokeLater(r);
+            if(this.icp!=null) {
+                MSSeries s = ChromatogramVisualizerTools.getMSSeries(p, this.filename);
+                this.icp.getLookup().lookup(InstanceContent.class).add(s);
+            }
             this.msp.changeMS(p);
             
         }
@@ -198,10 +210,11 @@ public class InformationController {
         AdditionalInformationTypes[] options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE};
         switch (pos) {
             case NorthWest:
-                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.HORIZONTAL_GLOBAL_TIC, AdditionalInformationTypes.HORIZONTAL_GLOBAL_VTIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_TIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_VTIC, AdditionalInformationTypes.HORIZONTAL_MAXMS, AdditionalInformationTypes.HORIZONTAL_MEANMS};
+//                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.HORIZONTAL_GLOBAL_TIC, AdditionalInformationTypes.HORIZONTAL_GLOBAL_VTIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_TIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_VTIC, AdditionalInformationTypes.HORIZONTAL_MAXMS, AdditionalInformationTypes.HORIZONTAL_MEANMS};
+                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.HORIZONTAL_GLOBAL_TIC, AdditionalInformationTypes.HORIZONTAL_LOCAL_TIC, AdditionalInformationTypes.HORIZONTAL_MAXMS, AdditionalInformationTypes.HORIZONTAL_MEANMS};
                 break;
             case SouthEast:
-                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.VERTICAL_GLOBAL_TIC, AdditionalInformationTypes.VERTICAL_GLOBAL_VTIC, AdditionalInformationTypes.VERTICAL_LOCAL_TIC, AdditionalInformationTypes.VERTICAL_LOCAL_VTIC, AdditionalInformationTypes.VERTICAL_MAXMS, AdditionalInformationTypes.VERTICAL_MEANMS, AdditionalInformationTypes.PEAKLIST};
+                options = new AdditionalInformationTypes[]{AdditionalInformationTypes.NONE, AdditionalInformationTypes.VERTICAL_GLOBAL_TIC, AdditionalInformationTypes.VERTICAL_LOCAL_TIC, AdditionalInformationTypes.VERTICAL_MAXMS, AdditionalInformationTypes.VERTICAL_MEANMS, AdditionalInformationTypes.PEAKLIST};
                 break;
             default:
                 break;
@@ -210,6 +223,10 @@ public class InformationController {
     }
 
     public String getFilename() {
+        return this.filename.getResourceLocation();
+    }
+
+    public IChromatogramDescriptor getChromatogramDescriptor() {
         return this.filename;
     }
 }

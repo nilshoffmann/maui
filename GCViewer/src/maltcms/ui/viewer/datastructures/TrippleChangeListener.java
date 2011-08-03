@@ -158,9 +158,9 @@ public class TrippleChangeListener implements PlotChangeListener {
                 this.p3.setDomainCrosshairVisible(true);
                 break;
             case NorthEast:
-                throw new UnsupportedOperationException("srsly? " + pos.toString());
+                throw new UnsupportedOperationException("Can not set plot position " + pos.toString());
             default:
-                throw new UnsupportedOperationException("srsly? " + pos.toString());
+                throw new UnsupportedOperationException("Can not set plot position " + pos.toString());
         }
     }
 

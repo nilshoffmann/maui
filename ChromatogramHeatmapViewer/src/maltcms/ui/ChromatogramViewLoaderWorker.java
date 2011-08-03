@@ -172,13 +172,6 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
 //								System.out.println(data[2][i]);
 //							}
         }
-        //hd.addSeries("breakpoints-"+f.getName(), bpo, 256);
-        //XYChart eicChart = new XYChart("eics",new String[]{"eics"},new Array[]{Array.factory(eicBins)},new Array[]{Array.factory(eicVals)},"m/z","intensity");
-        //CachingJFreeChart chart2 = new CachingJFreeChart(xyp2.create());
-        //JFrame jf3 = new JFrame();
-        //jf3.add(new ChartPanel(chart2,true));
-        //jf3.setVisible(true);
-        //jf3.pack();
         System.out.println("Creating sample table");
         double[] st = ImageTools.createSampleTable(256);
         System.out.println("Retrieving breakpoints");
@@ -221,29 +214,15 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
         if (f.getName() == null) {
             System.exit(-1);
         }
-//				        XYChart ticChart = new XYChart(f.getName(), new String[]{f.getName()}, new Array[]{fragment.getChild("total_intensity").getArray()}, "scan", "Intensity");
 
         Chromatogram1DChartProvider c1p = new Chromatogram1DChartProvider();
         
         XYPlot ticPlot = c1p.provide1DPlot(Arrays.asList(fragment),"total_intensity",true);
-//        XYLineAndShapeRenderer rend1 = new XYLineAndShapeRenderer(true, false);
-//        XYPlot ticPlot = new XYPlot(ticds, scanAxis, new NumberAxis("TIC intensity"), rend1);//ticChart.create();
         ticPlot.setDomainAxisLocation(AxisLocation.TOP_OR_RIGHT);
         ticPlot.setDomainCrosshairVisible(true);
         ticPlot.setDomainCrosshairLockedOnData(true);
         ticPlot.setDomainAxis(scanAxis);
 
-        
-
-
-        //scan index
-        //m/z axis
-        //ValueAxis va = heatmapPlot.getRangeAxis();
-//				        CombinedRangeXYPlot crxy = new CombinedRangeXYPlot(mzaxis);
-//				        crxy.setOrientation(PlotOrientation.HORIZONTAL);
-        //XYPlot ticHeatmapPlot = cdx;
-
-        //crxy.add(ticHeatmapPlot);
         XYLineAndShapeRenderer rend = new XYLineAndShapeRenderer();
         rend.setBaseShapesVisible(false);
         //new XYBarDataset(eicds,1.0d),

@@ -3,7 +3,7 @@
 <filesystem>
     <folder name="Actions">
         <folder name="ContainerNodeActions">
-            <folder name="net.sf.maltcms.chromaui.project.api.IContainer">
+            <folder name="net.sf.maltcms.chromaui.project.api.container.IContainer">
                 <file name="org-openide-actions-OpenAction.shadow">
                     <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-OpenAction.instance"/>
                     <attr name="position" intvalue="100"/>

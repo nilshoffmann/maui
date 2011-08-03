@@ -1,20 +1,11 @@
 package net.sf.maltcms.chromaui.project.spi.project;
 
-import java.awt.Image;
-import javax.swing.Action;
+import net.sf.maltcms.chromaui.project.spi.nodes.ChromAUIProjectNode;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
-import org.netbeans.spi.project.ui.support.CommonProjectActions;
-import org.openide.actions.PropertiesAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
-import org.openide.util.ImageUtilities;
-import org.openide.util.Lookup;
-import org.openide.util.Utilities;
-import org.openide.util.actions.SystemAction;
-import org.openide.util.lookup.Lookups;
-import org.openide.util.lookup.ProxyLookup;
 
 /**
  * Implements @see{LogicalViewProvider} for @see{ChromaProject}.

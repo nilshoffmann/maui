@@ -16,7 +16,7 @@ import org.openide.util.ImageUtilities;
  */
 public class SimpleChromAProjectInformation implements ProjectInformation {
 
-    public static final String ICON = "maltcms/ui/project/resources/maltcms.png";
+    public static final String ICON = "maltcms/ui/project/resources/MaltcmsWorkflowResult.png";
     private Icon i = ImageUtilities.image2Icon(ImageUtilities.loadImage(ICON));
     private SimpleChromAProject project;
 

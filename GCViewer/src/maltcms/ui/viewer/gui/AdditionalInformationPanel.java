@@ -137,22 +137,22 @@ public class AdditionalInformationPanel extends PanelE {
         XYPlot p = null;
         switch (this.currentInformation) {
             case HORIZONTAL_LOCAL_TIC:
-                p = ChromatogramVisualizerTools.createScanlinePlot(y, true, false, this.ic.getFilename());
+                p = ChromatogramVisualizerTools.createScanlinePlot(y, true, false, this.ic.getChromatogramDescriptor());
                 p = ChartTools.getPlot2(p);
                 this.cp = new ChartPanel(new JFreeChart(p));
                 break;
             case HORIZONTAL_LOCAL_VTIC:
-                p = ChromatogramVisualizerTools.createScanlinePlot(y, true, true, this.ic.getFilename());
+                p = ChromatogramVisualizerTools.createScanlinePlot(y, true, true, this.ic.getChromatogramDescriptor());
                 p = ChartTools.getPlot2(p);
                 this.cp = new ChartPanel(new JFreeChart(p));
                 break;
             case VERTICAL_LOCAL_TIC:
-                p = ChromatogramVisualizerTools.createScanlinePlot(x, false, false, this.ic.getFilename());
+                p = ChromatogramVisualizerTools.createScanlinePlot(x, false, false, this.ic.getChromatogramDescriptor());
                 p = ChartTools.getPlot3(p);
                 this.cp = new ChartPanel(new JFreeChart(p));
                 break;
             case VERTICAL_LOCAL_VTIC:
-                p = ChromatogramVisualizerTools.createScanlinePlot(x, false, true, this.ic.getFilename());
+                p = ChromatogramVisualizerTools.createScanlinePlot(x, false, true, this.ic.getChromatogramDescriptor());
                 p = ChartTools.getPlot3(p);
                 this.cp = new ChartPanel(new JFreeChart(p));
                 break;

@@ -22,11 +22,13 @@ import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import maltcms.datastructures.ms.ChromatogramFactory;
 import maltcms.ui.fileHandles.csv.CSV2TableLoader;
+import maltcms.ui.fileHandles.csv.CSVTableView;
 import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.datastructures.AdditionalInformationTypes;
 import maltcms.ui.viewer.events.PeakListLoadedAction;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import maltcms.ui.viewer.tools.FileFinder;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -43,7 +45,7 @@ import org.openide.util.Exceptions;
 public class AdditionalInformationFactory {
 
     public static JPanel createAdditionalPanel(InformationController ic, AdditionalInformationTypes type) {
-        String filename = ic.getFilename();
+        IChromatogramDescriptor filename = ic.getChromatogramDescriptor();
         JPanel panel = null;
         XYPlot p;
         switch (type) {
@@ -94,9 +96,10 @@ public class AdditionalInformationFactory {
         return panel;
     }
 
-    public static JPanel createPeakTable(XYPlot xyp, String peaklistfile,String filename) {
+    public static JPanel createPeakTable(XYPlot xyp, String peaklistfile, IChromatogramDescriptor filename) {
         InputStream is;
-        JPanel jp = new JPanel();
+        //CSVTableView csvtv = new CSVTableView();
+        JPanel jp = new CSVTableView();
         try {
             FileObject fo = FileUtil.createData(new File(peaklistfile));
             is = new FileInputStream(new File(peaklistfile));
@@ -110,7 +113,7 @@ public class AdditionalInformationFactory {
             plla.setTargetPanel(jp);
             plla.setTargetPlot(xyp);
             ChromatogramFactory cf = new ChromatogramFactory();
-            plla.setChromatogram(cf.createChromatogram2D(new FileFragment(new File(filename))));
+            plla.setChromatogram(cf.createChromatogram2D(new FileFragment(new File(filename.getResourceLocation()))));
             try {
                 plla.actionPerformed(new ActionEvent(f.get(), 0, "Model loaded"));
             } catch (InterruptedException ex) {

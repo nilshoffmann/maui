@@ -7,6 +7,7 @@ package net.sf.maltcms.chromaui.db.api.db4o;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
@@ -23,11 +24,18 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service=ICrudProviderFactory.class)
 public class DB4oCrudProviderFactory implements ICrudProviderFactory {
 
+    private WeakHashMap<URL, ICrudProvider> whm = new WeakHashMap<URL, ICrudProvider>();
+    
     @Override
     public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
-        DB4oCrudProvider dbcp;
+        ICrudProvider dbcp;
         try {
-            dbcp = new DB4oCrudProvider(new File(databaseLocation.toURI()), ic, cl);
+            if(whm.containsKey(databaseLocation)) {
+               dbcp = whm.get(databaseLocation); 
+            }else{
+                dbcp = new DB4oCrudProvider(new File(databaseLocation.toURI()), ic, cl);
+                whm.put(databaseLocation,dbcp);
+            }
             return dbcp;
         } catch (URISyntaxException ex) {
             Logger.getLogger(DB4oCrudProviderFactory.class.getName()).

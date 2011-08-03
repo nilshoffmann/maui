@@ -49,6 +49,7 @@ import cross.datastructures.tuple.Tuple2D;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import maltcms.db.similarities.MetaboliteSimilarity;
 
 /**
  * Will do the identification.
@@ -61,7 +62,7 @@ public class PeakIdentification {
     private MetaboliteQueryDB mqdb;
     private ObjectContainer oc;
     private boolean doSearch = true;
-    //private String dbFile = "/vol/maltcms/db/gmd/GMD_20100614_VAR5_FAME.db4o";
+//    private String dbFile = "/vol/maltcms/db/gmd/GMD_20100614_VAR5_FAME.db4o";
     private String dbFile = "/vol/maltcms/db/nist/NIST-EIMS-TMS.db4o";
     private double threshold = 0.0d;
     private int k = 1;
@@ -90,7 +91,8 @@ public class PeakIdentification {
 //        this.masqMasses.add(149);
     }
 
-    public Tuple2D<Array, Tuple2D<Double, IMetabolite>> getBest(final Array oms) {
+//    public Tuple2D<Array, Tuple2D<Double, IMetabolite>> getBest(final Array oms) {
+    public Tuple2D<Array, Tuple2D<Double, IMetabolite>> getBest(final Array omasses, final Array ointens) {
         if ((this.dbFile == null) || this.dbFile.isEmpty()) {
             this.dbAvailable = false;
         }
@@ -116,16 +118,18 @@ public class PeakIdentification {
                 dbMetabolites = this.oc.query(IMetabolite.class);
             }
             long s = System.currentTimeMillis();
-            final ArrayDouble.D1 massValues = new ArrayDouble.D1(oms.getShape()[0]);
-            final IndexIterator iter = massValues.getIndexIterator();
-            int c = 0;
-            while (iter.hasNext()) {
-                iter.setIntNext(c++);
-            }
-            Array ms = prepareMS(oms);
+//            final ArrayDouble.D1 massValues = new ArrayDouble.D1(oms.getShape()[0]);
+//            final IndexIterator iter = massValues.getIndexIterator();
+//            int c = 0;
+//            while (iter.hasNext()) {
+//                iter.setIntNext(c++);
+//            }
+//            Array ms = prepareMS(oms);
 
-            final Tuple2D<Array, Array> query = new Tuple2D<Array, Array>(
-                    massValues, ms);
+//            final Tuple2D<Array, Array> query = new Tuple2D<Array, Array>(
+//                    massValues, ms);
+             final Tuple2D<Array, Array> query = new Tuple2D<Array, Array>(
+                    omasses, ointens);
 
             // final MScanSimilarityPredicate ssp = new
             // MScanSimilarityPredicate(
@@ -145,8 +149,8 @@ public class PeakIdentification {
 
                 // if ((osRes != null) && (osRes.size() != 0)) {
                 final List<Tuple2D<Double, IMetabolite>> l = new ArrayList<Tuple2D<Double, IMetabolite>>();
-//                final MetaboliteSimilarity mss = new MetaboliteSimilarity();
-                DotProductMetaboliteSimilarity mss = new DotProductMetaboliteSimilarity();
+                final MetaboliteSimilarity mss = new MetaboliteSimilarity();
+//                DotProductMetaboliteSimilarity mss = new DotProductMetaboliteSimilarity();
                 // for (final IMetabolite im : osRes) {
 //                PrintStream bos = new PrintStream(new FileOutputStream("/vol/maltcms/pi.csv"));
 //                PrintStream oldOut = System.out;
@@ -210,7 +214,7 @@ public class PeakIdentification {
             }
 
             if (hits != null && hits.size() > 0) {
-                return new Tuple2D<Array, Tuple2D<Double, IMetabolite>>(ms, hits.get(0));
+                return new Tuple2D<Array, Tuple2D<Double, IMetabolite>>(omasses, hits.get(0));
             }
 
             System.out.println("identification took " + (System.currentTimeMillis()-s)/1000 + "s");

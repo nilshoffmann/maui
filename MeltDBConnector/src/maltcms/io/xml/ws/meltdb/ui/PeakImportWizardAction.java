@@ -80,7 +80,7 @@ public final class PeakImportWizardAction extends CallableSystemAction {
 
     @Override
     public String iconResource() {
-        return "maltcms/io/xml/ws/meltdb/meltdb-logo-32.png";
+        return "maltcms/io/xml/ws/meltdb/meltdb-logo-16.png";
     }
 
     public HelpCtx getHelpCtx() {

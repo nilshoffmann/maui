@@ -25,6 +25,7 @@ public class PaintScaleDialogAction extends AbstractAction {
     private Component parent = null;
     private int alpha, beta;
     private PaintScale ps = null;
+    private PaintScalePanel psp = null;
 
     public PaintScaleDialogAction(String name, int alpha, int beta, PaintScale ps) {
         super(name);
@@ -60,7 +61,9 @@ public class PaintScaleDialogAction extends AbstractAction {
     }
 
     public PaintScale showPaintScaleDialog() {
-        final PaintScalePanel psp = new PaintScalePanel(this.ps,this.alpha, this.beta);
+        if(this.psp==null) {
+            this.psp = new PaintScalePanel(this.ps,this.alpha, this.beta);
+        }
         int val = JOptionPane.showConfirmDialog(this.parent, psp);
         if (val == JOptionPane.OK_OPTION) {
             return psp.getPaintScale();

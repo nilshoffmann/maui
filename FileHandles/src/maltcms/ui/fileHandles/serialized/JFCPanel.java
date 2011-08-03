@@ -111,7 +111,8 @@ public final class JFCPanel extends JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane(this.chartPanel);
         jToolBar2 = new javax.swing.JToolBar();
-        jLabel1 = new javax.swing.JLabel();
+        xAxisType = new javax.swing.JComboBox();
+        yAxisType = new javax.swing.JComboBox();
         jComboBox1 = new javax.swing.JComboBox();
         jToggleButton1 = new javax.swing.JToggleButton();
 
@@ -122,8 +123,21 @@ public final class JFCPanel extends JPanel {
         jToolBar2.setRollover(true);
         jToolBar2.setOpaque(false);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(JFCPanel.class, "JFCPanel.jLabel1.text")); // NOI18N
-        jToolBar2.add(jLabel1);
+        xAxisType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Number", "Log","Date","Category" }));
+        xAxisType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xAxisTypeActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(xAxisType);
+
+        yAxisType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Number", "Log", "Date", "Category" }));
+        yAxisType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yAxisTypeActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(yAxisType);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Lines", "Lines and Shapes", "Shapes", "Bars", "Clustered Bars" }));
         jComboBox1.setActionCommand(org.openide.util.NbBundle.getMessage(JFCPanel.class, "JFCPanel.jComboBox1.actionCommand")); // NOI18N
@@ -261,12 +275,31 @@ public final class JFCPanel extends JPanel {
             this.chartPanel.getChart().getLegend().setVisible(false);
         }
     }//GEN-LAST:event_jToggleButton1ActionPerformed
+
+    private void xAxisTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xAxisTypeActionPerformed
+        String selection = (String)xAxisType.getSelectedItem();
+        if(selection.equals("Number")) {
+
+        }else if(selection.equals("Log")) {
+
+        }else if(selection.equals("Date")) {
+
+        }else if(selection.equals("Category")) {
+            
+        }
+    }//GEN-LAST:event_xAxisTypeActionPerformed
+
+    private void yAxisTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yAxisTypeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_yAxisTypeActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JComboBox xAxisType;
+    private javax.swing.JComboBox yAxisType;
     // End of variables declaration//GEN-END:variables
 
     public JToolBar getToolBar() {

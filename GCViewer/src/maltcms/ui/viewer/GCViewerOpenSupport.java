@@ -32,7 +32,7 @@ public class GCViewerOpenSupport extends OpenSupport implements OpenCookie, Clos
         CompositeConfiguration cfg = new CompositeConfiguration();
         cfg.addConfiguration(new SystemConfiguration());
         try {
-            PropertiesConfiguration pcfg = new PropertiesConfiguration(JFreeChartViewer.class.getClassLoader().getResource("cfg/default.properties"));
+            PropertiesConfiguration pcfg = new PropertiesConfiguration(GCViewerOpenSupport.class.getClassLoader().getResource("cfg/default.properties"));
             cfg.addConfiguration(pcfg);
             Factory.getInstance().configure(cfg);
         } catch (ConfigurationException e) {
@@ -49,8 +49,8 @@ public class GCViewerOpenSupport extends OpenSupport implements OpenCookie, Clos
 
 
         CDFDataObject dobj = (CDFDataObject) entry.getDataObject();
-        System.out.println("filename: " + dobj.getPrimaryFile().getPath());
-        GCViewerTopComponent jtc = new GCViewerTopComponent(dobj.getPrimaryFile().getPath());
+//        System.out.println("filename: " + dobj.getPrimaryFile().getPath());
+        GCViewerTopComponent jtc = new GCViewerTopComponent(dobj);
         return jtc;
     }
 }

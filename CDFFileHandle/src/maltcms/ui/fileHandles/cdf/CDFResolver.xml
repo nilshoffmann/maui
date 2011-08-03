@@ -10,6 +10,10 @@ and open the template in the editor.
         <ext name="CDF"/>
         <ext name="nc"/>
         <ext name="NC"/>
+        <ext name="mzxml"/>
+        <ext name="mzXML"/>
+        <ext name="mzML"/>
+        <ext name="mzData"/>
         <resolver mime="application/x-cdf"/>
     </file>
 </MIME-resolver>

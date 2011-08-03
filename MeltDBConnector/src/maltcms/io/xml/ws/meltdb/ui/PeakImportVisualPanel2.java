@@ -4,13 +4,69 @@
  */
 package maltcms.io.xml.ws.meltdb.ui;
 
+import java.io.IOException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import javax.swing.BorderFactory;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import maltcms.io.xml.ws.meltdb.MeltDBSession;
+import maltcms.io.xml.ws.meltdb.WebServiceClient;
+import org.openide.util.Exceptions;
 
-public final class PeakImportVisualPanel2 extends JPanel {
+public final class PeakImportVisualPanel2 extends JPanel implements ListSelectionListener{
+
+    private String userName;
+    private char[] password;
+    private JList projectsList;
+    private String activeProject;
+    public static final String PROP_WEBSERVICECLIENT = "WEBSERVICECLIENT";
+    public static final String PROP_ACTIVE_PROJECT = "ACTIVE_PROJECT";
 
     /** Creates new form PeakImportVisualPanel2 */
     public PeakImportVisualPanel2() {
         initComponents();
+        //        KeyStore ks;
+        URL url = getClass().getResource("/maltcms/io/xml/ws/meltdb/meltdbcacerts");
+        //        Logger.getLogger(getClass().getName()).log(Level.INFO, "Loading truststore from "+url);
+        //        System.setProperty("javax.net.ssl.keyStore", url.getPath());
+        //        //System.setProperty("jjavax.net.ssl.keyStoreType", "pkcs12");
+        //        System.setProperty("javax.net.ssl.keyStorePassword", "");
+        //        System.setProperty("javax.net.ssl.trustStore", url.getPath());
+        //        System.setProperty("javax.net.ssl.trustStorePassword", "");
+
+        KeyStore ks;
+        try {
+            ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(url.openStream(), null);
+            SSLContext context = SSLContext.getInstance("TLS");
+            TrustManagerFactory tmf =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(ks);
+            //            X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+            //            SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
+            context.init(null, tmf.getTrustManagers(), null);
+            SSLContext.setDefault(context);//getSocketFactory();
+        } catch (KeyManagementException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (CertificateException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (KeyStoreException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     @Override
@@ -18,6 +74,44 @@ public final class PeakImportVisualPanel2 extends JPanel {
         return "Select Project";
     }
 
+    public void setUserName(String name) {
+        this.userName = name;
+    }
+
+    public void setPassword(char[] password) {
+        this.password = password;
+        if (this.userName != null) {
+            initMeltDBSession(password);
+        }
+    }
+
+    private WebServiceClient initMeltDBSession(char[] password) {
+        MeltDBSession ms = new MeltDBSession(userName, String.valueOf(password));
+        WebServiceClient wsc = new WebServiceClient(ms);
+        add(wsc.getControlPanel());
+        projectsList = wsc.getProjectsList();
+        projectsList.addListSelectionListener(this);
+        JScrollPane plsp = new JScrollPane(projectsList);
+        plsp.setBorder(BorderFactory.createTitledBorder("Projects"));
+        add(plsp);
+        //
+        //            JScrollPane elsp = new JScrollPane(getExperimentsList());
+        //            elsp.setBorder(BorderFactory.createTitledBorder("Experiments"));
+        //            this.panel.add(elsp);
+        //            JScrollPane clsp = new JScrollPane(getChromatogramsList());
+        //            clsp.setBorder(BorderFactory.createTitledBorder("Chromatograms"));
+        //            this.panel.add(clsp);
+        //        add(wsc.getPanel(), BorderLayout.CENTER);
+        //        jf.setVisible(true);
+        //        jf.pack();
+        revalidate();
+        firePropertyChange(PROP_WEBSERVICECLIENT, wsc, wsc);
+        return wsc;
+    }
+
+//    public JList getProjectsList() {
+//
+//    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -26,36 +120,15 @@ public final class PeakImportVisualPanel2 extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox();
-        jLabel1 = new javax.swing.JLabel();
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PeakImportVisualPanel2.class, "PeakImportVisualPanel2.jLabel1.text")); // NOI18N
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox1, 0, 264, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(257, Short.MAX_VALUE))
-        );
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
     }// </editor-fold>//GEN-END:initComponents
+
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        String oldValue = activeProject;
+        activeProject = (String)projectsList.getSelectedValue();
+        firePropertyChange(PROP_ACTIVE_PROJECT,oldValue,projectsList.getSelectedValue());
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

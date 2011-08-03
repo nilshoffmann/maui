@@ -6,12 +6,12 @@ package maltcms.ui.viewer.datastructures;
 
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
-import cross.exception.ResourceNotAvailableException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.IndexIterator;
@@ -22,12 +22,12 @@ import ucar.ma2.IndexIterator;
  */
 public class TicProvider {
 
-    private static Map<String, TicProvider> statics = new HashMap<String, TicProvider>();
+    private static Map<IChromatogramDescriptor, TicProvider> statics = new HashMap<IChromatogramDescriptor, TicProvider>();
     private IFileFragment ff;
     private IVariableFragment tic = null;
     private IVariableFragment vtic = null;
 
-    public static TicProvider getInstance(String filename) throws IOException {
+    public static TicProvider getInstance(IChromatogramDescriptor filename) throws IOException {
         if (statics.containsKey(filename)) {
             return statics.get(filename);
         }
@@ -36,12 +36,13 @@ public class TicProvider {
         return tmp;
     }
 
-    private TicProvider(String filename) throws IOException {
+    private TicProvider(IChromatogramDescriptor filename) throws IOException {
         this.ff = ChromatogramVisualizerTools.getFragments(filename).getFirst();
+        loadTotalIntensity();
     }
 
     private void loadTotalIntensity() {
-        this.ff.getChild("total_intensity").setIndex(this.ff.getChild("second_column_scan_index"));
+        //this.ff.getChild("total_intensity").setIndex(this.ff.getChild("second_column_scan_index"));
         this.tic = ff.getChild("total_intensity");
     }
 

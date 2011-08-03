@@ -4,6 +4,7 @@
  */
 package maltcms.ui.fileHandles.csv;
 
+import cross.tools.MathTools;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -44,7 +45,7 @@ import org.openide.util.NbBundle;
 import org.openide.util.lookup.Lookups;
 //import org.openide.util.ImageUtilities;
 
-public final class CSVTableView extends JPanel implements MultiViewElement,ListSelectionListener, MouseListener {
+public final class CSVTableView extends JPanel implements MultiViewElement, ListSelectionListener, MouseListener {
 
     private static CSVTableView instance;
     /** path to the icon used by the component and its open action */
@@ -58,19 +59,9 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
     private int activeColumn = -1;
     private JToolBar toolbar = new JToolBar();
     private MultiViewElementCallback callback = null;
+    private boolean cellSelection = false;
 
     public CSVTableView() {
-        Action doNothing = new AbstractAction()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    //do nothing
-                }
-            };
-
-        getActionMap().put("doNothing", doNothing);
-
         initComponents();
         setName(NbBundle.getMessage(CSVTableView.class, "CTL_CSV2ListTopComponent"));
         setToolTipText(NbBundle.getMessage(CSVTableView.class, "HINT_CSV2ListTopComponent"));
@@ -92,7 +83,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
     }
 
     public void setTableModel(TableModel tm) {
-        if(tm == null) {
+        if (tm == null) {
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Received table model was null!");
             return;
         }
@@ -108,9 +99,16 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == 3) {
                     activeColumn = jTable1.getTableHeader().columnAtPoint(e.getPoint());
-                    jTable1.setRowSelectionAllowed(false);
+                    int[] selectedRows = jTable1.getSelectedRows();
+                    int minRow = 0;//
+                    int maxRow = jTable1.getRowCount() - 1;//
+                    if (cellSelection) {
+                        jTable1.setRowSelectionAllowed(true);
+                        minRow = MathTools.min(selectedRows);
+                        maxRow = MathTools.max(selectedRows);
+                    }
                     jTable1.setColumnSelectionInterval(activeColumn, activeColumn);
-                    jTable1.setRowSelectionInterval(0, jTable1.getRowCount()-1);
+                    jTable1.setRowSelectionInterval(minRow, maxRow);
                     createAndShowPopupMenu(e);
                 }
             }
@@ -178,8 +176,23 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jToolBar1 = new javax.swing.JToolBar();
+        jToggleButton1 = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+
+        jToolBar1.setRollover(true);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton1, org.openide.util.NbBundle.getMessage(CSVTableView.class, "CSVTableView.jToggleButton1.text")); // NOI18N
+        jToggleButton1.setFocusable(false);
+        jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jToggleButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jToggleButton1);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -198,16 +211,26 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        this.cellSelection = jToggleButton1.isSelected();
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -275,7 +298,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
                             columnsToPlot.add(col);
                             jTable1.getColumnModel().getColumn(col).setCellRenderer(new ColorColumnRenderer(new Color(238, 187, 0, 128)));
                         }
-                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
                 //selected rows
@@ -287,7 +310,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
                             public void actionPerformed(ActionEvent ae) {
                                 jTable1.getColumnModel().getColumn(Integer.valueOf(col)).setCellRenderer(new ColorColumnRenderer(Color.WHITE));
                                 columnsToPlot.remove(Integer.valueOf(col));
-                                jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                                jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                             }
                         });
                         break;
@@ -326,7 +349,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
                     public void actionPerformed(ActionEvent ae) {
                         domainColumn = jTable1.getSelectedColumn();
                         jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 0, 0, 128)));
-                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
 
@@ -339,7 +362,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
                     public void actionPerformed(ActionEvent ae) {
                         jTable1.getColumnModel().getColumn(domainColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
                         domainColumn = -1;
-                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
             }
@@ -363,7 +386,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
                     public void actionPerformed(ActionEvent ae) {
                         jTable1.getColumnModel().getColumn(labelColumn).setCellRenderer(new ColorColumnRenderer(new Color(255, 255, 255, 128)));
                         labelColumn = -1;
-                        jfctc.setChart(buildChart(labelColumn,domainColumn, columnsToPlot, jTable1.getSelectedRows()));
+                        jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                     }
                 });
             }
@@ -382,10 +405,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
     }
 
     public JFreeChart buildChart(int labelColumn, int domainColumn, int zValuesColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
-        if(labelColumn!=-1 && zValuesColumn==-1) {
-            return buildChartWithLabels(labelColumn,domainColumn,selectedColumns1, selectedRows);
+        if (labelColumn != -1 && zValuesColumn == -1) {
+            return buildChartWithLabels(labelColumn, domainColumn, selectedColumns1, selectedRows);
         }
-        if(labelColumn!=-1 && zValuesColumn!=-1) {
+        if (labelColumn != -1 && zValuesColumn != -1) {
             return buildBubbleChartWithLabels(labelColumn, zValuesColumn, domainColumn, selectedColumns1, selectedRows);
         }
         return buildChart(selectedColumns1, selectedRows, domainColumn);
@@ -403,10 +426,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
 
         for (int i = 0; i < selectedColumns.size(); i++) {
             for (String label : labelToIndex.keySet()) {
-                xysc.addSeries(new XYSeries(label+"-"+jTable1.getColumnName(selectedColumns.get(i)), true, true));
+                xysc.addSeries(new XYSeries(label + "-" + jTable1.getColumnName(selectedColumns.get(i)), true, true));
             }
             for (int j = 0; j < selectedRows.length; j++) {
-                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString()+"-"+jTable1.getColumnName(selectedColumns.get(i)));
+                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString() + "-" + jTable1.getColumnName(selectedColumns.get(i)));
                 if (domainColumn != -1) {
                     System.out.println("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
@@ -457,7 +480,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
         HashMap<String, Integer> placeMap = new LinkedHashMap<String, Integer>();
         int cnt = 0;
         for (String s : hm) {
-            System.out.println("Label: "+s);
+            System.out.println("Label: " + s);
             placeMap.put(s, cnt++);
         }
         return placeMap;
@@ -473,10 +496,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
 
         for (int i = 0; i < selectedColumns.size(); i++) {
             for (String label : labelToIndex.keySet()) {
-                xysc.addSeries(new XYSeries(label+"-"+jTable1.getColumnName(selectedColumns.get(i)), true, true));
+                xysc.addSeries(new XYSeries(label + "-" + jTable1.getColumnName(selectedColumns.get(i)), true, true));
             }
             for (int j = 0; j < selectedRows.length; j++) {
-                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString()+"-"+jTable1.getColumnName(selectedColumns.get(i)));
+                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString() + "-" + jTable1.getColumnName(selectedColumns.get(i)));
                 if (domainColumn != -1) {
                     System.out.println("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
@@ -568,11 +591,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
 //        }
         return new Action[]{new AbstractAction() {
 
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                
-            }
-        }};
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                }
+            }};
     }
 
     @Override
@@ -582,22 +604,24 @@ public final class CSVTableView extends JPanel implements MultiViewElement,ListS
 
     @Override
     public void componentShowing() {
-        callback.updateTitle("Table view");
+        if (callback != null) {
+            callback.updateTitle("Table view");
+        }
     }
 
     @Override
     public void componentHidden() {
-        
     }
 
     @Override
     public void componentActivated() {
-        callback.updateTitle("Table view");
+        if (callback != null) {
+            callback.updateTitle("Table view");
+        }
     }
 
     @Override
     public void componentDeactivated() {
-        
     }
 
     @Override

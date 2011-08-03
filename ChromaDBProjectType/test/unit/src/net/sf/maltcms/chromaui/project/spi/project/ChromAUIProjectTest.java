@@ -8,21 +8,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
-import net.sf.maltcms.chromaui.project.api.IContainer;
-import net.sf.maltcms.chromaui.project.api.types.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.types.ChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.TreatmentGroupContainer;
-import net.sf.maltcms.chromaui.project.api.types.TreatmentGroup;
+import junit.framework.TestCase;
+import net.sf.maltcms.chromaui.project.api.annotations.IAnnotation;
+import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.spi.container.TreatmentGroupContainer;
+import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.netbeans.junit.NbModuleSuite;
+import org.netbeans.junit.NbModuleSuite.Configuration;
 import org.openide.util.Exceptions;
 
 /**
  *
  * @author hoffmann
  */
-public class ChromAUIProjectTest {
+public class ChromAUIProjectTest extends TestCase{
 
     public ChromAUIProjectTest() {
     }
@@ -35,6 +39,11 @@ public class ChromAUIProjectTest {
     public static void tearDownClass() throws Exception {
     }
 
+    public static junit.framework.Test suite() {
+        Configuration config = NbModuleSuite.createConfiguration(ChromAUIProjectTest.class);
+        return NbModuleSuite.create(config);//ChromAUIProjectTest.class);
+   }
+    
     /**
      * Test of addContainer method, of class ChromAUIProject.
      */
@@ -55,6 +64,7 @@ public class ChromAUIProjectTest {
 
             cap = new ChromAUIProject();
             cap.activate(f.toURI().toURL());
+            cap.getCrudProvider();
 //            ChromatogramContainer icc = new ChromatogramContainer();
             ChromatogramDescriptor gcd1 = new ChromatogramDescriptor();
             gcd1.setResourceLocation(new File("test/a/chrom1.cdf").getAbsolutePath());
@@ -67,13 +77,20 @@ public class ChromAUIProjectTest {
 //            icc.add(gcd1, gcd2);
 
             TreatmentGroupContainer icg = new TreatmentGroupContainer();
-            TreatmentGroup tgd = new TreatmentGroup("Group A");
+            TreatmentGroupDescriptor tgd = new TreatmentGroupDescriptor("Group A");
             gcd1.setTreatmentGroup(tgd);
             gcd2.setTreatmentGroup(tgd);
+            
+            Species sp1 = new Species();
+            sp1.setOntology("AREGA AREGA");
+            sp1.setPubmedId("231908123");
+            IAnnotation sa1 = new SpeciesAnnotation();
+            sa1.setAnnotation(sp1);
+            icg.addAnnotations(sa1.getClass(), sa1); 
 //            tgd.add(gcd1, gcd2);
             icg.add(gcd1,gcd2);
 
-            TreatmentGroup tgd2 = new TreatmentGroup("Group B");
+            TreatmentGroupDescriptor tgd2 = new TreatmentGroupDescriptor("Group B");
             gcd3.setTreatmentGroup(tgd2);
             gcd4.setTreatmentGroup(tgd2);
 //            tgd2.add(gcd3, gcd4);
@@ -98,6 +115,9 @@ public class ChromAUIProjectTest {
                 for (IChromatogramDescriptor descr : cont.get()) {
                     System.out.println("TreatmentGroup has name: " + descr.getTreatmentGroup().getName());
                     System.out.println(descr);
+                }
+                for (IAnnotation sa:cont.getAnnotations(SpeciesAnnotation.class)) {
+                    System.out.println(sa.toString());
                 }
             }
         }catch(IOException ioex) {

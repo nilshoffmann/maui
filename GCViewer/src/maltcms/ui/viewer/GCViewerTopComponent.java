@@ -6,11 +6,19 @@ package maltcms.ui.viewer;
 
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
+import net.sf.maltcms.chromaui.project.api.types.GCGC;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.types.TOFMS;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.util.NotImplementedException;
+import org.openide.loaders.DataObject;
+import org.openide.util.Utilities;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.CloneableTopComponent;
 
 /**
@@ -25,25 +33,50 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "GCViewerTopComponent";
     private InformationController ic = null;
+    private DataObject file = null;
+    private IChromAUIProject project = null;
+    private InstanceContent content = new InstanceContent();
 
     public GCViewerTopComponent() {
         this(null);
     }
 
-    public GCViewerTopComponent(String filename) {
-        if (filename == null) {
-            throw new NotImplementedException("Filename must be not null!");
-        }
-        this.ic = new InformationController(filename);
+    public GCViewerTopComponent(DataObject filename) {
+        init(filename);
+    }
 
-        initComponents();
-        setName(NbBundle.getMessage(GCViewerTopComponent.class, "CTL_GCViewerTopComponent"));
-        setToolTipText(NbBundle.getMessage(GCViewerTopComponent.class, "HINT_GCViewerTopComponent"));
+    private void init(DataObject dobj) {
+        associateLookup(new AbstractLookup(content));
+        IChromAUIProject icp = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+        IChromatogramDescriptor descriptor = Utilities.actionsGlobalContext().lookup(IChromatogramDescriptor.class);
+        if (icp != null) {
+            this.project = icp;
+            content.add(this.project);
+        }
+        if( descriptor == null) {
+            descriptor = DescriptorFactory.newChromatogramDescriptor();
+            descriptor.setResourceLocation(dobj.getPrimaryFile().getPath());
+            descriptor.setDetectorType(new TOFMS());
+            descriptor.setSeparationType(new GCGC());
+            descriptor.setDisplayName(dobj.getPrimaryFile().getName());
+        }
+        System.out.println("Found project: " + icp + " in active nodes lookup!");
+        System.out.println("Found descriptor: " + descriptor + " in active nodes lookup!");
+        if (dobj != null) {
+            this.file = dobj;
+            content.add(this.file);
+            setDisplayName(NbBundle.getMessage(GCViewerTopComponent.class, "CTL_GCViewerTopComponent") + " " + dobj.getPrimaryFile().getName());
+            this.ic = new InformationController(icp,descriptor);
+            initComponents();
+            setName(NbBundle.getMessage(GCViewerTopComponent.class, "CTL_GCViewerTopComponent"));
+            setToolTipText(dobj.getPrimaryFile().getPath());
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
 
-        this.mainPanel.setVisible(true);
-        this.view4Panel.setSelected(true);
-        this.view4Panel();
+            this.mainPanel.setVisible(true);
+            this.view4Panel.setSelected(true);
+            this.view4Panel();
+//            this.mainPanel.add(this.ic.get1Panel());
+        }
     }
 
     private void view4Panel() {
@@ -209,7 +242,7 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
      */
     public static synchronized GCViewerTopComponent getDefault() {
         if (instance == null) {
-            instance = new GCViewerTopComponent("");
+            instance = new GCViewerTopComponent();
         }
         return instance;
     }
@@ -235,7 +268,7 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
@@ -252,6 +285,12 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
+//        if (this.project != null) {
+//            p.setProperty("projectLocation", this.project.getLocation().getPath());
+//        }
+//        if (this.file != null) {
+//            p.setProperty("fileLocation", this.file.getPrimaryFile().getPath());
+//        }
         // TODO store your settings
     }
 
@@ -265,6 +304,31 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
 
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
+//        String projectLocation = p.getProperty("projectLocation");
+//        if (projectLocation != null) {
+//            FileObject projectToBeOpened = FileUtil.toFileObject(new File(projectLocation));
+//            Project prj;
+//            try {
+//                prj = ProjectManager.getDefault().findProject(projectToBeOpened);
+//                Project[] array = new Project[1];
+//                array[0] = prj;
+//                OpenProjects.getDefault().open(array, false);
+//                this.project = (IChromAUIProject) prj;
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } catch (IllegalArgumentException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
+//
+//        }
+//        String fileLocation = p.getProperty("fileLocation");
+//        if (fileLocation != null) {
+//            try {
+//                init(DataObject.find(FileUtil.toFileObject(new File(fileLocation))));
+//            } catch (DataObjectNotFoundException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
+//        }
         // TODO read your settings according to their version
     }
 

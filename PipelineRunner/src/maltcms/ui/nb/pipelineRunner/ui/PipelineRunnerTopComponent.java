@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -43,12 +44,12 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "PipelineRunnerTopComponent";
+    private Process activeProcess = null;
     private File cfg = null;
-    private File inputDir = new File("/Users/nilshoffmann/Documents/maltcms/data/carbon/carbon");
-    private File outputDir = new File("/Users/nilshoffmann/Documents/maltcms/output/chromuitest");
+    private File inputDir = null;
+    private File outputDir = null;
     private File workingDirectory = null;
     private String files = "*.cdf";
-    private Process activeProcess = null;
 
     private Process getActiveProcess() {
         return activeProcess;
@@ -58,7 +59,6 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         this.activeProcess = p;
     }
 //    private LocalHostMaltcmsProcess lhmp = null;
-
     public PipelineRunnerTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(PipelineRunnerTopComponent.class, "CTL_PipelineRunnerTopComponent"));
@@ -78,7 +78,7 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         super.open();
     }
 
-    public void setUserConfiguration(File cfg) {
+    public void addUserConfiguration(File cfg) {
         this.cfg = cfg;
         if (this.cfg != null) {
             Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Set configuration: Configuration: " + cfg.getAbsolutePath());
@@ -89,7 +89,50 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
 
     }
 
+    public void submitViaMpaxs() {
+        //Impaxs server = Lookup.getDefault().lookup(Impaxs.class);//new MpaxsImpl();
+        //server.startMasterServer();
+        //server.addJobEventListener(this);
+//        long partNumber = 30;
+//        BigInteger partSize = testUntil.divide(BigInteger.valueOf(partNumber));
+//        System.out.println("Number of Fragments: " + partNumber);
+//        System.out.println("Fragment Size: " + partSize.doubleValue());
+//        BigInteger from = BigInteger.valueOf(2);
+//        BigInteger to = partSize;
+//        for (int i = 0; i <= partNumber; i++) {
+//            Job job = new Job(new Part(from, to, toTest));
+//            server.submitJob(job);
+//            numberOfSubmittedJobs++;
+//            from = to;
+//            to = to.add(partSize);
+//        }
+    }
+
     public void submit() {
+        if (inputDir == null) {
+            JFileChooser jfc = new JFileChooser();
+            jfc.setDialogTitle("Select Input Directory");
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int result = jfc.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                inputDir = jfc.getSelectedFile();
+            } else {
+                Exceptions.printStackTrace(new RuntimeException("No input directory defined, aborting!"));
+                return;
+            }
+        }
+        if (outputDir == null) {
+            JFileChooser jfc = new JFileChooser();
+            jfc.setDialogTitle("Select Output Base Directory");
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int result = jfc.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                outputDir = jfc.getSelectedFile();
+            } else {
+                Exceptions.printStackTrace(new RuntimeException("No output directory defined, aborting!"));
+                return;
+            }
+        }
         try {
             MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(workingDirectory, inputDir, outputDir, cfg, new String[]{files});
             System.out.println("Java.home: " + System.getProperty("java.home"));
@@ -99,7 +142,7 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
             //final NbProcessDescriptor desc = new NbProcessDescriptor(java.getAbsolutePath(), mlhe.buildCommandLine());
             final ProcessBuilder pb = new ProcessBuilder(mlhe.buildCommandLine());
             pb.directory(workingDirectory);
-            System.out.println("Process: "+pb.command()+" workingDirectory: "+pb.directory());
+            System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.directory());
             pb.redirectErrorStream(true);
 
 
@@ -169,7 +212,8 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        contentPanel = new javax.swing.JPanel();
 
         jToolBar1.setRollover(true);
 
@@ -198,15 +242,16 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
             }
         });
         jToolBar1.add(jButton2);
+        jToolBar1.add(jSeparator1);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
+        contentPanel.setLayout(contentPanelLayout);
+        contentPanelLayout.setHorizontalGroup(
+            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 412, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        contentPanelLayout.setVerticalGroup(
+            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 275, Short.MAX_VALUE)
         );
 
@@ -214,15 +259,15 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+            .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -283,9 +328,10 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         }
     }//GEN-LAST:event_jButton2ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel contentPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 
@@ -379,4 +425,9 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
     protected String preferredID() {
         return PREFERRED_ID;
     }
+
+//    @Override
+//    public void jobChanged(IJob job) {
+//        System.out.println("Received news from job " + job);
+//    }
 }

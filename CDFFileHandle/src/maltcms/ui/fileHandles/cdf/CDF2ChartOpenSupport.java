@@ -7,11 +7,13 @@ package maltcms.ui.fileHandles.cdf;
 import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IFileFragment;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import maltcms.ui.fileHandles.serialized.JFCTopComponent;
+import org.jfree.chart.JFreeChart;
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.loaders.DataObject;
@@ -53,7 +55,7 @@ public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, Clo
 
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
-        final List<IFileFragment> fragments = new ArrayList<IFileFragment>();
+        final HashSet<IFileFragment> fragments = new LinkedHashSet<IFileFragment>();
         for (CDFDataObject dataObject : auxDataObjects) {
             fragments.add(new FileFragment(new File(dataObject.getPrimaryFile().getPath())));
         }
@@ -61,7 +63,13 @@ public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, Clo
 
         Chromatogram1DChartProvider c1d = new Chromatogram1DChartProvider();
         JFCTopComponent jtc = new JFCTopComponent();
-        jtc.setChart(c1d.provideChart(fragments));
+        JFreeChart jfc = c1d.provideChart(new LinkedList<IFileFragment>(fragments));
+        if(jfc==null) {
+            
+//            throw new IllegalArgumentException("Chart creation was cancelled or failed!");
+            return null;
+        }
+        jtc.setChart(jfc);
         return jtc;
 
 

@@ -11,50 +11,60 @@ import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
-@OptionsPanelController.SubRegistration(location = "ExecutionSupport",
-displayName = "#AdvancedOption_DisplayName_LocalMaltcmsExecution",
+@OptionsPanelController.TopLevelRegistration(
+categoryName = "#AdvancedOption_DisplayName_LocalMaltcmsExecution",
 keywords = "#AdvancedOption_Keywords_LocalMaltcmsExecution",
-keywordsCategory = "Execution Support/LocalMaltcmsExecution")
+keywordsCategory = "Maui Settings/LocalMaltcmsExecution",
+        iconBase = "maltcms/ui/nb/pipelineRunner/maltcms-pipeline-runner.png")
 public final class LocalMaltcmsExecutionOptionsPanelController extends OptionsPanelController {
 
     private LocalMaltcmsExecutionPanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
+    @Override
     public void update() {
         getPanel().load();
         changed = false;
     }
 
+    @Override
     public void applyChanges() {
         getPanel().store();
         changed = false;
     }
 
+    @Override
     public void cancel() {
         // need not do anything special, if no changes have been persisted yet
     }
 
+    @Override
     public boolean isValid() {
         return getPanel().valid();
     }
 
+    @Override
     public boolean isChanged() {
         return changed;
     }
 
+    @Override
     public HelpCtx getHelpCtx() {
         return null; // new HelpCtx("...ID") if you have a help set
     }
 
+    @Override
     public JComponent getComponent(Lookup masterLookup) {
         return getPanel();
     }
 
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener l) {
         pcs.addPropertyChangeListener(l);
     }
 
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener l) {
         pcs.removePropertyChangeListener(l);
     }

@@ -113,11 +113,14 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
         Class<?> c = null;
         for (String s : col) {
             final String val = replaceNAs(s);
-            
+
+            if(c!=null && (c.isAssignableFrom(String.class))) {
+                return c;
+            }
             try {
                 Long.valueOf(val);
                 System.out.println("Class for column "+colName+" is: Long");
-                return Long.class;
+                c = Long.class;
 //                break;
             } catch (NumberFormatException nfe) {
             }
@@ -126,18 +129,18 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
                 Double.valueOf(val);
 //                c = Double.class;
                 System.out.println("Class for column "+colName+" is: Double");
-                return Double.class;
+                c =  Double.class;
             } catch (NumberFormatException nfe) {
             }
 
             if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false")) {
 //                c = Boolean.class;
                 System.out.println("Class for column "+colName+" is: Boolean");
-                return Boolean.class;
+                c = Boolean.class;
             } else {
 //                c = String.class;
                 System.out.println("Class for column "+colName+" is: String");
-                return String.class;
+                c = String.class;
             }
 //            break;
         }
@@ -165,7 +168,7 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
     }
 
     private Vector<?> convertColumn(Vector<String> v, Class<?> c) {
-        System.out.println("Class for column is: "+c.getClass().getName());
+        System.out.println("Class for column is: "+c.getName());
         if (c.equals(Long.class) || c.equals(Integer.class)) {
             System.out.println("Converting to Long/Integer");
             Vector<Long> ret = new Vector<Long>();

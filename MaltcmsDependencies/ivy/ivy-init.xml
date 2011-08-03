@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ivy-init" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property file="ivy/ivy.properties"/>
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	
+    <target name="create-ivy-dir" unless="${ivy.jar.dir}">
+        <mkdir dir="${ivy.jar.dir}" />
+    </target>
+
+    <target name="check-ivy" unless="${ivy.exists}" depends="create-ivy-dir">
+        <available property="ivy.exists" file="${ivy.jar.file}" />
+    </target>
+    <target name="ivy-clean" depends="load-ivy">
+        <ivy:cleancache/>
+    </target>
+	
+    <target name="download-ivy" unless="${ivy.exists}">
+        <mkdir dir="${ivy.jar.dir}" />
+		<!--
+			download Ivy from web site so that it can be used even without any
+			special installation
+		-->
+        <echo message="Trying to resolve and download ivy"/>
+        <get
+			src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+			dest="${ivy.jar.file}" usetimestamp="true" />
+    </target>
+
+    <!--
+            =================================
+            target: load-ivy this target is not
+            necessary if you put ivy.jar in your ant lib directory if you already
+            have ivy 2.0 in your ant lib, you can simply remove this target
+            =================================
+    -->
+    <target name="load-ivy" depends="check-ivy,download-ivy">
+        <!--
+                try to load ivy here from home ivy dir, in case the user has not
+                already dropped it into ant's lib dir (note that the latter copy will
+                always take precedence). We will not fail as long as ivy home lib dir
+                exists (it may be empty) and ivy is in at least one of ant's lib dir
+                or the ivy home lib dir.
+        -->
+        <mkdir dir="${ivy.jar.dir}" />
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar" />
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"
+			classpathref="ivy.lib.path" />
+    </target>
+    <!-- retrieve all dependencies defined in ivy.xml -->
+    <target name="retrieve-all" depends="load-ivy">
+        <ivy:configure file="nbproject/private/ivysettings.xml" />
+        <ivy:resolve file="ivy/ivy.xml" conf="${ivy.configurations}"/>
+<!--        <ivy:retrieve -->
+        <ivy:retrieve conf="${ivy.configurations}" pattern="${basedir}/release/modules/ext/[artifact]-[revision].[ext]"/>
+<!--        pattern="${basedir}/release/modules/ext/[artifact].[ext]"/>-->
+        <!--<ivy:install from="public" to="my-repository" transitive="true" file="ivy/ivy.xml"/>-->
+    </target>
+</project>

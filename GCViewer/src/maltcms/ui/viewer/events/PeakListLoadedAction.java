@@ -19,6 +19,8 @@ import javax.swing.table.DefaultTableModel;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.datastructures.ms.IChromatogram2D;
+import maltcms.ui.fileHandles.csv.CSVTableView;
+import maltcms.ui.fileHandles.csv.JTableCustomizer;
 import org.jfree.chart.annotations.XYBoxAnnotation;
 import org.jfree.chart.plot.XYPlot;
 import org.openide.util.Exceptions;
@@ -52,7 +54,7 @@ public class PeakListLoadedAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (this.monitor != null && this.jp != null) {
+        if (this.monitor != null) {
 
             Runnable r = new Runnable() {
 
@@ -60,10 +62,21 @@ public class PeakListLoadedAction extends AbstractAction {
                 public void run() {
                     try {
                         DefaultTableModel dtm = monitor.get();
+                        if (jp instanceof CSVTableView) {
+                            ((CSVTableView) jp).setTableModel(dtm);
+                        } else {
+                            JTable table = new JTable(dtm);
+                            table.setAutoCreateRowSorter(true);
+                            table.setColumnSelectionAllowed(true);
+                            table.setCellSelectionEnabled(true);
+                            table.setUpdateSelectionOnSort(true);
+                            JTableCustomizer.changeComparators(table);
+                            JTableCustomizer.fitAllColumnWidth(table);
+                            JScrollPane scrollpane = new JScrollPane(table);
+                            jp.add(scrollpane);
+                        }
                         //jp.setLayout(new GridLayout());
-                        JTable table = new JTable(dtm);
-                        JScrollPane scrollpane = new JScrollPane(table);
-                        jp.add(scrollpane);
+//                        
                         int si = dtm.findColumn("ScanIndex");
                         //IFileFragment f = ichrom.getParent();
                         //IScanLine isl = ScanLineCacheFactory.getDefaultScanLineCache(f);
@@ -74,11 +87,11 @@ public class PeakListLoadedAction extends AbstractAction {
 
 
                         for (int i = 0; i < dtm.getRowCount(); i++) {
-                            int value = Integer.parseInt(dtm.getValueAt(i,si).toString());
+                            int value = Integer.parseInt(dtm.getValueAt(i, si).toString());
                             int si1 = value / spm;
                             int si2 = value - (si1 * spm);
                             System.out.println("Adding annotation at " + si1 + " " + si2);
-                            xyp.getRenderer().addAnnotation(new XYBoxAnnotation(si1-1, si2-1, si1 + 1, si2 + 1, new BasicStroke(), new Color(0, 0, 0, 224), new Color(0, 0, 0, 128)));
+                            xyp.getRenderer().addAnnotation(new XYBoxAnnotation(si1 - 1, si2 - 1, si1 + 1, si2 + 1, new BasicStroke(), new Color(0, 0, 0, 224), new Color(0, 0, 0, 128)));
                         }
                     } catch (InterruptedException ex) {
                         Exceptions.printStackTrace(ex);

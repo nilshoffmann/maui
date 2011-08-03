@@ -15,12 +15,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import maltcms.ui.charts.JFreeChartViewer.ChromatogramOpenAction;
 import org.openide.util.Exceptions;
 
 /**
@@ -29,6 +29,17 @@ import org.openide.util.Exceptions;
  */
 public class FragmentTools {
 
+    public static List<IVariableFragment> getChildren(IFileFragment fragment) {
+        IDataSourceFactory dsf = Factory.getInstance().getDataSourceFactory();
+        try {
+            List<IVariableFragment> variables = dsf.getDataSourceFor(fragment).readStructure(fragment);
+            return variables;
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Collections.emptyList();
+    }
+    
     public static List<IVariableFragment> getAggregatedVariables(IFileFragment fragment) {
         IDataSourceFactory dsf = Factory.getInstance().getDataSourceFactory();
         HashMap<String, IVariableFragment> names = new HashMap<String, IVariableFragment>();

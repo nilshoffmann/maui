@@ -6,6 +6,7 @@ package maltcms.ui.viewer.tools;
 
 import cross.tools.StringTools;
 import java.io.File;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 
 /**
  *
@@ -13,9 +14,9 @@ import java.io.File;
  */
 public class FileFinder {
 
-    public static String findPeakListFor(String filename) {
+    public static String findPeakListFor(IChromatogramDescriptor filename) {
 //        System.out.println("f: " + filename);
-        File f = new File(filename);
+        File f = new File(filename.getResourceLocation());
         String s = f.getParentFile().getParentFile().getAbsolutePath();
 //        System.out.println("s: " + s);
         s += "/PeakExporter";

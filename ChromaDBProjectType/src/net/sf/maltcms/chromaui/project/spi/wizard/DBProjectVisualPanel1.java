@@ -22,7 +22,8 @@ import org.openide.WizardValidationException;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
-public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, IWizardValidatable {
+public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
+        IWizardValidatable {
 
     public static final String PROP_PROJECT_NAME = "projectName";
 
@@ -31,7 +32,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
         // Register listener on the textFields to make the automatic updates
         projectNameTextField.getDocument().addDocumentListener(this);
         projectLocationTextField.getDocument().addDocumentListener(this);
-        setName(NbBundle.getMessage(DBProjectVisualPanel1.class, "LBL_CreateProjectStep"));
+        setName(NbBundle.getMessage(DBProjectVisualPanel1.class,
+                "LBL_CreateProjectStep"));
 //        outputFolder.getDocument().addDocumentListener(this);
     }
 
@@ -61,6 +63,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
         jButton2 = new javax.swing.JButton();
         outputFolderTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        copyFiles = new javax.swing.JCheckBox();
 
         setPreferredSize(new java.awt.Dimension(640, 480));
 
@@ -113,6 +116,13 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel1.class, "DBProjectVisualPanel1.jLabel2.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(copyFiles, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel1.class, "DBProjectVisualPanel1.copyFiles.text")); // NOI18N
+        copyFiles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyFilesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -127,17 +137,17 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(outputFolderTextField)
-                    .addComponent(jScrollPane1)
-                    .addComponent(projectNameTextField)
-                    .addComponent(projectLocationTextField)
-                    .addComponent(createdFolderTextField))
+                    .addComponent(outputFolderTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                    .addComponent(projectNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                    .addComponent(projectLocationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                    .addComponent(createdFolderTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(browseButton)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(browseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(copyFiles, 0, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -165,9 +175,11 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
+                        .addComponent(copyFiles))
                     .addComponent(jLabel1)
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -187,7 +199,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
             }
             if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
                 File projectDir = chooser.getSelectedFile();
-                projectLocationTextField.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
+                projectLocationTextField.setText(FileUtil.normalizeFile(
+                        projectDir).getAbsolutePath());
             }
             firePropertyChange("VALIDATE", null, null);
         }
@@ -216,8 +229,13 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
 
     private void outputFolderTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputFolderTextFieldActionPerformed
     }//GEN-LAST:event_outputFolderTextFieldActionPerformed
+
+    private void copyFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyFilesActionPerformed
+        firePropertyChange("VALIDATE", null, null);
+    }//GEN-LAST:event_copyFilesActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
+    private javax.swing.JCheckBox copyFiles;
     private javax.swing.JLabel createdFolderLabel;
     private javax.swing.JTextField createdFolderTextField;
     private javax.swing.JList inputFiles;
@@ -258,10 +276,12 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
             return false; // Display name not specified
         }
         File f = new File(projectLocationTextField.getText());
-        System.out.println("Project location: " + f.getAbsolutePath() + " exists: " + f.exists() + " isDir: " + f.isDirectory());
+        System.out.println("Project location: " + f.getAbsolutePath() + " exists: " + f.
+                exists() + " isDir: " + f.isDirectory());
         if (!f.isDirectory()) {
             String message = "Project Folder is not a valid path.";
-            wizardDescriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+            wizardDescriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE,
+                    message);
             return false;
         }
         final File destFolder = new File(createdFolderTextField.getText());
@@ -290,7 +310,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
             return false;
         }
 
-        System.out.println("valid called, number of elements in list model: " + getListModel().size());
+        System.out.println("valid called, number of elements in list model: " + getListModel().
+                size());
         if (getListModel().isEmpty()) {
             wizardDescriptor.putProperty("WizardPanel_errorMessage",
                     "No input data files selected.");
@@ -332,10 +353,12 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
         String name = projectNameTextField.getText().trim();
         String folder = createdFolderTextField.getText().trim();
         String outputDir = outputFolderTextField.getText().trim();
+        Boolean doCopyFiles = copyFiles.isSelected();
 
         d.putProperty("projdir", new File(folder));
         d.putProperty("name", name);
         d.putProperty("output.basedir", new File(outputDir));
+        d.putProperty("copy.files", doCopyFiles);
         StringBuilder sb = new StringBuilder();
         for (Object o : getListModel().toArray()) {
             File of = (File) o;
@@ -350,7 +373,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
     @Override
     public void read(WizardDescriptor settings) {
         File projectLocation = (File) settings.getProperty("projdir");
-        if (projectLocation == null || projectLocation.getParentFile() == null || !projectLocation.getParentFile().isDirectory()) {
+        if (projectLocation == null || projectLocation.getParentFile() == null || !projectLocation.
+                getParentFile().isDirectory()) {
             try {
                 projectLocation = ProjectChooser.getProjectsFolder();
             } catch (AssertionError ae) {
@@ -363,7 +387,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
 
         File outputDir = (File) settings.getProperty("output.basedir");
         if (outputDir == null) {
-            outputDir = FileUtil.normalizeFile(new File(projectLocation, "output"));
+            outputDir = FileUtil.normalizeFile(new File(projectLocation,
+                    "output"));
         }
 
         this.outputFolderTextField.setText(outputDir.getAbsolutePath());
@@ -384,6 +409,14 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
 
         this.projectNameTextField.setText(projectName);
         this.projectNameTextField.selectAll();
+
+        Boolean doCopyFiles = (Boolean) settings.getProperty("copy.files");
+        if (doCopyFiles == null) {
+            copyFiles.setSelected(false);
+        } else {
+            copyFiles.setSelected(doCopyFiles);
+        }
+
 //        this.outputFolder.setText((String) settings.getProperty("output.basedir"));
     }
 
@@ -397,7 +430,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
     public void changedUpdate(DocumentEvent e) {
         updateTexts(e);
         if (this.projectNameTextField.getDocument() == e.getDocument()) {
-            firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
+            firePropertyChange(PROP_PROJECT_NAME, null,
+                    this.projectNameTextField.getText());
         }
     }
 
@@ -405,7 +439,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
     public void insertUpdate(DocumentEvent e) {
         updateTexts(e);
         if (this.projectNameTextField.getDocument() == e.getDocument()) {
-            firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
+            firePropertyChange(PROP_PROJECT_NAME, null,
+                    this.projectNameTextField.getText());
         }
     }
 
@@ -413,7 +448,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
     public void removeUpdate(DocumentEvent e) {
         updateTexts(e);
         if (this.projectNameTextField.getDocument() == e.getDocument()) {
-            firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
+            firePropertyChange(PROP_PROJECT_NAME, null,
+                    this.projectNameTextField.getText());
         }
     }
 
@@ -422,19 +458,23 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
 
         Document doc = e.getDocument();
 
-        if (doc == projectNameTextField.getDocument() || doc == projectLocationTextField.getDocument()) {
+        if (doc == projectNameTextField.getDocument() || doc == projectLocationTextField.
+                getDocument()) {
             // Change in the project name
 
             String projectName = projectNameTextField.getText();
             String projectFolder = projectLocationTextField.getText();
 
             //if (projectFolder.trim().length() == 0 || projectFolder.equals(oldName)) {
-            createdFolderTextField.setText(projectFolder + File.separatorChar + projectName);
+            createdFolderTextField.setText(
+                    projectFolder + File.separatorChar + projectName);
             //}
             String otxt = outputFolderTextField.getText();
 //            if (.isEmpty()) {
-            File outputDir = new File(new File(projectFolder, projectName), "output");
-            outputFolderTextField.setText(FileUtil.normalizeFile(outputDir).getAbsolutePath());
+            File outputDir = new File(new File(projectFolder, projectName),
+                    "output");
+            outputFolderTextField.setText(FileUtil.normalizeFile(outputDir).
+                    getAbsolutePath());
 //            }
 
         }
@@ -446,14 +486,16 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener, I
     class FileListCellRenderer implements ListCellRenderer {
 
         @Override
-        public Component getListCellRendererComponent(JList jlist, Object o, int i, boolean bln, boolean bln1) {
+        public Component getListCellRendererComponent(JList jlist, Object o,
+                int i, boolean bln, boolean bln1) {
             if (o instanceof File) {
                 String filename = ((File) o).getName();
                 JLabel jl = new JLabel(filename);
                 jl.setToolTipText(((File) o).getAbsolutePath());
                 return jl;
             } else {
-                return new DefaultListCellRenderer().getListCellRendererComponent(jlist, o, i, bln, bln1);
+                return new DefaultListCellRenderer().
+                        getListCellRendererComponent(jlist, o, i, bln, bln1);
             }
         }
     }

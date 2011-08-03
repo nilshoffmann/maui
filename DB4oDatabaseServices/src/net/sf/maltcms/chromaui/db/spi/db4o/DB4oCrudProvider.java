@@ -31,47 +31,68 @@ public final class DB4oCrudProvider implements ICrudProvider {
      * @param ic
      * @throws IllegalArgumentException
      */
-    public DB4oCrudProvider(File projectDBFile, ICredentials ic, ClassLoader domainClassLoader) throws IllegalArgumentException {
+    public DB4oCrudProvider(File projectDBFile, ICredentials ic,
+            ClassLoader domainClassLoader) throws IllegalArgumentException {
         if (ic == null) {
-            throw new IllegalArgumentException("Credentials Provider must not be null!");
+            throw new IllegalArgumentException(
+                    "Credentials Provider must not be null!");
         }
         if (projectDBFile == null) {
-            throw new IllegalArgumentException("Project database file must not be null!");
+            throw new IllegalArgumentException(
+                    "Project database file must not be null!");
         }
         if (projectDBFile.isDirectory()) {
-            throw new IllegalArgumentException("Project database file is a directory!");
+            throw new IllegalArgumentException(
+                    "Project database file is a directory!");
         }
         this.ic = ic;
-        System.out.println("Using crud provider on database file: " + projectDBFile.getAbsolutePath());
+        System.out.println("Using crud provider on database file: " + projectDBFile.
+                getAbsolutePath());
         projectDBLocation = projectDBFile;
-        System.out.println("Using class loader: "+domainClassLoader);
+        System.out.println("Using class loader: " + domainClassLoader);
         this.domainClassLoader = domainClassLoader;
     }
 
     @Override
-    public void open() {
+    public final void open() {
         authenticate();
         if (eoc == null) {
-            System.out.println("Opening ObjectContainer at " + projectDBLocation.getAbsolutePath());
+            System.out.println("Opening ObjectContainer at " + projectDBLocation.
+                    getAbsolutePath());
             EmbeddedConfiguration ec = com.db4o.Db4oEmbedded.newConfiguration();
             ec.common().activationDepth(Integer.MAX_VALUE);
             ec.common().reflectWith(new JdkReflector(this.domainClassLoader));
-            eoc = Db4oEmbedded.openFile(ec,projectDBLocation.getAbsolutePath());
+            ec.common().activationDepth(10);
+            ec.common().updateDepth(10);
+            eoc = Db4oEmbedded.openFile(ec, projectDBLocation.getAbsolutePath());
         }
     }
 
     @Override
-    public void close() {
+    public final void close() {
         authenticate();
         if (eoc != null) {
             eoc.close();
         }
     }
 
-    private void authenticate() throws AuthenticationException {
+    private final void authenticate() throws AuthenticationException {
         if (!ic.authenticate()) {
-            throw new AuthenticationException("Invalid credentials for user, check username and password!");
+            throw new AuthenticationException(
+                    "Invalid credentials for user, check username and password!");
         }
+    }
+
+    private final EmbeddedObjectContainer getObjectContainer(EmbeddedConfiguration ec,
+            String path) {
+        try{
+            this.eoc = Db4oEmbedded.openFile(ec, path);
+        }catch(Exception e) {
+            this.eoc.commit();
+            this.eoc.close();
+        }
+        this.eoc = Db4oEmbedded.openFile(ec, path);
+        return this.eoc;
     }
 
     @Override

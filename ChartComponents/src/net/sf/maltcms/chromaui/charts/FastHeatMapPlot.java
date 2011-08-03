@@ -796,25 +796,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             double ylow = this.rangeAxis.valueToJava2D(this.rangeAxis.getLowerBound(), dataArea, RectangleEdge.LEFT);
             double xhigh = this.domainAxis.valueToJava2D(this.domainAxis.getUpperBound(), dataArea, RectangleEdge.TOP);
             double yhigh = this.rangeAxis.valueToJava2D(this.rangeAxis.getUpperBound(), dataArea, RectangleEdge.RIGHT);
-//
-//            System.out.println("Data area: "+dataArea);
-//            Rectangle2D.Double targetCoordinates = new Rectangle2D.Double(xlow, ylow, Math.abs(xhigh - xlow), Math.abs(ylow - yhigh));
-//            System.out.println("to target: " + targetCoordinates);
-//            AffineTransform at = AffineTransform.getTranslateInstance(targetCoordinates.getMinX() - sourceCoordinates.getMinX() - xlow, targetCoordinates.getMinY() - sourceCoordinates.getMinY() - imgSpace.getHeight());
-//            imgTrans.concatenate(AffineTransform.getTranslateInstance(xlow,ylow));
-            // System.out.println("Mapping to: "+xlow+" "+ylow+" to "+xhigh+" "+yhigh);
-            // subimage is ROI
-            // BufferedImage subimage = this.dataImage.getSubimage(xlb, ylb,
-            // xub-xlb, yub-ylb);
-            // refreshEntities(g2,new
-            // Rectangle2D.Double(xlb,ylb,xub-xlb,yub-ylb),info,crosshairState);
-//            refreshEntities(g2, dataArea, info, crosshairState);
-//            AffineTransform g2trans = g2.getTransform();
-//            this.offscreenBuffer = drawVolatileImage(g2, this.offscreenBuffer, 0, 0, this.dataImage, xlow, ylow, xhigh, yhigh, xlb, ylb, xub, yub);
-//            Rectangle sb = sourceCoordinates.getBounds();
-//            Image subImage = this.dataImage.getSubimage(sb.x, sb.y, sb.width, sb.height);
-//            subImage = subImage.getScaledInstance(dataArea.getBounds().width, dataArea.getBounds().height, Image.SCALE_FAST);
-//            g2.drawImage(subImage, (int)dataArea.getMinX(), (int)dataArea.getMinY(), null);// ,transX1-transX0,transY1-transY0,null);
+            
             drawFromOffscreenBuffer(g2, this.dataImage, sourceCoordinates.getBounds(), dataArea.getBounds());
             renderCrosshairs(dataArea, g2);
         } else {

@@ -7,7 +7,10 @@ package maltcms.ui.viewer;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
+import org.netbeans.api.project.Project;
 import org.openide.loaders.DataObject;
+import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 
 public final class GCViewerOpenAction implements ActionListener {
 

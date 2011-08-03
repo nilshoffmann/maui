@@ -11,28 +11,48 @@
 package maltcms.ui.viewer.gui;
 
 import cross.datastructures.tuple.Tuple2D;
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.swing.SwingUtilities;
+import java.util.concurrent.TimeUnit;
+import javax.swing.DefaultComboBoxModel;
 import maltcms.datastructures.ms.IMetabolite;
+import maltcms.tools.ArrayTools;
+import maltcms.tools.MaltcmsTools;
 import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.extensions.PeakIdentification;
 import net.sf.maltcms.chromaui.charts.MetricNumberFormatter;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.charts.ScaledNumberFormatter;
+import net.sf.maltcms.chromaui.charts.TopKItemsLabelGenerator;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.event.AxisChangeEvent;
+import org.jfree.chart.event.PlotChangeEvent;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYBarDataset;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
+import ucar.ma2.MAMath;
+import ucar.ma2.MAMath.MinMax;
 
 /**
  *
@@ -42,13 +62,19 @@ public class MassSpectrumPanel extends PanelE {
 
     private InformationController ic;
     private XYSeriesCollection sc, tmp;
+    private XYPlot plot;
     private HashMap<Comparable, Double> scales = new HashMap<Comparable, Double>();
     private ExecutorService es = Executors.newFixedThreadPool(1);
-    private List<Point> selectedPoints = new ArrayList<Point>();
+    private List<?> annotations = Collections.emptyList();
+    private List<Point> selectedPoints = new LinkedList<Point>();
+    private int topK = 10;
+    private int activeMS = -1;
+    private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
 
     /** Creates new form MassSpectrumPanel */
     public MassSpectrumPanel(InformationController ic) {
         this.ic = ic;
+        //TODO LOOKUP LISTENER
         initComponents();
         initChartComponents();
     }
@@ -66,10 +92,38 @@ public class MassSpectrumPanel extends PanelE {
         renderer.setShadowVisible(false);
         renderer.setDrawBarOutline(false);
         NumberAxis intensityAxis = new NumberAxis("intensity");
-        intensityAxis.setNumberFormatOverride(new MetricNumberFormatter());
-        XYPlot p = new XYPlot(d, new NumberAxis("mz"), intensityAxis, renderer);
-        p.setForegroundAlpha(0.66f);
-        JFreeChart msChart = new JFreeChart(p);
+        intensityAxis.setNumberFormatOverride(defaultNumberFormat);
+        NumberAxis mzAxis = new NumberAxis("m/z");
+        mzAxis.setAutoRangeIncludesZero(false);
+        this.plot = new XYPlot(d,mzAxis , intensityAxis, renderer);
+        this.plot.setForegroundAlpha(0.66f);
+        
+        plot.setDomainCrosshairLockedOnData(true);
+        plot.setDomainCrosshairVisible(true);
+        ((XYBarRenderer) plot.getRenderer()).setShadowVisible(false);
+        ((XYBarRenderer) plot.getRenderer()).setDrawBarOutline(false);
+        ((XYBarRenderer) plot.getRenderer()).setBaseFillPaint(Color.RED);
+        ((XYBarRenderer) plot.getRenderer()).setBarPainter(new StandardXYBarPainter());
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+        plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                Comparable comp = xyd.getSeriesKey(i);
+                double x = xyd.getXValue(i, i1);
+                double y = xyd.getYValue(i, i1);
+                StringBuilder sb = new StringBuilder();
+                sb.append(comp);
+                sb.append(": ");
+                sb.append("x=");
+                sb.append(x);
+                sb.append(" y=");
+                sb.append(y);
+                return sb.toString();
+            }
+        });
+        JFreeChart msChart = new JFreeChart(this.plot);
+        msChart.addChangeListener(this.defaultNumberFormat);
 
 //        Factory.getInstance().getConfiguration().setProperty(VariableFragment.class.getName()
 //                + ".useCachedList", false);
@@ -80,21 +134,24 @@ public class MassSpectrumPanel extends PanelE {
         System.out.println("Creating ms chart 3");
 
         this.cp = new ChartPanel(msChart);
+        this.cp.setInitialDelay(1);
         this.cp.getChart().getLegend().setVisible(true);
-        this.jButton1ActionPerformed(null);
+        
+        this.clearActionPerformed(null);
         this.jPanel2.removeAll();
         this.jPanel2.add(this.cp);
         this.jPanel2.repaint();
     }
 
     public void changeMS(final Point imagePoint) {
-        this.selectedPoints.add(imagePoint);
+        selectedPoints.add(imagePoint);
         Runnable s = new Runnable() {
 
             @Override
             public void run() {
-                XYSeries s = ChromatogramVisualizerTools.getMSSeries(imagePoint, ic.getFilename());
-                if (jToggleButton1.isSelected()) {
+                System.out.println("Change ms called in MassSpectrumPanel");
+                XYSeries s = ChromatogramVisualizerTools.getMSSeries(imagePoint, ic.getChromatogramDescriptor());
+                if (addMs.isSelected()) {
                     try {
                         sc.getSeries(s.getKey());
                     } catch (Exception e) {
@@ -107,14 +164,19 @@ public class MassSpectrumPanel extends PanelE {
                     //cp.repaint();
                     ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
                 }
+                updateActiveMassSpectrum();
+                addTopKLabels(topK, activeMS);
+
             }
         };
         es.submit(s);
+
 
 //        this.cp.getChart().getPlot().datasetChanged(new DatasetChangeEvent(this, this.sc));
     }
 
     public void addIdentification() {
+        System.out.println("Adding id!");
         Runnable s = new Runnable() {
 
             @Override
@@ -122,22 +184,51 @@ public class MassSpectrumPanel extends PanelE {
 
                 Point l = selectedPoints.get(selectedPoints.size() - 1);
                 System.out.println("Identification for " + l);
-                Array ms = ChromatogramVisualizerTools.getMS(l, ic.getFilename());
-
+                XYSeries xys = sc.getSeries(sc.getSeriesCount() - 1);
+                List<Double> massFilter = new ArrayList<Double>(Arrays.asList(new Double[]{73d, 74d, 75d, 147d, 148d, 149d}));
+                Array masses = new ArrayDouble.D1(xys.getItemCount());
+                Array intensities = new ArrayDouble.D1(xys.getItemCount());
+                double minMassT = 70;
+                intensities = filterQuerySpectrum(xys, masses, minMassT, intensities, massFilter);
+                MinMax mm = MAMath.getMinMax(intensities);
+//                Tuple2D<Array,Array> mss = ChromatogramVisualizerTools.getMS(l, ic.getFilename());
+//                Array ms = mss.getFirst();
+//                Array inten = mss.getSecond();
                 PeakIdentification pi = PeakIdentification.getInstance();
                 System.out.println("Start");
-                Tuple2D<Array, Tuple2D<Double, IMetabolite>> bestHit = pi.getBest(ms);
+//                Tuple2D<Array, Tuple2D<Double, IMetabolite>> bestHit = pi.getBest(ms);
+                Tuple2D<Array, Tuple2D<Double, IMetabolite>> bestHit = pi.getBest(masses, intensities);
                 System.out.println("Done");
 
-                XYSeries s = ChromatogramVisualizerTools.convertToSeries(ms, bestHit.getSecond(), ic.getFilename());
-                sc = new XYSeriesCollection();
-                sc.addSeries(ChromatogramVisualizerTools.convertToSeries(bestHit.getFirst(), l.x + ", " + l.y));
-                try {
-                    sc.getSeries(s.getKey());
-                } catch (Exception e) {
-                    sc.addSeries(s);
+                XYSeries s = null;//ChromatogramVisualizerTools.convertToSeries(ms, bestHit.getSecond(), ic.getFilename());
+                String hitName = bestHit.getSecond().getSecond().getName();
+                hitName = hitName.substring(hitName.lastIndexOf("_") + 1);
+                s = new XYSeries(hitName + " (" + (int) (1000d * bestHit.getSecond().getFirst()) + ")");
+                Array bhmass = bestHit.getSecond().getSecond().getMassSpectrum().getFirst();
+                Array bhint = bestHit.getSecond().getSecond().getMassSpectrum().getSecond();
+                System.out.println(bestHit.getSecond().getSecond().getID());
+                MinMax bhmm = MAMath.getMinMax(bhint);
+                System.out.println("MM max: " + mm.max + " bhmm max: " + bhmm.max);
+                for (int i = 0; i < bhmass.getShape()[0]; i++) {
+                    double mz = bhmass.getDouble(i);
+                    double intens = bhint.getDouble(i);
+                    double normIntens = (intens / (bhmm.max)) * mm.max;
+                    System.out.println("MZ: " + mz + " intens: " + intens + " normIntens: " + normIntens);
+                    s.add(mz, normIntens);
                 }
+                //sc = new XYSeriesCollection();
+//                sc.addSeries(ChromatogramVisualizerTools.convertToSeries(bestHit.getFirst(), l.x + ", " + l.y));
+                sc.removeAllSeries();
+                sc.addSeries(xys);
+                sc.addSeries(s);
+//                try {
+//                    sc.getSeries(s.getKey());
+//                } catch (Exception e) {
+//                    sc.addSeries(s);
+//                }
                 ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
+                updateActiveMassSpectrum();
+                addTopKLabels(topK, activeMS);
 //                } else {
 //                    sc = new XYSeriesCollection();
 //                    sc.addSeries(s);
@@ -145,8 +236,55 @@ public class MassSpectrumPanel extends PanelE {
 //                    ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
 //                }
             }
+
+            private Array filterQuerySpectrum(XYSeries xys, Array masses, double minMassT, Array intensities, List<Double> massFilter) {
+                for (int i = 0; i < xys.getItemCount(); i++) {
+                    double mass = xys.getX(i).doubleValue();
+                    masses.setDouble(i, mass);
+                    if (mass >= minMassT) {
+                        intensities.setDouble(i, xys.getY(i).doubleValue());
+                    }
+                }
+                List<Integer> maskedIndices = MaltcmsTools.findMaskedMasses(masses, massFilter, 0);
+                intensities = ArrayTools.filterIndices(intensities, maskedIndices, 0);
+                return intensities;
+            }
         };
-        es.submit(s);
+        ExecutorService e = Executors.newSingleThreadExecutor();
+        e.execute(s);
+        e.shutdown();
+        try {
+            e.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private void updateActiveMassSpectrum() {
+        Object[] obj = new Object[sc.getSeriesCount()];
+        for (int i = 0; i < sc.getSeriesCount(); i++) {
+            obj[i] = sc.getSeries(i).getKey();
+        }
+        activeMassSpectrum.setModel(new DefaultComboBoxModel(obj));
+    }
+
+    private void addTopKLabels(int topk, int series) {
+        System.out.println("addTopKLabels: " + topk + " " + series);
+        if (series >= 0) {
+            final SortedMap<Double, Double> tm = new TreeMap<Double, Double>();
+            for (int i = 0; i < sc.getItemCount(series); i++) {
+                double mass = sc.getXValue(series, i);
+                double intens = sc.getYValue(series, i);
+                tm.put(intens, mass);
+            }
+            if (activeMS >= 0) {
+                System.out.println("Updating plot");
+                plot.getRenderer().setBaseItemLabelsVisible(true);
+                plot.getRenderer().setSeriesItemLabelGenerator(activeMS, new TopKItemsLabelGenerator(tm, topk));
+                plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
+                plot.notifyListeners(new PlotChangeEvent(plot));
+            }
+        }
     }
 
     /** This method is called from within the constructor to
@@ -160,166 +298,210 @@ public class MassSpectrumPanel extends PanelE {
 
         jPanel1 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
-        jButton1 = new javax.swing.JButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jToggleButton2 = new javax.swing.JToggleButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        clear = new javax.swing.JButton();
+        addMs = new javax.swing.JToggleButton();
+        absoluteRelativeToggle = new javax.swing.JToggleButton();
+        fixXAxis = new javax.swing.JToggleButton();
+        fixYAxis = new javax.swing.JToggleButton();
+        hideAnnotations = new javax.swing.JToggleButton();
+        activeMassSpectrum = new javax.swing.JComboBox();
+        remove = new javax.swing.JButton();
+        identify = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("maltcms/ui/viewer/Bundle"); // NOI18N
-        jButton1.setText(bundle.getString("MassSpectrumPanel.jButton1.text")); // NOI18N
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("maltcms/ui/viewer/gui/Bundle"); // NOI18N
+        clear.setText(bundle.getString("MassSpectrumPanel.clear.text")); // NOI18N
+        clear.setFocusable(false);
+        clear.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        clear.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        clear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                clearActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton1);
+        jToolBar1.add(clear);
 
-        jToggleButton1.setText(bundle.getString("MassSpectrumPanel.jToggleButton1.text")); // NOI18N
-        jToggleButton1.setFocusable(false);
-        jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jToggleButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        addMs.setText(bundle.getString("MassSpectrumPanel.addMs.text")); // NOI18N
+        addMs.setFocusable(false);
+        addMs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        addMs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        addMs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
+                addMsActionPerformed(evt);
             }
         });
-        jToolBar1.add(jToggleButton1);
+        jToolBar1.add(addMs);
 
-        jToggleButton2.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jToggleButton2.text")); // NOI18N
-        jToggleButton2.setToolTipText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jToggleButton2.toolTipText")); // NOI18N
-        jToggleButton2.setFocusable(false);
-        jToggleButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jToggleButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToggleButton2.addActionListener(new java.awt.event.ActionListener() {
+        absoluteRelativeToggle.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.absoluteRelativeToggle.text")); // NOI18N
+        absoluteRelativeToggle.setFocusable(false);
+        absoluteRelativeToggle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        absoluteRelativeToggle.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        absoluteRelativeToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton2ActionPerformed(evt);
+                absoluteRelativeToggleActionPerformed(evt);
             }
         });
-        jToolBar1.add(jToggleButton2);
+        jToolBar1.add(absoluteRelativeToggle);
 
-        jButton2.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jButton2.text")); // NOI18N
-        jButton2.setFocusable(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        fixXAxis.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.fixXAxis.text")); // NOI18N
+        fixXAxis.setFocusable(false);
+        fixXAxis.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        fixXAxis.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        fixXAxis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                fixXAxisActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton2);
+        jToolBar1.add(fixXAxis);
 
-        jButton3.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jButton3.text")); // NOI18N
-        jButton3.setFocusable(false);
-        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        fixYAxis.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.fixYAxis.text")); // NOI18N
+        fixYAxis.setFocusable(false);
+        fixYAxis.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        fixYAxis.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        fixYAxis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                fixYAxisActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton3);
+        jToolBar1.add(fixYAxis);
+
+        hideAnnotations.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.hideAnnotations.text")); // NOI18N
+        hideAnnotations.setFocusable(false);
+        hideAnnotations.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        hideAnnotations.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        hideAnnotations.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hideAnnotationsActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(hideAnnotations);
+
+        activeMassSpectrum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                activeMassSpectrumActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(activeMassSpectrum);
+
+        remove.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.remove.text")); // NOI18N
+        remove.setFocusable(false);
+        remove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        remove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        remove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(remove);
+
+        identify.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.identify.text")); // NOI18N
+        identify.setFocusable(false);
+        identify.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        identify.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        identify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                identifyActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(identify);
+
+        jPanel1.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         jPanel2.setLayout(new java.awt.GridLayout(1, 0));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE))
-        );
+        jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
+    private void addMsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMsActionPerformed
+    }//GEN-LAST:event_addMsActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearActionPerformed
         // TODO add your handling code here:
         this.sc.removeAllSeries();
         scales.clear();
         this.cp.repaint();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        this.activeMassSpectrum.setModel(new DefaultComboBoxModel(new Object[]{}));
+    }//GEN-LAST:event_clearActionPerformed
 
-    private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
-        System.out.println("Normalizing mass spectra");
-        if (jToggleButton2.isSelected()) {
-            for (int i = 0; i < sc.getSeriesCount(); i++) {
-                System.out.println("Normalizing series " + (i + 1) + "/" + sc.getSeriesCount());
-                XYSeries xys = sc.getSeries(i);
-                XYSeries xys2 = new XYSeries(xys.getKey());
-                double scale = (xys.getMaxY() - xys.getMinY());
-                scales.put(xys.getKey(), scale);
-                System.out.println("Processing " + xys.getItemCount() + " items");
-                for (int j = 0; j < xys.getItemCount(); i++) {
-                    System.out.println("Processing item " + (j + 1) + "/" + xys.getItemCount());
-                    //xys2.add(xys.getX(j), xys.getY(j).doubleValue() / scale);
-                }
-                ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
-                this.cp.repaint();
-            }
-        } else {
+    private void fixXAxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixXAxisActionPerformed
+        this.plot.getDomainAxis().setAutoRange(!fixXAxis.isSelected());
+    }//GEN-LAST:event_fixXAxisActionPerformed
 
-            for (int i = 0; i < sc.getSeriesCount(); i++) {
-                System.out.println("DeNormalizing series " + (i + 1) + "/" + sc.getSeriesCount());
-                XYSeries xys = sc.getSeries(i);
-                double scale = scales.get(xys.getKey());
-                for (int j = 0; j < xys.getItemCount(); i++) {
-                    xys.updateByIndex(j, xys.getY(j).doubleValue() * scale);
-                }
-                ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
-                this.cp.repaint();
-            }
+    private void fixYAxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixYAxisActionPerformed
+        this.plot.getRangeAxis().setAutoRange(!fixYAxis.isSelected());
+    }//GEN-LAST:event_fixYAxisActionPerformed
+
+    private void hideAnnotationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideAnnotationsActionPerformed
+//        this.annotations = this.plot.getAnnotations();
+//        this.plot.clearAnnotations();
+//        if (!hideAnnotations.isSelected()) {
+//            int i = 0;
+//            for (Object o : this.annotations) {
+//                if (i == this.annotations.size() - 1) {
+//                    this.plot.addAnnotation((XYAnnotation) o, true);
+//                } else {
+//                    this.plot.addAnnotation((XYAnnotation) o, false);
+//                }
+//                i++;
+//
+//            }
+//        }
+        if (activeMS >= 0) {
+//            this.plot.getRenderer().setBaseItemLabelsVisible(!hideAnnotations.isSelected());
+            this.plot.getRenderer().setSeriesItemLabelsVisible(activeMS, !hideAnnotations.isSelected());
         }
-    }//GEN-LAST:event_jToggleButton2ActionPerformed
+    }//GEN-LAST:event_hideAnnotationsActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void activeMassSpectrumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activeMassSpectrumActionPerformed
+        int key = activeMassSpectrum.getSelectedIndex();
+        activeMS = key;
+        addTopKLabels(topK, key);
+        activeMassSpectrum.setSelectedIndex(key);
+    }//GEN-LAST:event_activeMassSpectrumActionPerformed
 
+    private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
+        int key = activeMassSpectrum.getSelectedIndex();
+        this.sc.removeSeries(key);
+        updateActiveMassSpectrum();
+    }//GEN-LAST:event_removeActionPerformed
+
+    private void identifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identifyActionPerformed
         System.out.println("IDentifying");
         addIdentification();
+    }//GEN-LAST:event_identifyActionPerformed
 
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
-        
-
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void absoluteRelativeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRelativeToggleActionPerformed
+        this.defaultNumberFormat.setRelativeMode(absoluteRelativeToggle.isSelected());
+        this.cp.chartChanged(new AxisChangeEvent(this.plot.getRangeAxis()));
+    }//GEN-LAST:event_absoluteRelativeToggleActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JToggleButton absoluteRelativeToggle;
+    private javax.swing.JComboBox activeMassSpectrum;
+    private javax.swing.JToggleButton addMs;
+    private javax.swing.JButton clear;
+    private javax.swing.JToggleButton fixXAxis;
+    private javax.swing.JToggleButton fixYAxis;
+    private javax.swing.JToggleButton hideAnnotations;
+    private javax.swing.JButton identify;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JButton remove;
     // End of variables declaration//GEN-END:variables
 }
