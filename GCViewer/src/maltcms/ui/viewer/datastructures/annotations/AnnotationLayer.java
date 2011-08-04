@@ -4,13 +4,13 @@
  */
 package maltcms.ui.viewer.datastructures.annotations;
 
-import cross.datastructures.trees.QuadTree;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+import maltcms.ui.viewer.datastructures.tree.QuadTree;
 import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.axis.ValueAxis;

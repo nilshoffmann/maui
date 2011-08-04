@@ -51,9 +51,9 @@ public class MassSpectrumChartPanel extends JPanel{
         NumberAxis inten = new NumberAxis("Intensity");
         inten.setNumberFormatOverride(new DecimalFormat("###0.0000"));
         xyp.setRangeAxis(inten);
-        xyb.setBaseSeriesVisibleInLegend(false);
-        xyp.setDomainAxisLocation(AxisLocation.getOpposite(xyp.getDomainAxisLocation()));
-        xyp.setRangeAxisLocation(AxisLocation.getOpposite(xyp.getRangeAxisLocation()));
+        xyb.setBaseSeriesVisibleInLegend(true);
+//        xyp.setDomainAxisLocation(AxisLocation.getOpposite(xyp.getDomainAxisLocation()));
+//        xyp.setRangeAxisLocation(AxisLocation.getOpposite(xyp.getRangeAxisLocation()));
         xyp.setBackgroundPaint(Color.WHITE);
 //		JFreeChart msChart = ChartFactory.createXYBarChart("", "m/z", false, "intensity", null, PlotOrientation.VERTICAL, true, true, true);
         JFreeChart msChart = new JFreeChart(xyp);
@@ -61,8 +61,9 @@ public class MassSpectrumChartPanel extends JPanel{
                 + ".useCachedList", true);
         Chromatogram1DMSProvider cmsp = new Chromatogram1DMSProvider(new Chromatogram1D(f));
         MSChartHandler xyeh2d = new MSChartHandler(cmsp, xyp);
+//        xyeh2d.setTopK(20);
         cpml.addListener(xyeh2d);
-        msChart.setBackgroundPaint(Color.WHITE);
+//        msChart.setBackgroundPaint(Color.WHITE);
         return msChart;
     }
 

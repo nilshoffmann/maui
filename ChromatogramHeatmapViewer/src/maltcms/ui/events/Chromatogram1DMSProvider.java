@@ -8,8 +8,9 @@ import maltcms.datastructures.ms.Scan1D;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 import cross.datastructures.tuple.Tuple2D;
+import maltcms.datastructures.ms.IScan1D;
 
-public class Chromatogram1DMSProvider implements MassSpectrumProvider {
+public class Chromatogram1DMSProvider implements MassSpectrumProvider<IScan1D> {
 
     private final IChromatogram1D c;
 
@@ -22,7 +23,7 @@ public class Chromatogram1DMSProvider implements MassSpectrumProvider {
      */
     @Override
     public Tuple2D<Array, Array> getMS(int index) {
-        Scan1D s = this.c.getScan(index);
+        IScan1D s = this.c.getScan(index);
         return new Tuple2D<Array, Array>(s.getMasses(), s.getIntensities());
     }
 
@@ -44,5 +45,10 @@ public class Chromatogram1DMSProvider implements MassSpectrumProvider {
         Array a = this.c.getScanAcquisitionTime();
         Index idx = a.getIndex();
         return a.getDouble(idx.set(index));
+    }
+
+    @Override
+    public IScan1D getScan(int index) {
+        return this.c.getScan(index);
     }
 }

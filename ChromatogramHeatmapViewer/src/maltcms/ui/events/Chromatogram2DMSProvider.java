@@ -6,21 +6,26 @@ package maltcms.ui.events;
 import cross.datastructures.fragments.IFileFragment;
 import ucar.ma2.Array;
 import cross.datastructures.tuple.Tuple2D;
-import cross.exception.NotImplementedException;
+import java.awt.Point;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
+import maltcms.datastructures.ms.ChromatogramFactory;
+import maltcms.datastructures.ms.IChromatogram2D;
+import maltcms.datastructures.ms.IScan2D;
 
-public class Chromatogram2DMSProvider implements MassSpectrumProvider {
+public class Chromatogram2DMSProvider implements MassSpectrumProvider<IScan2D> {
 
     private final int sl;
     private final int spm;
     private final IFileFragment iff;
     private final IScanLine isl;
+    private final IChromatogram2D chrom;
 
     public Chromatogram2DMSProvider(IFileFragment f, int sl, int spm) {
             this.sl = sl;
             this.spm = spm;
             this.iff = f;
+            this.chrom = new ChromatogramFactory().createChromatogram2D(f);
             System.out.println("Initing scanlinecache");
             this.isl = ScanLineCacheFactory.getScanLineCache(f);
             System.out.println("done initing scanlinecache");
@@ -46,7 +51,7 @@ public class Chromatogram2DMSProvider implements MassSpectrumProvider {
      */
     @Override
     public int getIndex(double rt) {
-	    throw new NotImplementedException();
+	    return this.chrom.getIndexFor(rt);
     }
 
 	/* (non-Javadoc)
@@ -54,7 +59,13 @@ public class Chromatogram2DMSProvider implements MassSpectrumProvider {
      */
     @Override
     public double getRT(int index) {
-    	throw new NotImplementedException();
+    	return this.chrom.getScanAcquisitionTime().getDouble(index);
+    }
+
+    @Override
+    public IScan2D getScan(int index) {
+        Point p = this.chrom.getPointFor(index);
+        return this.chrom.getScan2D(p.x,p.y);
     }
 	
 }

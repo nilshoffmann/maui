@@ -5,17 +5,24 @@
 package maltcms.ui;
 
 import java.awt.BorderLayout;
+import java.io.File;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import maltcms.ui.views.ChromMSHeatmapPanel;
+import net.sf.maltcms.chromaui.charts.MaltcmsDrawingSupplier;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.util.RequestProcessor;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.CloneableTopComponent;
 
 /**
@@ -31,10 +38,16 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
     private static final String PREFERRED_ID = "ChromatogramViewTopComponent";
     private volatile String filename;
     private MassSpectrumViewTopComponent secondaryView;
+    private InstanceContent ic;
+    private SettingsPanel sp;
+    private JPanel loadingPanel;
 
     public ChromatogramViewTopComponent(String filename, MassSpectrumViewTopComponent secondaryView) {
         this();
+        this.ic = new InstanceContent();
+        associateLookup(new AbstractLookup(this.ic));
         this.filename = filename;
+        MaltcmsDrawingSupplier mds = new MaltcmsDrawingSupplier();
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         if (filename != null) {
             this.secondaryView = secondaryView;
@@ -42,6 +55,16 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
             load();
 //            this.jPanel1.add(load());
         }
+        setDisplayName("Chromatogram View of "+new File(this.filename).getName());
+        setToolTipText(this.filename);
+        requestActive();
+        requestFocusInWindow(true);
+        sp = new SettingsPanel();
+        loadingPanel = new JPanel();
+        JProgressBar jpb = new JProgressBar();
+        jpb.setIndeterminate(true);
+        loadingPanel.add(jpb,BorderLayout.CENTER);
+        add(loadingPanel,BorderLayout.CENTER);
     }
 
     public ChromatogramViewTopComponent() {
@@ -52,7 +75,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
 
     private void load() {
         System.out.println("Running loader");
-        SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(this, this.filename);
+        SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(this, this.filename, this.sp);
         RequestProcessor.getDefault().post(sw); 
     }
 
@@ -64,9 +87,52 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jToolBar1 = new javax.swing.JToolBar();
+        jButton1 = new javax.swing.JButton();
+
         setLayout(new java.awt.BorderLayout());
+
+        jToolBar1.setRollover(true);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.jButton1.text")); // NOI18N
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton1);
+
+        add(jToolBar1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
+        NotifyDescriptor nd = new NotifyDescriptor(
+                sp, // instance of your panel
+                "Settings", // title of the dialog
+                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+                null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+                      // otherwise specify options as:
+                      //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                NotifyDescriptor.OK_OPTION // default option is "Yes"
+        );
+
+        // let's display the dialog now...
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            double massResolution = sp.getMassResolution();
+            double[] masses = sp.getSelectedMasses();
+            String plotMode = sp.getPlotMode();
+            String rtAxisUnit = sp.getRTAxisTimeUnit();
+        } 
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -102,7 +168,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
@@ -141,6 +207,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
 
             @Override
             public void run() {
+                remove(loadingPanel);
                 add(jp,BorderLayout.CENTER);
                 if(secondaryView!=null) {
                     System.out.println("Setting ms data!");

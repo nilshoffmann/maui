@@ -35,6 +35,9 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel {
             @Override
             public Component getListCellRendererComponent(JList jlist, Object o,
                     int i, boolean bln, boolean bln1) {
+                if(o==null) {
+                    return new JLabel("<NOT AVAILABLE>");
+                }
                 return new JLabel(o.getClass().getName());
             }
         });

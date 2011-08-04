@@ -101,11 +101,12 @@ public final class GenericGroovyRawDataAction implements ActionListener {
             if (DialogDescriptor.OK_OPTION.equals(ret)) {
                 RawDataGroovyScript selectedScript = gssf.getSelectedScript(
                         RawDataGroovyScript.class);
-
-                selectedScript.setProject(icap);
-                selectedScript.setDataObjects(this.context.toArray(new CDFDataObject[this.context.
-                        size()]));
-                RequestProcessor.getDefault().post(selectedScript);
+                if (selectedScript != null) {
+                    selectedScript.setProject(icap);
+                    selectedScript.setDataObjects(this.context.toArray(new CDFDataObject[this.context.
+                            size()]));
+                    RequestProcessor.getDefault().post(selectedScript);
+                }
             } else {
             }
 

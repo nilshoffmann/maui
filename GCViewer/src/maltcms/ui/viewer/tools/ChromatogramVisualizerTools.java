@@ -24,7 +24,8 @@ import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.datastructures.ms.ChromatogramFactory;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IMetabolite;
-import maltcms.datastructures.ms.Scan2D;
+import maltcms.datastructures.ms.IScan1D;
+import maltcms.datastructures.ms.IScan2D;
 import maltcms.tools.ImageTools;
 import maltcms.ui.charts.AChart;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
@@ -118,6 +119,50 @@ public class ChromatogramVisualizerTools {
         }
         return s;
     }
+    
+    public static MSSeries getMSSeries1D(IScan1D scan) {
+        System.out.println("repainting ms");
+        long start = System.currentTimeMillis();
+        System.out.println("Getting slc");
+//        IFileFragment f = Factory.getInstance().getFileFragmentFactory().create(filename.getResourceLocation());
+//        Array sat = f.getChild("scan_acquisition_time").getArray();
+        //IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(f);
+        //System.out.println("scl: " + scanlineCache.getClass().getName());
+        System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+        try {
+//            double modulationTime = f.getChild("modulation_time").getArray().getDouble(0);
+//            double sar = f.getChild("scan_rate").getArray().getDouble(0);
+//            double offset = sat.getDouble(0);
+//            double rt1 = (imagePoint.x * modulationTime) + offset;
+//            double rt2 = modulationTime * (imagePoint.y / (sar * modulationTime));
+        } catch (ResourceNotAvailableException rnae) {
+        }
+//        ChromatogramFactory cf = new ChromatogramFactory();
+//        IChromatogram2D ic2d = cf.createChromatogram2D(f);
+//        IScan2D s2 = ic2d.getScan2D(imagePoint.x, imagePoint.y);
+        DecimalFormat rt1format = new DecimalFormat("#0.00");
+//        DecimalFormat rt2format = new DecimalFormat("#0.000");
+        //System.out.println("First col scan acquisition time " + scanlineCache.);
+        MSSeries s = new MSSeries(rt1format.format(scan.getScanAcquisitionTime()));
+
+        Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(scan.getMasses(), scan.getIntensities());//scanlineCache.getSparseMassSpectra(imagePoint);
+        IndexIterator mz = ms.getFirst().getIndexIterator();
+        IndexIterator inten = ms.getSecond().getIndexIterator();
+//
+        while (mz.hasNext() && inten.hasNext()) {
+            s.add(mz.getDoubleNext(), inten.getDoubleNext());
+        }
+
+//        for (int row = 0; row < 750; row++) {
+//            if (((int) (Math.random() * 10.0d)) == 1) {
+//                s.add(row, Math.random() * 1000000);
+//            } else {
+//                s.add(row, Math.random() * 500);
+//            }
+//        }
+
+        return s;
+    }
 
     public static MSSeries getMSSeries(Point imagePoint, IChromatogramDescriptor filename) {
         System.out.println("repainting ms");
@@ -138,7 +183,7 @@ public class ChromatogramVisualizerTools {
         }
         ChromatogramFactory cf = new ChromatogramFactory();
         IChromatogram2D ic2d = cf.createChromatogram2D(f);
-        Scan2D s2 = ic2d.getScan2D(imagePoint.x, imagePoint.y);
+        IScan2D s2 = ic2d.getScan2D(imagePoint.x, imagePoint.y);
         DecimalFormat rt1format = new DecimalFormat("#0");
         DecimalFormat rt2format = new DecimalFormat("#0.000");
         //System.out.println("First col scan acquisition time " + scanlineCache.);

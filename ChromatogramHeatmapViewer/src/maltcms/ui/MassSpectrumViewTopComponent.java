@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import maltcms.ui.events.ChartPanelMouseListener;
 import maltcms.ui.views.MassSpectrumChartPanel;
+import maltcms.ui.views.MassSpectrumPanel;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -34,8 +35,11 @@ public final class MassSpectrumViewTopComponent extends TopComponent {
     }
 
     public void setMSData(final IFileFragment f, final ChartPanelMouseListener cpml) {
-        MassSpectrumChartPanel mscp = new MassSpectrumChartPanel(cpml,f);
+//        MassSpectrumChartPanel mscp = new MassSpectrumChartPanel(cpml,f);
+        MassSpectrumPanel mscp = new MassSpectrumPanel(cpml, f);
         add(mscp,BorderLayout.CENTER);
+        setDisplayName("Mass Spectrum View of "+f.getName());
+        setToolTipText(f.getAbsolutePath());
     }
 
     /** This method is called from within the constructor to

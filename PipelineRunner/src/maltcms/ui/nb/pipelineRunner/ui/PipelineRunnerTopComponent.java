@@ -5,6 +5,7 @@
 package maltcms.ui.nb.pipelineRunner.ui;
 
 import cross.exception.ConstraintViolationException;
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,10 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -36,7 +40,8 @@ import org.openide.windows.OutputWriter;
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//maltcms.ui.nb.pipelineRunner.ui//PipelineRunner//EN",
+@ConvertAsProperties(
+dtd = "-//maltcms.ui.nb.pipelineRunner.ui//PipelineRunner//EN",
 autostore = false)
 public final class PipelineRunnerTopComponent extends CloneableTopComponent {
 
@@ -44,29 +49,56 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "PipelineRunnerTopComponent";
-    private Process activeProcess = null;
+//    private Process activeProcess = null;
     private File cfg = null;
     private File inputDir = null;
     private File outputDir = null;
     private File workingDirectory = null;
     private String files = "*.cdf";
+    private DefaultListModel dlm = null;
 
     private Process getActiveProcess() {
-        return activeProcess;
+        Process process = null;
+        if (processList.isSelectionEmpty()) {
+            if (processList.getModel().getSize() == 0) {
+                return null;
+            }
+            process = (Process) dlm.elementAt(0);
+        }
+        process = (Process) processList.getSelectedValue();
+        try {
+            if (process.exitValue() == 0) {
+                jButton1.setEnabled(true);
+                jButton2.setEnabled(false);
+            }
+        } catch (IllegalThreadStateException e) {
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(true);
+        }
+        return process;
     }
 
-    private void setActiveProcess(Process p) {
-        this.activeProcess = p;
+    private void addActiveProcess(Process p) {
+        if (dlm == null) {
+            dlm = new DefaultListModel();
+            processList.setModel(dlm);
+        }
+        dlm.addElement(p);
     }
 //    private LocalHostMaltcmsProcess lhmp = null;
+
     public PipelineRunnerTopComponent() {
         initComponents();
-        setName(NbBundle.getMessage(PipelineRunnerTopComponent.class, "CTL_PipelineRunnerTopComponent"));
-        setToolTipText(NbBundle.getMessage(PipelineRunnerTopComponent.class, "HINT_PipelineRunnerTopComponent"));
+        setName(NbBundle.getMessage(PipelineRunnerTopComponent.class,
+                "CTL_PipelineRunnerTopComponent"));
+        setToolTipText(NbBundle.getMessage(PipelineRunnerTopComponent.class,
+                "HINT_PipelineRunnerTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         jButton1.setEnabled(false);
         jButton2.setEnabled(false);
-        workingDirectory = new File(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", ""));
+        workingDirectory = new File(NbPreferences.forModule(
+                PipelineRunnerTopComponent.class).get("maltcmsInstallationPath",
+                ""));
     }
 
     @Override
@@ -81,7 +113,8 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
     public void addUserConfiguration(File cfg) {
         this.cfg = cfg;
         if (this.cfg != null) {
-            Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Set configuration: Configuration: " + cfg.getAbsolutePath());
+            Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Set configuration: Configuration: " + cfg.
+                    getAbsolutePath());
 
             jButton1.setEnabled(true);
             jButton2.setEnabled(false);
@@ -117,7 +150,8 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
             if (result == JFileChooser.APPROVE_OPTION) {
                 inputDir = jfc.getSelectedFile();
             } else {
-                Exceptions.printStackTrace(new RuntimeException("No input directory defined, aborting!"));
+                Exceptions.printStackTrace(new RuntimeException(
+                        "No input directory defined, aborting!"));
                 return;
             }
         }
@@ -129,20 +163,25 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
             if (result == JFileChooser.APPROVE_OPTION) {
                 outputDir = jfc.getSelectedFile();
             } else {
-                Exceptions.printStackTrace(new RuntimeException("No output directory defined, aborting!"));
+                Exceptions.printStackTrace(new RuntimeException(
+                        "No output directory defined, aborting!"));
                 return;
             }
         }
         try {
-            MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(workingDirectory, inputDir, outputDir, cfg, new String[]{files});
+            MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(
+                    workingDirectory, inputDir, outputDir, cfg, new String[]{
+                        files});
             System.out.println("Java.home: " + System.getProperty("java.home"));
-            File javaBinDir = new File(new File(System.getProperty("java.home")), "bin");
+            File javaBinDir = new File(new File(System.getProperty("java.home")),
+                    "bin");
             File java = new File(javaBinDir, "java");
             System.out.println("Executing java: " + java.getAbsolutePath());
             //final NbProcessDescriptor desc = new NbProcessDescriptor(java.getAbsolutePath(), mlhe.buildCommandLine());
             final ProcessBuilder pb = new ProcessBuilder(mlhe.buildCommandLine());
             pb.directory(workingDirectory);
-            System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.directory());
+            System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.
+                    directory());
             pb.redirectErrorStream(true);
 
 
@@ -153,12 +192,14 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
                 public void run() {
                     jButton1.setEnabled(false);
                     jButton2.setEnabled(true);
-                    ProgressHandle ph = ProgressHandleFactory.createHandle("Executing Maltcms");
+                    ProgressHandle ph = ProgressHandleFactory.createHandle(
+                            "Executing Maltcms");
                     ph.start();
                     ph.switchToIndeterminate();
                     ph.setDisplayName("Running Maltcms...");
 
-                    InputOutput io = IOProvider.getDefault().getIO("Running Maltcms...", false);
+                    InputOutput io = IOProvider.getDefault().getIO(
+                            "Running Maltcms...", false);
 //                io.setOutputVisible(true);
                     io.select();
                     final OutputWriter writer = io.getOut();
@@ -168,8 +209,11 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
                     try {
                         Process p = pb.start();
 //                    Process p = desc.exec(null, null, workingDirectory);
-                        setActiveProcess(p);
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+
+                        addActiveProcess(p);
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.
+                                getInputStream()));
                         String line = null;
                         while ((line = reader.readLine()) != null) {
                             writer.println(line);
@@ -184,8 +228,11 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
                     } catch (InterruptedException ex) {
                         Exceptions.printStackTrace(ex);
                     }
-                    jButton1.setEnabled(true);
-                    jButton2.setEnabled(false);
+
+                    jButton1.setEnabled(
+                            true);
+                    jButton2.setEnabled(
+                            false);
                     ph.finish();
                 }
             };
@@ -197,8 +244,6 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
             Exceptions.printStackTrace(cve);
         }
 //        IExecutionSupport ies = mlhe.createExecutionSupport();
-
-
     }
 
     /** This method is called from within the constructor to
@@ -214,6 +259,8 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         jButton2 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         contentPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        processList = new javax.swing.JList();
 
         jToolBar1.setRollover(true);
 
@@ -244,15 +291,18 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         jToolBar1.add(jButton2);
         jToolBar1.add(jSeparator1);
 
+        processList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(processList);
+
         javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
         contentPanel.setLayout(contentPanelLayout);
         contentPanelLayout.setHorizontalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 412, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
         );
         contentPanelLayout.setVerticalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 275, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -331,8 +381,10 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
     private javax.swing.JPanel contentPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JList processList;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -354,7 +406,8 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         defaultConfigLocation = getClass().getClassLoader().getResource(
                 "cfg/default.properties");
         try {
-            PropertiesConfiguration defaultConfig = new PropertiesConfiguration(defaultConfigLocation);
+            PropertiesConfiguration defaultConfig = new PropertiesConfiguration(
+                    defaultConfigLocation);
             ccfg.addConfiguration(defaultConfig);
             System.out.println("Using default config location: "
                     + defaultConfigLocation.toString());
@@ -371,7 +424,8 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
      * Obtain the PipelineRunnerTopComponent instance. Never call {@link #getDefault} directly!
      */
     public static synchronized PipelineRunnerTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+        TopComponent win = WindowManager.getDefault().findTopComponent(
+                PREFERRED_ID);
         if (win == null) {
             Logger.getLogger(PipelineRunnerTopComponent.class.getName()).warning(
                     "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
@@ -425,7 +479,6 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
     protected String preferredID() {
         return PREFERRED_ID;
     }
-
 //    @Override
 //    public void jobChanged(IJob job) {
 //        System.out.println("Received news from job " + job);

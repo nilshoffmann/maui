@@ -82,8 +82,12 @@ public class DB4oCrudProviderTest extends NbTestCase {
         }
     }
 
-    public DB4oCrudProviderTest() {
+    public DB4oCrudProviderTest(String name) {
+        super(name);
     }
+
+//    public DB4oCrudProviderTest() {
+//    }
 
     public static junit.framework.Test suite() {
         return NbModuleSuite.create(NbModuleSuite.createConfiguration(DB4oCrudProviderTest.class));
