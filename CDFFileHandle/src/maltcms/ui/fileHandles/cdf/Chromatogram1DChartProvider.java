@@ -43,14 +43,16 @@ import org.openide.util.Exceptions;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
+import ucar.ma2.MAMath;
 
 /**
  *
  * @author nilshoffmann
  */
 public class Chromatogram1DChartProvider {
-    
-    public XYPlot provide1DPlot(List<IFileFragment> fragments, String valueVar, boolean useRT) {
+
+    public XYPlot provide1DPlot(List<IFileFragment> fragments, String valueVar,
+            boolean useRT) {
         String[] labels = new String[fragments.size()];
         Array[] arrays = new Array[fragments.size()];
         Array[] domains = new Array[fragments.size()];
@@ -64,12 +66,14 @@ public class Chromatogram1DChartProvider {
             //Factory.getInstance().getConfiguration().getString("var.total_intensity","total_intensity")).getArray();
             if (useRT) {
                 try {
-                    domains[i] = fragment.getChild("scan_acquisition_time").getArray();
+                    domains[i] = fragment.getChild("scan_acquisition_time").
+                            getArray();
                 } catch (ResourceNotAvailableException rne) {
                 }
             }
             annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
-            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0, 0, 255, 192), new Color(0, 0, 255, 32)));
+            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
+                    0, 255, 192), new Color(0, 0, 255, 32)));
             annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
             //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
             i++;
@@ -91,30 +95,159 @@ public class Chromatogram1DChartProvider {
         xyp.setDomainCrosshairVisible(true);
         return xyp;
     }
-    
+
+    public XYPlot provide1DEICSUMPlot(List<IFileFragment> fragments,
+            double[] masses, double massResolution, boolean useRT) {
+        int i = 0;
+        IFileFragment fragment;
+        String[] labels = new String[fragments.size()];
+        Array[] arrays = new Array[fragments.size()];
+        Array[] domains = new Array[fragments.size()];
+        double[] massValues = Arrays.copyOf(masses, masses.length);
+        Arrays.sort(massValues);
+        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        for (IFileFragment file : fragments) {
+            fragment = file;
+            StringBuilder mzRanges = new StringBuilder();
+            for (int k = 0; k < massValues.length; k++) {
+                double minMZ = massValues[k];
+                double maxMZ = massValues[k] + massResolution;
+
+                mzRanges.append("[" + minMZ + "," + maxMZ + ")");
+                if (k < massValues.length - 1) {
+                    mzRanges.append(",");
+                }
+
+                Array eic = MaltcmsTools.getEIC(fragment, minMZ, maxMZ,
+                        false, false);
+                if (arrays[i] != null) {
+                    arrays[i] = MAMath.add(arrays[i], eic);
+                } else {
+                    arrays[i] = eic;
+                }
+                //Factory.getInstance().getConfiguration().getString("var.total_intensity","total_intensity")).getArray();
+
+            }
+
+            labels[i] = fragment.getName() + " EICS:" + mzRanges.toString();
+            if (useRT) {
+                try {
+                    domains[i] = fragment.getChild("scan_acquisition_time").
+                            getArray();
+                } catch (ResourceNotAvailableException rne) {
+                }
+            }
+            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
+            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
+                    0, 255, 192), new Color(0, 0, 255, 32)));
+//            annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
+            //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
+            i++;
+        }
+        XYChart xyc = null;
+        if (useRT) {
+            xyc = new XYChart(fragments.get(0).getName(),
+                    labels,
+                    arrays, domains, "time[s]", "value");
+        } else {
+            xyc = new XYChart(fragments.get(0).getName(),
+                    labels,
+                    arrays, "index", "value");
+        }
+        XYPlot xyp = xyc.create();
+        for (XYAnnotation xya : annotations) {
+            xyp.addAnnotation(xya);
+        }
+        xyp.setDomainCrosshairVisible(true);
+        return xyp;
+    }
+
+    public XYPlot provide1DEICCOPlot(List<IFileFragment> fragments,
+            double[] masses,
+            double massResolution, boolean useRT) {
+        int i = 0;
+        IFileFragment fragment;
+        String[] labels = new String[fragments.size() * masses.length];
+        Array[] arrays = new Array[fragments.size() * masses.length];
+        Array[] domains = new Array[fragments.size() * masses.length];
+        double[] massValues = Arrays.copyOf(masses, masses.length);
+        Arrays.sort(massValues);
+        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        int trace = 0;
+        for (IFileFragment file : fragments) {
+            fragment = file;
+            for (int k = 0; k < massValues.length; k++) {
+                double minMZ = massValues[k];
+                double maxMZ = massValues[k] + massResolution;
+                labels[trace] = fragment.getName() + " EICS:" + "[" + minMZ + "," + maxMZ + ")";
+                Array eic = MaltcmsTools.getEIC(fragment, minMZ, maxMZ,
+                        false, false);
+
+                arrays[trace] = eic;
+                if (useRT) {
+                    try {
+                        domains[trace] = fragment.getChild("scan_acquisition_time").
+                                getArray();
+                    } catch (ResourceNotAvailableException rne) {
+                    }
+                }
+                //Factory.getInstance().getConfiguration().getString("var.total_intensity","total_intensity")).getArray();
+                trace++;
+            }
+
+
+
+            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
+            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
+                    0, 255, 192), new Color(0, 0, 255, 32)));
+//            annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
+            //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
+            i++;
+        }
+        XYChart xyc = null;
+        if (useRT) {
+            xyc = new XYChart(fragments.get(0).getName(),
+                    labels,
+                    arrays, domains, "time[s]", "value");
+        } else {
+            xyc = new XYChart(fragments.get(0).getName(),
+                    labels,
+                    arrays, "index", "value");
+        }
+        XYPlot xyp = xyc.create();
+        for (XYAnnotation xya : annotations) {
+            xyp.addAnnotation(xya);
+        }
+        xyp.setDomainCrosshairVisible(true);
+        return xyp;
+    }
+
     public JFreeChart provideChart(List<IFileFragment> fragments) {
         String[] labels = new String[fragments.size()];
         Array[] arrays = new Array[fragments.size()];
         Array[] domains = new Array[fragments.size()];
         boolean createTIC = true;
-        
+
         VariableSelectionPanel vsp = new VariableSelectionPanel();
         IFileFragment fragment = fragments.get(0);
         ArrayList<String> vars = new ArrayList<String>();
-        List<IVariableFragment> variables = FragmentTools.getAggregatedVariables(fragment);
-        
+        List<IVariableFragment> variables = FragmentTools.getAggregatedVariables(
+                fragment);
+
         boolean showEICChoice = false;
-        
+
         for (IVariableFragment var : variables) {
             vars.add(var.getName());
         }
-        
+
         vsp.setAvailableVariables(vars.toArray(new String[]{}));
-        
-        DialogDescriptor nd = new DialogDescriptor(vsp, "Select variables to plot", true, null);
+
+        DialogDescriptor nd = new DialogDescriptor(vsp,
+                "Select variables to plot", true, null);
         DialogDisplayer.getDefault().notify(nd);
         Object val = nd.getValue();
-        if (!val.equals(DialogDescriptor.YES_OPTION) || !val.equals(DialogDescriptor.OK_OPTION)) {
+        if (!val.equals(DialogDescriptor.YES_OPTION) || !val.equals(
+                DialogDescriptor.OK_OPTION)) {
             return null;
         }
         //TODO bail out, if user hits cancel
@@ -128,13 +261,15 @@ public class Chromatogram1DChartProvider {
             TICEICChoiceDialog tcd = new TICEICChoiceDialog();
             minMZ = tcd.getMinMZ();
             maxMZ = tcd.getMaxMZ();
-            DialogDescriptor nd2 = new DialogDescriptor(tcd, "Select mass range or tic", true, null);
+            DialogDescriptor nd2 = new DialogDescriptor(tcd,
+                    "Select mass range or tic", true, null);
             DialogDisplayer.getDefault().notify(nd2);
             val = nd.getValue();
-            if (!val.equals(DialogDescriptor.YES_OPTION) || !val.equals(DialogDescriptor.OK_OPTION)) {
+            if (!val.equals(DialogDescriptor.YES_OPTION) || !val.equals(
+                    DialogDescriptor.OK_OPTION)) {
                 return null;
             }
-            
+
             createTIC = tcd.isTICSelected();
             labels = new String[fragments.size() * minMZ.length];
             arrays = new Array[fragments.size() * minMZ.length];
@@ -142,8 +277,8 @@ public class Chromatogram1DChartProvider {
         }
         List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
         Color[] plotColors = new Color[]{};
-        
-        
+
+
         if (createTIC) {
             int i = 0;
             for (IFileFragment file : fragments) {
@@ -157,8 +292,10 @@ public class Chromatogram1DChartProvider {
                     useRT = true;
                 }
                 annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
-                annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0, 0, 255, 192), new Color(0, 0, 255, 32)));
-                annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
+                annotations.addAll(generatePeakShapes(fragment, useRT,
+                        new Color(0, 0, 255, 192), new Color(0, 0, 255, 32)));
+                annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i],
+                        useRT));
                 //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
                 i++;
             }
@@ -168,7 +305,8 @@ public class Chromatogram1DChartProvider {
                 fragment = file;
                 for (int k = 0; k < minMZ.length; k++) {
                     labels[i] = fragment.getName() + " EIC:[" + minMZ[k] + "," + maxMZ[k] + ")";
-                    arrays[i] = MaltcmsTools.getEIC(fragment, minMZ[k], maxMZ[k], false, false);
+                    arrays[i] = MaltcmsTools.getEIC(fragment, minMZ[k], maxMZ[k],
+                            false, false);
                     //Factory.getInstance().getConfiguration().getString("var.total_intensity","total_intensity")).getArray();
                     if (!domainVar.equals("")) {
                         domains[i] = fragment.getChild(domainVar).getArray();
@@ -194,17 +332,19 @@ public class Chromatogram1DChartProvider {
             xyp.addAnnotation(xya);
         }
         xyp.setDomainCrosshairVisible(true);
-        
+
         JFreeChart jfc2 = new JFreeChart(xyp);
         return jfc2;
     }
-    
-    public List<XYPointerAnnotation> getCSVPeakAnnotations(IFileFragment f, Array ordinateValues, boolean useScanAcquisitionTime) {
+
+    public List<XYPointerAnnotation> getCSVPeakAnnotations(IFileFragment f,
+            Array ordinateValues, boolean useScanAcquisitionTime) {
         List<XYPointerAnnotation> l = new ArrayList<XYPointerAnnotation>();
         try {
             String basename = StringTools.removeFileExt(f.getName());
-            
-            File peakAnnotations = new File(new File(f.getAbsolutePath()).getParentFile(), basename + ".csv");
+
+            File peakAnnotations = new File(new File(f.getAbsolutePath()).
+                    getParentFile(), basename + ".csv");
             System.out.println("Looking for file " + peakAnnotations);
             if (!peakAnnotations.exists()) {
                 System.out.println("File does not exist!");
@@ -213,7 +353,8 @@ public class Chromatogram1DChartProvider {
             System.out.println("File exists!");
             CSVReader csvr = new CSVReader();
             try {
-                Tuple2D<Vector<Vector<String>>, Vector<String>> t = csvr.read(new BufferedInputStream(new FileInputStream(peakAnnotations)));
+                Tuple2D<Vector<Vector<String>>, Vector<String>> t = csvr.read(new BufferedInputStream(new FileInputStream(
+                        peakAnnotations)));
                 HashMap<String, Vector<String>> hm = csvr.getColumns(t);
                 Vector<String> rt = hm.get("RT");
                 Vector<String> scan = hm.get("SCAN");
@@ -226,9 +367,11 @@ public class Chromatogram1DChartProvider {
                     double apex = ordinateValues.getDouble(scanIdx);
                     if (useScanAcquisitionTime) {
                         double srt = (Double.parseDouble(s));
-                        xypa = new XYPointerAnnotation(id.get(i), srt * 60.0, apex, -0.8);
+                        xypa = new XYPointerAnnotation(id.get(i), srt * 60.0,
+                                apex, -0.8);
                     } else {
-                        xypa = new XYPointerAnnotation(id.get(i), scanIdx, apex, -0.8);
+                        xypa = new XYPointerAnnotation(id.get(i), scanIdx, apex,
+                                -0.8);
                     }
                     xypa.setTipRadius(0.01);
                     xypa.setLabelOffset(1);
@@ -245,17 +388,21 @@ public class Chromatogram1DChartProvider {
         }
         return l;
     }
-    
-    public List<XYPointerAnnotation> getANDIChromPeakAnnotations(IFileFragment f, boolean useScanAcquisitionTime) {
+
+    public List<XYPointerAnnotation> getANDIChromPeakAnnotations(IFileFragment f,
+            boolean useScanAcquisitionTime) {
         List<XYPointerAnnotation> l = new ArrayList<XYPointerAnnotation>();
         try {
             IVariableFragment peakNames = f.getChild("peak_name");
             IVariableFragment peakRT = f.getChild("peak_retention_time");
             Array ordinateValues = f.getChild("ordinate_values").getArray();
-            double delay = f.getChild("actual_delay_time").getArray().getDouble(0);
-            double samplingRate = f.getChild("actual_sampling_interval").getArray().getDouble(0);
+            double delay = f.getChild("actual_delay_time").getArray().getDouble(
+                    0);
+            double samplingRate = f.getChild("actual_sampling_interval").
+                    getArray().getDouble(0);
             Index idx = ordinateValues.getIndex();
-            Collection<String> peaknames = ArrayTools.getStringsFromArray(peakNames.getArray());
+            Collection<String> peaknames = ArrayTools.getStringsFromArray(peakNames.
+                    getArray());
             IndexIterator ii = peakRT.getArray().getIndexIterator();
             Iterator<String> peaknamesIter = peaknames.iterator();
             while (ii.hasNext() && peaknamesIter.hasNext()) {
@@ -266,7 +413,8 @@ public class Chromatogram1DChartProvider {
                     name = "NN";
                 }
                 if (useScanAcquisitionTime) {
-                    XYPointerAnnotation xypa = new XYPointerAnnotation(name, sat, ordinateValues.getDouble(idx.set(scan)), -0.8);
+                    XYPointerAnnotation xypa = new XYPointerAnnotation(name, sat,
+                            ordinateValues.getDouble(idx.set(scan)), -0.8);
                     xypa.setTipRadius(0.01);
                     xypa.setLabelOffset(1);
                     xypa.setBaseRadius(10);
@@ -274,7 +422,8 @@ public class Chromatogram1DChartProvider {
                     l.add(xypa);
 //                    XYLineAnnotation baseline = new XYLineAnnotation();
                 } else {
-                    XYPointerAnnotation xypa = new XYPointerAnnotation(name, scan, ordinateValues.getDouble(idx.set(scan)), -0.8);
+                    XYPointerAnnotation xypa = new XYPointerAnnotation(name,
+                            scan, ordinateValues.getDouble(idx.set(scan)), -0.8);
                     xypa.setTipRadius(0.01);
                     xypa.setLabelOffset(1);
                     xypa.setBaseRadius(10);
@@ -286,24 +435,25 @@ public class Chromatogram1DChartProvider {
         }
         return l;
     }
-    
-    public static List<XYAnnotation> generatePeakShapes(IFileFragment f, boolean useScanAcquisitionTime, Color outline, Color fill) {
+
+    public static List<XYAnnotation> generatePeakShapes(IFileFragment f,
+            boolean useScanAcquisitionTime, Color outline, Color fill) {
         List<XYAnnotation> l = new ArrayList<XYAnnotation>();
         try {
             IVariableFragment peakNames = f.getChild("peak_name");
             IVariableFragment peakRT = f.getChild("peak_retention_time");
             IVariableFragment peakStartRT = f.getChild("peak_start_time");
             IVariableFragment peakStopRT = f.getChild("peak_end_time");
-            
+
             int peaks = peakRT.getArray().getShape()[0];
-            
+
             boolean baselineAvailable = true;
-            
+
             IVariableFragment blStartRT = null;
             IVariableFragment blStopRT = null;
             IVariableFragment blStartValue = null;
             IVariableFragment blStopValue = null;
-            
+
             try {
                 blStartRT = f.getChild("baseline_start_time");
                 blStopRT = f.getChild("baseline_stop_time");
@@ -312,9 +462,9 @@ public class Chromatogram1DChartProvider {
             } catch (ResourceNotAvailableException e) {
                 baselineAvailable = false;
             }
-            
+
             boolean andichromMode = true;
-            
+
             Array ordinateValues = null;
             try {
                 ordinateValues = f.getChild("ordinate_values").getArray();
@@ -322,15 +472,16 @@ public class Chromatogram1DChartProvider {
                 ordinateValues = f.getChild("total_intensity").getArray();
                 andichromMode = false;
             }
-            
+
             if (andichromMode) {
             }
-            
-            Collection<String> peaknames = ArrayTools.getStringsFromArray(peakNames.getArray());
+
+            Collection<String> peaknames = ArrayTools.getStringsFromArray(peakNames.
+                    getArray());
             IndexIterator ii = peakRT.getArray().getIndexIterator();
-            
+
             Iterator<String> peaknamesIter = peaknames.iterator();
-            
+
             for (int i = 0; i
                     < peaks; i++) {
                 double sat = ii.getDoubleNext();
@@ -339,11 +490,15 @@ public class Chromatogram1DChartProvider {
                 int scan = 0;
                 int startIdx, stopIdx;
                 if (andichromMode) {
-                    double delay = f.getChild("actual_delay_time").getArray().getDouble(0);
-                    double samplingRate = f.getChild("actual_sampling_interval").getArray().getDouble(0);
+                    double delay = f.getChild("actual_delay_time").getArray().
+                            getDouble(0);
+                    double samplingRate = f.getChild("actual_sampling_interval").
+                            getArray().getDouble(0);
                     scan = (int) (Math.floor(((sat - delay) / samplingRate)));
-                    startIdx = (int) (Math.floor(((peakStartTime - delay) / samplingRate)));
-                    stopIdx = (int) (Math.floor(((peakStopTime - delay) / samplingRate)));
+                    startIdx = (int) (Math.floor(
+                            ((peakStartTime - delay) / samplingRate)));
+                    stopIdx = (int) (Math.floor(
+                            ((peakStopTime - delay) / samplingRate)));
                 } else {
                     Array satA = f.getChild("scan_acquisition_time").getArray();
                     double[] d = (double[]) satA.get1DJavaArray(double.class);
@@ -373,11 +528,11 @@ public class Chromatogram1DChartProvider {
                     blStartVal = ordinateValues.getDouble(startIdx);
                     blStopVal = ordinateValues.getDouble(stopIdx);
                 }
-                
+
                 if (name.trim().isEmpty()) {
                     name = "NN";
                 }
-                
+
                 GeneralPath gp = new GeneralPath();
                 if (useScanAcquisitionTime) {
                     Array sat2 = f.getChild("scan_acquisition_time").getArray();
@@ -390,11 +545,16 @@ public class Chromatogram1DChartProvider {
                     gp.lineTo(Math.min(blStartTime, peakStartTime), blStartVal);
                     gp.closePath();
                     //gp.closePath();
-                    Rectangle2D.Double bbox = new Rectangle2D.Double(peakStartTime, 0, peakStopTime - peakStartTime, ordinateValues.getDouble(scan));
+                    Rectangle2D.Double bbox = new Rectangle2D.Double(
+                            peakStartTime, 0, peakStopTime - peakStartTime,
+                            ordinateValues.getDouble(scan));
                     Area a = new Area(bbox);
                     a.intersect(new Area(gp));
-                    XYShapeAnnotation xypa = new XYShapeAnnotation(a, new BasicStroke(), outline, fill);
-                    XYLineAnnotation xyla = new XYLineAnnotation(blStartTime, blStartVal, blStopTime, blStopVal, new BasicStroke(), Color.BLACK);
+                    XYShapeAnnotation xypa = new XYShapeAnnotation(a,
+                            new BasicStroke(), outline, fill);
+                    XYLineAnnotation xyla = new XYLineAnnotation(blStartTime,
+                            blStartVal, blStopTime, blStopVal, new BasicStroke(),
+                            Color.BLACK);
                     l.add(xypa);
                     l.add(xyla);
 //                    XYLineAnnotation baseline = new XYLineAnnotation();
@@ -405,7 +565,8 @@ public class Chromatogram1DChartProvider {
                         gp.lineTo(j, ordinateValues.getDouble(j));
                     }
                     gp.closePath();
-                    XYShapeAnnotation xypa = new XYShapeAnnotation(gp, new BasicStroke(), outline, fill);
+                    XYShapeAnnotation xypa = new XYShapeAnnotation(gp,
+                            new BasicStroke(), outline, fill);
                     l.add(xypa);
                 }
             }
