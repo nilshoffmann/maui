@@ -29,6 +29,7 @@ import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.ProjectSettings;
 import net.sf.maltcms.chromaui.project.spi.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.events.RefreshNodes;
 import org.netbeans.api.project.Project;
@@ -167,12 +168,20 @@ public class ChromAUIProject implements IChromAUIProject {
                 tgs.add(icd.getTreatmentGroup());
             }
         }
-        return new LinkedList<ITreatmentGroupDescriptor>(tgs);
+        return tgs;
     }
 
     @Override
-    public Collection<DatabaseContainer> getDatabases() {
-        return getContainer(DatabaseContainer.class);
+    public Collection<IDatabaseDescriptor> getDatabases() {
+        getContainer(DatabaseContainer.class);
+        HashSet<IDatabaseDescriptor> tgs = new LinkedHashSet<IDatabaseDescriptor>();
+        for (DatabaseContainer cc : getContainer(
+                DatabaseContainer.class)) {
+            for (IDatabaseDescriptor icd : cc.get()) {
+                tgs.add(icd);
+            }
+        }
+        return tgs;
     }
 
     @Override

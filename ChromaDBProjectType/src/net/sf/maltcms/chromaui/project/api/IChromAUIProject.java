@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.Collection;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectState;
@@ -41,7 +42,7 @@ public interface IChromAUIProject extends Project, PropertyChangeListener {
     
     Collection<ITreatmentGroupDescriptor> getTreatmentGroups();
     
-    Collection<DatabaseContainer> getDatabases();
+    Collection<IDatabaseDescriptor> getDatabases();
     
     FileObject getOutputDir();
     

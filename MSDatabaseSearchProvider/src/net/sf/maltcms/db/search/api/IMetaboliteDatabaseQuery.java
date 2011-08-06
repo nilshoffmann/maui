@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
-import net.sf.maltcms.db.search.spi.MetaboliteDatabaseQueryResultList;
 
 /**
  *

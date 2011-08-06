@@ -17,6 +17,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.ChildFactory;
+import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
@@ -75,7 +76,13 @@ public class ContainerNodeFactory extends ChildFactory<IDescriptor> implements
                 //merge lookups of data object node and container node
                 Lookup lookup = new ProxyLookup(n.getLookup(), Lookups.fixed(cp,
                         cd), lkp);
-                return new FilterNode(n, new FilterNode.Children(n), lookup);
+//                try {
+                return new ChromatogramNode(n, Children.create(new ChromatogramChildNodeFactory(
+                        cd, lookup), true), lookup);
+                //                new FilterNode.Children(n), lookup);
+//                } catch (IntrospectionException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                }
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             } catch (IOException ex) {

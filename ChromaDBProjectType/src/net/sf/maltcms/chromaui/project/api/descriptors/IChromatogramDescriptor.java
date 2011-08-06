@@ -5,10 +5,8 @@
 
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
-import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
-import java.util.Collection;
+import java.util.List;
 import maltcms.datastructures.ms.IChromatogram;
-import net.sf.maltcms.chromaui.project.api.descriptors.IResourceDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 
@@ -31,5 +29,13 @@ public interface IChromatogramDescriptor extends IResourceDescriptor{
     ITreatmentGroupDescriptor getTreatmentGroup();
     
     void setTreatmentGroup(ITreatmentGroupDescriptor name);
+    
+    INormalizationDescriptor getNormalizationDescriptor();
+    
+    void setNormalizationDescriptor(INormalizationDescriptor normalizationDescriptor);
+    
+    List<IPeakAnnotationDescriptor> getPeakAnnotationDescriptors();
+    
+    void setPeakAnnotationDescriptors(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors);
 
 }

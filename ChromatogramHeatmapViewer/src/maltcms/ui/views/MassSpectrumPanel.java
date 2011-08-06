@@ -11,45 +11,36 @@
 package maltcms.ui.views;
 
 import cross.datastructures.fragments.IFileFragment;
-import cross.datastructures.tuple.Tuple2D;
 import cross.exception.NotImplementedException;
 import java.awt.Color;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import maltcms.datastructures.ms.Chromatogram1D;
-import maltcms.datastructures.ms.IMetabolite;
 import maltcms.datastructures.ms.IScan;
 import maltcms.datastructures.ms.IScan1D;
 import maltcms.datastructures.ms.IScan2D;
-import maltcms.tools.ArrayTools;
-import maltcms.tools.MaltcmsTools;
 import maltcms.ui.events.ChartPanelMouseListener;
 import maltcms.ui.events.Chromatogram1DMSProvider;
 import maltcms.ui.events.MSChartHandler;
-import maltcms.ui.viewer.extensions.PeakIdentification;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import net.sf.maltcms.chromaui.charts.ScaledNumberFormatter;
 import net.sf.maltcms.chromaui.charts.TopKItemsLabelGenerator;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
-import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
-import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
-import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQuery;
 import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryFactory;
+import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryResult;
+import net.sf.maltcms.db.search.api.MetaboliteDatabaseQueryResultList;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -68,10 +59,6 @@ import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
-import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.MAMath;
-import ucar.ma2.MAMath.MinMax;
 
 /**
  *
@@ -94,11 +81,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private Chromatogram1DMSProvider cmsp;
     private Result<IScan> lookupResult;
     private HashMap<XYSeries,IScan> seriesToScan = new LinkedHashMap<XYSeries,IScan>();
+    private IChromAUIProject project = null;
 
     /** Creates new form MassSpectrumPanel */
-    public MassSpectrumPanel(ChartPanelMouseListener cpml, IFileFragment f) {
+    public MassSpectrumPanel(ChartPanelMouseListener cpml, IFileFragment f, IChromAUIProject project) {
         this.cpml = cpml;
         this.f = f;
+        this.project = project;
 //        final JFreeChart jfc = getMSChart1D(cpml,f);
 //        JFCPanel jfcp = new JFCPanel();
 //        jfcp.setChart(jfc);
@@ -220,7 +209,23 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
     public void addIdentification() {
         
-//        Lookup.getDefault().lookup(IMetaboliteDatabaseQueryFactory.class).createQuery(, 0.7, seriesToScan.values().toArray(new IScan[seriesToScan.size()]));
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run() {
+                IMetaboliteDatabaseQuery query = Lookup.getDefault().lookup(IMetaboliteDatabaseQueryFactory.class).createQuery(project, 0.7, seriesToScan.values().toArray(new IScan[seriesToScan.size()]));
+                try {
+                    List<MetaboliteDatabaseQueryResultList> results = query.call();
+                    for(MetaboliteDatabaseQueryResultList list:results) {
+                        for(IMetaboliteDatabaseQueryResult result:list) {
+//                            result.
+                        }
+                    }
+                } catch (Exception ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        };
 //        System.out.println("Adding id!");
 //        Runnable s = new Runnable() {
 //
@@ -542,7 +547,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_removeActionPerformed
 
     private void identifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identifyActionPerformed
-        System.out.println("IDentifying");
+        System.out.println("Identifying");
         addIdentification();
     }//GEN-LAST:event_identifyActionPerformed
 

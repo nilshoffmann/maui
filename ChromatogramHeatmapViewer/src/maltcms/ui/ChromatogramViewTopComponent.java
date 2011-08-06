@@ -4,15 +4,18 @@
  */
 package maltcms.ui;
 
+import cross.datastructures.fragments.FileFragment;
 import java.awt.BorderLayout;
 import java.io.File;
+import java.util.Properties;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import maltcms.ui.charts.JFreeChartViewer.ChartPanelMouseListener;
 import maltcms.ui.views.ChromMSHeatmapPanel;
-import net.sf.maltcms.chromaui.charts.MaltcmsDrawingSupplier;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -27,6 +30,9 @@ import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays something.
+ * TODO add support for different renderers onto toolbar
+ * TODO add support for display of annotations (annotation browser)
+ * TODO add support for progress monitoring
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui//ChromatogramView//EN",
 autostore = false)
@@ -36,47 +42,66 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "ChromatogramViewTopComponent";
-    private volatile String filename;
     private MassSpectrumViewTopComponent secondaryView;
     private InstanceContent ic;
     private SettingsPanel sp;
     private JPanel loadingPanel;
+    private ChromMSHeatmapPanel jp;
+    private boolean loading = false;
 
-    public ChromatogramViewTopComponent(String filename, MassSpectrumViewTopComponent secondaryView) {
+    public ChromatogramViewTopComponent(IChromAUIProject project,
+            IChromatogramDescriptor filename,
+            MassSpectrumViewTopComponent secondaryView) {
         this();
         this.ic = new InstanceContent();
+
         associateLookup(new AbstractLookup(this.ic));
-        this.filename = filename;
-        MaltcmsDrawingSupplier mds = new MaltcmsDrawingSupplier();
-//        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        if (filename != null) {
-            this.secondaryView = secondaryView;
-            System.out.println("Filename given: " + filename);
-            load();
-//            this.jPanel1.add(load());
+        if (project != null) {
+            this.ic.add(project);
         }
-        setDisplayName("Chromatogram View of "+new File(this.filename).getName());
-        setToolTipText(this.filename);
+        this.ic.add(filename);
+        this.ic.add(new Properties());
+
+//        MaltcmsDrawingSupplier mds = new MaltcmsDrawingSupplier();
+//        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+        setDisplayName("Chromatogram View of " + new File(getLookup().lookup(
+                IChromatogramDescriptor.class).getResourceLocation()).getName());
+        setToolTipText(getLookup().lookup(IChromatogramDescriptor.class).
+                getResourceLocation());
         requestActive();
         requestFocusInWindow(true);
         sp = new SettingsPanel();
-        loadingPanel = new JPanel();
-        JProgressBar jpb = new JProgressBar();
-        jpb.setIndeterminate(true);
-        loadingPanel.add(jpb,BorderLayout.CENTER);
-        add(loadingPanel,BorderLayout.CENTER);
+//        loadingPanel = new JPanel();
+//        JProgressBar jpb = new JProgressBar();
+//        jpb.setIndeterminate(true);
+//        loadingPanel.add(jpb, BorderLayout.CENTER);
+//        add(loadingPanel, BorderLayout.CENTER);
+        this.secondaryView = secondaryView;
+        System.out.println("Setting ms data!");
+        secondaryView.setMSData(getChromatogramPanel().
+                getFileFragment(), getChromatogramPanel().
+                getChartPanelMouseListener());
+        System.out.println("Filename given: " + filename);
+        load();
+//            this.jPanel1.add(load());
     }
 
     public ChromatogramViewTopComponent() {
         initComponents();
-        setName(NbBundle.getMessage(ChromatogramViewTopComponent.class, "CTL_ChromatogramViewTopComponent"));
-        setToolTipText(NbBundle.getMessage(ChromatogramViewTopComponent.class, "HINT_ChromatogramViewTopComponent"));
+        setName(NbBundle.getMessage(ChromatogramViewTopComponent.class,
+                "CTL_ChromatogramViewTopComponent"));
+        setToolTipText(NbBundle.getMessage(ChromatogramViewTopComponent.class,
+                "HINT_ChromatogramViewTopComponent"));
     }
 
     private void load() {
-        System.out.println("Running loader");
-        SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(this, this.filename, this.sp);
-        RequestProcessor.getDefault().post(sw); 
+        if (!loading) {
+            System.out.println("Running loader");
+            SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(
+                    this, getLookup().lookup(IChromatogramDescriptor.class).
+                    getResourceLocation(), getLookup().lookup(Properties.class));
+            RequestProcessor.getDefault().post(sw);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -116,20 +141,23 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
                 NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
                 NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
                 null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
-                      // otherwise specify options as:
-                      //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                // otherwise specify options as:
+                //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-        );
+                );
 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            double massResolution = sp.getMassResolution();
-            double[] masses = sp.getSelectedMasses();
-            String plotMode = sp.getPlotMode();
-            String rtAxisUnit = sp.getRTAxisTimeUnit();
-        } 
+            Properties props = getLookup().lookup(Properties.class);
+            props.setProperty(
+                    "massResolution", sp.getMassResolution());
+            double[] masses = null;
+            props.setProperty("selectedMasses", sp.getSelectedMasses());
+            props.setProperty("plotMode", sp.getPlotMode());
+            props.setProperty("rtAxisUnit", sp.getRTAxisTimeUnit());
+            load();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JToolBar jToolBar1;
@@ -151,9 +179,11 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
      * Obtain the ChromatogramViewTopComponent instance. Never call {@link #getDefault} directly!
      */
     public static synchronized ChromatogramViewTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+        TopComponent win = WindowManager.getDefault().findTopComponent(
+                PREFERRED_ID);
         if (win == null) {
-            Logger.getLogger(ChromatogramViewTopComponent.class.getName()).warning(
+            Logger.getLogger(ChromatogramViewTopComponent.class.getName()).
+                    warning(
                     "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
             return getDefault();
         }
@@ -201,19 +231,34 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
         // TODO read your settings according to their version
     }
 
-    public void setPanel(final ChromMSHeatmapPanel jp) {
+    public ChromMSHeatmapPanel getChromatogramPanel() {
+        if (this.jp == null) {
+            this.jp = new ChromMSHeatmapPanel(
+                    new FileFragment(new File(getLookup().lookup(
+                    IChromatogramDescriptor.class).getResourceLocation())));
+            add(this.jp, BorderLayout.CENTER);
+            ic.add(this.jp);
+        }
+        return this.jp;
+    }
+
+    public void setPanel() {
         final TopComponent tc = this;
+        loading = false;
         Runnable r = new Runnable() {
 
             @Override
             public void run() {
-                remove(loadingPanel);
-                add(jp,BorderLayout.CENTER);
-                if(secondaryView!=null) {
+
+//        add(jp, BorderLayout.CENTER);
+                if (secondaryView != null) {
                     System.out.println("Setting ms data!");
-                    secondaryView.setMSData(jp.getFileFragment(), jp.getChartPanelMouseListener());
+                    secondaryView.setMSData(getChromatogramPanel().
+                            getFileFragment(), getChromatogramPanel().
+                            getChartPanelMouseListener());
                 }
-                SwingUtilities.updateComponentTreeUI(tc);
+                requestActive();
+                requestFocusInWindow(true);
             }
         };
         SwingUtilities.invokeLater(r);

@@ -9,8 +9,6 @@ import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
-import cross.datastructures.workflow.DefaultWorkflow;
-import cross.datastructures.workflow.WorkflowSlot;
 import cross.tools.StringTools;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -20,16 +18,18 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 import java.io.File;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import maltcms.io.csv.CSVWriter;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.project.ChromAUIProject;
+import net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.filesystems.FileObject;
@@ -132,7 +132,8 @@ public class DBProjectFactory {
                                 getFreeSpace();
                         long fileSize = file.length();
                         if (spaceLeft - (100 * 1024 * 1024) > fileSize) {
-                            FileUtil.copyFile(FileUtil.toFileObject(file), originaldatadir, file.getName());
+                            FileUtil.copyFile(FileUtil.toFileObject(file),
+                                    originaldatadir, file.getName());
                             File newFile = FileUtil.toFile(originaldatadir.
                                     getFileObject(
                                     file.getName()));
@@ -183,6 +184,13 @@ public class DBProjectFactory {
                         new TreatmentGroupDescriptor(fileToGroup.get(f)));
                 fileToDescriptor.put(f, icds[i]);
                 i++;
+            }
+
+            HashMap<File, INormalizationDescriptor> normalizationDescriptors = (HashMap<File, INormalizationDescriptor>) props.
+                    get(DBProjectVisualPanel3.PROP_FILE_TO_NORMALIZATION);
+            for (File file : normalizationDescriptors.keySet()) {
+                fileToDescriptor.get(file).setNormalizationDescriptor(
+                        normalizationDescriptors.get(file));
             }
 
             LinkedHashSet<String> groups = new LinkedHashSet<String>();

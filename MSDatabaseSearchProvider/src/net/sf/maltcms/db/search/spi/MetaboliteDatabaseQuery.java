@@ -4,6 +4,7 @@
  */
 package net.sf.maltcms.db.search.spi;
 
+import net.sf.maltcms.db.search.api.MetaboliteDatabaseQueryResultList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;

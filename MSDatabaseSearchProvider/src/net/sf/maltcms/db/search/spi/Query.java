@@ -4,6 +4,7 @@
  */
 package net.sf.maltcms.db.search.spi;
 
+import net.sf.maltcms.db.search.api.MetaboliteDatabaseQueryResultList;
 import com.db4o.ObjectSet;
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.NotImplementedException;

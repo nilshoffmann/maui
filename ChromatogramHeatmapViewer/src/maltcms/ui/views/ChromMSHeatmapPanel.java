@@ -16,6 +16,7 @@ import cross.event.IEvent;
 import cross.event.IEventSource;
 import cross.event.IListener;
 import java.awt.BorderLayout;
+import javax.swing.SwingUtilities;
 import maltcms.ui.events.ChartPanelMouseListener;
 import maltcms.ui.events.DomainMarkerKeyListener;
 import maltcms.ui.events.XYItemEntityClickedEvent;
@@ -31,7 +32,8 @@ import org.openide.util.lookup.InstanceContent;
  *
  * @author nilshoffmann
  */
-public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSource<XYItemEntity>, Lookup.Provider {
+public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
+        IEventSource<XYItemEntity>, Lookup.Provider {
 
     private XYPlot ticplot;
     private ChartPanel cdxpanel;
@@ -42,11 +44,21 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSou
     private Lookup lookup = new AbstractLookup(ic);
 
     /** Creates new form ChromMSHeatmapPanel */
-    public ChromMSHeatmapPanel(IFileFragment f, XYPlot ticplot) {
+    public ChromMSHeatmapPanel(IFileFragment f) {
         initComponents();
         this.f = f;
-        this.ticplot = ticplot;
-        prepareCharts();
+//        if (cdxpanel == null) {
+        cdxpanel = new ChartPanel(null);
+        cpml = new ChartPanelMouseListener(cdxpanel);
+        cdxpanel.addChartMouseListener(cpml);
+        cdxpanel.addKeyListener(new DomainMarkerKeyListener(
+                getTICPlot()));
+        add(cdxpanel, BorderLayout.CENTER);
+//                } else {
+
+
+//                }
+//        setPlot(ticplot);
     }
 
     public ChartPanelMouseListener getChartPanelMouseListener() {
@@ -57,17 +69,22 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements IEventSou
         return this.f;
     }
 
-    private void prepareCharts() {
-        System.out.println("Heatmap plot");
-        cdxpanel = new ChartPanel(new JFreeChart(getTICPlot()));
-        cpml = new ChartPanelMouseListener(cdxpanel);
-        cdxpanel.addChartMouseListener(cpml);
-        cdxpanel.addKeyListener(new DomainMarkerKeyListener(getTICPlot()));
-        add(cdxpanel, BorderLayout.CENTER);
-    }
-
     private XYPlot getTICPlot() {
         return this.ticplot;
+    }
+
+    public void setPlot(final XYPlot plot) {
+        this.ticplot = plot;
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run() {
+                JFreeChart jfc = new JFreeChart(ticplot);
+
+                cdxpanel.setChart(jfc);
+            }
+        };
+        SwingUtilities.invokeLater(r);
     }
 
     /** This method is called from within the constructor to

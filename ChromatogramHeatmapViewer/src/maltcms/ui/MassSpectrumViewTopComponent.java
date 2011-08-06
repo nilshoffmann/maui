@@ -6,13 +6,11 @@ package maltcms.ui;
 
 import cross.datastructures.fragments.IFileFragment;
 import java.awt.BorderLayout;
-import java.util.logging.Logger;
 import maltcms.ui.events.ChartPanelMouseListener;
-import maltcms.ui.views.MassSpectrumChartPanel;
 import maltcms.ui.views.MassSpectrumPanel;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 
@@ -27,18 +25,27 @@ public final class MassSpectrumViewTopComponent extends TopComponent {
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "MassSpectrumViewTopComponent";
+    private IChromAUIProject project;
 
     public MassSpectrumViewTopComponent() {
         initComponents();
-        setName(NbBundle.getMessage(MassSpectrumViewTopComponent.class, "CTL_MassSpectrumViewTopComponent"));
-        setToolTipText(NbBundle.getMessage(MassSpectrumViewTopComponent.class, "HINT_MassSpectrumViewTopComponent"));
+        setName(NbBundle.getMessage(MassSpectrumViewTopComponent.class,
+                "CTL_MassSpectrumViewTopComponent"));
+        setToolTipText(NbBundle.getMessage(MassSpectrumViewTopComponent.class,
+                "HINT_MassSpectrumViewTopComponent"));
     }
 
-    public void setMSData(final IFileFragment f, final ChartPanelMouseListener cpml) {
+    public void setProject(IChromAUIProject project) {
+        this.project = project;
+    }
+
+    public void setMSData(final IFileFragment f,
+            final ChartPanelMouseListener cpml) {
 //        MassSpectrumChartPanel mscp = new MassSpectrumChartPanel(cpml,f);
-        MassSpectrumPanel mscp = new MassSpectrumPanel(cpml, f);
-        add(mscp,BorderLayout.CENTER);
-        setDisplayName("Mass Spectrum View of "+f.getName());
+        removeAll();
+        MassSpectrumPanel mscp = new MassSpectrumPanel(cpml, f, this.project);
+        add(mscp, BorderLayout.CENTER);
+        setDisplayName("Mass Spectrum View of " + f.getName());
         setToolTipText(f.getAbsolutePath());
     }
 
@@ -55,40 +62,39 @@ public final class MassSpectrumViewTopComponent extends TopComponent {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
-     */
-    public static synchronized MassSpectrumViewTopComponent getDefault() {
-        if (instance == null) {
-            instance = new MassSpectrumViewTopComponent();
-        }
-        return instance;
-    }
-
-    /**
-     * Obtain the MassSpectrumViewTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized MassSpectrumViewTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(MassSpectrumViewTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof MassSpectrumViewTopComponent) {
-            return (MassSpectrumViewTopComponent) win;
-        }
-        Logger.getLogger(MassSpectrumViewTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
-
+//    /**
+//     * Gets default instance. Do not use directly: reserved for *.settings files only,
+//     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
+//     * To obtain the singleton instance, use {@link #findInstance}.
+//     */
+//    public static synchronized MassSpectrumViewTopComponent getDefault() {
+//        if (instance == null) {
+//            instance = new MassSpectrumViewTopComponent();
+//        }
+//        return instance;
+//    }
+//
+//    /**
+//     * Obtain the MassSpectrumViewTopComponent instance. Never call {@link #getDefault} directly!
+//     */
+//    public static synchronized MassSpectrumViewTopComponent findInstance() {
+//        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+//        if (win == null) {
+//            Logger.getLogger(MassSpectrumViewTopComponent.class.getName()).warning(
+//                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
+//            return getDefault();
+//        }
+//        if (win instanceof MassSpectrumViewTopComponent) {
+//            return (MassSpectrumViewTopComponent) win;
+//        }
+//        Logger.getLogger(MassSpectrumViewTopComponent.class.getName()).warning(
+//                "There seem to be multiple components with the '" + PREFERRED_ID
+//                + "' ID. That is a potential source of errors and unexpected behavior.");
+//        return getDefault();
+//    }
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override

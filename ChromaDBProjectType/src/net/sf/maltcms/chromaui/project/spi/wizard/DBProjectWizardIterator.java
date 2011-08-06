@@ -36,13 +36,14 @@ public class DBProjectWizardIterator implements WizardDescriptor./*Progress*/Ins
     private WizardDescriptor.Panel[] createPanels() {
         final GenericWizardPanel gwp1 = new GenericWizardPanel(new DBProjectVisualPanel1());
         final GenericWizardPanel gwp2 = new GenericWizardPanel(new DBProjectVisualPanel2());
+        final GenericWizardPanel gwp3 = new GenericWizardPanel(new DBProjectVisualPanel3());
         return new WizardDescriptor.Panel[]{
-                    gwp1,gwp2};
+                    gwp1,gwp2,gwp3};
     }
 
     private String[] createSteps() {
         return new String[]{
-                    NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_CreateProjectStep"), NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_AssignGroupStep")
+                    NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_CreateProjectStep"), NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_AssignGroupStep"), NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_AssignNormalizationStep")
                 };
     }
 

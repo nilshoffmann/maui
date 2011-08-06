@@ -251,7 +251,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         String s = (String) groupList.getSelectedValue();
         System.out.println("Selected value: " + s);
         removeGroup(s, idx);
-        firePropertyChange("VALIDATE", null, null);
+        firePropertyChange("VALIDATE", null, this);
 //        removeGroup(s, idx);
     }//GEN-LAST:event_removeGroupButtonActionPerformed
 
@@ -451,7 +451,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
             fileToGroup.put(f, group);
         }
         fileToGroupList.setCellRenderer(new FileListCellRenderer());
-        firePropertyChange("VALIDATE", null, null);
+        firePropertyChange("VALIDATE", null, this);
     }
 
     private boolean addGroup(String txt) {
@@ -461,7 +461,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         if (!getGroupListModel().contains(txt)) {
             if (!fileToGroup.values().contains(txt)) {
                 getGroupListModel().addElement(txt);
-                firePropertyChange("VALIDATE", null, null);
+                firePropertyChange("VALIDATE", null, this);
             }
             return true;
         }
@@ -482,13 +482,13 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         }
         fileToGroupList.setCellRenderer(new FileListCellRenderer());
 //        fileToGroup.containsValue(s);
-        firePropertyChange("VALIDATE", null, null);
+        firePropertyChange("VALIDATE", null, this);
     }
 
     @Override
     public void validate(WizardDescriptor d) throws WizardValidationException {
         // nothing to validate
-        firePropertyChange("VALIDATE", null, null);
+        firePropertyChange("VALIDATE", null, this);
     }
 
     class FileListCellRenderer extends JLabel implements ListCellRenderer {
@@ -520,7 +520,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
                     }
                 }
                 String filename = f.getName();
-                setText(filename + "\t" + group);
+                setText(filename + " | " + group);
                 setToolTipText(f.getAbsolutePath());
                 return this;
             }

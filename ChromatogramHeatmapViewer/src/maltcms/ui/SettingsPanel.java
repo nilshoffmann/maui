@@ -10,6 +10,8 @@
  */
 package maltcms.ui;
 
+import net.sf.maltcms.chromaui.charts.RTUnit;
+
 /**
  *
  * @author nilshoffmann
@@ -43,6 +45,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel1.setText(org.openide.util.NbBundle.getMessage(SettingsPanel.class, "SettingsPanel.jLabel1.text")); // NOI18N
 
         massResolution.setText(org.openide.util.NbBundle.getMessage(SettingsPanel.class, "SettingsPanel.massResolution.text")); // NOI18N
+        massResolution.setEnabled(false);
         massResolution.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 massResolutionActionPerformed(evt);
@@ -53,7 +56,7 @@ public class SettingsPanel extends javax.swing.JPanel {
 
         jLabel3.setText(org.openide.util.NbBundle.getMessage(SettingsPanel.class, "SettingsPanel.jLabel3.text")); // NOI18N
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seconds", "Minutes", "Hours" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seconds", "Minutes", "Hours", "Milliseconds" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -62,6 +65,7 @@ public class SettingsPanel extends javax.swing.JPanel {
 
         massesToDisplay.setText(org.openide.util.NbBundle.getMessage(SettingsPanel.class, "SettingsPanel.massesToDisplay.text")); // NOI18N
         massesToDisplay.setToolTipText(org.openide.util.NbBundle.getMessage(SettingsPanel.class, "SettingsPanel.massesToDisplay.toolTipText")); // NOI18N
+        massesToDisplay.setEnabled(false);
         massesToDisplay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 massesToDisplayActionPerformed(evt);
@@ -168,28 +172,20 @@ public class SettingsPanel extends javax.swing.JPanel {
     private javax.swing.JTextField massesToDisplay;
     // End of variables declaration//GEN-END:variables
 
-    public double[] getSelectedMasses() {
-        if(!massesToDisplay.isEnabled()) {
-            return new double[]{};
-        }
+    public String getSelectedMasses() {
         String massesToDisplayString = massesToDisplay.getText();
-        String[] split = massesToDisplayString.trim().split(" ");
-        double[] d = new double[split.length];
-        for(int i = 0;i<split.length;i++) {
-            d[i] = Double.parseDouble(split[i]);
-        }
-        return d;
+        return massesToDisplayString;
     }
     
     /**
      * 
      * @return Double.NaN if massResolution is disabled, otherwise double value
      */
-    public double getMassResolution() {
+    public String getMassResolution() {
         if(!massResolution.isEnabled()) {
-            return Double.NaN;
+            return ""+Double.NaN;
         }
-        return Double.parseDouble(massResolution.getText());
+        return massResolution.getText();
     }
     
     public String getPlotMode() {
@@ -197,6 +193,6 @@ public class SettingsPanel extends javax.swing.JPanel {
     }
     
     public String getRTAxisTimeUnit() {
-        return (String)jComboBox1.getSelectedItem();
+        return ((String)jComboBox1.getSelectedItem()).toUpperCase();
     }
 }

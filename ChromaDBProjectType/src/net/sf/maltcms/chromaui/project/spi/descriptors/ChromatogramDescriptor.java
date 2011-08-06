@@ -4,15 +4,21 @@
  */
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
+import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import cross.datastructures.fragments.FileFragment;
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import maltcms.datastructures.ms.ChromatogramFactory;
 import maltcms.datastructures.ms.IChromatogram;
 import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.types.GC;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
+import net.sf.maltcms.chromaui.project.api.types.QUADMS;
 
 /**
  *
@@ -20,12 +26,15 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  */
 public class ChromatogramDescriptor extends Annotatable implements IChromatogramDescriptor {
 
-    private String resourceLocation;
-    private ISeparationType st;
-    private IDetectorType dt;
-    private String displayName;
+    private String resourceLocation = "<NA>";
+    private ISeparationType st = new GC();
+    private IDetectorType dt = new QUADMS();
+    private String displayName = "<NA>";
     private IChromatogram chromatogram;
-    private ITreatmentGroupDescriptor treatmentGroup;
+    private ITreatmentGroupDescriptor treatmentGroup = new TreatmentGroupDescriptor(
+            "N.N.");
+    private INormalizationDescriptor normalizationDescriptor = new NormalizationDescriptor();
+    private List<IPeakAnnotationDescriptor> peakAnnotationDescriptors = Collections.emptyList();
 
     @Override
     public ITreatmentGroupDescriptor getTreatmentGroup() {
@@ -104,6 +113,26 @@ public class ChromatogramDescriptor extends Annotatable implements IChromatogram
     @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    @Override
+    public INormalizationDescriptor getNormalizationDescriptor() {
+        return normalizationDescriptor;
+    }
+
+    @Override
+    public void setNormalizationDescriptor(INormalizationDescriptor normalizationDescriptor) {
+        this.normalizationDescriptor = normalizationDescriptor;
+    }
+
+    @Override
+    public List<IPeakAnnotationDescriptor> getPeakAnnotationDescriptors() {
+        return this.peakAnnotationDescriptors;
+    }
+
+    @Override
+    public void setPeakAnnotationDescriptors(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
+        this.peakAnnotationDescriptors = peakAnnotationDescriptors;
     }
 
 }

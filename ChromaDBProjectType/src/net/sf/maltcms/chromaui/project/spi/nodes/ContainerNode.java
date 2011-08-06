@@ -45,4 +45,9 @@ public class ContainerNode extends BeanNode<IContainer<? extends IDescriptor>> {
     public String getDisplayName() {
         return getBean().getDisplayName();
     }
+
+    @Override
+    public String getShortDescription() {
+        return getBean().getName();
+    }
 }
