@@ -9,14 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import javax.xml.ws.ServiceMode;
 import lombok.Data;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQuery;
 import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryInput;
 import net.sf.maltcms.execution.spi.MaltcmsCompletionService;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
  *

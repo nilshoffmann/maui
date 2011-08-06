@@ -5,7 +5,6 @@
 package net.sf.maltcms.db.search.spi;
 
 import java.util.List;
-import java.util.Properties;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
