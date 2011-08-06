@@ -3,23 +3,13 @@
  */
 package maltcms.ui.heatmap3Dviewer.jogl;
 
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Float;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.FloatBuffer;
 
-import javax.media.j3d.Texture;
-import javax.media.jai.ImageMIPMap;
-import javax.media.jai.Interpolation;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
 
 /**
  * @author Nils.Hoffmann@CeBiTec.Uni-Bielefeld.DE
