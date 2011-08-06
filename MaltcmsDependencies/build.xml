@@ -4,7 +4,7 @@
 <!-- If you delete this file and reopen the project it will be recreated. -->
 <project name="maltcms.dependencies" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project maltcms.dependencies.</description>
-    <import file="nbproject/build-impl.xml"/>
+<!--    <import file="nbproject/build-impl.xml"/>
     <import file="ivy/ivy-init.xml" />
     <target name="up-to-date" depends="init">
         <uptodate targetfile="${cluster}/${module.jar}" property="is.jar.uptodate">
@@ -22,5 +22,5 @@
         </uptodate>
 
 	<antcall target="retrieve-all"/>
-    </target>
+    </target>-->
 </project>
