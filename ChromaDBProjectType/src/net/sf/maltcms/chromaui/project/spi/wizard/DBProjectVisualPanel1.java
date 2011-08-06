@@ -376,6 +376,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
         if (projectLocation == null || projectLocation.getParentFile() == null || !projectLocation.
                 getParentFile().isDirectory()) {
             try {
+//                ProjectChooser.setProjectsFolder(new File(new File(System.getProperty("user.home")),"MauiProjects"));
                 projectLocation = ProjectChooser.getProjectsFolder();
             } catch (AssertionError ae) {
                 projectLocation = new File(System.getProperty("user.home"));

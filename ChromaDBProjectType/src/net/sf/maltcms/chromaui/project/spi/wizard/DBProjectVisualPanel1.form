@@ -32,11 +32,11 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="outputFolderTextField" pref="374" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" pref="374" max="32767" attributes="0"/>
-                  <Component id="projectNameTextField" alignment="1" pref="374" max="32767" attributes="0"/>
-                  <Component id="projectLocationTextField" alignment="1" pref="374" max="32767" attributes="0"/>
-                  <Component id="createdFolderTextField" alignment="1" pref="374" max="32767" attributes="0"/>
+                  <Component id="outputFolderTextField" pref="379" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="379" max="32767" attributes="0"/>
+                  <Component id="projectNameTextField" alignment="1" pref="379" max="32767" attributes="0"/>
+                  <Component id="projectLocationTextField" alignment="1" pref="379" max="32767" attributes="0"/>
+                  <Component id="createdFolderTextField" alignment="1" pref="379" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
