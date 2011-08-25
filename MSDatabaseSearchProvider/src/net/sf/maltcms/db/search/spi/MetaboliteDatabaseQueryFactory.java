@@ -24,15 +24,16 @@ public class MetaboliteDatabaseQueryFactory implements
         IMetaboliteDatabaseQueryFactory {
 
     @Override
-    public IMetaboliteDatabaseQuery createQuery(List<IDatabaseDescriptor> descriptors,
-            double matchThreshold, IScan... scans) {
+    public IMetaboliteDatabaseQuery createQuery(
+            List<IDatabaseDescriptor> descriptors,
+            double matchThreshold, int maxHits, IScan... scans) {
         return new MetaboliteDatabaseQuery(descriptors, scans,
-                matchThreshold);
+                matchThreshold, maxHits);
     }
-    
+
     @Override
     public IMetaboliteDatabaseQuery createQuery(IChromAUIProject project,
-            double matchThreshold, IScan... scans) {
+            double matchThreshold, int maxHits, IScan... scans) {
         DatabaseDefinitionPanel panel = new DatabaseDefinitionPanel(project);
         // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
         NotifyDescriptor nd = new NotifyDescriptor(
@@ -48,7 +49,8 @@ public class MetaboliteDatabaseQueryFactory implements
 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            return createQuery(panel.getDatabaseDescriptors(), matchThreshold, scans);
+            return createQuery(panel.getDatabaseDescriptors(), matchThreshold, maxHits, 
+                    scans);
         }
         return null;
     }

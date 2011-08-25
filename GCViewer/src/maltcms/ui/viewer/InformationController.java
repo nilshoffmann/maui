@@ -53,6 +53,10 @@ public class InformationController {
         this.aip1 = new AdditionalInformationPanel(this, ChartPositions.NorthWest);
         this.aip2 = new AdditionalInformationPanel(this, ChartPositions.SouthEast);
     }
+    
+    public IChromAUIProject getProject() {
+        return icp;
+    }
 
     public HeatMapPanel getHMP() {
         return this.hmp;

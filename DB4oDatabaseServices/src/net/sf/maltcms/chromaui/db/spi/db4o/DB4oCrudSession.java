@@ -5,6 +5,7 @@
 package net.sf.maltcms.chromaui.db.spi.db4o;
 
 import com.db4o.ObjectContainer;
+import com.db4o.query.Predicate;
 import com.db4o.query.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +104,11 @@ public final class DB4oCrudSession implements ICrudSession {
     public final Query getSODAQuery() {
         authenticate(ic);
         return oc.query();
+    }
+    
+    public final <T> Collection<T> retrieve(Predicate<T> p) {
+        authenticate(ic);
+        return oc.query(p);
     }
 
     private void authenticate(ICredentials ic) throws AuthenticationException {

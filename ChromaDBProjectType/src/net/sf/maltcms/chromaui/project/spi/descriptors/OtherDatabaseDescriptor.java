@@ -4,7 +4,7 @@
  */
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
-import java.net.URL;
+import java.io.File;
 import java.util.Set;
 import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
@@ -35,8 +35,11 @@ public class OtherDatabaseDescriptor extends Annotatable
         this.location = u;
     }
 
-    @Override
+   @Override
     public String getName() {
+        if(this.name==null) {
+            return this.location;
+        }
         return this.name;
     }
 
@@ -52,6 +55,9 @@ public class OtherDatabaseDescriptor extends Annotatable
 
     @Override
     public String getDisplayName() {
+        if(this.displayName==null) {
+            return new File(this.location).getName();
+        }
         return this.displayName;
     }
 
@@ -78,6 +84,11 @@ public class OtherDatabaseDescriptor extends Annotatable
     @Override
     public void setApplicableDetectorTypes(Set<IDetectorType> detectorTypes) {
         this.applicableDetectorTypes = detectorTypes;
+    }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
     }
     
 }

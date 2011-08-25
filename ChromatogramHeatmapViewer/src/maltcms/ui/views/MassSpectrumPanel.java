@@ -10,6 +10,7 @@
  */
 package maltcms.ui.views;
 
+import net.sf.maltcms.db.search.api.ui.DatabaseDefinitionPanel;
 import cross.datastructures.fragments.IFileFragment;
 import cross.exception.NotImplementedException;
 import java.awt.Color;
@@ -24,9 +25,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import maltcms.datastructures.ms.Chromatogram1D;
+import maltcms.datastructures.ms.IMetabolite;
 import maltcms.datastructures.ms.IScan;
 import maltcms.datastructures.ms.IScan1D;
 import maltcms.datastructures.ms.IScan2D;
@@ -34,6 +41,7 @@ import maltcms.ui.events.ChartPanelMouseListener;
 import maltcms.ui.events.Chromatogram1DMSProvider;
 import maltcms.ui.events.MSChartHandler;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.charts.ScaledNumberFormatter;
 import net.sf.maltcms.chromaui.charts.TopKItemsLabelGenerator;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -54,11 +62,14 @@ import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
+import org.openide.util.RequestProcessor;
 
 /**
  *
@@ -80,14 +91,17 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private ChartPanel cp;
     private Chromatogram1DMSProvider cmsp;
     private Result<IScan> lookupResult;
-    private HashMap<XYSeries,IScan> seriesToScan = new LinkedHashMap<XYSeries,IScan>();
+    private HashMap<XYSeries, IScan> seriesToScan = new LinkedHashMap<XYSeries, IScan>();
     private IChromAUIProject project = null;
+    private DatabaseDefinitionPanel ddp = null;
 
     /** Creates new form MassSpectrumPanel */
-    public MassSpectrumPanel(ChartPanelMouseListener cpml, IFileFragment f, IChromAUIProject project) {
+    public MassSpectrumPanel(ChartPanelMouseListener cpml, IFileFragment f,
+            IChromAUIProject project) {
         this.cpml = cpml;
         this.f = f;
         this.project = project;
+        this.ddp = new DatabaseDefinitionPanel(project);
 //        final JFreeChart jfc = getMSChart1D(cpml,f);
 //        JFCPanel jfcp = new JFCPanel();
 //        jfcp.setChart(jfc);
@@ -206,26 +220,100 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //
 ////        this.cp.getChart().getPlot().datasetChanged(new DatasetChangeEvent(this, this.sc));
 //    }
-
     public void addIdentification() {
-        
-        Runnable r = new Runnable() {
+        // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
+        NotifyDescriptor nd = new NotifyDescriptor(
+                ddp, // instance of your panel
+                "Select Databases and Settings", // title of the dialog
+                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+                null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+                // otherwise specify options as:
+                //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                NotifyDescriptor.OK_OPTION // default option is "Yes"
+                );
 
-            @Override
-            public void run() {
-                IMetaboliteDatabaseQuery query = Lookup.getDefault().lookup(IMetaboliteDatabaseQueryFactory.class).createQuery(project, 0.7, seriesToScan.values().toArray(new IScan[seriesToScan.size()]));
-                try {
-                    List<MetaboliteDatabaseQueryResultList> results = query.call();
-                    for(MetaboliteDatabaseQueryResultList list:results) {
-                        for(IMetaboliteDatabaseQueryResult result:list) {
-//                            result.
-                        }
-                    }
-                } catch (Exception ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+        // let's display the dialog now...
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            if (ddp.getSelectedDatabases().isEmpty()) {
+                return;
             }
-        };
+            Runnable r = new Runnable() {
+
+                @Override
+                public void run() {
+                    IMetaboliteDatabaseQuery query = Lookup.getDefault().lookup(
+                            IMetaboliteDatabaseQueryFactory.class).createQuery(
+                            ddp.getSelectedDatabases(), ddp.getMatchThreshold(),
+                            ddp.getMaxNumberOfHits(), seriesToScan.values().
+                            toArray(new IScan[seriesToScan.size()]));
+                    try {
+                        List<MetaboliteDatabaseQueryResultList> results = query.
+                                call();
+
+                        Box outerBox = Box.createVerticalBox();
+                        for (MetaboliteDatabaseQueryResultList mdqrl : results) {
+                            for (IMetaboliteDatabaseQueryResult result : mdqrl) {
+                                Box vbox = Box.createVerticalBox();
+                                JLabel label = new JLabel("Results for scan " + result.
+                                        getScan().getScanIndex() + " at " + result.
+                                        getScan().getScanAcquisitionTime());
+                                JLabel dbLabel = new JLabel("DB: " + result.
+                                        getDatabaseDescriptor().
+                                        getResourceLocation());
+                                vbox.add(label);
+                                vbox.add(dbLabel);
+                                JLabel parameterLabel = new JLabel("Minimum Score: " + ddp.
+                                        getMatchThreshold() + "; Maximum #Hits Returned: " + ddp.
+                                        getMaxNumberOfHits());
+                                vbox.add(parameterLabel);
+                                DefaultTableModel dlm = new DefaultTableModel(new String[]{
+                                            "Score", "Name", "MW", "Formula",
+                                            "Max Mass"}, 0);
+                                for (IMetabolite metabolite : result.
+                                        getMetabolites()) {
+                                    String name = metabolite.getName();
+                                    if (name.lastIndexOf("_") != -1) {
+                                        name = name.substring(
+                                                name.lastIndexOf(
+                                                "_") + 1);
+                                    }
+                                    dlm.addRow(new Object[]{result.getScoreFor(
+                                                metabolite), name, metabolite.
+                                                getMW(), metabolite.getFormula(),
+                                                metabolite.getMaxMass()});
+                                }
+                                JTable jl = new JTable(dlm);
+                                JScrollPane resultScrollPane = new JScrollPane(
+                                        jl);
+                                vbox.add(resultScrollPane);
+                                outerBox.add(vbox);
+                                outerBox.add(Box.createVerticalStrut(10));
+                            }
+                        }
+                        JScrollPane jsp = new JScrollPane(outerBox);
+                        NotifyDescriptor nd = new NotifyDescriptor(
+                                jsp, // instance of your panel
+                                "Database Search Results", // title of the dialog
+                                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                                NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+                                null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+                                // otherwise specify options as:
+                                //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                                NotifyDescriptor.OK_OPTION // default option is "Yes"
+                                );
+                        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+                        }
+                    } catch (Exception ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            };
+            RequestProcessor.getDefault().post(r);
+
+        }
+    }
+
 //        System.out.println("Adding id!");
 //        Runnable s = new Runnable() {
 //
@@ -295,21 +383,21 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 ////                }
 //            }
 //
-//            private Array filterQuerySpectrum(XYSeries xys, Array masses,
-//                    double minMassT, Array intensities, List<Double> massFilter) {
-//                for (int i = 0; i < xys.getItemCount(); i++) {
-//                    double mass = xys.getX(i).doubleValue();
-//                    masses.setDouble(i, mass);
-//                    if (mass >= minMassT) {
-//                        intensities.setDouble(i, xys.getY(i).doubleValue());
-//                    }
-//                }
-//                List<Integer> maskedIndices = MaltcmsTools.findMaskedMasses(
-//                        masses, massFilter, 0);
-//                intensities = ArrayTools.filterIndices(intensities,
-//                        maskedIndices, 0);
-//                return intensities;
+//    private Array filterQuerySpectrum(XYSeries xys, Array masses,
+//            double minMassT, Array intensities, List<Double> massFilter) {
+//        for (int i = 0; i < xys.getItemCount(); i++) {
+//            double mass = xys.getX(i).doubleValue();
+//            masses.setDouble(i, mass);
+//            if (mass >= minMassT) {
+//                intensities.setDouble(i, xys.getY(i).doubleValue());
 //            }
+//        }
+//        List<Integer> maskedIndices = MaltcmsTools.findMaskedMasses(
+//                masses, massFilter, 0);
+//        intensities = ArrayTools.filterIndices(intensities,
+//                maskedIndices, 0);
+//        return intensities;
+//    }
 //        };
 //        ExecutorService e = Executors.newSingleThreadExecutor();
 //        e.execute(s);
@@ -319,8 +407,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //        } catch (InterruptedException ex) {
 //            Exceptions.printStackTrace(ex);
 //        }
-    }
-
+//}
     private void updateActiveMassSpectrum() {
         Object[] obj = new Object[sc.getSeriesCount()];
         for (int i = 0; i < sc.getSeriesCount(); i++) {
@@ -345,6 +432,8 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                         new TopKItemsLabelGenerator(tm, topk));
                 plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
                 plot.notifyListeners(new PlotChangeEvent(plot));
+                ChartCustomizer.setSeriesColors(plot, 0.8f);
+                ChartCustomizer.setSeriesStrokes(plot, 2.0f);
             }
         }
     }
@@ -548,7 +637,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
     private void identifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identifyActionPerformed
         System.out.println("Identifying");
-        addIdentification();
+        if (seriesToScan.isEmpty()) {
+            NotifyDescriptor nd = new NotifyDescriptor.Message(
+                    "Please select at least one mass spectrum!");
+            DialogDisplayer.getDefault().notify(nd);
+        } else {
+            addIdentification();
+        }
     }//GEN-LAST:event_identifyActionPerformed
 
     private void absoluteRelativeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRelativeToggleActionPerformed
@@ -583,7 +678,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                     System.out.println("Change ms called in MassSpectrumPanel");
                     if (scan instanceof IScan1D) {
                         XYSeries s = ChromatogramVisualizerTools.getMSSeries1D(
-                                (IScan1D)scan);
+                                (IScan1D) scan);
                         if (addMs.isSelected()) {
                             try {
                                 sc.getSeries(s.getKey());
@@ -598,14 +693,17 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                             sc.addSeries(s);
                             seriesToScan.put(s, scan);
                             //cp.repaint();
-                            ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
+                            XYPlot plot = (XYPlot) cp.getChart().getPlot();
+                            ChartCustomizer.setSeriesColors(plot, 0.8f);
+                            ChartCustomizer.setSeriesStrokes(plot, 2.0f);
+                            plot.setDataset(sc);
                         }
                         updateActiveMassSpectrum();
                         addTopKLabels(topK, activeMS);
-                    }else if(scan instanceof IScan2D) {
+                    } else if (scan instanceof IScan2D) {
                         throw new NotImplementedException();
                     }
-                        
+
 
                 }
             };

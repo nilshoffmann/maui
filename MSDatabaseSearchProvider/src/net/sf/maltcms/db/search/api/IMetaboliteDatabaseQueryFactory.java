@@ -15,8 +15,8 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
  */
 public interface IMetaboliteDatabaseQueryFactory {
     
-    public IMetaboliteDatabaseQuery createQuery(IChromAUIProject project, double matchThreshold, IScan...scans);
+    public IMetaboliteDatabaseQuery createQuery(IChromAUIProject project, double matchThreshold, int maxHits, IScan...scans);
     
-    public IMetaboliteDatabaseQuery createQuery(List<IDatabaseDescriptor> descriptors, double matchThreshold, IScan...scans);
+    public IMetaboliteDatabaseQuery createQuery(List<IDatabaseDescriptor> descriptors, double matchThreshold, int maxHits, IScan...scans);
     
 }

@@ -7,6 +7,7 @@ package net.sf.maltcms.chromaui.db.api.db4o;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +25,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service=ICrudProviderFactory.class)
 public class DB4oCrudProviderFactory implements ICrudProviderFactory {
 
-    private WeakHashMap<URL, ICrudProvider> whm = new WeakHashMap<URL, ICrudProvider>();
+    private HashMap<URL, ICrudProvider> whm = new HashMap<URL, ICrudProvider>();
     
     @Override
     public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {

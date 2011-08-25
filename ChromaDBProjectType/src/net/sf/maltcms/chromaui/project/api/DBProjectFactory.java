@@ -4,7 +4,7 @@
  */
 package net.sf.maltcms.chromaui.project.api;
 
-import net.sf.maltcms.chromaui.project.spi.container.TreatmentGroupContainer;
+import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;

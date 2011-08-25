@@ -19,7 +19,7 @@ import java.awt.BorderLayout;
 import javax.swing.SwingUtilities;
 import maltcms.ui.events.ChartPanelMouseListener;
 import maltcms.ui.events.DomainMarkerKeyListener;
-import maltcms.ui.events.XYItemEntityClickedEvent;
+import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.XYItemEntity;
@@ -40,6 +40,7 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
     private final IFileFragment f;
     private EventSource<XYItemEntity> es = new EventSource<XYItemEntity>();
     private ChartPanelMouseListener cpml;
+    private DomainMarkerKeyListener dmkl;
     private InstanceContent ic = new InstanceContent();
     private Lookup lookup = new AbstractLookup(ic);
 
@@ -51,14 +52,17 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
         cdxpanel = new ChartPanel(null);
         cpml = new ChartPanelMouseListener(cdxpanel);
         cdxpanel.addChartMouseListener(cpml);
-        cdxpanel.addKeyListener(new DomainMarkerKeyListener(
-                getTICPlot()));
+        dmkl = new DomainMarkerKeyListener(
+                getTICPlot());
+        cdxpanel.addKeyListener(dmkl);
         add(cdxpanel, BorderLayout.CENTER);
 //                } else {
 
 
 //                }
 //        setPlot(ticplot);
+        cdxpanel.requestFocus(true);
+        cdxpanel.requestFocusInWindow();
     }
 
     public ChartPanelMouseListener getChartPanelMouseListener() {
@@ -80,8 +84,10 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
             @Override
             public void run() {
                 JFreeChart jfc = new JFreeChart(ticplot);
-
+                ChartCustomizer.setSeriesColors(ticplot, 0.8f);
+                ChartCustomizer.setSeriesStrokes(ticplot, 2.0f);
                 cdxpanel.setChart(jfc);
+                dmkl.setPlot(ticplot);
             }
         };
         SwingUtilities.invokeLater(r);

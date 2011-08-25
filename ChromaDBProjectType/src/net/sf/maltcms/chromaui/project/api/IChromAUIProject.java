@@ -6,7 +6,7 @@
 package net.sf.maltcms.chromaui.project.api;
 
 import java.beans.PropertyChangeListener;
-import net.sf.maltcms.chromaui.project.spi.container.DatabaseContainer;
+import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import java.net.URL;
 import java.util.Collection;

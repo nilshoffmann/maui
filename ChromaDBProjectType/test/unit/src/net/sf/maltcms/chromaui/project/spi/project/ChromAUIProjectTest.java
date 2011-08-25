@@ -13,7 +13,7 @@ import net.sf.maltcms.chromaui.project.api.annotations.IAnnotation;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.spi.container.TreatmentGroupContainer;
+import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -30,6 +30,7 @@ import java.util.Vector;
 import maltcms.tools.MaltcmsTools;
 import maltcms.ui.charts.VariableSelectionPanel;
 import maltcms.ui.charts.XYChart;
+import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.annotations.XYLineAnnotation;
@@ -186,7 +187,8 @@ public class Chromatogram1DChartProvider {
                 arrays[trace] = eic;
                 if (useRT) {
                     try {
-                        domains[trace] = fragment.getChild("scan_acquisition_time").
+                        domains[trace] = fragment.getChild(
+                                "scan_acquisition_time").
                                 getArray();
                     } catch (ResourceNotAvailableException rne) {
                     }
@@ -276,8 +278,6 @@ public class Chromatogram1DChartProvider {
             domains = new Array[fragments.size() * minMZ.length];
         }
         List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
-        Color[] plotColors = new Color[]{};
-
 
         if (createTIC) {
             int i = 0;
@@ -332,7 +332,8 @@ public class Chromatogram1DChartProvider {
             xyp.addAnnotation(xya);
         }
         xyp.setDomainCrosshairVisible(true);
-
+        ChartCustomizer.setSeriesColors(xyp,0.7f);
+        ChartCustomizer.setSeriesStrokes(xyp, 2.0f);
         JFreeChart jfc2 = new JFreeChart(xyp);
         return jfc2;
     }

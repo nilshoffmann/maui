@@ -23,11 +23,11 @@ import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
-import net.sf.maltcms.chromaui.project.spi.container.DatabaseContainer;
+import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.ProjectSettings;
-import net.sf.maltcms.chromaui.project.spi.container.TreatmentGroupContainer;
+import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
@@ -173,7 +173,7 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public Collection<IDatabaseDescriptor> getDatabases() {
-        getContainer(DatabaseContainer.class);
+//        getContainer(DatabaseContainer.class);
         HashSet<IDatabaseDescriptor> tgs = new LinkedHashSet<IDatabaseDescriptor>();
         for (DatabaseContainer cc : getContainer(
                 DatabaseContainer.class)) {

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.chromaui.project.spi.container;
+package net.sf.maltcms.chromaui.project.api.container;
 
 import java.awt.Image;
 import net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer;
@@ -18,7 +18,7 @@ public class DatabaseContainer extends ADatabaseBackedContainer<IDatabaseDescrip
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
-                "net/sf/maltcms/chromaui/project/resources/DB.png");
+                "net/sf/maltcms/chromaui/project/resources/DBDescriptor.png");
     }
     
 }

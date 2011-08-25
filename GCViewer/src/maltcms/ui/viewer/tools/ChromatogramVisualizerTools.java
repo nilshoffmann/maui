@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import maltcms.datastructures.caches.IScanLine;
@@ -26,6 +27,7 @@ import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IMetabolite;
 import maltcms.datastructures.ms.IScan1D;
 import maltcms.datastructures.ms.IScan2D;
+import maltcms.datastructures.ms.Scan2D;
 import maltcms.tools.ImageTools;
 import maltcms.ui.charts.AChart;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
@@ -54,16 +56,20 @@ import ucar.ma2.MAMath.MinMax;
  */
 public class ChromatogramVisualizerTools {
 
+    private static WeakHashMap<IChromatogramDescriptor, Tuple2D<IScanLine, IChromatogram2D>> whm2d = new WeakHashMap<IChromatogramDescriptor, Tuple2D<IScanLine, IChromatogram2D>>();
+
 //    public static XYPlot getMSPlot() {
 //        return createBarChart();
 //    }
     public static Tuple2D<Array, Array> getMS(Point imagePoint, String filename) {
-        final IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(Factory.getInstance().getFileFragmentFactory().create(filename));
+        final IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(Factory.
+                getInstance().getFileFragmentFactory().create(filename));
 
         return scanlineCache.getSparseMassSpectra(imagePoint);
     }
 
-    public static XYSeries convertToSeries(Array oms, Tuple2D<Double, IMetabolite> hit, String name) {
+    public static XYSeries convertToSeries(Array oms,
+            Tuple2D<Double, IMetabolite> hit, String name) {
 
         IndexIterator iter = oms.getIndexIterator();
         int max = Integer.MIN_VALUE;
@@ -91,9 +97,11 @@ public class ChromatogramVisualizerTools {
         }
         max = max / 1000;
 
-        XYSeries s = new XYSeries(hit.getSecond().getName() + "(+" + hit.getFirst() + ")");
+        XYSeries s = new XYSeries(hit.getSecond().getName() + "(+" + hit.
+                getFirst() + ")");
 
-        Tuple2D<ArrayDouble.D1, ArrayInt.D1> ms = hit.getSecond().getMassSpectrum();
+        Tuple2D<ArrayDouble.D1, ArrayInt.D1> ms = hit.getSecond().
+                getMassSpectrum();
         IndexIterator mz = ms.getFirst().getIndexIterator();
         IndexIterator inten = ms.getSecond().getIndexIterator();
         while (mz.hasNext() && inten.hasNext()) {
@@ -119,7 +127,7 @@ public class ChromatogramVisualizerTools {
         }
         return s;
     }
-    
+
     public static MSSeries getMSSeries1D(IScan1D scan) {
         System.out.println("repainting ms");
         long start = System.currentTimeMillis();
@@ -128,7 +136,8 @@ public class ChromatogramVisualizerTools {
 //        Array sat = f.getChild("scan_acquisition_time").getArray();
         //IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(f);
         //System.out.println("scl: " + scanlineCache.getClass().getName());
-        System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+        System.out.println(
+                "Took: " + (System.currentTimeMillis() - start) + "ms");
         try {
 //            double modulationTime = f.getChild("modulation_time").getArray().getDouble(0);
 //            double sar = f.getChild("scan_rate").getArray().getDouble(0);
@@ -143,9 +152,11 @@ public class ChromatogramVisualizerTools {
         DecimalFormat rt1format = new DecimalFormat("#0.00");
 //        DecimalFormat rt2format = new DecimalFormat("#0.000");
         //System.out.println("First col scan acquisition time " + scanlineCache.);
-        MSSeries s = new MSSeries(rt1format.format(scan.getScanAcquisitionTime()));
+        MSSeries s = new MSSeries(
+                rt1format.format(scan.getScanAcquisitionTime()));
 
-        Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(scan.getMasses(), scan.getIntensities());//scanlineCache.getSparseMassSpectra(imagePoint);
+        Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(scan.getMasses(),
+                scan.getIntensities());//scanlineCache.getSparseMassSpectra(imagePoint);
         IndexIterator mz = ms.getFirst().getIndexIterator();
         IndexIterator inten = ms.getSecond().getIndexIterator();
 //
@@ -164,57 +175,76 @@ public class ChromatogramVisualizerTools {
         return s;
     }
 
-    public static MSSeries getMSSeries(Point imagePoint, IChromatogramDescriptor filename) {
-        System.out.println("repainting ms");
-        long start = System.currentTimeMillis();
-        System.out.println("Getting slc");
-        IFileFragment f = Factory.getInstance().getFileFragmentFactory().create(filename.getResourceLocation());
-        Array sat = f.getChild("scan_acquisition_time").getArray();
-        //IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(f);
+    public static IScan2D getScanForPoint(Point imagePoint,
+            IChromatogramDescriptor filename) {
+        IScanLine isl = null;
+        IChromatogram2D ichrom = null;
+        if (whm2d.containsKey(filename)) {
+            Tuple2D<IScanLine, IChromatogram2D> tple = whm2d.get(filename);
+            isl = tple.getFirst();
+            ichrom = tple.getSecond();
+        } else {
+
+            IFileFragment f = Factory.getInstance().getFileFragmentFactory().
+                    create(filename.getResourceLocation());
+//        Array sat = f.getChild("scan_acquisition_time").getArray();
+            isl = ScanLineCacheFactory.getScanLineCache(f);
+            ChromatogramFactory cf = new ChromatogramFactory();
+            ichrom = cf.createChromatogram2D(f);
+            whm2d.put(filename,new Tuple2D<IScanLine, IChromatogram2D>(isl,ichrom));
+        }
         //System.out.println("scl: " + scanlineCache.getClass().getName());
-        System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
-        try {
+//        System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+//        try {
 //            double modulationTime = f.getChild("modulation_time").getArray().getDouble(0);
 //            double sar = f.getChild("scan_rate").getArray().getDouble(0);
 //            double offset = sat.getDouble(0);
 //            double rt1 = (imagePoint.x * modulationTime) + offset;
 //            double rt2 = modulationTime * (imagePoint.y / (sar * modulationTime));
-        } catch (ResourceNotAvailableException rnae) {
-        }
-        ChromatogramFactory cf = new ChromatogramFactory();
-        IChromatogram2D ic2d = cf.createChromatogram2D(f);
-        IScan2D s2 = ic2d.getScan2D(imagePoint.x, imagePoint.y);
+//        } catch (ResourceNotAvailableException rnae) {
+//        }
+
+        Tuple2D<Array, Array> tple = isl.getSparseMassSpectra(
+                imagePoint);
+        //FIXME scan2d has no time set, fix code in Chromatogram2D
+        Scan2D s2 = new Scan2D(tple.getFirst(), tple.getSecond(), isl.
+                mapPoint(imagePoint), -1);
+        return s2;
+    }
+
+    public static MSSeries getMSSeries(IScan2D s2) {
         DecimalFormat rt1format = new DecimalFormat("#0");
         DecimalFormat rt2format = new DecimalFormat("#0.000");
         //System.out.println("First col scan acquisition time " + scanlineCache.);
-        MSSeries s = new MSSeries(rt1format.format(s2.getFirstColumnScanAcquisitionTime()) + ", " + rt2format.format(s2.getSecondColumnScanAcquisitionTime()));
+        MSSeries s = new MSSeries(rt1format.format(s2.
+                getFirstColumnScanAcquisitionTime()) + ", " + rt2format.format(s2.
+                getSecondColumnScanAcquisitionTime()));
 
-        Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(s2.getMasses(), s2.getIntensities());//scanlineCache.getSparseMassSpectra(imagePoint);
+        Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(s2.getMasses(), s2.
+                getIntensities());//scanlineCache.getSparseMassSpectra(imagePoint);
         IndexIterator mz = ms.getFirst().getIndexIterator();
         IndexIterator inten = ms.getSecond().getIndexIterator();
 //
         while (mz.hasNext() && inten.hasNext()) {
             s.add(mz.getDoubleNext(), inten.getDoubleNext());
         }
-
-//        for (int row = 0; row < 750; row++) {
-//            if (((int) (Math.random() * 10.0d)) == 1) {
-//                s.add(row, Math.random() * 1000000);
-//            } else {
-//                s.add(row, Math.random() * 500);
-//            }
-//        }
-
         return s;
     }
 
-    public static XYPlot createScanlinePlot(int mod, boolean horizontal, boolean noiseReduced, IChromatogramDescriptor filename) {
+    public static MSSeries getMSSeries(Point imagePoint,
+            IChromatogramDescriptor filename) {
+        return getMSSeries(getScanForPoint(imagePoint, filename));
+    }
+
+    public static XYPlot createScanlinePlot(int mod, boolean horizontal,
+            boolean noiseReduced, IChromatogramDescriptor filename) {
         Array tic = null;
         TicProvider tp = null;
         try {
             tp = TicProvider.getInstance(filename);
         } catch (IOException ex) {
-            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(
+                    Level.SEVERE, null, ex);
         }
 
         String xAxis = "";
@@ -251,7 +281,8 @@ public class ChromatogramVisualizerTools {
         return createXYChart(tic, time, name, xAxis, yAxis);
     }
 
-    public static XYPlot get1DTICChart(boolean noiseReduced, boolean horizontal, IChromatogramDescriptor filename) {
+    public static XYPlot get1DTICChart(boolean noiseReduced, boolean horizontal,
+            IChromatogramDescriptor filename) {
         IFileFragment origFragment = null, fragment = null;
 
         try {
@@ -260,7 +291,8 @@ public class ChromatogramVisualizerTools {
             fragment = ret.getSecond();
 
         } catch (IOException ex) {
-            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(
+                    Level.SEVERE, null, ex);
         }
 
         String xAxis = "", yAxis = "", name = "";
@@ -299,7 +331,8 @@ public class ChromatogramVisualizerTools {
         return createXYChart(tic, time, name, xAxis, yAxis);
     }
 
-    public static XYPlot getMSHeatMap(boolean mean, boolean horizontal, IChromatogramDescriptor filename) {
+    public static XYPlot getMSHeatMap(boolean mean, boolean horizontal,
+            IChromatogramDescriptor filename) {
         IFileFragment origFragment = null, fragment = null;
 
         try {
@@ -308,7 +341,8 @@ public class ChromatogramVisualizerTools {
             fragment = ret.getSecond();
 
         } catch (IOException ex) {
-            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(
+                    Level.SEVERE, null, ex);
         }
 
         int width = 0;
@@ -387,17 +421,20 @@ public class ChromatogramVisualizerTools {
 //        System.out.println("Image has size: "+rows+"x"+cols);
 //        return bi;
 //    }
-    public static IFileFragment getTICHeatMapFragment(IChromatogramDescriptor filename) {
+    public static IFileFragment getTICHeatMapFragment(
+            IChromatogramDescriptor filename) {
         IFileFragment origFragment = null, fragment = null;
 
         try {
             Tuple2D<IFileFragment, IFileFragment> ret = getFragments(filename);
             origFragment = ret.getFirst();
             //fragment = ret.getSecond();
-            fragment = new FileFragment(new File(System.getProperty("java.io.tmpdir")), origFragment.getName());
+            fragment = new FileFragment(new File(System.getProperty(
+                    "java.io.tmpdir")), origFragment.getName());
             fragment.addSourceFile(origFragment);
         } catch (IOException ex) {
-            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(
+                    Level.SEVERE, null, ex);
         }
 
         boolean askForParameters = false;
@@ -413,7 +450,8 @@ public class ChromatogramVisualizerTools {
         }
         IVariableFragment modTime = null;
         try {
-            System.out.println("Checking for presence of modulation_time variable");
+            System.out.println(
+                    "Checking for presence of modulation_time variable");
             modTime = fragment.getChild("modulation_time", true);
             System.out.println("present");
         } catch (ResourceNotAvailableException rnae) {
@@ -449,7 +487,8 @@ public class ChromatogramVisualizerTools {
         return fragment;
     }
 
-    public static XYPlot getTICHeatMap(IChromatogramDescriptor filename, boolean noiseReduced) {
+    public static XYPlot getTICHeatMap(IChromatogramDescriptor filename,
+            boolean noiseReduced) {
 
 
 //        
@@ -459,7 +498,8 @@ public class ChromatogramVisualizerTools {
         try {
             tp = TicProvider.getInstance(filename);
         } catch (IOException ex) {
-            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChromatogramVisualizerTools.class.getName()).log(
+                    Level.SEVERE, null, ex);
         }
 
         Array sra = fragment.getChild("scan_rate").getArray();
@@ -486,16 +526,20 @@ public class ChromatogramVisualizerTools {
             tic = fragment.getChild("total_intensity").getArray();
         }
 
-        double offset = fragment.getChild("scan_acquisition_time").getArray().getDouble(0);
+        double offset = fragment.getChild("scan_acquisition_time").getArray().
+                getDouble(0);
 
         final int spm = (int) (sr * mt);
         final int sl = (tic.getShape()[0] / (spm));
 
-        XYPlot p = createHeatMap(sl, spm, mt, offset, tic, fragment.getName(), "rt1", "rt2");
+        XYPlot p = createHeatMap(sl, spm, mt, offset, tic, fragment.getName(),
+                "rt1", "rt2");
         return p;
     }
 
-    public static XYPlot createHeatMap(int width, int height, double modulationTime, double rtoffset, Array tic, String name, String xAxis, String yAxis) {
+    public static XYPlot createHeatMap(int width, int height,
+            double modulationTime, double rtoffset, Array tic, String name,
+            String xAxis, String yAxis) {
         Index ticIdx = tic.getIndex();
         double[][] tic2ddata = new double[3][tic.getShape()[0]];
         int cnt = 0;
@@ -514,11 +558,13 @@ public class ChromatogramVisualizerTools {
 
         final double[] st = ImageTools.createSampleTable(1024);
         //System.out.println("Retrieving breakpoints");
-        final double[] bp = ImageTools.getBreakpoints(tic, 1024, Double.NEGATIVE_INFINITY);
+        final double[] bp = ImageTools.getBreakpoints(tic, 1024,
+                Double.NEGATIVE_INFINITY);
         MinMax mm = MAMath.getMinMax(tic);
 
         XYNoBlockRenderer xybr = new XYNoBlockRenderer();
-        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max, GradientPaintScale.getDefaultColorRamp());
+        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max,
+                GradientPaintScale.getDefaultColorRamp());
 //        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max, c);
         xybr.setPaintScale(ps);
         xybr.setDefaultEntityRadius(5);
@@ -532,9 +578,11 @@ public class ChromatogramVisualizerTools {
 //        Aktuelles Problem: Zeit auf der erten Achse beginnt nicht zwingend bei 0
 //        if (modulationTime > 0) {
 
-        rt1.setNumberFormatOverride(new RetentionTimeNumberFormatter(modulationTime, rtoffset, "#0"));
+        rt1.setNumberFormatOverride(new RetentionTimeNumberFormatter(
+                modulationTime, rtoffset, "#0"));
         double scanrate = modulationTime / (double) height;
-        rt2.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate, 0, "#0.000"));
+        rt2.setNumberFormatOverride(new RetentionTimeNumberFormatter(scanrate, 0,
+                "#0.000"));
 //        }
 
         XYPlot heatmapPlot = new XYPlot(xyz, rt1, rt2, xybr);
@@ -544,7 +592,8 @@ public class ChromatogramVisualizerTools {
         return heatmapPlot;
     }
 
-    public static XYPlot createXYChart(Array tic, Array time, String name, String xAxis, String yAxis) {
+    public static XYPlot createXYChart(Array tic, Array time, String name,
+            String xAxis, String yAxis) {
         final AChart<XYPlot> xyc = new XYChart(
                 name, new String[]{
                     "second_column_time_var",},
@@ -552,14 +601,16 @@ public class ChromatogramVisualizerTools {
                 xAxis, yAxis, false);
         XYPlot p = xyc.create();
         p.getDomainAxis().setFixedAutoRange(time.getShape()[0] - 1);
-        System.out.println("Setting fixed auto range to " + time.getShape()[0] + " for " + p.getDomainAxis().getLabel());
+        System.out.println("Setting fixed auto range to " + time.getShape()[0] + " for " + p.
+                getDomainAxis().getLabel());
         return p;
     }
 
 //    public static XYPlot createBarChart() {
 //        return null;
 //    }
-    public static Tuple2D<IFileFragment, IFileFragment> getFragments(final IChromatogramDescriptor filename) throws IOException {
+    public static Tuple2D<IFileFragment, IFileFragment> getFragments(
+            final IChromatogramDescriptor filename) throws IOException {
         File g1 = new File(filename.getResourceLocation());
         IFileFragment f1 = new FileFragment(g1);
 

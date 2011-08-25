@@ -19,12 +19,16 @@ import org.jfree.chart.plot.XYPlot;
  */
 public class DomainMarkerKeyListener implements KeyListener, XYItemEntityEventSource{
 
-    private final XYPlot xyp;
+    private XYPlot xyp;
 
     private final EventSource<XYItemEntity> esource = new EventSource<XYItemEntity>(1);
 
     public DomainMarkerKeyListener(XYPlot xyp) {
         this.xyp = xyp;
+    }
+    
+    public void setPlot(XYPlot plot) {
+        this.xyp = plot;
     }
 
     public void keyTyped(KeyEvent e) {

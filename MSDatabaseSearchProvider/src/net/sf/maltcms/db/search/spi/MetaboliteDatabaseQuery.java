@@ -26,6 +26,7 @@ public class MetaboliteDatabaseQuery implements IMetaboliteDatabaseQuery {
     private final List<IDatabaseDescriptor> databaseDescriptors;
     private final IScan[] queryScans;
     private final double matchThreshold;
+    private final int maxHits;
 
     @Override
     public List<MetaboliteDatabaseQueryResultList> call() throws Exception {
@@ -33,10 +34,12 @@ public class MetaboliteDatabaseQuery implements IMetaboliteDatabaseQuery {
                 Executors.newFixedThreadPool(Math.min(1, Runtime.getRuntime().
                 availableProcessors() - 1)), 30, TimeUnit.MINUTES, false);
         for (IDatabaseDescriptor descr : databaseDescriptors) {
-            Query q = new Query(descr, buildInput(queryScans), matchThreshold);
+            Query q = new Query(descr, buildInput(queryScans), matchThreshold, maxHits);
             mcs.submit(q);
         }
-        return mcs.call();
+        List<MetaboliteDatabaseQueryResultList> results = mcs.call();
+        DBConnectionManager.close();
+        return results;
     }
 
     private List<IMetaboliteDatabaseQueryInput> buildInput(IScan[] queryScans) {
