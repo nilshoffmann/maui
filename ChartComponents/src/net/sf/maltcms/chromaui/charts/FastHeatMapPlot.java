@@ -4,6 +4,7 @@
  */
 package net.sf.maltcms.chromaui.charts;
 
+import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;

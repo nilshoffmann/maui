@@ -5,14 +5,13 @@
 package net.sf.maltcms.chromaui.project.api.container;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.annotations.IAnnotatable;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 
 /**
  *
  * @author nilshoffmann
  */
-public interface IGenericContainer<T extends IDescriptor> extends IDescriptor, IAnnotatable {
+public interface IGenericContainer<T extends IDescriptor> extends IDescriptor {
 
     Collection<T> get();
 

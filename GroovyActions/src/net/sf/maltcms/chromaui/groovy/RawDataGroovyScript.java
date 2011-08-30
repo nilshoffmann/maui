@@ -4,16 +4,13 @@
  */
 package net.sf.maltcms.chromaui.groovy;
 
+import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import org.openide.loaders.DataObject;
 
 /**
  *
  * @author nilshoffmann
  */
-public interface RawDataGroovyScript extends Runnable {
-    
-    public void setProject(IChromAUIProject project);
-    public void setDataObjects(DataObject...dobjects);
+public interface RawDataGroovyScript extends GroovyScript<IChromAUIProject,CDFDataObject> {
     
 }

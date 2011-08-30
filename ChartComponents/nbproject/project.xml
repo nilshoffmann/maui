@@ -67,6 +67,11 @@
             <public-packages>
                 <package>net.sf.maltcms.chromaui.annotations</package>
                 <package>net.sf.maltcms.chromaui.charts</package>
+                <package>net.sf.maltcms.chromaui.charts.dataset</package>
+                <package>net.sf.maltcms.chromaui.charts.format</package>
+                <package>net.sf.maltcms.chromaui.charts.labels</package>
+                <package>net.sf.maltcms.chromaui.charts.renderer</package>
+                <package>net.sf.maltcms.chromaui.charts.tooltips</package>
                 <package>net.sf.maltcms.chromaui.ui</package>
             </public-packages>
         </data>

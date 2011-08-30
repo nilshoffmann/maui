@@ -5,9 +5,7 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import maltcms.datastructures.peak.Peak1D;
-import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 
 /**
@@ -15,11 +13,8 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
  * @author nilshoffmann
  */
 @Data
-@EqualsAndHashCode(callSuper=true)
-public class PeakAnnotationDescriptor extends Annotatable implements IPeakAnnotationDescriptor {
+public class PeakAnnotationDescriptor implements IPeakAnnotationDescriptor {
 
     private Peak1D peak;
-    
     private String displayName;
-    
 }

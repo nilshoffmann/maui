@@ -3,7 +3,7 @@
  */
 package maltcms.ui.events;
 
-import net.sf.maltcms.chromaui.charts.TopKItemsLabelGenerator;
+import net.sf.maltcms.chromaui.charts.labels.TopKItemsLabelGenerator;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;

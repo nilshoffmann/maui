@@ -4,7 +4,7 @@
  */
 package net.sf.maltcms.chromaui.project.spi.project;
 
-import net.sf.maltcms.chromaui.project.api.annotations.IAnnotation;
+import net.sf.maltcms.chromaui.project.api.descriptors.IAnnotation;
 
 /**
  *

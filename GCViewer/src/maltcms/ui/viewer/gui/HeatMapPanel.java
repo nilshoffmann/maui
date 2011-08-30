@@ -23,7 +23,7 @@ import net.sf.maltcms.chromaui.charts.GradientPaintScale;
 import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.events.PaintScaleDialogAction;
 import maltcms.ui.viewer.events.PaintScaleTarget;
-import net.sf.maltcms.chromaui.charts.XYNoBlockRenderer;
+import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import maltcms.ui.viewer.tools.ChartTools;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import org.jfree.chart.ChartMouseEvent;

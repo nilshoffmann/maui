@@ -4,23 +4,22 @@
  */
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
-import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 
 /**
  *
  * @author hoffmann
  */
-public class TreatmentGroupDescriptor extends Annotatable implements ITreatmentGroupDescriptor {
+public class TreatmentGroupDescriptor implements ITreatmentGroupDescriptor {
 
     private String name;
     private String displayName;
-    
+
     public TreatmentGroupDescriptor(String name) {
         this.name = name;
         this.displayName = name;
     }
-    
+
     @Override
     public String getName() {
         return this.name;
@@ -40,5 +39,4 @@ public class TreatmentGroupDescriptor extends Annotatable implements ITreatmentG
     public void setDisplayName(String displayName) {
         this.displayName = name;
     }
-
 }

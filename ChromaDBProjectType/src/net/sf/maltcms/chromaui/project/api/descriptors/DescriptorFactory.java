@@ -6,8 +6,11 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
+import maltcms.datastructures.peak.Peak1D;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.types.GC;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
@@ -15,6 +18,7 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 import net.sf.maltcms.chromaui.project.api.types.QUADMS;
 import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.OtherDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.RIDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor;
@@ -80,5 +84,19 @@ public class DescriptorFactory {
                 return odd;
 
         }
+    }
+
+    public static List<IPeakAnnotationDescriptor> newPeakAnnotationDescriptors(
+            IChromatogramDescriptor chromatogramDescriptor, List<Peak1D> peaks) {
+        List<IPeakAnnotationDescriptor> peakAnnotationDescriptors = new ArrayList<IPeakAnnotationDescriptor>();
+        for (Peak1D peak : peaks) {
+            PeakAnnotationDescriptor pad = new PeakAnnotationDescriptor();
+            pad.setPeak(peak);
+            pad.setDisplayName(peak.getName());
+            peakAnnotationDescriptors.add(pad);
+        }
+        
+        chromatogramDescriptor.setPeakAnnotationDescriptors(peakAnnotationDescriptors);
+        return chromatogramDescriptor.getPeakAnnotationDescriptors();
     }
 }

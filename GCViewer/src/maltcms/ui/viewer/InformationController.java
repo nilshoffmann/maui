@@ -21,7 +21,7 @@ import maltcms.ui.viewer.gui.Viewer2Panel;
 import maltcms.ui.viewer.gui.Viewer3Panel;
 import maltcms.ui.viewer.gui.Viewer4Panel;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
-import net.sf.maltcms.chromaui.charts.MSSeries;
+import net.sf.maltcms.chromaui.charts.dataset.MSSeries;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.chart.axis.NumberAxis;

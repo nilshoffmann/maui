@@ -11,7 +11,6 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
  *
  * @author nilshoffmann
  */
-public interface CSVDataGroovyScript extends Runnable {
-    public void setProject(IChromAUIProject project);
-    public void setDataObjects(CSVDataObject...dobjects);
+public interface CSVDataGroovyScript extends GroovyScript<IChromAUIProject,CSVDataObject> {
+
 }

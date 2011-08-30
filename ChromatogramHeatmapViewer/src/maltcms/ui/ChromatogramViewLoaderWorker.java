@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import maltcms.ui.views.ChromMSHeatmapPanel;
-import net.sf.maltcms.chromaui.charts.RTNumberFormatter;
+import net.sf.maltcms.chromaui.charts.format.RTNumberFormatter;
 import net.sf.maltcms.chromaui.charts.RTUnit;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;

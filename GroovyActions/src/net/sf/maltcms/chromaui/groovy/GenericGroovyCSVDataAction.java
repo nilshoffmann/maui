@@ -5,17 +5,17 @@
 package net.sf.maltcms.chromaui.groovy;
 
 import groovy.lang.GroovyClassLoader;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.Action;
 import maltcms.ui.fileHandles.csv.CSVDataObject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
@@ -73,34 +73,26 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
                 groovyDir = icap.getLocation().getFileObject("groovy/");
             }
 
-
+            List<FileObject> scriptFiles = Utils.getGroovyScripts(groovyDir,
+                    FileUtil.toFileObject(new File("/vol/maltcms/maui/groovy")));
             List<CSVDataGroovyScript> groovyScripts = new LinkedList<CSVDataGroovyScript>();
-            if (groovyDir.isValid()) {
-                Enumeration<? extends FileObject> enumeration = groovyDir.
-                        getChildren(true);
-                while (enumeration.hasMoreElements()) {
-                    FileObject child = enumeration.nextElement();
-                    if (child.hasExt("groovy")) {
-                        Class clazz;
-                        try {
-                            clazz = gcl.parseClass(FileUtil.toFile(child));
-                            Class<CSVDataGroovyScript> irdgs = clazz.asSubclass(
-                                    RawDataGroovyScript.class);
-                            CSVDataGroovyScript script = irdgs.newInstance();
-                            groovyScripts.add(script);
-                        } catch (InstantiationException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (IllegalAccessException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (CompilationFailedException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (IOException ex) {
-                            Exceptions.printStackTrace(ex);
-                        }
-
-                    }
+            for (FileObject child : scriptFiles) {
+                Class clazz;
+                try {
+                    clazz = gcl.parseClass(FileUtil.toFile(child));
+                    Class<CSVDataGroovyScript> irdgs = clazz.asSubclass(
+                            RawDataGroovyScript.class);
+                    CSVDataGroovyScript script = irdgs.newInstance();
+                    groovyScripts.add(script);
+                } catch (InstantiationException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (IllegalAccessException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (CompilationFailedException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-            } else {
             }
 
             GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
@@ -115,13 +107,13 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
                 selectedScript.setProject(icap);
                 selectedScript.setDataObjects(instances.toArray(new CSVDataObject[instances.
                         size()]));
-                RequestProcessor.getDefault().post(selectedScript);
+                ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.getName());
+                selectedScript.setProgressHandle(handle);
+                RequestProcessor rp = new RequestProcessor(selectedScript.
+                        getName(), 1, true);
+                rp.post(selectedScript);
             } else {
             }
-
-
-
-
         }
     }
 

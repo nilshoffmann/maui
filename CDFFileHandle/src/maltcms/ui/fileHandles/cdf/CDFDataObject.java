@@ -17,43 +17,43 @@ import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.Node;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
-public class CDFDataObject extends MultiDataObject implements IFileFragmentDataObject {
+public class CDFDataObject extends MultiDataObject implements
+        IFileFragmentDataObject {
 
     private InstanceContent ic = new InstanceContent();
-    private IFileFragment objDelegate = null;
+    private AbstractLookup lookup = new AbstractLookup(ic);
 
     public CDFDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        objDelegate = new FileFragment(new File(pf.getPath()));
-        ic.add(objDelegate);
+        ic.add(new FileFragment(new File(pf.getPath())));
+        ic.add(new CDFDataObjectNavigatorLookupHint());
     }
 
     @Override
     protected Node createNodeDelegate() {
-        return new DataNode(this, Children.LEAF, getLookup());
+        return new DataNode(this, Children.LEAF);
     }
 
     @Override
     public Lookup getLookup() {
-        return new ProxyLookup(getCookieSet().getLookup(), Lookups.singleton(new CDFDataObjectNavigatorLookupHint()));
+        return new ProxyLookup(getCookieSet().getLookup(),lookup);
     }
 
     @Override
     public IFileFragment getFragment() {
-        return this.objDelegate;
+        return getLookup().lookup(IFileFragment.class);
     }
-    
-    private static final class CDFDataObjectNavigatorLookupHint implements NavigatorLookupHint 
-    {
+
+    private static final class CDFDataObjectNavigatorLookupHint implements
+            NavigatorLookupHint {
 
         @Override
         public String getContentType() {
             return "application/x-cdf";
         }
-        
     };
 }

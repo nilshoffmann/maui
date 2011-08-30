@@ -6,7 +6,6 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import java.io.File;
 import java.util.Set;
-import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
@@ -16,7 +15,7 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  *
  * @author hoffmann
  */
-public class OtherDatabaseDescriptor extends Annotatable
+public class OtherDatabaseDescriptor
         implements IDatabaseDescriptor {
 
     private String location;
@@ -35,9 +34,9 @@ public class OtherDatabaseDescriptor extends Annotatable
         this.location = u;
     }
 
-   @Override
+    @Override
     public String getName() {
-        if(this.name==null) {
+        if (this.name == null) {
             return this.location;
         }
         return this.name;
@@ -55,7 +54,7 @@ public class OtherDatabaseDescriptor extends Annotatable
 
     @Override
     public String getDisplayName() {
-        if(this.displayName==null) {
+        if (this.displayName == null) {
             return new File(this.location).getName();
         }
         return this.displayName;
@@ -72,7 +71,8 @@ public class OtherDatabaseDescriptor extends Annotatable
     }
 
     @Override
-    public void setApplicableSeparationTypes(Set<ISeparationType> separationTypes) {
+    public void setApplicableSeparationTypes(
+            Set<ISeparationType> separationTypes) {
         this.applicableSeparationTypes = separationTypes;
     }
 
@@ -90,5 +90,4 @@ public class OtherDatabaseDescriptor extends Annotatable
     public String toString() {
         return getDisplayName();
     }
-    
 }

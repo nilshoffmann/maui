@@ -9,12 +9,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.loaders.DataObject;
@@ -49,7 +50,11 @@ public final class GenericGroovyRawDataAction implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         IChromAUIProject icap = Utilities.actionsGlobalContext().lookup(
                 IChromAUIProject.class);
-        if (icap != null) {
+
+
+
+        if (icap
+                != null) {
             GroovyClassLoader gcl = new GroovyClassLoader();
             File fo = FileUtil.toFile(icap.getLocation());
             FileObject groovyDir = null;
@@ -63,34 +68,26 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                 groovyDir = icap.getLocation().getFileObject("groovy/");
             }
 
-
-            List<RawDataGroovyScript> groovyScripts = new LinkedList<RawDataGroovyScript>();
-            if (groovyDir.isValid()) {
-                Enumeration<? extends FileObject> enumeration = groovyDir.
-                        getChildren(true);
-                while (enumeration.hasMoreElements()) {
-                    FileObject child = enumeration.nextElement();
-                    if (child.hasExt("groovy")) {
-                        Class clazz;
-                        try {
-                            clazz = gcl.parseClass(FileUtil.toFile(child));
-                            Class<RawDataGroovyScript> irdgs = clazz.asSubclass(
-                                    RawDataGroovyScript.class);
-                            RawDataGroovyScript script = irdgs.newInstance();
-                            groovyScripts.add(script);
-                        } catch (InstantiationException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (IllegalAccessException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (CompilationFailedException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (IOException ex) {
-                            Exceptions.printStackTrace(ex);
-                        }
-
-                    }
+            List<FileObject> scriptFiles = Utils.getGroovyScripts(groovyDir,
+                    FileUtil.toFileObject(new File("/vol/maltcms/maui/groovy")));
+            List<RawDataGroovyScript> groovyScripts = new ArrayList<RawDataGroovyScript>();
+            for (FileObject child : scriptFiles) {
+                Class clazz;
+                try {
+                    clazz = gcl.parseClass(FileUtil.toFile(child));
+                    Class<RawDataGroovyScript> irdgs = clazz.asSubclass(
+                            RawDataGroovyScript.class);
+                    RawDataGroovyScript script = irdgs.newInstance();
+                    groovyScripts.add(script);
+                } catch (InstantiationException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (IllegalAccessException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (CompilationFailedException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-            } else {
             }
 
             GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
@@ -105,13 +102,15 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                     selectedScript.setProject(icap);
                     selectedScript.setDataObjects(this.context.toArray(new CDFDataObject[this.context.
                             size()]));
-                    RequestProcessor.getDefault().post(selectedScript);
+                    ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.
+                            getName());
+                    selectedScript.setProgressHandle(handle);
+                    RequestProcessor rp = new RequestProcessor(selectedScript.
+                            getName(), 1, true);
+                    rp.post(selectedScript);
                 }
             } else {
             }
-
-
-
 
         }
     }

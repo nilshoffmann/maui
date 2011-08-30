@@ -83,7 +83,7 @@ public class AMDISMSSimilarity {
 
     public Double apply(Tuple2D<Array, Array> referenceMassSpectrum,
             Tuple2D<Array, Array> queryMassSpectrum, double mw) {
-        double massExponent = 1.0;
+        double massExponent = 3.0;
         double intensityExponent = 0.5;
 
         double resolution = 1.0;

@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import net.sf.maltcms.chromaui.project.api.events.RefreshNodes;
 
@@ -16,7 +15,7 @@ import net.sf.maltcms.chromaui.project.api.events.RefreshNodes;
  *
  * @author hoffmann
  */
-public abstract class ADatabaseBackedContainer<T extends IDescriptor> extends Annotatable
+public abstract class ADatabaseBackedContainer<T extends IDescriptor>
         implements IContainer<T> {
 
     private String name = getClass().getSimpleName(), displayName;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.chromaui.charts;
+package net.sf.maltcms.chromaui.charts.format;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -10,6 +10,8 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Locale;
+import net.sf.maltcms.chromaui.charts.RTUnit;
+import net.sf.maltcms.chromaui.charts.RTUnitTransformer;
 
 /**
  *
@@ -42,9 +44,8 @@ public class RTNumberFormatter extends NumberFormat {
             FieldPosition pos) {
         double newnumber = RTUnitTransformer.transform(number, unit);
         this.formatter.setMinimumFractionDigits(0);
-        this.formatter.setMaximumFractionDigits(4);
+        this.formatter.setMaximumFractionDigits(2);
         this.formatter.setMinimumIntegerDigits(1);
-//        this.
         StringBuffer sb = new StringBuffer();
         sb.append(this.formatter.format(newnumber));
         return sb;

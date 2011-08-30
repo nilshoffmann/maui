@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.maltcms.maui.peakTableViewer
+OpenIDE-Module-Layer: net/sf/maltcms/maui/peakTableViewer/layer.xml
+OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/maui/peakTableViewer/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+OpenIDE-Module-Specification-Version: 1.0
+

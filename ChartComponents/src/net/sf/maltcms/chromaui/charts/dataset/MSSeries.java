@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.maltcms.chromaui.charts;
+package net.sf.maltcms.chromaui.charts.dataset;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.data.xy.XYSeries;

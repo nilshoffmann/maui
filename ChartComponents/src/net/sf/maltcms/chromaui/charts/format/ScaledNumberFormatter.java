@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.chromaui.charts;
+package net.sf.maltcms.chromaui.charts.format;
 
 import cross.exception.NotImplementedException;
 import java.text.FieldPosition;

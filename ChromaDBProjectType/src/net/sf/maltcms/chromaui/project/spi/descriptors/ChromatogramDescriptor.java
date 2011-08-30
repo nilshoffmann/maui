@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import maltcms.datastructures.ms.ChromatogramFactory;
 import maltcms.datastructures.ms.IChromatogram;
-import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.GC;
@@ -24,7 +23,7 @@ import net.sf.maltcms.chromaui.project.api.types.QUADMS;
  *
  * @author hoffmann
  */
-public class ChromatogramDescriptor extends Annotatable implements IChromatogramDescriptor {
+public class ChromatogramDescriptor implements IChromatogramDescriptor {
 
     private String resourceLocation = "<NA>";
     private ISeparationType st = new GC();

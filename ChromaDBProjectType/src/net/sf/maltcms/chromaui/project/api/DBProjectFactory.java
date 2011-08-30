@@ -257,6 +257,7 @@ public class DBProjectFactory {
             }
 
             icui.getCrudProvider().close();
+            icui.closeSession();
             //DBProjectFactory.openProject(icui);
         } catch (MalformedURLException ex) {
             Exceptions.printStackTrace(ex);

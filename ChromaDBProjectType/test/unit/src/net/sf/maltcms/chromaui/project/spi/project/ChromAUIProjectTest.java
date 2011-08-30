@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 import junit.framework.TestCase;
-import net.sf.maltcms.chromaui.project.api.annotations.IAnnotation;
+import net.sf.maltcms.chromaui.project.api.descriptors.IAnnotation;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
@@ -81,12 +81,12 @@ public class ChromAUIProjectTest extends TestCase{
             gcd1.setTreatmentGroup(tgd);
             gcd2.setTreatmentGroup(tgd);
             
-            Species sp1 = new Species();
-            sp1.setOntology("AREGA AREGA");
-            sp1.setPubmedId("231908123");
-            IAnnotation sa1 = new SpeciesAnnotation();
-            sa1.setAnnotation(sp1);
-            icg.addAnnotations(sa1.getClass(), sa1); 
+//            Species sp1 = new Species();
+//            sp1.setOntology("AREGA AREGA");
+//            sp1.setPubmedId("231908123");
+//            IAnnotation sa1 = new SpeciesAnnotation();
+//            sa1.setAnnotation(sp1);
+//            icg.addAnnotations(sa1.getClass(), sa1); 
 //            tgd.add(gcd1, gcd2);
             icg.add(gcd1,gcd2);
 
@@ -116,9 +116,9 @@ public class ChromAUIProjectTest extends TestCase{
                     System.out.println("TreatmentGroup has name: " + descr.getTreatmentGroup().getName());
                     System.out.println(descr);
                 }
-                for (IAnnotation sa:cont.getAnnotations(SpeciesAnnotation.class)) {
-                    System.out.println(sa.toString());
-                }
+//                for (IAnnotation sa:cont.getAnnotations(SpeciesAnnotation.class)) {
+//                    System.out.println(sa.toString());
+//                }
             }
         }catch(IOException ioex) {
             Exceptions.printStackTrace(ioex);

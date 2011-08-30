@@ -5,7 +5,6 @@
 package net.sf.maltcms.chromaui.project.api.container;
 
 import java.awt.Image;
-import net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.openide.util.ImageUtilities;
 

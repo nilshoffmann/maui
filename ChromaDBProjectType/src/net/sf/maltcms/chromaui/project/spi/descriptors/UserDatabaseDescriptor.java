@@ -2,12 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import java.io.File;
 import java.util.Set;
-import net.sf.maltcms.chromaui.project.api.annotations.Annotatable;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
@@ -17,21 +15,18 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  *
  * @author hoffmann
  */
-public class UserDatabaseDescriptor extends Annotatable implements IDatabaseDescriptor{
+public class UserDatabaseDescriptor implements IDatabaseDescriptor {
 
     private String location;
-
     private String name;
-    
     private String displayName;
-
     private final DatabaseType type = DatabaseType.USER;
     private Set<ISeparationType> applicableSeparationTypes;
     private Set<IDetectorType> applicableDetectorTypes;
 
     @Override
     public String getResourceLocation() {
-       return this.location;
+        return this.location;
     }
 
     @Override
@@ -41,7 +36,7 @@ public class UserDatabaseDescriptor extends Annotatable implements IDatabaseDesc
 
     @Override
     public String getName() {
-        if(this.name==null) {
+        if (this.name == null) {
             return this.location;
         }
         return this.name;
@@ -59,7 +54,7 @@ public class UserDatabaseDescriptor extends Annotatable implements IDatabaseDesc
 
     @Override
     public String getDisplayName() {
-        if(this.displayName==null) {
+        if (this.displayName == null) {
             return new File(this.location).getName();
         }
         return this.displayName;
@@ -76,7 +71,8 @@ public class UserDatabaseDescriptor extends Annotatable implements IDatabaseDesc
     }
 
     @Override
-    public void setApplicableSeparationTypes(Set<ISeparationType> separationTypes) {
+    public void setApplicableSeparationTypes(
+            Set<ISeparationType> separationTypes) {
         this.applicableSeparationTypes = separationTypes;
     }
 
@@ -89,10 +85,9 @@ public class UserDatabaseDescriptor extends Annotatable implements IDatabaseDesc
     public void setApplicableDetectorTypes(Set<IDetectorType> detectorTypes) {
         this.applicableDetectorTypes = detectorTypes;
     }
-    
+
     @Override
     public String toString() {
         return getDisplayName();
     }
-
 }
