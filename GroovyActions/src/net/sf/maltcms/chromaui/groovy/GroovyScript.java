@@ -7,6 +7,7 @@ package net.sf.maltcms.chromaui.groovy;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
 import org.openide.loaders.DataObject;
+import org.openide.nodes.Node.PropertySet;
 import org.openide.util.Cancellable;
 
 /**

@@ -7,10 +7,12 @@ package net.sf.maltcms.chromaui.groovy;
 import groovy.lang.GroovyClassLoader;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Action;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -18,18 +20,24 @@ import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.actions.PropertiesAction;
 import org.openide.loaders.DataObject;
 
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
+import org.openide.explorer.propertysheet.PropertySheet;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.nodes.BeanNode;
+import org.openide.nodes.Node;
+import org.openide.nodes.NodeOperation;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.Lookups;
 
 @ActionID(category = "Groovy",
 id = "net.sf.maltcms.chromaui.groovy.GenericGroovyRawDataAction")
@@ -100,13 +108,20 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                         RawDataGroovyScript.class);
                 if (selectedScript != null) {
                     selectedScript.setProject(icap);
-                    selectedScript.setDataObjects(this.context.toArray(new CDFDataObject[this.context.
-                            size()]));
-                    ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.
-                            getName());
+                    selectedScript.setDataObjects(this.context.toArray(new CDFDataObject[this.context.size()]));
+                    try {
+                        BeanNode bn = new BeanNode(selectedScript);
+                        PropertySheet ps = new PropertySheet();
+                        ps.setNodes(new Node[]{bn});
+                        DialogDescriptor bnd = new DialogDescriptor(ps,
+                                "Set Script Properties");
+                        Object bndRet = DialogDisplayer.getDefault().notify(bnd);
+                    } catch (IntrospectionException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                    ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.getName(),selectedScript);
                     selectedScript.setProgressHandle(handle);
-                    RequestProcessor rp = new RequestProcessor(selectedScript.
-                            getName(), 1, true);
+                    RequestProcessor rp = new RequestProcessor(selectedScript.getName(), 1, true);
                     rp.post(selectedScript);
                 }
             } else {
