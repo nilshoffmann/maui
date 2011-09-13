@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.maltcms.chromaui.io.chromaTofPeakImporter
+OpenIDE-Module-Layer: net/sf/maltcms/chromaui/io/chromaTofPeakImporter/layer.xml
+OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/io/chromaTofPeakImporter/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
