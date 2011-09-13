@@ -55,5 +55,7 @@ public interface IChromAUIProject extends Project, PropertyChangeListener {
     void openSession();
     
     void closeSession();
+    
+    void refresh();
 
 }

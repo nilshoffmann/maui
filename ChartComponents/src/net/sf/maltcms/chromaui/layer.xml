@@ -19,11 +19,11 @@
     </folder>
     <folder name="Windows2">
         <folder name="Components">
-            <file name="AnnotationManagerTopComponent.settings" url="AnnotationManagerTopComponentSettings.xml"/>
+            <file name="AnnotationManagerTopComponent.settings" url="net/sf/maltcms/chromaui/ui/AnnotationManagerTopComponentSettings.xml"/>
         </folder>
         <folder name="Modes">
             <folder name="navigator">
-                <file name="AnnotationManagerTopComponent.wstcref" url="AnnotationManagerTopComponentWstcref.xml"/>
+                <file name="AnnotationManagerTopComponent.wstcref" url="net/sf/maltcms/chromaui/ui/AnnotationManagerTopComponentWstcref.xml"/>
             </folder>
         </folder>
     </folder>

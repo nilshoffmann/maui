@@ -7,6 +7,7 @@ package maltcms.ui;
 import cross.Factory;
 import maltcms.ui.charts.JFreeChartViewer;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
+import net.sf.maltcms.chromaui.msviewer.api.MassSpectrumViewTopComponent;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;

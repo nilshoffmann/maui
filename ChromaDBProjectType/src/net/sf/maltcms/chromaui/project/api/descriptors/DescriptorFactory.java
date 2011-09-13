@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import maltcms.datastructures.peak.Peak1D;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.types.GC;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
@@ -84,6 +86,30 @@ public class DescriptorFactory {
                 return odd;
 
         }
+    }
+    
+    public static IPeakAnnotationDescriptor newPeakAnnotationDescriptor(Peak1D peak, String name, double uniqueMass, double retentionIndex, double snr, double fwhh, double similarity, String library, String cas, String formula, String method) {
+        PeakAnnotationDescriptor pad = new PeakAnnotationDescriptor();
+        pad.setPeak(peak);
+        pad.setCas(cas);
+        pad.setDisplayName(name);
+        pad.setFormula(formula);
+        pad.setFwhh(fwhh);
+        pad.setLibrary(library);
+        pad.setRetentionIndex(retentionIndex);
+        pad.setSimilarity(similarity);
+        pad.setSnr(snr);
+        pad.setUniqueMass(uniqueMass);
+        pad.setMethod(method);
+        return pad;
+    }
+    
+    public static void addPeakAnnotations(IChromAUIProject project, IChromatogramDescriptor chromatogram, List<IPeakAnnotationDescriptor> peaks) {
+        Peak1DContainer p1dc = new Peak1DContainer();
+        p1dc.add(peaks.toArray(new IPeakAnnotationDescriptor[]{}));
+        p1dc.setDisplayName(chromatogram.getDisplayName());
+        project.addContainer(p1dc);
+        project.refresh();
     }
 
     public static List<IPeakAnnotationDescriptor> newPeakAnnotationDescriptors(

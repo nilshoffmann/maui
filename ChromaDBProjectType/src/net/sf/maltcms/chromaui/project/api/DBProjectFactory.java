@@ -281,4 +281,5 @@ public class DBProjectFactory {
     public static void openProject(IChromAUIProject iap) {
         OpenProjects.getDefault().open(new Project[]{iap}, false, true);
     }
+ 
 }

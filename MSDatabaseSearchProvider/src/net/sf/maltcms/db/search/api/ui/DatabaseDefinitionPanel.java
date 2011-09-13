@@ -25,6 +25,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
+import org.openide.NotifyDescriptor;
 
 /**
  * TODO link with project so that dbs are stored and retrieved.
@@ -254,7 +255,21 @@ public class DatabaseDefinitionPanel extends javax.swing.JPanel {
                 dbContainer.add(descriptor);
             }
 //          
-            project.addContainer(dbContainer);
+            if (project != null) {
+                project.addContainer(dbContainer);
+            } else {
+                // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
+                NotifyDescriptor nd = new NotifyDescriptor(
+                        "No project available! Selected databases will not be remembered!", // instance of your panel
+                        "No project", // title of the dialog
+                        NotifyDescriptor.DEFAULT_OPTION, // it is Yes/No dialog ...
+                        NotifyDescriptor.ERROR_MESSAGE, // ... of a question type => a question mark icon
+                        null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+                        // otherwise specify options as:
+                        //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                        NotifyDescriptor.OK_OPTION // default option is "Yes"
+                        );
+            }
 
         }
     }//GEN-LAST:event_addDatabaseActionPerformed

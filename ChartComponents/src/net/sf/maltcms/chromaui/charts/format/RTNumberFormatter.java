@@ -8,16 +8,15 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.Locale;
-import net.sf.maltcms.chromaui.charts.RTUnit;
-import net.sf.maltcms.chromaui.charts.RTUnitTransformer;
+import net.sf.maltcms.chromaui.charts.units.RTUnit;
+import net.sf.maltcms.chromaui.charts.units.RTUnitTransformer;
 
 /**
  *
  * @author mwilhelm
  */
-public class RTNumberFormatter extends NumberFormat {
+public class RTNumberFormatter extends DecimalFormat {
 
     private NumberFormat formatter = new DecimalFormat("#0.00",
             DecimalFormatSymbols.getInstance(Locale.US));
@@ -49,16 +48,5 @@ public class RTNumberFormatter extends NumberFormat {
         StringBuffer sb = new StringBuffer();
         sb.append(this.formatter.format(newnumber));
         return sb;
-    }
-
-    @Override
-    public StringBuffer format(long number, StringBuffer toAppendTo,
-            FieldPosition pos) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Number parse(String source, ParsePosition parsePosition) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

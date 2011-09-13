@@ -10,7 +10,7 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQuery;
 import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryFactory;
-import net.sf.maltcms.db.search.ui.DatabaseDefinitionPanel;
+import net.sf.maltcms.db.search.api.ui.DatabaseDefinitionPanel;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.lookup.ServiceProvider;
@@ -49,7 +49,7 @@ public class MetaboliteDatabaseQueryFactory implements
 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            return createQuery(panel.getDatabaseDescriptors(), matchThreshold, maxHits, 
+            return createQuery(panel.getSelectedDatabases(), matchThreshold, maxHits, 
                     scans);
         }
         return null;

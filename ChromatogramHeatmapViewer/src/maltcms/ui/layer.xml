@@ -19,11 +19,6 @@
                 <attr name="displayName" bundlevalue="maltcms.ui.Bundle#CTL_ChromatogramViewAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
             </file>
-            <file name="maltcms-ui-MassSpectrumViewAction.instance">
-                <attr name="component" methodvalue="maltcms.ui.MassSpectrumViewTopComponent.findInstance"/>
-                <attr name="displayName" bundlevalue="maltcms.ui.Bundle#CTL_MassSpectrumViewAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
-            </file>
         </folder>
     </folder>
     <folder name="Loaders">
@@ -43,22 +38,15 @@
             <file name="ChromatogramViewAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-ChromatogramViewAction.instance"/>
             </file>
-            <file name="MassSpectrumViewAction.shadow">
-                <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-MassSpectrumViewAction.instance"/>
-            </file>
         </folder>
     </folder>
     <folder name="Windows2">
         <folder name="Components">
             <file name="ChromatogramViewTopComponent.settings" url="ChromatogramViewTopComponentSettings.xml"/>
-            <file name="MassSpectrumViewTopComponent.settings" url="MassSpectrumViewTopComponentSettings.xml"/>
         </folder>
         <folder name="Modes">
             <folder name="editor">
                 <file name="ChromatogramViewTopComponent.wstcref" url="ChromatogramViewTopComponentWstcref.xml"/>
-            </folder>
-            <folder name="output">
-                <file name="MassSpectrumViewTopComponent.wstcref" url="MassSpectrumViewTopComponentWstcref.xml"/>
             </folder>
         </folder>
     </folder>

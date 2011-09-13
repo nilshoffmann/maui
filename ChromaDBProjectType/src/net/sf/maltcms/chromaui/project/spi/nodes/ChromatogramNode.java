@@ -144,24 +144,6 @@ public class ChromatogramNode extends FilterNode {
         return propSets2;
     }
 
-//    public ChromatogramNode(IChromatogramDescriptor bean, Children children, Lookup lkp) throws IntrospectionException {
-//        super(bean,children,new ProxyLookup(lkp,Lookups.singleton(bean)));
-//        setDisplayName(bean.getDisplayName());
-//        setShortDescription("Chromatogram "+ bean.toString());
-//        System.out.println("Created chromatogram node for: "+bean.toString());
-//    }
-//
-//    public ChromatogramNode(IChromatogramDescriptor bean) throws IntrospectionException {
-//        this(bean,Children.LEAF,Lookups.singleton(bean));
-//    }
-//
-//    public ChromatogramNode(IChromatogramDescriptor bean,InstanceContent ic) throws IntrospectionException {
-//        this(bean, Children.LEAF, new AbstractLookup(ic));
-//    }
-//
-//    public ChromatogramNode(IChromatogramDescriptor bean, Lookup lkp) throws IntrospectionException {
-//        this(bean, Children.LEAF, lkp);
-//    }
     @Override
     public Action[] getActions(boolean context) {
         Action[] originalActions = super.getActions(context);

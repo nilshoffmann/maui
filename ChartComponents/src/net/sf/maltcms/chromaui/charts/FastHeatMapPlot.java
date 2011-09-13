@@ -846,7 +846,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             XYZDataset xyzd = (XYZDataset) getDataset(i);
             BufferedImage bi2 = prepareData(xyzd, this.width, this.height,
                     xybr, g2, dataArea, info, null);
-            Graphics2D gg2 = (Graphics2D) bi.createGraphics();
+            Graphics2D gg2 = bi.createGraphics();
             gg2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, alpha));
             gg2.drawImage(bi2, 0, 0, null);
@@ -1389,7 +1389,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             this.rangeAxis.addChangeListener(this);
         }
 
-        this.dataImage = (BufferedImage) ImageIO.read(stream);
+        this.dataImage = ImageIO.read(stream);
     }
 
     public void setThresholdCutOff(int t) {

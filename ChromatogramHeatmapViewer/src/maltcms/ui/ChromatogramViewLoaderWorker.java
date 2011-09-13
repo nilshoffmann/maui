@@ -16,7 +16,7 @@ import javax.swing.SwingWorker;
 import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import maltcms.ui.views.ChromMSHeatmapPanel;
 import net.sf.maltcms.chromaui.charts.format.RTNumberFormatter;
-import net.sf.maltcms.chromaui.charts.RTUnit;
+import net.sf.maltcms.chromaui.charts.units.RTUnit;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 
@@ -85,24 +85,6 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
         configurePlot(plot, rtAxisUnit);
         final ChromMSHeatmapPanel cmhp = cvtc.getLookup().lookup(ChromMSHeatmapPanel.class);
         cmhp.setPlot(plot);
-        //cmhp.addListener(ChromatogramHMOpenAction.this.jFreeChartViewer);
-        //ChromatogramHMOpenAction.this.jFreeChartViewer.addChartPanel(cmhp, "Heatmap-TIC-EIC-Plot of " + fragment.getName());
-//        SwingUtilities.invokeLater(new Runnable() {
-//
-//            @Override
-//            public void run() {
-////                System.out.println("Setting panel");
-////                cvtc.setLayout(null);
-////                cvtc.removeAll();
-//                System.out.println("Setting panel");
-//                cvtc.setPanel();
-////                cvtc.add(cmhp,BorderLayout.CENTER);
-//////                JFrame jf = new JFrame();
-//////                jf.add(cmhp);
-//////                jf.setVisible(true);
-//////                jf.setSize(800,600);
-//            }
-//        });
         return cmhp;
     }
 

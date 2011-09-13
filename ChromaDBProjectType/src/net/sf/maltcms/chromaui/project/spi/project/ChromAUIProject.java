@@ -103,7 +103,8 @@ public class ChromAUIProject implements IChromAUIProject {
         ics.update((Object) ic);
     }
 
-    protected void refresh() {
+    @Override
+    public void refresh() {
         ic.add(new RefreshNodes());
         ic.set(Arrays.asList(new RefreshNodes()), null);
     }
