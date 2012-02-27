@@ -4,21 +4,35 @@
  */
 package net.sf.maltcms.maui.peakTableViewer;
 
-import java.util.Collection;
+import java.awt.BorderLayout;
+import java.beans.IntrospectionException;
 import java.util.Iterator;
-import java.util.List;
+import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.spi.nodes.ContainerNodeFactory;
+import net.sf.maltcms.chromaui.project.spi.nodes.DescriptorNode;
+import org.openide.util.Exceptions;
 import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
+import org.openide.explorer.view.OutlineView;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.Lookups;
 
 /**
  * Top component which displays something.
@@ -35,10 +49,13 @@ id = "net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_PeakTableViewerAction",
 preferredID = "PeakTableViewerTopComponent")
-public final class PeakTableViewerTopComponent extends TopComponent implements LookupListener {
+public final class PeakTableViewerTopComponent extends TopComponent implements
+        LookupListener, ExplorerManager.Provider, Lookup.Provider {
 
-    private Result<IChromAUIProject> result = null;
-    
+    private Result<IPeakGroupDescriptor> result = null;
+    private ExplorerManager manager = new ExplorerManager();
+    private OutlineView view = null;
+
     public PeakTableViewerTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(PeakTableViewerTopComponent.class,
@@ -46,6 +63,14 @@ public final class PeakTableViewerTopComponent extends TopComponent implements L
         setToolTipText(NbBundle.getMessage(PeakTableViewerTopComponent.class,
                 "HINT_PeakTableViewerTopComponent"));
 
+        ActionMap map = this.getActionMap();
+//        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(manager));
+//        map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(manager));
+//        map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(manager));
+        map.put("delete", ExplorerUtils.actionDelete(manager, true)); // or false
+
+        // following line tells the top component which lookup should be associated with it
+        associateLookup(ExplorerUtils.createLookup(manager, map));
     }
 
     /** This method is called from within the constructor to
@@ -56,23 +81,27 @@ public final class PeakTableViewerTopComponent extends TopComponent implements L
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+    // It is good idea to switch all listeners on and off when the
+    // component is shown or hidden. In the case of TopComponent use:
+    @Override
+    protected void componentActivated() {
+        ExplorerUtils.activateActions(manager, true);
+    }
+
+    @Override
+    protected void componentDeactivated() {
+        ExplorerUtils.activateActions(manager, false);
+    }
+
     @Override
     public void componentOpened() {
-        result = Utilities.actionsGlobalContext().lookupResult(IChromAUIProject.class);
+        result = Utilities.actionsGlobalContext().lookupResult(
+                IPeakGroupDescriptor.class);
         result.addLookupListener(this);
     }
 
@@ -95,20 +124,68 @@ public final class PeakTableViewerTopComponent extends TopComponent implements L
 
     @Override
     public void resultChanged(LookupEvent ev) {
-        IChromAUIProject project = null;
-        if(result.allInstances().isEmpty()) {
+        System.out.println("Found IPeakGroupDescriptor in lookup");
+        IPeakGroupDescriptor container = null;
+        if (result.allInstances().isEmpty()) {
             return;
         }
-        Iterator<? extends IChromAUIProject> iter = result.allInstances().iterator();
-        if(iter.hasNext()) {
-            project = iter.next();
-            Collection<IChromatogramDescriptor> coll = project.getChromatograms();
-            for(IChromatogramDescriptor descr: coll) {
-                List<IPeakAnnotationDescriptor> peaksAnnotations = descr.getPeakAnnotationDescriptors();
-                for(IPeakAnnotationDescriptor pad:peaksAnnotations) {
-                    
-                }
-            }
+        IChromAUIProject project = Utilities.actionsGlobalContext().lookup(
+                IChromAUIProject.class);
+        if (project == null) {
+            throw new NullPointerException(
+                    "No instance of IChromAUI project in lookup!");
         }
+//        container = result.allInstances().iterator().next();
+        Iterator<? extends IPeakGroupDescriptor> iter = result.allInstances().
+                iterator();
+        if (iter.hasNext()) {
+            container = (IPeakGroupDescriptor)iter.next();
+            setDisplayName("Peaks for " + project.getLocation().getName());
+            System.out.println("Setting node factory");
+            final Lookup lkp = Lookups.fixed(container,project);
+            Children.Keys<IPeakGroupDescriptor> children = new Children.Keys<IPeakGroupDescriptor>() {
+
+                @Override
+                protected void addNotify() {
+                    setKeys(new IPeakGroupDescriptor[]{lkp.lookup(IPeakGroupDescriptor.class)});
+                }
+
+                @Override
+                protected Node[] createNodes(IPeakGroupDescriptor key) {
+                    System.out.println("Creating node for key: "+key);
+                    Node[] nodes = new Node[key.getPeakAnnotationDescriptors().size()];
+                    int i = 0;
+                    for(IPeakAnnotationDescriptor descr:key.getPeakAnnotationDescriptors()){
+                        try {
+                            nodes[i++] = new DescriptorNode(descr,lkp);
+                        } catch (IntrospectionException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+                    }
+                    return nodes;
+                }
+                
+            };
+            
+            Node root = new AbstractNode(children,Lookups.fixed(container,project));
+            System.out.println("Setting root context");
+            manager.setRootContext(root);
+            if (view != null) {
+                remove(view);
+            }
+            view = new OutlineView("Peaks of Peak Group");
+            view.setTreeSortable(true);
+//        view.setPropertyColumns("name",
+//                "Name", "value", "Normalization Value");
+            view.getOutline().setRootVisible(false);
+            add(view, BorderLayout.CENTER);
+
+            revalidate();
+        }
+    }
+
+    @Override
+    public ExplorerManager getExplorerManager() {
+        return manager;
     }
 }
