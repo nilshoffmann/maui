@@ -30,18 +30,20 @@ import maltcms.datastructures.ms.IScan2D;
 import maltcms.datastructures.ms.Scan2D;
 import maltcms.tools.ImageTools;
 import maltcms.ui.charts.AChart;
-import net.sf.maltcms.chromaui.charts.GradientPaintScale;
+import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
 import maltcms.ui.viewer.datastructures.TicProvider;
 import maltcms.ui.viewer.gui.ModTimeAndScanRatePanel;
 import net.sf.maltcms.chromaui.charts.dataset.MSSeries;
 import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.ui.paintScales.IPaintScaleProvider;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYSeries;
+import org.openide.util.Lookup;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
@@ -191,25 +193,34 @@ public class ChromatogramVisualizerTools {
             isl = ScanLineCacheFactory.getScanLineCache(f);
             ChromatogramFactory cf = new ChromatogramFactory();
             ichrom = cf.createChromatogram2D(f);
-            whm2d.put(filename,new Tuple2D<IScanLine, IChromatogram2D>(isl,ichrom));
+            whm2d.put(filename, new Tuple2D<IScanLine, IChromatogram2D>(isl,
+                    ichrom));
         }
         //System.out.println("scl: " + scanlineCache.getClass().getName());
 //        System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
-//        try {
-//            double modulationTime = f.getChild("modulation_time").getArray().getDouble(0);
-//            double sar = f.getChild("scan_rate").getArray().getDouble(0);
-//            double offset = sat.getDouble(0);
-//            double rt1 = (imagePoint.x * modulationTime) + offset;
-//            double rt2 = modulationTime * (imagePoint.y / (sar * modulationTime));
-//        } catch (ResourceNotAvailableException rnae) {
-//        }
+        try {
+            double modulationTime = ichrom.getParent().getChild(
+                    "modulation_time").getArray().getDouble(0);
+            int scan = isl.mapPoint(imagePoint);
+            double sar = ichrom.getParent().getChild("scan_rate").getArray().
+                    getDouble(0);
+            double offset = ichrom.getParent().getChild("scan_acquisition_time").
+                    getArray().getDouble(0);
+            double sat = ichrom.getParent().getChild("scan_acquisition_time").
+                    getArray().getDouble(scan);
+            double rt1 = (imagePoint.x * modulationTime) + offset;
+            double rt2 = modulationTime * (imagePoint.y / (sar * modulationTime));
+            Tuple2D<Array, Array> tple = isl.getSparseMassSpectra(
+                    imagePoint);
+            //FIXME scan2d has no time set, fix code in Chromatogram2D
+            Scan2D s2 = new Scan2D(tple.getFirst(), tple.getSecond(), scan, sat,
+                    imagePoint.x, imagePoint.y, rt1, rt2);
+            return s2;
+        } catch (ResourceNotAvailableException rnae) {
+        }
 
-        Tuple2D<Array, Array> tple = isl.getSparseMassSpectra(
-                imagePoint);
-        //FIXME scan2d has no time set, fix code in Chromatogram2D
-        Scan2D s2 = new Scan2D(tple.getFirst(), tple.getSecond(), isl.
-                mapPoint(imagePoint), -1);
-        return s2;
+
+        return null;
     }
 
     public static MSSeries getMSSeries(IScan2D s2) {
@@ -533,7 +544,7 @@ public class ChromatogramVisualizerTools {
         final int sl = (tic.getShape()[0] / (spm));
 
         XYPlot p = createHeatMap(sl, spm, mt, offset, tic, fragment.getName(),
-                "rt1", "rt2");
+                "RT1 [seconds]", "RT2 [seconds]");
         return p;
     }
 
@@ -556,15 +567,17 @@ public class ChromatogramVisualizerTools {
         DefaultXYZDataset xyz = new DefaultXYZDataset();
         xyz.addSeries(name, tic2ddata);
 
-        final double[] st = ImageTools.createSampleTable(1024);
+//        final double[] st = ImageTools.createSampleTable(1024);
         //System.out.println("Retrieving breakpoints");
-        final double[] bp = ImageTools.getBreakpoints(tic, 1024,
-                Double.NEGATIVE_INFINITY);
+//        final double[] bp = ImageTools.getBreakpoints(tic, 1024,
+//                Double.NEGATIVE_INFINITY);
         MinMax mm = MAMath.getMinMax(tic);
 
         XYNoBlockRenderer xybr = new XYNoBlockRenderer();
-        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max,
-                GradientPaintScale.getDefaultColorRamp());
+        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
+        ips.setMin(mm.min);
+        ips.setMax(mm.max);
+        PaintScale ps = ips.getPaintScales().get(0);
 //        PaintScale ps = new GradientPaintScale(st, mm.min, mm.max, c);
         xybr.setPaintScale(ps);
         xybr.setDefaultEntityRadius(5);

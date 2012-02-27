@@ -12,6 +12,11 @@ import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 
+/**
+ * FIXME 
+ * Open TopComponentn in Runnable 
+ * @author nilshoffmann
+ */
 public final class GCViewerOpenAction implements ActionListener {
 
     private final DataObject context;

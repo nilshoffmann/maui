@@ -34,11 +34,7 @@ import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
 import net.sf.maltcms.chromaui.charts.format.ScaledNumberFormatter;
 import net.sf.maltcms.chromaui.charts.labels.TopKItemsLabelGenerator;
-import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQuery;
-import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryFactory;
-import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryResult;
-import net.sf.maltcms.db.search.api.MetaboliteDatabaseQueryResultList;
-import net.sf.maltcms.db.search.api.ui.DatabaseDefinitionPanel;
+import net.sf.maltcms.db.search.api.ui.DatabaseSearchPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -69,18 +65,18 @@ public class MassSpectrumPanel extends PanelE {
     private XYPlot plot;
     private HashMap<Comparable, Double> scales = new HashMap<Comparable, Double>();
     private ExecutorService es = Executors.newFixedThreadPool(1);
-    private List<?> annotations = Collections.emptyList();
-    private List<Point> selectedPoints = new LinkedList<Point>();
+//    private List<?> annotations = Collections.emptyList();
+//    private List<Point> selectedPoints = new LinkedList<Point>();
     private int topK = 10;
     private int activeMS = -1;
     private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
-    private DatabaseDefinitionPanel ddp = null;
+    private DatabaseSearchPanel ddp = null;
     private HashMap<XYSeries, IScan> seriesToScan = new LinkedHashMap<XYSeries, IScan>();
 
     /** Creates new form MassSpectrumPanel */
     public MassSpectrumPanel(InformationController ic) {
         this.ic = ic;
-        this.ddp = new DatabaseDefinitionPanel(ic.getProject());
+        this.ddp = new DatabaseSearchPanel(ic.getProject());
         //TODO LOOKUP LISTENER
         initComponents();
         initChartComponents();
@@ -152,7 +148,7 @@ public class MassSpectrumPanel extends PanelE {
     }
 
     public void changeMS(final Point imagePoint) {
-        selectedPoints.add(imagePoint);
+//        selectedPoints.add(imagePoint);
         Runnable s = new Runnable() {
 
             @Override
@@ -162,8 +158,8 @@ public class MassSpectrumPanel extends PanelE {
                         imagePoint, ic.getChromatogramDescriptor());
 
                 XYSeries s = ChromatogramVisualizerTools.getMSSeries(scan);
-                seriesToScan.put(s, scan);
                 if (addMs.isSelected()) {
+                    seriesToScan.put(s, scan);
                     try {
                         sc.getSeries(s.getKey());
                     } catch (Exception e) {
@@ -171,6 +167,8 @@ public class MassSpectrumPanel extends PanelE {
                     }
 
                 } else {
+                    seriesToScan.clear();
+                    seriesToScan.put(s, scan);
                     sc = new XYSeriesCollection();
                     sc.addSeries(s);
                     //cp.repaint();
@@ -293,18 +291,18 @@ public class MassSpectrumPanel extends PanelE {
 
                 @Override
                 public void run() {
-                    IMetaboliteDatabaseQuery query = Lookup.getDefault().lookup(
-                            IMetaboliteDatabaseQueryFactory.class).createQuery(
-                            ddp.getSelectedDatabases(), ddp.getMatchThreshold(),
-                            ddp.getMaxNumberOfHits(), seriesToScan.values().
+                    net.sf.maltcms.db.search.api.IQuery<IScan> query = Lookup.getDefault().lookup(
+                            net.sf.maltcms.db.search.api.IQueryFactory.class).createQuery(
+                            ddp.getSelectedDatabases(), ddp.getRetentionIndexCalculator(), ddp.getSelectedMetabolitePredicate(), ddp.getMatchThreshold(),
+                            ddp.getMaxNumberOfHits(), ddp.getRIWindow(), seriesToScan.values().
                             toArray(new IScan[seriesToScan.size()]));
                     try {
-                        List<MetaboliteDatabaseQueryResultList> results = query.
+                        List<net.sf.maltcms.db.search.api.QueryResultList<IScan>> results = query.
                                 call();
 
                         Box outerBox = Box.createVerticalBox();
-                        for (MetaboliteDatabaseQueryResultList mdqrl : results) {
-                            for (IMetaboliteDatabaseQueryResult result : mdqrl) {
+                        for (net.sf.maltcms.db.search.api.QueryResultList<IScan> mdqrl : results) {
+                            for (net.sf.maltcms.db.search.api.IQueryResult<IScan> result : mdqrl) {
                                 Box vbox = Box.createVerticalBox();
                                 JLabel label = new JLabel("Results for scan " + result.
                                         getScan().getScanIndex() + " at " + result.

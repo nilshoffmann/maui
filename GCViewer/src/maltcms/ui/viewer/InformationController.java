@@ -105,10 +105,10 @@ public class InformationController {
 
             };
             SwingUtilities.invokeLater(r);
-            if(this.icp!=null) {
-                MSSeries s = ChromatogramVisualizerTools.getMSSeries(p, this.filename);
-                this.icp.getLookup().lookup(InstanceContent.class).add(s);
-            }
+//            if(this.icp!=null) {
+//                MSSeries s = ChromatogramVisualizerTools.getMSSeries(p, this.filename);
+//                this.icp.addToLookup(s);
+//            }
             this.msp.changeMS(p);
             
         }

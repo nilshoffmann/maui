@@ -389,9 +389,9 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         ChartTools.changePaintScale(plot, this.ps);
         float[] dashPattern = new float[]{10, 5};
         
-        plot.setDomainCrosshairPaint(selectionOutline.darker());
+        plot.setDomainCrosshairPaint(Color.WHITE);
         plot.setDomainCrosshairStroke(new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 1f, dashPattern, 0));
-        plot.setRangeCrosshairPaint(selectionOutline.darker());
+        plot.setRangeCrosshairPaint(Color.WHITE);
         plot.setRangeCrosshairStroke(new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 1f, dashPattern, 0));
         cp.repaint();
     }

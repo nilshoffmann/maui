@@ -15,7 +15,7 @@ import cross.event.EventSource;
 import cross.event.IEvent;
 import cross.event.IEventSource;
 import cross.event.IListener;
-import java.awt.BorderLayout;
+import cross.exception.NotImplementedException;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.charts.events.ChartPanelMouseListener;
 import net.sf.maltcms.chromaui.charts.events.DomainMarkerKeyListener;
@@ -50,19 +50,20 @@ public class Chrom2DHeatmapPanel extends javax.swing.JPanel implements
         this.f = f;
 //        if (cdxpanel == null) {
         cdxpanel = new ChartPanel(null);
-        cpml = new ChartPanelMouseListener(cdxpanel);
-        cdxpanel.addChartMouseListener(cpml);
-        dmkl = new DomainMarkerKeyListener(
-                getTICPlot());
-        cdxpanel.addKeyListener(dmkl);
-        add(cdxpanel, BorderLayout.CENTER);
+        throw new NotImplementedException("Needs to be fixed!");
+//        cpml = new ChartPanelMouseListener(cdxpanel);
+//        cdxpanel.addChartMouseListener(cpml);
+//        dmkl = new DomainMarkerKeyListener(
+//                getTICPlot());
+//        cdxpanel.addKeyListener(dmkl);
+//        add(cdxpanel, BorderLayout.CENTER);
 //                } else {
 
 
 //                }
-//        setPlot(ticplot);
-        cdxpanel.requestFocus(true);
-        cdxpanel.requestFocusInWindow();
+////        setPlot(ticplot);
+//        cdxpanel.requestFocus(true);
+//        cdxpanel.requestFocusInWindow();
     }
 
     public ChartPanelMouseListener getChartPanelMouseListener() {
