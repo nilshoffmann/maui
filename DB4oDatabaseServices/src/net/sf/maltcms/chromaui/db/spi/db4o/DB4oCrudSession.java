@@ -10,6 +10,7 @@ import com.db4o.query.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
@@ -101,6 +102,7 @@ public final class DB4oCrudSession implements ICrudSession {
         return a;
     }
 
+    @Override
     public final Query getSODAQuery() {
         authenticate(ic);
         return oc.query();
@@ -120,7 +122,11 @@ public final class DB4oCrudSession implements ICrudSession {
     @Override
     public final void close() throws AuthenticationException {
         authenticate(ic);
-        oc.commit();
+        try{
+            oc.commit();
+        }catch(com.db4o.ext.DatabaseReadOnlyException droe){
+            
+        }
     }
 
     @Override
@@ -142,4 +148,11 @@ public final class DB4oCrudSession implements ICrudSession {
     public final void update(Object... o) throws AuthenticationException {
         update(Arrays.asList(o));
     }
+
+    @Override
+    public <T> IQuery<T> newQuery(Class<T> c) throws AuthenticationException {
+        DB4oQuery<T> db4oq = new DB4oQuery<T>(oc.ext().openSession());
+        return db4oq;
+    }
+
 }
