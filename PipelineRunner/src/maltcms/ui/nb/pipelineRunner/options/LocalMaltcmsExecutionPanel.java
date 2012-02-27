@@ -5,9 +5,13 @@
 package maltcms.ui.nb.pipelineRunner.options;
 
 import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import maltcms.ui.nb.pipelineRunner.ui.PipelineRunnerTopComponent;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.openide.filesystems.FileChooserBuilder;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
@@ -92,7 +96,27 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        FileChooserBuilder fcb = new FileChooserBuilder(LocalMaltcmsExecutionPanel.class);
+        fcb.setFilesOnly(true);
+        fcb.setFileFilter(new FileFilter() {
+
+            @Override
+            public boolean accept(File file) {
+                return file.getName().equals("maltcms.jar");
+            }
+
+            @Override
+            public String getDescription() {
+                return "maltcms library archive";
+            }
+        });
+        JFileChooser jfc = fcb.createFileChooser();
+        int ret = jfc.showOpenDialog(this);
+        if(ret==JFileChooser.APPROVE_OPTION) {
+            File f = jfc.getSelectedFile();
+            maltcmsInstallationPath.setText(f.getParent());
+            checkVersion(f.getParentFile().getAbsolutePath());
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void maltcmsInstallationPathPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_maltcmsInstallationPathPropertyChange
@@ -119,6 +143,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         // Preferences.userNodeForPackage(LocalMaltcmsExecutionPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
         // or for org.openide.util with API spec. version >= 7.4:
         NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsInstallationPath", maltcmsInstallationPath.getText());
+        NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsInstallationPath", maltcmsInstallationPath.getText());
         // or:
         // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
     }
@@ -128,15 +153,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         File cfgdir = new File(basedir,"cfg");
         try {
             PropertiesConfiguration pc = new PropertiesConfiguration(new File(cfgdir, "application.properties"));
-            int major = pc.getInt("application.version.major");
-            int minor = Integer.parseInt(pc.getString("application.version.minor").substring(1));
-            int micro = Integer.parseInt(pc.getString("application.version.micro",".0").substring(1));
-            if(major>=1) {
-                formValid = true;
-            }else{
-                formValid = false;
-            }
-            maltcmsVersion.setText(major+"."+minor+"."+micro);
+            
+            maltcmsVersion.setText(pc.getString("application.version", "NA"));
             maltcmsVersion.setEnabled(true);
         } catch (ConfigurationException ex) {
             Exceptions.printStackTrace(ex);

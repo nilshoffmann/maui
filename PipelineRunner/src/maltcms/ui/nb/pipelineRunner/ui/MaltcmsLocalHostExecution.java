@@ -5,32 +5,62 @@
 package maltcms.ui.nb.pipelineRunner.ui;
 
 import cross.exception.ConstraintViolationException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
+import org.openide.util.NbPreferences;
+import org.openide.windows.IOProvider;
+import org.openide.windows.InputOutput;
+import org.openide.windows.OutputWriter;
 
 /**
  *
  * @author nilshoffmann
  */
-public class MaltcmsLocalHostExecution {
+public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
 
     private final File baseDir;
-    private final File inputDir;
-    private final File outputDir;
+    private final File outputBaseDir;
+    private File outputDir;
     private final File configurationFile;
-    private final String[] inputFiles;
+    private final File[] inputFiles;
     private String maltcmsJarFileName = null;
+    private Process p;
 
-    public MaltcmsLocalHostExecution(File baseDir, File inputDir, File outputDir, File configurationFile, String[] inputFiles) throws IOException {
+    public MaltcmsLocalHostExecution(File baseDir, File outputBaseDir, File configurationFile, File[] inputFiles) throws IOException {
         checkMaltcmsPresence(baseDir);
         this.baseDir = baseDir;
-        this.inputDir = inputDir;
-        this.outputDir = outputDir;
+        this.outputBaseDir = outputBaseDir;
         this.configurationFile = configurationFile;
         this.inputFiles = inputFiles;
+    }
+
+    @Override
+    public boolean cancel() {
+        boolean cancel = super.cancel();
+        if(this.p!=null) {
+            this.p.destroy();
+        }
+        return cancel;
+    }
+    
+    public File getConfigurationFile() {
+        return this.configurationFile;
+    }
+
+    @Override
+    public String toString() {
+        return configurationFile.getName();
     }
 
     private void checkMaltcmsPresence(File baseDir) throws IOException {
@@ -76,14 +106,15 @@ public class MaltcmsLocalHostExecution {
 //        File java = new File(javaBinDir, "java");
         l.add("java");
         l.add("-Xmx2G");
+        l.add("-DomitUserTimePrefix=true");
         l.add("-jar");
         l.add(maltcmsJarFileName);
 //        l.add("-Xmx2G");
 //        sb.append("-Xmx2G -jar ");
 //        l.add("-jar " + maltcmsJarFileName);
 //        sb.append("-jar "+maltcmsJarFileName);
-        l.add("-i");
-        l.add(inputDir.getAbsolutePath());
+//        l.add("-i");
+//        l.add(inputDir.getAbsolutePath());
 //        sb.append(" -i ");
 //        sb.append(inputDir.getAbsolutePath());
         l.add("-o");
@@ -95,7 +126,7 @@ public class MaltcmsLocalHostExecution {
 //        sb.append(" -f ");
 //        sb.append(buildFileset());
         l.add("-c");
-        l.add(configurationFile.getAbsolutePath());
+        l.add(escapeString(configurationFile.getAbsolutePath(),"\""));
 //        sb.append(" -c ");
 //        sb.append(configurationFile.getAbsolutePath());
 //        return sb.toString();
@@ -112,13 +143,64 @@ public class MaltcmsLocalHostExecution {
 
     private String buildFileset() {
         StringBuilder sb = new StringBuilder();
-        for (String s : inputFiles) {
-            sb.append(escapeString(s, "\""));
+        sb.append("\"");
+        for (File s : inputFiles) {
+            sb.append(s.getAbsolutePath());
             if (inputFiles.length > 1) {
                 sb.append(",");
             }
         }
+        sb.replace(sb.length()-1, sb.length(), "");
+        sb.append("\"");
         return sb.toString();
     }
 
+    @Override
+    public File call() throws Exception {
+        getProgressHandle().setDisplayName("Running Maltcms...");
+        getProgressHandle().start();
+        outputDir = new File(outputBaseDir, new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()));
+        final ProcessBuilder pb = new ProcessBuilder(buildCommandLine());
+        String location = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
+        if (location.equals("NA")) {
+            throw new IllegalArgumentException("Please set maltcms location under settings!");
+        }
+        File f = new File(location);
+        pb.directory(f);
+        System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.directory());
+        pb.redirectErrorStream(true);
+        InputOutput io = IOProvider.getDefault().getIO(
+                "Running Maltcms in "+outputDir.getName(), false);
+//                io.setOutputVisible(true);
+        FileObject outDir = FileUtil.toFileObject(outputDir);
+        io.select();
+        final OutputWriter writer = io.getOut();
+        writer.reset();
+        try {
+            p = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                writer.println(line);
+            }
+            int ecode = p.waitFor();
+            System.out.println("Maltcms exited with code: " + ecode);
+            if (ecode == 0) {
+                File workflow = new File(outputDir, "workflow.xml");
+                if (workflow.exists()) {
+                    getProgressHandle().finish();
+                    return workflow;
+                }else{
+                    getProgressHandle().finish();
+                    throw new IOException("Could not locate workflow.xml in "+outputDir);
+                }
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        getProgressHandle().finish();
+        return null;
+    }
 }

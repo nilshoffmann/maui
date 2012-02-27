@@ -4,26 +4,27 @@
  */
 package maltcms.ui.nb.pipelineRunner.ui;
 
+import cross.exception.NotImplementedException;
 import java.io.File;
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import maltcms.ui.fileHandles.properties.pipeline.MaltcmsPipelineFormatDataObject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.ConfigurationUtils;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
-import org.openide.filesystems.FileStateInvalidException;
 import org.openide.loaders.OpenSupport;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.NbPreferences;
 import org.openide.windows.CloneableTopComponent;
 
 /**
@@ -40,39 +41,76 @@ public class PipelineRunOpenSupport extends OpenSupport implements OpenCookie, C
     protected CloneableTopComponent createCloneableTopComponent() {
         MaltcmsPipelineFormatDataObject dobj = (MaltcmsPipelineFormatDataObject) entry.getDataObject();
         Project p = FileOwnerQuery.getOwner(entry.getFile());
-        if(p instanceof IChromAUIProject) {
-            IChromAUIProject icp = ((IChromAUIProject)p);
-            Collection<IChromatogramDescriptor> ccs = icp.getChromatograms();
-            StringBuilder sb = new StringBuilder();
-            List<File> files = new ArrayList<File>();
-            for(IChromatogramDescriptor cc:ccs) {
-//                Collection<IChromatogramDescriptor> cds = cc.get();
-//                for(IChromatogramDescriptor icd:cds) {
-//                    sb.append(icd.getResourceLocation());
-//                    sb.append(",");
-                    files.add(new File(cc.getResourceLocation()));
+//        File outputFolder = null;
+        File f = new File(FileUtil.toFile(p.getProjectDirectory()), "output");
+        f.mkdirs();
+
+//        outputFolder.mkdirs();
+
+        List<File> files = Collections.emptyList();
+//        MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(null, null, null, null, inputFiles);
+        if (p instanceof IChromAUIProject) {
+            IChromAUIProject icp = ((IChromAUIProject) p);
+            files = DataSourceDialog.getFilesForDatasource(icp);
+//            Collection<IChromatogramDescriptor> ccs = icp.getChromatograms();
+//            StringBuilder sb = new StringBuilder();
+//            
+//            
+//            File importDir = new File(FileUtil.toFile(
+//                    icp.getLocation()), "import");
+//            if (importDir.exists() && importDir.isDirectory()) {
+//                File[] inputFiles = importDir.listFiles();
+//                files.addAll(Arrays.asList(inputFiles));
+//                System.out.println("Using input files from import directory!");
+//            } else {
+//                System.out.println("Using original input files!");
+//                for (IChromatogramDescriptor cc : ccs) {
+////                Collection<IChromatogramDescriptor> cds = cc.get();
+////                for(IChromatogramDescriptor icd:cds) {
+////                    sb.append(icd.getResourceLocation());
+////                    sb.append(",");
+//                    files.add(new File(cc.getResourceLocation()));
+////                }
 //                }
-            }
+//            }
+            
+
+
 //            String files = sb.substring(0, sb.length()-1);
-            System.out.println("Files: "+files);
+            System.out.println("Files: " + files);
+        } else {
+            throw new NotImplementedException("Can not open Maltcms process for non IChromAUI projects!");
+        }
+        if(files.isEmpty()) {
+            throw new IllegalArgumentException("Could not retrieve any files for project!");
         }
         //TODO: implement individual configurations support and automatic adding 
         //of output.basedir and input.dataInfo etc.
         PipelineRunnerTopComponent prtc = PipelineRunnerTopComponent.findInstance();
         FileObject fo = dobj.getPrimaryFile();
-        PropertiesConfiguration pc;
-        try {
-            pc = new PropertiesConfiguration(fo.getURL());
-            Logger.getLogger(PipelineRunOpenSupport.class.getName()).info("Configuration: " + ConfigurationUtils.toString(pc));
-
-            prtc.addUserConfiguration(new File(fo.getURL().toURI()));
-        } catch (URISyntaxException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (FileStateInvalidException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (ConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
+        String maltcmsPath = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
+        if (maltcmsPath.equals("NA")) {
+            throw new IllegalArgumentException("Please set maltcms path in settings!");
         }
+        try {
+            MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), f, FileUtil.toFile(fo), files.toArray(new File[files.size()]));
+            prtc.addProcess(mlhe);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+//        PropertiesConfiguration pc;
+//        try {
+//            pc = new PropertiesConfiguration(fo.getURL());
+////            Logger.getLogger(PipelineRunOpenSupport.class.getName()).info("Configuration: " + ConfigurationUtils.toString(pc));
+//
+////            prtc.addUserConfiguration(new File(fo.getURL().toURI()));
+////        } catch (URISyntaxException ex) {
+////            Exceptions.printStackTrace(ex);
+//        } catch (FileStateInvalidException ex) {
+//            Exceptions.printStackTrace(ex);
+//        } catch (ConfigurationException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
         return prtc;
     }
 }

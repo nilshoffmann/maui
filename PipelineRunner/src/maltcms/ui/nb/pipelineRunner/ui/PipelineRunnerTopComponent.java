@@ -4,86 +4,95 @@
  */
 package maltcms.ui.nb.pipelineRunner.ui;
 
-import cross.exception.ConstraintViolationException;
-import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.util.NbPreferences;
 import org.openide.windows.CloneableTopComponent;
-import org.openide.windows.IOProvider;
-import org.openide.windows.InputOutput;
 import org.openide.windows.Mode;
-import org.openide.windows.OutputWriter;
 
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(
-dtd = "-//maltcms.ui.nb.pipelineRunner.ui//PipelineRunner//EN",
+@ConvertAsProperties(dtd = "-//maltcms.ui.nb.pipelineRunner.ui//PipelineRunner//EN",
 autostore = false)
-public final class PipelineRunnerTopComponent extends CloneableTopComponent {
+public final class PipelineRunnerTopComponent extends CloneableTopComponent implements ListSelectionListener {
 
     private static PipelineRunnerTopComponent instance;
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "PipelineRunnerTopComponent";
 //    private Process activeProcess = null;
-    private File cfg = null;
-    private File inputDir = null;
-    private File outputDir = null;
-    private File workingDirectory = null;
-    private String files = "*.cdf";
-    private DefaultListModel dlm = null;
+//    private File cfg = null;
+//    private File inputDir = null;
+//    private File outputDir = null;
+//    private File workingDirectory = null;
+//    private String files = "*.cdf";
+    private DefaultListModel dlm = null, dlm2 = null;
 
-    private Process getActiveProcess() {
-        Process process = null;
+    private MaltcmsLocalHostExecution getActiveProcess() {
+        MaltcmsLocalHostExecution process = null;
         if (processList.isSelectionEmpty()) {
             if (processList.getModel().getSize() == 0) {
                 return null;
             }
-            process = (Process) dlm.elementAt(0);
+            process = (MaltcmsLocalHostExecution) dlm.elementAt(0);
         }
-        process = (Process) processList.getSelectedValue();
-        try {
-            if (process.exitValue() == 0) {
-                jButton1.setEnabled(true);
-                jButton2.setEnabled(false);
+        process = (MaltcmsLocalHostExecution) processList.getSelectedValue();
+        if (process.isCancel()) {
+            runButton.setEnabled(false);
+            stopButton.setEnabled(true);
+        }
+        return process;
+    }
+    
+    private MaltcmsLocalHostExecution getActiveRunningProcess() {
+        MaltcmsLocalHostExecution process = null;
+        if (runningProcessList.isSelectionEmpty()) {
+            if (runningProcessList.getModel().getSize() == 0) {
+                return null;
             }
-        } catch (IllegalThreadStateException e) {
-            jButton1.setEnabled(false);
-            jButton2.setEnabled(true);
+            process = (MaltcmsLocalHostExecution) dlm2.elementAt(0);
+        }
+        process = (MaltcmsLocalHostExecution) runningProcessList.getSelectedValue();
+        if (process.isCancel()) {
+            runButton.setEnabled(false);
+            stopButton.setEnabled(true);
         }
         return process;
     }
 
-    private void addActiveProcess(Process p) {
+    public void addProcess(MaltcmsLocalHostExecution p) {
         if (dlm == null) {
             dlm = new DefaultListModel();
             processList.setModel(dlm);
         }
         dlm.addElement(p);
+        if (!dlm.isEmpty()) {
+            processList.setSelectedIndex(dlm.size() - 1);
+        }
+    }
+
+    public void setProcessRunning(MaltcmsLocalHostExecution p) {
+        if (dlm2 == null) {
+            dlm2 = new DefaultListModel();
+            runningProcessList.setModel(dlm2);
+        }
+        dlm.removeElement(p);
+        dlm2.add(0, p);
+        if (!dlm2.isEmpty()) {
+            runningProcessList.setSelectedIndex(0);
+        }
     }
 //    private LocalHostMaltcmsProcess lhmp = null;
 
@@ -94,11 +103,13 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         setToolTipText(NbBundle.getMessage(PipelineRunnerTopComponent.class,
                 "HINT_PipelineRunnerTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        jButton1.setEnabled(false);
-        jButton2.setEnabled(false);
-        workingDirectory = new File(NbPreferences.forModule(
-                PipelineRunnerTopComponent.class).get("maltcmsInstallationPath",
-                ""));
+        runButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        processList.addListSelectionListener(this);
+        runningProcessList.addListSelectionListener(this);
+//        workingDirectory = new File(NbPreferences.forModule(
+//                PipelineRunnerTopComponent.class).get("maltcmsInstallationPath",
+//                ""));
     }
 
     @Override
@@ -110,18 +121,16 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         super.open();
     }
 
-    public void addUserConfiguration(File cfg) {
-        this.cfg = cfg;
-        if (this.cfg != null) {
-            Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Set configuration: Configuration: " + cfg.
-                    getAbsolutePath());
-
-            jButton1.setEnabled(true);
-            jButton2.setEnabled(false);
-        }
-
-    }
-
+//    public void addUserConfiguration(File cfg) {
+//        this.cfg = cfg;
+//        if (this.cfg != null) {
+//            Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Set configuration: Configuration: " + cfg.getAbsolutePath());
+//
+//            jButton1.setEnabled(true);
+//            jButton2.setEnabled(false);
+//        }
+//
+//    }
     public void submitViaMpaxs() {
         //Impaxs server = Lookup.getDefault().lookup(Impaxs.class);//new MpaxsImpl();
         //server.startMasterServer();
@@ -141,111 +150,108 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
 //        }
     }
 
-    public void submit() {
-        if (inputDir == null) {
-            JFileChooser jfc = new JFileChooser();
-            jfc.setDialogTitle("Select Input Directory");
-            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int result = jfc.showOpenDialog(this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                inputDir = jfc.getSelectedFile();
-            } else {
-                Exceptions.printStackTrace(new RuntimeException(
-                        "No input directory defined, aborting!"));
-                return;
-            }
-        }
-        if (outputDir == null) {
-            JFileChooser jfc = new JFileChooser();
-            jfc.setDialogTitle("Select Output Base Directory");
-            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int result = jfc.showOpenDialog(this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                outputDir = jfc.getSelectedFile();
-            } else {
-                Exceptions.printStackTrace(new RuntimeException(
-                        "No output directory defined, aborting!"));
-                return;
-            }
-        }
-        try {
-            MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(
-                    workingDirectory, inputDir, outputDir, cfg, new String[]{
-                        files});
-            System.out.println("Java.home: " + System.getProperty("java.home"));
-            File javaBinDir = new File(new File(System.getProperty("java.home")),
-                    "bin");
-            File java = new File(javaBinDir, "java");
-            System.out.println("Executing java: " + java.getAbsolutePath());
-            //final NbProcessDescriptor desc = new NbProcessDescriptor(java.getAbsolutePath(), mlhe.buildCommandLine());
-            final ProcessBuilder pb = new ProcessBuilder(mlhe.buildCommandLine());
-            pb.directory(workingDirectory);
-            System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.
-                    directory());
-            pb.redirectErrorStream(true);
-
-
-//        final Callable<Process> cal = ies.getProcessCallable();
-            Runnable r = new Runnable() {
-
-                @Override
-                public void run() {
-                    jButton1.setEnabled(false);
-                    jButton2.setEnabled(true);
-                    ProgressHandle ph = ProgressHandleFactory.createHandle(
-                            "Executing Maltcms");
-                    ph.start();
-                    ph.switchToIndeterminate();
-                    ph.setDisplayName("Running Maltcms...");
-
-                    InputOutput io = IOProvider.getDefault().getIO(
-                            "Running Maltcms...", false);
-//                io.setOutputVisible(true);
-                    io.select();
-                    final OutputWriter writer = io.getOut();
-
-
-//                Future<Process> future = RequestProcessor.getDefault().submit(cal);
-                    try {
-                        Process p = pb.start();
-//                    Process p = desc.exec(null, null, workingDirectory);
-
-
-                        addActiveProcess(p);
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.
-                                getInputStream()));
-                        String line = null;
-                        while ((line = reader.readLine()) != null) {
-                            writer.println(line);
-                        }
-                        int ecode = p.waitFor();
-//                    p.waitFor();
-//                    Process p = future.get();
-
-                        System.out.println("Maltcms exited with code: " + ecode);
-                    } catch (IOException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (InterruptedException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
-
-                    jButton1.setEnabled(
-                            true);
-                    jButton2.setEnabled(
-                            false);
-                    ph.finish();
-                }
-            };
-            ExecutorService es = Executors.newSingleThreadExecutor();
-            es.submit(r);
-        } catch (IOException ioex) {
-            Exceptions.printStackTrace(ioex);
-        } catch (ConstraintViolationException cve) {
-            Exceptions.printStackTrace(cve);
-        }
-//        IExecutionSupport ies = mlhe.createExecutionSupport();
-    }
-
+//    public void submit() {
+//        if (inputDir == null) {
+//            JFileChooser jfc = new JFileChooser();
+//            jfc.setDialogTitle("Select Input Directory");
+//            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//            int result = jfc.showOpenDialog(this);
+//            if (result == JFileChooser.APPROVE_OPTION) {
+//                inputDir = jfc.getSelectedFile();
+//            } else {
+//                Exceptions.printStackTrace(new RuntimeException(
+//                        "No input directory defined, aborting!"));
+//                return;
+//            }
+//        }
+//        if (outputDir == null) {
+//            JFileChooser jfc = new JFileChooser();
+//            jfc.setDialogTitle("Select Output Base Directory");
+//            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//            int result = jfc.showOpenDialog(this);
+//            if (result == JFileChooser.APPROVE_OPTION) {
+//                outputDir = jfc.getSelectedFile();
+//            } else {
+//                Exceptions.printStackTrace(new RuntimeException(
+//                        "No output directory defined, aborting!"));
+//                return;
+//            }
+//        }
+//        try {
+//            MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(
+//                    workingDirectory, inputDir, outputDir, cfg, new String[]{
+//                        files});
+//            System.out.println("Java.home: " + System.getProperty("java.home"));
+//            File javaBinDir = new File(new File(System.getProperty("java.home")),
+//                    "bin");
+//            File java = new File(javaBinDir, "java");
+//            System.out.println("Executing java: " + java.getAbsolutePath());
+//            //final NbProcessDescriptor desc = new NbProcessDescriptor(java.getAbsolutePath(), mlhe.buildCommandLine());
+//            final ProcessBuilder pb = new ProcessBuilder(mlhe.buildCommandLine());
+//            pb.directory(workingDirectory);
+//            System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.directory());
+//            pb.redirectErrorStream(true);
+//
+//
+////        final Callable<Process> cal = ies.getProcessCallable();
+//            Runnable r = new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    jButton1.setEnabled(false);
+//                    jButton2.setEnabled(true);
+//                    ProgressHandle ph = ProgressHandleFactory.createHandle(
+//                            "Executing Maltcms");
+//                    ph.start();
+//                    ph.switchToIndeterminate();
+//                    ph.setDisplayName("Running Maltcms...");
+//
+//                    InputOutput io = IOProvider.getDefault().getIO(
+//                            "Running Maltcms...", false);
+////                io.setOutputVisible(true);
+//                    io.select();
+//                    final OutputWriter writer = io.getOut();
+//
+//
+////                Future<Process> future = RequestProcessor.getDefault().submit(cal);
+//                    try {
+//                        Process p = pb.start();
+////                    Process p = desc.exec(null, null, workingDirectory);
+//
+//
+////                        addActiveProcess(p);
+//                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//                        String line = null;
+//                        while ((line = reader.readLine()) != null) {
+//                            writer.println(line);
+//                        }
+//                        int ecode = p.waitFor();
+////                    p.waitFor();
+////                    Process p = future.get();
+//
+//                        System.out.println("Maltcms exited with code: " + ecode);
+//                    } catch (IOException ex) {
+//                        Exceptions.printStackTrace(ex);
+//                    } catch (InterruptedException ex) {
+//                        Exceptions.printStackTrace(ex);
+//                    }
+//
+//                    jButton1.setEnabled(
+//                            true);
+//                    jButton2.setEnabled(
+//                            false);
+//                    ph.finish();
+//                }
+//            };
+//            ExecutorService es = Executors.newSingleThreadExecutor();
+//            es.submit(r);
+////        } catch (IOException ioex) {
+////            Exceptions.printStackTrace(ioex);
+//        } catch (ConstraintViolationException cve) {
+//            Exceptions.printStackTrace(cve);
+//        }
+////        IExecutionSupport ies = mlhe.createExecutionSupport();
+//    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -255,61 +261,73 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
     private void initComponents() {
 
         jToolBar1 = new javax.swing.JToolBar();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        runButton = new javax.swing.JButton();
+        stopButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         contentPanel = new javax.swing.JPanel();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         processList = new javax.swing.JList();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        runningProcessList = new javax.swing.JList();
 
         jToolBar1.setRollover(true);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/maltcms/ui/nb/pipelineRunner/media-playback-start.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.jButton1.text")); // NOI18N
-        jButton1.setToolTipText(org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.jButton1.toolTipText")); // NOI18N
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        runButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/maltcms/ui/nb/pipelineRunner/media-playback-start.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(runButton, org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.runButton.text")); // NOI18N
+        runButton.setToolTipText(org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.runButton.toolTipText")); // NOI18N
+        runButton.setFocusable(false);
+        runButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        runButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        runButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                runButtonActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton1);
+        jToolBar1.add(runButton);
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/maltcms/ui/nb/pipelineRunner/media-playback-stop.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.jButton2.text")); // NOI18N
-        jButton2.setToolTipText(org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.jButton2.toolTipText")); // NOI18N
-        jButton2.setFocusable(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/maltcms/ui/nb/pipelineRunner/media-playback-stop.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(stopButton, org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.stopButton.text")); // NOI18N
+        stopButton.setToolTipText(org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.stopButton.toolTipText")); // NOI18N
+        stopButton.setFocusable(false);
+        stopButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        stopButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        stopButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                stopButtonActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton2);
+        jToolBar1.add(stopButton);
         jToolBar1.add(jSeparator1);
+
+        jSplitPane1.setDividerLocation(150);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         processList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(processList);
+
+        jSplitPane1.setLeftComponent(jScrollPane1);
+
+        jScrollPane2.setViewportView(runningProcessList);
+
+        jSplitPane1.setRightComponent(jScrollPane2);
 
         javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
         contentPanel.setLayout(contentPanelLayout);
         contentPanelLayout.setHorizontalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
         );
         contentPanelLayout.setVerticalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
             .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -321,8 +339,12 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        submit();
+    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+        MaltcmsLocalHostExecution mlhe = getActiveProcess();
+        if (mlhe != null) {
+            MaltcmsLocalHostExecution.createAndRun(mlhe.getConfigurationFile().getName(), mlhe);
+            setProcessRunning(mlhe);
+        }
         //        Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Configuration: " + ConfigurationUtils.toString(cfg));
 //        if (lhmp != null) {
 //            if (!lhmp.isDone()) {
@@ -368,23 +390,31 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
 //        } catch (ConfigurationException ex) {
 //            Exceptions.printStackTrace(ex);
 //        }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_runButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (getActiveProcess() != null) {
-            getActiveProcess().destroy();
-            jButton1.setEnabled(true);
-            jButton2.setEnabled(false);
+    private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
+        MaltcmsLocalHostExecution mlhe = getActiveRunningProcess();
+        if (mlhe != null) {
+            mlhe.cancel();
+            runButton.setEnabled(false);
+            stopButton.setEnabled(false);
+            mlhe.getProgressHandle().finish();
+            mlhe.setProgressHandle(null);
+            dlm2.removeElement(mlhe);
+            addProcess(mlhe);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_stopButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contentPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JList processList;
+    private javax.swing.JButton runButton;
+    private javax.swing.JList runningProcessList;
+    private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -483,4 +513,32 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent {
 //    public void jobChanged(IJob job) {
 //        System.out.println("Received news from job " + job);
 //    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        if (lse.getSource() == processList) {
+            MaltcmsLocalHostExecution mlhe = (MaltcmsLocalHostExecution) processList.getSelectedValue();
+            if (mlhe != null) {
+                if (mlhe.getProgressHandle() == null) {
+                    runButton.setEnabled(true);
+                    stopButton.setEnabled(false);
+                } else {
+                    runButton.setEnabled(false);
+                    stopButton.setEnabled(true);
+                }
+            }
+        }
+        if (lse.getSource() == runningProcessList) {
+            MaltcmsLocalHostExecution mlhe = (MaltcmsLocalHostExecution) runningProcessList.getSelectedValue();
+            if (mlhe != null) {
+                if (mlhe.getProgressHandle() == null) {
+                    runButton.setEnabled(true);
+                    stopButton.setEnabled(false);
+                } else {
+                    runButton.setEnabled(false);
+                    stopButton.setEnabled(true);
+                }
+            }
+        }
+    }
 }
