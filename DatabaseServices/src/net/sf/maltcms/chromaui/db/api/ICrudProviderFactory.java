@@ -13,5 +13,5 @@ import java.net.URL;
 public interface ICrudProviderFactory {
     
     public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl);
-    
+    public ICrudProvider getInMemoryCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl);
 }

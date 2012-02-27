@@ -4,6 +4,8 @@
  */
 package net.sf.maltcms.chromaui.db.api;
 
+import com.db4o.query.Query;
+import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import java.util.Collection;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 
@@ -32,4 +34,8 @@ public interface ICrudSession {
     void update(Object...o) throws AuthenticationException;
 
     void close() throws AuthenticationException;
+    
+    Query getSODAQuery();
+    
+    <T> IQuery<T> newQuery(Class<T> c) throws AuthenticationException;
 }
