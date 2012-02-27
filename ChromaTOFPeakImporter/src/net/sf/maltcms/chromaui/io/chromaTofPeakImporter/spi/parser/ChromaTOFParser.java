@@ -6,11 +6,8 @@ package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser;
 
 import cross.datastructures.tuple.Tuple2D;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,13 +18,18 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
+import ucar.ma2.ArrayInt;
+import ucar.ma2.Index;
 
 /**
  *
  * @author hoffmann
  */
 public class ChromaTOFParser {
-
+    public static String FIELD_SEPARATOR = "\t";
+    
     public static HashMap<String, String> getFilenameToGroupMap(File f) {
         List<String> header = null;
         HashMap<String, String> filenameToGroupMap = new LinkedHashMap<String, String>();
@@ -37,7 +39,7 @@ public class ChromaTOFParser {
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    String[] lineArray = line.split("\t");
+                    String[] lineArray = line.split(FIELD_SEPARATOR);
                     if (lineCount > 0) {
                         System.out.println(
                                 "Adding file to group mapping: " + lineArray[0] + " " + lineArray[1]);
@@ -65,7 +67,29 @@ public class ChromaTOFParser {
         return -1;
     }
 
-    public static String rearrangeMassSpectra(String massSpectrum) {
+//    public static String rearrangeMassSpectra(String massSpectrum) {
+//        String[] mziTuples = massSpectrum.split(" ");
+//        TreeMap<Float, Integer> tm = new TreeMap<Float, Integer>();
+//        for (String tuple : mziTuples) {
+//            if (tuple.contains(":")) {
+//                String[] tplArray = tuple.split(":");
+//                tm.put(Float.valueOf(tplArray[0]), Integer.valueOf(tplArray[1]));
+//            } else {
+//                System.err.println(
+//                        "Warning: encountered strange tuple: " + tuple + " within ms: " + massSpectrum);
+//            }
+//        }
+//        StringBuilder sb = new StringBuilder();
+//        for (Float mz : tm.keySet()) {
+//            sb.append(mz);
+//            sb.append(":");
+//            sb.append(tm.get(mz));
+//            sb.append(" ");
+//        }
+//        return sb.toString();
+//    }
+    public static Tuple2D<double[], int[]> convertMassSpectrum(
+            String massSpectrum) {
         String[] mziTuples = massSpectrum.split(" ");
         TreeMap<Float, Integer> tm = new TreeMap<Float, Integer>();
         for (String tuple : mziTuples) {
@@ -77,14 +101,15 @@ public class ChromaTOFParser {
                         "Warning: encountered strange tuple: " + tuple + " within ms: " + massSpectrum);
             }
         }
-        StringBuilder sb = new StringBuilder();
-        for (Float mz : tm.keySet()) {
-            sb.append(mz);
-            sb.append(":");
-            sb.append(tm.get(mz));
-            sb.append(" ");
+        double[] masses = new double[tm.keySet().size()];
+        int[] intensities = new int[tm.keySet().size()];
+        int i = 0;
+        for (Float key : tm.keySet()) {
+            masses[i] = key;
+            intensities[i] = tm.get(key);
+            i++;
         }
-        return sb.toString();
+        return new Tuple2D<double[], int[]>(masses, intensities);
     }
 
     public static LinkedHashSet<String> getHeader(File f) {
@@ -100,7 +125,7 @@ public class ChromaTOFParser {
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    String[] lineArray = line.split("\t");
+                    String[] lineArray = line.split(FIELD_SEPARATOR);
                     if (header == null) {
                         for (int i = 0; i < lineArray.length; i++) {
                             lineArray[i] = lineArray[i].trim().toUpperCase().
@@ -143,7 +168,7 @@ public class ChromaTOFParser {
                 int lineCount = 0;
                 while ((line = br.readLine()) != null) {
                     if (!line.isEmpty()) {
-                        String[] lineArray = line.split("\t");
+                        String[] lineArray = line.split(FIELD_SEPARATOR);
                         if (header == null) {
                             for (int i = 0; i < lineArray.length; i++) {
                                 lineArray[i] = lineArray[i].trim().toUpperCase().
@@ -185,7 +210,7 @@ public class ChromaTOFParser {
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
                     ArrayList<String> lineList = new ArrayList<String>(Arrays.
-                            asList(line.split("\t")));
+                            asList(line.split(FIELD_SEPARATOR)));
                     if (header == null) {
                         for (int i = 0; i < lineList.size(); i++) {
                             lineList.set(i, lineList.get(i).trim().toUpperCase().
@@ -214,13 +239,13 @@ public class ChromaTOFParser {
         }
         return body;
     }
-    
-    public static Tuple2D<LinkedHashSet<String>,List<TableRow>> parseReport(File f) {
-        LinkedHashSet<String> header = getHeader(f);
-        List<TableRow> table = parseBody(header,f);
-        return new Tuple2D<LinkedHashSet<String>,List<TableRow>>(header,table);
-    }
 
+    public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(
+            File f) {
+        LinkedHashSet<String> header = getHeader(f);
+        List<TableRow> table = parseBody(header, f);
+        return new Tuple2D<LinkedHashSet<String>, List<TableRow>>(header, table);
+    }
 //    public static void main(String[] args) {
 //        File groupFile = new File(args[0]);
 //        HashMap<String, String> filenameToGroupMap = getFilenameToGroupMap(
