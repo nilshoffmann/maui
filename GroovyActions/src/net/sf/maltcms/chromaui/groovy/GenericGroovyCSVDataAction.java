@@ -4,6 +4,7 @@
  */
 package net.sf.maltcms.chromaui.groovy;
 
+import net.sf.maltcms.chromaui.ui.support.api.ContextAction;
 import groovy.lang.GroovyClassLoader;
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +28,10 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
+import net.sf.maltcms.chromaui.groovy.options.GroovyScriptLocationsPanel;
 
 /**
  *
@@ -38,7 +41,7 @@ import org.openide.util.Utilities;
 id = "net.sf.maltcms.chromaui.groovy.GenericGroovyCSVDataAction")
 @ActionRegistration(displayName = "#CTL_GenericGroovyCSVDataAction")
 @ActionReferences({
-    @ActionReference(path = "Loaders/text/csv/Actions", position = -400)
+    @ActionReference(path = "Loaders/text/csv/Actions", position = -500)
 })
 @Messages("CTL_GenericGroovyCSVDataAction=Run Groovy Action")
 public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
@@ -61,20 +64,7 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
                 IChromAUIProject.class);
         if (icap != null) {
             GroovyClassLoader gcl = new GroovyClassLoader();
-            File fo = FileUtil.toFile(icap.getLocation());
-            FileObject groovyDir = null;
-            if (!new File(fo, "groovy").isDirectory()) {
-                try {
-                    groovyDir = icap.getLocation().createFolder("groovy");
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            } else {
-                groovyDir = icap.getLocation().getFileObject("groovy/");
-            }
-
-            List<FileObject> scriptFiles = Utils.getGroovyScripts(groovyDir,
-                    FileUtil.toFileObject(new File("/vol/maltcms/maui/groovy")));
+            List<FileObject> scriptFiles = Utils.getScriptLocations(icap);
             List<CSVDataGroovyScript> groovyScripts = new LinkedList<CSVDataGroovyScript>();
             for (FileObject child : scriptFiles) {
                 Class clazz;
@@ -116,6 +106,8 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
             }
         }
     }
+
+    
 
     @Override
     public Action createContextAwareInstance(Lookup actionContext) {
