@@ -11,6 +11,8 @@ package maltcms.ui.fileHandles.csv;
  */
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
+import java.util.Arrays;
 import java.util.Date;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -19,21 +21,27 @@ import javax.swing.table.TableCellRenderer;
 
 public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
 
-    private Color colorSelected = new Color(0, 0, 200,128).brighter();
-    private Color colorFocus = new Color(0, 0, 255,128).brighter();
+    private Color colorSelected;
+    private Color colorFocus;
     private Color colorNormal;
+    private Color colorActive;
+    private int[] selectedRows;
 
-    public ColorColumnRenderer(Color color) {
+    public ColorColumnRenderer(Color selected, int[] selectedRows) {
         setOpaque(true);
-        colorNormal = color;
+        colorNormal = Color.WHITE;
+        colorFocus = Color.lightGray;
+        colorSelected = new Color(164,164,164);
+        colorActive = selected;
+        this.selectedRows = selectedRows;
     }
 
     public void setBackground(Color c, int row) {
-        Color color = new Color(c.getRed(),c.getGreen(),c.getBlue(),192);
+        Color color = new Color(c.getRed(),c.getGreen(),c.getBlue());
         if(row%2==0) {
             setBackground(color);
         }else{
-            setBackground(reduceBrightness(color,64));
+            setBackground(reduceBrightness(color,32));
             //setBackground(c.darker());
         }
     }
@@ -64,13 +72,26 @@ public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
             boolean isSelected, boolean hasFocus, int row, int column) {
 
         // die normalen Farben
-        setForeground(Color.BLACK);
         if (hasFocus) {
+            setForeground(Color.BLACK);
             setBackground(colorFocus,row);
         } else if (isSelected) {
+            setForeground(Color.BLACK);
             setBackground(colorSelected,row);
         } else {
-            setBackground(colorNormal,row);
+            if(selectedRows.length==0) {
+                setForeground(Color.BLACK);
+                setBackground(colorNormal,row);
+            }else{
+                int idx = Arrays.binarySearch(selectedRows, row);
+                if(idx>=0) {
+                    setForeground(Color.BLACK);
+                    setBackground(colorActive,row);
+                }else{
+                    setForeground(Color.BLACK);
+                    setBackground(colorNormal,row);
+                }
+            }
         }
 
         setText(null);

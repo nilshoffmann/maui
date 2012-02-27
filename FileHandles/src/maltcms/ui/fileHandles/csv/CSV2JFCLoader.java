@@ -22,11 +22,13 @@ import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.XYZDataset;
+import org.jfree.ui.RectangleEdge;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.filesystems.FileObject;
@@ -113,7 +115,7 @@ public class CSV2JFCLoader implements Runnable {
                     sb.append("\n");
                 }
                 System.out.println("Table before sorting: "+sb.toString());
-                dtm = sort(dtm);
+//                dtm = sort(dtm);
                 StringBuilder sb2 = new StringBuilder();
                 for(int i = 0;i<dtm.getRowCount();i++) {
                     for(int j = 0;j<dtm.getColumnCount();j++) {
@@ -122,12 +124,14 @@ public class CSV2JFCLoader implements Runnable {
                     sb2.append("\n");
                 }
                 System.out.println("Table after sorting: "+sb2.toString());
-                System.out.println("Storing " + dtm.getColumnCount() +" * "+ dtm.getRowCount() + " elements, "+(dtm.getColumnCount()*dtm.getRowCount())+" total!");
-                double[][] data = new double[3][(dtm.getColumnCount()) * dtm.getRowCount()];
-                ArrayDouble.D1 dt = new ArrayDouble.D1((dtm.getColumnCount()) * dtm.getRowCount());
+                int rows = dtm.getRowCount();
+                int columns = dtm.getColumnCount();
+                System.out.println("Storing " + columns +" * "+ rows + " elements, "+(rows*columns)+" total!");
+                double[][] data = new double[3][(columns* rows)];
+                ArrayDouble.D1 dt = new ArrayDouble.D1((columns) * rows);
                 double min = Double.POSITIVE_INFINITY;
                 double max = Double.NEGATIVE_INFINITY;
-                EvalTools.eqI(dtm.getRowCount(), dtm.getColumnCount(), this);
+                EvalTools.eqI(rows, columns, this);
                 int k = 0;
                 for (int i = 0; i < dtm.getRowCount(); i++) {
                     for (int j = 0; j < dtm.getColumnCount(); j++) {
@@ -161,9 +165,11 @@ public class CSV2JFCLoader implements Runnable {
                 for (int i = 0; i < colnames.length; i++) {
                     colnames[i] = dtm.getColumnName(i);
                 }
-                NumberAxis na = new SymbolAxis("category", colnames);
-                na.setVerticalTickLabels(true);
-                XYPlot xyp = new XYPlot(cd, na, new SymbolAxis("category", colnames), xyb);
+                NumberAxis na1 = new SymbolAxis("category", colnames);
+                na1.setVerticalTickLabels(false);
+                NumberAxis na2 = new SymbolAxis("category", colnames);
+                na1.setVerticalTickLabels(true);
+                XYPlot xyp = new XYPlot(cd, na1, na2, xyb);
                 xyb.setSeriesToolTipGenerator(0, new XYToolTipGenerator() {
 
                     @Override
@@ -171,8 +177,18 @@ public class CSV2JFCLoader implements Runnable {
                         return "[" + colnames[xyd.getX(i, i1).intValue()] + ":" + colnames[xyd.getY(i, i1).intValue()] + "] = " + ((XYZDataset) xyd).getZValue(i, i1) + "";
                     }
                 });
+                
 
                 JFreeChart jfc = new JFreeChart(this.title, xyp);
+                NumberAxis values = new NumberAxis("value");
+                values.setAutoRange(false);
+                values.setRangeWithMargins(min, max);
+                PaintScaleLegend psl = new PaintScaleLegend(ps,values);
+                jfc.addSubtitle(psl);
+                psl.setStripWidth(50);
+                psl.setPadding(20, 20, 20, 20);
+                psl.setHeight(200);
+                psl.setPosition(RectangleEdge.RIGHT);
                 jtc.setChart(jfc);
             }
         } catch (Exception ex) {
