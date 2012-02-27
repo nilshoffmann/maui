@@ -6,12 +6,11 @@ package net.sf.maltcms.db.search.api;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryResult;
 
 /**
  *
  * @author nilshoffmann
  */
-public class MetaboliteDatabaseQueryResultList extends ArrayList<IMetaboliteDatabaseQueryResult> implements Serializable{
+public class QueryResultList<T> extends ArrayList<IQueryResult<T>> implements Serializable{
     
 }

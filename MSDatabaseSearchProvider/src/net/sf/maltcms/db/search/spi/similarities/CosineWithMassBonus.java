@@ -1,8 +1,5 @@
-package net.sf.maltcms.db.search.spi;
+package net.sf.maltcms.db.search.spi.similarities;
 
-import com.db4o.query.Predicate;
-import maltcms.commands.distances.ArrayCos;
-import maltcms.commands.distances.IArrayDoubleComp;
 import maltcms.datastructures.ms.IMetabolite;
 import maltcms.tools.ArrayTools;
 import maltcms.tools.MaltcmsTools;
@@ -11,25 +8,23 @@ import ucar.ma2.ArrayDouble;
 import ucar.ma2.MAMath;
 import ucar.ma2.MAMath.MinMax;
 import cross.datastructures.tuple.Tuple2D;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-import maltcms.datastructures.ms.IScan;
+import maltcms.math.functions.IArraySimilarity;
+import maltcms.math.functions.similarities.ArrayCos;
+import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
+import org.openide.util.lookup.ServiceProvider;
 import ucar.ma2.ArrayInt;
 
-public class MetaboliteSimilarity extends Predicate<IMetabolite> {
+@ServiceProvider(service = AMetabolitePredicate.class)
+public class CosineWithMassBonus extends AMetabolitePredicate {
 
     boolean toggle = true;
-    private IArrayDoubleComp iadc = new ArrayCos();
+    private IArraySimilarity iadc = new ArrayCos();
     private double resolution = 1.0d;
     private double lastMin = Double.POSITIVE_INFINITY,
             lastMax = Double.NEGATIVE_INFINITY;
-    private final double scoreThreshold;
-    private final int maxHits;
-    private final boolean normalize;
-    private final IScan scan;
-    private List<Tuple2D<Double, IMetabolite>> metToScore = new ArrayList<Tuple2D<Double, IMetabolite>>();
+    private boolean normalize = true;
     private final Comparator<Tuple2D<Double, IMetabolite>> comparator = Collections.
             reverseOrder(new Comparator<Tuple2D<Double, IMetabolite>>() {
 
@@ -46,17 +41,36 @@ public class MetaboliteSimilarity extends Predicate<IMetabolite> {
     });
     private double threshold = 1.0;
 
-    public MetaboliteSimilarity(IScan scan, double scoreThreshold,
-            int maxHits, boolean normalize) {
-        this.scan = scan;
-        this.scoreThreshold = scoreThreshold;
-        this.maxHits = maxHits;
+    public boolean isNormalize() {
+        return normalize;
+    }
+
+    public void setNormalize(boolean normalize) {
         this.normalize = normalize;
     }
 
-    public List<Tuple2D<Double, IMetabolite>> getMetabolites() {
-        Collections.sort(this.metToScore, comparator);
-        return this.metToScore;
+    public double getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(double resolution) {
+        this.resolution = resolution;
+    }
+
+    public CosineWithMassBonus() {
+    }
+
+    @Override
+    public AMetabolitePredicate copy() {
+        CosineWithMassBonus ms = new CosineWithMassBonus();
+        ms.setResolution(resolution);
+//        ms.setThreshold(threshold);
+        ms.setMaxHits(getMaxHits());
+        ms.setNormalize(normalize);
+        ms.setScoreThreshold(getScoreThreshold());
+//        ms.setScan(getScan());
+        ms.setMaskedMasses(getMaskedMasses());
+        return ms;
     }
 
     protected double similarity(Array massesRef, Array intensitiesRef,
@@ -76,6 +90,7 @@ public class MetaboliteSimilarity extends Predicate<IMetabolite> {
                 new Tuple2D<Array, Array>(dmasses1, s1), ((int) Math.floor(min)),
                 ((int) Math.ceil(max)), bins,
                 resolution, 0.0d);
+        s1 = (ArrayDouble.D1)filterMaskedMasses(dmasses1, s1);
 //		}
         //normalization to 0..1
         if (normalize) {
@@ -88,7 +103,7 @@ public class MetaboliteSimilarity extends Predicate<IMetabolite> {
                 new Tuple2D<Array, Array>(dmasses2, s2),
                 ((int) Math.floor(min)), ((int) Math.ceil(max)), bins,
                 resolution, 0.0d);
-
+        s2 = (ArrayDouble.D1)filterMaskedMasses(dmasses2, s2);
         //normalization
         if (normalize) {
             double maxS2 = MAMath.getMaximum(s2);
@@ -99,7 +114,11 @@ public class MetaboliteSimilarity extends Predicate<IMetabolite> {
         for (int i = 0; i < dmasses1.getShape()[0]; i++) {
             double mass = dmasses1.getDouble(i);
             if (s1.getDouble(i) != 0 && s2.getDouble(i) != 0) {
-                if (Math.abs(mass - mw) < threshold) {
+                double percentDev = 0.10;
+                double val = Math.abs(s1.getDouble(i)-s2.getDouble(
+                        i))/Math.max(s1.getDouble(i),s2.getDouble(
+                        i));
+                if (Math.abs(mass - mw) < threshold && val<=percentDev) {
                     matchMW = 1.0;
                 }
                 commonMasses++;
@@ -107,40 +126,30 @@ public class MetaboliteSimilarity extends Predicate<IMetabolite> {
         }
         //FIXME try whether it makes a difference if the minimal interval of overlap 
         //is used
-        double relativeCommonMasses = (commonMasses)/(double)bins;
-        double d = this.iadc.apply(-1, -1, 0.0d, 0.0d, s1, s2);
+        double relativeCommonMasses = (commonMasses) / (double) bins;
+        double d = this.iadc.apply(s1, s2);
         return (d + matchMW);
     }
 
     @Override
     public boolean match(IMetabolite et) {
         Tuple2D<ArrayDouble.D1, ArrayInt.D1> etMs = et.getMassSpectrum();
-        double sim = similarity(scan.getMasses(), scan.getIntensities(), etMs.
-                getFirst(), etMs.getSecond(), et.getMW());
-        System.out.println("Similarity score: "+sim);
-        if (sim >= scoreThreshold) {
-            if (metToScore.size() == maxHits) {
-                Collections.sort(metToScore, comparator);
-                Tuple2D<Double, IMetabolite> tple = new Tuple2D<Double, IMetabolite>(
-                        sim, et);
-                int idx = Collections.binarySearch(metToScore, tple, comparator);
-                if (idx >= 0) {
-                    metToScore.add(idx, tple);
-                    metToScore.remove(metToScore.size() - 1);
-                } else {
-                    int insertionPoint = ((-1) * idx) + 1;
-                    if (insertionPoint != metToScore.size()) {
-                        metToScore.add(insertionPoint, tple);
-                        metToScore.remove(metToScore.size() - 1);
-                    }
-                }
-            } else {
-                metToScore.add(new Tuple2D<Double, IMetabolite>(sim, et));
-                Collections.sort(metToScore, comparator);
-            }
+        double sim = similarity(getScan().getMasses(),
+                getScan().getIntensities(), etMs.getFirst(), etMs.getSecond(),
+                et.getMW());
+        System.out.println("Similarity score: " + sim);
+        if (sim >= getScoreThreshold()) {
+            Tuple2D<Double, IMetabolite> tple = new Tuple2D<Double, IMetabolite>(
+                    sim, et);
+            getScoreMap().add(tple);
 
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Comparator<Tuple2D<Double, IMetabolite>> getComparator() {
+        return this.comparator;
     }
 }

@@ -12,20 +12,14 @@ package net.sf.maltcms.db.search.api.ui;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer;
-import net.sf.maltcms.chromaui.project.api.container.ContainerFactory;
-import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
-import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
-import org.openide.NotifyDescriptor;
 
 /**
  * TODO link with project so that dbs are stored and retrieved.
@@ -34,64 +28,54 @@ import org.openide.NotifyDescriptor;
 public class DatabaseDefinitionPanel extends javax.swing.JPanel {
 
 //    private HashSet<IDatabaseDescriptor> databaseFiles = new LinkedHashSet<IDatabaseDescriptor>();
-    private final IChromAUIProject project;
     private DefaultListModel listModel;
+    private DefaultComboBoxModel comboBoxModel;
 
     /** Creates new form DatabaseDefinitionPanel */
-    public DatabaseDefinitionPanel(IChromAUIProject project) {
+    public DatabaseDefinitionPanel() {
         initComponents();
 
         listModel = new DefaultListModel();
-        if (project != null) {
-            Collection<DatabaseContainer> databases = project.getContainer(
-                    DatabaseContainer.class);
-            for (DatabaseContainer container : databases) {
-                for (IDatabaseDescriptor descr : container.get()) {
-                    listModel.addElement(descr);
-                }
-            }
-        }
+//        if (project != null) {
+//            Collection<DatabaseContainer> databases = project.getContainer(
+//                    DatabaseContainer.class);
+//            for (DatabaseContainer container : databases) {
+//                for (IDatabaseDescriptor descr : container.get()) {
+//                    listModel.addElement(descr);
+//                }
+//            }
+//        }
 
         jList1.setModel(listModel);
-
-        this.project = project;
+        comboBoxModel = new DefaultComboBoxModel(DatabaseType.values());
+        jComboBox1.setModel(comboBoxModel);
+        jComboBox1.setSelectedIndex(DatabaseType.USER.ordinal());
     }
 
-    public List<IDatabaseDescriptor> getSelectedDatabases() {
-        Object[] descriptors = jList1.getSelectedValues();
-        List<IDatabaseDescriptor> list = new ArrayList<IDatabaseDescriptor>();
+    public List<File> getDatabases() {
+        Object[] descriptors = listModel.toArray();
+        List<File> list = new ArrayList<File>();
         for (Object obj : descriptors) {
-            list.add((IDatabaseDescriptor) obj);
+            list.add((File) obj);
         }
         return list;
     }
-
-//    public List<IDatabaseDescriptor> getDatabaseFiles() {
-//        List<IDatabaseDescriptor> descriptors = new LinkedList<IDatabaseDescriptor>();
-//        DatabaseContainer dbcontainer = new DatabaseContainer();
-//        for(File file:databaseFiles) {
-//            IDatabaseDescriptor descriptor = DescriptorFactory.newDatabaseDescriptor(
-//                    file.getAbsolutePath(), DatabaseType.USER);
-//            descriptors.add(descriptor);    
-//            dbcontainer.add(descriptor);
-//            project.addContainer();
-//        }
-//        return descriptors;
-//    }
-    public double getMatchThreshold() {
-        String str = minimumMatchScore.getText();
-        if (str.isEmpty()) {
-            minimumMatchScore.setText("0.6");
+    
+    public List<Double> getMaskedMasses() {
+        String text = maskedMasses.getText();
+        if(text.isEmpty()) {
+            return Collections.emptyList();
         }
-        return Double.parseDouble(minimumMatchScore.getText());
+        String[] values = text.split(",");
+        List<Double> list = new ArrayList<Double>();
+        for(String str:values) {
+            list.add(Double.parseDouble(str));
+        }
+        return list;
     }
-
-    public int getMaxNumberOfHits() {
-        String str = maximumMatches.getText();
-        if (str.isEmpty()) {
-            maximumMatches.setText("1");
-        }
-        return Integer.parseInt(maximumMatches.getText());
+    
+    public DatabaseType getDatabaseType() {
+        return (DatabaseType)jComboBox1.getSelectedItem();
     }
 
     /** This method is called from within the constructor to
@@ -108,13 +92,14 @@ public class DatabaseDefinitionPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         removeDatabase = new javax.swing.JButton();
-        minimumMatchScore = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        databaseContainerName = new javax.swing.JTextField();
+        jComboBox1 = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
-        maximumMatches = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        selectedDatabasesTextField = new javax.swing.JTextField();
-        jSeparator1 = new javax.swing.JSeparator();
+        localeComboBox = new javax.swing.JComboBox();
+        maskedMasses = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
 
         jLabel1.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.jLabel1.text")); // NOI18N
 
@@ -138,24 +123,48 @@ public class DatabaseDefinitionPanel extends javax.swing.JPanel {
         jScrollPane1.setViewportView(jList1);
 
         removeDatabase.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.removeDatabase.text")); // NOI18N
-
-        minimumMatchScore.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.minimumMatchScore.text")); // NOI18N
-        minimumMatchScore.addActionListener(new java.awt.event.ActionListener() {
+        removeDatabase.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                minimumMatchScoreActionPerformed(evt);
+                removeDatabaseActionPerformed(evt);
             }
         });
 
         jLabel2.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.jLabel2.text")); // NOI18N
 
-        jLabel3.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.jLabel3.text")); // NOI18N
+        databaseContainerName.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.databaseContainerName.text")); // NOI18N
+        databaseContainerName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                databaseContainerNameActionPerformed(evt);
+            }
+        });
 
-        maximumMatches.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.maximumMatches.text")); // NOI18N
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.jLabel3.text")); // NOI18N
 
         jLabel4.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.jLabel4.text")); // NOI18N
 
-        selectedDatabasesTextField.setEditable(false);
-        selectedDatabasesTextField.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.selectedDatabasesTextField.text")); // NOI18N
+        localeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "US", "GERMAN" }));
+        localeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                localeComboBoxActionPerformed(evt);
+            }
+        });
+
+        maskedMasses.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.maskedMasses.text")); // NOI18N
+        maskedMasses.setToolTipText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.maskedMasses.toolTipText")); // NOI18N
+        maskedMasses.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maskedMassesActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText(org.openide.util.NbBundle.getMessage(DatabaseDefinitionPanel.class, "DatabaseDefinitionPanel.jLabel5.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -163,56 +172,59 @@ public class DatabaseDefinitionPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(databaseContainerName, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(minimumMatchScore, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                                    .addComponent(maximumMatches, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                                    .addComponent(selectedDatabasesTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(addDatabase, javax.swing.GroupLayout.PREFERRED_SIZE, 94, Short.MAX_VALUE)
-                            .addComponent(removeDatabase, javax.swing.GroupLayout.PREFERRED_SIZE, 94, Short.MAX_VALUE))))
+                            .addComponent(localeComboBox, 0, 238, Short.MAX_VALUE)
+                            .addComponent(jComboBox1, 0, 238, Short.MAX_VALUE)
+                            .addComponent(maskedMasses, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                    .addComponent(removeDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(addDatabase))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeDatabase)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(minimumMatchScore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(databaseContainerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(addDatabase)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(removeDatabase))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maximumMatches, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(4, 4, 4)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(selectedDatabasesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(32, Short.MAX_VALUE))
+                    .addComponent(localeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(maskedMasses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -225,7 +237,8 @@ public class DatabaseDefinitionPanel extends javax.swing.JPanel {
                 if (file.isDirectory()) {
                     return true;
                 }
-                if (file.getName().toLowerCase().endsWith("db4o")) {
+                if (file.getName().toLowerCase().endsWith("db4o") || file.
+                        getName().toLowerCase().endsWith("msp")) {
                     return true;
                 }
                 return false;
@@ -233,7 +246,7 @@ public class DatabaseDefinitionPanel extends javax.swing.JPanel {
 
             @Override
             public String getDescription() {
-                return ".db4o";
+                return ".db4o,.msp";
             }
         };
         jfc.setFileFilter(fileFilter);
@@ -241,59 +254,64 @@ public class DatabaseDefinitionPanel extends javax.swing.JPanel {
         int result = jfc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File[] selectedDatabases = jfc.getSelectedFiles();
-//            databaseFiles.addAll(Arrays.asList(selectedDatabases));
-//            DefaultListModel dlm = new DefaultListModel();
-            ADatabaseBackedContainer<IDatabaseDescriptor> dbContainer = ContainerFactory.
-                    createDatabaseContainer();
             for (File file : selectedDatabases) {
-                IDatabaseDescriptor descriptor = DescriptorFactory.
-                        newDatabaseDescriptor(
-                        file.getAbsolutePath(), DatabaseType.USER);
-                if (!listModel.contains(descriptor)) {
-                    listModel.addElement(descriptor);
-                }
-                dbContainer.add(descriptor);
+                listModel.addElement(file);
             }
-//          
-            if (project != null) {
-                project.addContainer(dbContainer);
-            } else {
-                // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
-                NotifyDescriptor nd = new NotifyDescriptor(
-                        "No project available! Selected databases will not be remembered!", // instance of your panel
-                        "No project", // title of the dialog
-                        NotifyDescriptor.DEFAULT_OPTION, // it is Yes/No dialog ...
-                        NotifyDescriptor.ERROR_MESSAGE, // ... of a question type => a question mark icon
-                        null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
-                        // otherwise specify options as:
-                        //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
-                        NotifyDescriptor.OK_OPTION // default option is "Yes"
-                        );
-            }
-
         }
     }//GEN-LAST:event_addDatabaseActionPerformed
 
-    private void minimumMatchScoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minimumMatchScoreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_minimumMatchScoreActionPerformed
+    public Locale getSelectedLocale() {
+        String value = (String)localeComboBox.getSelectedItem();
+        if(value.equals("US")) {
+            return Locale.US;
+        }else if(value.equals("GERMAN")) {
+            return Locale.GERMAN;
+        }
+        return Locale.US;
+    }
+    
+    public String getDatabaseContainerName() {
+        return this.databaseContainerName.getText();
+    }
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
-        selectedDatabasesTextField.setText(
-                "" + jList1.getSelectedValues().length);
     }//GEN-LAST:event_jList1ValueChanged
+
+    private void databaseContainerNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_databaseContainerNameActionPerformed
+    }//GEN-LAST:event_databaseContainerNameActionPerformed
+
+    private void removeDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDatabaseActionPerformed
+        Object[] values = jList1.getSelectedValues();
+        for(Object obj:values) {
+            listModel.removeElement(obj);
+        }
+    }//GEN-LAST:event_removeDatabaseActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void localeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localeComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_localeComboBoxActionPerformed
+
+    private void maskedMassesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maskedMassesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_maskedMassesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDatabase;
+    private javax.swing.JTextField databaseContainerName;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField maximumMatches;
-    private javax.swing.JTextField minimumMatchScore;
+    private javax.swing.JComboBox localeComboBox;
+    private javax.swing.JTextField maskedMasses;
     private javax.swing.JButton removeDatabase;
-    private javax.swing.JTextField selectedDatabasesTextField;
     // End of variables declaration//GEN-END:variables
 }

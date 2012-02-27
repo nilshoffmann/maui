@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.db.search.spi;
+package net.sf.maltcms.db.search.spi.similarities;
 
 import cross.datastructures.tuple.Tuple2D;
 import java.util.BitSet;
@@ -47,23 +47,26 @@ public class AMDISMSSimilarity {
             double massExponent, double intensityExponent) {
 
 
-        BitSet libraryPeaks = new BitSet();
-        fillBitSet(ira, 0.0, libraryPeaks);
-        BitSet unknownPeaks = new BitSet();
-        fillBitSet(iqa, 0.0, unknownPeaks);
+//        BitSet libraryPeaks = new BitSet();
+//        fillBitSet(ira, 0.0, libraryPeaks);
+//        BitSet unknownPeaks = new BitSet();
+//        fillBitSet(iqa, 0.0, unknownPeaks);
+//
+////        BitSet unionPeaks = new BitSet();
+////        unionPeaks.or(libraryPeaks);
+////        unionPeaks.or(unknownPeaks);
+//
+//        BitSet intersecPeaks = new BitSet();
+//        intersecPeaks.and(unknownPeaks);
+//        intersecPeaks.and(libraryPeaks);
 
-//        BitSet unionPeaks = new BitSet();
-//        unionPeaks.or(libraryPeaks);
-//        unionPeaks.or(unknownPeaks);
-
-        BitSet intersecPeaks = new BitSet();
-        intersecPeaks.or(libraryPeaks);
-        intersecPeaks.and(unknownPeaks);
-
-        return getMixedValue(getIndexSubset(mra, intersecPeaks), getIndexSubset(
-                ira, intersecPeaks), getIndexSubset(mqa, intersecPeaks),
-                getIndexSubset(iqa, intersecPeaks), massExponent,
+        return getMixedValue(mra, ira, mqa,
+                iqa, massExponent,
                 intensityExponent);
+//        return getMixedValue(getIndexSubset(mra, intersecPeaks), getIndexSubset(
+//                ira, intersecPeaks), getIndexSubset(mqa, intersecPeaks),
+//                getIndexSubset(iqa, intersecPeaks), massExponent,
+//                intensityExponent);
     }
 
     public double getMixedValue(Array mra, Array ira, Array mqa, Array iqa,
@@ -76,14 +79,18 @@ public class AMDISMSSimilarity {
 //                massExponent, intensityExponent);
 
 //        return mixedValue / (refValue * queryValue);
-        double refValue = ArrayTools.integrate(ArrayTools.mult(ArrayTools.pow(mra,2*massExponent),ArrayTools.pow(ira,2*intensityExponent)));
-        double queryValue = ArrayTools.integrate(ArrayTools.mult(ArrayTools.pow(mqa,2*massExponent),ArrayTools.pow(iqa,2*intensityExponent)));
-        return mixedValue / refValue*queryValue * 1000.0d;
+        double refValue = ArrayTools.integrate(ArrayTools.mult(ArrayTools.pow(
+                mra, 2 * massExponent), ArrayTools.pow(ira,
+                2 * intensityExponent)));
+        double queryValue = ArrayTools.integrate(ArrayTools.mult(ArrayTools.pow(
+                mqa, 2 * massExponent), ArrayTools.pow(iqa,
+                2 * intensityExponent)));
+        return mixedValue / refValue * queryValue;
     }
 
-    public Double apply(Tuple2D<Array, Array> referenceMassSpectrum,
-            Tuple2D<Array, Array> queryMassSpectrum, double mw) {
-        double massExponent = 3.0;
+    public double apply(Tuple2D<Array, Array> referenceMassSpectrum,
+            Tuple2D<Array, Array> queryMassSpectrum) {
+        double massExponent = 1.0;
         double intensityExponent = 0.5;
 
         double resolution = 1.0;
@@ -112,27 +119,11 @@ public class AMDISMSSimilarity {
                 ((int) Math.floor(min)), ((int) Math.ceil(max)), bins,
                 resolution, 0.0d);
 
-        double commonMasses = 0.0d;
-        boolean matchMW = false;
-//        double binnedMW = MaltcmsTools.binMZ(mw, min, max, resolution);
-//        System.out.println("binned mw: "+binnedMW);
-        for (int i = 0; i < mqa.getShape()[0]; i++) {
-            double mass = mqa.getDouble(i);
-            if (ira.getDouble(i) != 0 && iqa.getDouble(i) != 0) {
-                if (Math.abs(mass - mw) < 1) {
-                    matchMW = true;
-                }
-                commonMasses++;
-            }
-        }
-        if(!matchMW) {
-            return 0.0;
-        }
-        double maxS1 = MAMath.getMaximum(ira);
-        ira = (ArrayDouble.D1) ArrayTools.mult(ira, 1.0d / maxS1);
+//        double maxS1 = MAMath.getMaximum(ira);
+//        ira = (ArrayDouble.D1) ArrayTools.mult(ira, 1.0d / maxS1);
 
-        double maxS2 = MAMath.getMaximum(iqa);
-        iqa = (ArrayDouble.D1) ArrayTools.mult(iqa, 1.0d / maxS2);
+//        double maxS2 = MAMath.getMaximum(iqa);
+//        iqa = (ArrayDouble.D1) ArrayTools.mult(iqa, 1.0d / maxS2);
         return applyOnShared(mra, ira, mqa, iqa, massExponent, intensityExponent);
     }
 

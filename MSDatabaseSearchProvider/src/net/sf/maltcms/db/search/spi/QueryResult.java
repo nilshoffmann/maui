@@ -9,19 +9,21 @@ import java.util.List;
 import java.util.Map;
 import lombok.Data;
 import maltcms.datastructures.ms.IMetabolite;
-import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
-import net.sf.maltcms.db.search.api.IMetaboliteDatabaseQueryResult;
+import net.sf.maltcms.db.search.api.IQueryResult;
 
 /**
  *
  * @author nilshoffmann
  */
 @Data
-public class MetaboliteDatabaseQueryResult implements IMetaboliteDatabaseQueryResult {
+public class QueryResult<T> implements
+        IQueryResult<T> {
 
-    private final IScan scan;
-    private final Map<IMetabolite,Double> metabolitesToScore;
+    private final T scan;
+    private final double retentionIndex;
+    private final Map<IMetabolite, Double> metabolitesToScore;
+    private final Map<IMetabolite, Double> metabolitesToRi;
     private final IDatabaseDescriptor databaseDescriptor;
 
     @Override
@@ -33,5 +35,15 @@ public class MetaboliteDatabaseQueryResult implements IMetaboliteDatabaseQueryRe
     public double getScoreFor(IMetabolite metabolite) {
         return metabolitesToScore.get(metabolite);
     }
-    
+
+    @Override
+    public double getRiFor(IMetabolite metabolite) {
+        if (metabolitesToRi == null) {
+            return Double.NaN;
+        }
+        if (metabolitesToRi.containsKey(metabolite)) {
+            return metabolitesToRi.get(metabolite);
+        }
+        return Double.NaN;
+    }
 }
