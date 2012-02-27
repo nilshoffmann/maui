@@ -14,7 +14,5 @@ public enum RTUnit {
     SECONDS,
     MINUTES,
     HOURS
-//    public static double transform(double seconds, RTUnit targetUnit) {
-//        return targetUnit.transform(seconds);
-//    }
+
 }

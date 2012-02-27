@@ -129,7 +129,7 @@ public class ChromatogramVisualizerTools {
         return s;
     }
 
-    public static MSSeries getMSSeries1D(IScan1D scan) {
+    public static MSSeries getMSSeries1D(IScan1D scan, String prefix) {
         System.out.println("repainting ms");
         long start = System.currentTimeMillis();
         System.out.println("Getting slc");
@@ -153,7 +153,7 @@ public class ChromatogramVisualizerTools {
         DecimalFormat rt1format = new DecimalFormat("#0.00");
 //        DecimalFormat rt2format = new DecimalFormat("#0.000");
         //System.out.println("First col scan acquisition time " + scanlineCache.);
-        MSSeries s = new MSSeries(
+        MSSeries s = new MSSeries(prefix+" @"+
                 rt1format.format(scan.getScanAcquisitionTime()));
 
         Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(scan.getMasses(),

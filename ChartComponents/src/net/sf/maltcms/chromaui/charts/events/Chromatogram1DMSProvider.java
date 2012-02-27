@@ -4,7 +4,6 @@
 package net.sf.maltcms.chromaui.charts.events;
 
 import maltcms.datastructures.ms.IChromatogram1D;
-import maltcms.datastructures.ms.Scan1D;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 import cross.datastructures.tuple.Tuple2D;
@@ -49,6 +48,7 @@ public class Chromatogram1DMSProvider implements MassSpectrumProvider<IScan1D> {
 
     @Override
     public IScan1D getScan(int index) {
-        return this.c.getScan(index);
+        IScan1D s = this.c.getScan(index);
+        return s;
     }
 }

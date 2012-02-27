@@ -27,16 +27,37 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 
 import cross.event.EventSource;
+import javax.swing.JPopupMenu;
+import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
+import org.jfree.chart.entity.LegendItemEntity;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.general.Dataset;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 
-public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMouseListener{
+public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEventSource,
+        ChartMouseListener, Lookup.Provider {
 
     private ChartPanel cp;
     private ExecutorService es = Executors.newSingleThreadExecutor();
-    private final EventSource<XYItemEntity> esource = new EventSource<XYItemEntity>(1);
+    private final EventSource<XYItemEntity> esource = new EventSource<XYItemEntity>(
+            1);
+    private InstanceContent ic = new InstanceContent();
+    private Lookup lkp = new AbstractLookup(ic);
+    private Dataset1D<SOURCE, TARGET> dataset;
+    private TARGET lastTarget = null;
 
-    public ChartPanelMouseListener(ChartPanel cp1) {
-        this.cp = cp1;
-        //this.cp.addChartMouseListener(this);
+    public ChartPanelMouseListener(Dataset1D<SOURCE, TARGET> ds) {
+        this.dataset = ds;
+    }
+    
+    public void setChartPanel(ChartPanel cp) {
+        this.cp = cp;
     }
 
     @Override
@@ -54,45 +75,102 @@ public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMo
         this.esource.removeListener(il);
     }
 
+    protected void setTarget(ChartMouseEvent cme) {
+        if (cme.getEntity() != null) {
+            if (cme.getEntity() instanceof XYItemEntity) {
+                XYItemEntity xyie = (XYItemEntity) cme.getEntity();
+                TARGET target = this.dataset.getTarget(xyie.getSeriesIndex(), xyie.getItem());
+                if (lastTarget != null) {
+                    ic.remove(lastTarget);
+                }
+                if (target != null) {
+                    ic.add(target);
+                }
+            }
+        }
+
+    }
+
     /* (non-Javadoc)
      * @see org.jfree.chart.ChartMouseListener#chartMouseClicked(org.jfree.chart.ChartMouseEvent)
      */
     @Override
     public void chartMouseClicked(final ChartMouseEvent arg0) {
-//        XYPlot xyp = getSubplot(arg0.getChart().getXYPlot(), this.cp.getChartRenderingInfo().getPlotInfo(), arg0.getTrigger().getPoint());
-//        Point2D mapped = xyp.getDomainAxis().
-        // Point2D p = getDataCoordinates(arg0);
-        //
-
-        //System.out.println("Mouse click at local coordinates: "+p+" global "+arg0.getTrigger().getX()+", "+arg0.getTrigger().getY());
         final ChartPanelMouseListener cpml = this;
-        if (arg0.getEntity() != null && arg0.getEntity() instanceof XYItemEntity) {
-            if (arg0.getTrigger().getButton() == MouseEvent.BUTTON1) {
-//                Runnable r = new Runnable() {
-//                    @Override
-//                    public void run() {
-                        double cx = arg0.getEntity().getArea().getBounds2D().getCenterX();
-                        double cy = arg0.getEntity().getArea().getBounds2D().getCenterY();
-                        Point2D.Double center = new Point2D.Double(cx,cy);
-//                        updateCrosshairs(arg0.getChart().getXYPlot(),center);
-                        if (arg0.getTrigger().isAltDown() && arg0.getTrigger().isShiftDown()) {
-                        	System.out.println("Item removed");
-                            fireEvent(new XYItemEntityRemovedEvent((XYItemEntity) arg0.getEntity(), cpml));
-                        } else if (arg0.getTrigger().isAltDown()) {
-                        	System.out.println("Item added");
-                        	fireEvent(new XYItemEntityAddedEvent((XYItemEntity) arg0.getEntity(), cpml));
-                        } else {
-                        	System.out.println("Item clicked");
-                            fireEvent(new XYItemEntityClickedEvent((XYItemEntity) arg0.getEntity(), cpml));
+        if (arg0.getEntity() != null) {
+            if (arg0.getEntity() instanceof XYItemEntity) {
+                XYItemEntity xyie = (XYItemEntity) arg0.getEntity();
+
+                if (arg0.getTrigger().getButton() == MouseEvent.BUTTON1) {
+//                
+                    if (arg0.getTrigger().isAltDown() && arg0.getTrigger().
+                            isShiftDown()) {
+//                        System.out.println("Item removed");
+                        fireEvent(new XYItemEntityRemovedEvent((XYItemEntity) arg0.getEntity(), cpml));
+                    } else if (arg0.getTrigger().isAltDown()) {
+//                        System.out.println("Item added");
+                        fireEvent(new XYItemEntityAddedEvent((XYItemEntity) arg0.getEntity(), cpml));
+                    } else {
+                        setTarget(arg0);
+//                        System.out.println("Item clicked");
+                        fireEvent(new XYItemEntityClickedEvent((XYItemEntity) arg0.getEntity(), cpml));
+                    }
+                }
+            } else if (arg0.getEntity() instanceof LegendItemEntity) {
+                JPopupMenu jpm = new JPopupMenu();
+                final LegendItemEntity lie = (LegendItemEntity) arg0.getEntity();
+                Dataset ds = lie.getDataset();
+                Comparable skey = lie.getSeriesKey();
+                Plot plot = arg0.getChart().getPlot();
+                if (plot instanceof XYPlot) {
+                    XYPlot xyplot = arg0.getChart().getXYPlot();
+                    if (xyplot.getSeriesCount() > 1) {
+                        XYDataset xyds = (XYDataset) ds;
+                        XYItemRenderer xyir = xyplot.getRendererForDataset(xyds);
+
+                        xyir.setSeriesVisible(xyds.indexOf(skey), !xyir.isSeriesVisible(xyds.indexOf(skey)));
+                        xyir.setSeriesVisibleInLegend(xyds.indexOf(skey),
+                                Boolean.TRUE);
+                    }
+                } else if (plot instanceof CategoryPlot) {
+                    CategoryPlot cplot = arg0.getChart().getCategoryPlot();
+                    if (cplot.getDatasetCount() > 1) {
+                        CategoryDataset cds = (CategoryDataset) ds;
+                        CategoryItemRenderer xyir = cplot.getRendererForDataset(
+                                cds);
+                        int seriesIndex = cds.getColumnIndex(skey);
+                        if (seriesIndex == -1) {
+                            seriesIndex = cds.getRowIndex(skey);
                         }
-                        //System.out.println("Fired Mouse Clicked in "+(System.currentTimeMillis()-start));
-                    //}
+                        xyir.setSeriesVisible(seriesIndex,
+                                !xyir.isSeriesVisible(
+                                seriesIndex));
+                        xyir.setSeriesVisibleInLegend(seriesIndex, Boolean.TRUE);
+                    }
+                }
+//                AbstractAction hse = new AbstractAction("Hide") {
+//
+//                    @Override
+//                    public void actionPerformed(ActionEvent ae) {
+//                        
+//                    }
 //                };
-//                es.submit(r);
+//                AbstractAction hse = new AbstractAction("Show") {
+//
+//                    @Override
+//                    public void actionPerformed(ActionEvent ae) {
+//                        
+//                    }
+//                };
+//                AbstractAction hse = new AbstractAction("Remove") {
+//
+//                    @Override
+//                    public void actionPerformed(ActionEvent ae) {
+//                        
+//                    }
+//                };
             }
-
         }
-
     }
 
     public XYPlot getSubplot(XYPlot xyp, PlotRenderingInfo pri, Point2D p) {
@@ -108,69 +186,46 @@ public class ChartPanelMouseListener implements XYItemEntityEventSource, ChartMo
     private Point2D getDatasetPoint(XYItemEntity xyie) {
         XYDataset xyds = xyie.getDataset();
         int itemIndex = xyie.getItem();
-        int seriesIndex =xyie.getSeriesIndex();
-        return new Point2D.Double(xyds.getXValue(seriesIndex, itemIndex),xyds.getYValue(seriesIndex, itemIndex));
+        int seriesIndex = xyie.getSeriesIndex();
+        return new Point2D.Double(xyds.getXValue(seriesIndex, itemIndex), xyds.getYValue(seriesIndex, itemIndex));
     }
-
-//    private void updateCrosshairs(XYPlot xy, Point2D p) {
-//        if (xy instanceof CombinedDomainXYPlot) {
-//            List<?> l = ((CombinedDomainXYPlot) xy).getSubplots();
-//            for(Object o:l) {
-//                XYPlot xyp = (XYPlot)o;
-//                updateCrosshairs(xyp, p);
-//            }
-//        }else if (xy instanceof CombinedRangeXYPlot) {
-//            List<?> l = ((CombinedDomainXYPlot) xyp).getSubplots();
-//
-//        }else {
-//            xy.setDomainCrosshairValue(p.getX());
-//            xy.setRangeCrosshairValue(p.getY());
-//            xy.setDomainCrosshairVisible(true);
-//            xy.setRangeCrosshairVisible(true);
-//        }
-//
-//    }
 
     /* (non-Javadoc)
      * @see org.jfree.chart.ChartMouseListener#chartMouseMoved(org.jfree.chart.ChartMouseEvent)
      */
     @Override
     public void chartMouseMoved(final ChartMouseEvent arg0) {
-        //System.out.println("Mouse moved");
-//        	Point2D p = getDataCoordinates(arg0);
         final ChartPanelMouseListener cpml = this;
 
         if (arg0.getEntity() != null) {
-//            Runnable r = new Runnable() {
-//
-//                public void run() {
-                    if (arg0.getEntity() instanceof XYItemEntity) {
-                        if (arg0.getTrigger().isAltDown()) {
-                            XYPlot xyp = arg0.getChart().getXYPlot();
-                            if(xyp!=null) {
-                                fireEvent(new XYItemEntityClickedEvent((XYItemEntity) arg0.getEntity(), cpml));
-                            }
-                            XYItemEntityMovedEvent xyie = new XYItemEntityMovedEvent((XYItemEntity) arg0.getEntity(), cpml);
-                            fireEvent(xyie);
-                        }
+            if (arg0.getEntity() instanceof XYItemEntity) {
+                if (arg0.getTrigger().isAltDown()) {
+                    XYPlot xyp = arg0.getChart().getXYPlot();
+                    if (xyp != null) {
+                        fireEvent(new XYItemEntityClickedEvent((XYItemEntity) arg0.getEntity(), cpml));
                     }
-                    if (arg0.getEntity() instanceof XYAnnotationEntity) {
-                        ChartRenderingInfo cri = cp.getChartRenderingInfo();
-                        EntityCollection entities = cri.getEntityCollection();
-                        ChartEntity ce = entities.getEntity(arg0.getTrigger().getX(), arg0.getTrigger().getY());
-                        if (ce instanceof XYItemEntity) {
-                            System.out.println("Entity at position: " + ce.getClass().getName() + " " + ((XYItemEntity) ce));
-                            XYItemEntityMouseOverEvent xyie = new XYItemEntityMouseOverEvent((XYItemEntity) ce, cpml);
-                            fireEvent(xyie);
-                        }
-                    }
-              //  }
-//            };
-//            es.submit(r);
-
-        } else {
+                    XYItemEntityMovedEvent xyie = new XYItemEntityMovedEvent((XYItemEntity) arg0.getEntity(), cpml);
+                    fireEvent(xyie);
+                }
+            }
+            if (arg0.getEntity() instanceof XYAnnotationEntity) {
+                ChartRenderingInfo cri = cp.getChartRenderingInfo();
+                EntityCollection entities = cri.getEntityCollection();
+                ChartEntity ce = entities.getEntity(arg0.getTrigger().getX(),
+                        arg0.getTrigger().getY());
+                if (ce instanceof XYItemEntity) {
+//                    System.out.println("Entity at position: " + ce.getClass().
+//                            getName() + " " + ((XYItemEntity) ce));
+                    XYItemEntityMouseOverEvent xyie = new XYItemEntityMouseOverEvent(
+                            (XYItemEntity) ce, cpml);
+                    fireEvent(xyie);
+                }
+            }
         }
-
     }
 
+    @Override
+    public Lookup getLookup() {
+        return this.lkp;
+    }
 }

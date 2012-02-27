@@ -15,6 +15,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>net.sf.maltcms.chromaui.db4o</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>net.sf.maltcms.chromaui.project</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -68,6 +76,7 @@
                 <package>net.sf.maltcms.chromaui.annotations</package>
                 <package>net.sf.maltcms.chromaui.charts</package>
                 <package>net.sf.maltcms.chromaui.charts.dataset</package>
+                <package>net.sf.maltcms.chromaui.charts.dataset.chromatograms</package>
                 <package>net.sf.maltcms.chromaui.charts.datastructures</package>
                 <package>net.sf.maltcms.chromaui.charts.events</package>
                 <package>net.sf.maltcms.chromaui.charts.format</package>

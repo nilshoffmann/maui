@@ -21,13 +21,13 @@ public class Chromatogram2DMSProvider implements MassSpectrumProvider<IScan2D> {
     private final IScanLine isl;
     private final IChromatogram2D chrom;
 
-    public Chromatogram2DMSProvider(IFileFragment f, int sl, int spm) {
+    public Chromatogram2DMSProvider(IChromatogram2D f, int sl, int spm) {
             this.sl = sl;
             this.spm = spm;
-            this.iff = f;
-            this.chrom = new ChromatogramFactory().createChromatogram2D(f);
+            this.iff = f.getParent();
+            this.chrom = f;
             System.out.println("Initing scanlinecache");
-            this.isl = ScanLineCacheFactory.getScanLineCache(f);
+            this.isl = ScanLineCacheFactory.getScanLineCache(this.iff);
             System.out.println("done initing scanlinecache");
     }
 	

@@ -8,8 +8,9 @@ import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import maltcms.ui.viewer.datastructures.tree.ElementNotFoundException;
-import maltcms.ui.viewer.datastructures.tree.QuadTree;
+
+import maltcms.datastructures.quadTree.ElementNotFoundException;
+import maltcms.datastructures.quadTree.QuadTree;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.EntityCollection;
 
