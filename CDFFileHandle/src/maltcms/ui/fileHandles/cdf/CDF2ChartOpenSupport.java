@@ -70,6 +70,7 @@ public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, Clo
             return null;
         }
         jtc.setChart(jfc);
+        jtc.setDisplayName("Chart");
         return jtc;
 
 

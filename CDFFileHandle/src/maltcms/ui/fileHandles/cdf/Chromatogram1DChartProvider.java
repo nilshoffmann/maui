@@ -10,6 +10,7 @@ import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
 import maltcms.io.csv.CSVReader;
 import cross.datastructures.tools.ArrayTools;
+import cross.tools.MathTools;
 import cross.tools.StringTools;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -27,7 +28,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import maltcms.io.csv.ColorRampReader;
+import maltcms.tools.ImageTools;
 import maltcms.tools.MaltcmsTools;
+import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.VariableSelectionPanel;
 import maltcms.ui.charts.XYChart;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
@@ -36,7 +40,17 @@ import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.annotations.XYShapeAnnotation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.SymbolAxis;
+import org.jfree.chart.labels.XYToolTipGenerator;
+import org.jfree.chart.labels.XYZToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.DefaultXYZDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.TextAnchor;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -47,10 +61,122 @@ import ucar.ma2.IndexIterator;
 import ucar.ma2.MAMath;
 
 /**
- *
+ * TODO finish integration of time range setting
  * @author nilshoffmann
  */
 public class Chromatogram1DChartProvider {
+
+    private int startScan = -1, stopScan = -1;
+
+    public void setScanRange(int startScan, int stopScan) {
+        this.startScan = startScan;
+        this.stopScan = stopScan;
+    }
+    
+    private XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+    
+    public void setRenderer(XYItemRenderer renderer) {
+        this.renderer = renderer;
+    }
+    
+    public XYItemRenderer getRenderer() {
+        return this.renderer;
+    }
+
+    public XYPlot provide1DCoPlot(List<IFileFragment> fragments, String ticvar,
+            boolean useRT) {
+
+        final String satVar = "scan_acquisition_time";
+
+        DefaultXYZDataset cd = new DefaultXYZDataset();
+        int rowIdx = 0;
+        double min = 0;
+        double max = 1;
+        double minRT = Double.POSITIVE_INFINITY;
+        double maxRT = Double.NEGATIVE_INFINITY;
+ 
+        int y = 0;
+        for (IFileFragment f : fragments) {
+            
+            double[] domainValues = null;
+            if (useRT) {
+                domainValues = (double[]) f.getChild(satVar).getArray().
+                        get1DJavaArray(double.class);
+            }else{
+                domainValues = (double[])f.getChild("scan_index").getArray().get1DJavaArray(double.class);
+            }
+            
+            double[] tic = (double[]) f.getChild(ticvar).getArray().
+                    get1DJavaArray(double.class);
+            double maxtic = MathTools.max(tic);
+            double mintic = MathTools.min(tic);
+            double[][] values = new double[3][tic.length];
+            for(int i = 0;i<tic.length;i++) {
+                values[0][i] = domainValues[i];
+                values[1][i] = y;
+                values[2][i] = Math.sqrt((tic[i]-mintic)/(maxtic-mintic));
+            }
+            
+            y++;
+            cd.addSeries(f.getName(), values);
+        }
+        
+        // ArrayDouble.D1 a = new ArrayDouble.D1(npoints);
+        // int offset = 0;
+        // for (IFileFragment f : t) {
+        // Array tic = f.getChild(ticvar).getArray();
+        // int len = tic.getShape()[0];
+        // Array.arraycopy(tic, 0, a, offset, len);
+        // offset += len;
+        // }
+        // histogram with fixed binsize
+        // fill intensities into adequate bin, raise count in bin by one
+        // afterwards, relative frequency within a bin gives a normalization
+        // coefficient
+        XYBlockRenderer xyb = new XYBlockRenderer();
+        GradientPaintScale ps = new GradientPaintScale(
+                ImageTools.createSampleTable(256), min, max,
+                ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(
+                "res/colorRamps/bcgyr.csv")));
+
+        xyb.setPaintScale(ps);
+        final String[] colnames = new String[fragments.size()];
+        for (int i = 0; i < colnames.length; i++) {
+            colnames[i] = StringTools.removeFileExt(fragments.get(i).getName());
+        }
+        NumberAxis na = null;
+        if (useRT) {
+            na = new NumberAxis("retention time [sec]");
+            na.setAutoRangeIncludesZero(false);
+            na.setLowerMargin(0);
+            na.setUpperMargin(0);
+        } else {
+            na = new NumberAxis("scan index");
+        }
+        // na.setVerticalTickLabels(true);
+        XYPlot xyp = new XYPlot(cd, na, new SymbolAxis("chromatogram", colnames),
+                xyb);
+        xyb.setBlockWidth(1);
+        xyp.setBackgroundPaint(Color.BLACK);
+        xyb.setBaseToolTipGenerator(new XYZToolTipGenerator() {
+
+            @Override
+            public String generateToolTip(XYZDataset xyzd, int i, int i1) {
+                return colnames[xyzd.getY(i, i1).intValue()] +" @" + xyzd.getXValue(i, i1) + " = "
+                        + xyzd.getZValue(i, i1);
+            }
+
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                if(xyd instanceof XYZDataset) {
+                    return generateToolTip((XYZDataset)xyd, i, i1);
+                }
+                return colnames[xyd.getY(i, i1).intValue()] + ":"
+                        + xyd.getXValue(i, i1);
+            }
+        });
+        return xyp;
+    }
 
     public XYPlot provide1DPlot(List<IFileFragment> fragments, String valueVar,
             boolean useRT) {
@@ -93,7 +219,27 @@ public class Chromatogram1DChartProvider {
         for (XYAnnotation xya : annotations) {
             xyp.addAnnotation(xya);
         }
-        xyp.setDomainCrosshairVisible(true);
+        xyp.setRenderer(renderer);
+        //xyp.setDomainCrosshairVisible(true);
+        xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                Comparable comp = xyd.getSeriesKey(i);
+                double x = xyd.getXValue(i, i1);
+                double y = xyd.getYValue(i, i1);
+                StringBuilder sb = new StringBuilder();
+                sb.append(comp);
+                sb.append(": ");
+                sb.append("x=");
+                sb.append(x);
+                sb.append(" y=");
+                sb.append(y);
+                return sb.toString();
+            }
+        });
+//        xyp.getRenderer().setDefaultEntityRadius(20);
+
         return xyp;
     }
 
@@ -159,7 +305,25 @@ public class Chromatogram1DChartProvider {
         for (XYAnnotation xya : annotations) {
             xyp.addAnnotation(xya);
         }
-        xyp.setDomainCrosshairVisible(true);
+//        xyp.setDomainCrosshairVisible(true);
+        xyp.setRenderer(renderer);
+        xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                Comparable comp = xyd.getSeriesKey(i);
+                double x = xyd.getXValue(i, i1);
+                double y = xyd.getYValue(i, i1);
+                StringBuilder sb = new StringBuilder();
+                sb.append(comp);
+                sb.append(": ");
+                sb.append("x=");
+                sb.append(x);
+                sb.append(" y=");
+                sb.append(y);
+                return sb.toString();
+            }
+        });
         return xyp;
     }
 
@@ -220,7 +384,25 @@ public class Chromatogram1DChartProvider {
         for (XYAnnotation xya : annotations) {
             xyp.addAnnotation(xya);
         }
-        xyp.setDomainCrosshairVisible(true);
+        xyp.setRenderer(renderer);
+        //xyp.setDomainCrosshairVisible(true);
+        xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                Comparable comp = xyd.getSeriesKey(i);
+                double x = xyd.getXValue(i, i1);
+                double y = xyd.getYValue(i, i1);
+                StringBuilder sb = new StringBuilder();
+                sb.append(comp);
+                sb.append(": ");
+                sb.append("x=");
+                sb.append(x);
+                sb.append(" y=");
+                sb.append(y);
+                return sb.toString();
+            }
+        });
         return xyp;
     }
 
@@ -331,8 +513,25 @@ public class Chromatogram1DChartProvider {
         for (XYAnnotation xya : annotations) {
             xyp.addAnnotation(xya);
         }
-        xyp.setDomainCrosshairVisible(true);
-        ChartCustomizer.setSeriesColors(xyp,0.7f);
+        //xyp.setDomainCrosshairVisible(true);
+        xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                Comparable comp = xyd.getSeriesKey(i);
+                double x = xyd.getXValue(i, i1);
+                double y = xyd.getYValue(i, i1);
+                StringBuilder sb = new StringBuilder();
+                sb.append(comp);
+                sb.append(": ");
+                sb.append("x=");
+                sb.append(x);
+                sb.append(" y=");
+                sb.append(y);
+                return sb.toString();
+            }
+        });
+        ChartCustomizer.setSeriesColors(xyp, 0.7f);
         ChartCustomizer.setSeriesStrokes(xyp, 2.0f);
         JFreeChart jfc2 = new JFreeChart(xyp);
         return jfc2;
