@@ -10,67 +10,128 @@
  */
 package maltcms.ui.views;
 
-import cross.datastructures.fragments.IFileFragment;
+import net.sf.maltcms.ui.plot.chromatogram1D.painter.SelectedXYItemEntityPainter;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.util.Collection;
 import javax.swing.SwingUtilities;
+import maltcms.datastructures.ms.IChromatogram;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IScan1D;
 import net.sf.maltcms.chromaui.charts.events.ChartPanelMouseListener;
 import net.sf.maltcms.chromaui.charts.events.DomainMarkerKeyListener;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
+import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
+import net.sf.maltcms.ui.plot.chromatogram1D.painter.PainterLayerUI;
+import org.jdesktop.jxlayer.JXLayer;
+import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
  * @author nilshoffmann
  */
-public class ChromMSHeatmapPanel extends javax.swing.JPanel implements Lookup.Provider {
+public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
+        Lookup.Provider {
 
     private XYPlot ticplot;
     private ChartPanel cdxpanel;
     private DomainMarkerKeyListener dmkl;
-    private InstanceContent ic = new InstanceContent();
-    private Lookup lookup = new AbstractLookup(ic);
+    private InstanceContent ic;// = new InstanceContent();
+    private Lookup lookup;// = new AbstractLookup(ic);
+    private JFreeChart chart;
+    private SelectedXYItemEntityPainter siep;
+    private JXLayer<ChartPanel> jxl;
+    private Dataset1D ds;
 
     /** Creates new form ChromMSHeatmapPanel */
-    public ChromMSHeatmapPanel(IFileFragment f) {
+    public ChromMSHeatmapPanel(InstanceContent topComponentInstanceContent, Chromatogram1DDataset ds,ChartPanelMouseListener cpml) {
         initComponents();
-        ic.add(f);
-        cdxpanel = new ChartPanel(null);
-        ChartPanelMouseListener cpml = new ChartPanelMouseListener(cdxpanel);
+        this.ds = ds;
+        this.ic = topComponentInstanceContent;
+        this.lookup = new ProxyLookup(new AbstractLookup(ic), this.ds.getLookup());
+        chart = new JFreeChart(new XYPlot());
+        cdxpanel = new ChartPanel(chart, true, true, true, true, true);
+        Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+        cdxpanel.setCursor(crosshairCursor);
+        chart.addProgressListener(cdxpanel);
+        cpml.setChartPanel(cdxpanel);
         ic.add(cpml);
         cdxpanel.addChartMouseListener(cpml);
-        add(cdxpanel, BorderLayout.CENTER);
-        cdxpanel.requestFocus(true);
-        cdxpanel.requestFocusInWindow();
+        cdxpanel.setInitialDelay(100);
+        cdxpanel.setDismissDelay(30000);
+        cdxpanel.setReshowDelay(0);
+
+        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>();
+
+        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
+                compoundPainter);
+        jxl = new JXLayer<ChartPanel>(cdxpanel, plui);
+        add(jxl, BorderLayout.CENTER);
         ic.add(cdxpanel);
+    }
+
+    private void addCompoundPainter(InstanceContent ic, ChartPanel cp,
+            Dataset1D ds) {
+        siep = new SelectedXYItemEntityPainter(ds, ic);
+        cp.addChartMouseListener(siep);
+        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>(
+                siep);
+        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
+                compoundPainter);
+        jxl.setUI(plui);
+    }
+
+    @Override
+    public void revalidate() {
+        super.revalidate();
+        if (cdxpanel != null) {
+            cdxpanel.requestFocusInWindow();
+        }
     }
 
     public ChartPanelMouseListener getChartPanelMouseListener() {
         return lookup.lookup(ChartPanelMouseListener.class);
     }
 
-    public IFileFragment getFileFragment() {
-        return lookup.lookup(IFileFragment.class);
+    public Collection<? extends IChromatogram> getChromatograms() {
+        return lookup.lookupAll(IChromatogram.class);
     }
 
     public void setPlot(final XYPlot plot) {
         this.ticplot = plot;
+
         Runnable r = new Runnable() {
 
             @Override
             public void run() {
-                JFreeChart jfc = new JFreeChart(ticplot);
+                ticplot.setNoDataMessage("Loading Data...");
+                chart = new JFreeChart(ticplot);
+                cdxpanel.setChart(chart);
+//                chart = new JFreeChart(ticplot);
+                XYItemRenderer r = ticplot.getRenderer();
+                if (r instanceof XYLineAndShapeRenderer) {
+                    ((XYLineAndShapeRenderer) r).setDrawSeriesLineAsPath(true);
+                    ((XYLineAndShapeRenderer) r).setBaseShapesVisible(true);
+                    ((XYLineAndShapeRenderer) r).setBaseShapesFilled(false);
+                }
                 ChartCustomizer.setSeriesColors(ticplot, 0.8f);
                 ChartCustomizer.setSeriesStrokes(ticplot, 2.0f);
-                cdxpanel.setChart(jfc);
+//                cdxpanel.setChart(chart);
                 dmkl = new DomainMarkerKeyListener(
                         ticplot);
                 dmkl.setPlot(ticplot);
                 cdxpanel.addKeyListener(dmkl);
+                addCompoundPainter(ic, cdxpanel, ds);
             }
         };
         SwingUtilities.invokeLater(r);

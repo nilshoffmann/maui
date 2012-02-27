@@ -5,9 +5,16 @@
 package maltcms.ui;
 
 import cross.Factory;
+import cross.exception.NotImplementedException;
+import java.util.Arrays;
+import maltcms.datastructures.ms.IChromatogram;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IScan;
 import maltcms.ui.charts.JFreeChartViewer;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
-import net.sf.maltcms.chromaui.msviewer.api.MassSpectrumViewTopComponent;
+import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -64,14 +71,25 @@ public class ChromatogramViewOpenSupport extends OpenSupport implements
         }
         IChromAUIProject project = lkp.lookup(IChromAUIProject.class); 
 //        CDFDataObject dobj = (CDFDataObject) entry.getDataObject();
-        MassSpectrumViewTopComponent secondaryView = new MassSpectrumViewTopComponent();
-        secondaryView.setProject(project);
-        ChromatogramViewTopComponent cvtc = new ChromatogramViewTopComponent(project, descriptor, secondaryView);
+//        MassSpectrumViewTopComponent secondaryView = MassSpectrumViewTopComponent.findInstance();
+//        secondaryView.setProject(project);
+//        secondaryView.open();
+        if(descriptor.getChromatogram() instanceof IChromatogram1D) {
+            NamedElementProvider<IChromatogram, IScan> nep = new Chromatogram1DElementProvider(descriptor.getDisplayName(),(IChromatogram1D)descriptor.getChromatogram());
+            Chromatogram1DDataset ds = new Chromatogram1DDataset(Arrays.asList(nep));
+            ChromatogramViewTopComponent cvtc = new ChromatogramViewTopComponent(project, Arrays.asList(descriptor),ds);
+//            secondaryView.setLookup(cvtc.getLookup());
+            return cvtc;
+        }else{
+            throw new NotImplementedException("Currently no support for 2D chromatograms!");
+        }
+        
+        
 //        ChromatogramViewTopComponent cvtc = new ChromatogramViewTopComponent(dobj.getPrimaryFile().getPath(),secondaryView);
 //        System.out.println("filename: " + dobj.getPrimaryFile().getPath());
 
-        secondaryView.open();
-        cvtc.requestActive();
-        return cvtc;
+        
+//        cvtc.requestActive();
+//        return cvtc;
     }
 }

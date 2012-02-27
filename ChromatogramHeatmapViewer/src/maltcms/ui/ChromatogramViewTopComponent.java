@@ -5,19 +5,26 @@
 package maltcms.ui;
 
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
-import cross.datastructures.fragments.FileFragment;
 import java.awt.BorderLayout;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import maltcms.ui.views.ChromMSHeatmapPanel;
-import net.sf.maltcms.chromaui.msviewer.api.MassSpectrumViewTopComponent;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
+import net.sf.maltcms.chromaui.charts.events.ChartPanelMouseListener;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.annotations.XYAnnotation;
 import org.openide.util.NbBundle;
+import org.openide.util.Task;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
@@ -25,6 +32,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.RequestProcessor;
+import org.openide.util.TaskListener;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.CloneableTopComponent;
@@ -37,21 +45,22 @@ import org.openide.windows.CloneableTopComponent;
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui//ChromatogramView//EN",
 autostore = false)
-public final class ChromatogramViewTopComponent extends CloneableTopComponent {
+public final class ChromatogramViewTopComponent extends CloneableTopComponent implements TaskListener {
 
     private static ChromatogramViewTopComponent instance;
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "ChromatogramViewTopComponent";
-    private MassSpectrumViewTopComponent secondaryView;
+//    private MassSpectrumViewTopComponent secondaryView;
     private InstanceContent ic;
     private SettingsPanel sp;
     private ChromMSHeatmapPanel jp;
     private boolean loading = false;
+    private List<XYAnnotation> annotations = Collections.emptyList();
+    private ExecutorService es = Executors.newFixedThreadPool(1);
 
     public ChromatogramViewTopComponent(IChromAUIProject project,
-            IChromatogramDescriptor filename,
-            MassSpectrumViewTopComponent secondaryView) {
+            List<IChromatogramDescriptor> filename, Chromatogram1DDataset ds) {
         this();
         this.ic = new InstanceContent();
 
@@ -59,7 +68,10 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
         if (project != null) {
             this.ic.add(project);
         }
-        this.ic.add(filename);
+        for (IChromatogramDescriptor descr : filename) {
+            this.ic.add(descr);
+        }
+        this.ic.add(ds);
         this.ic.add(new Properties());
         setDisplayName("Chromatogram View of " + new File(getLookup().lookup(
                 IChromatogramDescriptor.class).getResourceLocation()).getName());
@@ -68,13 +80,12 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
         requestActive();
         requestFocusInWindow(true);
         sp = new SettingsPanel();
-        this.secondaryView = secondaryView;
+        this.ic.add(sp);
+//        this.secondaryView = secondaryView;
         System.out.println("Setting ms data!");
-        secondaryView.setMSData(getChromatogramPanel().
-                getFileFragment(), getChromatogramPanel().
-                getChartPanelMouseListener());
-        System.out.println("Filename given: " + filename);
-        load();
+        System.out.println("Filenames given: " + filename);
+//        secondaryView.setMSData();
+
 //            this.jPanel1.add(load());
     }
 
@@ -87,13 +98,12 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
     }
 
     private void load() {
-        if (!loading) {
-            System.out.println("Running loader");
-            SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(
-                    this, getLookup().lookup(IChromatogramDescriptor.class).
-                    getResourceLocation(), getLookup().lookup(Properties.class));
-            RequestProcessor.getDefault().post(sw);
-        }
+        SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(
+                this, getLookup().lookupAll(IChromatogramDescriptor.class),
+                getLookup().lookup(Properties.class), getLookup().lookup(
+                SettingsPanel.class), getLookup().lookup(IChromAUIProject.class));
+        RequestProcessor.Task t = new RequestProcessor().post(sw);
+        t.addTaskListener(this);
     }
 
     /** This method is called from within the constructor to
@@ -109,6 +119,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
         jSeparator1 = new javax.swing.JToolBar.Separator();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -148,6 +159,18 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
         });
         jToolBar1.add(jButton3);
 
+        jCheckBox1.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.jCheckBox1.text")); // NOI18N
+        jCheckBox1.setFocusable(false);
+        jCheckBox1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jCheckBox1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jCheckBox1);
+
         add(jToolBar1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -169,10 +192,15 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
             Properties props = getLookup().lookup(Properties.class);
             props.setProperty(
                     "massResolution", sp.getMassResolution());
-            double[] masses = null;
             props.setProperty("selectedMasses", sp.getSelectedMasses());
             props.setProperty("plotMode", sp.getPlotMode());
             props.setProperty("rtAxisUnit", sp.getRTAxisTimeUnit());
+//            props.setProperty("autoRange", Boolean.valueOf(sp.isAutoRange()).
+//                    toString());
+            props.setProperty("plotType", sp.getPlotType());
+            props.setProperty("renderer", sp.getRenderer().getClass().getName());
+//            props.setProperty("timeRangeMin", sp.getTimeRangeMin());
+//            props.setProperty("timeRangeMax", sp.getTimeRangeMax());
             load();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -186,10 +214,36 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        if (this.jp != null) {
+            ChartPanel cp = jp.getLookup().lookup(ChartPanel.class);
+            if (jCheckBox1.isSelected()) {
+                int size = annotations.size();
+                for (int i = 0; i < size - 1; i++) {
+                    cp.getChart().getXYPlot().addAnnotation(annotations.get(i),
+                            false);
+
+                }
+                if (size > 0) {
+                    cp.getChart().getXYPlot().addAnnotation(annotations.get(
+                            size - 1),
+                            true);
+                }
+            } else {
+                List l = cp.getChart().getXYPlot().getAnnotations();
+                annotations = new ArrayList<XYAnnotation>(l.size());
+                for (Object obj : l) {
+                    annotations.add((XYAnnotation) obj);
+                }
+                cp.getChart().getXYPlot().clearAnnotations();
+            }
+        }
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
@@ -234,12 +288,16 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
 
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+    }
+
+    @Override
+    protected void componentActivated() {
+        super.componentActivated();
+        requestFocusInWindow(true);
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
     }
 
     void writeProperties(java.util.Properties p) {
@@ -264,9 +322,9 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
 
     public ChromMSHeatmapPanel getChromatogramPanel() {
         if (this.jp == null) {
-            this.jp = new ChromMSHeatmapPanel(
-                    new FileFragment(new File(getLookup().lookup(
-                    IChromatogramDescriptor.class).getResourceLocation())));
+            Chromatogram1DDataset ds = getLookup().lookup(
+                    Chromatogram1DDataset.class);
+            this.jp = new ChromMSHeatmapPanel(ic, ds, new ChartPanelMouseListener(ds));
             add(this.jp, BorderLayout.CENTER);
             ic.add(this.jp);
         }
@@ -282,21 +340,37 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent {
             public void run() {
 
 //        add(jp, BorderLayout.CENTER);
-                if (secondaryView != null) {
-                    System.out.println("Setting ms data!");
-                    secondaryView.setMSData(getChromatogramPanel().
-                            getFileFragment(), getChromatogramPanel().
-                            getChartPanelMouseListener());
-                }
+
+//                secondaryView.setMSData(getChromatogramPanel().
+//                    getChromatogram(), getChromatogramPanel().
+//                    getChartPanelMouseListener());
+
+//                if (secondaryView != null) {
+//                    System.out.println("Setting ms data!");
+//                    secondaryView.setMSData();
+//                }
                 requestActive();
                 requestFocusInWindow(true);
             }
         };
-        SwingUtilities.invokeLater(r);
+        es.submit(r);
     }
 
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
+    }
+
+    @Override
+    public void taskFinished(Task task) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                open();
+                requestActive();
+            }
+        });
+
     }
 }
