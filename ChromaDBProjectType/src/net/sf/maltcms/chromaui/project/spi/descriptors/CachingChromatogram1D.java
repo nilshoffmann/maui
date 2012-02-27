@@ -1,0 +1,284 @@
+/*
+ * $license$
+ *
+ * $Id$
+ */
+package net.sf.maltcms.chromaui.project.spi.descriptors;
+
+import cross.Factory;
+import cross.Logging;
+import cross.annotations.Configurable;
+import cross.datastructures.ehcache.CacheFactory;
+import cross.datastructures.ehcache.ICacheDelegate;
+import cross.datastructures.ehcache.ICacheElementProvider;
+import cross.datastructures.fragments.CachedList;
+import cross.datastructures.fragments.IFileFragment;
+import cross.datastructures.fragments.IVariableFragment;
+import cross.datastructures.fragments.ImmutableVariableFragment2;
+import cross.datastructures.fragments.VariableFragment;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IExperiment1D;
+import maltcms.datastructures.ms.IScan1D;
+import maltcms.datastructures.ms.Scan1D;
+import maltcms.tools.MaltcmsTools;
+import org.apache.commons.configuration.Configuration;
+import ucar.ma2.Array;
+
+/**
+ *
+ * Use @see maltcms.datastructures.ms.Chromatogram1D instead!
+ * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ */
+public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProvider<Integer, Scan1D> {
+
+    private IFileFragment parent;
+    private final String scanAcquisitionTimeUnit = "seconds";
+    @Configurable(name = "var.scan_acquisition_time")
+    private String scan_acquisition_time_var = "scan_acquisition_time";
+    private List<Array> massValues;
+    private List<Array> intensityValues;
+    private ICacheDelegate<Integer, Scan1D> whm;
+    private int scans;
+    private boolean initialized = false;
+
+    public CachingChromatogram1D(final IFileFragment e) {
+        this.parent = e;
+        CacheFactory<Integer, Scan1D> cf = new CacheFactory<Integer, Scan1D>();
+        whm = cf.createAutoRetrievalCache(e.getAbsolutePath(),this);
+//        fillCache(scans,mzV,iV);
+    }
+
+    private void init() {
+        if (!initialized) {
+            final String mz = Factory.getInstance().getConfiguration().getString(
+                    "var.mass_values", "mass_values");
+            final String intens = Factory.getInstance().getConfiguration().getString(
+                    "var.intensity_values", "intensity_values");
+            final String scan_index = Factory.getInstance().getConfiguration().
+                    getString("var.scan_index", "scan_index");
+            final IVariableFragment index = this.parent.getChild(scan_index);
+            this.scans = MaltcmsTools.getNumberOfScans(this.parent);
+            final IVariableFragment mzV = this.parent.getChild(mz);
+            mzV.setIndex(index);
+//            activateCache(mzV);
+            massValues = mzV.getIndexedArray();
+//            setPrefetchSize(scans, massValues);
+            final IVariableFragment iV = this.parent.getChild(intens);
+            iV.setIndex(index);
+//            activateCache(iV);
+            intensityValues = iV.getIndexedArray();
+//            setPrefetchSize(scans, intensityValues);
+            initialized = true;
+        }
+    }
+
+//    protected void fillCache(final int scans, final IVariableFragment masses, final IVariableFragment intensities) {
+//        Runnable r1 = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                masses.getIndexedArray().get((scans / 4) - 1);
+//            }
+//        };
+//        Runnable r2 = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                intensities.getIndexedArray().get((scans / 4) - 1);
+//            }
+//        };
+//        ExecutorService es = Executors.newFixedThreadPool(1);
+//        es.submit(r1);
+//        es.submit(r2);
+//        es.shutdown();
+//    }
+
+    protected void setPrefetchSize(int scans, List<Array> list) {
+        if (list instanceof CachedList) {
+            ((CachedList) list).setCacheSize(scans / 10);
+            ((CachedList) list).setPrefetchOnMiss(true);
+        }
+    }
+
+    protected void activateCache(IVariableFragment ivf) {
+        if (ivf instanceof ImmutableVariableFragment2) {
+            System.out.println("Using cached access on variable: " + ivf);
+            ((ImmutableVariableFragment2) ivf).setUseCachedList(true);
+        }
+        if (ivf instanceof VariableFragment) {
+            System.out.println("Using cached access on variable: " + ivf);
+            ((VariableFragment) ivf).setUseCachedList(true);
+        }
+    }
+
+    protected Scan1D acquireFromCache(int i) {
+//        if(whm.get(i) == null) {
+//            System.out.println("Retrieving scan "+i);
+//            Scan1D scan = provide(i);
+//            whm.put(i, scan);
+//            return scan;
+//        }
+//        return whm.get(Integer.valueOf(i));
+        return provide(i);
+    }
+
+    protected Scan1D buildScan(int i) {
+        return acquireFromCache(i);
+    }
+
+    @Override
+    public void configure(final Configuration cfg) {
+        this.scan_acquisition_time_var = cfg.getString(
+                "var.scan_acquisition_time", "scan_acquisition_time");
+    }
+
+    @Override
+    public List<Array> getIntensities() {
+        return intensityValues;
+    }
+
+    @Override
+    public List<Array> getMasses() {
+        return massValues;
+    }
+
+    /**
+     * @param scan
+     *            scan index to load
+     */
+    @Override
+    public Scan1D getScan(final int scan) {
+        return buildScan(scan);
+    }
+
+    @Override
+    public String getScanAcquisitionTimeUnit() {
+        return this.scanAcquisitionTimeUnit;
+    }
+
+    public List<Scan1D> getScans() {
+        ArrayList<Scan1D> al = new ArrayList<Scan1D>();
+        for (int i = 0; i < getNumberOfScans(); i++) {
+            al.add(buildScan(i));
+        }
+        return al;
+    }
+
+    /**
+     * This iterator acts on the underlying collection of scans in
+     * Chromatogram1D, so be careful with concurrent access / modification!
+     */
+    @Override
+    public Iterator<IScan1D> iterator() {
+
+        final Iterator<IScan1D> iter = new Iterator<IScan1D>() {
+
+            private int currentPos = 0;
+
+            @Override
+            public boolean hasNext() {
+                if (this.currentPos < getScans().size() - 1) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public IScan1D next() {
+                return getScan(this.currentPos++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException(
+                        "Can not remove scans with iterator!");
+            }
+        };
+        return iter;
+    }
+
+    public void setExperiment(final IExperiment1D e) {
+        this.parent = e;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see maltcms.datastructures.ms.IChromatogram#getScanAcquisitionTime()
+     */
+    @Override
+    public Array getScanAcquisitionTime() {
+        return this.parent.getChild(this.scan_acquisition_time_var).getArray();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see maltcms.datastructures.ms.IChromatogram#getNumberOfScans()
+     */
+    @Override
+    public int getNumberOfScans() {
+        return MaltcmsTools.getNumberOfScans(this.parent);
+    }
+
+    @Override
+    public int getIndexFor(double scan_acquisition_time) {
+        double[] d = (double[]) getScanAcquisitionTime().get1DJavaArray(
+                double.class);
+        int idx = Arrays.binarySearch(d, scan_acquisition_time);
+        if (idx >= 0) {// exact hit
+            Logging.getLogger(this).info("sat {}, scan_index {}",
+                    scan_acquisition_time, idx);
+            return idx;
+        } else {// imprecise hit, find closest element
+            double current = d[Math.min(d.length - 1, (-idx) + 1)];
+            double previous = d[Math.max(0, (-idx))];
+            if (Math.abs(scan_acquisition_time - previous) < Math.abs(
+                    scan_acquisition_time - current)) {
+                Logging.getLogger(this).info("sat {}, scan_index {}",
+                        scan_acquisition_time, (-idx) + 1);
+                return (-idx) + 1;
+            } else {
+                Logging.getLogger(this).info("sat {}, scan_index {}",
+                        scan_acquisition_time, -idx);
+                return (-idx);
+            }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see maltcms.datastructures.ms.IChromatogram#getParent()
+     */
+    @Override
+    public IFileFragment getParent() {
+        return this.parent;
+    }
+
+    @Override
+    public Scan1D provide(Integer k) {
+//        System.out.println("Retrieving scan "+k+" from mass_values");
+//        final Array masses = massValues.get(k);
+//        System.out.println("Retrieving scan "+k+" from intensity_values");
+//        final Array intens = intensityValues.get(k);
+////            final Tuple2D<Array, Array> t = MaltcmsTools.getMS(this.parent, i);
+//        Scan1D s = new Scan1D(masses, intens, k,
+//                this.parent.getChild(scan_acquisition_time_var).getArray().
+//                getDouble(k));
+//        System.out.println("Returning scan");
+        double[] masses = new double[]{73.0d,120.0d,143.0d};
+        double[] intensities = new double[]{7858123.13,123451.786,9097213.14};
+        Array massesArray = Array.factory(masses);
+        Array intensArray = Array.factory(intensities);
+        Scan1D s = new Scan1D(massesArray, intensArray, k, 875.7);
+        
+        return s;
+    }
+}

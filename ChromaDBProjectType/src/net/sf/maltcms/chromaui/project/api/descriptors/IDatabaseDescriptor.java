@@ -5,9 +5,8 @@
 
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
-import java.net.URL;
+import java.util.List;
 import java.util.Set;
-import net.sf.maltcms.chromaui.project.api.descriptors.IResourceDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
@@ -18,11 +17,9 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  */
 public interface IDatabaseDescriptor extends IResourceDescriptor{
 
-    String getName();
-
-    void setName(String name);
-
     DatabaseType getType();
+    
+    void setType(DatabaseType type);
 
     Set<ISeparationType> getApplicableSeparationTypes();
 
@@ -31,5 +28,9 @@ public interface IDatabaseDescriptor extends IResourceDescriptor{
     Set<IDetectorType> getApplicableDetectorTypes();
 
     void setApplicableDetectorTypes(Set<IDetectorType> detectorTypes);
+    
+    List<Double> getMaskedMasses();
+    
+    public void setMaskedMasses(List<Double> masses);
 
 }

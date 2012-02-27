@@ -4,33 +4,35 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
-import maltcms.datastructures.peak.Peak1D;
-
 /**
  *
  * @author nilshoffmann
  */
-public interface IPeakAnnotationDescriptor extends IDescriptor {
+public interface IPeakAnnotationDescriptor extends IBasicDescriptor {
     
-    public Peak1D getPeak();
+    public IChromatogramDescriptor getChromatogramDescriptor();
     
-    public void setPeak(Peak1D peak);
-    
-    public IChromatogramDescriptor getChromatogram();
-    
-    public void setChromatogram(IChromatogramDescriptor chromatogram);
-    
-    public String getName();
-    
-    public void setName(String name);
+    public void setChromatogramDescriptor(IChromatogramDescriptor chromatogram);
     
     public double getUniqueMass();
     
     public void setUniqueMass(double uniqueMass);
     
+    public double[] getQuantMasses();
+    
+    public void setQuantMasses(double[] quantMasses);
+    
     public double getRetentionIndex();
     
     public void setRetentionIndex(double retentionIndex);
+    
+    public String getRetentionIndexMethod();
+    
+    public void setRetentionIndexMethod(String retentionIndexMethod);
+    
+    public void setQuantSnr(double quantSnr);
+    
+    public double getQuantSnr();
     
     public void setSnr(double snr);
     
@@ -59,5 +61,45 @@ public interface IPeakAnnotationDescriptor extends IDescriptor {
     public String getMethod();
     
     public void setMethod(String method);
+    
+    public int getIndex();
+    
+    public void setIndex(int index);
+    
+    public double[] getMassValues();
+    
+    public void setMassValues(double[] massValues);
+    
+    public int[] getIntensityValues();
+    
+    public void setIntensityValues(int[] intensityValues);
+    
+    public void setStartTime(double startTime);
+    
+    public double getStartTime();
+    
+    public void setStopTime(double stopTime);
+    
+    public double getStopTime();
+    
+    public double getApexTime();
+    
+    public void setApexTime(double apexTime);
+    
+    public void setArea(double area);
+    
+    public double getArea();
+    
+    public void setRawArea(double rawArea);
+    
+    public double getRawArea();
+    
+    public void setBaselineArea(double baselineArea);
+    
+    public double getBaselineArea();
+    
+    public double getApexIntensity();
+    
+    public void setApexIntensity(double apexIntensity);
     
 }

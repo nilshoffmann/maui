@@ -314,7 +314,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                 size());
         if (getListModel().isEmpty()) {
             wizardDescriptor.putProperty("WizardPanel_errorMessage",
-                    "No input data files selected.");
+                    "Please add at least one raw chromatogram file.");
             return false;
         }
 

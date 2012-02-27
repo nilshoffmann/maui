@@ -4,39 +4,67 @@
  */
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
+import com.db4o.activation.ActivationPurpose;
+import java.awt.Color;
+import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 
 /**
  *
  * @author hoffmann
  */
-public class TreatmentGroupDescriptor implements ITreatmentGroupDescriptor {
+public class TreatmentGroupDescriptor extends ADescriptor implements ITreatmentGroupDescriptor {
 
-    private String name;
-    private String displayName;
+    private String comment = "<NA>";
+    public static final String PROP_COMMENT = "comment";
 
-    public TreatmentGroupDescriptor(String name) {
-        this.name = name;
-        this.displayName = name;
+    /**
+     * Get the value of comment
+     *
+     * @return the value of comment
+     */
+    @Override
+    public String getComment() {
+        activate(ActivationPurpose.READ);
+        return comment;
     }
 
+    /**
+     * Set the value of comment
+     *
+     * @param comment new value of comment
+     */
     @Override
-    public String getName() {
-        return this.name;
+    public void setComment(String comment) {
+        activate(ActivationPurpose.WRITE);
+        String oldComment = this.comment;
+        this.comment = comment;
+        firePropertyChange(PROP_COMMENT, oldComment, comment);
+    }
+    private Color color = Color.BLUE;
+    public static final String PROP_COLOR = "color";
+
+    /**
+     * Get the value of color
+     *
+     * @return the value of color
+     */
+    @Override
+    public Color getColor() {
+        activate(ActivationPurpose.READ);
+        return color;
     }
 
+    /**
+     * Set the value of color
+     *
+     * @param comment new value of color
+     */
     @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    @Override
-    public void setDisplayName(String displayName) {
-        this.displayName = name;
+    public void setColor(Color color) {
+        activate(ActivationPurpose.WRITE);
+        Color oldColor = this.color;
+        this.color = color;
+        firePropertyChange(PROP_COLOR, oldColor, color);
     }
 }

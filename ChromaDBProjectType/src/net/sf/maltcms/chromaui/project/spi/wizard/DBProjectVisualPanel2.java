@@ -105,6 +105,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(assignGroupToFile, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.assignGroupToFile.text")); // NOI18N
+        assignGroupToFile.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.assignGroupToFile.toolTipText")); // NOI18N
         assignGroupToFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 assignGroupToFileActionPerformed(evt);
@@ -155,15 +156,11 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
                         .addComponent(modulationTimeLabel)
                         .addGap(2, 2, 2)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(modulationTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(detectorTypeComboBox, 0, 145, Short.MAX_VALUE)
-                            .addComponent(separationTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addContainerGap(8, Short.MAX_VALUE))
+                    .addComponent(modulationTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(detectorTypeComboBox, 0, 145, Short.MAX_VALUE)
+                        .addComponent(separationTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -346,7 +343,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
                     }
                 } else {
                     wizardDescriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE,
-                            "Please assign all chromatograms to a group. Select a group and a number of chromatograms and select 'assign'");
+                            "Please assign every chromatogram to a group.");
                     return false;
                 }
             }

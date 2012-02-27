@@ -3,20 +3,20 @@
 <filesystem>
     <folder name="Actions">
         <folder name="ContainerNodeActions">
-            <folder name="net.sf.maltcms.chromaui.project.api.container.IContainer">
+<!--            <folder name="net.sf.maltcms.chromaui.project.api.container.IContainer">
                 <file name="org-openide-actions-OpenAction.shadow">
                     <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-OpenAction.instance"/>
                     <attr name="position" intvalue="100"/>
                 </file>
-            </folder>
+            </folder>-->
             <!-- add your own custom actions below this node, prefixed with the fully qualified container class name
                  for which the action should be available -->
         </folder>
         <folder name="ChromAUIProjectLogicalView">
-            <file name="org-openide-actions-OpenAction.shadow">
+<!--            <file name="org-openide-actions-OpenAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-OpenAction.instance"/>
                 <attr name="position" intvalue="100"/>
-            </file>
+            </file>-->
             <!-- add your own custom actions below this node or within a different layer.xml file with the same folder structure -->
         </folder>
     </folder>
@@ -55,26 +55,6 @@
                     <file name="org-openide-actions-ToolsAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-ToolsAction.instance"/>
                         <attr name="position" intvalue="1200"/>
-                    </file>
-                    <file name="sep-1.instance">
-                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
-                        <attr name="position" intvalue="100"/>
-                    </file>
-                    <file name="sep-2.instance">
-                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
-                        <attr name="position" intvalue="400"/>
-                    </file>
-                    <file name="sep-3.instance">
-                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
-                        <attr name="position" intvalue="700"/>
-                    </file>
-                    <file name="sep-4.instance">
-                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
-                        <attr name="position" intvalue="900"/>
-                    </file>
-                    <file name="sep-5.instance">
-                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
-                        <attr name="position" intvalue="1100"/>
                     </file>
                 </folder>
                 <folder name="Factories">

@@ -14,36 +14,44 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.List;
+import javax.management.Notification;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.IMatchPredicate;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
+import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.ProjectSettings;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
-import net.sf.maltcms.chromaui.project.api.events.RefreshNodes;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.ui.ProjectOpenedHook;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileStateInvalidException;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.Lookups;
 
 /**
  *
@@ -66,6 +74,35 @@ public class ChromAUIProject implements IChromAUIProject {
     private FileObject projectDatabaseFile;
     private FileObject parentFile;
     private InstanceContent ic = new InstanceContent();
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+    public synchronized void removePropertyChangeListener(String string, PropertyChangeListener pl) {
+        pcs.removePropertyChangeListener(string, pl);
+    }
+
+    @Override
+    public synchronized void removePropertyChangeListener(PropertyChangeListener pl) {
+        pcs.removePropertyChangeListener(pl);
+    }
+
+    @Override
+    public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
+        pcs.addPropertyChangeListener(pl);
+    }
+
+    public ChromAUIProject() {
+        lkp = new AbstractLookup(
+                ic);
+        if (state != null) {
+            ic.add(state);
+        }
+        //allow outside code to mark the project as needing saving
+        ic.add(new Info());
+        //Project information implementation
+        ic.add(new ChromAUIProjectLogicalView(this));
+        //Logical view of project implementation
+        ic.add(new OpenCloseHook());
+    }
 
     @Override
     public void activate(URL projectDatabaseFile) {
@@ -91,27 +128,73 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public void addContainer(IContainer... ic) {
         ics.create((Object) ic);
+        refresh();
     }
 
     @Override
     public void removeContainer(IContainer... ic) {
-        ics.delete((Object) ic);
+        DialogDisplayer dd = DialogDisplayer.getDefault();
+        Object result = dd.notify(new NotifyDescriptor.Confirmation(
+                "Really delete " + ic.length + " container" + (ic.length > 1 ? "s" : "") + "?",
+                "Confirm container deletion", NotifyDescriptor.YES_NO_OPTION));
+        if (result.equals(NotifyDescriptor.YES_OPTION)) {
+            for (IContainer container : ic) {
+                ics.delete(container);
+            }
+            refresh();
+        }
+    }
+
+    @Override
+    public void removeDescriptor(IBasicDescriptor... descriptor) {
+        DialogDisplayer dd = DialogDisplayer.getDefault();
+        boolean deleteAll = true;
+        if (descriptor.length > 1) {
+            Object result = dd.notify(new NotifyDescriptor.Confirmation(
+                    "Delete " + descriptor.length + " descriptor" + (descriptor.length > 1 ? "s" : "") + "?",
+                    "Confirm descriptor deletion", NotifyDescriptor.YES_NO_CANCEL_OPTION));
+            if (result.equals(NotifyDescriptor.CANCEL_OPTION)) {
+                return;
+            } else if (result.equals(NotifyDescriptor.NO_OPTION)) {
+                deleteAll = false;
+            }
+        }
+        if (deleteAll) {
+            ics.delete(Arrays.asList(descriptor));
+        } else {
+            for (IBasicDescriptor descr : descriptor) {
+                if (!(descr instanceof IContainer)) {
+                    Object result = dd.notify(new NotifyDescriptor.Confirmation(
+                            "Really delete descriptor: " + descr.getDisplayName() + "?",
+                            "Confirm descriptor deletion", NotifyDescriptor.YES_NO_OPTION));
+                    if (result.equals(NotifyDescriptor.YES_OPTION)) {
+                        ics.delete(descr);
+                    }
+                }
+            }
+        }
+        refresh();
     }
 
     @Override
     public void updateContainer(IContainer... ic) {
         ics.update((Object) ic);
+        refresh();
     }
 
     @Override
     public void refresh() {
-        ic.add(new RefreshNodes());
-        ic.set(Arrays.asList(new RefreshNodes()), null);
+        pcs.firePropertyChange(new PropertyChangeEvent(
+                this, "refresh", false, true));
+//        getLookup().lookup(Info.class).firePropertyChange(new PropertyChangeEvent(
+//                this, "REFRESH_NODES", null, this));
     }
 
     @Override
     public <T extends IContainer> Collection<T> getContainer(Class<T> c) {
+        ICrudSession ics = icp.createSession();
         Collection<T> l = ics.retrieve(c);
+        ics.close();
         return l;
     }
 
@@ -133,29 +216,37 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public Lookup getLookup() {
-        if (lkp == null) {
-            lkp = Lookups.fixed(
-                    state, //allow outside code to mark the project as needing saving
-                    new Info(), //Project information implementation
-                    new ChromAUIProjectLogicalView(this), //Logical view of project implementation
-                    new OpenCloseHook(),
-                    ic);
-        }
         return lkp;
 
     }
 
     @Override
     public void setState(ProjectState state) {
+        if (this.state != null) {
+            ic.remove(this.state);
+        }
+        ic.add(state);
         this.state = state;
     }
 
     @Override
     public Collection<IChromatogramDescriptor> getChromatograms() {
         ArrayList<IChromatogramDescriptor> al = new ArrayList<IChromatogramDescriptor>();
+
+
+
+
+
+
+
+
+
+
+
+
         for (TreatmentGroupContainer cc : getContainer(
                 TreatmentGroupContainer.class)) {
-            al.addAll(cc.get());
+            al.addAll(cc.getMembers());
         }
         return al;
     }
@@ -163,9 +254,27 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public Collection<ITreatmentGroupDescriptor> getTreatmentGroups() {
         HashSet<ITreatmentGroupDescriptor> tgs = new LinkedHashSet<ITreatmentGroupDescriptor>();
+
+
+
+
+
+
+
+
+
+
+
+
         for (TreatmentGroupContainer cc : getContainer(
                 TreatmentGroupContainer.class)) {
-            for (IChromatogramDescriptor icd : cc.get()) {
+
+
+
+
+
+
+            for (IChromatogramDescriptor icd : cc.getMembers()) {
                 tgs.add(icd.getTreatmentGroup());
             }
         }
@@ -176,9 +285,27 @@ public class ChromAUIProject implements IChromAUIProject {
     public Collection<IDatabaseDescriptor> getDatabases() {
 //        getContainer(DatabaseContainer.class);
         HashSet<IDatabaseDescriptor> tgs = new LinkedHashSet<IDatabaseDescriptor>();
+
+
+
+
+
+
+
+
+
+
+
+
         for (DatabaseContainer cc : getContainer(
                 DatabaseContainer.class)) {
-            for (IDatabaseDescriptor icd : cc.get()) {
+
+
+
+
+
+
+            for (IDatabaseDescriptor icd : cc.getMembers()) {
                 tgs.add(icd);
             }
         }
@@ -203,16 +330,41 @@ public class ChromAUIProject implements IChromAUIProject {
             return c.cast(ps.get(key));
         }
         throw new NullPointerException("No element for key: " + key);
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     protected ProjectSettings getSettings() {
         Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
+
+
+
+
+
+
+
+
+
+
+
+
         if (l.isEmpty()) {
             ProjectSettings ps = new ProjectSettings();
             ics.create(Arrays.asList(ps));
             l = ics.retrieve(ProjectSettings.class);
         }
         ProjectSettings ps = l.toArray(new ProjectSettings[l.size()])[0];
+
         return ps;
     }
 
@@ -228,7 +380,20 @@ public class ChromAUIProject implements IChromAUIProject {
                 closeSession();
             }
             if (projectDatabaseFile == null) {
-                throw new IllegalStateException("Project database file not set, please call 'activate(URL url)' with the appropriate location before 'openSession()' is called!");
+                throw new IllegalStateException(
+                        "Project database file not set, please call 'activate(URL url)' with the appropriate location before 'openSession()' is called!");
+
+
+
+
+
+
+
+
+
+
+
+
             }
             icp = Lookup.getDefault().lookup(ICrudProviderFactory.class).
                     getCrudProvider(projectDatabaseFile.getURL(),
@@ -236,6 +401,7 @@ public class ChromAUIProject implements IChromAUIProject {
                     ClassLoader.class));//new DB4oCrudProvider(pdbf, new NoAuthCredentials(), this.getClass().getClassLoader());
             icp.open();
             ics = icp.createSession();
+
             ics.open();
         } catch (FileStateInvalidException ex) {
             Exceptions.printStackTrace(ex);
@@ -245,7 +411,7 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public void closeSession() {
         if (icp != null) {
-            ics.close();
+            //ics.close();
             icp.close();
             icp = null;
         }
@@ -253,15 +419,64 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        ics.update(pce.getNewValue());
-        refresh();
+        pcs.firePropertyChange(pce);
     }
 
     @Override
     public void addToLookup(Object... obj) {
         for (Object object : obj) {
-            this.ic.add(object);
+            if (object != null) {
+                this.ic.add(object);
+            }
         }
+    }
+
+    @Override
+    public Collection<Peak1DContainer> getPeaks(
+            IChromatogramDescriptor descriptor) {
+        Collection<Peak1DContainer> containers = getContainer(
+                Peak1DContainer.class);
+        List<Peak1DContainer> peaks = new ArrayList<Peak1DContainer>();
+
+        for (Peak1DContainer container : containers) {
+            if (container != null) {
+                IChromatogramDescriptor chrom = container.getChromatogram();
+                if (chrom != null) {
+                    String chromName = chrom.getDisplayName();
+                    String descrName = descriptor.getDisplayName();
+//            System.out.println("ChromName: "+chromName+" descrName: "+descrName);
+                    if (chromName.equals(descrName)) {
+                        peaks.add(container);
+                    }
+                }
+            }
+        }
+
+        return peaks;
+    }
+
+    @Override
+    public <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp) {
+        IQuery<T> query = ics.newQuery(c);
+        return query.retrieve(mp);
+    }
+
+    @Override
+    public <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp) {
+        IQuery<T> query = ics.newQuery(c);
+        return query.retrieve(mp, comp);
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     private final class OpenCloseHook extends ProjectOpenedHook {

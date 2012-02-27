@@ -4,29 +4,35 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import maltcms.datastructures.peak.Peak1D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.types.GC;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
+import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
 import net.sf.maltcms.chromaui.project.api.types.QUADMS;
+import net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.OtherDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.NormalizationDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.RIDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.SampleGroupDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -35,17 +41,47 @@ import org.openide.loaders.DataObjectNotFoundException;
 public class DescriptorFactory {
 
     public static DataObject getDataObject(IResourceDescriptor id) throws DataObjectNotFoundException, IOException {
-        return DataObject.find(FileUtil.createData(new File(id.
-                getResourceLocation())));
+        return DataObject.find(FileUtil.createData(new File(id.getResourceLocation())));
+    }
+
+    public static IPeakGroupDescriptor newPeakGroupDescriptor(String name) {
+        IPeakGroupDescriptor descr = new PeakGroupDescriptor();
+        descr.setName(name);
+        descr.setDisplayName(name);
+        return descr;
+    }
+
+    public static ISampleGroupDescriptor newSampleGroupDescriptor(String name) {
+        ISampleGroupDescriptor descr = new SampleGroupDescriptor();
+        descr.setName(name);
+        descr.setDisplayName(name);
+        return descr;
     }
 
     public static IChromatogramDescriptor newChromatogramDescriptor() {
         return new ChromatogramDescriptor();
     }
 
+    public static IChromatogramDescriptor newChromatogramDescriptor(String name, ITreatmentGroupDescriptor treatmentGroup, ISampleGroupDescriptor sampleGroup, INormalizationDescriptor normalization) {
+        IChromatogramDescriptor descr = new ChromatogramDescriptor();
+        descr.setName(name);
+        descr.setDisplayName(name);
+        descr.setTreatmentGroup(treatmentGroup);
+        descr.setSampleGroup(sampleGroup);
+        descr.setNormalizationDescriptor(normalization);
+        return descr;
+    }
+
     public static ITreatmentGroupDescriptor newTreatmentGroupDescriptor(
             String name) {
-        return new TreatmentGroupDescriptor(name);
+        ITreatmentGroupDescriptor descr = new TreatmentGroupDescriptor();
+        descr.setName(name);
+        descr.setDisplayName(name);
+        return descr;
+    }
+
+    public static IToolDescriptor newToolResultDescriptor() {
+        return new ToolDescriptor();
     }
 
     public static IDatabaseDescriptor newDatabaseDescriptor(String location,
@@ -53,45 +89,50 @@ public class DescriptorFactory {
         return newDatabaseDescriptor(location, type, new GC(), new QUADMS());
     }
 
+    public static IPeakGroupDescriptor newPeakGroupDescriptor(
+            List<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool) {
+        PeakGroupDescriptor pgd = new PeakGroupDescriptor();
+        pgd.setPeakAnnotationDescriptors(peaks);
+        pgd.setTool(tool);
+        return pgd;
+    }
+
     public static IDatabaseDescriptor newDatabaseDescriptor(String location,
             DatabaseType type,
             ISeparationType separationType, IDetectorType detectorType) {
-        switch (type) {
-            case USER:
-                UserDatabaseDescriptor udd = new UserDatabaseDescriptor();
-                udd.setResourceLocation(location);
-                udd.setApplicableDetectorTypes(new LinkedHashSet<IDetectorType>(Arrays.
-                        asList(detectorType)));
-                udd.setApplicableSeparationTypes(new LinkedHashSet<ISeparationType>(Arrays.
-                        asList(separationType)));
-                udd.setName("User DB");
-                return udd;
-            case RI:
-                RIDatabaseDescriptor rid = new RIDatabaseDescriptor();
-                rid.setResourceLocation(location);
-                rid.setApplicableDetectorTypes(new LinkedHashSet<IDetectorType>(Arrays.
-                        asList(detectorType)));
-                rid.setApplicableSeparationTypes(new LinkedHashSet<ISeparationType>(Arrays.
-                        asList(separationType)));
-                rid.setName("RI DB");
-                return rid;
-            default:
-                OtherDatabaseDescriptor odd = new OtherDatabaseDescriptor();
-                odd.setResourceLocation(location);
-                odd.setApplicableDetectorTypes(new LinkedHashSet<IDetectorType>(Arrays.
-                        asList(detectorType)));
-                odd.setApplicableSeparationTypes(new LinkedHashSet<ISeparationType>(Arrays.
-                        asList(separationType)));
-                odd.setName("Unspecified DB");
-                return odd;
-
-        }
+        UserDatabaseDescriptor udd = new UserDatabaseDescriptor();
+        udd.setResourceLocation(location);
+        udd.setApplicableDetectorTypes(new LinkedHashSet<IDetectorType>(Arrays.asList(detectorType)));
+        udd.setApplicableSeparationTypes(new LinkedHashSet<ISeparationType>(Arrays.asList(separationType)));
+        udd.setType(type);
+        String name = new File(location).getName();
+        udd.setName(name);
+        udd.setDisplayName(name);
+        return udd;
     }
-    
-    public static IPeakAnnotationDescriptor newPeakAnnotationDescriptor(Peak1D peak, String name, double uniqueMass, double retentionIndex, double snr, double fwhh, double similarity, String library, String cas, String formula, String method) {
+
+    /**
+     * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a 
+     * normalization value of 1.0;
+     * @return 
+     */
+    public static INormalizationDescriptor newNormalizationDescriptor() {
+        INormalizationDescriptor normalization = new NormalizationDescriptor();
+        normalization.setNormalizationType(NormalizationType.DRYWEIGHT);
+        normalization.setValue(1.0d);
+        return normalization;
+    }
+
+    public static IPeakAnnotationDescriptor newPeakAnnotationDescriptor(
+            IChromatogramDescriptor chromatogram, String name,
+            double uniqueMass, double[] quantMasses, double retentionIndex,
+            double snr, double fwhh,
+            double similarity, String library, String cas, String formula,
+            String method, double startTime, double apexTime, double stopTime,
+            double area, double intensity) {
         PeakAnnotationDescriptor pad = new PeakAnnotationDescriptor();
-        pad.setPeak(peak);
         pad.setCas(cas);
+        pad.setName(name);
         pad.setDisplayName(name);
         pad.setFormula(formula);
         pad.setFwhh(fwhh);
@@ -100,29 +141,46 @@ public class DescriptorFactory {
         pad.setSimilarity(similarity);
         pad.setSnr(snr);
         pad.setUniqueMass(uniqueMass);
+        pad.setQuantMasses(quantMasses);
         pad.setMethod(method);
+        pad.setChromatogramDescriptor(chromatogram);
+        pad.setStartTime(startTime);
+        pad.setStopTime(stopTime);
+        pad.setApexTime(apexTime);
+        pad.setArea(area);
+        pad.setApexIntensity(intensity);
         return pad;
     }
+
+    public static IAnovaDescriptor newAnovaDescriptor() {
+        return new AnovaDescriptor();
+    }
     
-    public static void addPeakAnnotations(IChromAUIProject project, IChromatogramDescriptor chromatogram, List<IPeakAnnotationDescriptor> peaks) {
+    public static IPcaDescriptor newPcaDescriptor() {
+        return new PcaDescriptor();
+    }
+
+    public static void addPeakAnnotations(IChromAUIProject project,
+            IChromatogramDescriptor chromatogram,
+            List<IPeakAnnotationDescriptor> peaks, IToolDescriptor trd) {
         Peak1DContainer p1dc = new Peak1DContainer();
-        p1dc.add(peaks.toArray(new IPeakAnnotationDescriptor[]{}));
-        p1dc.setDisplayName(chromatogram.getDisplayName());
+        p1dc.setChromatogram(chromatogram);
+        p1dc.addMembers(peaks.toArray(new IPeakAnnotationDescriptor[]{}));
+        p1dc.setTool(trd);
+        p1dc.setDisplayName(trd.getName() + " " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(trd.getDate()));
         project.addContainer(p1dc);
         project.refresh();
     }
 
-    public static List<IPeakAnnotationDescriptor> newPeakAnnotationDescriptors(
-            IChromatogramDescriptor chromatogramDescriptor, List<Peak1D> peaks) {
-        List<IPeakAnnotationDescriptor> peakAnnotationDescriptors = new ArrayList<IPeakAnnotationDescriptor>();
-        for (Peak1D peak : peaks) {
-            PeakAnnotationDescriptor pad = new PeakAnnotationDescriptor();
-            pad.setPeak(peak);
-            pad.setDisplayName(peak.getName());
-            peakAnnotationDescriptors.add(pad);
+    public static Image getImage(IBasicDescriptor descriptor) {
+        if (descriptor instanceof IPeakAnnotationDescriptor) {
+            return ImageUtilities.loadImage(
+                    "net/sf/maltcms/chromaui/project/resources/Peak.png");
+        } else if (descriptor instanceof IDatabaseDescriptor) {
+            return ImageUtilities.loadImage(
+                    "net/sf/maltcms/chromaui/project/resources/DBDescriptor.png");
         }
-        
-        chromatogramDescriptor.setPeakAnnotationDescriptors(peakAnnotationDescriptors);
-        return chromatogramDescriptor.getPeakAnnotationDescriptors();
+        return ImageUtilities.loadImage(
+                "net/sf/maltcms/chromaui/project/resources/cdflogo.png");
     }
 }

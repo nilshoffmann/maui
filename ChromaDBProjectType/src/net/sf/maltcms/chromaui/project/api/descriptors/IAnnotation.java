@@ -4,13 +4,11 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
-
 /**
  *
  * @author nilshoffmann
  */
-public interface IAnnotation<T> extends IDescriptor {
+public interface IAnnotation<T> extends IBasicDescriptor {
     public T getAnnotation();
     
     public void setAnnotation(T t);

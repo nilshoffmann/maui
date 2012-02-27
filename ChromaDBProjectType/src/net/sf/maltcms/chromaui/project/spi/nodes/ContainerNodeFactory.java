@@ -5,26 +5,26 @@
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
-import net.sf.maltcms.chromaui.project.api.events.RefreshNodes;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
-import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.Lookup.Result;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
+import org.openide.util.WeakListeners;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
@@ -32,36 +32,53 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author nilshoffmann
  */
-public class ContainerNodeFactory extends ChildFactory<IDescriptor> implements
-        LookupListener {
+public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFactory<T> implements
+        PropertyChangeListener {
 
-    final IContainer<? extends IDescriptor> cp;
+    final IContainer<T> cp;
     private Lookup lkp;
 
-    public ContainerNodeFactory(IContainer<? extends IDescriptor> cp, Lookup lkp) {
+    public ContainerNodeFactory(IContainer<T> cp, Lookup lkp) {
 //        System.out.println("Created ContainerNode Factory for " + cp.getClass());
         this.cp = cp;
         this.lkp = lkp;
-        Result<RefreshNodes> lookupResult = lkp.lookupResult(
-                RefreshNodes.class);
-        lookupResult.addLookupListener(this);
+        cp.addPropertyChangeListener(this);
     }
 
     @Override
-    protected boolean createKeys(List<IDescriptor> list) {
-        Collection<? extends IDescriptor> container = this.cp.get();
-        for (IDescriptor idesc : container) {
-            if (Thread.interrupted()) {
+    protected boolean createKeys(List<T> list) {
+        try {
+            Collection<T> container = this.cp.getMembers();
+            if(container==null || container.isEmpty()) {
                 return true;
-            } else {
-                list.add(idesc);
             }
+            for (T idesc : container) {
+                if (Thread.interrupted()) {
+                    return true;
+                } else {
+                    if(idesc!=null) {
+                        list.add(idesc);
+                    }
+                }
+            }
+            Collections.sort(list, new Comparator<IBasicDescriptor>() {
+
+                @Override
+                public int compare(IBasicDescriptor t,
+                        IBasicDescriptor t1) {
+                    if (t.getClass().equals(t1.getClass())) {
+                        return t.compareTo(t1);
+                    }
+                    return t.getDisplayName().compareTo(t1.getDisplayName());
+                }
+            });
+        } catch (NullPointerException npe) {
         }
         return true;
     }
 
     @Override
-    protected Node createNodeForKey(IDescriptor key) {
+    protected Node createNodeForKey(T key) {
         if (key instanceof IChromatogramDescriptor) {
             IChromatogramDescriptor cd = (IChromatogramDescriptor) key;
             System.out.println(cd.getResourceLocation());
@@ -70,15 +87,23 @@ public class ContainerNodeFactory extends ChildFactory<IDescriptor> implements
             try {
                 dobj = DataObject.find(FileUtil.toFileObject(new File(cd.
                         getResourceLocation())));
-                System.out.println("Trying to retrieve data object from location : " + cd.
-                        getResourceLocation());
+                //System.out.println("Trying to retrieve data object from location : " + cd.
+                //        getResourceLocation());
                 Node n = dobj.getNodeDelegate();
                 //merge lookups of data object node and container node
                 Lookup lookup = new ProxyLookup(n.getLookup(), Lookups.fixed(cp,
                         cd), lkp);
 //                try {
-                return new ChromatogramNode(n, Children.create(new ChromatogramChildNodeFactory(
-                        cd, lookup), true), lookup);
+                ChromatogramNode cn = new ChromatogramNode(n,
+                        Children.create(new ChromatogramChildNodeFactory(
+                        cd, lkp), true), lookup);
+//                cd.addPropertyChangeListener(this);
+                WeakListeners.propertyChange(this, dobj);
+                WeakListeners.propertyChange(this, key);
+                WeakListeners.propertyChange(this, cn);
+                return cn;
+//                        Children.create(new ChromatogramChildNodeFactory(
+//                        cd, lookup), true), lookup);
                 //                new FilterNode.Children(n), lookup);
 //                } catch (IntrospectionException ex) {
 //                    Exceptions.printStackTrace(ex);
@@ -94,17 +119,21 @@ public class ContainerNodeFactory extends ChildFactory<IDescriptor> implements
             ContainerNode cn;
             try {
                 //merge factory lookup from parent nodes with this container node lookup
-                cn = new ContainerNode((IContainer<IDescriptor>) key,
+                cn = new ContainerNode((IContainer<IBasicDescriptor>) key,
                         new ProxyLookup(lkp, Lookups.fixed(cp)));
+                WeakListeners.propertyChange(this, key);
+                WeakListeners.propertyChange(this, cn);
                 return cn;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);
             }
         } else {
             try {
-                //leaf node, add current lookup, make containter available generically
+                //leaf node, addMembers current lookup, make containter available generically
                 DescriptorNode cn = new DescriptorNode(key, new ProxyLookup(lkp,
                         Lookups.fixed(cp)));
+                WeakListeners.propertyChange(this, key);
+                WeakListeners.propertyChange(this, cn);
                 return cn;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);
@@ -114,11 +143,7 @@ public class ContainerNodeFactory extends ChildFactory<IDescriptor> implements
     }
 
     @Override
-    public void resultChanged(LookupEvent ev) {
-        Lookup.Result r = (Lookup.Result) ev.getSource();
-        Collection c = r.allInstances();
-        if (!c.isEmpty()) {
-            refresh(true);
-        }
+    public void propertyChange(PropertyChangeEvent pce) {
+        refresh(true);
     }
 }

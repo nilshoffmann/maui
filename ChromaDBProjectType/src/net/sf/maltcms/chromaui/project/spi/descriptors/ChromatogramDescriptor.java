@@ -4,16 +4,20 @@
  */
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
+import com.db4o.activation.ActivationPurpose;
+import com.db4o.collections.ActivatableArrayList;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import cross.datastructures.fragments.FileFragment;
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import maltcms.datastructures.ms.ChromatogramFactory;
 import maltcms.datastructures.ms.IChromatogram;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.GC;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
@@ -23,50 +27,70 @@ import net.sf.maltcms.chromaui.project.api.types.QUADMS;
  *
  * @author hoffmann
  */
-public class ChromatogramDescriptor implements IChromatogramDescriptor {
+public class ChromatogramDescriptor extends ADescriptor implements IChromatogramDescriptor {
 
+    private transient IChromatogram chromatogram;
     private String resourceLocation = "<NA>";
-    private ISeparationType st = new GC();
-    private IDetectorType dt = new QUADMS();
-    private String displayName = "<NA>";
-    private IChromatogram chromatogram;
-    private ITreatmentGroupDescriptor treatmentGroup = new TreatmentGroupDescriptor(
-            "N.N.");
+    private ISeparationType separationType = new GC();
+    private IDetectorType detectorType = new QUADMS();
+    private ITreatmentGroupDescriptor treatmentGroup = new TreatmentGroupDescriptor();
     private INormalizationDescriptor normalizationDescriptor = new NormalizationDescriptor();
-    private List<IPeakAnnotationDescriptor> peakAnnotationDescriptors = Collections.emptyList();
+    private List<Peak1DContainer> peakAnnotations = new ActivatableArrayList<Peak1DContainer>();
+
+    public List<Peak1DContainer> getPeakAnnotations() {
+        activate(ActivationPurpose.READ);
+        return peakAnnotations;
+    }
+
+    public void setPeakAnnotations(List<Peak1DContainer> peakAnnotations) {
+        activate(ActivationPurpose.WRITE);
+        List<Peak1DContainer> oldValue = this.peakAnnotations;
+        this.peakAnnotations = new ActivatableArrayList<Peak1DContainer>(peakAnnotations);
+        firePropertyChange("peakAnnotations", oldValue, this.peakAnnotations);
+    }
 
     @Override
     public ITreatmentGroupDescriptor getTreatmentGroup() {
+        activate(ActivationPurpose.READ);
         return treatmentGroup;
     }
 
     @Override
     public void setTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup) {
+        activate(ActivationPurpose.WRITE);
+        ITreatmentGroupDescriptor oldValue = this.treatmentGroup;
         this.treatmentGroup = treatmentGroup;
+        firePropertyChange("treatmentGroup", oldValue, this.treatmentGroup);
     }
 
     @Override
     public String getResourceLocation() {
+        activate(ActivationPurpose.READ);
         return this.resourceLocation;
     }
 
     @Override
     public void setResourceLocation(String u) {
-//        if (u.isAbsolute()) {
+        activate(ActivationPurpose.WRITE);
+        String oldValue = this.resourceLocation;
         this.resourceLocation = u;
-//        } else {
-//            throw new IllegalArgumentException("URI is not absolute: "+u);
-//        }
+        firePropertyChange("resourceLocation", oldValue,
+                this.resourceLocation);
     }
 
     @Override
     public IChromatogram getChromatogram() {
         if (this.chromatogram == null) {
-            ChromatogramFactory cf = new ChromatogramFactory();
-            if (this.st.getFeatureDimensions() == 2) {
-                this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(getResourceLocation())));
+            
+            if (this.separationType.getFeatureDimensions() == 2) {
+                ChromatogramFactory cf = new ChromatogramFactory();
+                this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(
+                        getResourceLocation())));
             } else {
-                this.chromatogram = cf.createChromatogram1D(new FileFragment(new File(getResourceLocation())));
+                
+                this.chromatogram = new CachingChromatogram1D(new FileFragment(new File(getResourceLocation())));
+//);//cf.createChromatogram1D(new FileFragment(new File(
+//                        getResourceLocation())));
             }
         }
         return this.chromatogram;
@@ -74,64 +98,82 @@ public class ChromatogramDescriptor implements IChromatogramDescriptor {
 
     @Override
     public String toString() {
-        return "ChromatogramDescriptor{" + "resourceLocation=" + resourceLocation + ", treatmentGroup=" + treatmentGroup + ", separationType=" + st + ", detectorType=" + dt + '}';
+        return "ChromatogramDescriptor{" + "resourceLocation=" + getResourceLocation() + ", treatmentGroup=" + getTreatmentGroup() + ", separationType=" + getSeparationType() + ", detectorType=" + getDetectorType() + '}';
     }
 
     @Override
     public void setSeparationType(ISeparationType st) {
-        this.st = st;
+        activate(ActivationPurpose.WRITE);
+        ISeparationType oldValue = this.separationType;
+        this.separationType = st;
+        firePropertyChange("separationType", oldValue, this.separationType);
     }
 
     @Override
     public void setDetectorType(IDetectorType dt) {
-        this.dt = dt;
+        activate(ActivationPurpose.WRITE);
+        IDetectorType oldValue = this.detectorType;
+        this.detectorType = dt;
+        firePropertyChange("detectorType", oldValue, this.detectorType);
     }
 
     @Override
     public ISeparationType getSeparationType() {
-        return this.st;
+        activate(ActivationPurpose.READ);
+        return this.separationType;
     }
 
     @Override
     public IDetectorType getDetectorType() {
-        return this.dt;
-    }
-
-    @Override
-    public String getDisplayName() {
-        if (this.displayName == null || this.displayName.isEmpty()) {
-//            try {
-            return getResourceLocation();
-//            } catch (MalformedURLException ex) {
-//                return toString();
-//            }
-        }
-        return this.displayName;
-    }
-
-    @Override
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        activate(ActivationPurpose.READ);
+        return this.detectorType;
     }
 
     @Override
     public INormalizationDescriptor getNormalizationDescriptor() {
+        activate(ActivationPurpose.READ);
         return normalizationDescriptor;
     }
 
     @Override
-    public void setNormalizationDescriptor(INormalizationDescriptor normalizationDescriptor) {
+    public void setNormalizationDescriptor(
+            INormalizationDescriptor normalizationDescriptor) {
+        activate(ActivationPurpose.WRITE);
+        INormalizationDescriptor oldValue = this.normalizationDescriptor;
         this.normalizationDescriptor = normalizationDescriptor;
+        firePropertyChange("normalizationDescriptor", oldValue,
+                this.normalizationDescriptor);
     }
+    private ISampleGroupDescriptor sampleGroup;
+    public static final String PROP_SAMPLEGROUP = "sampleGroup";
 
+    /**
+     * Get the value of sampleGroup
+     *
+     * @return the value of sampleGroup
+     */
     @Override
-    public List<IPeakAnnotationDescriptor> getPeakAnnotationDescriptors() {
-        return this.peakAnnotationDescriptors;
+    public ISampleGroupDescriptor getSampleGroup() {
+        activate(ActivationPurpose.READ);
+        return sampleGroup;
     }
 
+    /**
+     * Set the value of sampleGroup
+     *
+     * @param sampleGroup new value of sampleGroup
+     */
     @Override
-    public void setPeakAnnotationDescriptors(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
-        this.peakAnnotationDescriptors = peakAnnotationDescriptors;
+    public void setSampleGroup(ISampleGroupDescriptor sampleGroup) {
+        activate(ActivationPurpose.WRITE);
+        ISampleGroupDescriptor oldSampleGroup = this.sampleGroup;
+        this.sampleGroup = sampleGroup;
+        firePropertyChange(PROP_SAMPLEGROUP, oldSampleGroup, sampleGroup);
     }
-
+    
+    @Override
+    public int compareTo(IBasicDescriptor t) {
+        return getDisplayName().compareTo(t.getDisplayName());
+    }
+    
 }

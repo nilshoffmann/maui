@@ -74,10 +74,11 @@ public class ChromAUIProjectTest extends TestCase{
             gcd3.setResourceLocation(new File("test/b/chrom2.cdf").getAbsolutePath());
             ChromatogramDescriptor gcd4 = new ChromatogramDescriptor();
             gcd4.setResourceLocation(new File("test/b/chrom2.cdf").getAbsolutePath());
-//            icc.add(gcd1, gcd2);
+//            icc.addMembers(gcd1, gcd2);
 
             TreatmentGroupContainer icg = new TreatmentGroupContainer();
-            TreatmentGroupDescriptor tgd = new TreatmentGroupDescriptor("Group A");
+            TreatmentGroupDescriptor tgd = new TreatmentGroupDescriptor();
+            tgd.setName("Group A");
             gcd1.setTreatmentGroup(tgd);
             gcd2.setTreatmentGroup(tgd);
             
@@ -87,14 +88,15 @@ public class ChromAUIProjectTest extends TestCase{
 //            IAnnotation sa1 = new SpeciesAnnotation();
 //            sa1.setAnnotation(sp1);
 //            icg.addAnnotations(sa1.getClass(), sa1); 
-//            tgd.add(gcd1, gcd2);
-            icg.add(gcd1,gcd2);
+//            tgd.addMembers(gcd1, gcd2);
+            icg.addMembers(gcd1,gcd2);
 
-            TreatmentGroupDescriptor tgd2 = new TreatmentGroupDescriptor("Group B");
+            TreatmentGroupDescriptor tgd2 = new TreatmentGroupDescriptor();
+            tgd2.setName("Group B");
             gcd3.setTreatmentGroup(tgd2);
             gcd4.setTreatmentGroup(tgd2);
-//            tgd2.add(gcd3, gcd4);
-            icg.add(gcd3,gcd4);
+//            tgd2.addMembers(gcd3, gcd4);
+            icg.addMembers(gcd3,gcd4);
 
             IContainer[] ic = new IContainer[]{icg};
             cap.addContainer(ic);
@@ -102,8 +104,8 @@ public class ChromAUIProjectTest extends TestCase{
 //            Collection<ChromatogramContainer> cc = cap.getContainer(ChromatogramContainer.class);
 //            System.out.println("Query returned " + cc.size() + " ChromatogramContainer");
 //            for (ChromatogramContainer cont : cc) {
-//                System.out.println("Container has " + cont.get() + " files");
-//                for (IChromatogramDescriptor descr : cont.get()) {
+//                System.out.println("Container has " + cont.getMembers() + " files");
+//                for (IChromatogramDescriptor descr : cont.getMembers()) {
 //                    System.out.println(descr.getResourceLocation());
 //                }
 //            }
@@ -112,7 +114,7 @@ public class ChromAUIProjectTest extends TestCase{
             System.out.println("Query returned " + itgc.size() + " ITreatmentGroupContainer");
             for (TreatmentGroupContainer cont : itgc) {
                 System.out.println("TreatmentContainer has name: " + cont.getName());
-                for (IChromatogramDescriptor descr : cont.get()) {
+                for (IChromatogramDescriptor descr : cont.getMembers()) {
                     System.out.println("TreatmentGroup has name: " + descr.getTreatmentGroup().getName());
                     System.out.println(descr);
                 }
@@ -125,7 +127,7 @@ public class ChromAUIProjectTest extends TestCase{
         } finally {
             
         }
-        // TODO review the generated test code and remove the default call to fail.
+        // TODO review the generated test code and removeMembers the default call to fail.
         //fail("The test case is a prototype.");
     }
 
@@ -138,7 +140,7 @@ public class ChromAUIProjectTest extends TestCase{
 //        IContainer[] ic = null;
 //        ChromAUIProject instance = null;
 //        instance.removeContainer(ic);
-        // TODO review the generated test code and remove the default call to fail.
+        // TODO review the generated test code and removeMembers the default call to fail.
         //fail("The test case is a prototype.");
     }
 
@@ -153,7 +155,7 @@ public class ChromAUIProjectTest extends TestCase{
 //        Collection expResult = null;
 //        Collection result = instance.getContainer(c);
 //        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
+//        // TODO review the generated test code and removeMembers the default call to fail.
 //        fail("The test case is a prototype.");
     }
 
@@ -165,7 +167,7 @@ public class ChromAUIProjectTest extends TestCase{
 //        System.out.println("main");
 //        String[] args = null;
 //        ChromAUIProject.main(args);
-//        // TODO review the generated test code and remove the default call to fail.
+//        // TODO review the generated test code and removeMembers the default call to fail.
 //        fail("The test case is a prototype.");
     }
 }

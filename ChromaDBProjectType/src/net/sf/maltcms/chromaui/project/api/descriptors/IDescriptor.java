@@ -8,10 +8,9 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  *
  * @author nilshoffmann
  */
-public interface IDescriptor {
-
-    public String getDisplayName();
-
-    public void setDisplayName(String displayName);
+public interface IDescriptor extends IBasicDescriptor {
+    final String PROP_TOOL = "tool";
+    public IToolDescriptor getTool();
+    public void setTool(IToolDescriptor toolDescriptor);
     
 }

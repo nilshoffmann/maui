@@ -6,27 +6,19 @@
 package net.sf.maltcms.chromaui.project.api.container;
 
 import java.awt.Image;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 
 /**
  *
  * @author hoffmann
  */
-public interface IContainer<T extends IDescriptor> extends Comparable, IGenericContainer<T> {
+public interface IContainer<T extends IBasicDescriptor> extends IGenericContainer<T> {
 
-    String getName();
-
-    void setName(String s);
-
+    final String PROP_PRECEDENCE = "precedence";
+    
     int getPrecedence();
 
     void setPrecedence(int i);
-    
-    @Override
-    String getDisplayName();
-    
-    @Override
-    void setDisplayName(String s);
     
     Image getIcon(int type);
 

@@ -5,13 +5,21 @@
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.DBProjectFactory;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
-import net.sf.maltcms.chromaui.project.api.events.RefreshNodes;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
+import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
+import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -19,10 +27,7 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
-import org.openide.util.Lookup.Result;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
+import org.openide.util.WeakListeners;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
@@ -31,26 +36,16 @@ import org.openide.util.lookup.ProxyLookup;
  * @author nilshoffmann
  */
 public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
-        LookupListener {
+        PropertyChangeListener {
 
     final IChromAUIProject cp;
 
     public ChromaUIProjectNodesFactory(IChromAUIProject cp) {
 //        System.out.println("Created ChromaUIProjectNodes Factory");
         this.cp = cp;
-        Result<RefreshNodes> lookupResult = cp.getLookup().lookupResult(
-                RefreshNodes.class);
-        lookupResult.addLookupListener(this);
+        this.cp.addPropertyChangeListener(this);
     }
 
-//    @Override
-//    protected Node[] createNodesForKey(String key) {
-//        Node n = createNodeForKey(key);
-//        if (n == null) {
-//            return null;
-//        }
-//        return new Node[]{n};
-//    }
     protected List<FileObject> getFileChildren() {
         FileObject[] fo = cp.getProjectDirectory().getChildren();
         List<FileObject> children = new ArrayList<FileObject>(fo.length);
@@ -62,26 +57,57 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 
     @Override
     protected boolean createKeys(List<Object> list) {
-        for (IContainer ic : this.cp.getContainer(IContainer.class)) {
+        List<IContainer> containers = filter(this.cp.getContainer(
+                IContainer.class), Peak1DContainer.class);
+//        List<IContainer> containers = new ArrayList<IContainer>(this.cp.
+//                getContainer(
+//                IContainer.class));
+        for (IContainer ic : containers) {
             if (Thread.interrupted()) {
-                return true;
-            } else {
-//                if (!ic.getClass().getName().equals(ChromatogramContainer.class.getName()) && !ic.getClass().getName().equals(TreatmentGroupContainer.class.getName())) {
-//                    list.add("db:" + ic.getClass().getName());
-//                }
-                list.add(ic);
+                return false;
             }
-        }
-        for (FileObject fo : getFileChildren()) {
-            if (Thread.interrupted()) {
-                return true;
-            } else {
-//                System.out.println(fobj.getNameExt());
-                if (!fo.getNameExt().endsWith(DBProjectFactory.PROJECT_FILE)) {
-                    list.add(fo);
+            if (ic.getPrecedence() == 0) {
+                if (ic instanceof TreatmentGroupContainer) {
+                    ic.setPrecedence(100000);
+                } else if (ic instanceof DatabaseContainer) {
+                    ic.setPrecedence(200000);
+                } else if (ic instanceof Peak1DContainer) {
+                    ic.setPrecedence(300000);
+                } else if (ic instanceof PeakGroupContainer) {
+                    ic.setPrecedence(500000);
+                } else if (ic instanceof StatisticsContainer) {
+                    ic.setPrecedence(400000);
                 }
             }
         }
+        Collections.sort(containers);
+
+        if (Thread.interrupted()) {
+            return false;
+        } else {
+//                if (!ic.getClass().getName().equals(ChromatogramContainer.class.getName()) && !ic.getClass().getName().equals(TreatmentGroupContainer.class.getName())) {
+//                    list.add("db:" + ic.getClass().getName());
+//                }
+            for (IContainer ic : containers) {
+                if (Thread.interrupted()) {
+                    return false;
+                }
+                if (ic != null) {
+                    list.add(ic);
+                }
+            }
+        }
+
+//        for (FileObject fo : getFileChildren()) {
+//            if (Thread.interrupted()) {
+//                return true;
+//            } else {
+////                System.out.println(fobj.getNameExt());
+//                if (!fo.getNameExt().endsWith(DBProjectFactory.PROJECT_FILE)) {
+//                    list.add(fo);
+//                }
+//            }
+//        }
         return true;
 
 //        System.out.println("Retrieved these containers: "+container.toString());
@@ -94,8 +120,14 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
             Class<? extends IContainer> toFilter) {
         List<IContainer> r = new ArrayList<IContainer>();
         for (IContainer ic : l) {
-            if (!ic.getClass().getName().equals(toFilter.getName())) {
-                r.add(ic);
+            if (Thread.interrupted()) {
+                return Collections.emptyList();
+            } else {
+                if (ic != null) {
+                    if (!ic.getClass().getName().equals(toFilter.getName())) {
+                        r.add(ic);
+                    }
+                }
             }
         }
         return r;
@@ -105,17 +137,22 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     protected Node createNodeForKey(Object key) {
         if (key instanceof IContainer) {
             try {
-                ContainerNode cn = new ContainerNode((IContainer) key, Lookups.
-                        fixed(cp));
+                ContainerNode cn = new ContainerNode((IContainer) key, Lookups.fixed(cp));
+                WeakListeners.propertyChange(this, ((IContainer) key));
                 return cn;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);
             }
         } else if (key instanceof FileObject) {
             try {
-                Node n = DataObject.find((FileObject) key).getNodeDelegate();
-                return new FilterNode(n, new FilterNode.Children(n),
+                DataObject dobj = DataObject.find((FileObject) key);
+//                dobj.addPropertyChangeListener(this);
+                Node n = dobj.getNodeDelegate();
+                FilterNode fn = new FilterNode(n, new FilterNode.Children(n),
                         new ProxyLookup(n.getLookup(), Lookups.fixed(cp)));
+                WeakListeners.propertyChange(this, fn);
+                WeakListeners.propertyChange(this, dobj);
+                return fn;
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -124,11 +161,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     }
 
     @Override
-    public void resultChanged(LookupEvent ev) {
-        Lookup.Result r = (Lookup.Result) ev.getSource();
-        Collection c = r.allInstances();
-        if(!c.isEmpty()) {
-            refresh(true);
-        }
+    public void propertyChange(PropertyChangeEvent pce) {
+        System.out.println("Received prop change event for property " + pce.getPropertyName() + ": " + pce.getOldValue() + "=>" + pce.getNewValue() + " from " + pce.getSource().getClass());
+        refresh(true);
     }
 }

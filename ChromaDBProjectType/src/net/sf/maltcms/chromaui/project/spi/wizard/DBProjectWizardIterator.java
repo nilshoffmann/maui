@@ -53,7 +53,7 @@ public class DBProjectWizardIterator implements WizardDescriptor./*Progress*/Ins
         Map<String, Object> props = wiz.getProperties();
         System.out.println(props);
         File projdir = (File) props.get("projdir");
-        DBProjectFactory.createProject(props, projdir);
+        DBProjectFactory.initGroups(props, projdir);
 
         resultSet.add(FileUtil.createData(projdir));
 

@@ -10,7 +10,7 @@ import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
  *
  * @author nilshoffmann
  */
-public interface INormalizationDescriptor extends IDescriptor {
+public interface INormalizationDescriptor extends IBasicDescriptor {
     public NormalizationType getNormalizationType();
     public void setNormalizationType(NormalizationType normalizationType);
     public double getValue();

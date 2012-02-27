@@ -5,20 +5,22 @@
 package net.sf.maltcms.chromaui.project.api.container;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 
 /**
  *
  * @author nilshoffmann
  */
-public interface IGenericContainer<T extends IDescriptor> extends IDescriptor {
+public interface IGenericContainer<T extends IBasicDescriptor> extends IBasicDescriptor {
 
-    Collection<T> get();
+    final String PROP_MEMBERS = "members";
+    
+    Collection<T> getMembers();
 
-    void set(T... f);
+    void setMembers(T... f);
 
-    void add(T... f);
+    void addMembers(T... f);
 
-    void remove(T... f);
+    void removeMembers(T... f);
     
 }

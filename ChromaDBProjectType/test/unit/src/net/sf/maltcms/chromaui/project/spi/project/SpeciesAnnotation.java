@@ -4,39 +4,33 @@
  */
 package net.sf.maltcms.chromaui.project.spi.project;
 
+import com.db4o.activation.ActivationPurpose;
+import lombok.Data;
+import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IAnnotation;
 
 /**
  *
  * @author nilshoffmann
  */
-public class SpeciesAnnotation implements IAnnotation<Species> {
+@Data
+public class SpeciesAnnotation extends ADescriptor implements IAnnotation<Species> {
 
     private Species species;
+    public final String PROP_SPECIES = "species";
     
     @Override
     public Species getAnnotation() {
+        activate(ActivationPurpose.READ);
         return species;
     }
 
     @Override
     public void setAnnotation(Species species) {
+        activate(ActivationPurpose.WRITE);
+        Species old = this.species;
         this.species = species;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return this.species.getPubmedId();
-    }
-
-    @Override
-    public void setDisplayName(String displayName) {
-        
-    }
-    
-    @Override
-    public String toString() {
-        return species.getOntology()+" "+species.getPubmedId();
+        firePropertyChange(PROP_SPECIES, old, species);
     }
     
 }
