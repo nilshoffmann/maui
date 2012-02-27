@@ -6,11 +6,11 @@ package net.sf.maltcms.chromaui.statistics.pcaViewer;
 
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import visual.GroupPanel;
+import de.unibielefeld.cebitec.lstutz.pca.visual.StandardGUI;
+import java.awt.BorderLayout;
 
 /**
  * Top component which displays something.
@@ -29,12 +29,22 @@ id = "net.sf.maltcms.chromaui.statistics.pcaViewer.PCAViewerTopComponent")
 preferredID = "PCAViewerTopComponent")
 public final class PCAViewerTopComponent extends TopComponent {
 
+    private StandardGUI scene = null;
+    
     public PCAViewerTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(PCAViewerTopComponent.class,
                 "CTL_PCAViewerTopComponent"));
         setToolTipText(NbBundle.getMessage(PCAViewerTopComponent.class,
                 "HINT_PCAViewerTopComponent"));
+    }
+    
+    public void setData(StandardGUI sg) {
+        if(scene==null) {
+            add(sg,BorderLayout.CENTER);
+        }else{
+            throw new IllegalStateException("StandardGUI may only be added once!");
+        }
     }
 
     /** This method is called from within the constructor to
@@ -45,16 +55,7 @@ public final class PCAViewerTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

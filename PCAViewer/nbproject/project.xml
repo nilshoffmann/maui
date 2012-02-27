@@ -16,11 +16,52 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>net.sf.maltcms</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>net.sf.maltcms.chromaui.db4o</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>net.sf.maltcms.chromaui.project</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>net.sf.maltcms.chromaui.rserve</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>net.sf.maltcms.chromaui.ui.support</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.api.progress</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.24.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -75,20 +116,8 @@
             </module-dependencies>
             <public-packages>
                 <package>data</package>
-                <package>javax.jnlp</package>
-                <package>org.jdom</package>
-                <package>org.jdom.adapters</package>
-                <package>org.jdom.filter</package>
-                <package>org.jdom.input</package>
-                <package>org.jdom.output</package>
-                <package>org.jdom.transform</package>
-                <package>org.jdom.xpath</package>
                 <package>visual</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/3dviewer.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/3dviewer.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>
