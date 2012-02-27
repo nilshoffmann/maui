@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module: net.sf.maltcms.chromaui.rserve
-OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/rserve/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
-
