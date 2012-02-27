@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.swinglabs.swingx
+OpenIDE-Module-Localizing-Bundle: org/swinglabs/swingx/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
