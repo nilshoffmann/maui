@@ -4,7 +4,9 @@
  */
 package maltcms.ui.nb.pipelineRunner.ui;
 
+import java.io.File;
 import java.net.URL;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.event.ListSelectionEvent;
@@ -264,6 +266,7 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
         runButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
+        removePipeline = new javax.swing.JButton();
         contentPanel = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -299,6 +302,18 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
         });
         jToolBar1.add(stopButton);
         jToolBar1.add(jSeparator1);
+
+        removePipeline.setIcon(new javax.swing.ImageIcon(getClass().getResource("/maltcms/ui/nb/pipelineRunner/remove.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(removePipeline, org.openide.util.NbBundle.getMessage(PipelineRunnerTopComponent.class, "PipelineRunnerTopComponent.removePipeline.text")); // NOI18N
+        removePipeline.setFocusable(false);
+        removePipeline.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        removePipeline.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        removePipeline.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removePipelineActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(removePipeline);
 
         jSplitPane1.setDividerLocation(150);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -342,7 +357,7 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         MaltcmsLocalHostExecution mlhe = getActiveProcess();
         if (mlhe != null) {
-            MaltcmsLocalHostExecution.createAndRun(mlhe.getConfigurationFile().getName(), mlhe);
+            Future<File> f = MaltcmsLocalHostExecution.createAndRun(mlhe.getConfigurationFile().getName(), mlhe);
             setProcessRunning(mlhe);
         }
         //        Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Configuration: " + ConfigurationUtils.toString(cfg));
@@ -404,6 +419,12 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
             addProcess(mlhe);
         }
     }//GEN-LAST:event_stopButtonActionPerformed
+
+    private void removePipelineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removePipelineActionPerformed
+        Object obj = processList.getSelectedValue();
+        dlm.removeElement(obj);
+    }//GEN-LAST:event_removePipelineActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contentPanel;
     private javax.swing.JScrollPane jScrollPane1;
@@ -412,6 +433,7 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JList processList;
+    private javax.swing.JButton removePipeline;
     private javax.swing.JButton runButton;
     private javax.swing.JList runningProcessList;
     private javax.swing.JButton stopButton;

@@ -138,6 +138,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                 if (domainColumn != -1) {
 //                    System.out.println("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
+                    boolean skipMissing = false;
                     Number domainValue = Double.valueOf(0);
                     Number rangeValue = Double.valueOf(0);
 //                    System.out.println("Class of object: " + o.getClass().getName());
@@ -145,18 +146,30 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
 //                        System.out.println("domain instanceof Number");
                         domainValue = (Number) o;
                     } else if (o instanceof String) {
+                        String value = (String) o;
+                        if (value.equals("-") || value.equals("NA")) {
+                            skipMissing = true;
+                        } else {
 //                        System.out.println("domain instanceof String");
-                        domainValue = Double.parseDouble((String) o);
+                            domainValue = Double.parseDouble((String) o);
+                        }
                     }
                     Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
                     if (val instanceof Number) {
 //                        System.out.println("instanceof Number");
                         rangeValue = (Number) val;
                     } else if (val instanceof String) {
+                        String value = (String) val;
+                        if (value.equals("-") || value.equals("NA")) {
+                            skipMissing = true;
+                        } else {
 //                        System.out.println("range value instanceof String");
-                        rangeValue = Double.parseDouble((String) val);
+                            rangeValue = Double.parseDouble((String) val);
+                        }
                     }
-                    xys.add(domainValue, rangeValue);
+                    if (!skipMissing) {
+                        xys.add(domainValue, rangeValue);
+                    }
                 } else {
                     System.out.println("No domain column set");
                     Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
@@ -165,9 +178,13 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                         Number rangeValue = (Number) val;
                         xys.add(j, rangeValue);
                     } else if (val instanceof String) {
+                        String value = (String) val;
+                        if (value.equals("-") || value.equals("NA")) {
+                        } else {
 //                        System.out.println("instanceof String");
-                        Number rangeValue = Double.parseDouble((String) val);
-                        xys.add(j, rangeValue);
+                            Number rangeValue = Double.parseDouble((String) val);
+                            xys.add(j, rangeValue);
+                        }
                     }
                 }
             }
@@ -181,6 +198,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
             StringBuilder sb = new StringBuilder();
             for (Integer i : selectedColumns) {
                 sb.append(jTable1.getModel().getColumnName(i) + " ");
+                if(sb.length()>30) {
+                    sb.append("...");
+                    break;
+                }
             }
             yaxisLabel = sb.toString();
         }
@@ -485,6 +506,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
             StringBuilder sb = new StringBuilder();
             for (Integer i : selectedColumns) {
                 sb.append(jTable1.getModel().getColumnName(i) + " ");
+                if(sb.length()>30) {
+                    sb.append("...");
+                    break;
+                }
             }
             yaxisLabel = sb.toString();
         }
@@ -526,12 +551,18 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                     Number domainValue = Double.valueOf(0);
                     Number rangeValue = Double.valueOf(0);
                     System.out.println("Class of object: " + o.getClass().getName());
+                    boolean skipMissing = false;
                     if (o instanceof Number) {
                         System.out.println("domain instanceof Number");
                         domainValue = ((Number) o);
                     } else if (o instanceof String) {
                         System.out.println("domain instanceof String");
-                        domainValue = Double.parseDouble((String) o);
+                        String value = (String) o;
+                        if (value.equals("-") || value.equals("NA")) {
+                            skipMissing = true;
+                        } else {
+                            domainValue = Double.parseDouble((String) o);
+                        }
                     }
                     Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
                     if (val instanceof Number) {
@@ -540,21 +571,36 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
 
                     } else if (val instanceof String) {
                         System.out.println("value instanceof String");
-                        rangeValue = Double.parseDouble((String) val);
+                        String value = (String) val;
+                        if (value.equals("-") || value.equals("NA")) {
+                            skipMissing = true;
+                        } else {
+                            rangeValue = Double.parseDouble((String) val);
+                        }
                     }
-                    xys.add(domainValue, rangeValue);
+                    if (!skipMissing) {
+                        xys.add(domainValue, rangeValue);
+                    }
                 } else {
                     System.out.println("No domain column set");
                     Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
                     Number rangeValue = Double.valueOf(0);
+                    boolean skipMissing = false;
                     if (val instanceof Number) {
                         System.out.println("instanceof Number");
                         rangeValue = ((Number) val);
-                    }else if(val instanceof String) {
+                    } else if (val instanceof String) {
                         System.out.println("instance of String");
-                        rangeValue = Double.parseDouble((String)val);
+                        String value = (String) val;
+                        if (value.equals("-") || value.equals("NA")) {
+                            skipMissing = true;
+                        } else {
+                            rangeValue = Double.parseDouble((String) val);
+                        }
                     }
-                    xys.add(j, rangeValue);
+                    if (!skipMissing) {
+                        xys.add(j, rangeValue);
+                    }
                 }
 
             }
@@ -567,6 +613,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
             StringBuilder sb = new StringBuilder();
             for (Integer i : selectedColumns) {
                 sb.append(jTable1.getModel().getColumnName(i) + " ");
+                if(sb.length()>30) {
+                    sb.append("...");
+                    break;
+                }
             }
             yaxisLabel = sb.toString();
         }

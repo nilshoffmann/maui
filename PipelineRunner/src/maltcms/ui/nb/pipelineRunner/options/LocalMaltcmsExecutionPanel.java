@@ -115,6 +115,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         if(ret==JFileChooser.APPROVE_OPTION) {
             File f = jfc.getSelectedFile();
             maltcmsInstallationPath.setText(f.getParent());
+            controller.changed();
             checkVersion(f.getParentFile().getAbsolutePath());
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -133,6 +134,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         // someCheckBox.setSelected(Preferences.userNodeForPackage(LocalMaltcmsExecutionPanel.class).getBoolean("someFlag", false));
         // or for org.openide.util with API spec. version >= 7.4:
         maltcmsInstallationPath.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", ""));
+        checkVersion(maltcmsInstallationPath.getText());
         // or:
         // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
     }
@@ -143,7 +145,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         // Preferences.userNodeForPackage(LocalMaltcmsExecutionPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
         // or for org.openide.util with API spec. version >= 7.4:
         NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsInstallationPath", maltcmsInstallationPath.getText());
-        NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsInstallationPath", maltcmsInstallationPath.getText());
+//        NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsVersion", maltcmsVersion.getText());
         // or:
         // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
     }
@@ -156,6 +158,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
             
             maltcmsVersion.setText(pc.getString("application.version", "NA"));
             maltcmsVersion.setEnabled(true);
+            controller.changed();
         } catch (ConfigurationException ex) {
             Exceptions.printStackTrace(ex);
         }

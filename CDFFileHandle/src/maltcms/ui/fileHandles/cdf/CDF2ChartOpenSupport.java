@@ -64,44 +64,11 @@ public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, Clo
         Chromatogram1DChartProvider c1d = new Chromatogram1DChartProvider();
         JFCTopComponent jtc = new JFCTopComponent();
         JFreeChart jfc = c1d.provideChart(new LinkedList<IFileFragment>(fragments));
-        if(jfc==null) {
-            
-//            throw new IllegalArgumentException("Chart creation was cancelled or failed!");
+        if (jfc == null) {
             return null;
         }
         jtc.setChart(jfc);
         jtc.setDisplayName("Chart");
         return jtc;
-
-
     }
-//                    ChromatogramOpenAction.this.jFreeChartViewer.addChart(jfc2, jFreeChartViewer.getLastOpenDir().getName());
-//                } else {
-//                    XYPlot xyp = jfreechart.getXYPlot();
-//                    for (XYAnnotation xya : annotations) {
-//                        xyp.addAnnotation(xya);
-//                    }
-//                    XYDataset xyds = xyp.getDataset();
-//                    if (xyds instanceof XYSeriesCollection) {
-//                        XYSeriesCollection xysc = (XYSeriesCollection) xyds;
-//                        for (int j = 0; j < arrays.length; j++) {
-//                            try {
-//                                XYSeries q = xysc.getSeries(labels[j]);
-//                                System.err.println("Series with name " + labels[j] + " already present!");
-//                            } catch (UnknownKeyException uke) {
-//                                XYSeries xys = new XYSeries(labels[j]);
-//                                IndexIterator ii = arrays[j].getIndexIterator();
-//                                int cnt = 0;
-//                                Array domain = domains[j] == null ? ArrayTools.indexArray(arrays[j].getShape()[0], 0) : domains[j];
-//                                IndexIterator di = domain.getIndexIterator();
-//                                while (ii.hasNext() && di.hasNext()) {
-//                                    xys.add(di.getDoubleNext(), ii.getDoubleNext());
-//                                    cnt++;
-//                                }
-//                                xysc.addSeries(xys);
-//                            }
-//                        }
-//                    } else {
-//                        System.err.println("XYDataset is not of type XYSeriesCollection, cant handle!");
-//                    }
 }

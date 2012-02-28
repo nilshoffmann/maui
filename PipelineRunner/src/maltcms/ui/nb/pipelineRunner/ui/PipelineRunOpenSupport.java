@@ -73,7 +73,7 @@ public class PipelineRunOpenSupport extends OpenSupport implements OpenCookie, C
 ////                }
 //                }
 //            }
-            
+
 
 
 //            String files = sb.substring(0, sb.length()-1);
@@ -81,9 +81,10 @@ public class PipelineRunOpenSupport extends OpenSupport implements OpenCookie, C
         } else {
             throw new NotImplementedException("Can not open Maltcms process for non IChromAUI projects!");
         }
-        if(files.isEmpty()) {
-            throw new IllegalArgumentException("Could not retrieve any files for project!");
-        }
+//        if(files.isEmpty()) {
+//            return null;
+//            //throw new IllegalArgumentException("Could not retrieve any files for project!");
+//        }
         //TODO: implement individual configurations support and automatic adding 
         //of output.basedir and input.dataInfo etc.
         PipelineRunnerTopComponent prtc = PipelineRunnerTopComponent.findInstance();
@@ -92,25 +93,14 @@ public class PipelineRunOpenSupport extends OpenSupport implements OpenCookie, C
         if (maltcmsPath.equals("NA")) {
             throw new IllegalArgumentException("Please set maltcms path in settings!");
         }
-        try {
-            MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), f, FileUtil.toFile(fo), files.toArray(new File[files.size()]));
-            prtc.addProcess(mlhe);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+        if (files != null && !files.isEmpty()) {
+            try {
+                MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), f, FileUtil.toFile(fo), files.toArray(new File[files.size()]));
+                prtc.addProcess(mlhe);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
-//        PropertiesConfiguration pc;
-//        try {
-//            pc = new PropertiesConfiguration(fo.getURL());
-////            Logger.getLogger(PipelineRunOpenSupport.class.getName()).info("Configuration: " + ConfigurationUtils.toString(pc));
-//
-////            prtc.addUserConfiguration(new File(fo.getURL().toURI()));
-////        } catch (URISyntaxException ex) {
-////            Exceptions.printStackTrace(ex);
-//        } catch (FileStateInvalidException ex) {
-//            Exceptions.printStackTrace(ex);
-//        } catch (ConfigurationException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
         return prtc;
     }
 }

@@ -123,17 +123,23 @@ public class DataTable {
                     IChromatogramDescriptor chrom = rowNames.get(i);
                     ITreatmentGroupDescriptor treatmentGroup = chrom.getTreatmentGroup();
                     Set<IPeakAnnotationDescriptor> s = groupMap.get(treatmentGroup);
-                    switch (imputationMode) {
-                        case GROUP_MEAN:
-                            values[i] = getGroupMeanArea(s, normalizer);
-                            break;
-                        case GROUP_MEDIAN:
-                            values[i] = getGroupMedianArea(s, normalizer);
-                            break;
-                        case ZERO:
-                            values[i] = 0;
-                            break;
+                    if (s != null) {
+                        switch (imputationMode) {
+                            case GROUP_MEAN:
+                                values[i] = getGroupMeanArea(s, normalizer);
+                                break;
+                            case GROUP_MEDIAN:
+                                values[i] = getGroupMedianArea(s, normalizer);
+                                break;
+                            case ZERO:
+                                values[i] = 0;
+                                break;
 
+                        }
+                    } else {
+                        //FIXME add fallback to complete dataset imputation?
+                        System.err.println("Warning: group had no values, setting to 0!");
+                        values[i] = 0;
                     }
                 }
             }
@@ -150,7 +156,7 @@ public class DataTable {
         }
         return null;
     }
-    
+
     public REXP getRowNamesREXP() {
         String[] rows = new String[rowNames.size()];
         int i = 0;
@@ -160,11 +166,11 @@ public class DataTable {
         REXPString rexpRowNames = new REXPString(rows);
         return rexpRowNames;
     }
-    
+
     public List<IChromatogramDescriptor> getRowNames() {
         return this.rowNames;
     }
-    
+
     public List<IPeakGroupDescriptor> getVariables() {
         return new ArrayList<IPeakGroupDescriptor>(groupToValues.keySet());
     }
@@ -177,8 +183,8 @@ public class DataTable {
             throw new REXPMismatchException(new REXPList(l), "data frame (contents must be vectors)");
         }
         REXPVector fe = (REXPVector) l.at(0);
-        if( fe.length()!=rowNames.length() ) {
-            throw new REXPMismatchException(rowNames, "row names (must have dim="+fe.length()+")");
+        if (fe.length() != rowNames.length()) {
+            throw new REXPMismatchException(rowNames, "row names (must have dim=" + fe.length() + ")");
         }
         return new REXPGenericVector(l,
                 new REXPList(

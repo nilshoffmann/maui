@@ -6,7 +6,6 @@ package net.sf.maltcms.chromaui.groovy;
 
 import net.sf.maltcms.chromaui.ui.support.api.ContextAction;
 import groovy.lang.GroovyClassLoader;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -28,10 +27,8 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
-import net.sf.maltcms.chromaui.groovy.options.GroovyScriptLocationsPanel;
 
 /**
  *

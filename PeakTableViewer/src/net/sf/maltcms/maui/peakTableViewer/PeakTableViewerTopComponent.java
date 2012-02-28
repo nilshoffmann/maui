@@ -37,8 +37,7 @@ import org.openide.util.lookup.Lookups;
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(
-dtd = "-//net.sf.maltcms.maui.peakTableViewer//PeakTableViewer//EN",
+@ConvertAsProperties(dtd = "-//net.sf.maltcms.maui.peakTableViewer//PeakTableViewer//EN",
 autostore = false)
 @TopComponent.Description(preferredID = "PeakTableViewerTopComponent",
 //iconBase="SET/PATH/TO/ICON/HERE", 
@@ -126,7 +125,7 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
     public void resultChanged(LookupEvent ev) {
         System.out.println("Found IPeakGroupDescriptor in lookup");
         IPeakGroupDescriptor container = null;
-        if (result.allInstances().isEmpty()) {
+        if (result.allInstances().isEmpty() || result == null) {
             return;
         }
         IChromAUIProject project = Utilities.actionsGlobalContext().lookup(
@@ -139,10 +138,10 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
         Iterator<? extends IPeakGroupDescriptor> iter = result.allInstances().
                 iterator();
         if (iter.hasNext()) {
-            container = (IPeakGroupDescriptor)iter.next();
+            container = (IPeakGroupDescriptor) iter.next();
             setDisplayName("Peaks for " + project.getLocation().getName());
             System.out.println("Setting node factory");
-            final Lookup lkp = Lookups.fixed(container,project);
+            final Lookup lkp = Lookups.fixed(container, project);
             Children.Keys<IPeakGroupDescriptor> children = new Children.Keys<IPeakGroupDescriptor>() {
 
                 @Override
@@ -152,33 +151,35 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
                 @Override
                 protected Node[] createNodes(IPeakGroupDescriptor key) {
-                    System.out.println("Creating node for key: "+key);
+                    System.out.println("Creating node for key: " + key);
                     Node[] nodes = new Node[key.getPeakAnnotationDescriptors().size()];
                     int i = 0;
-                    for(IPeakAnnotationDescriptor descr:key.getPeakAnnotationDescriptors()){
+                    for (IPeakAnnotationDescriptor descr : key.getPeakAnnotationDescriptors()) {
                         try {
-                            nodes[i++] = new DescriptorNode(descr,lkp);
+                            nodes[i++] = new DescriptorNode(descr, lkp);
                         } catch (IntrospectionException ex) {
                             Exceptions.printStackTrace(ex);
                         }
                     }
                     return nodes;
                 }
-                
             };
-            
-            Node root = new AbstractNode(children,Lookups.fixed(container,project));
+
+            Node root = new AbstractNode(children, Lookups.fixed(container, project));
             System.out.println("Setting root context");
             manager.setRootContext(root);
-            if (view != null) {
-                remove(view);
-            }
-            view = new OutlineView("Peaks of Peak Group");
-            view.setTreeSortable(true);
+//            if (view != null) {
+//                remove(view);
+//            }
+            if (view == null) {
+                view = new OutlineView("Peaks of Peak Group");
+                view.setTreeSortable(true);
 //        view.setPropertyColumns("name",
 //                "Name", "value", "Normalization Value");
-            view.getOutline().setRootVisible(false);
-            add(view, BorderLayout.CENTER);
+                view.getOutline().setRootVisible(false);
+                add(view, BorderLayout.CENTER);
+            }
+
 
             revalidate();
         }

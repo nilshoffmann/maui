@@ -15,7 +15,7 @@ import org.openide.util.Lookup;
 categoryName = "#AdvancedOption_DisplayName_LocalMaltcmsExecution",
 keywords = "#AdvancedOption_Keywords_LocalMaltcmsExecution",
 keywordsCategory = "Maui Settings/LocalMaltcmsExecution",
-        iconBase = "maltcms/ui/nb/pipelineRunner/maltcms-pipeline-runner.png")
+        iconBase = "maltcms/ui/nb/pipelineRunner/media-playback-start32large.png")
 public final class LocalMaltcmsExecutionOptionsPanelController extends OptionsPanelController {
 
     private LocalMaltcmsExecutionPanel panel;

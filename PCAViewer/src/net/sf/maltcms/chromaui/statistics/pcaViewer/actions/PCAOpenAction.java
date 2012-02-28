@@ -54,6 +54,7 @@ public final class PCAOpenAction implements ActionListener {
             PCAViewerTopComponent pvtc = new PCAViewerTopComponent();
             pvtc.setData(gui);
             pvtc.open();
+            pvtc.requestActive();
 //        } catch (IOException ex) {
 //            Exceptions.printStackTrace(ex);
 //        }

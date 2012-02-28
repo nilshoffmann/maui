@@ -184,6 +184,7 @@ public class CSV2JFCLoader implements Runnable {
                 values.setAutoRange(false);
                 values.setRangeWithMargins(min, max);
                 PaintScaleLegend psl = new PaintScaleLegend(ps,values);
+                psl.setBackgroundPaint(jfc.getBackgroundPaint());
                 jfc.addSubtitle(psl);
                 psl.setStripWidth(50);
                 psl.setPadding(20, 20, 20, 20);
