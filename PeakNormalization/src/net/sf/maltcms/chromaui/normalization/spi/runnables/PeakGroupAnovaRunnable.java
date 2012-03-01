@@ -177,6 +177,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                             ad.setDisplayName(ad.getPeakGroupDescriptor().
                                     getDisplayName());
                             anovaDescriptors.addMembers(ad);
+                            ad.setPvalueAdjustmentMethod(pvalueAdjustmentMethod.getDisplayName());
                         }
 
                     }
