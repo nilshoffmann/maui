@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.mozilla.rhino.patched/1">
+    <module_version install_time="1302219304913" last="false" origin="installer" specification_version="1.112.1">
+        <file crc="977737551" name="config/Modules/org-mozilla-rhino-patched.xml"/>
+        <file crc="2734619614" name="modules/org-mozilla-rhino-patched.jar"/>
+    </module_version>
+    <module_version install_time="1316520535871" last="true" origin="NetBeans Distribution" specification_version="1.113.1">
+        <file crc="2920545853" name="modules/locale/org-mozilla-rhino-patched_ja.jar"/>
+        <file crc="3440985056" name="modules/locale/org-mozilla-rhino-patched_pt_BR.jar"/>
+        <file crc="2915354410" name="modules/locale/org-mozilla-rhino-patched_ru.jar"/>
+        <file crc="56262646" name="modules/locale/org-mozilla-rhino-patched_zh_CN.jar"/>
+        <file crc="977737551" name="config/Modules/org-mozilla-rhino-patched.xml"/>
+        <file crc="279802548" name="modules/org-mozilla-rhino-patched.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.tasklist.todo/1">
+    <module_version install_time="1302220118609" last="false" origin="installer" specification_version="1.12.1.1">
+        <file crc="496296242" name="config/Modules/org-netbeans-modules-tasklist-todo.xml"/>
+        <file crc="1415648500" name="modules/org-netbeans-modules-tasklist-todo.jar"/>
+    </module_version>
+    <module_version install_time="1316520526998" last="true" origin="NetBeans Distribution" specification_version="1.13.1.1">
+        <file crc="269896881" name="modules/locale/org-netbeans-modules-tasklist-todo_ja.jar"/>
+        <file crc="31580925" name="modules/locale/org-netbeans-modules-tasklist-todo_pt_BR.jar"/>
+        <file crc="913209097" name="modules/locale/org-netbeans-modules-tasklist-todo_ru.jar"/>
+        <file crc="246371528" name="modules/locale/org-netbeans-modules-tasklist-todo_zh_CN.jar"/>
+        <file crc="496296242" name="config/Modules/org-netbeans-modules-tasklist-todo.xml"/>
+        <file crc="2682487872" name="modules/org-netbeans-modules-tasklist-todo.jar"/>
+    </module_version>
+</module>

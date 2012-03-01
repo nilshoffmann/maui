@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.javascript.editing/1">
+    <module_version install_time="1302220955039" last="false" origin="installer" specification_version="0.99.1">
+        <file crc="1888599495" name="config/Modules/org-netbeans-modules-javascript-editing.xml"/>
+        <file crc="736243149" name="jsstubs/allstubs.zip"/>
+        <file crc="2245282543" name="jsstubs/netbeans-index-1.119-javascript-6.115.zip"/>
+        <file crc="610947138" name="jsstubs/sdocs.zip"/>
+        <file crc="1646029134" name="modules/org-netbeans-modules-javascript-editing.jar"/>
+    </module_version>
+    <module_version install_time="1316520529705" last="true" origin="NetBeans Distribution" specification_version="0.100.1">
+        <file crc="560364968" name="modules/locale/org-netbeans-modules-javascript-editing_ja.jar"/>
+        <file crc="699787154" name="modules/locale/org-netbeans-modules-javascript-editing_pt_BR.jar"/>
+        <file crc="424720728" name="modules/locale/org-netbeans-modules-javascript-editing_ru.jar"/>
+        <file crc="3477690078" name="modules/locale/org-netbeans-modules-javascript-editing_zh_CN.jar"/>
+        <file crc="1888599495" name="config/Modules/org-netbeans-modules-javascript-editing.xml"/>
+        <file crc="1175104283" name="jsstubs/allstubs.zip"/>
+        <file crc="2245282543" name="jsstubs/netbeans-index-1.119-javascript-6.115.zip"/>
+        <file crc="610947138" name="jsstubs/sdocs.zip"/>
+        <file crc="1902027839" name="modules/org-netbeans-modules-javascript-editing.jar"/>
+    </module_version>
+</module>

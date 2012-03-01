@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.schema2beans/1">
+    <module_version install_time="1302219243332" last="false" origin="installer" specification_version="1.28.1">
+        <file crc="3280133545" name="config/Modules/org-netbeans-modules-schema2beans.xml"/>
+        <file crc="3785645985" name="modules/org-netbeans-modules-schema2beans.jar"/>
+    </module_version>
+    <module_version install_time="1316520532543" last="true" origin="NetBeans Distribution" specification_version="1.29.1">
+        <file crc="1109611188" name="modules/locale/org-netbeans-modules-schema2beans_ja.jar"/>
+        <file crc="2607922627" name="modules/locale/org-netbeans-modules-schema2beans_pt_BR.jar"/>
+        <file crc="3025685369" name="modules/locale/org-netbeans-modules-schema2beans_ru.jar"/>
+        <file crc="4216860761" name="modules/locale/org-netbeans-modules-schema2beans_zh_CN.jar"/>
+        <file crc="3280133545" name="config/Modules/org-netbeans-modules-schema2beans.xml"/>
+        <file crc="3863935288" name="modules/org-netbeans-modules-schema2beans.jar"/>
+    </module_version>
+</module>

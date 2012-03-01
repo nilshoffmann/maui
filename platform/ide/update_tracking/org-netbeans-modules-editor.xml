@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.editor/3">
+    <module_version install_time="1302220369127" last="false" origin="installer" specification_version="1.56.1.5.13.8">
+        <file crc="3066718341" name="config/ModuleAutoDeps/org-netbeans-modules-editor.xml"/>
+        <file crc="2401213403" name="config/Modules/org-netbeans-modules-editor.xml"/>
+        <file crc="2177486242" name="modules/org-netbeans-modules-editor.jar"/>
+    </module_version>
+    <module_version install_time="1306673607612" last="false" origin="NetBeans Distribution" specification_version="1.56.1.5.13.9">
+        <file crc="1456034381" name="modules/locale/org-netbeans-modules-editor_ja.jar"/>
+        <file crc="3074344011" name="modules/locale/org-netbeans-modules-editor_pt_BR.jar"/>
+        <file crc="3634928853" name="modules/locale/org-netbeans-modules-editor_ru.jar"/>
+        <file crc="2037708452" name="modules/locale/org-netbeans-modules-editor_zh_CN.jar"/>
+        <file crc="3066718341" name="config/ModuleAutoDeps/org-netbeans-modules-editor.xml"/>
+        <file crc="2401213403" name="config/Modules/org-netbeans-modules-editor.xml"/>
+        <file crc="3528972313" name="modules/org-netbeans-modules-editor.jar"/>
+    </module_version>
+    <module_version install_time="1316520530193" last="true" origin="NetBeans Distribution" specification_version="1.57.2.5.13.10">
+        <file crc="4001980546" name="modules/locale/org-netbeans-modules-editor_ja.jar"/>
+        <file crc="2959196223" name="modules/locale/org-netbeans-modules-editor_pt_BR.jar"/>
+        <file crc="122473499" name="modules/locale/org-netbeans-modules-editor_ru.jar"/>
+        <file crc="65785929" name="modules/locale/org-netbeans-modules-editor_zh_CN.jar"/>
+        <file crc="3066718341" name="config/ModuleAutoDeps/org-netbeans-modules-editor.xml"/>
+        <file crc="2401213403" name="config/Modules/org-netbeans-modules-editor.xml"/>
+        <file crc="3963640699" name="modules/org-netbeans-modules-editor.jar"/>
+    </module_version>
+</module>

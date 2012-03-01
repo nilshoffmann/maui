@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.dlight.terminal">
+    <module_version install_time="1302220139386" last="false" origin="installer" specification_version="1.5.1.1">
+        <file crc="2542683547" name="config/Modules/org-netbeans-modules-dlight-terminal.xml"/>
+        <file crc="4147279538" name="modules/org-netbeans-modules-dlight-terminal.jar"/>
+    </module_version>
+    <module_version install_time="1316520534665" last="true" origin="NetBeans Distribution" specification_version="1.6.1.1">
+        <file crc="4071808020" name="modules/locale/org-netbeans-modules-dlight-terminal_ja.jar"/>
+        <file crc="3726915937" name="modules/locale/org-netbeans-modules-dlight-terminal_pt_BR.jar"/>
+        <file crc="4288831400" name="modules/locale/org-netbeans-modules-dlight-terminal_ru.jar"/>
+        <file crc="1977194942" name="modules/locale/org-netbeans-modules-dlight-terminal_zh_CN.jar"/>
+        <file crc="2542683547" name="config/Modules/org-netbeans-modules-dlight-terminal.xml"/>
+        <file crc="1349701146" name="modules/org-netbeans-modules-dlight-terminal.jar"/>
+    </module_version>
+</module>

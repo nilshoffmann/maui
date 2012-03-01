@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.xml.multiview/1">
+    <module_version install_time="1302220060734" last="false" origin="installer" specification_version="1.18.1.2">
+        <file crc="3843291236" name="config/Modules/org-netbeans-modules-xml-multiview.xml"/>
+        <file crc="1642904034" name="modules/org-netbeans-modules-xml-multiview.jar"/>
+    </module_version>
+    <module_version install_time="1316520524285" last="true" origin="NetBeans Distribution" specification_version="1.19.1.2">
+        <file crc="2229336946" name="modules/locale/org-netbeans-modules-xml-multiview_ja.jar"/>
+        <file crc="120729518" name="modules/locale/org-netbeans-modules-xml-multiview_pt_BR.jar"/>
+        <file crc="2354618483" name="modules/locale/org-netbeans-modules-xml-multiview_ru.jar"/>
+        <file crc="590110499" name="modules/locale/org-netbeans-modules-xml-multiview_zh_CN.jar"/>
+        <file crc="3843291236" name="config/Modules/org-netbeans-modules-xml-multiview.xml"/>
+        <file crc="4155977321" name="modules/org-netbeans-modules-xml-multiview.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.projectimport.eclipse.core/1">
+    <module_version install_time="1302221431917" last="false" origin="installer" specification_version="2.12.1">
+        <file crc="985807201" name="config/Modules/org-netbeans-modules-projectimport-eclipse-core.xml"/>
+        <file crc="878725671" name="modules/org-netbeans-modules-projectimport-eclipse-core.jar"/>
+    </module_version>
+    <module_version install_time="1316520552762" last="true" origin="NetBeans Distribution" specification_version="2.13.1">
+        <file crc="807122191" name="modules/locale/org-netbeans-modules-projectimport-eclipse-core_ja.jar"/>
+        <file crc="1452158769" name="modules/locale/org-netbeans-modules-projectimport-eclipse-core_pt_BR.jar"/>
+        <file crc="2594701800" name="modules/locale/org-netbeans-modules-projectimport-eclipse-core_ru.jar"/>
+        <file crc="1784528951" name="modules/locale/org-netbeans-modules-projectimport-eclipse-core_zh_CN.jar"/>
+        <file crc="985807201" name="config/Modules/org-netbeans-modules-projectimport-eclipse-core.xml"/>
+        <file crc="4020670236" name="modules/org-netbeans-modules-projectimport-eclipse-core.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.java.hints.processor">
+    <module_version install_time="1302219410630" last="false" origin="installer" specification_version="1.6.1.1.13">
+        <file crc="1443179671" name="config/Modules/org-netbeans-modules-java-hints-processor.xml"/>
+        <file crc="3783069126" name="modules/org-netbeans-modules-java-hints-processor.jar"/>
+    </module_version>
+    <module_version install_time="1316520557034" last="true" origin="NetBeans Distribution" specification_version="1.7.1.1.15">
+        <file crc="2893530378" name="modules/locale/org-netbeans-modules-java-hints-processor_ja.jar"/>
+        <file crc="4249719392" name="modules/locale/org-netbeans-modules-java-hints-processor_pt_BR.jar"/>
+        <file crc="2275942863" name="modules/locale/org-netbeans-modules-java-hints-processor_ru.jar"/>
+        <file crc="2691764908" name="modules/locale/org-netbeans-modules-java-hints-processor_zh_CN.jar"/>
+        <file crc="1443179671" name="config/Modules/org-netbeans-modules-java-hints-processor.xml"/>
+        <file crc="1025819708" name="modules/org-netbeans-modules-java-hints-processor.jar"/>
+    </module_version>
+</module>

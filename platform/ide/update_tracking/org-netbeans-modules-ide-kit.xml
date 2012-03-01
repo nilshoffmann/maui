@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.ide.kit">
+    <module_version install_time="1302221037477" last="false" origin="installer" specification_version="1.14.1">
+        <file crc="1583991425" name="VERSION.txt"/>
+        <file crc="3415496542" name="config/Modules/org-netbeans-modules-ide-kit.xml"/>
+        <file crc="3377210759" name="modules/org-netbeans-modules-ide-kit.jar"/>
+    </module_version>
+    <module_version install_time="1316520526005" last="true" origin="NetBeans Distribution" specification_version="1.15.1">
+        <file crc="1798335613" name="modules/locale/org-netbeans-modules-ide-kit_ja.jar"/>
+        <file crc="3469400280" name="modules/locale/org-netbeans-modules-ide-kit_pt_BR.jar"/>
+        <file crc="3713037328" name="modules/locale/org-netbeans-modules-ide-kit_ru.jar"/>
+        <file crc="2171308764" name="modules/locale/org-netbeans-modules-ide-kit_zh_CN.jar"/>
+        <file crc="287857734" name="VERSION.txt"/>
+        <file crc="3415496542" name="config/Modules/org-netbeans-modules-ide-kit.xml"/>
+        <file crc="2291171052" name="modules/org-netbeans-modules-ide-kit.jar"/>
+    </module_version>
+</module>

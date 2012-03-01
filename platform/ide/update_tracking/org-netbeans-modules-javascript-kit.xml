@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.javascript.kit/1">
+    <module_version install_time="1302221018550" last="false" origin="installer" specification_version="0.114.1">
+        <file crc="1357808967" name="config/Modules/org-netbeans-modules-javascript-kit.xml"/>
+        <file crc="520315225" name="modules/org-netbeans-modules-javascript-kit.jar"/>
+    </module_version>
+    <module_version install_time="1316520517045" last="true" origin="NetBeans Distribution" specification_version="0.115.1">
+        <file crc="2630935636" name="modules/locale/org-netbeans-modules-javascript-kit_ja.jar"/>
+        <file crc="2903421360" name="modules/locale/org-netbeans-modules-javascript-kit_pt_BR.jar"/>
+        <file crc="986614402" name="modules/locale/org-netbeans-modules-javascript-kit_ru.jar"/>
+        <file crc="3845269574" name="modules/locale/org-netbeans-modules-javascript-kit_zh_CN.jar"/>
+        <file crc="1357808967" name="config/Modules/org-netbeans-modules-javascript-kit.xml"/>
+        <file crc="251914826" name="modules/org-netbeans-modules-javascript-kit.jar"/>
+    </module_version>
+</module>

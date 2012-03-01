@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.editor.errorstripe.api/1">
+    <module_version install_time="1302219391198" last="false" origin="installer" specification_version="2.15.1.1">
+        <file crc="437455388" name="config/Modules/org-netbeans-modules-editor-errorstripe-api.xml"/>
+        <file crc="175546646" name="modules/org-netbeans-modules-editor-errorstripe-api.jar"/>
+    </module_version>
+    <module_version install_time="1316520536636" last="true" origin="NetBeans Distribution" specification_version="2.16.1.1">
+        <file crc="3429611471" name="modules/locale/org-netbeans-modules-editor-errorstripe-api_ja.jar"/>
+        <file crc="2097846944" name="modules/locale/org-netbeans-modules-editor-errorstripe-api_pt_BR.jar"/>
+        <file crc="1922075146" name="modules/locale/org-netbeans-modules-editor-errorstripe-api_ru.jar"/>
+        <file crc="4085192785" name="modules/locale/org-netbeans-modules-editor-errorstripe-api_zh_CN.jar"/>
+        <file crc="437455388" name="config/Modules/org-netbeans-modules-editor-errorstripe-api.xml"/>
+        <file crc="113132801" name="modules/org-netbeans-modules-editor-errorstripe-api.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.editor.kit">
+    <module_version install_time="1302221020264" last="false" origin="installer" specification_version="1.12.1">
+        <file crc="1726315458" name="config/Modules/org-netbeans-modules-editor-kit.xml"/>
+        <file crc="536864011" name="modules/org-netbeans-modules-editor-kit.jar"/>
+    </module_version>
+    <module_version install_time="1316520525383" last="true" origin="NetBeans Distribution" specification_version="1.13.1">
+        <file crc="3935167883" name="modules/locale/org-netbeans-modules-editor-kit_ja.jar"/>
+        <file crc="4205857670" name="modules/locale/org-netbeans-modules-editor-kit_pt_BR.jar"/>
+        <file crc="4098319653" name="modules/locale/org-netbeans-modules-editor-kit_ru.jar"/>
+        <file crc="2602661369" name="modules/locale/org-netbeans-modules-editor-kit_zh_CN.jar"/>
+        <file crc="1726315458" name="config/Modules/org-netbeans-modules-editor-kit.xml"/>
+        <file crc="3654775456" name="modules/org-netbeans-modules-editor-kit.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.gsf.testrunner">
+    <module_version install_time="1302220721218" last="false" origin="installer" specification_version="1.19.1">
+        <file crc="1006638708" name="config/Modules/org-netbeans-modules-gsf-testrunner.xml"/>
+        <file crc="1805526230" name="modules/org-netbeans-modules-gsf-testrunner.jar"/>
+    </module_version>
+    <module_version install_time="1316520527436" last="true" origin="NetBeans Distribution" specification_version="1.20.2">
+        <file crc="3401381781" name="modules/locale/org-netbeans-modules-gsf-testrunner_ja.jar"/>
+        <file crc="2544961797" name="modules/locale/org-netbeans-modules-gsf-testrunner_pt_BR.jar"/>
+        <file crc="3081135864" name="modules/locale/org-netbeans-modules-gsf-testrunner_ru.jar"/>
+        <file crc="3691264451" name="modules/locale/org-netbeans-modules-gsf-testrunner_zh_CN.jar"/>
+        <file crc="1006638708" name="config/Modules/org-netbeans-modules-gsf-testrunner.xml"/>
+        <file crc="3145399845" name="modules/org-netbeans-modules-gsf-testrunner.jar"/>
+    </module_version>
+</module>

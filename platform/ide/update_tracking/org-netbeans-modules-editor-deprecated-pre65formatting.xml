@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.editor.deprecated.pre65formatting/0">
+    <module_version install_time="1302220384336" last="false" origin="installer" specification_version="1.3.1.1.5.13.8">
+        <file crc="1017076465" name="config/Modules/org-netbeans-modules-editor-deprecated-pre65formatting.xml"/>
+        <file crc="2371757638" name="modules/org-netbeans-modules-editor-deprecated-pre65formatting.jar"/>
+    </module_version>
+    <module_version install_time="1306673607833" last="false" origin="NetBeans Distribution" specification_version="1.3.1.1.5.13.9">
+        <file crc="2096948354" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_ja.jar"/>
+        <file crc="2222782167" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_pt_BR.jar"/>
+        <file crc="2023792924" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_ru.jar"/>
+        <file crc="3864332069" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_zh_CN.jar"/>
+        <file crc="1017076465" name="config/Modules/org-netbeans-modules-editor-deprecated-pre65formatting.xml"/>
+        <file crc="3735161883" name="modules/org-netbeans-modules-editor-deprecated-pre65formatting.jar"/>
+    </module_version>
+    <module_version install_time="1316520519371" last="true" origin="NetBeans Distribution" specification_version="1.4.1.1.5.13.10">
+        <file crc="2641449952" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_ja.jar"/>
+        <file crc="1529714914" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_pt_BR.jar"/>
+        <file crc="3614567000" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_ru.jar"/>
+        <file crc="1915642863" name="modules/locale/org-netbeans-modules-editor-deprecated-pre65formatting_zh_CN.jar"/>
+        <file crc="1017076465" name="config/Modules/org-netbeans-modules-editor-deprecated-pre65formatting.xml"/>
+        <file crc="3983694804" name="modules/org-netbeans-modules-editor-deprecated-pre65formatting.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="org.netbeans.modules.javascript.hints/1">
+    <module_version install_time="1302221015467" last="false" origin="installer" specification_version="0.48.1">
+        <file crc="2801559414" name="config/Modules/org-netbeans-modules-javascript-hints.xml"/>
+        <file crc="473435994" name="modules/org-netbeans-modules-javascript-hints.jar"/>
+    </module_version>
+    <module_version install_time="1316520519862" last="true" origin="NetBeans Distribution" specification_version="0.49.1">
+        <file crc="2733281465" name="modules/locale/org-netbeans-modules-javascript-hints_ja.jar"/>
+        <file crc="526404110" name="modules/locale/org-netbeans-modules-javascript-hints_pt_BR.jar"/>
+        <file crc="2647814540" name="modules/locale/org-netbeans-modules-javascript-hints_ru.jar"/>
+        <file crc="1591282808" name="modules/locale/org-netbeans-modules-javascript-hints_zh_CN.jar"/>
+        <file crc="2801559414" name="config/Modules/org-netbeans-modules-javascript-hints.xml"/>
+        <file crc="1056797683" name="modules/org-netbeans-modules-javascript-hints.jar"/>
+    </module_version>
+</module>
