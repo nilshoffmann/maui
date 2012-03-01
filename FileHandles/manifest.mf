@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 OpenIDE-Module: maltcms.ui.fileHandles
 OpenIDE-Module-Layer: maltcms/ui/fileHandles/layer.xml
 OpenIDE-Module-Localizing-Bundle: maltcms/ui/fileHandles/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
+OpenIDE-Module-Specification-Version: 1.1
 

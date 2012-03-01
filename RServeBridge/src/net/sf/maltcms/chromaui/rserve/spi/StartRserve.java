@@ -31,7 +31,22 @@ public class StartRserve {
                 p = Runtime.getRuntime().exec(
                         "\"" + cmd + "\" -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs);
             } else /* unix startup */ {
-                p = Runtime.getRuntime().exec(cmd+" CMD Rserve "+rargs);
+                try{
+                    String execString = cmd+" CMD Rserve "+rargs;
+                    System.out.println("Starting via "+execString);
+                    p = Runtime.getRuntime().exec(execString);
+                }catch(Exception e) {
+                    try{
+                        String execString = cmd+" -e \"library(Rserve);Rserve("+(debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs;
+                        System.out.println("Starting via "+execString);
+                        p = Runtime.getRuntime().exec(execString);
+                    }catch(Exception e1) {
+                        String execString = "/bin/sh"+" -c"+
+                            " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs;
+                        System.out.println("Starting via "+execString);
+                        p = Runtime.getRuntime().exec(execString);
+                    }
+                }
 //                p = Runtime.getRuntime().exec(
 //                            "/bin/sh"+" -c"+
 //                            " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs

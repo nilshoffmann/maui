@@ -121,7 +121,9 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>net.sf.maltcms.chromaui.statistics.view.api</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

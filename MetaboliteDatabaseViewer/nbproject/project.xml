@@ -128,7 +128,9 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>net.sf.maltcms.chromaui.metabolitedb.api.nodes</package>
+            </public-packages>
         </data>
     </configuration>
 </project>
