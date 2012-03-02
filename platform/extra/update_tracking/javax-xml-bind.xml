@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="javax.xml.bind">
+    <module_version install_time="1310671295614" last="true" origin="javax-xml-bind.nbm" specification_version="2.1.7">
+        <file crc="2040869133" name="config/Modules/javax-xml-bind.xml"/>
+        <file crc="4266509734" name="modules/ext/activation.jar"/>
+        <file crc="3224142146" name="modules/ext/jaxb-api.jar"/>
+        <file crc="543756465" name="modules/ext/jaxb-impl.jar"/>
+        <file crc="2581967924" name="modules/ext/jsr173_1.0_api.jar"/>
+        <file crc="3622844948" name="modules/javax-xml-bind.jar"/>
+    </module_version>
+</module>
