@@ -54,11 +54,11 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
     private Dataset1D ds;
 
     /** Creates new form ChromMSHeatmapPanel */
-    public ChromMSHeatmapPanel(InstanceContent topComponentInstanceContent, Chromatogram1DDataset ds,ChartPanelMouseListener cpml) {
+    public ChromMSHeatmapPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, Chromatogram1DDataset ds,ChartPanelMouseListener cpml) {
         initComponents();
         this.ds = ds;
         this.ic = topComponentInstanceContent;
-        this.lookup = new ProxyLookup(new AbstractLookup(ic), this.ds.getLookup());
+        this.lookup = tcLookup;
         chart = new JFreeChart(new XYPlot());
         cdxpanel = new ChartPanel(chart, true, true, true, true, true);
         Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
@@ -121,7 +121,7 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
                 XYItemRenderer r = ticplot.getRenderer();
                 if (r instanceof XYLineAndShapeRenderer) {
                     ((XYLineAndShapeRenderer) r).setDrawSeriesLineAsPath(true);
-                    ((XYLineAndShapeRenderer) r).setBaseShapesVisible(true);
+                    ((XYLineAndShapeRenderer) r).setBaseShapesVisible(false);
                     ((XYLineAndShapeRenderer) r).setBaseShapesFilled(false);
                 }
                 ChartCustomizer.setSeriesColors(ticplot, 0.8f);

@@ -59,12 +59,10 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     private List<XYAnnotation> annotations = Collections.emptyList();
     private ExecutorService es = Executors.newFixedThreadPool(1);
 
-    public ChromatogramViewTopComponent(IChromAUIProject project,
+    public void initialize(IChromAUIProject project,
             List<IChromatogramDescriptor> filename, Chromatogram1DDataset ds) {
-        this();
-        this.ic = new InstanceContent();
+//        this();
 
-        associateLookup(new AbstractLookup(this.ic));
         if (project != null) {
             this.ic.add(project);
         }
@@ -77,16 +75,17 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
                 IChromatogramDescriptor.class).getResourceLocation()).getName());
         setToolTipText(getLookup().lookup(IChromatogramDescriptor.class).
                 getResourceLocation());
-        requestActive();
-        requestFocusInWindow(true);
+//        requestActive();
+        //      requestFocusInWindow(true);
         sp = new SettingsPanel();
         this.ic.add(sp);
 //        this.secondaryView = secondaryView;
         System.out.println("Setting ms data!");
         System.out.println("Filenames given: " + filename);
 //        secondaryView.setMSData();
-
-//            this.jPanel1.add(load());
+        this.jp = new ChromMSHeatmapPanel(ic, getLookup(), ds, new ChartPanelMouseListener(ds));
+        add(this.jp, BorderLayout.CENTER);
+        ic.add(this.jp);
     }
 
     public ChromatogramViewTopComponent() {
@@ -95,9 +94,12 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
                 "CTL_ChromatogramViewTopComponent"));
         setToolTipText(NbBundle.getMessage(ChromatogramViewTopComponent.class,
                 "HINT_ChromatogramViewTopComponent"));
+        this.ic = new InstanceContent();
+
+        associateLookup(new AbstractLookup(this.ic));
     }
 
-    private void load() {
+    public void load() {
         SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(
                 this, getLookup().lookupAll(IChromatogramDescriptor.class),
                 getLookup().lookup(Properties.class), getLookup().lookup(
@@ -318,42 +320,6 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
-    }
-
-    public ChromMSHeatmapPanel getChromatogramPanel() {
-        if (this.jp == null) {
-            Chromatogram1DDataset ds = getLookup().lookup(
-                    Chromatogram1DDataset.class);
-            this.jp = new ChromMSHeatmapPanel(ic, ds, new ChartPanelMouseListener(ds));
-            add(this.jp, BorderLayout.CENTER);
-            ic.add(this.jp);
-        }
-        return this.jp;
-    }
-
-    public void setPanel() {
-        final TopComponent tc = this;
-        loading = false;
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run() {
-
-//        add(jp, BorderLayout.CENTER);
-
-//                secondaryView.setMSData(getChromatogramPanel().
-//                    getChromatogram(), getChromatogramPanel().
-//                    getChartPanelMouseListener());
-
-//                if (secondaryView != null) {
-//                    System.out.println("Setting ms data!");
-//                    secondaryView.setMSData();
-//                }
-                requestActive();
-                requestFocusInWindow(true);
-            }
-        };
-        es.submit(r);
     }
 
     @Override

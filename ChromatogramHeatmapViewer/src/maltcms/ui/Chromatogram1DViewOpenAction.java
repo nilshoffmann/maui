@@ -6,18 +6,23 @@ package maltcms.ui;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-import net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent;
+import maltcms.datastructures.ms.IChromatogram;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IScan;
+import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import net.sf.maltcms.ui.plot.chromatogram1D.tasks.Chromatogram1DTopComponentLoader;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.NotImplementedException;
 import org.openide.util.Utilities;
 
 @ActionID(category = "ContainerNodeActions/ChromatogramNode",
@@ -27,37 +32,38 @@ id = "maltcms.ui.Chromatogram1DViewOpenAction")
 @Messages("CTL_Chromatogram1DViewOpenAction=Open in Chromatogram Viewer")
 public final class Chromatogram1DViewOpenAction implements ActionListener {
 
-    private final List<IChromatogramDescriptor> context;
+    private final List<IChromatogramDescriptor> chromatograms;
 
     public Chromatogram1DViewOpenAction(List<IChromatogramDescriptor> context) {
-        this.context = context;
+        this.chromatograms = context;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-
-        AProgressAwareRunnable apar = new AProgressAwareRunnable() {
-
-            @Override
-            public void run() {
-
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        getProgressHandle().setDisplayName("Creating Chromatogram1D View");
-                        getProgressHandle().start();
-                        final Lookup lkp = Utilities.actionsGlobalContext();
-                        final ChromatogramViewTopComponentBuilder builder = new ChromatogramViewTopComponentBuilder();
-                        ChromatogramViewTopComponent tc = builder.create(lkp.lookup(IChromAUIProject.class), context.toArray(new IChromatogramDescriptor[context.size()]));
-                        tc.open();
-//                        MassSpectrumViewerTopComponent.findInstance().open();
-                        getProgressHandle().finish();
-                    }
-                });
-
+        boolean is1D = true;
+        for (IChromatogramDescriptor descr : chromatograms) {
+//            System.out.println("descr: "+(descr instanceof IChromatogram1D));
+            if (!(descr.getChromatogram() instanceof IChromatogram1D)) {
+                is1D = false;
             }
-        };
-        AProgressAwareRunnable.createAndRun("Creating Chromatogram1D View", apar);
+        }
+        if (is1D) {
+            System.out.println("Creating 1D data providers and dataset.");
+            List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+
+            for (IChromatogramDescriptor descr : chromatograms) {
+                providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
+            }
+
+            Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
+            ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
+            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
+            topComponent.open();
+            topComponent.load();
+        } else {
+            throw new NotImplementedException(
+                    "Currently no support for 2D chromatograms!");
+        }
+
     }
 }

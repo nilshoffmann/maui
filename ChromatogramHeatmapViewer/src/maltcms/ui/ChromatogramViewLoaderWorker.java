@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import javax.swing.SwingWorker;
+import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import maltcms.ui.views.ChromMSHeatmapPanel;
@@ -28,7 +29,6 @@ import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import ucar.ma2.Array;
@@ -37,24 +37,14 @@ import ucar.ma2.Array;
  *
  * @author nilshoffmann
  */
+@Data
 public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPanel, Void> {
 
-    private final Collection<? extends IChromatogramDescriptor> files;
     private final ChromatogramViewTopComponent cvtc;
+    private final Collection<? extends IChromatogramDescriptor> files;
     private final Properties sp;
     private final SettingsPanel settingsPanel;
     private final IChromAUIProject project;
-
-    public ChromatogramViewLoaderWorker(ChromatogramViewTopComponent cvtc,
-            Collection<? extends IChromatogramDescriptor> files, Properties sp,
-            SettingsPanel settingsPanel,
-            IChromAUIProject project) {
-        this.files = files;
-        this.cvtc = cvtc;
-        this.sp = sp;
-        this.settingsPanel = settingsPanel;
-        this.project = project;
-    }
 
     @Override
     protected ChromMSHeatmapPanel doInBackground() throws Exception {

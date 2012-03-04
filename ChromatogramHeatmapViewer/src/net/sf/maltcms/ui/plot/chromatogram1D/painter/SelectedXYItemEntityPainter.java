@@ -18,6 +18,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import maltcms.ui.views.ChartPanelTools;
 import maltcms.ui.views.GraphicsSettings;
 import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
@@ -50,7 +51,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     private boolean isHeatmap = false;
     private TARGET lastItem = null;
     private ExecutorService es = Executors.newSingleThreadExecutor();
-    private boolean updatePending = false;
+    private AtomicBoolean updatePending = new AtomicBoolean(false);
 
     public SelectedXYItemEntityPainter(Dataset1D<SOURCE, TARGET> ds,
             InstanceContent ic) {
@@ -159,13 +160,12 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     @Override
     public void chartMouseClicked(final ChartMouseEvent cme) {
 //        p = cme.getTrigger().getPoint();
-//        if (!updatePending) {
+        if (updatePending.compareAndSet(false, true)) {
             Runnable r = new Runnable() {
 
                 @Override
                 public void run() {
                     System.out.println("Retrieving element");
-                    updatePending = true;
                     ChartEntity ce = cme.getEntity();
                     if (ce instanceof XYItemEntity) {
                         System.out.println("Is data entity");
@@ -180,14 +180,14 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                     } else {
                         selectedArea = null;
                     }
-                    updatePending = false;
+                    updatePending.set(false);
                     setDirty(true);
                 }
             };
             es.submit(r);
-//        }else{
-//            System.out.println("Not performing update due to pending update!");
-//        }
+        }else{
+            System.out.println("Not performing update due to pending update!");
+        }
     }
 
     @Override

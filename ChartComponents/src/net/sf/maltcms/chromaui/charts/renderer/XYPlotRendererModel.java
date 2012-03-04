@@ -6,11 +6,11 @@
 package net.sf.maltcms.chromaui.charts.renderer;
 
 import javax.swing.DefaultComboBoxModel;
+import org.jfree.chart.renderer.xy.SamplingXYLineRenderer;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
 
 /**
  *
@@ -26,10 +26,13 @@ public class XYPlotRendererModel extends DefaultComboBoxModel {
         xyb.setBarAlignmentFactor(0.5);
         xyb.setDrawBarOutline(false);
         xyb.setShadowVisible(false);
+        StandardXYBarPainter barPainter = new StandardXYBarPainter();
+        xyb.setBarPainter(barPainter);
         addElement(xyb);
-        XYAreaRenderer xya = new XYAreaRenderer();
+        XYAreaRenderer xya = new XYAreaRenderer(XYAreaRenderer.AREA);
         addElement(xya);
-        addElement(new XYSplineRenderer(200));
+        addElement(new SamplingXYLineRenderer());
+        //addElement(new XYSplineRenderer(5));
     }
     
 }

@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IExperiment1D;
 import maltcms.datastructures.ms.IScan1D;
@@ -66,14 +64,14 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
             this.scans = MaltcmsTools.getNumberOfScans(this.parent);
             final IVariableFragment mzV = this.parent.getChild(mz);
             mzV.setIndex(index);
-//            activateCache(mzV);
+            activateCache(mzV);
             massValues = mzV.getIndexedArray();
-//            setPrefetchSize(scans, massValues);
+            setPrefetchSize(scans, massValues);
             final IVariableFragment iV = this.parent.getChild(intens);
             iV.setIndex(index);
-//            activateCache(iV);
+            activateCache(iV);
             intensityValues = iV.getIndexedArray();
-//            setPrefetchSize(scans, intensityValues);
+            setPrefetchSize(scans, intensityValues);
             initialized = true;
         }
     }
@@ -118,14 +116,14 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     }
 
     protected Scan1D acquireFromCache(int i) {
-//        if(whm.get(i) == null) {
-//            System.out.println("Retrieving scan "+i);
-//            Scan1D scan = provide(i);
-//            whm.put(i, scan);
-//            return scan;
-//        }
-//        return whm.get(Integer.valueOf(i));
-        return provide(i);
+        if(whm.get(i) == null) {
+            System.out.println("Retrieving scan "+i);
+            Scan1D scan = provide(i);
+            whm.put(i, scan);
+            return scan;
+        }
+        return whm.get(Integer.valueOf(i));
+//        return provide(i);
     }
 
     protected Scan1D buildScan(int i) {
@@ -154,6 +152,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
      */
     @Override
     public Scan1D getScan(final int scan) {
+        init();
         return buildScan(scan);
     }
 
@@ -163,6 +162,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     }
 
     public List<Scan1D> getScans() {
+        init();
         ArrayList<Scan1D> al = new ArrayList<Scan1D>();
         for (int i = 0; i < getNumberOfScans(); i++) {
             al.add(buildScan(i));
@@ -183,6 +183,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
             @Override
             public boolean hasNext() {
+                init();
                 if (this.currentPos < getScans().size() - 1) {
                     return true;
                 }
@@ -264,21 +265,12 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
     @Override
     public Scan1D provide(Integer k) {
-//        System.out.println("Retrieving scan "+k+" from mass_values");
-//        final Array masses = massValues.get(k);
-//        System.out.println("Retrieving scan "+k+" from intensity_values");
-//        final Array intens = intensityValues.get(k);
-////            final Tuple2D<Array, Array> t = MaltcmsTools.getMS(this.parent, i);
-//        Scan1D s = new Scan1D(masses, intens, k,
-//                this.parent.getChild(scan_acquisition_time_var).getArray().
-//                getDouble(k));
-//        System.out.println("Returning scan");
-        double[] masses = new double[]{73.0d,120.0d,143.0d};
-        double[] intensities = new double[]{7858123.13,123451.786,9097213.14};
-        Array massesArray = Array.factory(masses);
-        Array intensArray = Array.factory(intensities);
-        Scan1D s = new Scan1D(massesArray, intensArray, k, 875.7);
-        
+        init();
+        final Array masses = massValues.get(k);
+        final Array intens = intensityValues.get(k);
+        Scan1D s = new Scan1D(masses, intens, k,
+                this.parent.getChild(scan_acquisition_time_var).getArray().
+                getDouble(k));
         return s;
     }
 }
