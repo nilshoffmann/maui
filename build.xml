@@ -29,10 +29,10 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="build/updates/"/>
-            <arg value="${upload.username}@porta.cebitec.uni-bielefeld.de:/prj/chromaui/apache/htdocs/updatecenter/"/>
+            <arg value="${upload.username}@maui.cebitec.uni-bielefeld.de:/var/apache2/maui/htdocs/updatecenter/1.1/"/>
         </exec>
     </target>
-    <target name="upload-build" description="Deploys zip distribution and macosx app" depends="upload-credentials, build-zip, build-mac">
+    <target name="upload-build" description="Deploys zip distribution and macosx app" depends="upload-credentials">
         <tstamp>
             <format property="deploy.time" pattern="yyyy-MM-dd"/>
         </tstamp>
@@ -40,7 +40,16 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="dist/"/>
-            <arg value="${upload.username}@porta.cebitec.uni-bielefeld.de:/prj/chromaui/apache/htdocs/download/${deploy.time}"/>
+            <arg value="${upload.username}@maui.cebitec.uni-bielefeld.de:/var/apache2/maui/htdocs/download/${deploy.time}"/>
+        </exec>    
+    </target>
+    
+    <target name="upload-homepage" description="Deploys homepage" depends="upload-credentials">
+        <exec command="rsync" inputstring="">
+            <arg value="-avtruP"/>
+            <arg value="-e ssh "/>
+            <arg value="homepage/"/>
+            <arg value="${upload.username}@maui.cebitec.uni-bielefeld.de:/var/apache2/maui/htdocs/"/>
         </exec>    
     </target>
     

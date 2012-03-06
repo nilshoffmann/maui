@@ -171,11 +171,13 @@ final class RServePanel extends javax.swing.JPanel {
 
     private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testButtonActionPerformed
         if(useLocalInstance.isSelected()) {
-            try {
-                PlotDemo.createPlotDemo(RserveConnectionFactory.getLocalConnection());
-            } catch (RserveException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+//            try {
+                //FIXME works only in Cebitec
+//                PlotDemo.createPlotDemo(RserveConnectionFactory.directConnection(localRserveSettingsField.getText()));
+                PlotDemo.createPlotDemo(RserveConnectionFactory.hotfixConnection());
+//            } catch (RserveException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
         }
     }//GEN-LAST:event_testButtonActionPerformed
 

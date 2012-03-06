@@ -42,10 +42,10 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
     
     @Override
     public void run() {
-        try {
+//        try {
             progressHandle.start();
             try {
-                RConnection c = RserveConnectionFactory.getLocalConnection();
+                RConnection c = RserveConnectionFactory.getDefaultConnection();
                 try {
                     StatisticsContainer pcaDescriptor = new StatisticsContainer();
                     pcaDescriptor.setName("pca");
@@ -133,9 +133,9 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                             + e.getMessage());
                     Exceptions.printStackTrace(e);
                 }
-            } catch (RserveException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+//            } catch (RserveException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
             progressHandle.finish();
         } catch (Exception e) {
             progressHandle.finish();

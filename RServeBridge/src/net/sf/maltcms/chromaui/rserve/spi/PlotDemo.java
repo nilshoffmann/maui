@@ -70,6 +70,7 @@ public class PlotDemo extends JLabel {
 
             // close RConnection, we're done
             c.close();
+            c.shutdown();
         } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
             System.out.println(rse);
         } catch (REXPMismatchException mme) { // REXP mismatch exception (we got something we didn't think we get)

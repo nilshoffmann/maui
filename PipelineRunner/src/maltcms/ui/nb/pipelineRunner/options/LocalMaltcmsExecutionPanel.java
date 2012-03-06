@@ -115,8 +115,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         if(ret==JFileChooser.APPROVE_OPTION) {
             File f = jfc.getSelectedFile();
             maltcmsInstallationPath.setText(f.getParent());
-            controller.changed();
             checkVersion(f.getParentFile().getAbsolutePath());
+            controller.changed();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -165,7 +165,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
     }
 
     boolean valid() {
-        return formValid;
+        return true;
         // TODO check whether form is consistent and complete
 //        return true;
     }

@@ -20,12 +20,98 @@ import org.rosuda.REngine.Rserve.RserveException;
 public class RserveConnectionFactory extends Thread {
 
     private static RserveConnectionFactory rcf = new RserveConnectionFactory();
-    private static boolean isLocalServer = false;
+    private boolean isLocalServer = false;
+    private RConnection activeConnection = null;
+    
+    private RserveConnectionFactory() {
+        Runtime.getRuntime().addShutdownHook(this);
+    }
+    
+    public static RserveConnectionFactory getInstance() {
+        return rcf;
+    }
+    
+    public static RConnection getDefaultConnection() {
+        RserveConnectionFactory factory = RserveConnectionFactory.getInstance();
+        if(factory.activeConnection!=null) {
+            return factory.activeConnection;
+        }
+        return RserveConnectionFactory.hotfixConnection();
+    }
+    
+    private void setConnection(RConnection connection) {
+        if(this.activeConnection==null) {
+            this.activeConnection = connection;
+        }else{
+            throw new IllegalStateException("Can not reset active connection! Call RserveConnectionFactory.closeConnection() before!");
+        }
+    }
+    
+    public void closeConnection() {
+        if(this.activeConnection!=null) {
+            System.out.println("Closing connection to Rserve!");
+            this.activeConnection.close();
+            if(isLocalServer) {
+                try {
+                    System.out.println("Shutting down local server!");
+                    this.activeConnection.shutdown();
+                } catch (RserveException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+            this.activeConnection = null;
+        }
+    }
 
-    private static RConnection launchRserve() {
+    private static Process createFallbackRserveProcess(String cmd, String rsrvargs, String rargs, boolean debug) {
+        try {
+            String execString = cmd + " -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs;
+            System.out.println("Starting via " + execString);
+            Process p = Runtime.getRuntime().exec(execString);
+            return p;
+        } catch (Exception e1) {
+            String execString = "/bin/sh" + " -c"
+                    + " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs;
+            System.out.println("Starting via shell " + execString);
+            try {
+                Process p = Runtime.getRuntime().exec(execString);
+                return p;
+            } catch (Exception e2) {
+            }
+        }
+        return null;
+    }
+
+    public static RConnection directConnection(String command) {
+        try {
+            Process p = Runtime.getRuntime().exec(command);
+            RConnection testConnection = connect(p, false);
+            return testConnection;
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        throw new NullPointerException();
+    }
+    
+    public static RConnection hotfixConnection() {
+        boolean debug = false;
+        String rsrvargs = "";
+        String rargs = "";
+        String rcmd = "/vol/r-2.13/lib/R/bin/R CMD /vol/r-2.13/lib/R/library/Rserve/libs/i386/Rserve-bin.so --vanilla";
+        try {
+            Process p = Runtime.getRuntime().exec(rcmd);
+            RConnection testConnection = connect(p, false);
+            return testConnection;
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        throw new NullPointerException();
+    }
+    
+    private static RConnection testConnection() {
         //otherwise start a new one
         String rbinaryLocation = getRBinaryLocation();
-
+        System.out.println("R binary location: " + rbinaryLocation);
         if (rbinaryLocation != null) {
             boolean isWindows = false;
             String osname = System.getProperty("os.name");
@@ -40,43 +126,29 @@ public class RserveConnectionFactory extends Thread {
                     "CMD",
                     "Rserve",
                     "--vanilla");
+            Process rserveProcess = null;
             try {
-                Process rserveProcess = pb.start();
+                rserveProcess = pb.start();
+            } catch (Exception e) {
+                System.out.println("Trying fallback");
+                rserveProcess = createFallbackRserveProcess(rbinaryLocation, "", "", false);
+            }
+            if (rserveProcess != null) {
                 System.out.println(
                         "waiting for Rserve to start ... (" + rserveProcess + ")");
                 // we need to fetch the output - some platforms will die if you don't ...
-                StreamHog errorHog = new StreamHog(
-                        rserveProcess.getErrorStream(),
-                        false);
-                StreamHog outputHog = new StreamHog(
-                        rserveProcess.getInputStream(),
-                        false);
-                if (!isWindows) /* on Windows the process will never return, so we cannot wait */ {
-                    try {
-                        rserveProcess.waitFor();
-                    } catch (InterruptedException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
+                RConnection testConnection = connect(rserveProcess, isWindows);
+                if (testConnection == null) {
+                    rserveProcess.destroy();
+                    rserveProcess = createFallbackRserveProcess(rbinaryLocation, "", "", false);
+                    testConnection = connect(rserveProcess,isWindows);
                 }
-                System.out.println(
-                        "call terminated, let us try to connect ...");
 
-                RConnection testConnection = null;
-                for (int i = 0; i < 5; i++) {
-                    try {
-                        testConnection = new RConnection();
-                    } catch (RserveException ex) {
-                        System.err.println(
-                                "Failed to connect on try " + (1 + i) + "/5");
-                    }
-                }
                 if (testConnection != null) {
-                    isLocalServer = true;
+                    rcf.isLocalServer = true;
                     Runtime.getRuntime().addShutdownHook(rcf);
                     return testConnection;
                 }
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
             }
 
         } else {
@@ -86,15 +158,41 @@ public class RserveConnectionFactory extends Thread {
         return null;
     }
 
-    @Override
-    public void run() {
-        if (isLocalServer) {
+    public static RConnection connect(Process rserveProcess, boolean isWindows) {
+        StreamHog errorHog = new StreamHog(
+                rserveProcess.getErrorStream(),
+                false);
+        StreamHog outputHog = new StreamHog(
+                rserveProcess.getInputStream(),
+                false);
+        if (!isWindows) /* on Windows the process will never return, so we cannot wait */ {
             try {
-                RConnection testConnection = new RConnection();
-                testConnection.shutdown();
-            } catch (RserveException re) {
+                rserveProcess.waitFor();
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
             }
         }
+        System.out.println(
+                "call terminated, let us try to connect ...");
+
+        RConnection testConnection = null;
+        for (int i = 0; i < 5; i++) {
+            try {
+                testConnection = new RConnection();
+            } catch (RserveException ex) {
+                System.err.println(
+                        "Failed to connect on try " + (1 + i) + "/5");
+            }
+        }
+        if(testConnection!=null) {
+            RserveConnectionFactory.getInstance().setConnection(testConnection);
+        }
+        return testConnection;
+    }
+
+    @Override
+    public void run() {
+        closeConnection();
     }
 
     public static String getRBinaryLocation() {
@@ -102,7 +200,7 @@ public class RserveConnectionFactory extends Thread {
         if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
                 equals("Windows")) {
             System.out.println(
-                    "Windows: query registry to find where R is installed ...");
+                    "Windows: querying registry to find where R is installed ...");
             String installPath = null;
             try {
                 Process rp = Runtime.getRuntime().exec(
@@ -131,7 +229,8 @@ public class RserveConnectionFactory extends Thread {
             "/sw/bin/R",
             "/usr/common/bin/R",
             "/opt/bin/R",
-            "/opt/local/bin/R"
+            "/opt/local/bin/R",
+            "/vol/r-2.13/bin/R"
         };
         for (String location : locations) {
             if (new File(location).exists()) {
@@ -141,28 +240,38 @@ public class RserveConnectionFactory extends Thread {
         return null;
     }
 
-    public static RConnection getLocalConnection() throws RserveException {
-            try {
-                RConnection testConnection = new RConnection();
-                System.out.println("Using local connection");
-                return testConnection;
-            } catch (RserveException re) {
-            }
-            launchRserve();
-            try {
-                RConnection testConnection = new RConnection();
-                System.out.println("Using local connection after starting rserve locally");
-                return testConnection;
-            } catch (RserveException re) {
-            }
-            return null;
+    public RConnection getLocalConnection() throws RserveException {
+        if(activeConnection!=null) {
+            return activeConnection;
+        }
+        try {
+            RConnection testConnection = new RConnection();
+            System.out.println("Using local connection");
+            setConnection(testConnection);
+            return testConnection;
+        } catch (RserveException re) {
+            System.out.println("No local instance of RServe found, starting new one!");
+        } catch (IllegalStateException ise) {
+            Exceptions.printStackTrace(ise);
+        }
+        testConnection();
+        try {
+            RConnection testConnection = new RConnection();
+            System.out.println("Using local connection after starting rserve locally");
+            setConnection(testConnection);
+            return testConnection;
+        } catch (IllegalStateException ise) {
+            Exceptions.printStackTrace(ise);
+        }
+        return null;
     }
 
-    public static RConnection getRemoteConnection(InetAddress address, int port,
+    public RConnection getRemoteConnection(InetAddress address, int port,
             String username, String password) throws RserveException {
         RConnection connection = new RConnection(address.getHostAddress(), port);
         if (connection.needLogin()) {
             connection.login(username, password);
+            setConnection(connection);
             return connection;
         }
         return null;
