@@ -103,7 +103,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(
                 this, getLookup().lookupAll(IChromatogramDescriptor.class),
                 getLookup().lookup(Properties.class), getLookup().lookup(
-                SettingsPanel.class), getLookup().lookup(IChromAUIProject.class));
+                SettingsPanel.class));
         RequestProcessor.Task t = new RequestProcessor().post(sw);
         t.addTaskListener(this);
     }

@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import javax.management.Notification;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
@@ -36,7 +35,6 @@ import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
@@ -106,9 +104,6 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public void activate(URL projectDatabaseFile) {
-//        EntityManagerFactory factory = Persistence.createEntityManagerFactory("maui.prj");
-//        EntityManager em = factory.createEntityManager();
-
         if (this.icp != null) {
             this.icp.close();
         }
@@ -232,18 +227,6 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public Collection<IChromatogramDescriptor> getChromatograms() {
         ArrayList<IChromatogramDescriptor> al = new ArrayList<IChromatogramDescriptor>();
-
-
-
-
-
-
-
-
-
-
-
-
         for (TreatmentGroupContainer cc : getContainer(
                 TreatmentGroupContainer.class)) {
             al.addAll(cc.getMembers());
@@ -254,26 +237,8 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public Collection<ITreatmentGroupDescriptor> getTreatmentGroups() {
         HashSet<ITreatmentGroupDescriptor> tgs = new LinkedHashSet<ITreatmentGroupDescriptor>();
-
-
-
-
-
-
-
-
-
-
-
-
         for (TreatmentGroupContainer cc : getContainer(
                 TreatmentGroupContainer.class)) {
-
-
-
-
-
-
             for (IChromatogramDescriptor icd : cc.getMembers()) {
                 tgs.add(icd.getTreatmentGroup());
             }
@@ -285,26 +250,8 @@ public class ChromAUIProject implements IChromAUIProject {
     public Collection<IDatabaseDescriptor> getDatabases() {
 //        getContainer(DatabaseContainer.class);
         HashSet<IDatabaseDescriptor> tgs = new LinkedHashSet<IDatabaseDescriptor>();
-
-
-
-
-
-
-
-
-
-
-
-
         for (DatabaseContainer cc : getContainer(
                 DatabaseContainer.class)) {
-
-
-
-
-
-
             for (IDatabaseDescriptor icd : cc.getMembers()) {
                 tgs.add(icd);
             }
@@ -330,34 +277,10 @@ public class ChromAUIProject implements IChromAUIProject {
             return c.cast(ps.get(key));
         }
         throw new NullPointerException("No element for key: " + key);
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     protected ProjectSettings getSettings() {
         Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
-
-
-
-
-
-
-
-
-
-
-
-
         if (l.isEmpty()) {
             ProjectSettings ps = new ProjectSettings();
             ics.create(Arrays.asList(ps));
@@ -382,18 +305,6 @@ public class ChromAUIProject implements IChromAUIProject {
             if (projectDatabaseFile == null) {
                 throw new IllegalStateException(
                         "Project database file not set, please call 'activate(URL url)' with the appropriate location before 'openSession()' is called!");
-
-
-
-
-
-
-
-
-
-
-
-
             }
             icp = Lookup.getDefault().lookup(ICrudProviderFactory.class).
                     getCrudProvider(projectDatabaseFile.getURL(),
@@ -465,18 +376,6 @@ public class ChromAUIProject implements IChromAUIProject {
     public <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp) {
         IQuery<T> query = ics.newQuery(c);
         return query.retrieve(mp, comp);
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     private final class OpenCloseHook extends ProjectOpenedHook {

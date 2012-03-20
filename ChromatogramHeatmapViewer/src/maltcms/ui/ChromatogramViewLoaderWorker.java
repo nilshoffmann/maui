@@ -44,7 +44,6 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
     private final Collection<? extends IChromatogramDescriptor> files;
     private final Properties sp;
     private final SettingsPanel settingsPanel;
-    private final IChromAUIProject project;
 
     @Override
     protected ChromMSHeatmapPanel doInBackground() throws Exception {

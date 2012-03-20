@@ -8,8 +8,12 @@ package net.sf.maltcms.chromaui.rserve.api;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import javax.naming.AuthenticationNotSupportedException;
 import net.sf.maltcms.chromaui.rserve.spi.StreamHog;
 import org.openide.util.Exceptions;
+import org.openide.util.NbPreferences;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
@@ -17,41 +21,72 @@ import org.rosuda.REngine.Rserve.RserveException;
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class RserveConnectionFactory extends Thread {
+public class RserveConnectionFactory extends Thread implements PreferenceChangeListener {
 
+    public static final String KEY_RBINARY_LOCATIONS = "rbinaryLocations";
     private static RserveConnectionFactory rcf = new RserveConnectionFactory();
     private boolean isLocalServer = false;
     private RConnection activeConnection = null;
-    
+    public static final String defaultUnixRlocations = "/Library/Frameworks/R.framework/Resources/bin/R,"
+            + "/usr/local/lib/R/bin/R,"
+            + "/usr/lib/R/bin/R,"
+            + "/usr/local/bin/R,"
+            + "/sw/bin/R,"
+            + "/usr/common/bin/R,"
+            + "/opt/bin/R,"
+            + "/opt/local/bin/R,"
+            + "/vol/r-2.13/bin/R";
+    public static final String KEY_RSERVECALLS = "rserveCalls";
+    public static final String defaultRserveCalls = "Rserve,/vol/r-2.13/lib/R/library/Rserve/libs/i386/Rserve-bin.so";
+    public static final String KEY_RARGS = "rargs";
+    public static final String defaultRargs = "--vanilla --slave";
+    public static final String KEY_RSERVEARGS = "rserveArgs";
+    public static final String defaultRserveArgs = "";
+    public static final String KEY_RBINARY_LOCATION = "rBinaryLocation";
+    public static final String KEY_RSERVECALL = "rServeCall";
+    private String[] unixRlocations;
+    private File rBinaryLocation;
+    private String rArgs;
+    private String rServeArgs;
+    private String[] rserveCalls;
+    private String rserveCall;
+
     private RserveConnectionFactory() {
         Runtime.getRuntime().addShutdownHook(this);
+        NbPreferences.forModule(RserveConnectionFactory.class).addPreferenceChangeListener(this);
+        unixRlocations = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RBINARY_LOCATIONS, defaultUnixRlocations).split(",");
+        rArgs = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RARGS, defaultRargs);
+        String rbinary = NbPreferences.forModule(RserveConnectionFactory.class).get(KEY_RBINARY_LOCATION, null);
+        if (rbinary != null) {
+            rBinaryLocation = new File(rbinary);
+        }
+        rserveCalls = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVECALLS, defaultRserveCalls).split(",");
+        rServeArgs = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RARGS, defaultRserveArgs);
+        rserveCall = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVECALL, null);
     }
-    
+
     public static RserveConnectionFactory getInstance() {
         return rcf;
     }
-    
+
+    //DO NOT CHANGE!!!
     public static RConnection getDefaultConnection() {
-        RserveConnectionFactory factory = RserveConnectionFactory.getInstance();
-        if(factory.activeConnection!=null) {
-            return factory.activeConnection;
-        }
         return RserveConnectionFactory.hotfixConnection();
     }
-    
+
     private void setConnection(RConnection connection) {
-        if(this.activeConnection==null) {
+        if (this.activeConnection == null) {
             this.activeConnection = connection;
-        }else{
+        } else {
             throw new IllegalStateException("Can not reset active connection! Call RserveConnectionFactory.closeConnection() before!");
         }
     }
-    
+
     public void closeConnection() {
-        if(this.activeConnection!=null) {
+        if (this.activeConnection != null) {
             System.out.println("Closing connection to Rserve!");
             this.activeConnection.close();
-            if(isLocalServer) {
+            if (isLocalServer) {
                 try {
                     System.out.println("Shutting down local server!");
                     this.activeConnection.shutdown();
@@ -63,131 +98,134 @@ public class RserveConnectionFactory extends Thread {
         }
     }
 
-    private static Process createFallbackRserveProcess(String cmd, String rsrvargs, String rargs, boolean debug) {
-        try {
-            String execString = cmd + " -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs;
-            System.out.println("Starting via " + execString);
-            Process p = Runtime.getRuntime().exec(execString);
-            return p;
-        } catch (Exception e1) {
-            String execString = "/bin/sh" + " -c"
-                    + " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs;
-            System.out.println("Starting via shell " + execString);
-            try {
-                Process p = Runtime.getRuntime().exec(execString);
-                return p;
-            } catch (Exception e2) {
-            }
+    public boolean isWindows() {
+        String osname = System.getProperty("os.name");
+        if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
+                equals("Windows")) {
+            return true;
         }
-        return null;
+        return false;
     }
 
-    public static RConnection directConnection(String command) {
-        try {
-            Process p = Runtime.getRuntime().exec(command);
-            RConnection testConnection = connect(p, false);
-            return testConnection;
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+    public String buildExecString() {
+        StringBuilder sb = new StringBuilder();
+        if (rBinaryLocation == null) {
+            rBinaryLocation = getRBinaryLocation();
         }
-        throw new NullPointerException();
+        sb.append(rBinaryLocation.getAbsolutePath());
+        sb.append(" CMD ");
+        if (rserveCall == null) {
+            int exitValue = -1;
+            for (String rserveCallValue : rserveCalls) {
+                try {
+                    String tmpExecString = sb.toString()+rserveCallValue;
+                    Process p = startProcess(tmpExecString);
+                    exitValue = p.waitFor();
+                    if (exitValue == 0) {
+                        rserveCall = rserveCallValue;
+                        break;
+                    }
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
+        sb.append(rserveCall.trim());
+        sb.append(" ");
+        sb.append(rArgs.trim());
+        sb.append(" ");
+        sb.append(rServeArgs.trim());
+        return sb.toString().trim();
     }
-    
+
     public static RConnection hotfixConnection() {
-        boolean debug = false;
-        String rsrvargs = "";
-        String rargs = "";
-        String rcmd = "/vol/r-2.13/lib/R/bin/R CMD /vol/r-2.13/lib/R/library/Rserve/libs/i386/Rserve-bin.so --vanilla";
+        return RserveConnectionFactory.getInstance().getLocalConnection();
+    }
+
+    public Process startProcess(String commandString) {
+        boolean isWindows = isWindows();
         try {
-            Process p = Runtime.getRuntime().exec(rcmd);
-            RConnection testConnection = connect(p, false);
-            return testConnection;
+            Process p = Runtime.getRuntime().exec(commandString);
+            StreamHog errorHog = new StreamHog(
+                    p.getErrorStream(),
+                    true);
+            StreamHog outputHog = new StreamHog(
+                    p.getInputStream(),
+                    true);
+            return p;
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
-        }
-        throw new NullPointerException();
-    }
-    
-    private static RConnection testConnection() {
-        //otherwise start a new one
-        String rbinaryLocation = getRBinaryLocation();
-        System.out.println("R binary location: " + rbinaryLocation);
-        if (rbinaryLocation != null) {
-            boolean isWindows = false;
-            String osname = System.getProperty("os.name");
-            if (osname != null && osname.length() >= 7 && osname.substring(0,
-                    7).
-                    equals("Windows")) {
-                isWindows = true; /* Windows startup */
-            }
-            System.out.println(
-                    "Running Rserve " + rbinaryLocation + " CMD Rserve --vanilla");
-            ProcessBuilder pb = new ProcessBuilder(rbinaryLocation,
-                    "CMD",
-                    "Rserve",
-                    "--vanilla");
-            Process rserveProcess = null;
-            try {
-                rserveProcess = pb.start();
-            } catch (Exception e) {
-                System.out.println("Trying fallback");
-                rserveProcess = createFallbackRserveProcess(rbinaryLocation, "", "", false);
-            }
-            if (rserveProcess != null) {
-                System.out.println(
-                        "waiting for Rserve to start ... (" + rserveProcess + ")");
-                // we need to fetch the output - some platforms will die if you don't ...
-                RConnection testConnection = connect(rserveProcess, isWindows);
-                if (testConnection == null) {
-                    rserveProcess.destroy();
-                    rserveProcess = createFallbackRserveProcess(rbinaryLocation, "", "", false);
-                    testConnection = connect(rserveProcess,isWindows);
-                }
-
-                if (testConnection != null) {
-                    rcf.isLocalServer = true;
-                    Runtime.getRuntime().addShutdownHook(rcf);
-                    return testConnection;
-                }
-            }
-
-        } else {
-            System.out.println(
-                    "Could not start local instance of Rserve!");
         }
         return null;
     }
 
-    public static RConnection connect(Process rserveProcess, boolean isWindows) {
-        StreamHog errorHog = new StreamHog(
-                rserveProcess.getErrorStream(),
-                false);
-        StreamHog outputHog = new StreamHog(
-                rserveProcess.getInputStream(),
-                false);
-        if (!isWindows) /* on Windows the process will never return, so we cannot wait */ {
-            try {
-                rserveProcess.waitFor();
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
+    public void startProcessAndWait(String commandString) {
+        boolean isWindows = isWindows();
+        try {
+            Process p = Runtime.getRuntime().exec(commandString);
+            StreamHog errorHog = new StreamHog(
+                    p.getErrorStream(),
+                    true);
+            StreamHog outputHog = new StreamHog(
+                    p.getInputStream(),
+                    true);
+            if (!isWindows) /* on Windows the process will never return, so we cannot wait */ {
+                try {
+                    p.waitFor();
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    protected RConnection connectLocal() {
+        System.out.println(
+                "Trying to connect to local Rserve ...");
+        RConnection connection = null;
+        try {
+            connection = new RConnection();
+            setConnection(connection);
+            return connection;
+        } catch (RserveException ex) {
+            System.err.println("Failed to connect to Rserve ... launching local instance!");
+            startProcessAndWait(buildExecString());
+            for (int i = 0; i < 5; i++) {
+                try {
+                    connection = new RConnection();
+                    setConnection(connection);
+                    return connection;
+                } catch (RserveException ex2) {
+                    System.err.println(
+                            "Failed to connect on try " + (1 + i) + "/5");
+                }
             }
         }
-        System.out.println(
-                "call terminated, let us try to connect ...");
+        return null;
+    }
 
-        RConnection testConnection = null;
+    protected RConnection connectRemote(InetAddress address, int port, String username, String password) {
+        System.out.println(
+                "Trying to connect to remote Rserve at " + address + ":" + port + " ...");
+        RConnection connection;
         for (int i = 0; i < 5; i++) {
             try {
-                testConnection = new RConnection();
+                connection = new RConnection(address.getHostAddress(), port);
+                if (connection.needLogin()) {
+                    connection.login(username, password);
+                    setConnection(connection);
+                    return connection;
+                } else {
+                    throw new RuntimeException("Warning: Remote Rserve does not require authentication!");
+                }
             } catch (RserveException ex) {
                 System.err.println(
                         "Failed to connect on try " + (1 + i) + "/5");
             }
         }
-        if(testConnection!=null) {
-            RserveConnectionFactory.getInstance().setConnection(testConnection);
-        }
-        return testConnection;
+        return null;
     }
 
     @Override
@@ -195,7 +233,43 @@ public class RserveConnectionFactory extends Thread {
         closeConnection();
     }
 
-    public static String getRBinaryLocation() {
+    /**
+     * Returns the r binary location
+     * @return 
+     */
+    public File getRBinaryLocation() {
+        if (rBinaryLocation != null) {
+            return rBinaryLocation;
+        }
+        String osname = System.getProperty("os.name");
+        if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
+                equals("Windows")) {
+            return getRBinaryLocationWindows();
+        }
+        return getRBinaryLocationUnix();
+    }
+
+    public void setRBinaryLocation(File location) {
+        if (location.exists()) {
+            rBinaryLocation = location;
+        } else {
+            throw new IllegalArgumentException("File " + location + " does not exist!");
+        }
+    }
+
+    public File getRBinaryLocationUnix() {
+        if (rBinaryLocation != null) {
+            return rBinaryLocation;
+        }
+        for (String location : defaultUnixRlocations.split(",")) {
+            if (new File(location).exists()) {
+                return new File(location);
+            }
+        }
+        return null;
+    }
+
+    public File getRBinaryLocationWindows() {
         String osname = System.getProperty("os.name");
         if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
                 equals("Windows")) {
@@ -219,61 +293,47 @@ public class RserveConnectionFactory extends Thread {
                         "ERROR: canot find path to R. Make sure reg is available and R was installed with registry settings.");
                 return null;
             }
-            return installPath + "\\bin\\R.exe";
-        }
-        String[] locations = new String[]{
-            "/Library/Frameworks/R.framework/Resources/bin/R",
-            "/usr/local/lib/R/bin/R",
-            "/usr/lib/R/bin/R",
-            "/usr/local/bin/R",
-            "/sw/bin/R",
-            "/usr/common/bin/R",
-            "/opt/bin/R",
-            "/opt/local/bin/R",
-            "/vol/r-2.13/bin/R"
-        };
-        for (String location : locations) {
-            if (new File(location).exists()) {
-                return location;
-            }
+            return new File(installPath, "\\bin\\R.exe");
         }
         return null;
+
     }
 
-    public RConnection getLocalConnection() throws RserveException {
-        if(activeConnection!=null) {
+    /**
+     * If the factory already has an active connection, the active connection is returned.
+     * Otherwise, this method tries to connectLocal to an already running local instance of Rserve.
+     * If that fails, it will try to launch a new Rserve instance and connect to it. Otherwise
+     * it will return null.
+     * @return
+     * @throws RserveException 
+     */
+    public RConnection getLocalConnection() {
+        if (activeConnection != null) {
             return activeConnection;
         }
-        try {
-            RConnection testConnection = new RConnection();
-            System.out.println("Using local connection");
-            setConnection(testConnection);
-            return testConnection;
-        } catch (RserveException re) {
-            System.out.println("No local instance of RServe found, starting new one!");
-        } catch (IllegalStateException ise) {
-            Exceptions.printStackTrace(ise);
-        }
-        testConnection();
-        try {
-            RConnection testConnection = new RConnection();
-            System.out.println("Using local connection after starting rserve locally");
-            setConnection(testConnection);
-            return testConnection;
-        } catch (IllegalStateException ise) {
-            Exceptions.printStackTrace(ise);
-        }
-        return null;
+        return connectLocal();
     }
 
+    /**
+     * If the factory already has an active connection, the active connection is returned.
+     * Otherwise, this method creates a remote connection to an rserve running at address and port.
+     * This method does not allow unauthenticated access to Rserve.
+     * @param address
+     * @param port
+     * @param username
+     * @param password
+     * @return an active RConnection to the remote server or null if anything failed
+     */
     public RConnection getRemoteConnection(InetAddress address, int port,
-            String username, String password) throws RserveException {
-        RConnection connection = new RConnection(address.getHostAddress(), port);
-        if (connection.needLogin()) {
-            connection.login(username, password);
-            setConnection(connection);
-            return connection;
+            String username, String password) {
+        if (activeConnection != null) {
+            return activeConnection;
         }
-        return null;
+        return connectRemote(address, port, username, password);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent pce) {
+        NbPreferences.forModule(RserveConnectionFactory.class);
     }
 }

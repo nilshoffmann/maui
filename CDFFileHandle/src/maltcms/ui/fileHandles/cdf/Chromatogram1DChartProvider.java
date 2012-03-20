@@ -198,9 +198,9 @@ public class Chromatogram1DChartProvider {
                 } catch (ResourceNotAvailableException rne) {
                 }
             }
-            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
+            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT,valueVar));
             annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
-                    0, 255, 192), new Color(0, 0, 255, 32)));
+                    0, 255, 192), new Color(0, 0, 255, 32),valueVar));
             annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
             //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
             i++;
@@ -473,9 +473,9 @@ public class Chromatogram1DChartProvider {
                     domains[i] = fragment.getChild(domainVar).getArray();
                     useRT = true;
                 }
-                annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
+                annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT, valueVar));
                 annotations.addAll(generatePeakShapes(fragment, useRT,
-                        new Color(0, 0, 255, 192), new Color(0, 0, 255, 32)));
+                        new Color(0, 0, 255, 192), new Color(0, 0, 255, 32),valueVar));
                 annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i],
                         useRT));
                 //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
@@ -536,7 +536,7 @@ public class Chromatogram1DChartProvider {
         JFreeChart jfc2 = new JFreeChart(xyp);
         return jfc2;
     }
-
+    
     public List<XYPointerAnnotation> getCSVPeakAnnotations(IFileFragment f,
             Array ordinateValues, boolean useScanAcquisitionTime) {
         List<XYPointerAnnotation> l = new ArrayList<XYPointerAnnotation>();
@@ -588,14 +588,19 @@ public class Chromatogram1DChartProvider {
         }
         return l;
     }
-
+    
     public List<XYPointerAnnotation> getANDIChromPeakAnnotations(IFileFragment f,
             boolean useScanAcquisitionTime) {
+        return getANDIChromPeakAnnotations(f, useScanAcquisitionTime, "total_intensity");
+    }
+
+    public List<XYPointerAnnotation> getANDIChromPeakAnnotations(IFileFragment f,
+            boolean useScanAcquisitionTime, String valueVariable) {
         List<XYPointerAnnotation> l = new ArrayList<XYPointerAnnotation>();
         try {
             IVariableFragment peakNames = f.getChild("peak_name");
             IVariableFragment peakRT = f.getChild("peak_retention_time");
-            Array ordinateValues = f.getChild("ordinate_values").getArray();
+            Array ordinateValues = f.getChild(valueVariable).getArray();
             double delay = f.getChild("actual_delay_time").getArray().getDouble(
                     0);
             double samplingRate = f.getChild("actual_sampling_interval").
@@ -638,6 +643,11 @@ public class Chromatogram1DChartProvider {
 
     public static List<XYAnnotation> generatePeakShapes(IFileFragment f,
             boolean useScanAcquisitionTime, Color outline, Color fill) {
+        return generatePeakShapes(f, useScanAcquisitionTime, outline, fill, "total_intensity");
+    }
+    
+    public static List<XYAnnotation> generatePeakShapes(IFileFragment f,
+            boolean useScanAcquisitionTime, Color outline, Color fill, String valueVar) {
         List<XYAnnotation> l = new ArrayList<XYAnnotation>();
         try {
             IVariableFragment peakNames = f.getChild("peak_name");
@@ -663,17 +673,14 @@ public class Chromatogram1DChartProvider {
                 baselineAvailable = false;
             }
 
-            boolean andichromMode = true;
+            boolean andichromMode = valueVar.equals("ordinate_values");
 
             Array ordinateValues = null;
             try {
-                ordinateValues = f.getChild("ordinate_values").getArray();
+                ordinateValues = f.getChild(valueVar).getArray();
             } catch (ResourceNotAvailableException rne) {
                 ordinateValues = f.getChild("total_intensity").getArray();
                 andichromMode = false;
-            }
-
-            if (andichromMode) {
             }
 
             Collection<String> peaknames = ArrayTools.getStringsFromArray(peakNames.
