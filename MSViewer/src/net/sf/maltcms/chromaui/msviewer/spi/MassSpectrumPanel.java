@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -37,6 +38,7 @@ import maltcms.datastructures.ms.IScan1D;
 import maltcms.datastructures.ms.IScan2D;
 import maltcms.datastructures.ms.Scan1D;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
+import net.sf.maltcms.chromaui.charts.dataset.MSSeries;
 import net.sf.maltcms.chromaui.charts.format.ScaledNumberFormatter;
 import net.sf.maltcms.chromaui.charts.labels.TopKItemsLabelGenerator;
 import net.sf.maltcms.chromaui.charts.tools.ChromatogramVisualizerTools;
@@ -96,10 +98,11 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private Result<IScan> lookupResult;
     private Result<IMetabolite> metaboliteSelection;
     private Result<IPeakAnnotationDescriptor> peakAnnotationDescriptorResult;
-    private HashMap<XYSeries, IScan> seriesToScan = new LinkedHashMap<XYSeries, IScan>();
+    private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<MSSeries, IScan>();
 //    private IChromAUIProject project = null;
     private DatabaseSearchPanel ddp = null;
     private Lookup contentProviderLookup;
+    private boolean addSeriesToTopPlot = true;
 //    private Dataset1D<IChromatogram,IScan> dataset;
 //    private MSChartHandler msChartHandler;
 
@@ -158,9 +161,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void initChartComponents() {
 
         this.sc = new XYSeriesCollection();
-        XYSeries s = new XYSeries("asd");
-        s.add(1, 1);
-        this.sc.addSeries(s);
+        //XYSeries s = new XYSeries("asd");
+        //s.add(1, 1);
+        //this.sc.addSeries(s);
         XYBarDataset d = new XYBarDataset(sc, 0.5d);
         XYBarRenderer renderer = new XYBarRenderer(0.1d);
         StandardXYBarPainter sp = new StandardXYBarPainter();
@@ -194,9 +197,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                 sb.append(comp);
                 sb.append(": ");
                 sb.append("x=");
-                sb.append(x);
+                sb.append(String.format("%.2f",x));
                 sb.append(" y=");
-                sb.append(y);
+                sb.append(String.format("%.2f",y));
                 return sb.toString();
             }
         });
@@ -436,7 +439,18 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void addTopKLabels(int topk, int series) {
         System.out.println("addTopKLabels: " + topk + " " + series);
         if (series >= 0) {
-            final SortedMap<Double, Double> tm = new TreeMap<Double, Double>();
+            SortedMap<Double, Double> tm = null;
+            if (addSeriesToTopPlot) {
+                tm = new TreeMap<Double, Double>();
+            } else {
+                tm = new TreeMap<Double, Double>(new Comparator<Double>() {
+
+                    @Override
+                    public int compare(Double t, Double t1) {
+                        return -Double.compare(t, t1);
+                    }
+                });
+            }
             for (int i = 0; i < sc.getItemCount(series); i++) {
                 double mass = sc.getXValue(series, i);
                 double intens = sc.getYValue(series, i);
@@ -468,6 +482,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jToolBar1 = new javax.swing.JToolBar();
         clear = new javax.swing.JButton();
         addMs = new javax.swing.JToggleButton();
+        addSeriesTop = new javax.swing.JToggleButton();
         absoluteRelativeToggle = new javax.swing.JToggleButton();
         fixXAxis = new javax.swing.JToggleButton();
         fixYAxis = new javax.swing.JToggleButton();
@@ -504,6 +519,18 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             }
         });
         jToolBar1.add(addMs);
+
+        addSeriesTop.setSelected(true);
+        addSeriesTop.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.addSeriesTop.text")); // NOI18N
+        addSeriesTop.setFocusable(false);
+        addSeriesTop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        addSeriesTop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        addSeriesTop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSeriesTopActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(addSeriesTop);
 
         absoluteRelativeToggle.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.absoluteRelativeToggle.text")); // NOI18N
         absoluteRelativeToggle.setFocusable(false);
@@ -602,11 +629,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearActionPerformed
         // TODO add your handling code here:
         this.sc.removeAllSeries();
-        scales.clear();
-        seriesToScan.clear();
+        this.sc = new XYSeriesCollection();
+        this.scales.clear();
+        this.seriesToScan.clear();
         this.cp.repaint();
         this.activeMassSpectrum.setModel(
                 new DefaultComboBoxModel(new Object[]{}));
+        this.plot.setDataset(sc);
     }//GEN-LAST:event_clearActionPerformed
 
     private void fixXAxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixXAxisActionPerformed
@@ -672,13 +701,21 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_identifyActionPerformed
 
     private void absoluteRelativeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRelativeToggleActionPerformed
-        this.defaultNumberFormat.setRelativeMode(absoluteRelativeToggle.isSelected());
+//        this.defaultNumberFormat.setRelativeMode(absoluteRelativeToggle.isSelected());
+        for(MSSeries mss:seriesToScan.keySet()) {
+            mss.setNormalize(absoluteRelativeToggle.isSelected());
+        }
         this.cp.chartChanged(new AxisChangeEvent(this.plot.getRangeAxis()));
     }//GEN-LAST:event_absoluteRelativeToggleActionPerformed
+
+    private void addSeriesTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSeriesTopActionPerformed
+        this.addSeriesToTopPlot = this.addSeriesTop.isSelected();
+    }//GEN-LAST:event_addSeriesTopActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton absoluteRelativeToggle;
     private javax.swing.JComboBox activeMassSpectrum;
     private javax.swing.JToggleButton addMs;
+    private javax.swing.JToggleButton addSeriesTop;
     private javax.swing.JButton clear;
     private javax.swing.JToggleButton fixXAxis;
     private javax.swing.JToggleButton fixYAxis;
@@ -713,7 +750,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         }
         if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
             System.out.println("Received peak annotations from lookup");
-            for(IPeakAnnotationDescriptor ipad:peakAnnotationDescriptorResult.allInstances()) {
+            for (IPeakAnnotationDescriptor ipad : peakAnnotationDescriptorResult.allInstances()) {
                 final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
                 setData(scan, ipad.getDisplayName());
             }
@@ -727,9 +764,10 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             public void run() {
                 System.out.println("Change ms called in MassSpectrumPanel");
                 if (scan instanceof IScan1D) {
-                    XYSeries s = ChromatogramVisualizerTools.getMSSeries1D(
-                            (IScan1D) scan, name);
-                    s.setKey(s.getKey());
+                    MSSeries s = ChromatogramVisualizerTools.getMSSeries1D(
+                            (IScan1D) scan, name, addSeriesToTopPlot);
+                    //s.setKey(s.getKey());
+                    s.setNormalize(absoluteRelativeToggle.isSelected());
                     if (addMs.isSelected()) {
                         try {
                             sc.getSeries(s.getKey());
@@ -746,6 +784,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                         //cp.repaint();
 //                            XYPlot plot = (XYPlot) cp.getChart().getPlot();
                         plot.setDataset(sc);
+                        sc.addChangeListener(plot);
                     }
                     updateActiveMassSpectrum();
                     activeMS = seriesToScan.size() - 1;
@@ -753,8 +792,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                     ChartCustomizer.setSeriesColors(plot, 0.95f);
                     ChartCustomizer.setSeriesStrokes(plot, 2.0f);
                 } else if (scan instanceof IScan2D) {
-                    XYSeries s = ChromatogramVisualizerTools.getMSSeries(
-                            (IScan2D) scan);
+                    MSSeries s = ChromatogramVisualizerTools.getMSSeries(
+                            (IScan2D) scan, addSeriesToTopPlot);
+                    s.setNormalize(absoluteRelativeToggle.isSelected());
                     if (addMs.isSelected()) {
                         try {
                             sc.getSeries(s.getKey());

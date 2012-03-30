@@ -84,6 +84,7 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
                     ic.remove(lastTarget);
                 }
                 if (target != null) {
+                    lastTarget = target;
                     ic.add(target);
                 }
             }

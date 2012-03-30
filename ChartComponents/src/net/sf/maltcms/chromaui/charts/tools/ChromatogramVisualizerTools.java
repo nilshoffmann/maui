@@ -129,7 +129,7 @@ public class ChromatogramVisualizerTools {
         return s;
     }
 
-    public static MSSeries getMSSeries1D(IScan1D scan, String prefix) {
+    public static MSSeries getMSSeries1D(IScan1D scan, String prefix, boolean top) {
         System.out.println("repainting ms");
         long start = System.currentTimeMillis();
         System.out.println("Getting slc");
@@ -162,7 +162,11 @@ public class ChromatogramVisualizerTools {
         IndexIterator inten = ms.getSecond().getIndexIterator();
 //
         while (mz.hasNext() && inten.hasNext()) {
-            s.add(mz.getDoubleNext(), inten.getDoubleNext());
+            if(top) {
+                s.add(mz.getDoubleNext(), inten.getDoubleNext());
+            }else{
+                s.add(mz.getDoubleNext(), -inten.getDoubleNext());
+            }
         }
 
 //        for (int row = 0; row < 750; row++) {
@@ -174,6 +178,10 @@ public class ChromatogramVisualizerTools {
 //        }
 
         return s;
+    }
+    
+    public static MSSeries getMSSeries1D(IScan1D scan, String prefix) {
+        return getMSSeries1D(scan, prefix, true);
     }
 
     public static IScan2D getScanForPoint(Point imagePoint,
@@ -213,7 +221,7 @@ public class ChromatogramVisualizerTools {
         return s2;
     }
 
-    public static MSSeries getMSSeries(IScan2D s2) {
+    public static MSSeries getMSSeries(IScan2D s2, boolean top) {
         DecimalFormat rt1format = new DecimalFormat("#0");
         DecimalFormat rt2format = new DecimalFormat("#0.000");
         //System.out.println("First col scan acquisition time " + scanlineCache.);
@@ -227,9 +235,17 @@ public class ChromatogramVisualizerTools {
         IndexIterator inten = ms.getSecond().getIndexIterator();
 //
         while (mz.hasNext() && inten.hasNext()) {
-            s.add(mz.getDoubleNext(), inten.getDoubleNext());
+            if(top) {
+                s.add(mz.getDoubleNext(), inten.getDoubleNext());
+            }else{
+                s.add(mz.getDoubleNext(), -inten.getDoubleNext());
+            }
         }
         return s;
+    }
+    
+    public static MSSeries getMSSeries(IScan2D s2) {
+        return getMSSeries(s2,true);
     }
 
     public static MSSeries getMSSeries(Point imagePoint,

@@ -5,7 +5,6 @@
  */
 package net.sf.maltcms.db.search.api.ri;
 
-import com.db4o.ObjectContainer;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Arrays;
@@ -18,7 +17,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.db.search.api.DBConnectionManager;
 import net.sf.maltcms.db.search.api.IRetentionIndexDatabase;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -61,7 +59,7 @@ public class RetentionIndexDatabase implements IRetentionIndexDatabase {
             session.close();
             oc.close();
         } catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
         } catch (Exception e) {
             if(oc!=null) {
                 oc.close();
@@ -72,7 +70,6 @@ public class RetentionIndexDatabase implements IRetentionIndexDatabase {
                 oc.close();
             }
         }
-//                MetaboliteSimilarity ms = new MetaboliteSimilarity(scan,this.matchThreshold,maxHits,true);  
     }
 
     @Override

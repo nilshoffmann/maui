@@ -55,7 +55,7 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                     c.assign(dataTable.getName(), dataTable.toDataFrame());
                     c.assign("rowNames",dataTable.getRowNamesREXP());
                     c.eval("row.names("+dataTable.getName()+") <- rowNames");
-                    c.eval("write.table(" + dataTable.getName() + ",file=\"/Users/nilshoffmann/rout.csv\")");
+                    //c.eval("write.table(" + dataTable.getName() + ",file=\"/Users/nilshoffmann/rout.csv\")");
                     StringBuilder expression = new StringBuilder();
                     expression.append("result <- prcomp(");
                     expression.append(dataTable.getName());

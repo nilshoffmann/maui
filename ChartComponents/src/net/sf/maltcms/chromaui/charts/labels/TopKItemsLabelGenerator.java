@@ -19,7 +19,7 @@ public class TopKItemsLabelGenerator implements XYItemLabelGenerator {
 
     private final SortedMap<Double, Double> sm;
     private final Set<Double> ks;
-
+    
     public TopKItemsLabelGenerator(SortedMap<Double, Double> sm, int k) {
         this.sm = sm;
         this.ks = new TreeSet<Double>(new ArrayList<Double>(this.sm.keySet()).subList(Math.max(0, sm.size() - k), sm.size()));

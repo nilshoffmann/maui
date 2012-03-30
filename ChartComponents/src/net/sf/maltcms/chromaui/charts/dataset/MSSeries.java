@@ -5,7 +5,6 @@
 
 package net.sf.maltcms.chromaui.charts.dataset;
 
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.data.xy.XYSeries;
 
 /**
@@ -14,7 +13,8 @@ import org.jfree.data.xy.XYSeries;
  */
 public class MSSeries extends XYSeries{
 
-    private IChromatogramDescriptor parent;
+    private boolean normalize = false;
+    private double norm = 1.0d;
 
     public MSSeries(Comparable key, boolean autoSort, boolean allowDuplicateXValues) {
         super(key,autoSort,allowDuplicateXValues);
@@ -27,14 +27,33 @@ public class MSSeries extends XYSeries{
     public MSSeries(Comparable key) {
         super(key);
     }
-
-    public void setParent(IChromatogramDescriptor parent) {
-        this.parent = parent;
+    
+    public boolean isNormalize() {
+        return normalize;
     }
-
-    public IChromatogramDescriptor getParent() {
-        return this.parent;
+    
+    public void setNormalize(boolean normalize) {
+        this.normalize = normalize;
+        if(this.normalize) {
+            this.norm = getNormalizationValue();
+            System.out.println("Normalizing series "+getKey()+": "+normalize);
+            //normalize
+            for(int i = 0;i<getItemCount();i++) {
+                updateByIndex(i, Double.valueOf(getY(i).doubleValue()/this.norm));
+            }
+        }else{
+            System.out.println("Normalizing series "+getKey()+": "+normalize);
+            //denormalize
+            for(int i = 0;i<getItemCount();i++) {
+                updateByIndex(i, Double.valueOf(getY(i).doubleValue()*this.norm));
+            }
+            this.norm = 1.0d;
+        }
+        fireSeriesChanged();
     }
-
-
+    
+    public double getNormalizationValue() {
+        return getMaxY()-getMinY();
+    }
+    
 }

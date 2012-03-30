@@ -18,6 +18,9 @@ public class ChartPanelTools {
     public static AffineTransform getModelToViewTransform(ChartPanel chartPanel) {
         double zoomX = chartPanel.getScaleX();
         double zoomY = chartPanel.getScaleY();
+        
+        //System.out.println("Current zoomX: "+zoomX);
+        //System.out.println("Current zoomY: "+zoomY);
 
         Insets insets = chartPanel.getInsets();
         double transX = insets.left;

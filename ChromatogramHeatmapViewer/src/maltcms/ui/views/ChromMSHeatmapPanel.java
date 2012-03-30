@@ -16,8 +16,6 @@ import java.awt.Cursor;
 import java.util.Collection;
 import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IChromatogram;
-import maltcms.datastructures.ms.IChromatogram1D;
-import maltcms.datastructures.ms.IScan1D;
 import net.sf.maltcms.chromaui.charts.events.ChartPanelMouseListener;
 import net.sf.maltcms.chromaui.charts.events.DomainMarkerKeyListener;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
@@ -32,9 +30,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.openide.util.Lookup;
-import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
@@ -82,8 +78,11 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
 
     private void addCompoundPainter(InstanceContent ic, ChartPanel cp,
             Dataset1D ds) {
-        siep = new SelectedXYItemEntityPainter(ds, ic);
+        siep = new SelectedXYItemEntityPainter(ds, ic, cp);
         cp.addChartMouseListener(siep);
+        cp.getChart().getXYPlot().getDomainAxis().addChangeListener(siep);
+        cp.getChart().getXYPlot().getRangeAxis().addChangeListener(siep);
+        cp.getChart().addChangeListener(siep);
         CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>(
                 siep);
         PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
