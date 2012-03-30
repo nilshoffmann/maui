@@ -104,14 +104,15 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         this.peakAnnotationDescriptors = new ActivatableArrayList<IPeakAnnotationDescriptor>(
                 peakAnnotationDescriptors);
         for (IPeakAnnotationDescriptor pad : peakAnnotationDescriptors) {
-            WeakListeners.propertyChange(this, pad);
+            pad.addPropertyChangeListener(this);
         }
         firePropertyChange(PROP_PEAKANNOTATIONDESCRIPTORS,
                 oldPeakAnnotationDescriptors, peakAnnotationDescriptors);
-        setDisplayName(createDisplayName(peakAnnotationDescriptors).toString());
+        setShortDescription(createDisplayName(peakAnnotationDescriptors).toString());
     }
 
-    private StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
+    @Override
+    public StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
         StringBuilder sb = new StringBuilder(super.getName());
         sb.append(" (");
         Map<String, Integer> nameToCount = new HashMap<String, Integer>();
@@ -304,7 +305,8 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     @Override
     public IPeakAnnotationDescriptor getPeakForSample(IChromatogramDescriptor chromatogramDescriptor) {
         for (IPeakAnnotationDescriptor ipad : getPeakAnnotationDescriptors()) {
-            if (ipad.getChromatogramDescriptor().getName().equals(chromatogramDescriptor.getName())) {
+            //FIXME this does not work and results in NPE
+            if (ipad.getChromatogramDescriptor().getDisplayName().equals(chromatogramDescriptor.getDisplayName())) {
                 return ipad;
             }
         }
@@ -330,11 +332,35 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         }
         return Math.sqrt(d / ((double) getPeakAnnotationDescriptors().size() - 1.0d));
     }
+    
+    @Override
+    public String getMajorityName() {
+        StringBuilder sb = new StringBuilder(super.getName());
+        sb.append(" (");
+        Map<String, Integer> nameToCount = new HashMap<String, Integer>();
+        for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
+            if (nameToCount.containsKey(pad.getName())) {
+                nameToCount.put(pad.getName(), Integer.valueOf(nameToCount.get(pad.getName()).intValue() + 1));
+            } else {
+                nameToCount.put(pad.getName(), Integer.valueOf(1));
+            }
+        }
+        String mostFrequentName = "";
+        float highestCount = 0;
+        for (String key : nameToCount.keySet()) {
+            int count = nameToCount.get(key).intValue();
+            if (count > highestCount) {
+                mostFrequentName = key;
+                highestCount = count;
+            }
+        }
+        return mostFrequentName;
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        if (pce.getPropertyName().equals(IPeakAnnotationDescriptor.PROP_DISPLAYNAME) || pce.getPropertyName().equals(IPeakAnnotationDescriptor.PROP_NAME)) {
-            setDisplayName(createDisplayName(peakAnnotationDescriptors).toString());
-        }
+        //if (pce.getPropertyName().equals(IPeakAnnotationDescriptor.PROP_DISPLAYNAME) || pce.getPropertyName().equals(IPeakAnnotationDescriptor.PROP_NAME)) {
+            setShortDescription(createDisplayName(peakAnnotationDescriptors).toString());
+        //}
     }
 }

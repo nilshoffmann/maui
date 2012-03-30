@@ -20,15 +20,15 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="170" max="-2" attributes="0"/>
+                      <EmptySpace pref="189" max="-2" attributes="0"/>
                       <Component id="useLocalInstance" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator1" alignment="0" pref="316" max="32767" attributes="0"/>
+                  <Component id="jSeparator1" alignment="0" pref="318" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="241" max="-2" attributes="0"/>
+                      <EmptySpace pref="259" max="-2" attributes="0"/>
                       <Component id="testButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator2" alignment="0" pref="316" max="32767" attributes="0"/>
+                  <Component id="jSeparator2" alignment="0" pref="318" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jLabel3" alignment="1" min="-2" max="-2" attributes="0"/>

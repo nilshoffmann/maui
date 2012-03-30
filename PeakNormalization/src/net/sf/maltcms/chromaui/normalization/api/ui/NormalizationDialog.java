@@ -32,11 +32,13 @@ public class NormalizationDialog {
 
         if (result.equals(NotifyDescriptor.OK_OPTION)) {
             IPeakGroupDescriptor normalizationGroup = nsp.getInternalNormalizationGroup();
-            
+            System.out.println("Selected normalization group: "+normalizationGroup.getMajorityName());
             IPeakNormalizer externalNormalizer = null;
             if (nsp.isNormalizeToExternalQuantity()) {
+                System.out.println("Normalizing to external quantity");
                 externalNormalizer = new NormalizationDescriptorNormalizer();
             } else {
+                System.out.println("Normalizing to identity");
                 externalNormalizer = new IdentityNormalizer();
             }
             CompoundPeakNormalizer cpn = new CompoundPeakNormalizer();

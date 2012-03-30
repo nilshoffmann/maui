@@ -6,8 +6,7 @@ package net.sf.maltcms.chromaui.rserve.options;
 
 import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
 import net.sf.maltcms.chromaui.rserve.spi.PlotDemo;
-import org.openide.util.Exceptions;
-import org.rosuda.REngine.Rserve.RserveException;
+import org.rosuda.REngine.Rserve.RConnection;
 
 final class RServePanel extends javax.swing.JPanel {
 
@@ -174,7 +173,8 @@ final class RServePanel extends javax.swing.JPanel {
 //            try {
                 //FIXME works only in Cebitec
 //                PlotDemo.createPlotDemo(RserveConnectionFactory.directConnection(localRserveSettingsField.getText()));
-                PlotDemo.createPlotDemo(RserveConnectionFactory.hotfixConnection());
+                RConnection testConnection = RserveConnectionFactory.hotfixConnection();
+                PlotDemo.createPlotDemo(testConnection);
 //            } catch (RserveException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }

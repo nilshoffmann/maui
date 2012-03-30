@@ -19,10 +19,13 @@ public class CompositeNormalizer implements IPeakNormalizer {
     @Override
     public double getNormalizedArea(IPeakAnnotationDescriptor descriptor) {
         double area = descriptor.getArea();
+        System.out.print("Raw area for "+descriptor.getName()+"= "+area+" ");
         for (int i = 0; i < normalizer.length; i++) {
             IPeakNormalizer iPeakNormalizer = normalizer[i];
-            area/=iPeakNormalizer.getNormalizedArea(descriptor);
+            area = area/iPeakNormalizer.getNormalizedArea(descriptor);
+            System.out.print(" normalized[i]="+area+" ");
         }
+        System.out.println();
         return area;
     }
 
@@ -31,7 +34,7 @@ public class CompositeNormalizer implements IPeakNormalizer {
         double intensity = descriptor.getApexIntensity();
         for (int i = 0; i < normalizer.length; i++) {
             IPeakNormalizer iPeakNormalizer = normalizer[i];
-            intensity/=iPeakNormalizer.getNormalizedIntensity(descriptor);
+            intensity = intensity/iPeakNormalizer.getNormalizedIntensity(descriptor);
         }
         return intensity;
     }

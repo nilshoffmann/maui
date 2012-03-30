@@ -163,6 +163,18 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
 
     @Override
     public int compareTo(IBasicDescriptor t) {
+        if(t instanceof IAnovaDescriptor) {
+            double[] pvalues1 = getPvalues();
+            double[] pvalues2 = ((IAnovaDescriptor)t).getPvalues();
+            for(int i = 0;i<pvalues1.length;i++) {
+                if(pvalues1[i]<pvalues2[i]) {
+                    return -1;
+                }else if(pvalues1[i]<pvalues2[i]) {
+                    return 1;
+                }
+            }
+        }
+        
         return getDisplayName().compareTo(t.getDisplayName());
     }
 }

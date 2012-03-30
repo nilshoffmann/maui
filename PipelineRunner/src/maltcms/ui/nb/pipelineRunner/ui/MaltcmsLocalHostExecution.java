@@ -105,31 +105,25 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
 //        File javaBinDir = new File(new File(System.getProperty("java.home")), "bin");
 //        File java = new File(javaBinDir, "java");
         l.add("java");
-        l.add("-Xmx2G");
+        String commandLineOptions = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("commandLineOptions", "");
+        if(!commandLineOptions.isEmpty()) {
+            String[] splits = commandLineOptions.split(" ");
+            for(String option:splits) {
+                String op = option.trim();
+                if(op!=null && !op.isEmpty()) {
+                    l.add(op);
+                }
+            }
+        }
         l.add("-DomitUserTimePrefix=true");
         l.add("-jar");
         l.add(maltcmsJarFileName);
-//        l.add("-Xmx2G");
-//        sb.append("-Xmx2G -jar ");
-//        l.add("-jar " + maltcmsJarFileName);
-//        sb.append("-jar "+maltcmsJarFileName);
-//        l.add("-i");
-//        l.add(inputDir.getAbsolutePath());
-//        sb.append(" -i ");
-//        sb.append(inputDir.getAbsolutePath());
         l.add("-o");
         l.add(outputDir.getAbsolutePath());
-//        sb.append(" -o ");
-//        sb.append(outputDir.getAbsolutePath());
         l.add("-f");
         l.add(buildFileset());
-//        sb.append(" -f ");
-//        sb.append(buildFileset());
         l.add("-c");
         l.add(escapeString(configurationFile.getAbsolutePath(),"\""));
-//        sb.append(" -c ");
-//        sb.append(configurationFile.getAbsolutePath());
-//        return sb.toString();
         return l.toArray(new String[l.size()]);
     }
 

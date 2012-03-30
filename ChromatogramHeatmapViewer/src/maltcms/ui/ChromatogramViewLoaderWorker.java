@@ -104,6 +104,19 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
             if ("SIDE".equals(plotType)) {
                 plot = c1p.provide1DPlot(buildFileFragments(files),
                         "total_intensity", true);
+                IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
+                if(project!=null) {
+                    plot.clearAnnotations();
+                    List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+                    for(IChromatogramDescriptor file:files) {
+                        annotations.addAll(generatePeakShapes(file, project, Color.BLUE, new Color(0,0,255,32), plotMode, masses));
+                    }
+                    XYAnnotation last = annotations.remove(annotations.size()-1);
+                    for(XYAnnotation ann:annotations) {
+                        plot.addAnnotation(ann,false);
+                    }
+                    plot.addAnnotation(last,true);
+                }
             } else if ("TOP".equals(plotType)) {
                 plot = c1p.provide1DCoPlot(buildFileFragments(files),
                         "total_intensity", true);
@@ -206,17 +219,17 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
 //                            startTime, 0, stopTime - startTime,
 //                            tic.getDouble(scan));
                     Rectangle2D.Double bbox = new Rectangle2D.Double(
-                            apexTime, 0, apexTime+1,
+                            startTime, 0, stopTime-startTime,
                             tic.getDouble(scan));
 //                    Area a = new Area(bbox);
 //                    a.intersect(new Area(gp));
 //                    System.out.println("creating annotation");
                     XYShapeAnnotation xypa = new XYShapeAnnotation(bbox,
                             new BasicStroke(), outline, fill);
-                    XYTextAnnotation xyta = new XYTextAnnotation(apexTime + " m/z: " + peakDescr.
-                            getQuantMasses() + " area: " + peakDescr.getArea() + " name: " + peakDescr.
-                            getName(), apexTime,
-                            tic.getDouble(scan));
+//                    XYTextAnnotation xyta = new XYTextAnnotation(apexTime + " m/z: " + peakDescr.
+//                            getQuantMasses() + " area: " + peakDescr.getArea() + " name: " + peakDescr.
+//                            getName(), apexTime,
+//                            tic.getDouble(scan));
 //                    XYLineAnnotation xyla = new XYLineAnnotation(peakDescr.
 //                            getStartTime(),
 //                            tic.getDouble(startIdx), peakDescr.getStopTime(), tic.
@@ -224,7 +237,7 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
 //                            Color.BLACK);
                     System.out.println("adding annotation");
                     l.add(xypa);
-                    l.add(xyta);
+//                    l.add(xyta);
 //                    l.addMembers(xyla);
 //                    XYLineAnnotation baseline = new XYLineAnnotation();
                 }

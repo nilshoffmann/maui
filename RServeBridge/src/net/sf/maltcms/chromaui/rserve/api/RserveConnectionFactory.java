@@ -85,15 +85,16 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
     public void closeConnection() {
         if (this.activeConnection != null) {
             System.out.println("Closing connection to Rserve!");
-            this.activeConnection.close();
             if (isLocalServer) {
                 try {
                     System.out.println("Shutting down local server!");
+                    this.activeConnection.serverShutdown();
                     this.activeConnection.shutdown();
                 } catch (RserveException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
+            this.activeConnection.close();
             this.activeConnection = null;
         }
     }

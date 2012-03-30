@@ -249,19 +249,7 @@ public class ABasicDescriptor implements IBasicDescriptor {
             return false;
         }
         final ABasicDescriptor other = (ABasicDescriptor) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        if ((this.displayName == null) ? (other.displayName != null) : !this.displayName.equals(other.displayName)) {
-            return false;
-        }
-        if (this.date != other.date && (this.date == null || !this.date.equals(other.date))) {
-            return false;
-        }
         if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
-            return false;
-        }
-        if ((this.shortDescription == null) ? (other.shortDescription != null) : !this.shortDescription.equals(other.shortDescription)) {
             return false;
         }
         return true;
@@ -269,14 +257,9 @@ public class ABasicDescriptor implements IBasicDescriptor {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 79 * hash + (this.displayName != null ? this.displayName.hashCode() : 0);
-        hash = 79 * hash + (this.date != null ? this.date.hashCode() : 0);
-        hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 79 * hash + (this.shortDescription != null ? this.shortDescription.hashCode() : 0);
+        int hash = 3;
+        hash = 89 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
-    
     
 }

@@ -65,10 +65,6 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
                 getClass().getName()));
         containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + getBean().
                 getClass().getSimpleName()));
-//        List<? extends Action> containerActions = Utilities.actionsForPath("Actions/ContainerNodeActions/"+.getName());
-//        containerActions.addAll(getLookup().lookupAll(Action.class));
-//        containerActions.addAll(Utilities.actionsForPath(
-//                "Actions/ContainerNodeActions/"));
         containerActions.add(null);
         containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/DefaultActions"));
         containerActions.add(SystemAction.get(PropertiesAction.class));
@@ -109,7 +105,7 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
         if(pce.getPropertyName().equals(PROP_NAME)) {
             fireNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME)) {
+        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals("displayName")) {
             fireDisplayNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
         if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {

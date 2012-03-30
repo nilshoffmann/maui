@@ -42,7 +42,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
 //        System.out.println("Created ContainerNode Factory for " + cp.getClass());
         this.cp = cp;
         this.lkp = lkp;
-        cp.addPropertyChangeListener(this);
+        WeakListeners.propertyChange(this, cp);
     }
 
     @Override

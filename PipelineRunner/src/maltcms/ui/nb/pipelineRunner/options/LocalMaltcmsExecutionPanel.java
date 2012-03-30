@@ -6,6 +6,7 @@ package maltcms.ui.nb.pipelineRunner.options;
 
 import java.io.File;
 
+import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import maltcms.ui.nb.pipelineRunner.ui.PipelineRunnerTopComponent;
@@ -40,6 +41,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         maltcmsVersion = new javax.swing.JTextField();
+        commandLineOptions = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel1.text")); // NOI18N
 
@@ -62,19 +65,30 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         maltcmsVersion.setEditable(false);
         maltcmsVersion.setText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.maltcmsVersion.text")); // NOI18N
 
+        commandLineOptions.setText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.commandLineOptions.text")); // NOI18N
+        commandLineOptions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                commandLineOptionsActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel3.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(maltcmsVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                    .addComponent(maltcmsInstallationPath, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(commandLineOptions, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                    .addComponent(maltcmsVersion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                    .addComponent(maltcmsInstallationPath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -91,7 +105,11 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(maltcmsVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(commandLineOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -128,6 +146,11 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_maltcmsInstallationPathPropertyChange
 
+    private void commandLineOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandLineOptionsActionPerformed
+        // TODO add your handling code here:
+        controller.changed();
+    }//GEN-LAST:event_commandLineOptionsActionPerformed
+
     void load() {
         // TODO read settings and initialize GUI
         // Example:        
@@ -135,6 +158,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         // or for org.openide.util with API spec. version >= 7.4:
         maltcmsInstallationPath.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", ""));
         checkVersion(maltcmsInstallationPath.getText());
+        commandLineOptions.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("commandLineOptions", ""));
         // or:
         // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
     }
@@ -145,7 +169,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         // Preferences.userNodeForPackage(LocalMaltcmsExecutionPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
         // or for org.openide.util with API spec. version >= 7.4:
         NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsInstallationPath", maltcmsInstallationPath.getText());
-//        NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsVersion", maltcmsVersion.getText());
+        NbPreferences.forModule(PipelineRunnerTopComponent.class).put("commandLineOptions", commandLineOptions.getText().trim());
+        //        NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsVersion", maltcmsVersion.getText());
         // or:
         // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
     }
@@ -170,9 +195,11 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 //        return true;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField commandLineOptions;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField maltcmsInstallationPath;
     private javax.swing.JTextField maltcmsVersion;
     // End of variables declaration//GEN-END:variables

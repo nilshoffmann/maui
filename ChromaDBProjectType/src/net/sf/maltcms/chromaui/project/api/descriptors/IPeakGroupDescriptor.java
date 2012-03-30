@@ -47,6 +47,8 @@ public interface IPeakGroupDescriptor extends IBasicDescriptor {
     
     public double getAreaStdDev(IPeakNormalizer normalizer);
     
+    public String getMajorityName();
+    
     public String getCas();
     
     public void setCas(String cas);
@@ -66,4 +68,6 @@ public interface IPeakGroupDescriptor extends IBasicDescriptor {
     public Map<ISampleGroupDescriptor,Set<IPeakAnnotationDescriptor>> getPeaksBySampleGroup();
 
     public IPeakAnnotationDescriptor getPeakForSample(IChromatogramDescriptor chromatogramDescriptor);
+    
+    public StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors);
 }
