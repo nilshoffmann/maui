@@ -7,8 +7,6 @@ package net.sf.maltcms.chromaui.project.spi.actions;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import java.beans.PropertyChangeEvent;
-import java.util.Collection;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
@@ -25,7 +23,7 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.chromaui.project.spi.actions.RenamePeakGroup")
 @ActionRegistration(displayName = "#CTL_RenamePeakGroup")
 @ActionReferences({@ActionReference(path="Actions/DescriptorNodeActions/IPeakGroupDescriptor")})
-@Messages("CTL_RenamePeakGroup=Rename ")
+@Messages("CTL_RenamePeakGroup=Rename")
 public final class RenamePeakGroup implements ActionListener {
 
     private final IPeakGroupDescriptor context;

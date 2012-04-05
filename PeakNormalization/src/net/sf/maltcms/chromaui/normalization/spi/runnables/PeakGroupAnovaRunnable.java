@@ -66,7 +66,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
 //                        String[] sampleGroup = new String[peakArea.length];
                         HashMap<String, Set<IPeakAnnotationDescriptor>> groupToPeak = new HashMap<String, Set<IPeakAnnotationDescriptor>>();
                         for (IPeakAnnotationDescriptor pad : descr.getPeakAnnotationDescriptors()) {
-                            peakArea[i] = normalizer.getNormalizedArea(pad);
+                            peakArea[i] = normalizer.getNormalizationFactor(pad)*pad.getArea();
 //                        sampleGroup[i] = pad.getChromatogramDescriptor().
 //                                getSampleGroup().getName();
                             treatmentGroup[i] = pad.getChromatogramDescriptor().
@@ -92,7 +92,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                 double[] values1 = new double[set.size()];
                                 int k = 0;
                                 for (IPeakAnnotationDescriptor pad : set) {
-                                    values1[k] = normalizer.getNormalizedArea(pad);
+                                    values1[k] = normalizer.getNormalizationFactor(pad)*pad.getArea();
                                 }
                                 for (String group2 : groupToPeak.keySet()) {
                                     if (!group1.equals(

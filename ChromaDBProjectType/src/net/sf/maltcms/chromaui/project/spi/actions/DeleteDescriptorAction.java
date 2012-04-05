@@ -7,9 +7,7 @@ package net.sf.maltcms.chromaui.project.spi.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.IContainer;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import org.openide.awt.ActionRegistration;

@@ -18,27 +18,15 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 public class CompoundPeakNormalizer implements IPeakNormalizer {
 
     private IPeakGroupDescriptor referenceGroup;
-    
-    private boolean logTransform = false;
 
     @Override
-    public double getNormalizedArea(IPeakAnnotationDescriptor descriptor) {
+    public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor) {
         IPeakAnnotationDescriptor referencePeak = referenceGroup.getPeakForSample(descriptor.getChromatogramDescriptor());
-        if(logTransform) {
-            return Math.log10(descriptor.getArea()/referencePeak.getArea());
-        }else{
-            return descriptor.getArea()/referencePeak.getArea();
+        if(referencePeak==null) {
+            System.out.println("Reference peak "+referenceGroup.getMajorityName()+" not contained in chromatogram "+descriptor.getChromatogramDescriptor().getResourceLocation());
+            return 0.0d;
         }
-    }
-
-    @Override
-    public double getNormalizedIntensity(IPeakAnnotationDescriptor descriptor) {
-        IPeakAnnotationDescriptor referencePeak = referenceGroup.getPeakForSample(descriptor.getChromatogramDescriptor());
-        if(logTransform) {
-            return Math.log10(descriptor.getApexIntensity()/referencePeak.getApexIntensity());
-        }else{
-            return descriptor.getApexIntensity()/referencePeak.getApexIntensity();
-        }
+        return 1.0d/referencePeak.getArea();
     }
     
 }

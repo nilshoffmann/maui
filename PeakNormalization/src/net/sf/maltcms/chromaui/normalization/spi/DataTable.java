@@ -52,7 +52,7 @@ public class DataTable {
         double[] values = new double[peaks.size()];
         int i = 0;
         for (IPeakAnnotationDescriptor pad : peaks) {
-            values[i++] = normalizer.getNormalizedArea(pad);
+            values[i++] = normalizer.getNormalizationFactor(pad)*pad.getArea();
         }
         return MathTools.average(values, 0, values.length - 1);
     }
@@ -61,7 +61,7 @@ public class DataTable {
         double[] values = new double[peaks.size()];
         int i = 0;
         for (IPeakAnnotationDescriptor pad : peaks) {
-            values[i++] = normalizer.getNormalizedArea(pad);
+            values[i++] = normalizer.getNormalizationFactor(pad)*pad.getArea();
         }
         return MathTools.median(values, 0, values.length - 1);
     }
@@ -101,7 +101,7 @@ public class DataTable {
             for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
                 if (chromToRowIndex.containsKey(ipad.getChromatogramDescriptor())) {
                     Integer index = chromToRowIndex.get(ipad.getChromatogramDescriptor());
-                    variableValues[index.intValue()] = normalizer.getNormalizedArea(ipad);
+                    variableValues[index.intValue()] = normalizer.getNormalizationFactor(ipad)*ipad.getArea();
                 }
             }
             groupToValues.put(ipgd, variableValues);

@@ -17,12 +17,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
 public class NormalizationDescriptorNormalizer implements IPeakNormalizer {
 
     @Override
-    public double getNormalizedArea(IPeakAnnotationDescriptor descriptor) {
-        return descriptor.getChromatogramDescriptor().getNormalizationDescriptor().getValue(); 
-    }
-
-    @Override
-    public double getNormalizedIntensity(IPeakAnnotationDescriptor descriptor) {
+    public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor) {
         return descriptor.getChromatogramDescriptor().getNormalizationDescriptor().getValue();
     }
     

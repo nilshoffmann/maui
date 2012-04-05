@@ -13,8 +13,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
  */
 public interface IPeakNormalizer {
     
-    public double getNormalizedArea(IPeakAnnotationDescriptor descriptor);
-    
-    public double getNormalizedIntensity(IPeakAnnotationDescriptor descriptor);
+    public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor);
     
 }

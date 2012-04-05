@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.UUID;
 import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
@@ -90,12 +91,12 @@ public final class ExportAnovaResults implements ActionListener {
             try {
                 ph.progress("Exporting Anova Results...");
                 BufferedWriter bw = null;
-                LinkedHashMap<String, Integer> chromToIndex = new LinkedHashMap<String, Integer>();
+                LinkedHashMap<UUID, Integer> chromToIndex = new LinkedHashMap<UUID, Integer>();
                 List<String> chromatogramNames = new ArrayList<String>();
                 int idx = 0;
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                     chromatogramNames.add(chrom.getDisplayName());
-                    chromToIndex.put(chrom.getDisplayName(), idx++);
+                    chromToIndex.put(chrom.getId(), idx++);
                 }
                 try {
                     bw = new BufferedWriter(new FileWriter(output));
@@ -127,7 +128,14 @@ public final class ExportAnovaResults implements ActionListener {
                         String[] peaks = new String[chromatogramNames.size()];
                         for (IPeakAnnotationDescriptor peak : peakGroup.getPeakAnnotationDescriptors()) {
                             IChromatogramDescriptor peakChrom = peak.getChromatogramDescriptor();
-                            peaks[chromToIndex.get(peakChrom.getDisplayName())] = normalizer.getNormalizedArea(peak) + "";
+                            double factor = normalizer.getNormalizationFactor(peak);
+                            double value = peak.getArea();
+                            if(Double.isNaN(factor)) {
+                                value = 0;   
+                            }else{
+                                value = value*factor;
+                            }
+                            peaks[chromToIndex.get(peakChrom.getId())] = value+"";
                         }
                         for (int j = 0; j < peaks.length; j++) {
                             if (peaks[j] == null) {
@@ -137,6 +145,7 @@ public final class ExportAnovaResults implements ActionListener {
                             }
                             sb.append("\t");
                         }
+                        System.out.println("Row: "+Arrays.toString(peaks));
                         sb.append(group.getName()).append("\t");
                         sb.append(group.getPeakGroupDescriptor().getId()).append("\t");
                         if (group.getFactors().length == 1) {

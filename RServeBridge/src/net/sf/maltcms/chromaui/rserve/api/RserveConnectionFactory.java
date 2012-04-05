@@ -8,9 +8,11 @@ package net.sf.maltcms.chromaui.rserve.api;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import javax.naming.AuthenticationNotSupportedException;
 import net.sf.maltcms.chromaui.rserve.spi.StreamHog;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
@@ -63,6 +65,11 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
         rserveCalls = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVECALLS, defaultRserveCalls).split(",");
         rServeArgs = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RARGS, defaultRserveArgs);
         rserveCall = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVECALL, null);
+        System.out.println("unixRlocations: " + Arrays.toString(unixRlocations));
+        System.out.println("rArgs: " + rArgs);
+        System.out.println("rServeArgs: " + rServeArgs);
+        System.out.println("rserveCalls: " + Arrays.toString(rserveCalls));
+        System.out.println("rserveCall: " + rserveCall);
     }
 
     public static RserveConnectionFactory getInstance() {
@@ -108,45 +115,49 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
         return false;
     }
 
-    public String buildExecString() {
-        StringBuilder sb = new StringBuilder();
+    public List<String> buildExecString() {
+        List<String> rserveCmd = new ArrayList<String>();
         if (rBinaryLocation == null) {
             rBinaryLocation = getRBinaryLocation();
         }
-        sb.append(rBinaryLocation.getAbsolutePath());
-        sb.append(" CMD ");
+        rserveCmd.add(rBinaryLocation.getAbsolutePath());
+        rserveCmd.add("CMD");
         if (rserveCall == null) {
             int exitValue = -1;
             for (String rserveCallValue : rserveCalls) {
                 try {
-                    String tmpExecString = sb.toString()+rserveCallValue;
-                    Process p = startProcess(tmpExecString);
-                    exitValue = p.waitFor();
-                    if (exitValue == 0) {
-                        rserveCall = rserveCallValue;
-                        break;
+                    rserveCmd.add(rserveCallValue);
+                    System.out.println("Trying to run: " + rserveCmd);
+                    Process p = startProcess(rserveCmd);
+                    if (p != null) {
+                        exitValue = p.waitFor();
+                        System.out.println("Exit value: "+exitValue);
+                        if (exitValue == 0 || exitValue==2) {
+                            rserveCall = rserveCallValue;
+                            break;
+                        }
                     }
+                    rserveCmd.remove(rserveCallValue);
                 } catch (InterruptedException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
         }
-        sb.append(rserveCall.trim());
-        sb.append(" ");
-        sb.append(rArgs.trim());
-        sb.append(" ");
-        sb.append(rServeArgs.trim());
-        return sb.toString().trim();
+        if (rserveCall == null) {
+            throw new RuntimeException("Could not determine local Rserve command!");
+        }
+        return rserveCmd;
     }
 
     public static RConnection hotfixConnection() {
         return RserveConnectionFactory.getInstance().getLocalConnection();
     }
 
-    public Process startProcess(String commandString) {
+    public Process startProcess(List<String> command) {
         boolean isWindows = isWindows();
         try {
-            Process p = Runtime.getRuntime().exec(commandString);
+            ProcessBuilder pb = new ProcessBuilder(command);
+            Process p = pb.start();//Runtime.getRuntime().exec(command);
             StreamHog errorHog = new StreamHog(
                     p.getErrorStream(),
                     true);
@@ -160,10 +171,11 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
         return null;
     }
 
-    public void startProcessAndWait(String commandString) {
+    public void startProcessAndWait(List<String> commandString) {
         boolean isWindows = isWindows();
         try {
-            Process p = Runtime.getRuntime().exec(commandString);
+            ProcessBuilder bp = new ProcessBuilder(commandString);
+            Process p = bp.start();//Runtime.getRuntime().exec(commandString);
             StreamHog errorHog = new StreamHog(
                     p.getErrorStream(),
                     true);
@@ -188,20 +200,24 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
         RConnection connection = null;
         try {
             connection = new RConnection();
-            setConnection(connection);
+            //setConnection(connection);
             return connection;
         } catch (RserveException ex) {
             System.err.println("Failed to connect to Rserve ... launching local instance!");
-            startProcessAndWait(buildExecString());
-            for (int i = 0; i < 5; i++) {
-                try {
-                    connection = new RConnection();
-                    setConnection(connection);
-                    return connection;
-                } catch (RserveException ex2) {
-                    System.err.println(
-                            "Failed to connect on try " + (1 + i) + "/5");
+            try {
+                startProcessAndWait(buildExecString());
+                for (int i = 0; i < 5; i++) {
+                    try {
+                        connection = new RConnection();
+                        //setConnection(connection);
+                        return connection;
+                    } catch (RserveException ex2) {
+                        System.err.println(
+                                "Failed to connect on try " + (1 + i) + "/5");
+                    }
                 }
+            } catch (Exception e) {
+                System.err.println("Failed to connect to Rserve: " + e.getLocalizedMessage());
             }
         }
         return null;
@@ -309,9 +325,9 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
      * @throws RserveException 
      */
     public RConnection getLocalConnection() {
-        if (activeConnection != null) {
-            return activeConnection;
-        }
+//        if (activeConnection != null) {
+//            return activeConnection;
+//        }
         return connectLocal();
     }
 

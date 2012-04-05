@@ -205,7 +205,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public double getMeanArea(IPeakNormalizer normalizer) {
         double d = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
-            d += normalizer.getNormalizedArea(pad);
+            double factor = normalizer.getNormalizationFactor(pad);
+            double area = pad.getArea()*factor;
+            d += area;
         }
         return d / (double) getPeakAnnotationDescriptors().size();
     }
@@ -215,7 +217,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         double[] d = new double[getPeakAnnotationDescriptors().size()];
         int i = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
-            d[i++] = normalizer.getNormalizedArea(pad);
+            double factor = normalizer.getNormalizationFactor(pad);
+            double area = pad.getArea()*factor;
+            d[i++] = area;
         }
         return MathTools.median(d);
     }
@@ -224,7 +228,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public double getMeanAreaLog10(IPeakNormalizer normalizer) {
         double d = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
-            double value = Math.log10(normalizer.getNormalizedArea(pad));
+            double factor = normalizer.getNormalizationFactor(pad);
+            double area = pad.getArea()*factor;
+            double value = Math.log10(area);
             d += value;
         }
         return d / (double) getPeakAnnotationDescriptors().size();
@@ -234,8 +240,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public double getMeanApexIntensityLog10(IPeakNormalizer normalizer) {
         double intensity = 0.0d;
         for (IPeakAnnotationDescriptor descr : getPeakAnnotationDescriptors()) {
-            double value = Math.log10(normalizer.getNormalizedArea(descr));
-            intensity += value;
+            double factor = normalizer.getNormalizationFactor(descr);
+            double intens = descr.getApexIntensity()*factor;
+            intensity += Math.log10(intens);
         }
         return intensity / (double) getPeakAnnotationDescriptors().size();
     }
@@ -244,7 +251,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public double getMeanApexIntensity(IPeakNormalizer normalizer) {
         double intensity = 0.0d;
         for (IPeakAnnotationDescriptor descr : getPeakAnnotationDescriptors()) {
-            intensity += normalizer.getNormalizedIntensity(descr);
+            double factor = normalizer.getNormalizationFactor(descr);
+            double intens = descr.getApexIntensity()*factor;
+            intensity += intens;
         }
         return intensity / (double) getPeakAnnotationDescriptors().size();
     }
@@ -306,7 +315,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public IPeakAnnotationDescriptor getPeakForSample(IChromatogramDescriptor chromatogramDescriptor) {
         for (IPeakAnnotationDescriptor ipad : getPeakAnnotationDescriptors()) {
             //FIXME this does not work and results in NPE
-            if (ipad.getChromatogramDescriptor().getDisplayName().equals(chromatogramDescriptor.getDisplayName())) {
+            if (ipad.getChromatogramDescriptor().getId().equals(chromatogramDescriptor.getId())) {
                 return ipad;
             }
         }
@@ -328,7 +337,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         double meanArea = getMeanArea(normalizer);
         double d = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
-            d += Math.pow(normalizer.getNormalizedArea(pad) - meanArea, 2);
+            double factor = normalizer.getNormalizationFactor(pad);
+            double area = pad.getArea()*factor;
+            d += Math.pow(area - meanArea, 2);
         }
         return Math.sqrt(d / ((double) getPeakAnnotationDescriptors().size() - 1.0d));
     }

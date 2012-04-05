@@ -139,10 +139,11 @@ public class PeakGroupBoxPlot {
             Collection<IPeakAnnotationDescriptor> descriptors) {
         List<Double> values = new LinkedList<Double>();
         for (IPeakAnnotationDescriptor ipad : descriptors) {
+            double factor = normalizer.getNormalizationFactor(ipad);
             if (showAreas) {
-                values.add(normalizer.getNormalizedArea(ipad));
+                values.add(factor*ipad.getArea());
             } else {
-                values.add(normalizer.getNormalizedIntensity(ipad));
+                values.add(factor*ipad.getApexIntensity());
             }
         }
 
