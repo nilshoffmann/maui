@@ -297,7 +297,7 @@ public class ChromAUIProject implements IChromAUIProject {
     }
 
     @Override
-    public void openSession() {
+    public synchronized void openSession() {
         try {
             if (icp != null) {
                 closeSession();
@@ -320,7 +320,7 @@ public class ChromAUIProject implements IChromAUIProject {
     }
 
     @Override
-    public void closeSession() {
+    public synchronized void closeSession() {
         if (icp != null) {
             //ics.close();
             icp.close();

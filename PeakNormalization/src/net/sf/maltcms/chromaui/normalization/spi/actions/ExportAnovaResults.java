@@ -42,8 +42,8 @@ import org.openide.util.Utilities;
 id = "net.sf.maltcms.chromaui.project.spi.actions.ExportAnovaResults")
 @ActionRegistration(displayName = "#CTL_ExportAnovaResults")
 @ActionReferences({
-    @ActionReference(path = "Actions/ContainerNodeActions/StatisticsContainer"),
-    @ActionReference(path = "Menu/File", position = 1520)
+    @ActionReference(path = "Actions/ContainerNodeActions/StatisticsContainer/anova")
+//@ActionReference(path = "Menu/File", position = 1520)
 })
 @Messages("CTL_ExportAnovaResults=Export Anova Results")
 public final class ExportAnovaResults implements ActionListener {
@@ -56,19 +56,24 @@ public final class ExportAnovaResults implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
-        File exportDir = new File(FileUtil.toFile(project.getLocation()), "export/anova/" + sdf.format(new Date()));
-        exportDir.mkdirs();
-        File exportFile = new File(exportDir, "anovaExport.csv");
-        List<IAnovaDescriptor> anovas = new ArrayList<IAnovaDescriptor>();
-        for (IStatisticsDescriptor statd : context.getMembers()) {
-            if (statd instanceof IAnovaDescriptor) {
-                anovas.add((IAnovaDescriptor) statd);
+        if (context.getMethod().equalsIgnoreCase("anova")) {
+            System.out.println("Exporting peak tables!");
+            IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
+            File exportDir = new File(FileUtil.toFile(project.getLocation()), "export/anova/" + sdf.format(new Date()));
+            exportDir.mkdirs();
+            File exportFile = new File(exportDir, "anovaExport.csv");
+            List<IAnovaDescriptor> anovas = new ArrayList<IAnovaDescriptor>();
+            for (IStatisticsDescriptor statd : context.getMembers()) {
+                if (statd instanceof IAnovaDescriptor) {
+                    anovas.add((IAnovaDescriptor) statd);
+                }
             }
+            ExportRunnable er = new ExportRunnable(project, anovas, exportFile);
+            ExportRunnable.createAndRun("Anova Peak Group Export", er);
+        }else{
+            System.out.println("Not applicable for method "+context.getMethod());
         }
-        ExportRunnable er = new ExportRunnable(project, anovas, exportFile);
-        ExportRunnable.createAndRun("Anova Peak Group Export", er);
     }
 
     class ExportRunnable extends AProgressAwareRunnable {
@@ -130,12 +135,12 @@ public final class ExportAnovaResults implements ActionListener {
                             IChromatogramDescriptor peakChrom = peak.getChromatogramDescriptor();
                             double factor = normalizer.getNormalizationFactor(peak);
                             double value = peak.getArea();
-                            if(Double.isNaN(factor)) {
-                                value = 0;   
-                            }else{
-                                value = value*factor;
+                            if (Double.isNaN(factor)) {
+                                value = 0;
+                            } else {
+                                value = value * factor;
                             }
-                            peaks[chromToIndex.get(peakChrom.getId())] = value+"";
+                            peaks[chromToIndex.get(peakChrom.getId())] = value + "";
                         }
                         for (int j = 0; j < peaks.length; j++) {
                             if (peaks[j] == null) {
@@ -145,7 +150,7 @@ public final class ExportAnovaResults implements ActionListener {
                             }
                             sb.append("\t");
                         }
-                        System.out.println("Row: "+Arrays.toString(peaks));
+                        System.out.println("Row: " + Arrays.toString(peaks));
                         sb.append(group.getName()).append("\t");
                         sb.append(group.getPeakGroupDescriptor().getId()).append("\t");
                         if (group.getFactors().length == 1) {

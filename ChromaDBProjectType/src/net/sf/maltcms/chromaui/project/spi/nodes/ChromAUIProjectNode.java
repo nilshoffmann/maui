@@ -39,7 +39,7 @@ public class ChromAUIProjectNode extends AbstractNode implements PropertyChangeL
         //this.displayName = this.project.getProjectDirectory().getName();
         setName(project.getProjectDirectory().getName());
         setShortDescription(project.getLocation().getPath());
-        WeakListeners.propertyChange(this, project);
+        project.addPropertyChangeListener(WeakListeners.propertyChange(this, project));
         metaboliteSelection = Utilities.actionsGlobalContext().lookupResult(IMetabolite.class);
 //        project.getLookup().lookup(ProjectInformation.class).addPropertyChangeListener(this);
     }

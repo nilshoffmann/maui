@@ -11,6 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.util.LinkedHashSet;
 import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import org.openide.actions.PropertiesAction;
@@ -34,7 +35,7 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
         super(bean, Children.create(new ContainerNodeFactory(bean, lkp), true),
                 new ProxyLookup(lkp, Lookups.singleton(bean)));
         System.out.println("Creating container node for " + bean.getClass());
-        WeakListeners.propertyChange(this, bean);
+        bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
     }
 
     @Override
@@ -47,7 +48,12 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
             list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + c.
                     getSimpleName()));
         }
-        
+        if(getBean() instanceof StatisticsContainer) {
+            StatisticsContainer sc = (StatisticsContainer)getBean();
+            String method = sc.getMethod();
+            list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().
+                getClass().getSimpleName()+"/"+method));
+        }
         list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().
                 getClass().getSimpleName()));
         list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().

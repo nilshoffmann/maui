@@ -36,7 +36,7 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
         super(bean, children, new ProxyLookup(lkp, Lookups.singleton(bean)));
         setDisplayName(bean.getDisplayName());
         setShortDescription(bean.toString());
-        WeakListeners.propertyChange(this, bean);
+        bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
     }
 
     public DescriptorNode(IBasicDescriptor bean) throws IntrospectionException {

@@ -9,6 +9,7 @@ import net.sf.maltcms.chromaui.normalization.spi.CompositeNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.CompoundPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.IdentityNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.NormalizationDescriptorNormalizer;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import org.openide.DialogDisplayer;
@@ -21,7 +22,7 @@ import org.openide.NotifyDescriptor;
 public class NormalizationDialog {
 
     public static IPeakNormalizer getPeakNormalizer(PeakGroupContainer context) {
-
+        
         NormalizationSettingsPanel nsp = new NormalizationSettingsPanel(context);
         NotifyDescriptor nd = new NotifyDescriptor(
                 nsp, "Set normalization options", NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE, null, NotifyDescriptor.OK_OPTION);

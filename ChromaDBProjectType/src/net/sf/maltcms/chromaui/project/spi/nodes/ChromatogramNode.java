@@ -36,8 +36,8 @@ public class ChromatogramNode extends FilterNode implements
     public ChromatogramNode(Node original, org.openide.nodes.Children children,
             Lookup lookup) {
         super(original, children, lookup);
-        WeakListeners.propertyChange(this,
-                lookup.lookup(IChromatogramDescriptor.class));
+        lookup.lookup(IChromatogramDescriptor.class).addPropertyChangeListener(WeakListeners.propertyChange(this,
+                lookup.lookup(IChromatogramDescriptor.class)));
     }
 
     public ChromatogramNode(Node original, org.openide.nodes.Children children) {

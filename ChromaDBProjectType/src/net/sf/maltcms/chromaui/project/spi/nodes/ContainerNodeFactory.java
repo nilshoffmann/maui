@@ -121,8 +121,8 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 //merge factory lookup from parent nodes with this container node lookup
                 cn = new ContainerNode((IContainer<IBasicDescriptor>) key,
                         new ProxyLookup(lkp, Lookups.fixed(cp)));
-                WeakListeners.propertyChange(this, key);
-                WeakListeners.propertyChange(this, cn);
+                key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
+                cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
                 return cn;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);

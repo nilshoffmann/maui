@@ -14,6 +14,7 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
+import net.sf.maltcms.chromaui.project.spi.nodes.DescriptorNode;
 import net.sf.maltcms.chromaui.statistics.view.api.IStatisticsDescriptorComparator;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.ChildFactory;
@@ -127,7 +128,7 @@ public class StatisticsContainerListChildFactory extends ChildFactory<IStatistic
         }
         if (key instanceof IAnovaDescriptor) {
             try {
-                AnovaNode an = new AnovaNode(key, Children.LEAF, Lookups.fixed(
+                DescriptorNode an = new DescriptorNode(key, Children.LEAF, Lookups.fixed(
                         project,
                         ((IAnovaDescriptor) key).getPeakGroupDescriptor()));
                 return an;
@@ -136,13 +137,14 @@ public class StatisticsContainerListChildFactory extends ChildFactory<IStatistic
             }
         } else {
             try {
-                return new FilterNode(new BeanNode(key), Children.LEAF, Lookups.
-                        fixed(
+                DescriptorNode an = new DescriptorNode(key, Children.LEAF, Lookups.fixed(
                         project));
+                return an;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
+        
         return Node.EMPTY;
     }
 }
