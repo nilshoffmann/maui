@@ -14,7 +14,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "Actions",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.project.spi.actions.RefreshNodesAction")
 @ActionRegistration(displayName = "#CTL_RefreshNodesAction")
 @ActionReferences({@ActionReference(path="Actions/ChromAUIProjectLogicalView"),@ActionReference(path="Actions/ContainerNodeActions/DefaultActions"),@ActionReference(path="Actions/DescriptorNodeActions/DefaultActions")})

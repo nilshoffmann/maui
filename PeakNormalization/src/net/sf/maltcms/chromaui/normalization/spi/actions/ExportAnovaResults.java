@@ -38,7 +38,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
-@ActionID(category = "Actions",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.project.spi.actions.ExportAnovaResults")
 @ActionRegistration(displayName = "#CTL_ExportAnovaResults")
 @ActionReferences({

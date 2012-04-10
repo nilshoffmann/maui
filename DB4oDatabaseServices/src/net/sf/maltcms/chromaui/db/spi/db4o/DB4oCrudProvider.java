@@ -92,7 +92,7 @@ public final class DB4oCrudProvider implements ICrudProvider {
             ec.common().queries().evaluationMode(QueryEvaluationMode.SNAPSHOT);
             ec.common().maxStackDepth(80);
             ec.common().bTreeNodeSize(2048);
-            ec.file().asynchronousSync(true);
+            //ec.file().asynchronousSync(true);
             ec.file().generateUUIDs(ConfigScope.GLOBALLY);
             Storage fileStorage = new FileStorage();
             // A cache with 128 pages of 1024KB size, gives a 128KB cache

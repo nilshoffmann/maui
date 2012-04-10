@@ -22,7 +22,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "Actions",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject")
 @ActionRegistration(displayName = "#CTL_AnnotatePeaksOnProject")
 @ActionReferences({

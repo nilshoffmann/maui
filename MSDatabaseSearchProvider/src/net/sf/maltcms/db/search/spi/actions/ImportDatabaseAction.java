@@ -10,8 +10,6 @@ import java.io.File;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.db.search.api.ui.DatabaseDefinitionPanel;
 import net.sf.maltcms.db.search.spi.tasks.DBImportTask;
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 
@@ -20,13 +18,13 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.RequestProcessor;
 
-@ActionID(category = "Database",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction")
 @ActionRegistration(displayName = "#CTL_ImportDatabaseAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 1414)
+    @ActionReference(path = "Menu/File", position = 1414),
+    @ActionReference(path="Actions/ChromAUIProjectLogicalView")
 })
 @Messages("CTL_ImportDatabaseAction=Import Database")
 public final class ImportDatabaseAction implements ActionListener {

@@ -20,11 +20,12 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "ContainerNodeActions/PeakGroupContainer",
+@ActionID(category = "Actions",
 id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupPca")
 @ActionRegistration(displayName = "#CTL_PeakGroupPca")
 @ActionReferences({
-    @ActionReference(path = "Menu/View", position = 0)
+    @ActionReference(path = "Menu/View", position = 0),
+    @ActionReference(path = "Actions/ContainerNodeActions/PeakGroupContainer")
 })
 @Messages("CTL_PeakGroupPca=Run Pca")
 public final class PeakGroupPca implements ActionListener {

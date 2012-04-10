@@ -25,11 +25,12 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
-@ActionID(category = "ContainerNodeActions/IPeakGroupDescriptor",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.normalization.spi.OpenPeakGroupRtBoxPlot")
 @ActionRegistration(displayName = "#CTL_OpenPeakGroupRtBoxPlot")
 @ActionReferences({
-    @ActionReference(path = "Menu/View", position = 0)
+    @ActionReference(path = "Menu/View", position = 0),
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")
 })
 @Messages("CTL_OpenPeakGroupRtBoxPlot=Show Peak Group Rt Box Plot")
 public final class OpenPeakGroupRtBoxPlot implements ActionListener {

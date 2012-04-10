@@ -19,11 +19,12 @@ import org.openide.awt.ActionID;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "Actions",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportPeakGroups")
 @ActionRegistration(displayName = "#CTL_ImportPeakGroups")
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 1420)
+    @ActionReference(path = "Menu/File", position = 1420),
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView")
 })
 @Messages("CTL_ImportPeakGroups=Import Multiple Peak Alignment")
 public final class ImportPeakGroups implements ActionListener {

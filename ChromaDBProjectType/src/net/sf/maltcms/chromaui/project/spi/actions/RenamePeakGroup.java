@@ -19,7 +19,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "Actions",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.project.spi.actions.RenamePeakGroup")
 @ActionRegistration(displayName = "#CTL_RenamePeakGroup")
 @ActionReferences({@ActionReference(path="Actions/DescriptorNodeActions/IPeakGroupDescriptor")})

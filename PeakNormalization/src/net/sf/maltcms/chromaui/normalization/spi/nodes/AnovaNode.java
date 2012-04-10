@@ -38,10 +38,10 @@ public class AnovaNode extends BeanNode {
         Action[] actions = super.getActions(context);
         List<Action> finalActions = new ArrayList<Action>();
         List<? extends Action> pathActions = Utilities.actionsForPath(
-                "Actions/ContainerNodeActions/IPeakGroupDescriptor");
+                "Actions/DescriptorNodeActions/IPeakGroupDescriptor");
         finalActions.addAll(pathActions);
         finalActions.add(null);
-        finalActions.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/DefaultActions"));
+        finalActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/DefaultActions"));
         finalActions.addAll(Arrays.asList(actions));
         return finalActions.toArray(new Action[finalActions.size()]);
     }

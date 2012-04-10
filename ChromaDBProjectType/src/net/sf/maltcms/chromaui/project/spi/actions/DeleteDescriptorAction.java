@@ -17,7 +17,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
-@ActionID(category = "Actions",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction")
 @ActionRegistration(displayName = "#CTL_DeleteDescriptorAction")
 @ActionReferences({

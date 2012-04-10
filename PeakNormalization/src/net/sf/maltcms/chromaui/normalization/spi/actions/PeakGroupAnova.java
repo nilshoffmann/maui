@@ -19,11 +19,12 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "ContainerNodeActions/PeakGroupContainer",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupAnova")
 @ActionRegistration(displayName = "#CTL_PeakGroupAnova")
 @ActionReferences({
-    @ActionReference(path = "Menu/View", position = 0)
+    @ActionReference(path = "Menu/View", position = 0),
+    @ActionReference(path = "Actions/ContainerNodeActions/PeakGroupContainer")
 })
 @Messages("CTL_PeakGroupAnova=Run Anova")
 public final class PeakGroupAnova implements ActionListener {

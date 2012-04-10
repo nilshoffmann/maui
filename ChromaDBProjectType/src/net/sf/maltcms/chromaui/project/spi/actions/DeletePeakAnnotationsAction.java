@@ -17,7 +17,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "Actions",
+@ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.project.spi.actions.DeletePeakAnnotationsAction")
 @ActionRegistration(displayName = "#CTL_DeletePeakAnnotationsAction")
 @ActionReferences({@ActionReference(path="Actions/ChromAUIProjectLogicalView")})
