@@ -144,7 +144,7 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
         } else {
             return;
         }
-        HashSet<String> whiteList = new HashSet<String>(Arrays.asList(
+        HashSet<String> whiteList = new HashSet<String>(Arrays.asList("groupSize",
                 "pvalueAdjustmentMethod", "pvalues", "factors", "fvalues","degreesOfFreedom"));
         if (descriptor != null) {
 //        container.addMembers(iter.toArray(new IStatisticsDescriptor[iter.size()]));

@@ -14,6 +14,7 @@ public interface IHypothesisTestDescriptor {
     String PROP_FACTORS = "factors";
     String PROP_PVALUES = "pvalues";
     String PROP_PVALUEADJUSTMENTMETHOD = "pvalueAdjustmentMethod";
+    String PROP_GROUPSIZE = "groupSize";
 
     /**
      * Get the value of degreesOfFreedom
@@ -70,4 +71,8 @@ public interface IHypothesisTestDescriptor {
      * @return the value of pvalueAdjustmentMethod
      */
     String getPvalueAdjustmentMethod();
+    
+    void setGroupSize(int size);
+    
+    int getGroupSize();
 }

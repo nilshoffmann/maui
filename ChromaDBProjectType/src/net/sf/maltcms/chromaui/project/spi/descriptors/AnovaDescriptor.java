@@ -18,6 +18,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
     
     private double[] pValues;
+    private int groupSize = -1;
 
     /**
      * Get the value of pValues
@@ -159,6 +160,24 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
     public String getPvalueAdjustmentMethod() {
         activate(ActivationPurpose.READ);
         return this.pvalueAdjustmentMethod;
+    }
+    
+    @Override
+    public void setGroupSize(int size) {
+        activate(ActivationPurpose.WRITE);
+        int old = this.groupSize;
+        this.groupSize = size;
+        firePropertyChange(PROP_GROUPSIZE, old,
+                this.groupSize);
+    }
+    
+    @Override
+    public int getGroupSize() {
+        activate(ActivationPurpose.READ);
+        if(this.groupSize==-1) {
+            setGroupSize(getPeakGroupDescriptor().getPeakAnnotationDescriptors().size());
+        }
+        return this.groupSize;
     }
 
     @Override
