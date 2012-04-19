@@ -4,10 +4,12 @@
 	<property environment="env" />
 	<property name="maui.dir" value="maui"/>
 	<property name="proteus.dir" value="proteus"/>
-	<property name="platform.dir" value="platform"/>
+        <property name="platform.version" value="7.1"/>
+	<property name="platform.dir" value="platform-${platform.version}"/>
+        <property name="platform.zip" value="${platform.dir}.zip"/>
 	<property name="maui.svn" value="svn+ssh://porta.cebitec.uni-bielefeld.de/vol/maltcms/repository/ChromAUI"/>
 	<property name="proteus.svn" value="https://svn.cebitec.uni-bielefeld.de/svn/aggiprojects/master/kotte/ProteomikLaborprogramm"/>
-        <property name="platform.location" value="http://www.maltcms.de:8080/artifactory/ext-release-local/net/sf/maltcms/platform/7.1/platform-7.1.zip"/>
+        <property name="platform.location" value="http://www.maltcms.de:8080/artifactory/ext-release-local/net/sf/maltcms/platform/${platform.version}/platform-${platform.version}.zip"/>
 
 	<target name="help" description="Prints usage info using -projecthelp">
 		<java classname="org.apache.tools.ant.Main">
@@ -20,63 +22,23 @@
         <target name="check-platform-dir">
             <available property="platform.dir.exists" file="${platform.dir}" type="dir"/>
         </target>
-
-        <target name="check-platform" depends="check-platform-dir,get-platform"/>
-
-        <target name="get-platform" unless="platform.dir.exists">
-                <!--<mkdir dir="${platform.dir}"/>-->
-                <get src="${platform.location}" dest="platform.zip"/>
-                <unzip src="platform.zip" dest="."/>
+        <target name="check-platform-zip">
+            <available property="platform.zip.exists" file="${platform.zip}" type="file"/>
         </target>
 
-	<target name="check-maui-dir">
-		<available property="maui.dir.exists" file="${maui.dir}" type="dir"/>
-	</target>
+        <target name="check-platform" depends="check-platform-dir,get-platform,check-platform-zip,unzip-platform"/>
 
-	<target name="check-maui" unless="maui.dir.exists">
-		<mkdir dir="${maui.dir}"/>	
-		<exec executable="svn" inputstring="" dir="${maui.dir}">
-			<arg value="co"/>
-			<arg value="${maui.svn}"/>
-			<arg value="."/>
-		</exec>
-	</target>
-
-	<target name="update-maui" depends="check-platform,check-maui-dir,check-maui">
-		<exec executable="svn" inputstring="" dir="${maui.dir}">
-			<arg value="update"/>
-			<arg value="."/>
-		</exec>
-	</target>
-
-	<target name="check-proteus-dir">
-		<available property="proteus.dir.exists" file="${proteus.dir}" type="dir"/>
-	</target>
-
-	<target name="check-proteus" unless="proteus.dir.exists">
-		<mkdir dir="${proteus.dir}"/>	
-		<exec executable="svn" inputstring="" dir="${proteus.dir}">
-			<arg value="co"/>
-			<arg value="${proteus.svn}"/>
-			<arg value="."/>
-		</exec>
-	</target>
-
-	<target name="update-proteus" depends="check-platform,check-proteus-dir,check-proteus">
-		<exec executable="svn" inputstring="" dir="${proteus.dir}">
-			<arg value="update"/>
-			<arg value="."/>
-		</exec>
-	</target>
+        <target name="get-platform" unless="platform.dir.exists">
+                <get src="${platform.location}" dest="${platform.zip}"/>
+        </target>
+        
+        <target name="unzip-platform" if="platform.zip.exists">
+                <unzip src="${platform.zip}" dest="."/>
+                <move file="platform" toDir="${platform.dir}"/>
+                <delete file="${platform.zip}"/>
+        </target>
 	
-	<target name="update-all" depends="update-maui,update-proteus" description="Update/Check out current svn versions.">
-	</target>
-
-	<target name="credentials" description="Ask for user credentials">
-		<input addproperty="sf.username">Please enter sourceforge username:</input>
-		<!--<input message="Please supply password for user ${sf.username}:" addproperty="sf.username.password">
-			<handler type="secure"/>
-		</input>-->
+	<target name="update-all" depends="check-platform" description="Update/Check out current platform version.">
 	</target>
 
 </project>
