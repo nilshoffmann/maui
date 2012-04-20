@@ -554,7 +554,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     @Override
     public double getApexIntensity() {
         activate(ActivationPurpose.READ);
-        return baselineArea;
+        return apexIntensity;
     }
 
     @Override

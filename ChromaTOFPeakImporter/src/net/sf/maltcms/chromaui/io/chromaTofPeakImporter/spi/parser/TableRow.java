@@ -11,5 +11,6 @@ import java.util.LinkedHashMap;
  * @author hoffmann
  */
 public class TableRow extends LinkedHashMap<String,String> {
+
     
 }

@@ -60,8 +60,7 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
             progressHandle.progress("Retrieving Chromatograms");
             LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<String, IChromatogramDescriptor>();
             for (IChromatogramDescriptor descriptor : project.getChromatograms()) {
-                String chromName = new File(descriptor.getResourceLocation()).
-                        getName();
+                String chromName = new File(descriptor.getResourceLocation()).getName();
                 chromName = chromName.substring(0, chromName.lastIndexOf(
                         "."));
                 chromatograms.put(chromName, descriptor);
@@ -115,8 +114,7 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
                 } else if (file.getName().toLowerCase().endsWith("tsv")) {
                     ChromaTOFParser.FIELD_SEPARATOR = "\t";
                 }
-                Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.
-                        parseReport(reports.get(chromName));
+                Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(reports.get(chromName));
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
                 LinkedHashSet<String> header = report.getFirst();
                 System.out.println("Available fields: " + header);
@@ -130,32 +128,60 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
 //                        );
 //                p.setArea();
 //                p.setName(tr.get("NAME"));
-                    IPeakAnnotationDescriptor descriptor = DescriptorFactory.
-                            newPeakAnnotationDescriptor(
-                            chromatogram,
-                            tr.get("NAME"),
-                            parseDouble((tr.get("UNIQUEMASS"))),
-                            parseDoubleArray("QUANT_MASSES", tr, ","),
-                            parseDouble((tr.get("RETENTION_INDEX"))),
-                            parseDouble((tr.get("S/N"))),
-                            Double.parseDouble(tr.get(
-                            "FULL_WIDTH_AT_HALF_HEIGHT")),
-                            parseDouble((tr.get("SIMILARITY"))),
-                            tr.get("LIBRARY"),
-                            tr.get("CAS"),
-                            tr.get("FORMULA"),
-                            "ChromaTOF", parseDouble(tr.get("INTEGRATIONBEGIN")),
-                            parseDouble((tr.get("R.T._(S)"))), parseDouble((tr.
-                            get(
-                            "INTEGRATIONEND"))), parseDouble((tr.get("AREA"))),
-                            Double.NaN);
-                    descriptor.setIndex(index++);
+                    String rt = tr.get("R.T._(S)");
+                    if (rt.contains(",")) {//2D mode
+                        String[] rts = rt.split(",");
+                        double rt1 = parseDouble(rts[0].trim());
+                        double rt2 = parseDouble(rts[1].trim());
+                        IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeak2DAnnotationDescriptor(
+                                chromatogram,
+                                tr.get("NAME"),
+                                parseDouble((tr.get("UNIQUEMASS"))),
+                                parseDoubleArray("QUANT_MASSES", tr, ","),
+                                parseDouble((tr.get("RETENTION_INDEX"))),
+                                parseDouble((tr.get("S/N"))),
+                                Double.parseDouble(tr.get(
+                                "FULL_WIDTH_AT_HALF_HEIGHT")),
+                                parseDouble((tr.get("SIMILARITY"))),
+                                tr.get("LIBRARY"),
+                                tr.get("CAS"),
+                                tr.get("FORMULA"),
+                                "ChromaTOF", parseDouble(tr.get("INTEGRATIONBEGIN")),
+                                rt1+rt2, parseDouble((tr.get(
+                                "INTEGRATIONEND"))), parseDouble((tr.get("AREA"))),
+                                Double.NaN,rt1,rt2);
+                        descriptor.setIndex(index++);
 //                descriptor.setPeak(p);
-                    Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.
-                            convertMassSpectrum(tr.get("SPECTRA"));
-                    descriptor.setMassValues(massSpectrum.getFirst());
-                    descriptor.setIntensityValues(massSpectrum.getSecond());
-                    peaks.add(descriptor);
+                        Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
+                        descriptor.setMassValues(massSpectrum.getFirst());
+                        descriptor.setIntensityValues(massSpectrum.getSecond());
+                        peaks.add(descriptor);
+                    } else {
+                        IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
+                                chromatogram,
+                                tr.get("NAME"),
+                                parseDouble((tr.get("UNIQUEMASS"))),
+                                parseDoubleArray("QUANT_MASSES", tr, ","),
+                                parseDouble((tr.get("RETENTION_INDEX"))),
+                                parseDouble((tr.get("S/N"))),
+                                Double.parseDouble(tr.get(
+                                "FULL_WIDTH_AT_HALF_HEIGHT")),
+                                parseDouble((tr.get("SIMILARITY"))),
+                                tr.get("LIBRARY"),
+                                tr.get("CAS"),
+                                tr.get("FORMULA"),
+                                "ChromaTOF", parseDouble(tr.get("INTEGRATIONBEGIN")),
+                                parseDouble((tr.get("R.T._(S)"))), parseDouble((tr.get(
+                                "INTEGRATIONEND"))), parseDouble((tr.get("AREA"))),
+                                Double.NaN);
+                        descriptor.setIndex(index++);
+//                descriptor.setPeak(p);
+                        Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
+                        descriptor.setMassValues(massSpectrum.getFirst());
+                        descriptor.setIntensityValues(massSpectrum.getSecond());
+                        peaks.add(descriptor);
+                    }
+
 //                    System.out.println("Adding peak: " + descriptor.getName() + " " + descriptor.
 //                            getApexTime());
 
@@ -166,7 +192,7 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
                 //System.out.println("Adding peak annotations: " + peaks);
                 DescriptorFactory.addPeakAnnotations(project,
                         chromatogram,
-                        peaks,trd);
+                        peaks, trd);
                 peaksReportsImported++;
 
                 progressHandle.progress(

@@ -19,16 +19,7 @@ import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
 import net.sf.maltcms.chromaui.project.api.types.QUADMS;
-import net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.NormalizationDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.SampleGroupDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.*;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -151,6 +142,37 @@ public class DescriptorFactory {
         pad.setApexIntensity(intensity);
         return pad;
     }
+    
+    public static IPeakAnnotationDescriptor newPeak2DAnnotationDescriptor(
+            IChromatogramDescriptor chromatogram, String name,
+            double uniqueMass, double[] quantMasses, double retentionIndex,
+            double snr, double fwhh,
+            double similarity, String library, String cas, String formula,
+            String method, double startTime, double apexTime, double stopTime,
+            double area, double intensity, double rt1, double rt2) {
+        Peak2DAnnotationDescriptor pad = new Peak2DAnnotationDescriptor();
+        pad.setCas(cas);
+        pad.setName(name);
+        pad.setDisplayName(name);
+        pad.setFormula(formula);
+        pad.setFwhh(fwhh);
+        pad.setLibrary(library);
+        pad.setRetentionIndex(retentionIndex);
+        pad.setSimilarity(similarity);
+        pad.setSnr(snr);
+        pad.setUniqueMass(uniqueMass);
+        pad.setQuantMasses(quantMasses);
+        pad.setMethod(method);
+        pad.setChromatogramDescriptor(chromatogram);
+        pad.setStartTime(startTime);
+        pad.setStopTime(stopTime);
+        pad.setApexTime(apexTime);
+        pad.setArea(area);
+        pad.setApexIntensity(intensity);
+        pad.setFirstColumnRt(rt1);
+        pad.setSecondColumnRt(rt2);
+        return pad;
+    }
 
     public static IAnovaDescriptor newAnovaDescriptor() {
         return new AnovaDescriptor();
@@ -183,4 +205,5 @@ public class DescriptorFactory {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/cdflogo.png");
     }
+
 }
