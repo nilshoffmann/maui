@@ -116,37 +116,38 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
     }
 
     public List<String> buildExecString() {
-        List<String> rserveCmd = new ArrayList<String>();
+        //List<String> rserveCmd = new ArrayList<String>();
         if (rBinaryLocation == null) {
             rBinaryLocation = getRBinaryLocation();
         }
-        rserveCmd.add(rBinaryLocation.getAbsolutePath());
-        rserveCmd.add("CMD");
+        //rserveCmd.add(rBinaryLocation.getAbsolutePath());
+        //rserveCmd.add("CMD");
         if (rserveCall == null) {
             int exitValue = -1;
             for (String rserveCallValue : rserveCalls) {
-                try {
-                    rserveCmd.add(rserveCallValue);
-                    System.out.println("Trying to run: " + rserveCmd);
-                    Process p = startProcess(rserveCmd);
-                    if (p != null) {
-                        exitValue = p.waitFor();
-                        System.out.println("Exit value: "+exitValue);
-                        if (exitValue == 0 || exitValue==2) {
-                            rserveCall = rserveCallValue;
-                            break;
-                        }
+                List<String> rserveCmd = Arrays.asList(rBinaryLocation.getAbsolutePath(), "CMD", rserveCallValue);
+                System.out.println("Trying to run: " + rserveCmd);
+                startProcessAndWait(rserveCmd);
+                for (int i = 0; i < 5; i++) {
+                    try {
+                        RConnection conn = new RConnection();
+                        //setConnection(connection);
+                        conn.close();
+                        rserveCall = rserveCallValue;
+                        return rserveCmd;
+                    } catch (RserveException ex2) {
+                        System.err.println(
+                                "Failed to connect on try " + (1 + i) + "/5");
                     }
-                    rserveCmd.remove(rserveCallValue);
-                } catch (InterruptedException ex) {
-                    Exceptions.printStackTrace(ex);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ix) {
+                    };
                 }
             }
-        }
-        if (rserveCall == null) {
             throw new RuntimeException("Could not determine local Rserve command!");
         }
-        return rserveCmd;
+        return Arrays.asList(rBinaryLocation.getAbsolutePath(), "CMD", rserveCall);
     }
 
     public static RConnection hotfixConnection() {
@@ -182,7 +183,9 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
             StreamHog outputHog = new StreamHog(
                     p.getInputStream(),
                     true);
-            if (!isWindows) /* on Windows the process will never return, so we cannot wait */ {
+            if (!isWindows) /*
+             * on Windows the process will never return, so we cannot wait
+             */ {
                 try {
                     p.waitFor();
                 } catch (InterruptedException ex) {
@@ -215,12 +218,16 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
                         System.err.println(
                                 "Failed to connect on try " + (1 + i) + "/5");
                     }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ix) {
+                    };
                 }
             } catch (Exception e) {
                 System.err.println("Failed to connect to Rserve: " + e.getLocalizedMessage());
             }
         }
-        return null;
+        throw new NullPointerException();
     }
 
     protected RConnection connectRemote(InetAddress address, int port, String username, String password) {
@@ -241,6 +248,10 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
                 System.err.println(
                         "Failed to connect on try " + (1 + i) + "/5");
             }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ix) {
+            };
         }
         return null;
     }
@@ -252,7 +263,8 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
 
     /**
      * Returns the r binary location
-     * @return 
+     *
+     * @return
      */
     public File getRBinaryLocation() {
         if (rBinaryLocation != null) {
@@ -317,12 +329,13 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
     }
 
     /**
-     * If the factory already has an active connection, the active connection is returned.
-     * Otherwise, this method tries to connectLocal to an already running local instance of Rserve.
-     * If that fails, it will try to launch a new Rserve instance and connect to it. Otherwise
-     * it will return null.
+     * If the factory already has an active connection, the active connection is
+     * returned. Otherwise, this method tries to connectLocal to an already
+     * running local instance of Rserve. If that fails, it will try to launch a
+     * new Rserve instance and connect to it. Otherwise it will return null.
+     *
      * @return
-     * @throws RserveException 
+     * @throws RserveException
      */
     public RConnection getLocalConnection() {
 //        if (activeConnection != null) {
@@ -332,14 +345,17 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
     }
 
     /**
-     * If the factory already has an active connection, the active connection is returned.
-     * Otherwise, this method creates a remote connection to an rserve running at address and port.
-     * This method does not allow unauthenticated access to Rserve.
+     * If the factory already has an active connection, the active connection is
+     * returned. Otherwise, this method creates a remote connection to an rserve
+     * running at address and port. This method does not allow unauthenticated
+     * access to Rserve.
+     *
      * @param address
      * @param port
      * @param username
      * @param password
-     * @return an active RConnection to the remote server or null if anything failed
+     * @return an active RConnection to the remote server or null if anything
+     * failed
      */
     public RConnection getRemoteConnection(InetAddress address, int port,
             String username, String password) {

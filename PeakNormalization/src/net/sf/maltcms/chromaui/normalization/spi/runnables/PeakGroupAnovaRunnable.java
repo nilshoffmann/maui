@@ -209,6 +209,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
 //            }
             progressHandle.finish();
         } catch (Exception e) {
+            Exceptions.printStackTrace(e);
             progressHandle.finish();
         }
     }
