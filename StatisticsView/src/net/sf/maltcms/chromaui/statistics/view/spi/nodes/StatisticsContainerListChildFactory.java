@@ -129,7 +129,7 @@ public class StatisticsContainerListChildFactory extends ChildFactory<IStatistic
         if (key instanceof IAnovaDescriptor) {
             try {
                 DescriptorNode an = new DescriptorNode(key, Children.LEAF, Lookups.fixed(
-                        project,
+                        project, key, 
                         ((IAnovaDescriptor) key).getPeakGroupDescriptor()));
                 return an;
             } catch (IntrospectionException ex) {

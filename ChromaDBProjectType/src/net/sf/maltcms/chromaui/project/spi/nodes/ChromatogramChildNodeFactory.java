@@ -68,8 +68,8 @@ public class ChromatogramChildNodeFactory extends ChildFactory<Peak1DContainer>
         try {
             //container node, add current lookup, make container available generically
             ContainerNode cn = new ContainerNode(key, Lookups.fixed(this.chromatogramDescriptor, this.lkp.lookup(IChromAUIProject.class)));
-            WeakListeners.propertyChange(this, key);
-            WeakListeners.propertyChange(this, cn);
+            key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
+            cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
             return cn;
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);
@@ -80,6 +80,5 @@ public class ChromatogramChildNodeFactory extends ChildFactory<Peak1DContainer>
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
         refresh(true);
-//        this.lkp.lookup(IChromAUIProject.class).refresh();
     }
 }

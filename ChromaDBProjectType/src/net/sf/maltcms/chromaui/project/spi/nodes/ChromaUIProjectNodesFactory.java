@@ -43,7 +43,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     public ChromaUIProjectNodesFactory(IChromAUIProject cp) {
 //        System.out.println("Created ChromaUIProjectNodes Factory");
         this.cp = cp;
-        this.cp.addPropertyChangeListener(this);
+        this.cp.addPropertyChangeListener(WeakListeners.propertyChange(this,cp));
     }
 
     protected List<FileObject> getFileChildren() {
@@ -138,7 +138,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
         if (key instanceof IContainer) {
             try {
                 ContainerNode cn = new ContainerNode((IContainer) key, Lookups.fixed(cp));
-                WeakListeners.propertyChange(this, ((IContainer) key));
+                cn.addPropertyChangeListener(WeakListeners.propertyChange(this,cn));
+                ((IContainer)key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
                 return cn;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);
@@ -150,8 +151,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                 Node n = dobj.getNodeDelegate();
                 FilterNode fn = new FilterNode(n, new FilterNode.Children(n),
                         new ProxyLookup(n.getLookup(), Lookups.fixed(cp)));
-                WeakListeners.propertyChange(this, fn);
-                WeakListeners.propertyChange(this, dobj);
+                fn.addPropertyChangeListener(WeakListeners.propertyChange(this, fn));
+                dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
                 return fn;
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);

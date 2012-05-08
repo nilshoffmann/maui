@@ -42,7 +42,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
 //        System.out.println("Created ContainerNode Factory for " + cp.getClass());
         this.cp = cp;
         this.lkp = lkp;
-        WeakListeners.propertyChange(this, cp);
+        cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
     }
 
     @Override
@@ -98,9 +98,9 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                         Children.create(new ChromatogramChildNodeFactory(
                         cd, lkp), true), lookup);
 //                cd.addPropertyChangeListener(this);
-                WeakListeners.propertyChange(this, dobj);
-                WeakListeners.propertyChange(this, key);
-                WeakListeners.propertyChange(this, cn);
+                dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
+                key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
+                cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
                 return cn;
 //                        Children.create(new ChromatogramChildNodeFactory(
 //                        cd, lookup), true), lookup);
@@ -132,8 +132,8 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 //leaf node, addMembers current lookup, make containter available generically
                 DescriptorNode cn = new DescriptorNode(key, new ProxyLookup(lkp,
                         Lookups.fixed(cp)));
-                WeakListeners.propertyChange(this, key);
-                WeakListeners.propertyChange(this, cn);
+                key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
+                cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
                 return cn;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);

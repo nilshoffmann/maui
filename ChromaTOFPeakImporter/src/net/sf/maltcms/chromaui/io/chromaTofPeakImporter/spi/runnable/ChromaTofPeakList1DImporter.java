@@ -215,9 +215,7 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
             Exceptions.printStackTrace(ex);
         }
 
-        File importDir = new File(FileUtil.toFile(project.getProjectDirectory()),
-                "import");
-        importDir.mkdirs();
+        File importDir = project.getImportLocation(this);
         File fragment = new File(importDir, StringTools.removeFileExt(
                 peakListName));
         FileFragment f = new FileFragment(fragment);

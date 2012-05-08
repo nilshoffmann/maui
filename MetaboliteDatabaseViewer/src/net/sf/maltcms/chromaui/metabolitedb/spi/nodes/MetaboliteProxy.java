@@ -262,14 +262,6 @@ public class MetaboliteProxy implements IMetabolite {
         pcs.firePropertyChange(PROP_COMMENTS, oldValue, string);
     }
 
-    public int getMw() {
-        return getMW();
-    }
-
-    public void setMw(int mw) {
-        setMW(mw);
-    }
-
     public String getId() {
         return getID();
     }
@@ -297,4 +289,15 @@ public class MetaboliteProxy implements IMetabolite {
     public int compareTo(IAnchor t) {
         return metabolite.compareTo(t);
     }
+
+    @Override
+    public double getMw() {
+        return getMW();
+    }
+
+    @Override
+    public void setMw(double d) {
+        setMW((int)d);
+    }
+
 }

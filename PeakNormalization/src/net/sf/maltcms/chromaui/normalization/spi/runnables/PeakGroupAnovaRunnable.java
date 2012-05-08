@@ -12,9 +12,11 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import javax.swing.SwingUtilities;
 import lombok.Data;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
@@ -44,6 +46,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
 
     private final IPeakNormalizer normalizer;
     private final PeakGroupContainer container;
+    private final IChromAUIProject project;
     private final PvalueAdjustment pvalueAdjustmentMethod;
 
     @Override
@@ -204,6 +207,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                             + e.getMessage());
                     Exceptions.printStackTrace(e);
                 }
+                project.refresh();
 //            } catch (RserveException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }

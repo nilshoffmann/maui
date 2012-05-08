@@ -12,12 +12,14 @@ import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
 import net.sf.maltcms.chromaui.normalization.spi.runnables.PeakGroupAnovaRunnable;
 import net.sf.maltcms.chromaui.normalization.api.ui.PvalueAdjustmentDialog;
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupAnova")
@@ -45,7 +47,7 @@ public final class PeakGroupAnova implements ActionListener {
         if(pvalueAdjustment==null) {
             return;
         }
-        PeakGroupAnovaRunnable tc = new PeakGroupAnovaRunnable(normalizer, context,
+        PeakGroupAnovaRunnable tc = new PeakGroupAnovaRunnable(normalizer, context, Utilities.actionsGlobalContext().lookup(IChromAUIProject.class),
                 pvalueAdjustment);
         PeakGroupAnovaRunnable.createAndRun("Peak group anova", tc);
     }

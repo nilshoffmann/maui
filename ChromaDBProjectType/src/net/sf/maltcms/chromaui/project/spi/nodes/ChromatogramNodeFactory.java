@@ -68,8 +68,8 @@ public class ChromatogramNodeFactory extends ChildFactory<IChromatogramDescripto
         AbstractNode an = new AbstractNode(
                 Children.create(new ChromatogramChildNodeFactory(
                 cd, lookup), true));
-        WeakListeners.propertyChange(this, an);
-        WeakListeners.propertyChange(this, cd);
+        an.addPropertyChangeListener(WeakListeners.propertyChange(this, an));
+        cd.addPropertyChangeListener(WeakListeners.propertyChange(this, cd));
         an.setName(cd.getDisplayName());
         return an;
     }

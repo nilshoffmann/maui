@@ -23,7 +23,7 @@ import org.rosuda.REngine.Rserve.RserveException;
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class RserveConnectionFactory extends Thread implements PreferenceChangeListener {
+public class RserveConnectionFactory implements PreferenceChangeListener {
 
     public static final String KEY_RBINARY_LOCATIONS = "rbinaryLocations";
     private static RserveConnectionFactory rcf = new RserveConnectionFactory();
@@ -52,9 +52,10 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
     private String rServeArgs;
     private String[] rserveCalls;
     private String rserveCall;
+    private boolean debug = true;
+    private Thread shutdownHook;
 
     private RserveConnectionFactory() {
-        Runtime.getRuntime().addShutdownHook(this);
         NbPreferences.forModule(RserveConnectionFactory.class).addPreferenceChangeListener(this);
         unixRlocations = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RBINARY_LOCATIONS, defaultUnixRlocations).split(",");
         rArgs = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RARGS, defaultRargs);
@@ -125,7 +126,9 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
         if (rserveCall == null) {
             int exitValue = -1;
             for (String rserveCallValue : rserveCalls) {
-                List<String> rserveCmd = Arrays.asList(rBinaryLocation.getAbsolutePath(), "CMD", rserveCallValue);
+                String[] rRargs = rArgs.split(" ");
+                List<String> rserveCmd = new ArrayList<String>(Arrays.asList(rBinaryLocation.getAbsolutePath(), "CMD", rserveCallValue, "-e", "\"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rServeArgs + "')\""));
+                rserveCmd.addAll(Arrays.asList(rRargs));
                 System.out.println("Trying to run: " + rserveCmd);
                 startProcessAndWait(rserveCmd);
                 for (int i = 0; i < 5; i++) {
@@ -179,10 +182,10 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
             Process p = bp.start();//Runtime.getRuntime().exec(commandString);
             StreamHog errorHog = new StreamHog(
                     p.getErrorStream(),
-                    true);
+                    false);
             StreamHog outputHog = new StreamHog(
                     p.getInputStream(),
-                    true);
+                    false);
             if (!isWindows) /*
              * on Windows the process will never return, so we cannot wait
              */ {
@@ -213,6 +216,7 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
                     try {
                         connection = new RConnection();
                         //setConnection(connection);
+                        isLocalServer = true;
                         return connection;
                     } catch (RserveException ex2) {
                         System.err.println(
@@ -240,6 +244,7 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
                 if (connection.needLogin()) {
                     connection.login(username, password);
                     setConnection(connection);
+                    isLocalServer = false;
                     return connection;
                 } else {
                     throw new RuntimeException("Warning: Remote Rserve does not require authentication!");
@@ -254,11 +259,6 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
             };
         }
         return null;
-    }
-
-    @Override
-    public void run() {
-        closeConnection();
     }
 
     /**
@@ -338,10 +338,10 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
      * @throws RserveException
      */
     public RConnection getLocalConnection() {
-//        if (activeConnection != null) {
-//            return activeConnection;
-//        }
-        return connectLocal();
+        if (activeConnection == null) {
+            activeConnection = connectLocal();
+        }
+        return activeConnection;
     }
 
     /**
@@ -368,5 +368,18 @@ public class RserveConnectionFactory extends Thread implements PreferenceChangeL
     @Override
     public void preferenceChange(PreferenceChangeEvent pce) {
         NbPreferences.forModule(RserveConnectionFactory.class);
+    }
+
+    public Thread getShutdownHook() {
+        if (shutdownHook == null) {
+            shutdownHook = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    RserveConnectionFactory.getInstance().closeConnection();
+                }
+            });
+        }
+        return shutdownHook;
     }
 }

@@ -11,13 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
@@ -53,10 +48,9 @@ import org.openide.util.lookup.InstanceContent;
 
 /**
  *
- * Implementation of a ChromAUI project type.
- * Abstracts from the concrete db schema used to represent the
- * logical structure of a project on disk.
- * Should be used as a starting point for other project type
+ * Implementation of a ChromAUI project type. Abstracts from the concrete db
+ * schema used to represent the logical structure of a project on disk. Should
+ * be used as a starting point for other project type
  * implementations/extensions. See @link{http://platform.netbeans.org/tutorials/nbm-projectextension.html}
  * for details on writing a project type extension.
  *
@@ -180,7 +174,7 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public void refresh() {
         pcs.firePropertyChange(new PropertyChangeEvent(
-                this, "refresh", false, true));
+                this, "container", false, true));
 //        getLookup().lookup(Info.class).firePropertyChange(new PropertyChangeEvent(
 //                this, "REFRESH_NODES", null, this));
     }
@@ -376,6 +370,19 @@ public class ChromAUIProject implements IChromAUIProject {
     public <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp) {
         IQuery<T> query = ics.newQuery(c);
         return query.retrieve(mp, comp);
+    }
+
+    @Override
+    public File getImportLocation(Object importer) {
+        File importDir = new File(FileUtil.toFile(getProjectDirectory()),
+                "import");
+        importDir = new File(importDir, importer.getClass().getSimpleName());
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "MM-dd-yyyy_HH-mm-ss", Locale.US);
+        importDir = new File(importDir, dateFormat.format(
+                new Date()));
+        importDir.mkdirs();
+        return importDir;
     }
 
     private final class OpenCloseHook extends ProjectOpenedHook {

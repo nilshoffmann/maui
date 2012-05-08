@@ -35,7 +35,8 @@ id = "net.sf.maltcms.chromaui.normalization.spi.OpenPeakGroupBoxPlot")
 @ActionRegistration(displayName = "#CTL_OpenPeakGroupBoxPlot")
 @ActionReferences({
     @ActionReference(path = "Menu/View", position = 0),
-    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor"),
+    @ActionReference(path = "Actions/DescriptorNodeActions/IAnovaDescriptor")
 })
 @Messages("CTL_OpenPeakGroupBoxPlot=Show Peak Group Area Box Plot")
 public final class OpenPeakGroupBoxPlot implements ActionListener {
@@ -67,6 +68,7 @@ public final class OpenPeakGroupBoxPlot implements ActionListener {
             JScrollPane jsp = new JScrollPane(bg);
             pgbpt.add(jsp, BorderLayout.CENTER);
             pgbpt.open();
+            pgbpt.requestActive();
         }else{
             System.err.println("No IChromAUI project is in lookup!");
         }

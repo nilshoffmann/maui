@@ -7,8 +7,10 @@ package net.sf.maltcms.chromaui.normalization.spi.runnables;
 
 import com.db4o.collections.ActivatableArrayList;
 import java.util.List;
+import javax.swing.SwingUtilities;
 import lombok.Data;
 import net.sf.maltcms.chromaui.normalization.spi.DataTable;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
@@ -36,6 +38,7 @@ import ucar.ma2.ArrayDouble;
 public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
 
     private final PeakGroupContainer container;
+    private final IChromAUIProject project;
     private final DataTable dataTable;
     private final boolean centerData;
     private final boolean scaleToUnitVariance;
@@ -119,7 +122,6 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                     pcaDescriptor.addMembers(pcadescr);
                     statContainers.add(pcaDescriptor);
                     container.setStatisticsContainers(statContainers);
-
                     // close RConnection, we're done
                     c.close();
                 } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)

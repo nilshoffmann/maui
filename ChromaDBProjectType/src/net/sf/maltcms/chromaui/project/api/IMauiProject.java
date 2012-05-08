@@ -5,6 +5,7 @@
 package net.sf.maltcms.chromaui.project.api;
 
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.Collection;
 import java.util.Comparator;
 import net.sf.maltcms.chromaui.db.api.IMatchPredicate;
@@ -44,5 +45,7 @@ public interface IMauiProject extends PropertyChangeListener {
     void updateContainer(IContainer... ic);
     
     void removeDescriptor(IBasicDescriptor... descriptor);
+    
+    File getImportLocation(Object importer);
     
 }

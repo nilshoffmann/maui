@@ -30,7 +30,8 @@ id = "net.sf.maltcms.chromaui.normalization.spi.OpenPeakGroupRtBoxPlot")
 @ActionRegistration(displayName = "#CTL_OpenPeakGroupRtBoxPlot")
 @ActionReferences({
     @ActionReference(path = "Menu/View", position = 0),
-    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor"),
+    @ActionReference(path = "Actions/DescriptorNodeActions/IAnovaDescriptor")
 })
 @Messages("CTL_OpenPeakGroupRtBoxPlot=Show Peak Group Rt Box Plot")
 public final class OpenPeakGroupRtBoxPlot implements ActionListener {
@@ -58,6 +59,7 @@ public final class OpenPeakGroupRtBoxPlot implements ActionListener {
             JScrollPane jsp = new JScrollPane(bg);
             pgbpt.add(jsp, BorderLayout.CENTER);
             pgbpt.open();
+            pgbpt.requestActive();
         }else{
             System.err.println("No IChromAUI project is in lookup!");
         }

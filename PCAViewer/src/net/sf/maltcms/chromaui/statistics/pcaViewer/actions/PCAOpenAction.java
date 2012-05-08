@@ -4,24 +4,17 @@
  */
 package net.sf.maltcms.chromaui.statistics.pcaViewer.actions;
 
-import de.unibielefeld.cebitec.lstutz.pca.data.ImportUtilities;
 import de.unibielefeld.cebitec.lstutz.pca.data.ParserUtilities;
 import de.unibielefeld.cebitec.lstutz.pca.data.PcaDescriptorAdapter;
-import de.unibielefeld.cebitec.lstutz.pca.data.XMLParser;
 import de.unibielefeld.cebitec.lstutz.pca.visual.StandardGUI;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.URL;
-import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
 import net.sf.maltcms.chromaui.statistics.pcaViewer.PCAViewerTopComponent;
-import net.sf.maltcms.chromaui.statistics.pcaViewer.spi.runnables.PeakGroupPcaRunnable;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "DescriptorNodeActions/IPcaDescriptor",

@@ -13,12 +13,14 @@ import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
 import net.sf.maltcms.chromaui.normalization.spi.DataTable;
 import net.sf.maltcms.chromaui.normalization.spi.DataTable.ImputationMode;
 import net.sf.maltcms.chromaui.normalization.spi.runnables.PeakGroupPcaRunnable;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
 
 @ActionID(category = "Actions",
 id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupPca")
@@ -44,7 +46,7 @@ public final class PeakGroupPca implements ActionListener {
         }
         ImputationMode imputationMode = MissingValueDialog.getImputationMode();
         DataTable dt = new DataTable(context,normalizer,"peakTable",imputationMode);
-        PeakGroupPcaRunnable tc = new PeakGroupPcaRunnable(context,dt,false,false);
+        PeakGroupPcaRunnable tc = new PeakGroupPcaRunnable(context,Utilities.actionsGlobalContext().lookup(IChromAUIProject.class),dt,false,false);
         PeakGroupPcaRunnable.createAndRun("Peak group pca", tc);
     }
 }
