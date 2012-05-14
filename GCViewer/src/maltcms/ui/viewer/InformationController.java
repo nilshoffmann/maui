@@ -10,6 +10,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import maltcms.datastructures.ms.IScan2D;
 import maltcms.ui.viewer.datastructures.AdditionalInformationTypes;
 import maltcms.ui.viewer.datastructures.TrippleChangeListener;
 import maltcms.ui.viewer.gui.AdditionalInformationPanel;
@@ -41,13 +42,15 @@ public class InformationController {
     private TrippleChangeListener listener;
     private IChromatogramDescriptor filename;
     private IChromAUIProject icp;
+    private InstanceContent content;
+    private IScan2D activeScan;
 
-    public InformationController(IChromAUIProject project, IChromatogramDescriptor descriptor) {
+    public InformationController(InstanceContent content, IChromAUIProject project, IChromatogramDescriptor descriptor) {
 //        System.out.println("Lookup of DataObject contained: "+lkp.lookupAll(Object.class));
         this.filename = descriptor;
         this.icp = project;
         this.listener = new TrippleChangeListener();
-
+        this.content = content;
         this.hmp = new HeatMapPanel(this);
         this.msp = new MassSpectrumPanel(this);
         this.aip1 = new AdditionalInformationPanel(this, ChartPositions.NorthWest);
@@ -109,7 +112,13 @@ public class InformationController {
 //                MSSeries s = ChromatogramVisualizerTools.getMSSeries(p, this.filename);
 //                this.icp.addToLookup(s);
 //            }
-            this.msp.changeMS(p);
+            if(activeScan!=null) {
+                content.remove(activeScan);
+            }
+            IScan2D scan = ChromatogramVisualizerTools.getScanForPoint(
+                        p, getChromatogramDescriptor());
+            content.add(scan);
+            //this.msp.changeMS(p);
             
         }
     }

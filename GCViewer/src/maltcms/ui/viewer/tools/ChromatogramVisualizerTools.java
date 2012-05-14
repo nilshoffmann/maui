@@ -190,7 +190,7 @@ public class ChromatogramVisualizerTools {
             IFileFragment f = Factory.getInstance().getFileFragmentFactory().
                     create(filename.getResourceLocation());
 //        Array sat = f.getChild("scan_acquisition_time").getArray();
-            isl = ScanLineCacheFactory.getScanLineCache(f);
+            isl = ScanLineCacheFactory.getOldScanLineCache(f);
             ChromatogramFactory cf = new ChromatogramFactory();
             ichrom = cf.createChromatogram2D(f);
             whm2d.put(filename, new Tuple2D<IScanLine, IChromatogram2D>(isl,

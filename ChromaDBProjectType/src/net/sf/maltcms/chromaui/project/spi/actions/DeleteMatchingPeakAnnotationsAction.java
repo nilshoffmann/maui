@@ -20,15 +20,15 @@ import org.openide.awt.ActionReferences;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.project.spi.actions.DeletePeakAnnotationsAction")
-@ActionRegistration(displayName = "#CTL_DeletePeakAnnotationsAction")
+id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteMatchingPeakAnnotationsAction")
+@ActionRegistration(displayName = "#CTL_DeleteMatchingPeakAnnotationsAction")
 @ActionReferences({@ActionReference(path="Actions/ChromAUIProjectLogicalView")})
-@Messages("CTL_DeletePeakAnnotationsAction=Remove Peak Annotations")
-public final class DeletePeakAnnotationsAction implements ActionListener {
+@Messages("CTL_DeleteMatchingPeakAnnotationsAction=Remove Matching Peak Annotations")
+public final class DeleteMatchingPeakAnnotationsAction implements ActionListener {
 
     private final IChromAUIProject context;
 
-    public DeletePeakAnnotationsAction(IChromAUIProject context) {
+    public DeleteMatchingPeakAnnotationsAction(IChromAUIProject context) {
         this.context = context;
     }
 

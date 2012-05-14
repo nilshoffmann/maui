@@ -30,10 +30,12 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
 
     private final IChromAUIProject project;
     private final File[] files;
+    private File importDir;
 
     @Override
     public void run() {
         try {
+            importDir = project.getImportLocation(this);
             progressHandle.start(files.length);
             progressHandle.progress("Retrieving Chromatograms");
             LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<String, IChromatogramDescriptor>();
@@ -105,7 +107,6 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
     public void createArtificialChromatogram(IChromAUIProject project,
             File importFile) {
 
-        File importDir = project.getImportLocation(this);
         File fragment = new File(importDir, importFile.getName());
         FileFragment f = new FileFragment(fragment);
         f.addSourceFile(new FileFragment(importFile));

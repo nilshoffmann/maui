@@ -5,31 +5,22 @@
 package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser;
 
 import cross.datastructures.tuple.Tuple2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.ArrayInt;
-import ucar.ma2.Index;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author hoffmann
  */
 public class ChromaTOFParser {
+
     public static String FIELD_SEPARATOR = "\t";
-    
+    public static String QUOTATION_CHARACTER = "\"";
+
     public static HashMap<String, String> getFilenameToGroupMap(File f) {
         List<String> header = null;
         HashMap<String, String> filenameToGroupMap = new LinkedHashMap<String, String>();
@@ -39,7 +30,7 @@ public class ChromaTOFParser {
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    String[] lineArray = line.split(FIELD_SEPARATOR);
+                    String[] lineArray = line.split(String.valueOf(FIELD_SEPARATOR));
                     if (lineCount > 0) {
                         System.out.println(
                                 "Adding file to group mapping: " + lineArray[0] + " " + lineArray[1]);
@@ -90,6 +81,10 @@ public class ChromaTOFParser {
 //    }
     public static Tuple2D<double[], int[]> convertMassSpectrum(
             String massSpectrum) {
+        if(massSpectrum==null) {
+            System.err.println("Warning: mass spectral data was null!");
+            return new Tuple2D<double[],int[]>(new double[0],new int[0]);
+        }
         String[] mziTuples = massSpectrum.split(" ");
         TreeMap<Float, Integer> tm = new TreeMap<Float, Integer>();
         for (String tuple : mziTuples) {
@@ -117,7 +112,7 @@ public class ChromaTOFParser {
         ArrayList<String> header = null;
         String fileName = f.getName().substring(0, f.getName().lastIndexOf(
                 "."));
-        System.out.println("Processing report " + fileName);
+        //System.out.println("Processing report " + fileName);
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(f));
@@ -125,7 +120,7 @@ public class ChromaTOFParser {
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    String[] lineArray = line.split(FIELD_SEPARATOR);
+                    String[] lineArray = splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER);//line.split(String.valueOf(FIELD_SEPARATOR));
                     if (header == null) {
                         for (int i = 0; i < lineArray.length; i++) {
                             lineArray[i] = lineArray[i].trim().toUpperCase().
@@ -152,53 +147,83 @@ public class ChromaTOFParser {
         globalHeader.addAll(header);
         return globalHeader;
     }
+    public static final String doubleQuotePattern = "";
+    public static final String msPattern = "";
 
-    public static LinkedHashSet<String> getHeader(File[] inputFiles,
-            HashMap<String, String> filenameToGroupMap) {
-        LinkedHashSet<String> globalHeader = new LinkedHashSet<String>();
-        for (File f : inputFiles) {
-            ArrayList<String> header = null;
-            String fileName = f.getName().substring(0, f.getName().lastIndexOf(
-                    "."));
-            System.out.println("Processing report " + fileName);
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new FileReader(f));
-                String line = "";
-                int lineCount = 0;
-                while ((line = br.readLine()) != null) {
-                    if (!line.isEmpty()) {
-                        String[] lineArray = line.split(FIELD_SEPARATOR);
-                        if (header == null) {
-                            for (int i = 0; i < lineArray.length; i++) {
-                                lineArray[i] = lineArray[i].trim().toUpperCase().
-                                        replaceAll(" ", "_");
-                            }
-                            header = new ArrayList<String>(Arrays.asList(
-                                    lineArray));
-                            header.add("SOURCE_FILE");
-                            header.add("GROUP");
-                            break;
-                        }
-                        lineCount++;
-                    }
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(ChromaTOFParser.class.getName()).log(
-                        Level.SEVERE, null, ex);
-            } finally {
-                try {
-                    br.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(ChromaTOFParser.class.getName()).log(
-                            Level.SEVERE, null, ex);
-                }
+    public static String[] splitLine(String line, String fieldSeparator, String quoteSymbol) {
+        if (fieldSeparator.equals(",")) {
+            Pattern p = Pattern.compile("((\")([^\"]*)(\"))");
+            Matcher m = p.matcher(line);
+            List<String> results = new LinkedList<String>();
+            int match = 1;
+            while (m.find()) {
+//                System.out.println("Match " + (match++));
+//                for (int i = 0; i < m.groupCount(); i++) {
+//                    System.out.println("Group " + i + ": " + m.group(i));
+//                }
+                results.add(m.group(3).trim());
             }
-            globalHeader.addAll(header);
+            Pattern endPattern = Pattern.compile(",([\"]{0,1}([^\"]*)[^\"]{0,1}$)");
+            Matcher m2 = endPattern.matcher(line);
+            while (m2.find()) {
+//                for (int i = 0; i < m2.groupCount(); i++) {
+//                    System.out.println("Group " + i + ": " + m2.group(i));
+//                }
+                results.add(m2.group(1).trim());
+            }
+            return results.toArray(new String[results.size()]);
+        } else if (fieldSeparator.equals("\t")) {
+            return line.split("\t");
+        } else {
+            throw new IllegalArgumentException("Field separator " + fieldSeparator + " is not supported, only ',' and '\t' are valid!");
         }
-        return globalHeader;
     }
 
+//    public static LinkedHashSet<String> getHeader(File[] inputFiles,
+//            HashMap<String, String> filenameToGroupMap) {
+//        LinkedHashSet<String> globalHeader = new LinkedHashSet<String>();
+//        for (File f : inputFiles) {
+//            ArrayList<String> header = null;
+//            String fileName = f.getName().substring(0, f.getName().lastIndexOf(
+//                    "."));
+//            System.out.println("Processing report " + fileName);
+//            BufferedReader br = null;
+//            try {
+//                br = new BufferedReader(new FileReader(f));
+//                String line = "";
+//                int lineCount = 0;
+//                while ((line = br.readLine()) != null) {
+//                    if (!line.isEmpty()) {
+//                        String[] lineArray = line.split(String.valueOf(FIELD_SEPARATOR));
+//                        if (header == null) {
+//                            for (int i = 0; i < lineArray.length; i++) {
+//                                lineArray[i] = lineArray[i].trim().toUpperCase().
+//                                        replaceAll(" ", "_");
+//                            }
+//                            header = new ArrayList<String>(Arrays.asList(
+//                                    lineArray));
+//                            header.add("SOURCE_FILE");
+//                            header.add("GROUP");
+//                            break;
+//                        }
+//                        lineCount++;
+//                    }
+//                }
+//            } catch (IOException ex) {
+//                Logger.getLogger(ChromaTOFParser.class.getName()).log(
+//                        Level.SEVERE, null, ex);
+//            } finally {
+//                try {
+//                    br.close();
+//                } catch (IOException ex) {
+//                    Logger.getLogger(ChromaTOFParser.class.getName()).log(
+//                            Level.SEVERE, null, ex);
+//                }
+//            }
+//            globalHeader.addAll(header);
+//        }
+//        return globalHeader;
+//    }
     public static List<TableRow> parseBody(LinkedHashSet<String> globalHeader,
             File f) {
         List<TableRow> body = new ArrayList<TableRow>();
@@ -209,8 +234,7 @@ public class ChromaTOFParser {
             List<String> header = null;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    ArrayList<String> lineList = new ArrayList<String>(Arrays.
-                            asList(line.split(FIELD_SEPARATOR)));
+                    ArrayList<String> lineList = new ArrayList<String>(Arrays.asList(splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER)));//.split(String.valueOf(FIELD_SEPARATOR))));
                     if (header == null) {
                         for (int i = 0; i < lineList.size(); i++) {
                             lineList.set(i, lineList.get(i).trim().toUpperCase().

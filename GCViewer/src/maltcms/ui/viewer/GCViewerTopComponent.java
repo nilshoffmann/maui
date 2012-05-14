@@ -65,8 +65,9 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
         if (dobj != null) {
             this.file = dobj;
             content.add(this.file);
+            content.add(descriptor);
             setDisplayName(NbBundle.getMessage(GCViewerTopComponent.class, "CTL_GCViewerTopComponent") + " " + dobj.getPrimaryFile().getName());
-            this.ic = new InformationController(icp,descriptor);
+            this.ic = new InformationController(content,icp,descriptor);
             initComponents();
             setName(NbBundle.getMessage(GCViewerTopComponent.class, "CTL_GCViewerTopComponent"));
             setToolTipText(dobj.getPrimaryFile().getPath());
