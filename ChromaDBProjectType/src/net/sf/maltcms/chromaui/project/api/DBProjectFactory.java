@@ -33,6 +33,7 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.SampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.project.ChromAUIProject;
 import net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3;
+import org.apache.commons.io.FileUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.filesystems.FileObject;
@@ -109,7 +110,7 @@ public class DBProjectFactory {
                 "separationType");
         IDetectorType detectorType = (IDetectorType) props.get("detectorType");
 
-        Double modulationTime = (Double) props.get("modulationTime");
+        
 
         try {
             icui.activate(new File(projdir, projectFileName).toURI().toURL());
@@ -120,7 +121,7 @@ public class DBProjectFactory {
             File[] inputFiles = toFileArray((String) o, ",");
             importChromatograms(props, projdir, inputFiles, fileToGroup);
             LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor = new LinkedHashMap<File, IChromatogramDescriptor>();
-            initChromatograms(inputFiles, projdir, modulationTime,
+            initChromatograms(props, inputFiles, projdir,
                     separationType, detectorType, fileToDescriptor);
             addNormalizationDescriptors(props, fileToDescriptor);
 
@@ -233,26 +234,26 @@ public class DBProjectFactory {
         if (copyFiles.booleanValue()) {
             System.out.println("Copying files to user project directory!");
             try {
-                FileObject originaldatadir = FileUtil.createFolder(new File(
-                        projdir, "original"));
+                File originalData = new File(projdir, "original");
+                FileObject originaldatadir = FileUtil.createFolder(originalData);
                 int i = 0;
                 for (File file : inputFiles) {
                     long spaceLeft = FileUtil.toFile(originaldatadir).
                             getFreeSpace();
                     long fileSize = file.length();
                     if (spaceLeft - (100 * 1024 * 1024) > fileSize) {
-                        FileUtil.copyFile(FileUtil.toFileObject(file),
-                                originaldatadir, file.getName());
-                        File newFile = FileUtil.toFile(originaldatadir.getFileObject(
-                                file.getName()));
+                        File newFile = new File(originalData,
+                                file.getName());
+                        FileUtils.copyFile(file, newFile);
                         String group = fileToGroup.get(file);
                         fileToGroup.remove(file);
                         fileToGroup.put(newFile, group);
-                        inputFiles[i++] = newFile;
+                        inputFiles[i] = newFile;
                     } else {
                         throw new RuntimeException(
                                 "Less than 100 MBytes of space left on " + originaldatadir.getPath() + " for file " + file.getName() + " (required: " + (fileSize / 1024 / 1024) + "MByte free: " + (spaceLeft / 1024 / 1024) + "). Not copying file!");
                     }
+                    i++;
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
@@ -261,12 +262,12 @@ public class DBProjectFactory {
         }
     }
 
-    private static void initChromatograms(File[] inputFiles, File projdir,
-            Double modulationTime,
+    private static void initChromatograms(Map<String, Object> props, File[] inputFiles, File projdir,
             ISeparationType separationType, IDetectorType detectorType,
             LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor) throws ResourceNotAvailableException {
         IChromatogramDescriptor[] icds = new IChromatogramDescriptor[inputFiles.length];
         //            IFileFragment[] fragments = new IFileFragment[inputFiles.length];
+        Double modulationTime = (Double) props.get("modulationTime");
         int i = 0;
         for (File f : inputFiles) {
             IFileFragment ff = getProjectFileForResource(projdir, f);

@@ -732,10 +732,12 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         System.out.println("MassSpectrumPanel received LookupEvent");
         Collection<? extends IScan> coll = lookupResult.allInstances();
         if (coll.size() > 0) {
-            System.out.println("Received IScan from lookup");
+            System.out.println("Received "+coll.size()+" IScans from lookup");
+            System.out.println("Found "+contentProviderLookup.lookupAll(IChromatogram.class).size()+" chromatograms in lookup!");
+            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
             for (IScan scan : coll) {
-                IChromatogram chrom = contentProviderLookup.lookup(IChromatogramDescriptor.class).getChromatogram();
-                String name = chrom.getParent().getName();
+//                IChromatogram chrom = contentProviderLookup.lookup(IChromatogramDescriptor.class).getChromatogram();
+                String name = ichromDescr.getParent().getName();
                 setData(scan, name);
             }
 //            final IScan scan = coll.iterator().next();

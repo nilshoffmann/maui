@@ -27,6 +27,7 @@ import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.openide.util.Lookup;
@@ -50,7 +51,7 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
     private Dataset1D ds;
 
     /** Creates new form ChromMSHeatmapPanel */
-    public ChromMSHeatmapPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, Chromatogram1DDataset ds,ChartPanelMouseListener cpml) {
+    public ChromMSHeatmapPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, Chromatogram1DDataset ds) {
         initComponents();
         this.ds = ds;
         this.ic = topComponentInstanceContent;
@@ -60,9 +61,9 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
         Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
         cdxpanel.setCursor(crosshairCursor);
         chart.addProgressListener(cdxpanel);
-        cpml.setChartPanel(cdxpanel);
-        ic.add(cpml);
-        cdxpanel.addChartMouseListener(cpml);
+        //cpml.setChartPanel(cdxpanel);
+        //ic.add(cpml);
+        //cdxpanel.addChartMouseListener(cpml);
         cdxpanel.setInitialDelay(100);
         cdxpanel.setDismissDelay(30000);
         cdxpanel.setReshowDelay(0);
@@ -98,9 +99,9 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
         }
     }
 
-    public ChartPanelMouseListener getChartPanelMouseListener() {
-        return lookup.lookup(ChartPanelMouseListener.class);
-    }
+    //public ChartPanelMouseListener getChartPanelMouseListener() {
+    //    return lookup.lookup(ChartPanelMouseListener.class);
+    //}
 
     public Collection<? extends IChromatogram> getChromatograms() {
         return lookup.lookupAll(IChromatogram.class);
@@ -122,6 +123,8 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
                     ((XYLineAndShapeRenderer) r).setDrawSeriesLineAsPath(true);
                     ((XYLineAndShapeRenderer) r).setBaseShapesVisible(false);
                     ((XYLineAndShapeRenderer) r).setBaseShapesFilled(false);
+                } else if (r instanceof XYAreaRenderer) {
+                    ((XYAreaRenderer) r).setOutline(true);
                 }
                 ChartCustomizer.setSeriesColors(ticplot, 0.8f);
                 ChartCustomizer.setSeriesStrokes(ticplot, 2.0f);

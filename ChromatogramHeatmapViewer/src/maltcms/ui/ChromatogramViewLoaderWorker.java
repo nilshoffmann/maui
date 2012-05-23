@@ -107,15 +107,15 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
                 IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
                 if(project!=null) {
                     plot.clearAnnotations();
-                    List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
-                    for(IChromatogramDescriptor file:files) {
-                        annotations.addAll(generatePeakShapes(file, project, Color.BLUE, new Color(0,0,255,32), plotMode, masses));
-                    }
-                    XYAnnotation last = annotations.remove(annotations.size()-1);
-                    for(XYAnnotation ann:annotations) {
-                        plot.addAnnotation(ann,false);
-                    }
-                    plot.addAnnotation(last,true);
+//                    List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+//                    for(IChromatogramDescriptor file:files) {
+//                        annotations.addAll(generatePeakShapes(file, project, Color.BLUE, new Color(0,0,255,32), plotMode, masses));
+//                    }
+//                    XYAnnotation last = annotations.remove(annotations.size()-1);
+//                    for(XYAnnotation ann:annotations) {
+//                        plot.addAnnotation(ann,false);
+//                    }
+//                    plot.addAnnotation(last,true);
                 }
             } else if ("TOP".equals(plotType)) {
                 plot = c1p.provide1DCoPlot(buildFileFragments(files),
@@ -254,8 +254,8 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
         NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
         domainAxis.setNumberFormatOverride(new RTNumberFormatter(rtAxisUnit));
         domainAxis.setLabel("RT[" + rtAxisUnit.name().toLowerCase() + "]");
-        //plot.setDomainCrosshairVisible(true);
-        //plot.setDomainCrosshairLockedOnData(true);
+        plot.setDomainCrosshairVisible(true);
+        plot.setDomainCrosshairLockedOnData(true);
         plot.setRangeZeroBaselineVisible(true);
         plot.setDomainZeroBaselineVisible(false);
         plot.getDomainAxis().setAutoRange(true);

@@ -18,7 +18,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import maltcms.ui.views.ChromMSHeatmapPanel;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
-import net.sf.maltcms.chromaui.charts.events.ChartPanelMouseListener;
+
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.chart.ChartPanel;
@@ -83,7 +83,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         System.out.println("Setting ms data!");
         System.out.println("Filenames given: " + filename);
 //        secondaryView.setMSData();
-        this.jp = new ChromMSHeatmapPanel(ic, getLookup(), ds, new ChartPanelMouseListener(ds));
+        this.jp = new ChromMSHeatmapPanel(ic, getLookup(), ds);
         add(this.jp, BorderLayout.CENTER);
         ic.add(this.jp);
     }
@@ -161,7 +161,6 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         });
         jToolBar1.add(jButton3);
 
-        jCheckBox1.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.jCheckBox1.text")); // NOI18N
         jCheckBox1.setFocusable(false);
         jCheckBox1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -295,7 +294,8 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     @Override
     protected void componentActivated() {
         super.componentActivated();
-        requestFocusInWindow(true);
+        requestFocusInWindow();
+        jp.requestFocusInWindow();
     }
 
     @Override

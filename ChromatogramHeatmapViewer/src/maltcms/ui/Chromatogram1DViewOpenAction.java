@@ -28,7 +28,6 @@ import org.openide.util.Utilities;
 @ActionID(category = "ContainerNodeActions/ChromatogramNode",
 id = "maltcms.ui.Chromatogram1DViewOpenAction")
 @ActionRegistration(displayName = "#CTL_Chromatogram1DViewOpenAction")
-@ActionReferences({})
 @Messages("CTL_Chromatogram1DViewOpenAction=Open in Chromatogram Viewer")
 public final class Chromatogram1DViewOpenAction implements ActionListener {
 

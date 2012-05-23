@@ -79,6 +79,8 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
         if (cme.getEntity() != null) {
             if (cme.getEntity() instanceof XYItemEntity) {
                 XYItemEntity xyie = (XYItemEntity) cme.getEntity();
+                XYDataset ds = xyie.getDataset();
+                System.out.println("Series Index of item: "+xyie.getSeriesIndex()+" item number: "+xyie.getItem());
                 TARGET target = this.dataset.getTarget(xyie.getSeriesIndex(), xyie.getItem());
                 if (lastTarget != null) {
                     ic.remove(lastTarget);

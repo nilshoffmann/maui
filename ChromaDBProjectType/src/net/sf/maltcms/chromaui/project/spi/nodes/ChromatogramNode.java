@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
@@ -173,7 +173,7 @@ public class ChromatogramNode extends FilterNode implements
 
     @Override
     public Action[] getActions(boolean context) {
-        List<Action> allActions = new ArrayList<Action>();
+        Set<Action> allActions = new LinkedHashSet<Action>();
         allActions.addAll(Utilities.actionsForPath(
                 "Actions/ContainerNodeActions/ChromatogramNode"));
         Action[] originalActions = super.getActions(context);

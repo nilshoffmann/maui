@@ -16,8 +16,10 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import maltcms.ui.views.ChartPanelTools;
 import maltcms.ui.views.GraphicsSettings;
@@ -56,7 +58,8 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     private Dataset1D<SOURCE, TARGET> ds;
     private InstanceContent ic;
     private boolean isHeatmap = false;
-    private TARGET lastItem = null;
+    private Queue<TARGET> selectionQueue = new LinkedBlockingQueue<TARGET>();
+   // private TARGET lastItem = null;
     private ExecutorService es = Executors.newSingleThreadExecutor();
     private AtomicBoolean updatePending = new AtomicBoolean(false);
     private ChartPanel cp;
@@ -198,10 +201,29 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                         xyie = (XYItemEntity) ce;
                         s = null;
 //                        p = null;
-                        if (lastItem != null) {
-                            ic.remove(lastItem);
+                        if (!selectionQueue.isEmpty()) {
+                            System.out.println("Clearing selection queue! Removing elements from instance content!");
+                            for(TARGET t:selectionQueue) {
+                                ic.remove(t);
+                            }
+                            selectionQueue.clear();
                         }
-                        ic.add(ds.getTarget(xyie.getSeriesIndex(), xyie.getItem()));
+                        System.out.println("Series index: "+xyie.getSeriesIndex()+" item: "+xyie.getItem());
+                        TARGET t = ds.getTarget(xyie.getSeriesIndex(), xyie.getItem());
+                        selectionQueue.add(t);
+                        for(int i = 0;i < ds.getSeriesCount(); i++) {
+                            ic.remove(ds.getSource(i));
+                        }
+                        //add chromatogram descriptor
+                        ic.add(ds.getSource(xyie.getSeriesIndex()));
+                        //add corresponding scan
+                        ic.add(t);
+                        //remove chromatogram descriptor
+                        ic.remove(ds.getSource(xyie.getSeriesIndex()));
+                        //re-add all chromatogram descriptors
+                        for(int i = 0;i < ds.getSeriesCount(); i++) {
+                            ic.add(ds.getSource(i));
+                        }
                     } else {
                         xyie = null;
                     }

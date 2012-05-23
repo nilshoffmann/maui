@@ -405,7 +405,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
 
         String projectName = (String) settings.getProperty("name");
         if (projectName == null) {
-            projectName = "chromaUIProject";
+            projectName = NbBundle.getMessage(DBProjectVisualPanel1.class,
+                "DBProjectVisualPanel1.projectNameTextField.text");
         }
 
         this.projectNameTextField.setText(projectName);

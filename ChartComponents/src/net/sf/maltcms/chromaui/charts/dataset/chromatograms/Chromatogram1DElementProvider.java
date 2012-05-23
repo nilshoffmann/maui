@@ -47,7 +47,7 @@ public class Chromatogram1DElementProvider implements NamedElementProvider<IChro
 
     @Override
     public IScan get(int i) {
-        System.out.println("Retrieving scan "+i+" from "+getClass().getName());
+        System.out.println("Retrieving scan "+i+" from "+getClass().getName()+" "+getKey());
         IScan scan = chrom.getScan(i);
         System.out.println("Retrieved scan "+i+" from "+getClass().getName());
         return scan;

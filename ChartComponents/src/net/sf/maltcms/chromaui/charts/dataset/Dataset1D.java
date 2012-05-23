@@ -37,10 +37,12 @@ public abstract class Dataset1D<SOURCE,TARGET> extends AbstractXYDataset impleme
     }
     
     public TARGET getTarget(int seriesIndex, int itemIndex) {
+        System.out.println("Retrieving target from series "+seriesIndex+", item "+itemIndex);
         return targetProvider.get(seriesIndex).get(itemIndex);
     }
     
     public SOURCE getSource(int seriesIndex) {
+        System.out.println("Retrieving source for index: "+seriesIndex);
         return targetProvider.get(seriesIndex).getSource();
     }
 
