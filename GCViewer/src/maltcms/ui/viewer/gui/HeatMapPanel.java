@@ -177,7 +177,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
             @Override
             public void run() {
-                if (cmevent.getTrigger().getClickCount() == 2
+                if (cmevent.getTrigger().getClickCount() == 1
                         && cmevent.getTrigger().getButton() == 1) {
                     final XYPlot plot = cp.getChart().getXYPlot();
                     final Point dataPoint = ChartTools.translatePointToImageCoord(plot,

@@ -214,11 +214,11 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                         for(int i = 0;i < ds.getSeriesCount(); i++) {
                             ic.remove(ds.getSource(i));
                         }
-                        //add chromatogram descriptor
+                        //add ichromatogram
                         ic.add(ds.getSource(xyie.getSeriesIndex()));
                         //add corresponding scan
                         ic.add(t);
-                        //remove chromatogram descriptor
+                        //remove ichromatogram
                         ic.remove(ds.getSource(xyie.getSeriesIndex()));
                         //re-add all chromatogram descriptors
                         for(int i = 0;i < ds.getSeriesCount(); i++) {

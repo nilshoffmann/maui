@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IScan2D;
@@ -43,7 +44,7 @@ public class InformationController {
     private IChromatogramDescriptor filename;
     private IChromAUIProject icp;
     private InstanceContent content;
-    private IScan2D activeScan;
+    private LinkedBlockingQueue<IScan2D> selectionQueue = new LinkedBlockingQueue<IScan2D>();
 
     public InformationController(InstanceContent content, IChromAUIProject project, IChromatogramDescriptor descriptor) {
 //        System.out.println("Lookup of DataObject contained: "+lkp.lookupAll(Object.class));
@@ -56,7 +57,7 @@ public class InformationController {
         this.aip1 = new AdditionalInformationPanel(this, ChartPositions.NorthWest);
         this.aip2 = new AdditionalInformationPanel(this, ChartPositions.SouthEast);
     }
-    
+
     public IChromAUIProject getProject() {
         return icp;
     }
@@ -105,21 +106,22 @@ public class InformationController {
                 public void run() {
                     listener.updateCrossHair(p);
                 }
-
             };
             SwingUtilities.invokeLater(r);
-//            if(this.icp!=null) {
-//                MSSeries s = ChromatogramVisualizerTools.getMSSeries(p, this.filename);
-//                this.icp.addToLookup(s);
-//            }
-            if(activeScan!=null) {
-                content.remove(activeScan);
+            if (!selectionQueue.isEmpty()) {
+                System.out.println("Clearing selection queue! Removing elements from instance content!");
+                for (IScan2D t : selectionQueue) {
+                    content.remove(t);
+                }
+                selectionQueue.clear();
             }
             IScan2D scan = ChromatogramVisualizerTools.getScanForPoint(
-                        p, getChromatogramDescriptor());
+                    p, getChromatogramDescriptor());
+            content.add(getChromatogramDescriptor().getChromatogram());
             content.add(scan);
+            content.remove(getChromatogramDescriptor().getChromatogram());
             //this.msp.changeMS(p);
-            
+
         }
     }
 
@@ -129,7 +131,7 @@ public class InformationController {
 
                 @Override
                 public void run() {
-                    aip1.changePoint(p);  
+                    aip1.changePoint(p);
                 }
             };
             Runnable r2 = new Runnable() {
@@ -138,7 +140,6 @@ public class InformationController {
                 public void run() {
                     aip2.changePoint(p);
                 }
-                
             };
             Runnable r3 = new Runnable() {
 
@@ -146,7 +147,6 @@ public class InformationController {
                 public void run() {
                     listener.updateCrossHair(p);
                 }
-
             };
             SwingUtilities.invokeLater(r1);
             SwingUtilities.invokeLater(r2);

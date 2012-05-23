@@ -4,6 +4,7 @@
  */
 package maltcms.ui.viewer;
 
+import cross.datastructures.tools.EvalTools;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -59,6 +60,8 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
             descriptor.setDetectorType(new TOFMS());
             descriptor.setSeparationType(new GCGC());
             descriptor.setDisplayName(dobj.getPrimaryFile().getName());
+        }else{
+            EvalTools.notNull(descriptor.getChromatogram(),this);
         }
         System.out.println("Found project: " + icp + " in active nodes lookup!");
         System.out.println("Found descriptor: " + descriptor + " in active nodes lookup!");
@@ -74,8 +77,8 @@ public final class GCViewerTopComponent extends CloneableTopComponent {
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
 
             this.mainPanel.setVisible(true);
-            this.view4Panel.setSelected(true);
-            this.view4Panel();
+            this.view1Panel.setSelected(true);
+            this.view1Panel();
 //            this.mainPanel.add(this.ic.get1Panel());
         }
     }

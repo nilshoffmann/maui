@@ -53,14 +53,6 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
         handle.start(5);
         System.out.println("Running Chromatogram open action!");
 
-//        final File f = new File(this.file);
-//
-//        Factory.getInstance().getConfiguration().setProperty("output.basedir",
-//                f.getParent());
-//        Factory.getInstance().getConfiguration().setProperty("user.name",
-//                System.getProperty("user.name", ""));
-//        IFileFragment fragment = new FileFragment(f);
-
         System.out.println("Retrieving settings from panel");
         handle.progress("Reading settings", 1);
         double massResolution = Double.parseDouble(sp.getProperty(

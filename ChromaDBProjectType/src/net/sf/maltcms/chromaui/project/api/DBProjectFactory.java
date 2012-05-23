@@ -109,9 +109,6 @@ public class DBProjectFactory {
         ISeparationType separationType = (ISeparationType) props.get(
                 "separationType");
         IDetectorType detectorType = (IDetectorType) props.get("detectorType");
-
-        
-
         try {
             icui.activate(new File(projdir, projectFileName).toURI().toURL());
             icui.getCrudProvider();
@@ -119,7 +116,7 @@ public class DBProjectFactory {
             Map<File, String> fileToGroup = (Map<File, String>) props.get(
                     "groupMapping");
             File[] inputFiles = toFileArray((String) o, ",");
-            importChromatograms(props, projdir, inputFiles, fileToGroup);
+            fileToGroup = importChromatograms(props, projdir, inputFiles, fileToGroup);
             LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor = new LinkedHashMap<File, IChromatogramDescriptor>();
             initChromatograms(props, inputFiles, projdir,
                     separationType, detectorType, fileToDescriptor);
@@ -227,17 +224,18 @@ public class DBProjectFactory {
         }
     }
 
-    private static void importChromatograms(Map<String, Object> props,
+    private static Map<File, String> importChromatograms(Map<String, Object> props,
             File projdir, File[] inputFiles,
             Map<File, String> fileToGroup) throws RuntimeException, IOException {
         Boolean copyFiles = (Boolean) props.get("copy.files");
         if (copyFiles.booleanValue()) {
+            Map<File,String> newFileToGroup = new LinkedHashMap<File,String>();
             System.out.println("Copying files to user project directory!");
             try {
                 File originalData = new File(projdir, "original");
                 FileObject originaldatadir = FileUtil.createFolder(originalData);
                 int i = 0;
-                for (File file : inputFiles) {
+                for (File file : fileToGroup.keySet()) {
                     long spaceLeft = FileUtil.toFile(originaldatadir).
                             getFreeSpace();
                     long fileSize = file.length();
@@ -246,8 +244,8 @@ public class DBProjectFactory {
                                 file.getName());
                         FileUtils.copyFile(file, newFile);
                         String group = fileToGroup.get(file);
-                        fileToGroup.remove(file);
-                        fileToGroup.put(newFile, group);
+                        //fileToGroup.remove(file);
+                        newFileToGroup.put(newFile, group);
                         inputFiles[i] = newFile;
                     } else {
                         throw new RuntimeException(
@@ -255,11 +253,13 @@ public class DBProjectFactory {
                     }
                     i++;
                 }
+                return newFileToGroup;
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
                 throw ex;
             }
         }
+        return fileToGroup;
     }
 
     private static void initChromatograms(Map<String, Object> props, File[] inputFiles, File projdir,

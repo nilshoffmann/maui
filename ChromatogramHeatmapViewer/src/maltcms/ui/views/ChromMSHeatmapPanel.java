@@ -67,6 +67,7 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
         cdxpanel.setInitialDelay(100);
         cdxpanel.setDismissDelay(30000);
         cdxpanel.setReshowDelay(0);
+        cdxpanel.setFocusable(true);
 
         CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>();
 
