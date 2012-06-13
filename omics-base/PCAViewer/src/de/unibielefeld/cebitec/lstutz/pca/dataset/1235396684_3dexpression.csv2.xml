@@ -1,0 +1,255 @@
+<opt x_axis="R_value" y_axis="Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots" z_axis="Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots">
+  <Item 3d="TC116366" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+COMMENT: No hits found." Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC116366&amp;CONFIRM=TC116366">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0.261258" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0.227139" R_value="0.143524032521613" />
+  </Item>
+  <Item 3d="TC116760" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+COMMENT: No hits found." Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC116760&amp;CONFIRM=TC116760">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0" R_value="0.143524032521613" />
+  </Item>
+  <Item 3d="TC121386" Annotation="NAME: LPD1
+EC NUMBER: 1.8.1.4
+GENE PRODUCT: Dihydrolipoyl dehydrogenase, mitochondrial precursor 
+GO NUMBERS: 5737 16491 45454 
+DESCRIPTION: 
+[EC:1.8.1.4] 
+Dihydrolipoyl dehydrogenase, mitochondrial precursor (EC 1.8.1.4) (Dihydrolipoamide dehydrogenase) (Pyruvate dehydrogenase complex E3 subunit) (PDC-E3) (E3) (Glycine cleavage system L protein).
+Pyridine nucleotide-disulphide oxidoreductase dimerisation region
+COMMENT: 
+Blast2x vs SP:
+FUNCTION: Lipoamide dehydrogenase is a component of the glycine cleavage system as well as of the alpha-ketoacid dehydrogenase complexes. The pyruvate dehydrogenase complex contains multiple copies of three enzymatic components: pyruvate dehydrogenase (E1), dihydrolipoamide acetyltransferase (E2) and lipoamide dehydrogenase (E3).
+CATALYTIC ACTIVITY: Protein N(6)-(dihydrolipoyl)lysine + NAD(+) = protein N(6)-(lipoyl)lysine + NADH.
+COFACTOR: Binds 1 FAD per subunit (By similarity).
+SUBUNIT: Homodimer (By similarity).
+SUBCELLULAR LOCATION: Mitochondrion matrix.
+MASS SPECTROMETRY: MW=49753; MW_ERR=5; METHOD=Electrospray; RANGE=32-501; NOTE=Ref.5.
+MISCELLANEOUS: The active site is a redox-active disulfide bond.
+SIMILARITY: Belongs to the class-I pyridine nucleotide-disulfide oxidoreductase family.
+KEYWORDS: 3D-structure; Direct protein sequencing; FAD; Flavoprotein; Mitochondrion; NAD; Oxidoreductase; Redox-active center; Transit peptide
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP, InterPro
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC121386&amp;CONFIRM=TC121386">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-2.17944" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.695926" R_value="-0.856475967478387" />
+  </Item>
+  <Item 3d="TC124347" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+GO NUMBERS: 4674 5524 6468 
+DESCRIPTION: 
+Protein kinase, C-terminal
+COMMENT: 
+Used Tools:
+InterPro
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124347&amp;CONFIRM=TC124347">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0.193998" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.0819313" R_value="0.728486533242769" />
+  </Item>
+  <Item 3d="TC124758" Annotation="NAME: crb3
+GENE PRODUCT: WD repeat protein 18.
+DESCRIPTION: 
+WD40 repeat-like
+COMMENT: 
+Blast2x vs SP:
+SIMILARITY: Contains 6 WD repeats.
+KEYWORDS: Repeat; WD repeat
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124758&amp;CONFIRM=TC124758">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.795695" R_value="-0.856475967478387" />
+  </Item>
+  <Item 3d="TC129765" Annotation="GENE PRODUCT: glutamine synthetase, putative
+GO NUMBERS: 3824 
+DESCRIPTION: 
+Glutamine synthetase/guanido kinase, catalytic region
+COMMENT: 
+Used Tools:
+Blast2x vs KEGG, InterPro, Blast2x vs KOG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC129765&amp;CONFIRM=TC129765">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-0.794471" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.55668" R_value="0.777535442108079" />
+  </Item>
+  <Item 3d="TC130381" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+COMMENT: No hits found." Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130381&amp;CONFIRM=TC130381">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.509823" R_value="0.143524032521613" />
+  </Item>
+  <Item 3d="TC130704" Annotation="GENE PRODUCT: Peptidyl-prolyl cis-trans isomerase CYP40 
+GO NUMBERS: 5488 
+DESCRIPTION: 
+Peptidyl-prolyl cis-trans isomerase CYP40 (EC 5.2.1.8) (PPIase CYP40) (Rotamase CYP40) (Cyclophilin-40) (Cyclophilin of 40 kDa) (Protein SQUINT).
+Tetratricopeptide-like helical
+COMMENT: 
+Blast2x vs SP:
+FUNCTION: PPIases accelerate the folding of proteins. It catalyzes the cis-trans isomerization of proline imidic peptide bonds in oligopeptides. Involved in promoting the expression of the juvenile phase of vegetative development, and, to a lower extent, in regulating the positioning of floral buds, floral morphogenesis and the expression of HSPs.
+CATALYTIC ACTIVITY: Peptidylproline (omega=180) = peptidylproline (omega=0).
+ENZYME REGULATION: Binds cyclosporin A (CsA). CsA mediates some of its effects via an inhibitory action on PPIase (By similarity).
+SUBCELLULAR LOCATION: Cytoplasm (Probable).
+TISSUE SPECIFICITY: Expressed at low levels in seedlings, leaves and flowers.
+SIMILARITY: Belongs to the cyclophilin-type PPIase family.
+SIMILARITY: Contains 1 PPIase cyclophilin-type domain.
+SIMILARITY: Contains 2 TPR repeats.
+KEYWORDS: Chaperone; Cyclosporin; Cytoplasm; Isomerase; Repeat; Rotamase; TPR repeat
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP, InterPro
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130704&amp;CONFIRM=TC130704">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-2.59387" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-2.41752" R_value="0.777535442108079" />
+  </Item>
+  <Item 3d="TC130735" Annotation="GENE PRODUCT: amine oxidase family protein / SWIRM domain-containing protein
+COMMENT: 
+Used Tools:
+Blast2x vs KEGG, Blast2x vs KOG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130735&amp;CONFIRM=TC130735">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.919703" R_value="0.777535442108079" />
+  </Item>
+  <Item 3d="TC130793" Annotation="GENE PRODUCT: expressed protein
+GO NUMBERS: 30246 
+DESCRIPTION: 
+Carbohydrate-binding-like fold
+COMMENT: 
+Used Tools:
+Blast2x vs KEGG, InterPro
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130793&amp;CONFIRM=TC130793">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-1.28498" R_value="0.777535442108079" />
+  </Item>
+  <Item 3d="TC131320" Annotation="GENE PRODUCT: endonuclease/exonuclease/phosphatase family protein
+COMMENT: 
+Used Tools:
+Blast2x vs KEGG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC131320&amp;CONFIRM=TC131320">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-0.534435" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0.078569" R_value="-5.43596333813339" />
+  </Item>
+  <Item 3d="TC133526" Annotation="GENE PRODUCT: Nipped-B-like protein (Delangin) (SCC2 homolog).
+COMMENT: 
+Blast2x vs SP:
+FUNCTION: Probably plays a structural role in chromatin. Involved in sister chromatid cohesion, possibly by interacting with the cohesin complex (By similarity).
+SUBUNIT: Interacts directly with CBX5 via the PxVxL motif.
+SUBCELLULAR LOCATION: Nucleus (By similarity).
+ALTERNATIVE PRODUCTS: Event=Alternative splicing; Named isoforms=3; Name=1; Synonyms=A, IDN3-A; IsoId=Q6KC79-1; Sequence=Displayed; Name=2; Synonyms=B, IDN3-B; IsoId=Q6KC79-2; Sequence=VSP_011092, VSP_011093; Name=3; IsoId=Q6KC79-3; Sequence=VSP_011091; Note=No experimental confirmation available;
+TISSUE SPECIFICITY: Widely expressed. Highly expressed in heart, skeletal muscle, fetal and adult liver, fetal and adult kidney. Expressed at intermediated level in thymus, placenta, peripheral leukocyte and small intestine. Weakly or not expressed in brain, colon, spleen and lung.
+DEVELOPMENTAL STAGE: In embryos, it is expressed in developing limbs and later in cartilage primordia of the ulna and of various hand bones. Sites of craniofacial expression include the cartilage primordium of the basioccipital and basisphenoid skull bones and elsewhere in the head and face, including a region encompassing the mesenchyme adjacent to the cochlear canal. Also expressed in the spinal column, notochord and surface ectoderm sclerotome and what seem to be migrating myoblasts. Expressed in the developing heart in the atrial and ventricular myocardium and in the ventricular tubeculae but absent in the endocardial cushions. Also expressed in the developing esophagus, trachea and midgut loops, in the bronchi of the lung and in the tubules of the metanephros. Expression in organs and tissues not typically affected in CDL (e.g., the developing trachea, bronchi, esophagus, heart and kidney) may reflect a bias towards underreporting of more subtle aspects of the phenotype or problems that typically present later in life. Expressed in the mesenchyme surrounding the cochlear canal possibly reflecting the hearing impairment commonly found. Weakly or not expressed in embryonic brain.
+DOMAIN: Contains one Pro-Xaa-Val-Xaa-Leu (PxVxL) motif, which is required for interaction with chromoshadow domains. This motif requires additional residues -7, -6, +4 and +5 of the central Val which contact the chromoshadow domain.
+PTM: Phosphorylated upon DNA damage, probably by ATM or ATR.
+DISEASE: Defects in NIPBL are the cause of Cornelia de Lange syndrome type 1 (CDLS1) [MIM:122470]. CDLS is a clinically heterogeneous developmental disorder associated with malformations affecting multiple systems. CDLS is characterized by facial dysmorphisms, abnormal hands and feet, growth delay, cognitive retardation and various other malformations including gastroesophageal dysfunction and cardiac, ophthalmologic and genitourinary anomalies.
+SIMILARITY: Belongs to the SCC2/Nipped-B family.
+SIMILARITY: Contains 5 HEAT repeats.
+SEQUENCE CAUTION: Sequence=BAA77335.1; Type=Miscellaneous discrepancy; Note=Chimeric cDNA; Sequence=BAA77349.1; Type=Miscellaneous discrepancy; Note=Chimeric cDNA; Sequence=BAC86701.1; Type=Erroneous initiation; Note=Translation N-terminally extended; Sequence=CAE45790.1; Type=Frameshift; Positions=278;
+WEB RESOURCE: NAME=GeneReviews; URL=&quot;http://www.genetests.org/query?gene=NIPBL&quot;.
+KEYWORDS: Alternative splicing; Cell cycle; Disease mutation; Nucleus; Phosphorylation; Polymorphism; Repeat
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP, Blast2x vs KOG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133526&amp;CONFIRM=TC133526">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.527861" R_value="-0.856475967478387" />
+  </Item>
+  <Item 3d="TC134363" Annotation="GENE PRODUCT: GATA transcription factor 19.
+GO NUMBERS: 3700 6355 8270 
+DESCRIPTION: 
+Zinc finger, NHR/GATA-type
+COMMENT: 
+Blast2x vs SP:
+FUNCTION: Transcriptional regulator that specifically binds 5'- GATA-3' or 5'-GAT-3' motifs within gene promoters (By similarity).
+SUBCELLULAR LOCATION: Nucleus (Probable).
+SIMILARITY: Belongs to the type IV zinc-finger family. Class B subfamily.
+SIMILARITY: Contains 1 GATA-type zinc finger.
+KEYWORDS: DNA-binding; Metal-binding; Nucleus; Transcription; Transcription regulation; Zinc; Zinc-finger
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134363&amp;CONFIRM=TC134363">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0" R_value="-0.856475967478387" />
+  </Item>
+  <Item 3d="TC135018" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+COMMENT: No hits found." Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135018&amp;CONFIRM=TC135018">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-0.536999" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.745672" R_value="-5.43596333813339" />
+  </Item>
+  <Item 3d="TC135309" Annotation="EC NUMBER: 2.7.1.-
+GENE PRODUCT: Protein kinase APK1A, chloroplast precursor 
+DESCRIPTION: 
+Protein kinase APK1A, chloroplast precursor (EC 2.7.11.1).
+COMMENT: 
+Blast2x vs SP:
+FUNCTION: Possible bi-functional kinase. In vitro, it exhibits serine/threonine activity. In vivo, can phosphorylate tyrosine residues of limited substrates.
+CATALYTIC ACTIVITY: ATP + a protein = ADP + a phosphoprotein.
+SUBCELLULAR LOCATION: Plastid, chloroplast (Potential).
+SIMILARITY: Belongs to the protein kinase superfamily. Ser/Thr protein kinase family.
+SIMILARITY: Contains 1 protein kinase domain.
+SEQUENCE CAUTION: Sequence=AAF79545.1; Type=Erroneous gene model prediction;
+KEYWORDS: ATP-binding; Chloroplast; Kinase; Nucleotide-binding; Plastid; Serine/threonine-protein kinase; Transferase; Transit peptide; Tyrosine-protein kinase
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135309&amp;CONFIRM=TC135309">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0.479966" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0.510962" R_value="0.777535442108079" />
+  </Item>
+  <Item 3d="TC135311" Annotation="GENE PRODUCT: gibberellin-regulated family protein
+DESCRIPTION: 
+Gibberellin regulated protein
+COMMENT: 
+Used Tools:
+Blast2x vs KEGG, InterPro
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135311&amp;CONFIRM=TC135311">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0.120345" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.64899" R_value="0.777535442108079" />
+  </Item>
+  <Item 3d="TC136336" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+COMMENT: No hits found." Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136336&amp;CONFIRM=TC136336">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0.207365" R_value="0.143524032521613" />
+  </Item>
+  <Item 3d="TC136431" Annotation="NAME: pgm1
+EC NUMBER: 5.4.2.2
+GENE PRODUCT: Phosphoglucomutase, cytoplasmic 
+DESCRIPTION: 
+[EC:5.4.2.2] 
+Phosphoglucomutase, cytoplasmic (EC 5.4.2.2) (Glucose phosphomutase) (PGM).
+COMMENT: 
+Blast2x vs SP:
+FUNCTION: This enzyme participates in both the breakdown and synthesis of glucose (By similarity).
+CATALYTIC ACTIVITY: Alpha-D-glucose 1-phosphate = alpha-D-glucose 6-phosphate.
+COFACTOR: Binds 1 magnesium ion per subunit (By similarity).
+SUBCELLULAR LOCATION: Cytoplasm (By similarity).
+SIMILARITY: Belongs to the phosphohexose mutase family.
+KEYWORDS: Carbohydrate metabolism; Cytoplasm; Glucose metabolism; Isomerase; Magnesium; Metal-binding; Phosphorylation
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136431&amp;CONFIRM=TC136431">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-0.40769" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.497582" R_value="0.143524032521613" />
+  </Item>
+  <Item 3d="TC136834" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+COMMENT: No hits found." Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136834&amp;CONFIRM=TC136834">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0.823068" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0.278028" R_value="-5.43596333813339" />
+  </Item>
+  <Item 3d="TC137306" Annotation="GENE PRODUCT: hydroxyproline-rich glycoprotein family protein
+COMMENT: 
+Used Tools:
+Blast2x vs KEGG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC137306&amp;CONFIRM=TC137306">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="-0.476691" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="-0.118584" R_value="0.777535442108079" />
+  </Item>
+  <Item 3d="TC139625" Annotation="NAME: agp
+EC NUMBER: 2.7.7.27
+GENE PRODUCT: glucose-1-phosphate adenylyltransferase 
+GO NUMBERS: 16740 
+DESCRIPTION: 
+[EC:2.7.7.27] 
+Glucose-1-phosphate adenylyltransferase large subunit 1 (EC 2.7.7.27) (ADP-glucose synthase) (ADP-glucose pyrophosphorylase) (AGPase S) (Alpha-D-glucose-1-phosphate adenyl transferase) (Fragment).
+Trimeric LpxA-like
+COMMENT: 
+Blast2x vs SP:
+FUNCTION: This protein plays a role in synthesis of starch. It catalyzes the synthesis of the activated glycosyl donor, ADP- glucose from Glc-1-P and ATP.
+CATALYTIC ACTIVITY: ATP + alpha-D-glucose 1-phosphate = diphosphate + ADP-glucose.
+ENZYME REGULATION: Activated by 3'phosphoglycerate, inhibited by orthophosphate. Allosteric regulation.
+PATHWAY: Starch biosynthesis.
+SUBUNIT: Heterotetramer.
+SUBCELLULAR LOCATION: Plastid, chloroplast. Plastid, amyloplast. Note=Found in the chloroplast in leaf. Found in the plastid in the developing endosperm.
+TISSUE SPECIFICITY: Prominently expressed in the leaves and a weaker expression is seen in the tubers.
+SIMILARITY: Belongs to the bacterial/plant glucose-1-phosphate adenylyltransferase family.
+KEYWORDS: Allosteric enzyme; Amyloplast; Chloroplast; Nucleotidyltransferase; Plastid; Starch biosynthesis; Transferase
+
+Used Tools:
+Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
+" Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC139625&amp;CONFIRM=TC139625">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0.478794" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0.391555" R_value="-0.856475967478387" />
+  </Item>
+  <Item 3d="TC140937" Annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+COMMENT: No hits found." Color="F7FE2E" Shape="sphere" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140937&amp;CONFIRM=TC140937">
+    <Values Comparison of Glomus intraradices colonized roots at 28 days post infection with uninfected control roots="0" Comparison of Glomus mosseae colonized roots at 28 days post infection with uninfected control roots="0" R_value="0.143524032521613" />
+  </Item>
+</opt>

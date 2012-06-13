@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+OpenIDE-Module: de.unibielefeld.gi.kotte.laborprogramm.debug/1
+OpenIDE-Module-Layer: de/unibielefeld/gi/kotte/laborprogramm/debug/layer.xml
+OpenIDE-Module-Localizing-Bundle: de/unibielefeld/gi/kotte/laborprogramm/debug/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+OpenIDE-Module-Specification-Version: 1.0
+
