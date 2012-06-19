@@ -2,6 +2,7 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/hoffmann/Uni/projects/omics/omics-base/PCAViewer/nbproject/suite.properties</file>
+        <file>file:/home/hoffmann/Uni/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/Startup.java</file>
+        <file>file:/home/hoffmann/Uni/projects/omics/omics-base/PCAViewer/src/net/sf/maltcms/chromaui/statistics/pcaViewer/actions/PCAOpenAction.java</file>
     </open-files>
 </project-private>

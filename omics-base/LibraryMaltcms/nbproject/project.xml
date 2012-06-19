@@ -23,15 +23,6 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.modules.xml.jaxb.api</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <release-version>1</release-version>
-                        <specification-version>1.10.1</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>org.openide.modules</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -388,6 +379,7 @@
                 <package>net.sf.ehcache.writer.writebehind</package>
                 <package>net.sf.ehcache.writer.writebehind.operations</package>
                 <package>net.sf.ehcache.writer.writethrough</package>
+                <package>net.sf.maltcms</package>
                 <package>net.sf.maltcms.apps</package>
                 <package>net.sf.maltcms.datastructures</package>
                 <package>net.sf.maltcms.evaluation.api</package>
@@ -770,12 +762,8 @@
                 <package>org.mozilla.intl.chardet</package>
                 <package>org.netbeans.api.wizard</package>
                 <package>org.netbeans.api.wizard.displayer</package>
-                <package>org.netbeans.modules.openide.util</package>
                 <package>org.netbeans.modules.wizard</package>
                 <package>org.netbeans.spi.wizard</package>
-                <package>org.openide.util</package>
-                <package>org.openide.util.lookup</package>
-                <package>org.openide.util.lookup.implspi</package>
                 <package>org.slf4j</package>
                 <package>org.slf4j.bridge</package>
                 <package>org.slf4j.helpers</package>
@@ -1061,12 +1049,12 @@
                 <binary-origin>release/modules/ext/spring-asm-3.0.6.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-io-2.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-io-2.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jcommon-1.0.16.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jcommon-1.0.16.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-io-2.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-io-2.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/cross-tools-1.2.8-SNAPSHOT.jar</runtime-relative-path>
@@ -1245,20 +1233,16 @@
                 <binary-origin>release/modules/ext/com.springsource.antlr-2.7.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/maltcms-experimental-1.2.1-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/maltcms-experimental-1.2.1-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-execution-spi-1.5.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-execution-spi-1.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-math-2.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-math-2.2.jar</binary-origin>
+                <runtime-relative-path>ext/maltcms-experimental-1.2.1-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/maltcms-experimental-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/org-openide-util-lookup-RELEASE701.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org-openide-util-lookup-RELEASE701.jar</binary-origin>
+                <runtime-relative-path>ext/commons-math-2.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-math-2.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-digester-1.8.jar</runtime-relative-path>
@@ -1377,12 +1361,12 @@
                 <binary-origin>release/modules/ext/maltcms-io-mzdata-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/spring-aop-3.0.5.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spring-aop-3.0.5.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/commons-codec-1.4.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-codec-1.4.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/spring-aop-3.0.5.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/spring-aop-3.0.5.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/batik-svggen-1.6-1.jar</runtime-relative-path>
