@@ -82,6 +82,7 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
             Dataset1D ds) {
         siep = new SelectedXYItemEntityPainter(ds, ic, cp);
         cp.addChartMouseListener(siep);
+        cp.getChart().addChangeListener(siep);
         cp.getChart().getXYPlot().getDomainAxis().addChangeListener(siep);
         cp.getChart().getXYPlot().getRangeAxis().addChangeListener(siep);
         cp.getChart().addChangeListener(siep);

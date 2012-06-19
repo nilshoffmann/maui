@@ -60,7 +60,6 @@ public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, Clo
             fragments.add(new FileFragment(new File(dataObject.getPrimaryFile().getPath())));
         }
 
-
         Chromatogram1DChartProvider c1d = new Chromatogram1DChartProvider();
         JFCTopComponent jtc = new JFCTopComponent();
         JFreeChart jfc = c1d.provideChart(new LinkedList<IFileFragment>(fragments));

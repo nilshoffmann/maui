@@ -45,13 +45,13 @@ id = "net.sf.maltcms.chromaui.groovy.GenericGroovyRawDataAction")
 @Messages("CTL_GenericGroovyRawDataAction=Run Groovy Action")
 public final class GenericGroovyRawDataAction implements ActionListener {
 
-    private final List<DataObject> context;
+    private final List<CDFDataObject> context;
 
-    public GenericGroovyRawDataAction(List<DataObject> context) {
+    public GenericGroovyRawDataAction(List<CDFDataObject> context) {
         this.context = context;
     }
 
-    public IChromAUIProject locateProject(DataObject dobj) {
+    public IChromAUIProject locateProject(CDFDataObject dobj) {
         FileObject fobj = dobj.getPrimaryFile();
         FileObject currentFileObject = fobj.getParent();
         while (!currentFileObject.isRoot()) {
@@ -114,8 +114,6 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                 RawDataGroovyScript selectedScript = gssf.getSelectedScript(
                         RawDataGroovyScript.class);
                 if (selectedScript != null) {
-                    selectedScript.setProject(icap);
-                    selectedScript.setDataObjects(this.context.toArray(new CDFDataObject[this.context.size()]));
                     try {
                         BeanNode bn = new BeanNode(selectedScript);
                         PropertySheet ps = new PropertySheet();
@@ -123,11 +121,14 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                         DialogDescriptor bnd = new DialogDescriptor(ps,
                                 "Set Script Properties");
                         Object bndRet = DialogDisplayer.getDefault().notify(bnd);
+                        if(DialogDescriptor.CANCEL_OPTION.equals(bndRet)) {
+                            return;
+                        }
                     } catch (IntrospectionException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                     ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.getName(), selectedScript);
-                    selectedScript.setProgressHandle(handle);
+                    selectedScript.create(icap, handle, this.context);
                     RequestProcessor rp = new RequestProcessor(selectedScript.getName(), 1, true);
                     rp.post(selectedScript);
                 }

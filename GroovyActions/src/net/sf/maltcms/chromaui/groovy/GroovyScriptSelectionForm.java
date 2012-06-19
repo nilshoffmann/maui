@@ -16,6 +16,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import net.sf.maltcms.chromaui.groovy.api.GroovyProjectDataObjectScript;
 
 /**
  *
@@ -37,6 +38,9 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel {
                     int i, boolean bln, boolean bln1) {
                 if(o==null) {
                     return new JLabel("<NOT AVAILABLE>");
+                }
+                if(o instanceof GroovyProjectDataObjectScript) {
+                    return new JLabel(((GroovyProjectDataObjectScript)o).getName());
                 }
                 return new JLabel(o.getClass().getName());
             }

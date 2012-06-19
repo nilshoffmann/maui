@@ -4,22 +4,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi;
 
-import java.util.LinkedList;
-import java.util.List;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
-import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
-import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.NormalizationDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

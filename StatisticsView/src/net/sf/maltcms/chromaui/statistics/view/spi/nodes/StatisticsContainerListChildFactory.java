@@ -5,23 +5,19 @@
  */
 package net.sf.maltcms.chromaui.statistics.view.spi.nodes;
 
-import java.beans.IntrospectionException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import net.sf.maltcms.chromaui.normalization.spi.nodes.AnovaNode;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
-import net.sf.maltcms.chromaui.project.spi.nodes.DescriptorNode;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.statistics.view.api.IStatisticsDescriptorComparator;
-import org.openide.nodes.BeanNode;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
-import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -126,25 +122,14 @@ public class StatisticsContainerListChildFactory extends ChildFactory<IStatistic
         if (key == null) {
             return Node.EMPTY;
         }
+        INodeFactory nodeFactory = Lookup.getDefault().lookup(INodeFactory.class);
         if (key instanceof IAnovaDescriptor) {
-            try {
-                DescriptorNode an = new DescriptorNode(key, Children.LEAF, Lookups.fixed(
-                        project, key, 
-                        ((IAnovaDescriptor) key).getPeakGroupDescriptor()));
-                return an;
-            } catch (IntrospectionException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            return nodeFactory.createDescriptorNode(key, Children.LEAF, Lookups.fixed(
+                    project, key,
+                    ((IAnovaDescriptor) key).getPeakGroupDescriptor()));
         } else {
-            try {
-                DescriptorNode an = new DescriptorNode(key, Children.LEAF, Lookups.fixed(
-                        project));
-                return an;
-            } catch (IntrospectionException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            return nodeFactory.createDescriptorNode(key, Children.LEAF, Lookups.fixed(
+                    project));
         }
-        
-        return Node.EMPTY;
     }
 }

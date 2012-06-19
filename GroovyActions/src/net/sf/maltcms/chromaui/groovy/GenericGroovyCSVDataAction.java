@@ -90,12 +90,8 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
             if (DialogDescriptor.OK_OPTION.equals(ret)) {
                 CSVDataGroovyScript selectedScript = gssf.getSelectedScript(
                         CSVDataGroovyScript.class);
-
-                selectedScript.setProject(icap);
-                selectedScript.setDataObjects(instances.toArray(new CSVDataObject[instances.
-                        size()]));
                 ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.getName());
-                selectedScript.setProgressHandle(handle);
+                selectedScript.create(icap, handle, instances);
                 RequestProcessor rp = new RequestProcessor(selectedScript.
                         getName(), 1, true);
                 rp.post(selectedScript);

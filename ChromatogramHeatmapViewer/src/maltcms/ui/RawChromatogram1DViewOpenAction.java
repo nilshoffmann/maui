@@ -36,7 +36,7 @@ id = "maltcms.ui.RawChromatogram1DViewOpenAction")
 @ActionReferences({
     @ActionReference(path = "Loaders/application/x-cdf/Actions", position = 0)
 })
-@Messages("CTL_RawChromatogram1DViewOpenAction=Open in Chromatogram Viewer")
+@Messages("CTL_RawChromatogram1DViewOpenAction=Open Raw in Chromatogram Viewer")
 public final class RawChromatogram1DViewOpenAction implements ActionListener {
 
     private final List<CDFDataObject> chromatograms;

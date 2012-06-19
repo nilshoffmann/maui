@@ -23,6 +23,7 @@ import org.openide.util.Cancellable;
 import net.sf.maltcms.*;
 import cross.*;
 import maltcms.*;
+import cross.datastructures.fragments.IFileFragment
 
 /**
  *
@@ -63,9 +64,9 @@ class DefaultRawDataScript implements RawDataGroovyScript {
     @Override
     public void run() {
         progressHandle.setDisplayName(name)
-//        def snr = 5.0
-//        def fwhm = 5.0
-//        def max = 50
+        //        def snr = 5.0
+        //        def fwhm = 5.0
+        //        def max = 50
         def Date date = new Date()
         def DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
         def outdir = new File(FileUtil.toFile(project.getOutputDir()),formatter.format(date))

@@ -45,6 +45,7 @@ public class InformationController {
     private IChromAUIProject icp;
     private InstanceContent content;
     private LinkedBlockingQueue<IScan2D> selectionQueue = new LinkedBlockingQueue<IScan2D>();
+    private final Object mutex = new Object();
 
     public InformationController(InstanceContent content, IChromAUIProject project, IChromatogramDescriptor descriptor) {
 //        System.out.println("Lookup of DataObject contained: "+lkp.lookupAll(Object.class));
@@ -105,21 +106,25 @@ public class InformationController {
                 @Override
                 public void run() {
                     listener.updateCrossHair(p);
+                    synchronized (mutex) {
+                        if (!selectionQueue.isEmpty()) {
+                            System.out.println("Clearing selection queue! Removing elements from instance content!");
+                            for (IScan2D t : selectionQueue) {
+                                content.remove(t);
+                            }
+                            selectionQueue.clear();
+                        }
+                        IScan2D scan = ChromatogramVisualizerTools.getScanForPoint(
+                                p, getChromatogramDescriptor());
+                        content.add(getChromatogramDescriptor().getChromatogram());
+                        selectionQueue.add(scan);
+                        content.add(scan);
+                        content.remove(getChromatogramDescriptor().getChromatogram());
+                    }
                 }
             };
             SwingUtilities.invokeLater(r);
-            if (!selectionQueue.isEmpty()) {
-                System.out.println("Clearing selection queue! Removing elements from instance content!");
-                for (IScan2D t : selectionQueue) {
-                    content.remove(t);
-                }
-                selectionQueue.clear();
-            }
-            IScan2D scan = ChromatogramVisualizerTools.getScanForPoint(
-                    p, getChromatogramDescriptor());
-            content.add(getChromatogramDescriptor().getChromatogram());
-            content.add(scan);
-            content.remove(getChromatogramDescriptor().getChromatogram());
+
             //this.msp.changeMS(p);
 
         }
@@ -212,11 +217,6 @@ public class InformationController {
             });
             na.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         }
-//        if (hmpwidth != -1 && aip1width != -1) {
-//            double diff = aip1width - hmpwidth;
-//            System.out.println("DIFF IS: " + diff);
-////            this.hmp.getChartPanel().getChart().setPadding(new RectangleInsets(0, diff, 0, 0));
-//        }
     }
 
     public Object[] getInformation(ChartPositions pos) {

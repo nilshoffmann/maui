@@ -36,11 +36,12 @@ import org.jfree.chart.event.ChartChangeEvent;
 import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.util.ShapeUtilities;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
 /**
@@ -67,7 +68,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
 
     public SelectedXYItemEntityPainter(Dataset1D<SOURCE, TARGET> ds,
             InstanceContent ic, ChartPanel cp) {
-        cursor = createCursor(16.0f);
+        cursor = createCursor(20.0f);
         setCacheable(true);
         setAntialiasing(true);
         this.ic = ic;
@@ -112,7 +113,8 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
 
     @Override
     protected void doPaint(Graphics2D gd, U chartPanel, int i, int i1) {
-        Shape paintArea = chartPanel.getScreenDataArea();//ChartPanelTools.getModelToViewTransform(
+        Rectangle2D paintArea = chartPanel.getChartRenderingInfo().getPlotInfo().getDataArea();
+        //Shape paintArea = chartPanel.getScreenDataArea();//ChartPanelTools.getModelToViewTransform(
         //chartPanel).createTransformedShape(
         //chartPanel.getScreenDataArea());
         Plot plot = chartPanel.getChart().getPlot();
@@ -143,7 +145,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                     p.getY() - 0.5, 1.0, 1.0), hoverColor);
 
             originalSettings.apply(gd);
-        } else if (s != null) {
+        } else if(s!=null) {
             GraphicsSettings originalSettings = GraphicsSettings.create(gd);
             GraphicsSettings newSettings = GraphicsSettings.clone(
                     originalSettings);
@@ -199,7 +201,8 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                     if (ce instanceof XYItemEntity) {
                         System.out.println("Is data entity");
                         xyie = (XYItemEntity) ce;
-                        s = null;
+                        s = xyie.getArea();
+                        //s = null;
 //                        p = null;
                         if (!selectionQueue.isEmpty()) {
                             System.out.println("Clearing selection queue! Removing elements from instance content!");
@@ -224,9 +227,10 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                         for(int i = 0;i < ds.getSeriesCount(); i++) {
                             ic.add(ds.getSource(i));
                         }
-                    } else {
-                        xyie = null;
                     }
+                    //else {
+                    //    xyie = null;
+                    //}
                     updatePending.set(false);
                     setDirty(true);
                 }
@@ -258,27 +262,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     @Override
     public void axisChanged(AxisChangeEvent event) {
         System.out.println("Received axis change!");
-        PlotRenderingInfo plotInfo = cp.getChartRenderingInfo().getPlotInfo();
-
-        Plot plot = cp.getChart().getPlot();
-        if (plot instanceof XYPlot) {
-            XYPlot xyp = (XYPlot) plot;
-//            if (xyie != null) {
-//                double modelX = xyp.getDomainAxis().valueToJava2D(viewX, plotInfo.getDataArea(), xyp.getDomainAxisEdge());
-//                double modelY = xyp.getRangeAxis().valueToJava2D(viewY, plotInfo.getDataArea(), xyp.getRangeAxisEdge());
-//
-//                Shape shape = selectedArea;
-//                if (xyp.getOrientation() == PlotOrientation.HORIZONTAL) {
-//                    shape = ShapeUtilities.createTranslatedShape(shape, modelY,
-//                            modelX);
-//                } else if (xyp.getOrientation() == PlotOrientation.VERTICAL) {
-//                    shape = ShapeUtilities.createTranslatedShape(shape, modelX,
-//                            modelY);
-//                }
-//                selectedArea = shape;
-//                setDirty(true);
-//            }
-        }
+        setDirty(true);
     }
 
     @Override

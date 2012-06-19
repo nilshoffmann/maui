@@ -299,6 +299,11 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     }
 
     @Override
+    protected void componentDeactivated() {
+        super.componentDeactivated();
+    }
+
+    @Override
     public void componentClosed() {
     }
 
