@@ -247,14 +247,24 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                     if(index==0) {
                         writer.println "Skipping first line"
                     }else{
+                        IPeakAnnotationDescriptor descriptor = null
                         String[] lineContent = line.split("\t")
                         //writer.println "Parsing content for peak ${index}: ${lineContent}"
                         //lineContent[0] = lineNumber
+                        double mz = Double.parseDouble(lineContent[1])
+                        //double mzmin = Double.parseDouble(lineContent[2])
+                        //double mzmax = Double.parseDouble(lineContent[3])
                         double rt = Double.parseDouble(lineContent[4])
-                        IPeakAnnotationDescriptor descriptor = null
-                        double intensity = Double.parseDouble(lineContent[8])
+                        double rtmin = Double.parseDouble(lineContent[5])
+                        double rtmax = Double.parseDouble(lineContent[6])
+                        double rawArea = Double.parseDouble(lineContent[7])
+                        double filteredArea = Double.parseDouble(lineContent[8])
+                        //double rawIntensity = Double.parseDouble(lineContent[9])
+                        double filteredIntensity = Double.parseDouble(lineContent[10])
+                        //double rankInEic = Double.parseDouble(lineContent[11])
+                        double snr = Double.parseDouble(lineContent[12])
                         double[] mzs= new double[1]
-                        mzs[0]=Double.parseDouble(lineContent[1])
+                        mzs[0]=mz
                         if(peakSet.containsKey(Double.valueOf(rt))) {
                             descriptor = peakSet.get(Double.valueOf(rt))
                             double[] mzsOld = descriptor.getQuantMasses()
@@ -263,6 +273,9 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                             System.arraycopy(mzsOld,0,mzsNew,0,mzsOld.length)
                             Arrays.sort(mzsNew)
                             descriptor.setQuantMasses(mzsNew)
+                            descriptor.setArea(descriptor.getArea()+filteredArea)
+                            descriptor.setRawArea(descriptor.getRawArea()+rawArea)
+                            descriptor.setApexIntensity(descriptor.getApexIntensity()+filteredIntensity)
                         }else{
                             descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
                                 chromatogram,
@@ -270,19 +283,20 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                                 mzs[0],
                                 mzs,
                                 Double.NaN,
-                                Double.parseDouble(lineContent[12]),
+                                snr,
                                 fullWidthAtHalfMaximum,
                                 Double.NaN,
                                 null,
                                 null,
                                 null,
 				"XCMS Matched Filter",
-                                Double.parseDouble(lineContent[4]),
-                                Double.parseDouble(lineContent[5]),
+                                rtmin,
                                 rt,
-                                intensity,
-                                intensity
+                                rtmax,
+                                filteredArea,
+                                filteredIntensity
                             )
+                            descriptor.setRawArea(rawArea)
                             //TODO descriptor massValues und intensityValues ergaenzen
                             descriptor.setIndex(index-1)
                             descriptor.setDisplayName(descriptor.getName()) 
@@ -428,4 +442,5 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
     }
 
 }
+
 

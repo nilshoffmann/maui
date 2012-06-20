@@ -61,9 +61,6 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
         Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
         cdxpanel.setCursor(crosshairCursor);
         chart.addProgressListener(cdxpanel);
-        //cpml.setChartPanel(cdxpanel);
-        //ic.add(cpml);
-        //cdxpanel.addChartMouseListener(cpml);
         cdxpanel.setInitialDelay(100);
         cdxpanel.setDismissDelay(30000);
         cdxpanel.setReshowDelay(0);
@@ -101,10 +98,6 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
         }
     }
 
-    //public ChartPanelMouseListener getChartPanelMouseListener() {
-    //    return lookup.lookup(ChartPanelMouseListener.class);
-    //}
-
     public Collection<? extends IChromatogram> getChromatograms() {
         return lookup.lookupAll(IChromatogram.class);
     }
@@ -119,7 +112,6 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
                 ticplot.setNoDataMessage("Loading Data...");
                 chart = new JFreeChart(ticplot);
                 cdxpanel.setChart(chart);
-//                chart = new JFreeChart(ticplot);
                 XYItemRenderer r = ticplot.getRenderer();
                 if (r instanceof XYLineAndShapeRenderer) {
                     ((XYLineAndShapeRenderer) r).setDrawSeriesLineAsPath(true);
@@ -130,7 +122,6 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
                 }
                 ChartCustomizer.setSeriesColors(ticplot, 0.8f);
                 ChartCustomizer.setSeriesStrokes(ticplot, 2.0f);
-//                cdxpanel.setChart(chart);
                 dmkl = new DomainMarkerKeyListener(
                         ticplot);
                 dmkl.setPlot(ticplot);

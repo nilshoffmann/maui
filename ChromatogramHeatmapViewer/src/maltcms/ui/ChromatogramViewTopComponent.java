@@ -6,6 +6,7 @@ package maltcms.ui;
 
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,8 +67,10 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         if (project != null) {
             this.ic.add(project);
         }
+        annotations = new ArrayList<XYAnnotation>();
         for (IChromatogramDescriptor descr : filename) {
             this.ic.add(descr);
+            annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255,0,0,32), new Color(255,0,0,16), "TIC", new double[0]));
         }
         this.ic.add(ds);
         this.ic.add(new Properties());
@@ -231,11 +234,6 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
                             true);
                 }
             } else {
-                List l = cp.getChart().getXYPlot().getAnnotations();
-                annotations = new ArrayList<XYAnnotation>(l.size());
-                for (Object obj : l) {
-                    annotations.add((XYAnnotation) obj);
-                }
                 cp.getChart().getXYPlot().clearAnnotations();
             }
         }

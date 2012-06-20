@@ -5,8 +5,8 @@
 package maltcms.ui;
 
 import cross.datastructures.fragments.IFileFragment;
-import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +17,7 @@ import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import maltcms.ui.views.ChromMSHeatmapPanel;
+import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
 import net.sf.maltcms.chromaui.charts.format.RTNumberFormatter;
 import net.sf.maltcms.chromaui.charts.units.RTUnit;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -25,10 +26,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import org.jfree.chart.annotations.XYAnnotation;
-import org.jfree.chart.annotations.XYShapeAnnotation;
-import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.ui.TextAnchor;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import ucar.ma2.Array;
@@ -97,18 +97,18 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
                 plot = c1p.provide1DPlot(buildFileFragments(files),
                         "total_intensity", true);
                 IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
-                if(project!=null) {
-                    plot.clearAnnotations();
-//                    List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
-//                    for(IChromatogramDescriptor file:files) {
-//                        annotations.addAll(generatePeakShapes(file, project, Color.BLUE, new Color(0,0,255,32), plotMode, masses));
-//                    }
-//                    XYAnnotation last = annotations.remove(annotations.size()-1);
-//                    for(XYAnnotation ann:annotations) {
-//                        plot.addAnnotation(ann,false);
-//                    }
-//                    plot.addAnnotation(last,true);
-                }
+//                if(project!=null ) {
+//                    plot.clearAnnotations();
+////                    List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+////                    for(IChromatogramDescriptor file:files) {
+////                        annotations.addAll(generatePeakShapes(file, project, Color.BLUE, new Color(0,0,255,32), plotMode, masses));
+////                    }
+////                    XYAnnotation last = annotations.remove(annotations.size()-1);
+////                    for(XYAnnotation ann:annotations) {
+////                        plot.addAnnotation(ann,false);
+////                    }
+////                    plot.addAnnotation(last,true);
+//                }
             } else if ("TOP".equals(plotType)) {
                 plot = c1p.provide1DCoPlot(buildFileFragments(files),
                         "total_intensity", true);
@@ -188,8 +188,9 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
                     int scan = chromatogram.getIndexFor(peakDescr.getApexTime());
                     System.out.println("Retention time: " + peakDescr.
                             getApexTime() + "; Scan index: " + scan);
-//                    int startIdx = chromatogram.getIndexFor(peakDescr.getStartTime());
-//                    int stopIdx = chromatogram.getIndexFor(peakDescr.getStopTime());
+                    int startIdx = chromatogram.getIndexFor(peakDescr.getStartTime());
+                    int apexIdx = chromatogram.getIndexFor(peakDescr.getApexTime());
+                    int stopIdx = chromatogram.getIndexFor(peakDescr.getStopTime());
                     double apexTime = peakDescr.getApexTime();
                     double startTime = peakDescr.getStartTime();
                     double stopTime = peakDescr.getStopTime();
@@ -210,14 +211,29 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
 //                    Rectangle2D.Double bbox = new Rectangle2D.Double(
 //                            startTime, 0, stopTime - startTime,
 //                            tic.getDouble(scan));
-                    Rectangle2D.Double bbox = new Rectangle2D.Double(
-                            startTime, 0, stopTime-startTime,
-                            tic.getDouble(scan));
+//                    Rectangle2D.Double bbox = new Rectangle2D.Double(
+//                            startTime, 0, stopTime-startTime,
+//                            tic.getDouble(scan));
+                    GeneralPath gp = new GeneralPath();
+                    gp.moveTo(startTime, tic.getDouble(startIdx));
+                    gp.lineTo(apexTime, tic.getDouble(apexIdx));
+                    gp.lineTo(stopTime, tic.getDouble(stopIdx));
+                    gp.closePath();
 //                    Area a = new Area(bbox);
 //                    a.intersect(new Area(gp));
 //                    System.out.println("creating annotation");
-                    XYShapeAnnotation xypa = new XYShapeAnnotation(bbox,
-                            new BasicStroke(), outline, fill);
+//                    StringBuilder qm = new StringBuilder();
+//                    for(double d:peakDescr.getQuantMasses()) {
+//                        qm.append(String.format("%.2f",d));
+//                        qm.append(":");
+//                    }
+//                    String massString = qm.substring(0, qm.length()-1);
+                    String label = peakDescr.getDisplayName()+"@"+String.format("%.2f",apexTime);
+                    XYSelectableShapeAnnotation<IPeakAnnotationDescriptor> xyssa = new XYSelectableShapeAnnotation<IPeakAnnotationDescriptor>(apexTime, tic.getDouble(apexIdx), gp, peakDescr.getIndex()+"", TextAnchor.BASELINE_LEFT, peakDescr);
+                    xyssa.setFill(fill);
+                    xyssa.setOutline(outline);
+//                    XYShapeAnnotation xypa = new XYShapeAnnotation(bbox,
+//                            new BasicStroke(), outline, fill);
 //                    XYTextAnnotation xyta = new XYTextAnnotation(apexTime + " m/z: " + peakDescr.
 //                            getQuantMasses() + " area: " + peakDescr.getArea() + " name: " + peakDescr.
 //                            getName(), apexTime,
@@ -228,7 +244,8 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
 //                            getDouble(stopIdx), new BasicStroke(),
 //                            Color.BLACK);
                     System.out.println("adding annotation");
-                    l.add(xypa);
+                    //l.add(xypa);
+                    l.add(xyssa);
 //                    l.add(xyta);
 //                    l.addMembers(xyla);
 //                    XYLineAnnotation baseline = new XYLineAnnotation();

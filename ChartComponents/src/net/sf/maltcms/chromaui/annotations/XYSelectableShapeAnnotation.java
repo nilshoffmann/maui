@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.maltcms.chromaui.annotations;
 
@@ -10,7 +10,6 @@ import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import java.io.Serializable;
 
 import org.jfree.chart.HashUtilities;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
+import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.ValueAxis;
@@ -34,46 +34,71 @@ import org.jfree.util.ObjectUtilities;
 import org.jfree.util.PaintUtilities;
 
 public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation implements Serializable {
-	
-	private boolean active = false;
-	
-	private Paint highlight = new Color(192,192,192,96);
-	
-	private Paint outline = Color.black;
-	
-	private Stroke stroke = new BasicStroke(1.0f);
-	
-	private double x, y;
-	
-	private Shape s;
-	
-	private String label = "";
-	
-	private XYTextAnnotation xyta;
 
-        private T t;
+    private boolean active = false;
+    private Paint highlight = new Color(192, 192, 192, 164);
+    private Paint outline = new Color(192, 192, 192, 128);
+    private Paint fill = new Color(192, 192, 192, 96);
+    private Stroke stroke = new BasicStroke(1.0f);
+    private double x, y;
+    private Shape s;
+    private String label = "";
+    private XYPointerAnnotation xyta;
+    private T t;
+    private Shape ch;
 
-        private Shape ch;
+    public XYSelectableShapeAnnotation(double x, double y, Shape s, String label, TextAnchor ta, T t) {
+        this(x, y, s, label, ta);
+        this.t = t;
+    }
+    
+    private XYSelectableShapeAnnotation(double x, double y, Shape s, String label, TextAnchor ta) {
+        this.x = x;
+        this.y = y;
+        this.s = s;
+        this.ch = getCrosshairShape(x, y, s.getBounds2D().getWidth(), s.getBounds2D().getHeight());
+        this.label = label;
+        this.xyta = new XYPointerAnnotation(label, x, y,-0.4);
+        this.xyta.setTipRadius(0.1);
+        this.xyta.setTextAnchor(ta);
+    }
+    
+    public Shape getShape() {
+        return this.s;
+    }
 
-        public XYSelectableShapeAnnotation(double x, double y, Shape s, String label, TextAnchor ta, T t) {
-            this(x, y, s, label, ta);
-            this.t = t;
-        }
+    public Paint getHighlight() {
+        return highlight;
+    }
 
-        public Shape getShape() {
-            return this.s;
-        }
+    public void setHighlight(Paint highlight) {
+        this.highlight = highlight;
+    }
+    
+    public Paint getFill() {
+        return fill;
+    }
+    
+    public void setFill(Paint fill) {
+        this.fill = fill;
+    }
 
-	private XYSelectableShapeAnnotation(double x, double y, Shape s, String label, TextAnchor ta) {
-		this.x = x;
-		this.y = y;
-		this.s = s;
-                this.ch = getCrosshairShape(x, y, s.getBounds2D().getWidth(), s.getBounds2D().getHeight());
-		this.label = label;
-		this.xyta = new XYTextAnnotation(label, x, y);
-		this.xyta.setTextAnchor(ta);
-	}
-	
+    public Paint getOutline() {
+        return outline;
+    }
+
+    public void setOutline(Paint outline) {
+        this.outline = outline;
+    }
+
+    public Stroke getStroke() {
+        return stroke;
+    }
+
+    public void setStroke(Stroke stroke) {
+        this.stroke = stroke;
+    }
+
 //	public void setLocation(double x, double y) {
 //		AffineTransform at = AffineTransform.getTranslateInstance(0,0);
 //		this.s = at.createTransformedShape(this.s);
@@ -84,26 +109,30 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
 //		this.xyta.setX(x);
 //		this.xyta.setY(y);
 //	}
-	
-	public XYTextAnnotation getTextAnnotation() {
-		return this.xyta;
-	}
-	
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	
-	public boolean isActive() {
-		return this.active;
-	}
-	/* (non-Javadoc)
-     * @see org.jfree.chart.annotations.AbstractXYAnnotation#draw(java.awt.Graphics2D, org.jfree.chart.plot.XYPlot, java.awt.geom.Rectangle2D, org.jfree.chart.axis.ValueAxis, org.jfree.chart.axis.ValueAxis, int, org.jfree.chart.plot.PlotRenderingInfo)
+    public XYTextAnnotation getTextAnnotation() {
+        return this.xyta;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return this.active;
+    }
+    /*
+     * (non-Javadoc) @see
+     * org.jfree.chart.annotations.AbstractXYAnnotation#draw(java.awt.Graphics2D,
+     * org.jfree.chart.plot.XYPlot, java.awt.geom.Rectangle2D,
+     * org.jfree.chart.axis.ValueAxis, org.jfree.chart.axis.ValueAxis, int,
+     * org.jfree.chart.plot.PlotRenderingInfo)
      */
+
     @Override
     public void draw(Graphics2D arg0, XYPlot arg1, Rectangle2D arg2,
             ValueAxis arg3, ValueAxis arg4, int arg5, PlotRenderingInfo arg6) {
-    	//System.out.println("Annotation "+toString()+" is active: "+isActive());
-    	PlotOrientation orientation = arg1.getOrientation();
+        //System.out.println("Annotation "+toString()+" is active: "+isActive());
+        PlotOrientation orientation = arg1.getOrientation();
         RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
                 arg1.getDomainAxisLocation(), orientation);
         RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
@@ -127,7 +156,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         double m12 = yy0 - m11 * y0;
 
         //  create transform & transform shape
-        Shape s = null,ch = null;
+        Shape s = null, ch = null;
         if (orientation == PlotOrientation.HORIZONTAL) {
             AffineTransform t1 = new AffineTransform(0.0f, 1.0f, 1.0f, 0.0f,
                     0.0f, 0.0f);
@@ -137,39 +166,39 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
             s = t2.createTransformedShape(s);
             ch = t1.createTransformedShape(this.ch);
             ch = t2.createTransformedShape(ch);
-        }
-        else if (orientation == PlotOrientation.VERTICAL) {
+        } else if (orientation == PlotOrientation.VERTICAL) {
             AffineTransform t = new AffineTransform(m00, 0, 0, m11, m02, m12);
             s = t.createTransformedShape(this.s);
             ch = t.createTransformedShape(this.ch);
         }
 
-        if (this.highlight != null && this.active) {
+        if (this.active) {
             arg0.setPaint(this.highlight);
-            double x = s.getBounds2D().getX();
-            double y = s.getBounds2D().getY();
-            double w = s.getBounds2D().getWidth();
-            double h = s.getBounds2D().getHeight();
-            Shape e = new Ellipse2D.Double(x,y,w,h);
-            arg0.fill(e);
+//            double x = s.getBounds2D().getX();
+//            double y = s.getBounds2D().getY();
+//            double w = s.getBounds2D().getWidth();
+//            double h = s.getBounds2D().getHeight();
+//            Shape e = new Ellipse2D.Double(x, y, w, h);
+            arg0.fill(s);
             arg0.setPaint(this.outline);
-            arg0.draw(e);
-        }
-
-        if (this.stroke != null && this.outline != null) {
-            arg0.setPaint(this.outline);
-            arg0.setStroke(this.stroke);
             arg0.draw(s);
+            arg0.setStroke(this.stroke);
             arg0.draw(ch);
+        } else {
+            arg0.setPaint(this.fill);
+            arg0.fill(s);
+            arg0.setPaint(this.outline);
+            arg0.draw(s);
         }
         addEntity(arg6, s, arg5, getToolTipText(), getURL());
         this.xyta.draw(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
     }
-    
+
     /**
      * Tests this annotation for equality with an arbitrary object.
      *
-     * @param obj  the object (<code>null</code> permitted).
+     * @param obj the object (
+     * <code>null</code> permitted).
      *
      * @return A boolean.
      */
@@ -232,7 +261,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     /**
      * Provides serialization support.
      *
-     * @param stream  the output stream.
+     * @param stream the output stream.
      *
      * @throws IOException if there is an I/O error.
      */
@@ -248,13 +277,13 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     /**
      * Provides serialization support.
      *
-     * @param stream  the input stream.
+     * @param stream the input stream.
      *
-     * @throws IOException  if there is an I/O error.
-     * @throws ClassNotFoundException  if there is a classpath problem.
+     * @throws IOException if there is an I/O error.
+     * @throws ClassNotFoundException if there is a classpath problem.
      */
     private void readObject(ObjectInputStream stream)
-        throws IOException, ClassNotFoundException {
+            throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
         this.s = SerialUtilities.readShape(stream);
         this.stroke = SerialUtilities.readStroke(stream);
@@ -266,6 +295,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     public T getT() {
         return this.t;
     }
+
     public static Shape getCrosshairShape(double x, double y, double w, double h) {
         // draw GeneralPath (polyline)
         //we draw two lines, one from
@@ -284,5 +314,4 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         return crosshair;
 
     }
-	
 }
