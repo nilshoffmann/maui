@@ -51,14 +51,15 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
                 DialogDisplayer.getDefault().notify(message);
             }
             int peaksReportsImported = 0;
-            progressHandle.progress("Importing "+reports.keySet().size()+" Peak Lists");
+            progressHandle.progress("Importing " + reports.keySet().size() + " Peak Lists");
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
             trd.setDisplayName(getClass().getSimpleName());
             File importDir = null;
-            if(!reports.keySet().isEmpty()) {
+            if (!reports.keySet().isEmpty()) {
                 importDir = project.getImportLocation(this);
             }
+            Utils.defaultLocale = locale;
             for (String chromName : reports.keySet()) {
                 progressHandle.progress(
                         "Importing " + (peaksReportsImported + 1) + "/" + files.length,
@@ -85,6 +86,7 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
                 LinkedHashSet<String> header = report.getFirst();
                 System.out.println("Available fields: " + header);
                 int index = 0;
+                //FIXME Integrationbegin and end
                 for (TableRow tr : report.getSecond()) {
                     //System.out.println("Parsing row "+(index+1)+"/"+report.getSecond().size());
                     //System.out.println("Row data: "+tr.toString());
@@ -109,19 +111,18 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
                                 tr.get("LIBRARY"),
                                 tr.get("CAS"),
                                 tr.get("FORMULA"),
-                                "ChromaTOF", parseDouble(tr.get("INTEGRATIONBEGIN")),
-                                rt1+rt2, parseDouble((tr.get(
-                                "INTEGRATIONEND"))), parseDouble((tr.get("AREA"))),
-                                Double.NaN,rt1,rt2);
+                                "ChromaTOF", parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
+                                rt1 + rt2, parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), parseDouble((tr.get("AREA"))),
+                                Double.NaN, rt1, rt2);
                         descriptor.setIndex(index++);
 //                descriptor.setPeak(p);
                         Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
-                        if(massSpectrum.getFirst().length>0) {
+                        if (massSpectrum.getFirst().length > 0) {
                             descriptor.setMassValues(massSpectrum.getFirst());
                             descriptor.setIntensityValues(massSpectrum.getSecond());
                             peaks.add(descriptor);
-                        }else{
-                            System.err.println("Skipping peak with empty mass spectrum: "+descriptor.toString());
+                        } else {
+                            System.err.println("Skipping peak with empty mass spectrum: " + descriptor.toString());
                         }
                     } else {
                         //System.out.println("1D chromatogram peak data detected");
@@ -138,9 +139,8 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
                                 tr.get("LIBRARY"),
                                 tr.get("CAS"),
                                 tr.get("FORMULA"),
-                                "ChromaTOF", parseDouble(tr.get("INTEGRATIONBEGIN")),
-                                parseDouble((tr.get("R.T._(S)"))), parseDouble((tr.get(
-                                "INTEGRATIONEND"))), parseDouble((tr.get("AREA"))),
+                                "ChromaTOF", parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
+                                parseDouble((tr.get("R.T._(S)"))), parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), parseDouble((tr.get("AREA"))),
                                 Double.NaN);
                         descriptor.setIndex(index++);
 //                descriptor.setPeak(p);
@@ -166,6 +166,7 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
                 progressHandle.progress(
                         "Imported " + (peaksReportsImported + 1) + "/" + files.length);
             }
+            Utils.defaultLocale = Locale.getDefault();
             //progressHandle.finish();
         } catch (Exception e) {
             Exceptions.printStackTrace(e);
@@ -173,6 +174,14 @@ public class ChromaTofPeakList1DImporter extends AProgressAwareRunnable {
         } finally {
             progressHandle.finish();
         }
+    }
+    
+    private double parseIntegrationStartEnd(String s) {
+        if(s.contains(",")) {
+            String[] tokens = s.split(",");
+            return parseDouble(tokens[0]);
+        }
+        return parseDouble(s);
     }
 
     private LinkedHashMap<String, File> mapReports(LinkedHashMap<String, IChromatogramDescriptor> chromatograms, File[] files) {

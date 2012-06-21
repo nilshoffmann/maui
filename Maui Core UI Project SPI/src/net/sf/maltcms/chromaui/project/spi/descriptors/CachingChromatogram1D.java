@@ -238,17 +238,19 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
                     scan_acquisition_time, idx);
             return idx;
         } else {// imprecise hit, find closest element
+            
+            //FIXME validate
             double current = d[Math.min(d.length - 1, (-idx) + 1)];
-            double previous = d[Math.max(0, (-idx))];
+            double previous = d[Math.max(0, Math.min((-idx),d.length-1))];
             if (Math.abs(scan_acquisition_time - previous) < Math.abs(
                     scan_acquisition_time - current)) {
                 Logging.getLogger(this).info("sat {}, scan_index {}",
                         scan_acquisition_time, (-idx) + 1);
-                return (-idx) + 1;
+                return Math.max(0,Math.min((-idx) + 1,d.length-1));
             } else {
                 Logging.getLogger(this).info("sat {}, scan_index {}",
                         scan_acquisition_time, -idx);
-                return (-idx);
+                return Math.max(0,Math.min((-idx),d.length-1));
             }
         }
     }

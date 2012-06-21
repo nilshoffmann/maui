@@ -58,8 +58,7 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
         double massResolution = Double.parseDouble(sp.getProperty(
                 "massResolution", "1.0"));
         double[] masses = null;
-        String[] massesStrings = (sp.getProperty("selectedMasses", "73.0 147.0")).
-                trim().
+        String[] massesStrings = (sp.getProperty("selectedMasses", "73.0 147.0")).trim().
                 split(
                 " ");
         masses = new double[massesStrings.length];
@@ -97,38 +96,15 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
                 plot = c1p.provide1DPlot(buildFileFragments(files),
                         "total_intensity", true);
                 IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
-//                if(project!=null ) {
-//                    plot.clearAnnotations();
-////                    List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
-////                    for(IChromatogramDescriptor file:files) {
-////                        annotations.addAll(generatePeakShapes(file, project, Color.BLUE, new Color(0,0,255,32), plotMode, masses));
-////                    }
-////                    XYAnnotation last = annotations.remove(annotations.size()-1);
-////                    for(XYAnnotation ann:annotations) {
-////                        plot.addAnnotation(ann,false);
-////                    }
-////                    plot.addAnnotation(last,true);
-//                }
+                if (cvtc.getAnnotations().isEmpty()) {
+                    for (IChromatogramDescriptor descr : files) {
+                        cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255,0,0,32), new Color(255,0,0,16), "TIC", new double[0]));
+                    }
+                }
             } else if ("TOP".equals(plotType)) {
                 plot = c1p.provide1DCoPlot(buildFileFragments(files),
                         "total_intensity", true);
             }
-//            for (IChromatogramDescriptor file : files) {
-//                List<XYAnnotation> l = generatePeakShapes(file, project,
-//                        Color.BLUE,
-//                        new Color(0, 0, 255, 128), plotMode, masses);
-//                int size = l.size();
-//                int cnt = 0;
-//                for (XYAnnotation xya : l) {
-//                    if(cnt<size-1) {
-//                        plot.addAnnotation(xya,false);
-//                    }else{
-//                        System.out.println("Notifying plot of annotations");
-//                        plot.addAnnotation(xya,true);
-//                    }
-//                    cnt++;
-//                }
-//            }
         } else if ("EIC-SUM".equals(plotMode)) {
             System.out.println("Loading EIC-SUM");
             plot = c1p.provide1DEICSUMPlot(buildFileFragments(files),
@@ -176,18 +152,17 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
             for (Peak1DContainer container : project.getPeaks(file)) {
                 System.out.println(
                         "Container has " + container.getMembers().size() + " peak annotations!");
- 
+                String toolName = container.getTool().getName();
+                Color containerColor = container.getColor();
                 for (IPeakAnnotationDescriptor peakDescr : container.getMembers()) {
 //                    Peak1D peak = peakDescr.getPeak();
-                    System.out.println("Adding peak " + (cnt++) + " " + peakDescr.
-                            getName());
+                    System.out.println("Adding peak " + (cnt++) + " " + peakDescr.getName());
 
 //                System.out.println("Retrieving scan acquisition time");
 //                Array sat2 = chromatogram.getParent().getChild(
 //                        "scan_acquisition_time").getArray();
                     int scan = chromatogram.getIndexFor(peakDescr.getApexTime());
-                    System.out.println("Retention time: " + peakDescr.
-                            getApexTime() + "; Scan index: " + scan);
+                    System.out.println("Retention time: " + peakDescr.getApexTime() + "; Scan index: " + scan);
                     int startIdx = chromatogram.getIndexFor(peakDescr.getStartTime());
                     int apexIdx = chromatogram.getIndexFor(peakDescr.getApexTime());
                     int stopIdx = chromatogram.getIndexFor(peakDescr.getStopTime());
@@ -228,10 +203,10 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
 //                        qm.append(":");
 //                    }
 //                    String massString = qm.substring(0, qm.length()-1);
-                    String label = peakDescr.getDisplayName()+"@"+String.format("%.2f",apexTime);
-                    XYSelectableShapeAnnotation<IPeakAnnotationDescriptor> xyssa = new XYSelectableShapeAnnotation<IPeakAnnotationDescriptor>(apexTime, tic.getDouble(apexIdx), gp, peakDescr.getIndex()+"", TextAnchor.BASELINE_LEFT, peakDescr);
-                    xyssa.setFill(fill);
-                    xyssa.setOutline(outline);
+                    String label = peakDescr.getDisplayName() + "@" + String.format("%.2f", apexTime);
+                    XYSelectableShapeAnnotation<IPeakAnnotationDescriptor> xyssa = new XYSelectableShapeAnnotation<IPeakAnnotationDescriptor>(apexTime, tic.getDouble(apexIdx), gp, toolName + ", #" + peakDescr.getIndex() + "", TextAnchor.BASELINE_LEFT, peakDescr);
+                    xyssa.setFill(containerColor);
+                    xyssa.setOutline(containerColor.darker());
 //                    XYShapeAnnotation xypa = new XYShapeAnnotation(bbox,
 //                            new BasicStroke(), outline, fill);
 //                    XYTextAnnotation xyta = new XYTextAnnotation(apexTime + " m/z: " + peakDescr.

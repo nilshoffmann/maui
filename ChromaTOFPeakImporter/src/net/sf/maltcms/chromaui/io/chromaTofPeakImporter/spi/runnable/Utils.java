@@ -34,6 +34,8 @@ import ucar.ma2.MAMath;
  */
 public class Utils {
     
+    public static Locale defaultLocale = Locale.getDefault();
+    
     public static void createArtificialChromatogram(File importDir, IChromAUIProject project,
             String peakListName, List<IPeakAnnotationDescriptor> peaks) {
         try {
@@ -122,7 +124,7 @@ public class Utils {
     }
 
     public static double parseDouble(String s) {
-        return parseDouble(s, Locale.getDefault());
+        return parseDouble(s, defaultLocale);
     }
 
     public static double parseDouble(String s, Locale locale) {

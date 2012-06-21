@@ -67,10 +67,10 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         if (project != null) {
             this.ic.add(project);
         }
-        annotations = new ArrayList<XYAnnotation>();
+        annotations = new ArrayList<XYAnnotation>(0);
         for (IChromatogramDescriptor descr : filename) {
             this.ic.add(descr);
-            annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255,0,0,32), new Color(255,0,0,16), "TIC", new double[0]));
+            //annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255,0,0,32), new Color(255,0,0,16), "TIC", new double[0]));
         }
         this.ic.add(ds);
         this.ic.add(new Properties());
@@ -111,6 +111,10 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         t.addTaskListener(this);
     }
 
+    public List<XYAnnotation> getAnnotations() {
+        return annotations;
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

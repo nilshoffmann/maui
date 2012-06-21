@@ -12,5 +12,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
  * @author nilshoffmann
  */
 public class ToolDescriptor extends ABasicDescriptor implements IToolDescriptor{
+
     
 }

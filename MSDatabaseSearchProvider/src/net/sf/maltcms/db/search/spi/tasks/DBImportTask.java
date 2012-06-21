@@ -104,6 +104,7 @@ public class DBImportTask extends AProgressAwareRunnable {
                             try {
                                 provider.open();
                                 ICrudSession session = provider.createSession();
+                                System.out.println("Adding metabolites to database!");
                                 for (IMetabolite im : metabolites) {
                                     session.create(im);
                                 }
@@ -124,7 +125,7 @@ public class DBImportTask extends AProgressAwareRunnable {
                 } else {
 
                     File dbFile = new File(FileUtil.toFile(baseDir),
-                            name);
+                            name + ".db4o");
                     if (overwriteFile(dbFile)) {
                         getProgressHandle().progress("Copying db4o file");
                         createdFiles.add(FileUtil.createData(dbFile));

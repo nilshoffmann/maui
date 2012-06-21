@@ -21,15 +21,17 @@ import org.openide.util.Exceptions;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 
-import com.db4o.Db4o;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
-import com.db4o.config.Configuration;
 import com.db4o.query.Predicate;
+import cross.exception.ConstraintViolationException;
+import java.io.*;
 import java.lang.Number;
 import java.text.NumberFormat;
-import java.util.Locale;
+import java.util.*;
+import net.sf.maltcms.datastructures.CachedLazyList;
+import net.sf.maltcms.datastructures.IElementProvider;
 
 /**
  *
@@ -48,7 +50,7 @@ public class MSPFormatMetaboliteParser2 {
     private int npeaks = 0;
     private int points = 0;
     private int linecounter = 0;
-    private ArrayList<IMetabolite> metabolites;
+//    private ArrayList<IMetabolite> metabolites;
     private String syndate;
     private String synname;
     private String sp;
@@ -66,8 +68,9 @@ public class MSPFormatMetaboliteParser2 {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    
-    public void handleLine(String line) {
+
+    public IMetabolite handleLine(String line) {
+        IMetabolite metabolite = null;
         if (line.startsWith("Name: ")) {
             handleName(line.substring("Name: ".length()));
         } else if (line.startsWith("Synon: ")) {
@@ -92,7 +95,7 @@ public class MSPFormatMetaboliteParser2 {
         } else if (line.isEmpty()) {// next metabolite
             if (data != null) {
                 handleData(data.toString());
-                createMetabolite();
+                metabolite = createMetabolite();
             }
         } else {// we have data
             if (nextIsPeakData) {
@@ -104,9 +107,10 @@ public class MSPFormatMetaboliteParser2 {
             // System.out.println(data.toString());
         }
         linecounter++;
+        return metabolite;
     }
 
-    public void createMetabolite() {
+    public IMetabolite createMetabolite() {
         if (this.id == null) {
             this.id = this.name;
         }
@@ -116,7 +120,8 @@ public class MSPFormatMetaboliteParser2 {
         if (this.name == null) {
             System.err.println("Error creating metabolite, name=" + this.name
                     + "; id=" + this.id);
-            System.exit(-1);
+            throw new RuntimeException("Error creating metabolite, name=" + this.name
+                    + "; id=" + this.id);
         }
         IMetabolite m = new Metabolite(this.name, this.id, this.idType,
                 this.dbno, this.comments, this.formula, this.syndate, this.ri,
@@ -124,11 +129,11 @@ public class MSPFormatMetaboliteParser2 {
                 this.masses, this.intensities);
         if (m == null) {
             System.err.println("Error creating metabolite");
-            System.exit(-1);
+            throw new RuntimeException("Error creating metabolite");
         }
-        this.metabolites.add(m);
-        System.out.println("Parsed Metabolite Nr. " + this.metabolites.size()
-                + ": " + m.getName());
+        //this.metabolites.add(m);
+//        System.out.println("Parsed Metabolite Nr. " + this.metabolites.size()
+//                + ": " + m.getName());
         //System.out.println("Parsed Metabolite : " + m.toString());
         this.name = null;
         this.id = null;
@@ -150,6 +155,7 @@ public class MSPFormatMetaboliteParser2 {
         this.data = null;
         this.casNumber = null;
         this.nextIsPeakData = false;
+        return m;
     }
 
     public void handleCasNumber(String line) {
@@ -191,12 +197,10 @@ public class MSPFormatMetaboliteParser2 {
     }
 
     public void handleSynonNist2Lib(String nist2LibSynon) {
-        if (nist2LibSynon.startsWith("Retention-Index") && nist2LibSynon.
-                contains("=")) {
+        if (nist2LibSynon.startsWith("Retention-Index") && nist2LibSynon.contains("=")) {
             String[] split = nist2LibSynon.split("=");
             this.ri = parseNumericString(split[1].trim());
-        } else if (nist2LibSynon.startsWith("Retention-Time") && nist2LibSynon.
-                contains("=")) {
+        } else if (nist2LibSynon.startsWith("Retention-Time") && nist2LibSynon.contains("=")) {
             String[] split = nist2LibSynon.split("=");
             this.rt = parseNumericString(split[1].trim());
         }
@@ -332,8 +336,7 @@ public class MSPFormatMetaboliteParser2 {
                 if (pair.length == 2) {
                     this.masses.set(this.points,
                             Double.parseDouble(pair[0].trim()));
-                    this.intensities.set(this.points, Integer.parseInt(pair[1].
-                            trim()));
+                    this.intensities.set(this.points, Integer.parseInt(pair[1].trim()));
                     this.points++;
                 } else {
                     System.err.println("Incorrect split result for pair: " + p
@@ -346,25 +349,143 @@ public class MSPFormatMetaboliteParser2 {
         System.out.println("Intensities: " + intensities);
     }
 
-    public ArrayList<IMetabolite> parse(File f) {
-        this.metabolites = new ArrayList<IMetabolite>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                handleLine(line);
+    private class MetaboliteProvider implements IElementProvider<IMetabolite> {
+
+        private File f;
+        private int records = 0;
+        private List<Long> metaboliteStartIndices;
+        private RandomAccessFile raf = null;
+
+        MetaboliteProvider(File f) {
+            this.f = f;
+            raf = null;
+            try {
+                System.out.println("Opening random access file!");
+                raf = new RandomAccessFile(f, "r");
+                String line = "";
+                metaboliteStartIndices = new ArrayList<Long>();
+                int lineCounter = 0;
+                long offset = 0;
+                System.out.println("RAF file pointer: "+raf.getFilePointer()+", RAF length: "+raf.length());
+                while ((offset=raf.getFilePointer())<raf.length()) {
+                    line = raf.readLine();
+                    if(line.startsWith("Name: ")) {
+                        records++;
+                        metaboliteStartIndices.add(Long.valueOf(offset));
+                    }
+                    lineCounter++;
+                }
+            } catch (FileNotFoundException e) {
+                System.err.println(e.getLocalizedMessage());
+                e.printStackTrace();
+            } catch (IOException e) {
+                System.err.println(e.getLocalizedMessage());
+                e.printStackTrace();
+            } finally {
+                if (raf != null) {
+                    try {
+                        raf.close();
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
             }
-            // System.out.println("Found "+nnpeaks+" mass spectra!");
-            // System.exit(-1);
-            // handleLine("\r");
-        } catch (FileNotFoundException e) {
-            System.err.println(e.getLocalizedMessage());
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println(e.getLocalizedMessage());
-            e.printStackTrace();
+            System.out.println("Found "+records+" metabolites in database file.");
         }
-        return this.metabolites;
+
+        @Override
+        public int size() {
+            return records;
+        }
+
+        @Override
+        public IMetabolite get(int i) {
+            try{
+                raf = new RandomAccessFile(f, "r");
+                raf.seek(metaboliteStartIndices.get(i));
+                long end = raf.length();
+                if(i+1<metaboliteStartIndices.size()) {
+                    end = metaboliteStartIndices.get(i+1); 
+                }
+                IMetabolite metabolite = null;
+                while(raf.getFilePointer()<end) {
+                    metabolite = handleLine(raf.readLine());
+                }
+                if(metabolite==null) {
+                    throw new RuntimeException("Could not create metabolite for index "+i);
+                }
+                System.out.println("Loaded metabolite "+i);
+                return metabolite;
+                
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (raf != null) {
+                    try {
+                        raf.close();
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public List<IMetabolite> get(int i, int i1) {
+            if((i>=0 && i1>i) && (i1<size())) {
+                List<IMetabolite> l = new ArrayList<IMetabolite>(i1-i);
+                for(int j =i;j<=i1;j++) {
+                    IMetabolite m = get(i);
+                    if(m!=null) {
+                        l.add(m);
+                    }else{
+                        throw new RuntimeException("Could not retrieve metabolite "+i);
+                    }
+                }
+                return l;
+            }
+            throw new ConstraintViolationException("Index range invalid: "+i+", "+i1+" not in range: 0.."+size());
+        }
+
+        @Override
+        public void reset() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    public List<IMetabolite> parse(File f) {
+//        BufferedReader br = null;
+//        try {
+//            br = new BufferedReader(new FileReader(f));
+//            String line = "";
+//            while ((line = br.readLine()) != null) {
+//                handleLine(line);
+//            }
+//            // System.out.println("Found "+nnpeaks+" mass spectra!");
+//            // System.exit(-1);
+//            // handleLine("\r");
+//        } catch (FileNotFoundException e) {
+//            System.err.println(e.getLocalizedMessage());
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            System.err.println(e.getLocalizedMessage());
+//            e.printStackTrace();
+//        } finally {
+//            if (br != null) {
+//                try {
+//                    br.close();
+//                } catch (IOException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                }
+//            }
+//        }
+        CachedLazyList<IMetabolite> cll = new CachedLazyList<IMetabolite>(new MetaboliteProvider(f));
+//        this.metabolites = new ArrayList<IMetabolite>();
+
+//        return this.metabolites;
+        return cll;
     }
 
     public static void main(String[] args) {
@@ -380,11 +501,11 @@ public class MSPFormatMetaboliteParser2 {
                 int cnt = 0;
                 for (String s : files) {
                     File f = new File(s);
-                    ArrayList<IMetabolite> al = gmp.parse(f);
+                    List<IMetabolite> al = gmp.parse(f);
                     ObjectSet<IMetabolite> numMet = db.query(new Predicate<IMetabolite>() {
 
                         /**
-                         * 
+                         *
                          */
                         private static final long serialVersionUID = -3537350989202183850L;
 
@@ -403,7 +524,7 @@ public class MSPFormatMetaboliteParser2 {
                         // Predicate<IMetabolite>() {
 
                         /**
-                         * 
+                         *
                          */
                         // private static final long serialVersionUID =
                         // -8580415202887162014L;
