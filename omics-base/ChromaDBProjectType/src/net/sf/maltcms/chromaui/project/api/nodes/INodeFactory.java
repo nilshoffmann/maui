@@ -14,7 +14,7 @@ import org.openide.util.Lookup;
  *
  * @author hoffmann
  */
-public interface INodeFactory<T> {
+public interface INodeFactory {
     Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup);
-    Node createContainerNode(IContainer<? extends T> key, Children children, Lookup lookup);
+    Node createContainerNode(IContainer key, Children children, Lookup lookup);
 }

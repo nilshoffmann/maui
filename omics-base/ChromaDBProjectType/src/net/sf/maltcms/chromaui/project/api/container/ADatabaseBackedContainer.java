@@ -6,6 +6,7 @@ package net.sf.maltcms.chromaui.project.api.container;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.collections.ActivatableArrayList;
+import com.db4o.collections.ActivatableCollection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -57,6 +58,18 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
     public Collection<T> getMembers() {
         activate(ActivationPurpose.READ);
         return members;
+    }
+    
+    @Override
+    public void setMembers(Collection<T> members) {
+        activate(ActivationPurpose.WRITE);
+        if(members instanceof ActivatableArrayList) {
+            this.members = (ActivatableArrayList<T>)members;
+        }else{
+            this.members = new ActivatableArrayList<T>(members);
+        }
+        firePropertyChange(PROP_MEMBERS, null,
+                this.members);
     }
 
     @Override

@@ -16,6 +16,8 @@ public interface IGenericContainer<T extends IBasicDescriptor> extends IBasicDes
     final String PROP_MEMBERS = "members";
     
     Collection<T> getMembers();
+    
+    void setMembers(Collection<T> members);
 
     void setMembers(T... f);
 
