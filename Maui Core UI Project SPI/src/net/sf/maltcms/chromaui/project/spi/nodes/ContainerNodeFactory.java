@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.openide.filesystems.FileUtil;
@@ -52,6 +53,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
             if(container==null || container.isEmpty()) {
                 return true;
             }
+            
             for (T idesc : container) {
                 if (Thread.interrupted()) {
                     return true;

@@ -18,6 +18,7 @@ import net.sf.maltcms.chromaui.project.api.types.*;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -207,12 +208,19 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
 
     @Override
     public Image getImage(IBasicDescriptor descriptor) {
-        if (descriptor instanceof IPeakAnnotationDescriptor) {
-            return ImageUtilities.loadImage(
-                    "net/sf/maltcms/chromaui/project/resources/Peak.png");
-        } else if (descriptor instanceof IDatabaseDescriptor) {
-            return ImageUtilities.loadImage(
-                    "net/sf/maltcms/chromaui/project/resources/DBDescriptor.png");
+        try{
+            if (descriptor instanceof IPeakAnnotationDescriptor) {
+                return ImageUtilities.loadImage(
+                        "net/sf/maltcms/chromaui/project/resources/Peak.png");
+            } else if (descriptor instanceof IDatabaseDescriptor) {
+                return ImageUtilities.loadImage(
+                        "net/sf/maltcms/chromaui/project/resources/DBDescriptor.png");
+            } else if (descriptor instanceof IToolDescriptor) {
+                return ImageUtilities.loadImage(
+                    "net/sf/maltcms/chromaui/project/resources/Tool.png");
+            }
+        }catch(Exception e) {
+            Exceptions.printStackTrace(e);
         }
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/cdflogo.png");

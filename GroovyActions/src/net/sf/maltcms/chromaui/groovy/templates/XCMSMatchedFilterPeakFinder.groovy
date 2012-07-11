@@ -80,7 +80,7 @@ class XCMSMatchedFilterPeakFinder implements RawDataGroovyScript {
         }
     }
     
-    private int runQSubCall(File outdir, File rscriptLocation, Collection<CDFDataObject> dataObjects, OutputWriter writer) {
+    private int createQSubCall(File outdir, File rscriptLocation, Collection<CDFDataObject> dataObjects, OutputWriter writer) {
         def qsubArrayJobFile = new File(outdir,"arrayJob.txt")
         def arrayJobScript =
 """#!/bin/bash
@@ -127,7 +127,9 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
         }
 
         writer.print "Processing ${dataObjects.size()} lines of parameters\n"
+		writer.print "Running XCMS\n"
         progressHandle.progress("Running XCMS",3);
+		List<String> processCall = ["./submit.sh"]
         process = new ProcessBuilder(processCall).directory(outdir).start()
         process.consumeProcessOutput(writer,writer)
         process.waitFor()
@@ -276,6 +278,16 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                             descriptor.setArea(descriptor.getArea()+filteredArea)
                             descriptor.setRawArea(descriptor.getRawArea()+rawArea)
                             descriptor.setApexIntensity(descriptor.getApexIntensity()+filteredIntensity)
+                            double[] massValuesOld = descriptor.getMassValues()
+                            double[] massValuesNew = new double[massValuesOld.length+1]
+                            System.arraycopy(massValuesOld,0,massValuesNew,0,massValuesOld.length)
+                            massValuesNew[massValuesOld.length] = mz
+                            descriptor.setMassValues(massValuesNew)
+                            int[] intensityValuesOld = descriptor.getIntensityValues()
+                            int[] intensityValuesNew = new int[intensityValuesOld.length+1]
+                            System.arraycopy(intensityValuesOld,0,intensityValuesNew,0,intensityValuesOld.length)
+                            intensityValuesNew[intensityValuesOld.length] = (int)Math.rint(filteredIntensity)
+                            descriptor.setIntensityValues(intensityValuesNew)
                         }else{
                             descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
                                 chromatogram,
@@ -296,6 +308,12 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                                 filteredArea,
                                 filteredIntensity
                             )
+                            double[] mza = new double[1]
+                            mza[0] = mz
+                            descriptor.setMassValues(mza)
+                            int[] inta = new int[1]
+                            inta[0] = (int)Math.rint(filteredIntensity)
+                            descriptor.setIntensityValues(inta)
                             descriptor.setRawArea(rawArea)
                             //TODO descriptor massValues und intensityValues ergaenzen
                             descriptor.setIndex(index-1)
@@ -309,10 +327,25 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                 for(Double d:peakSet.keySet()) {
                     writer.println "Adding peak for rt ${d}"
                     IPeakAnnotationDescriptor descriptor = peakSet.get(d)
-                    IChromatogram chrom = chromatogram.getChromatogram()
-                    Scan1D s = chrom.getScan(chrom.getIndexFor(descriptor.getApexTime()))
-                    descriptor.setMassValues((double[])s.getMasses().get1DJavaArray(double.class));
-                    descriptor.setIntensityValues((int[])s.getIntensities().get1DJavaArray(int.class));
+                    double[] massValues = descriptor.getMassValues()
+                    int[] intensityValues = descriptor.getIntensityValues()
+                    def mvals = new TreeMap()
+                    for(int i = 0; i<massValues.length; i++) {
+                        mvals[massValues[i]] = intensityValues[i]
+                    }
+                    int cnt = 0
+                    mvals.each{ 
+                        key,value -> 
+                            massValues[cnt] = key
+                            intensityValues[cnt] = value
+                            cnt++
+                    }
+                    descriptor.setMassValues(massValues)
+                    descriptor.setIntensityValues(intensityValues)
+                    //IChromatogram chrom = chromatogram.getChromatogram()
+                    //Scan1D s = chrom.getScan(chrom.getIndexFor(descriptor.getApexTime()))
+                    //descriptor.setMassValues((double[])s.getMasses().get1DJavaArray(double.class));
+                    //descriptor.setIntensityValues((int[])s.getIntensities().get1DJavaArray(int.class));
                     peaks.add(descriptor)
                 }
 
@@ -442,5 +475,6 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
     }
 
 }
+
 
 

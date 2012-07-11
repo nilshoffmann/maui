@@ -95,6 +95,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         firePropertyChange(PROP_INTENSITYVALUES, oldIntensityValues,
                 intensityValues);
     }
+    
     private String retentionIndexMethod = "<NA>";
     public static final String PROP_RETENTIONINDEXMETHOD = "retentionIndexMethod";
 

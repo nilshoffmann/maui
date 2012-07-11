@@ -11,13 +11,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.IMatchPredicate;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
-import net.sf.maltcms.chromaui.project.api.container.IContainer;
-import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
-import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
-import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
-import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
+import net.sf.maltcms.chromaui.project.api.container.*;
+import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -78,6 +76,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                 }
             }
         }
+
         Collections.sort(containers);
 
         if (Thread.interrupted()) {
@@ -95,6 +94,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                 }
             }
         }
+        
+        
 
 //        for (FileObject fo : getFileChildren()) {
 //            if (Thread.interrupted()) {

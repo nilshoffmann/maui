@@ -12,12 +12,14 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author hoffmann
  */
-public class NodeFactory<T> implements INodeFactory<T> {
+@ServiceProvider(service=INodeFactory.class)
+public class NodeFactory implements INodeFactory {
 
     @Override
     public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
@@ -37,7 +39,7 @@ public class NodeFactory<T> implements INodeFactory<T> {
 //    }
 
     @Override
-    public Node createContainerNode(IContainer<? extends T> key, Children children, Lookup lookup) {
+    public Node createContainerNode(IContainer key, Children children, Lookup lookup) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
