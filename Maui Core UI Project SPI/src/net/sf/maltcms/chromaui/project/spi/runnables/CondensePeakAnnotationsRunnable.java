@@ -105,8 +105,6 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
                             for (Clique<PeakFeatureVector> pfv2 : cliques.values()) {
                                 Clique<PeakFeatureVector> jointClique = new Clique<PeakFeatureVector>(new PeakFeatureVectorComparator(), new PeakCliqueRTDiffMemberCriterion(), new PeakCliqueUpdater());
                                 Set<PeakFeatureVector> vectors = new LinkedHashSet<PeakFeatureVector>();
-                                if(pfv1.)
-                                jointClique.add
                             }
                         }
                     }
@@ -130,7 +128,7 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
                                     }
                                 }
                             }
-                            jointClique.add
+                           //jointClique.add
                         }
                     }
 
@@ -158,9 +156,9 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
         }
     }
     
-    private static boolean areCliquesCompatible(Clique<PeakFeatureVector> c1, Clique<PeakFeatureVector> c2) {
-        
-    }
+//    private static boolean areCliquesCompatible(Clique<PeakFeatureVector> c1, Clique<PeakFeatureVector> c2) {
+//        
+//    }
 
     private void saveHistogramChart(HistogramDataset dataset, File f) {
         String plotTitle = "Histogram";
@@ -284,7 +282,6 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
         }
     }
 
-    @Slf4j
     class PeakCliqueUpdater implements ICliqueUpdater<PeakFeatureVector> {
 
         private final PeakSimilarity sim = new PeakSimilarity();
@@ -309,7 +306,7 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
                     mindistIdx = j;
                 }
             }
-            log.debug("Clique centroid is {}", peaks.get(mindistIdx));
+//            log.debug("Clique centroid is {}", peaks.get(mindistIdx));
             c.setCentroid(peaks.get(mindistIdx));
         }
 
@@ -330,9 +327,9 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
             } else {
                 varray = new ArrayDouble.D0();
             }
-            log.debug(
-                    "Clique variance before adding peak: {}, clique mean before: {}",
-                    var, mean);
+//            log.debug(
+//                    "Clique variance before adding peak: {}, clique mean before: {}",
+//                    var, mean);
             double delta = 0;
             double rt = p.getPeakAnnotationDescriptor().getApexTime();
             n = c.size() + 1;
@@ -347,9 +344,9 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
             varray.setDouble(Index.scalarIndexImmutable, var);
             c.getArrayStatsMap().addFeature("RT_MEAN", marray);
             c.getArrayStatsMap().addFeature("RT_VARIANCE", varray);
-            log.debug(
-                    "Clique variance after adding peak: {}, clique mean before: {}",
-                    var, mean);
+//            log.debug(
+//                    "Clique variance after adding peak: {}, clique mean before: {}",
+//                    var, mean);
         }
     }
 }
