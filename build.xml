@@ -41,7 +41,13 @@
 	<target name="update-all" depends="check-platform" description="Update/Check out current platform version.">
 	</target>
 
-	<target name="build-all" depends="check-platform" description="Build all omics-applications.">
+        <target name="clean-all" depends="check-platform" description="Clean all omics-applications.">
+		<ant dir="omics-base" target="clean"/>
+		<ant dir="maui" target="clean"/>
+		<ant dir="proteus" target="clean"/>
+	</target>
+
+	<target name="build-all" depends="clean-all" description="Build all omics-applications.">
 		<ant dir="omics-base" target="nbms"/>
 		<ant dir="maui" target="build-zip"/>
 		<ant dir="proteus" target="build-zip"/>
