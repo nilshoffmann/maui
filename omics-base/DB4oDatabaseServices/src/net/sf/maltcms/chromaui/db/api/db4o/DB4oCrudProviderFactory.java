@@ -14,6 +14,7 @@ import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.spi.db4o.DB4oCrudProvider;
 import net.sf.maltcms.chromaui.db.spi.db4o.DB4oInMemoryCrudProvider;
+import org.openide.util.NbPreferences;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -28,12 +29,15 @@ public class DB4oCrudProviderFactory implements ICrudProviderFactory {
     
     @Override
     public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
-        ICrudProvider dbcp;
+        DB4oCrudProvider dbcp;
         try {
 //            if(whm.containsKey(databaseLocation)) {
 //               dbcp = whm.get(databaseLocation); 
 //            }else{
                 dbcp = new DB4oCrudProvider(new File(databaseLocation.toURI()), ic, cl);
+                dbcp.setBackupDatabase(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
+                dbcp.setBackupTimeInterval(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10));
+                dbcp.setVerboseDiagnostics(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
 //                whm.put(databaseLocation,dbcp);
 //            }
             return dbcp;
@@ -46,12 +50,15 @@ public class DB4oCrudProviderFactory implements ICrudProviderFactory {
     
     @Override
     public ICrudProvider getInMemoryCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
-        ICrudProvider dbcp;
+        DB4oInMemoryCrudProvider dbcp;
         try {
 //            if(whm.containsKey(databaseLocation)) {
 //               dbcp = whm.get(databaseLocation); 
 //            }else{
                 dbcp = new DB4oInMemoryCrudProvider(new File(databaseLocation.toURI()), ic, cl);
+                dbcp.setBackupDatabase(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
+                dbcp.setBackupTimeInterval(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10));
+                dbcp.setVerboseDiagnostics(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
 //                whm.put(databaseLocation,dbcp);
 //            }
             return dbcp;

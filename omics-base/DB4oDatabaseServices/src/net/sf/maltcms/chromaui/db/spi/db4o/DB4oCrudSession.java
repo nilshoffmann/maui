@@ -10,6 +10,8 @@ import com.db4o.query.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
@@ -17,6 +19,7 @@ import net.sf.maltcms.chromaui.db.api.ICrudSession;
 
 /**
  * Implementation of ICrudSession for DB4o.
+ *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 public final class DB4oCrudSession implements ICrudSession {
@@ -34,13 +37,17 @@ public final class DB4oCrudSession implements ICrudSession {
         authenticate(ic);
         try {
             for (Object obj : o) {
-                System.out.println("Storing object of type "+obj.getClass().getName());
-                oc.store(obj);
+                if (obj != null) {
+                    System.out.println("Storing object of type " + obj.getClass().getName());
+                    oc.store(obj);
+                } else {
+                    System.out.println("Skipping null object!");
+                }
             }
             oc.commit();
         } catch (RuntimeException re) {
             oc.rollback();
-            throw re;
+            System.err.println("Caught exception while creating object: "+re);
         }
     }
 
@@ -54,25 +61,33 @@ public final class DB4oCrudSession implements ICrudSession {
         authenticate(ic);
         try {
             for (Object obj : o) {
+                if (obj == null) {
+                    throw new NullPointerException();
+                }
+                System.out.println("Deleting object of type " + obj.getClass().getName());
                 oc.delete(obj);
             }
             oc.commit();
         } catch (RuntimeException re) {
             oc.rollback();
-            throw re;
+            System.err.println("Caught exception while deleting object: "+re);
         }
     }
 
     /**
-     * Returns a copy of ALL elements returned
-     * by the query on the underlying ObjectContainer.
-     * 
+     * Returns a copy of ALL elements returned by the query on the underlying
+     * ObjectContainer.
+     *
      * @param <T>
      * @param c
      * @return
      */
     @Override
     public final <T> Collection<T> retrieve(Class<T> c) {
+        if (c == null) {
+            System.err.println("Can not retrieve null!");
+            return Collections.emptyList();
+        }
         authenticate(ic);
         //oc.ext().configure().activationDepth(10);
         ArrayList<T> a = new ArrayList<T>();
@@ -81,23 +96,26 @@ public final class DB4oCrudSession implements ICrudSession {
         }
         return a;
     }
-    
+
     /**
-     * Returns a copy of ALL elements returned
-     * by the query on the underlying ObjectContainer using 
-     * an example object.
-     * 
+     * Returns a copy of ALL elements returned by the query on the underlying
+     * ObjectContainer using an example object.
+     *
      * @param <T>
      * @param c
      * @return
      */
     @Override
     public final <T> Collection<T> retrieveByExample(T c) {
+        if (c == null) {
+            System.err.println("Can not retrieve with null example!");
+            return Collections.emptyList();
+        }
         authenticate(ic);
         //oc.ext().configure().activationDepth(10);
         ArrayList<T> a = new ArrayList<T>();
-        for (Object o : oc.queryByExample(c)){
-            a.add((T)c.getClass().cast(o));
+        for (Object o : oc.queryByExample(c)) {
+            a.add((T) c.getClass().cast(o));
         }
         return a;
     }
@@ -107,7 +125,7 @@ public final class DB4oCrudSession implements ICrudSession {
         authenticate(ic);
         return oc.query();
     }
-    
+
     public final <T> Collection<T> retrieve(Predicate<T> p) {
         authenticate(ic);
         return oc.query(p);
@@ -122,10 +140,9 @@ public final class DB4oCrudSession implements ICrudSession {
     @Override
     public final void close() throws AuthenticationException {
         authenticate(ic);
-        try{
+        try {
             oc.commit();
-        }catch(com.db4o.ext.DatabaseReadOnlyException droe){
-            
+        } catch (com.db4o.ext.DatabaseReadOnlyException droe) {
         }
     }
 
@@ -154,5 +171,4 @@ public final class DB4oCrudSession implements ICrudSession {
         DB4oQuery<T> db4oq = new DB4oQuery<T>(oc.ext().openSession());
         return db4oq;
     }
-
 }

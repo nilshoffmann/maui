@@ -8,24 +8,17 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.config.CommonConfiguration;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.config.FileConfiguration;
-import com.db4o.config.TSerializable;
 import com.db4o.diagnostic.DiagnosticToConsole;
 import com.db4o.io.Bin;
 import com.db4o.io.BinConfiguration;
 import com.db4o.io.FileStorage;
 import com.db4o.io.PagingMemoryStorage;
 import com.db4o.reflect.jdk.JdkReflector;
-import java.awt.Shape;
-import java.awt.geom.Area;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Path2D;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
-import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
-import org.openide.util.NbPreferences;
 
 /**
  * ICrudProvider implementation for DB4o object database.
@@ -51,14 +44,14 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
 
     @Override
     public void postOpen() {
-        if (backupDatabase && backupService != null) {
+        if (backupDatabase) {
             backupService = Executors.newSingleThreadScheduledExecutor();
             backupService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
                     Date d = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
-                    File backupDirectory = new File(projectDBLocation.getParentFile(), "backups");
+                    File backupDirectory = new File(projectDBLocation.getParentFile(), "backup");
                     backupDirectory.mkdirs();
                     File backupFile = new File(backupDirectory, sdf.format(d) + "-" + projectDBLocation.getName());
                     eoc.ext().backup(backupFile.getAbsolutePath());
@@ -95,17 +88,44 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
         fileConfiguration.readOnly(true);
         fileConfiguration.storage(memoryStorage);
         CommonConfiguration cc = configuration.common();
-        cc.reflectWith(new JdkReflector(this.domainClassLoader));
-        cc.objectClass(Shape.class).translate(new TSerializable());
-        if (NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false)) {
+        cc.reflectWith(new JdkReflector(domainClassLoader));
+//        ShapeTranslator translator = new ShapeTranslator();
+//        cc.objectClass(Shape.class).translate(translator);
+//        cc.objectClass(Arc2D.class).translate(translator);
+//        cc.objectClass(Arc2D.Double.class).translate(translator);
+//        cc.objectClass(Arc2D.Float.class).translate(translator);
+//        cc.objectClass(Area.class).translate(translator);
+//        cc.objectClass(BasicTextUI.BasicCaret.class).translate(translator);
+//        cc.objectClass(CubicCurve2D.class).translate(translator);
+//        cc.objectClass(CubicCurve2D.Double.class).translate(translator);
+//        cc.objectClass(CubicCurve2D.Float.class).translate(translator);
+//        cc.objectClass(DefaultCaret.class).translate(translator);
+//        cc.objectClass(Ellipse2D.class).translate(translator);
+//        cc.objectClass(Ellipse2D.Double.class).translate(translator);
+//        cc.objectClass(Ellipse2D.Float.class).translate(translator);
+//        cc.objectClass(GeneralPath.class).translate(translator);
+//        cc.objectClass(Line2D.class).translate(translator);
+//        cc.objectClass(Line2D.Double.class).translate(translator);
+//        cc.objectClass(Line2D.Float.class).translate(translator);
+//        cc.objectClass(Path2D.class).translate(translator);
+//        cc.objectClass(Path2D.Double.class).translate(translator);
+//        cc.objectClass(Path2D.Float.class).translate(translator);
+//        cc.objectClass(Polygon.class).translate(translator);
+//        cc.objectClass(QuadCurve2D.class).translate(translator);
+//        cc.objectClass(QuadCurve2D.Double.class).translate(translator);
+//        cc.objectClass(QuadCurve2D.Float.class).translate(translator);
+//        cc.objectClass(Rectangle.class).translate(translator);
+//        cc.objectClass(Rectangle2D.class).translate(translator);
+//        cc.objectClass(Rectangle2D.Double.class).translate(translator);
+//        cc.objectClass(Rectangle2D.Float.class).translate(translator);
+//        cc.objectClass(RectangularShape.class).translate(translator);
+//        cc.objectClass(RoundRectangle2D.class).translate(translator);
+//        cc.objectClass(RoundRectangle2D.Double.class).translate(translator);
+//        cc.objectClass(RoundRectangle2D.Float.class).translate(translator);
+        if (isVerboseDiagnostics()) {
             cc.diagnostic().addListener(new DiagnosticToConsole());
         }
-        cc.objectClass(GeneralPath.class).storeTransientFields(true);
-        cc.objectClass(Shape.class).storeTransientFields(true);
-        cc.objectClass(Area.class).storeTransientFields(true);
-        cc.objectClass(Path2D.class).storeTransientFields(true);
-        cc.objectClass(Path2D.Float.class).storeTransientFields(true);
-        cc.objectClass(Path2D.Double.class).storeTransientFields(true);
+//        cc.objectClass(Shape.class).translate(new ShapeTranslator());
         return configuration;
     }
 }

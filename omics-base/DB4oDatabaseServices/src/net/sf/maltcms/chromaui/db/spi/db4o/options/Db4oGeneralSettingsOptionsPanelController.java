@@ -7,9 +7,13 @@ package net.sf.maltcms.chromaui.db.spi.db4o.options;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
+import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.NbPreferences;
 
 @OptionsPanelController.SubRegistration(
     location = "Database",
@@ -31,6 +35,13 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
     public void applyChanges() {
         getPanel().store();
         changed = false;
+        boolean automaticBackups = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false);
+        boolean verboseDiagnostics = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false);
+        if(automaticBackups || verboseDiagnostics) {
+            Project[] projects = OpenProjects.getDefault().getOpenProjects();
+            OpenProjects.getDefault().close(projects);
+            OpenProjects.getDefault().open(projects, false, true);
+        }
     }
 
     public void cancel() {

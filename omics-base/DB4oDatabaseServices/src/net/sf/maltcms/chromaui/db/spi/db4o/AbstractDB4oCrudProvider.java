@@ -17,7 +17,9 @@ import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
+import org.openide.util.NbPreferences;
 
 /**
  *
@@ -35,6 +37,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
     protected final ICredentials ic;
     protected final HashSet<ICrudSession> openSessions = new HashSet<ICrudSession>();
     protected final File projectDBLocation;
+    private boolean verboseDiagnostics = false;
 
     /**
      * Throws IllegalArgumentException if either projectDBFile or ic are null.
@@ -120,6 +123,14 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
 
     public boolean isBackupDatabase() {
         return backupDatabase;
+    }
+    
+    public boolean isVerboseDiagnostics() {
+        return verboseDiagnostics;
+    }
+    
+    public void setVerboseDiagnostics(boolean verboseDiagnostics) {
+        this.verboseDiagnostics = verboseDiagnostics;
     }
 
     protected boolean isFileTypeSupported(String dbfile) {
