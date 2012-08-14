@@ -7,7 +7,7 @@ package maltcms.ui.fileHandles.properties.wizards;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
-import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
+import maltcms.ui.fileHandles.properties.tools.ModelBuilder;
 
 /**
  *
@@ -16,8 +16,8 @@ import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 public class HashTableModelFactory {
 
     public TableModel create(PipelineElementWidget node, JTable table, boolean simpleMode, Class<?> c) {
-        HashTableModel htm =
-                PropertyLoader.getModel(node.getProperties(), c);
+        WidgetTableModel htm =
+                ModelBuilder.getModel(node.getProperties(), c);
         htm.setPipelineElementWidgetNode(node);
         table.setModel(htm);
         htm.setJTable(table);

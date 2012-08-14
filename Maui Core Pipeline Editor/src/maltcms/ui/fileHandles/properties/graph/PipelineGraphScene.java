@@ -282,7 +282,7 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     public void setBaseFile(FileObject f) {
         this.activeFile = f;
         clearScene();
-        PropertyLoader.parseIntoScene(f.getPath(), this);
+        SceneParser.parseIntoScene(f.getPath(), this);
     }
 
     public FileObject getBaseFile() {

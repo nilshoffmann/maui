@@ -114,7 +114,8 @@
             <public-packages>
                 <package>maltcms.ui.charts</package>
                 <package>maltcms.ui.fileHandles.csv</package>
-                <package>maltcms.ui.fileHandles.properties.pipeline</package>
+                <package>maltcms.ui.fileHandles.properties.tools</package>
+                <package>maltcms.ui.fileHandles.properties.wizards</package>
                 <package>maltcms.ui.fileHandles.serialized</package>
             </public-packages>
         </data>

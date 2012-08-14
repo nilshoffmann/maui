@@ -24,9 +24,9 @@ import maltcms.ui.fileHandles.properties.pipelineWizard.FileInputOutputPane;
 import maltcms.ui.fileHandles.properties.pipelineWizard.PipelineWizardResultProducer;
 import maltcms.ui.fileHandles.properties.pipelineWizard.PreprocessingPane;
 import maltcms.ui.fileHandles.properties.pipelineWizard.VisualizationPane;
-import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import maltcms.ui.fileHandles.properties.tools.SceneExporter;
 import maltcms.ui.fileHandles.properties.tools.SceneLayouter;
+import maltcms.ui.fileHandles.properties.tools.SceneParser;
 import maltcms.ui.fileHandles.properties.tools.SceneValidator;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openide.util.Exceptions;
@@ -362,7 +362,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         for(String key:gatheredSettings.keySet()) {
             pc.setProperty(key, gatheredSettings.get(key));
         }
-        PropertyLoader.parseIntoScene(null, pc, this.scene);
+        SceneParser.parseIntoScene(null, pc, this.scene);
     }//GEN-LAST:event_jButton9ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton GridsToggleButton;

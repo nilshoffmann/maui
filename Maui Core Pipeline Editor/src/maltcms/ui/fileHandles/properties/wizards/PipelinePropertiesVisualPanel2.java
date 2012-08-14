@@ -11,7 +11,7 @@
 package maltcms.ui.fileHandles.properties.wizards;
 
 import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
-import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
+import maltcms.ui.fileHandles.properties.tools.ModelBuilder;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
@@ -147,7 +147,7 @@ public class PipelinePropertiesVisualPanel2 extends javax.swing.JPanel {
             property = this.node.getProperties();
         }
 
-        this.jTable1.setModel(PropertyLoader.getModel(property,null));
+        this.jTable1.setModel(ModelBuilder.getModel(property,null));
 
     }
 }

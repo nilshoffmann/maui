@@ -1,13 +1,14 @@
+package maltcms.ui.fileHandles.properties;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package maltcms.ui.fileHandles.properties;
+
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import maltcms.ui.fileHandles.properties.PropertiesDataObject;
 import org.openide.loaders.DataObject;
 
 public final class Properties2ListOpenAction implements ActionListener {
