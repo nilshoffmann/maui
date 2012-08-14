@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package maltcms.ui;
+package net.sf.maltcms.ui.plot.chromatogram1D.actions;
 
 import cross.datastructures.fragments.FileFragment;
 import java.awt.event.ActionListener;
@@ -15,6 +15,7 @@ import maltcms.datastructures.ms.Chromatogram1D;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
+import maltcms.ui.ChromatogramViewTopComponent;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;

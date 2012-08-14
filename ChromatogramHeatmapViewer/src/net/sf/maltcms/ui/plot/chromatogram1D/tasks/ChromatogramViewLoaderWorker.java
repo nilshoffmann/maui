@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package maltcms.ui;
+package net.sf.maltcms.ui.plot.chromatogram1D.tasks;
 
 import cross.datastructures.fragments.IFileFragment;
 import java.awt.Color;
@@ -15,6 +15,7 @@ import java.util.Properties;
 import javax.swing.SwingWorker;
 import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram;
+import maltcms.ui.ChromatogramViewTopComponent;
 import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import maltcms.ui.views.ChromMSHeatmapPanel;
 import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;

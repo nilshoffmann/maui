@@ -4,6 +4,7 @@
  */
 package maltcms.ui;
 
+import net.sf.maltcms.ui.plot.chromatogram1D.tasks.ChromatogramViewLoaderWorker;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -12,10 +12,11 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 @OptionsPanelController.TopLevelRegistration(
+id= "maltcmsOptions",
 categoryName = "#AdvancedOption_DisplayName_LocalMaltcmsExecution",
 keywords = "#AdvancedOption_Keywords_LocalMaltcmsExecution",
 keywordsCategory = "Maui Settings/LocalMaltcmsExecution",
-        iconBase = "maltcms/ui/nb/pipelineRunner/media-playback-start32large.png")
+        iconBase = "maltcms/ui/nb/pipelineRunner/media-playback-start32.png")
 public final class LocalMaltcmsExecutionOptionsPanelController extends OptionsPanelController {
 
     private LocalMaltcmsExecutionPanel panel;

@@ -12,16 +12,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
+import org.apache.commons.io.FileUtils;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectManager;
+import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
-import org.openide.windows.IOProvider;
-import org.openide.windows.InputOutput;
-import org.openide.windows.OutputWriter;
+import org.openide.windows.*;
 
 /**
  *
@@ -48,12 +53,12 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
     @Override
     public boolean cancel() {
         boolean cancel = super.cancel();
-        if(this.p!=null) {
+        if (this.p != null) {
             this.p.destroy();
         }
         return cancel;
     }
-    
+
     public File getConfigurationFile() {
         return this.configurationFile;
     }
@@ -106,11 +111,11 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
 //        File java = new File(javaBinDir, "java");
         l.add("java");
         String commandLineOptions = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("commandLineOptions", "");
-        if(!commandLineOptions.isEmpty()) {
+        if (!commandLineOptions.isEmpty()) {
             String[] splits = commandLineOptions.split(" ");
-            for(String option:splits) {
+            for (String option : splits) {
                 String op = option.trim();
-                if(op!=null && !op.isEmpty()) {
+                if (op != null && !op.isEmpty()) {
                     l.add(op);
                 }
             }
@@ -123,7 +128,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         l.add("-f");
         l.add(buildFileset());
         l.add("-c");
-        l.add(escapeString(configurationFile.getAbsolutePath(),"\""));
+        l.add(escapeString(configurationFile.getAbsolutePath(), "\""));
         return l.toArray(new String[l.size()]);
     }
 
@@ -144,7 +149,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                 sb.append(",");
             }
         }
-        sb.replace(sb.length()-1, sb.length(), "");
+        sb.replace(sb.length() - 1, sb.length(), "");
         sb.append("\"");
         return sb.toString();
     }
@@ -164,7 +169,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.directory());
         pb.redirectErrorStream(true);
         InputOutput io = IOProvider.getDefault().getIO(
-                "Running Maltcms in "+outputDir.getName(), false);
+                "Running Maltcms in " + outputDir.getName(), false);
 //                io.setOutputVisible(true);
         FileObject outDir = FileUtil.toFileObject(outputDir);
         io.select();
@@ -180,21 +185,58 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
             int ecode = p.waitFor();
             System.out.println("Maltcms exited with code: " + ecode);
             if (ecode == 0) {
-                File workflow = new File(outputDir, "workflow.xml");
-                if (workflow.exists()) {
+//                File workflow = new File(outputDir, "workflow.xml");
+                Collection<File> files = FileUtils.listFiles(outputDir, new String[]{"xml"}, true);
+                if (files.isEmpty()) {
                     getProgressHandle().finish();
-                    return workflow;
-                }else{
-                    getProgressHandle().finish();
-                    throw new IOException("Could not locate workflow.xml in "+outputDir);
+                    throw new IOException("Could not locate workflow.xml in " + outputDir);
+                } else {
+                    File resultFile = null;
+                    for (File file : files) {
+                        if (file.getName().equals("workflow.xml")) {
+                            if (resultFile != null) {
+                                throw new IllegalArgumentException("Found more than one workflow.xml files below " + outputDir + "!");
+                            }
+                            resultFile = file;
+                        }
+                    }
+                    if (resultFile != null) {
+                        System.out.println("Found result file: " + resultFile);
+                        final File resFile = resultFile;
+                        Runnable r = new Runnable() {
+
+                            @Override
+                            public void run() {
+                                Project project;
+                                try {
+                                    project = ProjectManager.getDefault().findProject(FileUtil.toFileObject(resFile.getParentFile()));
+                                    if (project != null) {
+                                        OpenProjects.getDefault().open(new Project[]{project}, false, true);
+                                        TopComponent projWindow = WindowManager.getDefault().findTopComponent("projectTabLogical_tc");
+                                        projWindow.requestActive();
+                                    }
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                } catch (IllegalArgumentException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+
+                            }
+                        };
+                        SwingUtilities.invokeLater(r);
+                        return resultFile;
+                    }
                 }
             }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
+        } finally {
+            if(getProgressHandle()!=null) {
+                getProgressHandle().finish();
+            }
         }
-        getProgressHandle().finish();
         return null;
     }
 }

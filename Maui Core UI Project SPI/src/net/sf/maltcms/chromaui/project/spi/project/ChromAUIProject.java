@@ -32,8 +32,10 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
+import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.spi.java.classpath.ClassPathProvider;
 import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.ui.ProjectOpenedHook;
 import org.openide.DialogDisplayer;
@@ -95,6 +97,8 @@ public class ChromAUIProject implements IChromAUIProject {
         ic.add(new ChromAUIProjectLogicalView(this));
         //Logical view of project implementation
         ic.add(new OpenCloseHook());
+        //
+        ic.add(new MaltcmsClassPathProvider());
     }
 
     @Override

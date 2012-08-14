@@ -80,17 +80,14 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 
     @Override
     public IChromatogram getChromatogram() {
+        activate(ActivationPurpose.READ);
         if (this.chromatogram == null) {
-            
-            if (this.separationType.getFeatureDimensions() == 2) {
+            if (getSeparationType().getFeatureDimensions() == 2) {
                 ChromatogramFactory cf = new ChromatogramFactory();
                 this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(
                         getResourceLocation())));
             } else {
-                
                 this.chromatogram = new CachingChromatogram1D(new FileFragment(new File(getResourceLocation())));
-//);//cf.createChromatogram1D(new FileFragment(new File(
-//                        getResourceLocation())));
             }
         }
         return this.chromatogram;

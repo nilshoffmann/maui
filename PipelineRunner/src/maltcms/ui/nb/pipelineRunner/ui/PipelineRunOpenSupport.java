@@ -7,23 +7,23 @@ package maltcms.ui.nb.pipelineRunner.ui;
 import cross.exception.NotImplementedException;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
+import javax.swing.SwingUtilities;
 import maltcms.ui.fileHandles.properties.pipeline.MaltcmsPipelineFormatDataObject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.loaders.OpenSupport;
-import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
 import org.openide.util.NbPreferences;
 import org.openide.windows.CloneableTopComponent;
 
@@ -39,68 +39,44 @@ public class PipelineRunOpenSupport extends OpenSupport implements OpenCookie, C
 
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
-        MaltcmsPipelineFormatDataObject dobj = (MaltcmsPipelineFormatDataObject) entry.getDataObject();
-        Project p = FileOwnerQuery.getOwner(entry.getFile());
-//        File outputFolder = null;
-        File f = new File(FileUtil.toFile(p.getProjectDirectory()), "output");
-        f.mkdirs();
-
-//        outputFolder.mkdirs();
-
         List<File> files = Collections.emptyList();
-//        MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(null, null, null, null, inputFiles);
+        DataObject dataObject = entry.getDataObject();
+        Project p = FileOwnerQuery.getOwner(entry.getFile());
+        File outputDirectory = new File(FileUtil.toFile(p.getProjectDirectory()), "output");
+        outputDirectory.mkdirs();
         if (p instanceof IChromAUIProject) {
             IChromAUIProject icp = ((IChromAUIProject) p);
             files = DataSourceDialog.getFilesForDatasource(icp);
-//            Collection<IChromatogramDescriptor> ccs = icp.getChromatograms();
-//            StringBuilder sb = new StringBuilder();
-//            
-//            
-//            File importDir = new File(FileUtil.toFile(
-//                    icp.getLocation()), "import");
-//            if (importDir.exists() && importDir.isDirectory()) {
-//                File[] inputFiles = importDir.listFiles();
-//                files.addAll(Arrays.asList(inputFiles));
-//                System.out.println("Using input files from import directory!");
-//            } else {
-//                System.out.println("Using original input files!");
-//                for (IChromatogramDescriptor cc : ccs) {
-////                Collection<IChromatogramDescriptor> cds = cc.get();
-////                for(IChromatogramDescriptor icd:cds) {
-////                    sb.append(icd.getResourceLocation());
-////                    sb.append(",");
-//                    files.add(new File(cc.getResourceLocation()));
-////                }
-//                }
-//            }
-
-
-
-//            String files = sb.substring(0, sb.length()-1);
             System.out.println("Files: " + files);
         } else {
+            //TODO implement Selection Dialog for open Maui projects
             throw new NotImplementedException("Can not open Maltcms process for non IChromAUI projects!");
         }
-//        if(files.isEmpty()) {
-//            return null;
-//            //throw new IllegalArgumentException("Could not retrieve any files for project!");
-//        }
-        //TODO: implement individual configurations support and automatic adding 
-        //of output.basedir and input.dataInfo etc.
-        PipelineRunnerTopComponent prtc = PipelineRunnerTopComponent.findInstance();
-        FileObject fo = dobj.getPrimaryFile();
+        File pipelineFile = FileUtil.toFile(dataObject.getPrimaryFile());
+        Preferences prefs = NbPreferences.forModule(PipelineRunnerTopComponent.class);
         String maltcmsPath = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
-        if (maltcmsPath.equals("NA")) {
-            throw new IllegalArgumentException("Please set maltcms path in settings!");
-        }
-        if (files != null && !files.isEmpty()) {
-            try {
-                MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), f, FileUtil.toFile(fo), files.toArray(new File[files.size()]));
-                prtc.addProcess(mlhe);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+        String maltcmsVersion = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsVersion", "NA");
+        if (maltcmsPath.equals("NA") || maltcmsPath.isEmpty() || maltcmsVersion.equals("NA") || maltcmsVersion.isEmpty()) {
+            boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
+        } else {
+            if (files != null && !files.isEmpty()) {
+                try {
+                    File maltcmsOutputDirectory = new File(outputDirectory,"maltcms-"+maltcmsVersion);
+                    maltcmsOutputDirectory.mkdirs();
+                    final MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), maltcmsOutputDirectory, pipelineFile, files.toArray(new File[files.size()]));
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
+                            PipelineRunnerTopComponent.findInstance().requestActive();
+                        }
+                    });
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
-        return prtc;
+        return PipelineRunnerTopComponent.findInstance();
     }
 }
