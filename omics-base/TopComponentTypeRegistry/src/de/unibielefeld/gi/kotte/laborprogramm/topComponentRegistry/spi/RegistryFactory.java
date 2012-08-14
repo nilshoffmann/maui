@@ -10,7 +10,10 @@ import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- *
+ * RegistryFactory is the default implementation for @see IRegistryFactory.
+ * Other Implementations may be retrieved by calling 
+ * @see Lookup.getDefault().lookupAll(IRegistryFactory.class).
+ * 
  * @author hoffmann
  */
 @ServiceProvider(service=IRegistryFactory.class)

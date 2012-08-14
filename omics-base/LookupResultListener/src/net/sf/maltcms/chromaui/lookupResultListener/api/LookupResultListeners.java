@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
 
 /**
  *
@@ -178,6 +179,13 @@ public class LookupResultListeners implements List<AbstractLookupResultListener>
     public void register(Lookup targetLookup) {
         for(AbstractLookupResultListener listener:this) {
             listener.register(targetLookup);
+        }
+    }
+
+    @Override
+    public void resultChanged(LookupEvent result) {
+        for(AbstractLookupResultListener listener:this) {
+            listener.resultChanged(result);
         }
     }
 }

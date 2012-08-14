@@ -5,7 +5,6 @@
 package de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.spi;
 
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -16,7 +15,8 @@ import org.openide.util.Utilities;
 import org.openide.windows.TopComponent;
 
 /**
- *
+ * A registry for open @see TopComponent objects, linked to arbitrary 
+ * domain objects associated to their originating project.
  * @author hoffmann
  */
 public class Registry implements IRegistry {
@@ -55,12 +55,20 @@ public class Registry implements IRegistry {
         for (Map<Object, TopComponent> map : typeToTopComponent.values()) {
             TopComponent tc = map.remove(object);
             if(tc!=null) {
-                System.out.println("Closing TopComponent for Object: "+object.getClass());
+                Logger.getLogger(getClass().getName()).info("Closing TopComponent for Object: "+object.getClass().getName());
                 tc.close();
             }
         }
     }
 
+    /**
+     * Queries @see Utilities.actionsGlobalContext() to retrieve selected project.
+     * Returns the selected project if present in the lookup, otherwise, throws an 
+     * illegal state exception. This method is not intended for external use!
+     * 
+     * @return the active project in global selection scope
+     * @throws IllegalStateException if no project is selected
+     */
     protected Project getSelectedProject() throws IllegalStateException {
         Project project = Utilities.actionsGlobalContext().lookup(Project.class);
         if (project == null) {
@@ -87,7 +95,7 @@ public class Registry implements IRegistry {
         Project project = getSelectedProject();
         Map<Object, TopComponent> map = getTopComponentsFor(project);
         if (map.containsKey(object)) {
-            System.out.println("Found TopComponent instance");
+            Logger.getLogger(getClass().getName()).fine("Found TopComponent instance");
             return map.get(object);
         }
         return null;
@@ -106,6 +114,8 @@ public class Registry implements IRegistry {
 
             }
         };
+        //schedule to run on EDT since we are manipulating GUI state and should
+        //therefor avoid interference with other GUI activities.
         SwingUtilities.invokeLater(r);
     }
 }
