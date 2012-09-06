@@ -6,11 +6,10 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import cross.Factory;
-import cross.Logging;
 import cross.annotations.Configurable;
-import cross.datastructures.ehcache.CacheFactory;
-import cross.datastructures.ehcache.ICacheDelegate;
-import cross.datastructures.ehcache.ICacheElementProvider;
+import cross.datastructures.cache.CacheFactory;
+import cross.datastructures.cache.ICacheDelegate;
+import cross.datastructures.cache.ICacheElementProvider;
 import cross.datastructures.fragments.CachedList;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IExperiment1D;
 import maltcms.datastructures.ms.IScan1D;
@@ -33,6 +33,7 @@ import ucar.ma2.Array;
  * Use @see maltcms.datastructures.ms.Chromatogram1D instead!
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
+@Slf4j
 public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProvider<Integer, Scan1D> {
 
     private IFileFragment parent;
@@ -47,8 +48,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
     public CachingChromatogram1D(final IFileFragment e) {
         this.parent = e;
-        CacheFactory<Integer, Scan1D> cf = new CacheFactory<Integer, Scan1D>();
-        whm = cf.createAutoRetrievalCache(e.getAbsolutePath(),this);
+        whm = CacheFactory.createAutoRetrievalCache(e.getAbsolutePath(),this);
 //        fillCache(scans,mzV,iV);
     }
 
@@ -234,7 +234,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
                 double.class);
         int idx = Arrays.binarySearch(d, scan_acquisition_time);
         if (idx >= 0) {// exact hit
-            Logging.getLogger(this).info("sat {}, scan_index {}",
+            log.info("sat {}, scan_index {}",
                     scan_acquisition_time, idx);
             return idx;
         } else {// imprecise hit, find closest element
@@ -244,11 +244,11 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
             double previous = d[Math.max(0, Math.min((-idx),d.length-1))];
             if (Math.abs(scan_acquisition_time - previous) < Math.abs(
                     scan_acquisition_time - current)) {
-                Logging.getLogger(this).info("sat {}, scan_index {}",
+                log.info("sat {}, scan_index {}",
                         scan_acquisition_time, (-idx) + 1);
                 return Math.max(0,Math.min((-idx) + 1,d.length-1));
             } else {
-                Logging.getLogger(this).info("sat {}, scan_index {}",
+                log.info("sat {}, scan_index {}",
                         scan_acquisition_time, -idx);
                 return Math.max(0,Math.min((-idx),d.length-1));
             }

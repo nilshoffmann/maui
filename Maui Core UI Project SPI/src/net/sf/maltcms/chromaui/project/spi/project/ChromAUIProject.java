@@ -19,9 +19,7 @@ import javax.swing.ImageIcon;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
-import net.sf.maltcms.chromaui.db.api.IMatchPredicate;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
-import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
@@ -32,10 +30,8 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
-import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
-import org.netbeans.spi.java.classpath.ClassPathProvider;
 import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.ui.ProjectOpenedHook;
 import org.openide.DialogDisplayer;
@@ -97,7 +93,7 @@ public class ChromAUIProject implements IChromAUIProject {
         ic.add(new ChromAUIProjectLogicalView(this));
         //Logical view of project implementation
         ic.add(new OpenCloseHook());
-        //
+        //ClassPath Provider for Maltcms installations
         ic.add(new MaltcmsClassPathProvider());
     }
 
@@ -363,19 +359,7 @@ public class ChromAUIProject implements IChromAUIProject {
         }
 
         return peaks;
-    }
-
-    @Override
-    public <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp) {
-        IQuery<T> query = ics.newQuery(c);
-        return query.retrieve(mp);
-    }
-
-    @Override
-    public <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp) {
-        IQuery<T> query = ics.newQuery(c);
-        return query.retrieve(mp, comp);
-    }
+    } 
 
     @Override
     public File getImportLocation(Object importer) {

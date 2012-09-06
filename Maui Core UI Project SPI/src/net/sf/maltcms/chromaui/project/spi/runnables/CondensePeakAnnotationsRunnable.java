@@ -4,7 +4,7 @@
  */
 package net.sf.maltcms.chromaui.project.spi.runnables;
 
-import cross.datastructures.ehcache.CacheFactory;
+import cross.datastructures.cache.CacheFactory;
 import cross.datastructures.tuple.Tuple2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,15 +14,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.cluster.Clique;
 import maltcms.datastructures.cluster.IClique;
 import maltcms.datastructures.cluster.ICliqueMemberCriterion;
 import maltcms.datastructures.cluster.ICliqueUpdater;
 import maltcms.datastructures.feature.DefaultFeatureVector;
-import maltcms.datastructures.peak.Peak1D;
 import maltcms.tools.ImageTools;
-import maltcms.tools.MaltcmsTools;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;

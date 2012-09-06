@@ -5,7 +5,6 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.runnables;
 
-import cross.Factory;
 import cross.datastructures.fragments.FileFragment;
 import java.io.File;
 import java.util.*;
@@ -14,12 +13,8 @@ import maltcms.datastructures.peak.Peak1D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.*;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import org.openide.util.Exceptions;
-import ucar.ma2.Array;
 
 /**
  *

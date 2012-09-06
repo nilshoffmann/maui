@@ -17,6 +17,7 @@ import java.util.List;
 import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
 import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -50,7 +51,7 @@ public class SceneValidator {
 
     private String checkPipeline(List<PipelineElementWidget> pipeline) {
         final Maltcms m = Maltcms.getInstance();
-        final CompositeConfiguration cfg = m.getDefaultConfig();
+        final PropertiesConfiguration cfg = m.getDefaultConfiguration();
         Factory.getInstance().configure(cfg);
 
         ICommandSequence cs = new CommandPipeline();

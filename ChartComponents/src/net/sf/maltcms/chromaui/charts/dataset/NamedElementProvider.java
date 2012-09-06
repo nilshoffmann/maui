@@ -6,7 +6,7 @@
 package net.sf.maltcms.chromaui.charts.dataset;
 
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.datastructures.IElementProvider;
+import cross.datastructures.collections.IElementProvider;
 
 /**
  *

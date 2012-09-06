@@ -5,9 +5,9 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.runnables;
 
-import cern.colt.Arrays;
 import com.db4o.collections.ActivatableArrayList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;

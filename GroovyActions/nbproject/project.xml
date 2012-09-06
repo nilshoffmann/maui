@@ -145,7 +145,7 @@
                         <specification-version>8.6.1</specification-version>
                     </run-dependency>
                 </dependency>
-                </module-dependencies>
+            </module-dependencies>
             <public-packages>
                 <package>net.sf.maltcms.chromaui.groovy.api</package>
             </public-packages>

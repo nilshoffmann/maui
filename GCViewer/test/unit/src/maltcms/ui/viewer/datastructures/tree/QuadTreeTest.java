@@ -8,6 +8,7 @@ package maltcms.ui.viewer.datastructures.tree;
 import cross.datastructures.tuple.Tuple2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import maltcms.datastructures.quadTree.QuadTree;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

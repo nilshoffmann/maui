@@ -115,6 +115,10 @@
             <public-packages>
                 <package>maltcms.ui.fileHandles.properties.pipeline</package>
             </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/wizard-0.998.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/wizard-0.998.1.jar</binary-origin>
+            </class-path-extension>
         </data>
     </configuration>
 </project>

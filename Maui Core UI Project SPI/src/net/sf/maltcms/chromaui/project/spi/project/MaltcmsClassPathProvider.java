@@ -5,7 +5,6 @@
 package net.sf.maltcms.chromaui.project.spi.project;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.prefs.PreferenceChangeEvent;
@@ -16,7 +15,6 @@ import org.netbeans.spi.java.classpath.ClassPathProvider;
 import org.netbeans.spi.java.classpath.support.ClassPathSupport;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
 /**
@@ -26,27 +24,25 @@ import org.openide.util.NbPreferences;
 public class MaltcmsClassPathProvider implements ClassPathProvider, PreferenceChangeListener {
 
     private Set<ClassPath> classPaths = new LinkedHashSet<ClassPath>();
-    
+
     public MaltcmsClassPathProvider() {
         NbPreferences.forModule(IMaltcmsClassPathProvider.class).addPreferenceChangeListener(this);
         ClassPath bootClassPath = ClassPathSupport.createClassPath(System.getProperty("java.class.path"));
         classPaths.add(bootClassPath);
     }
-    
+
     @Override
     public ClassPath findClassPath(FileObject fo, String string) {
+        System.out.println("Trying to find classpath of type "+string+" for "+fo);
         return ClassPathSupport.createProxyClassPath(classPaths.toArray(new ClassPath[classPaths.size()]));
     }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent pce) {
-        if(pce.getKey().equals("classPathRoot")) {
-            try {
-                classPaths.add(ClassPathSupport.createClassPath(FileUtil.createFolder(new File(pce.getNewValue()))));
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+        if (pce.getKey().equals("extClassPathRoot")) {
+            System.out.println("Adding classPathRoot: " + pce.getNewValue());
+            classPaths.clear();
+            classPaths.add(ClassPathSupport.createClassPath(FileUtil.toFileObject(new File(pce.getNewValue()))));
         }
     }
-    
 }

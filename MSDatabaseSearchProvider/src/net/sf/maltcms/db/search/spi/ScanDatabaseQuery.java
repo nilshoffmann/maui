@@ -17,7 +17,7 @@ import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
 import net.sf.maltcms.db.search.api.IQuery;
 import net.sf.maltcms.db.search.api.IQueryInput;
 import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
-import net.sf.maltcms.execution.spi.MaltcmsCompletionService;
+import net.sf.mpaxs.spi.concurrent.MpaxsCompletionService;
 
 /**
  *
@@ -35,7 +35,7 @@ public class ScanDatabaseQuery implements IQuery<IScan> {
 
     @Override
     public List<QueryResultList<IScan>> call() throws Exception {
-        MaltcmsCompletionService<QueryResultList<IScan>> mcs = new MaltcmsCompletionService<QueryResultList<IScan>>(
+        MpaxsCompletionService<QueryResultList<IScan>> mcs = new MpaxsCompletionService<QueryResultList<IScan>>(
                 Executors.newFixedThreadPool(Math.min(1, Runtime.getRuntime().
                 availableProcessors() - 1)), 30, TimeUnit.MINUTES, false);
         for (IDatabaseDescriptor descr : databaseDescriptors) {

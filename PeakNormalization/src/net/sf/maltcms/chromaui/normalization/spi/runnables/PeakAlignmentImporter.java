@@ -5,7 +5,6 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.runnables;
 
-import com.db4o.ObjectSet;
 import cross.datastructures.tuple.Tuple2D;
 import cross.tools.StringTools;
 import java.io.File;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Vector;
 import lombok.Data;
 import maltcms.io.csv.CSVReader;
-import net.sf.maltcms.chromaui.db.api.IMatchPredicate;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;

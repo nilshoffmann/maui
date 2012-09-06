@@ -17,6 +17,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.db.search.api.DBConnectionManager;
 import net.sf.maltcms.db.search.api.IRetentionIndexDatabase;
+import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 
 /**
  *
