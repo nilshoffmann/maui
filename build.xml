@@ -4,12 +4,8 @@
 	<property environment="env" />
 	<property name="maui.dir" value="maui"/>
 	<property name="proteus.dir" value="proteus"/>
-        <property name="platform.version" value="7.1"/>
-	<property name="platform.dir" value="platform-${platform.version}"/>
-        <property name="platform.zip" value="${platform.dir}.zip"/>
 	<property name="maui.svn" value="svn+ssh://porta.cebitec.uni-bielefeld.de/vol/maltcms/repository/ChromAUI"/>
 	<property name="proteus.svn" value="https://svn.cebitec.uni-bielefeld.de/svn/aggiprojects/master/kotte/ProteomikLaborprogramm"/>
-        <property name="platform.location" value="http://www.maltcms.de:8080/artifactory/ext-release-local/net/sf/maltcms/platform/${platform.version}/platform-${platform.version}.zip"/>
 
 	<target name="help" description="Prints usage info using -projecthelp">
 		<java classname="org.apache.tools.ant.Main">
@@ -19,29 +15,7 @@
 		</java>
 	</target>
 
-        <target name="check-platform-dir">
-            <available property="platform.dir.exists" file="${platform.dir}" type="dir"/>
-        </target>
-        <target name="check-platform-zip">
-            <available property="platform.zip.exists" file="${platform.zip}" type="file"/>
-        </target>
-
-        <target name="check-platform" depends="check-platform-dir,get-platform,check-platform-zip,unzip-platform"/>
-
-        <target name="get-platform" unless="platform.dir.exists">
-                <get src="${platform.location}" dest="${platform.zip}"/>
-        </target>
-        
-        <target name="unzip-platform" if="platform.zip.exists">
-                <unzip src="${platform.zip}" dest="."/>
-                <move file="platform" toFile="${platform.dir}"/>
-                <delete file="${platform.zip}"/>
-        </target>
-	
-	<target name="update-all" depends="check-platform" description="Update/Check out current platform version.">
-	</target>
-
-        <target name="clean-all" depends="check-platform" description="Clean all omics-applications.">
+        <target name="clean-all" description="Clean all omics-applications.">
 		<ant dir="omics-base" target="clean"/>
 		<ant dir="maui" target="clean"/>
 		<ant dir="proteus" target="clean"/>
