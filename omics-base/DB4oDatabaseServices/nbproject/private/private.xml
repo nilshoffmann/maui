@@ -3,8 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/hoffmann/Uni/projects/omics/omics-base/DB4oDatabaseServices/src/net/sf/maltcms/chromaui/db/api/db4o/DB4oCrudProviderFactory.java</file>
-        <file>file:/home/hoffmann/Uni/projects/omics/omics-base/DB4oDatabaseServices/src/net/sf/maltcms/chromaui/db/spi/db4o/AbstractDB4oCrudProvider.java</file>
-        <file>file:/home/hoffmann/Uni/projects/omics/omics-base/DB4oDatabaseServices/src/net/sf/maltcms/chromaui/db/spi/db4o/DB4oCrudProvider.java</file>
+        <file>file:/opt/projects/omics/omics-base/DB4oDatabaseServices/test/unit/src/net/sf/maltcms/chromaui/project/spi/DB4oCrudProviderTest.java</file>
+        <file>file:/opt/projects/omics/omics-base/DB4oDatabaseServices/src/net/sf/maltcms/chromaui/db/spi/db4o/DB4oQuery.java</file>
+        <file>file:/opt/projects/omics/omics-base/DB4oDatabaseServices/src/net/sf/maltcms/chromaui/db/spi/db4o/DB4oCrudSession.java</file>
     </open-files>
 </project-private>

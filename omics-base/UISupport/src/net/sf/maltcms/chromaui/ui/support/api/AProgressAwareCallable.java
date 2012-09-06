@@ -8,7 +8,7 @@ package net.sf.maltcms.chromaui.ui.support.api;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import net.sf.maltcms.execution.api.ICompletionService;
+import net.sf.mpaxs.api.ICompletionService;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.Cancellable;

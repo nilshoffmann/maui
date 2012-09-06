@@ -7,8 +7,6 @@ package net.sf.maltcms.chromaui.project.api;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collection;
-import java.util.Comparator;
-import net.sf.maltcms.chromaui.db.api.IMatchPredicate;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
@@ -28,9 +26,9 @@ public interface IMauiProject extends PropertyChangeListener {
 
     Collection<IChromatogramDescriptor> getChromatograms();
     
-    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp);
-    
-    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp);
+//    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp);
+//    
+//    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp);
 
     <T extends IContainer> Collection<T> getContainer(Class<T> c);
 

@@ -21,7 +21,7 @@ public class CrudProvider {
                 ClassLoader.class));
     }
 
-    public static ICrudProvider getProviderFor(URL databaseLocation,
+    protected static ICrudProvider getProviderFor(URL databaseLocation,
             ICredentials credentials, ClassLoader classLoader) throws ProviderNotFoundException {
         for (ICrudProviderFactory factory : Lookup.getDefault().lookupAll(
                 ICrudProviderFactory.class)) {
@@ -43,7 +43,7 @@ public class CrudProvider {
                 ClassLoader.class));
     }
 
-    public static ICrudProvider getInMemoryProviderFor(URL databaseLocation, ICredentials credentials, ClassLoader classLoader) throws ProviderNotFoundException {
+    protected static ICrudProvider getInMemoryProviderFor(URL databaseLocation, ICredentials credentials, ClassLoader classLoader) throws ProviderNotFoundException {
         for (ICrudProviderFactory factory : Lookup.getDefault().lookupAll(
                 ICrudProviderFactory.class)) {
             try {

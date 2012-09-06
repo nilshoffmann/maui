@@ -35,13 +35,17 @@ public abstract class AbstractLookupResultListener<T> implements LookupListener,
     @Override
     public void register(Lookup targetLookup) {
         result = targetLookup.lookupResult(typeToListenFor);
-        result.addLookupListener(this);
-        resultChanged(new LookupEvent(result));
+        if(result!=null) {
+            result.addLookupListener(this);
+            resultChanged(new LookupEvent(result));
+        }
     }
 
     @Override
     public void deregister() {
-        result.removeLookupListener(this);
+        if(result!=null) {
+            result.removeLookupListener(this);
+        }
         result = null;
     }
 

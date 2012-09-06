@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.maltcms.chromaui.db4o
+OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/db4o/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.1
+
