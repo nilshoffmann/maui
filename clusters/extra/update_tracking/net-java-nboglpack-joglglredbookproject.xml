@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="net.java.nboglpack.joglglredbookproject">
+    <module_version install_time="1333628635033" last="true" origin="net-java-nboglpack-joglglredbookproject.nbm" specification_version="1.0.2">
+        <file crc="825610522" name="config/Modules/net-java-nboglpack-joglglredbookproject.xml"/>
+        <file crc="1020199177" name="jogl-project/glredbook-src.zip"/>
+        <file crc="2699017422" name="modules/net-java-nboglpack-joglglredbookproject.jar"/>
+    </module_version>
+</module>

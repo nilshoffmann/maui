@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="net.java.nboglpack.joglproject">
+    <module_version install_time="1333628635242" last="true" origin="net-java-nboglpack-joglproject.nbm" specification_version="1.7">
+        <file crc="3667584724" name="config/Modules/net-java-nboglpack-joglproject.xml"/>
+        <file crc="2049274066" name="jogl-project/initJoglProject.xml"/>
+        <file crc="2045127970" name="jogl-project/jogl-templates.zip"/>
+        <file crc="2443627299" name="modules/net-java-nboglpack-joglproject.jar"/>
+    </module_version>
+</module>

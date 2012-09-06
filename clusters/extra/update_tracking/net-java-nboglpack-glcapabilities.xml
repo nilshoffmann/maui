@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="net.java.nboglpack.glcapabilities">
+    <module_version install_time="1333628635109" last="true" origin="net-java-nboglpack-glcapabilities.nbm" specification_version="1.2.2">
+        <file crc="2976367690" name="config/Modules/net-java-nboglpack-glcapabilities.xml"/>
+        <file crc="147621079" name="modules/net-java-nboglpack-glcapabilities.jar"/>
+    </module_version>
+</module>

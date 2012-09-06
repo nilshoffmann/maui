@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="net.java.nboglpack.jogldemosproject">
+    <module_version install_time="1333628634088" last="true" origin="net-java-nboglpack-jogldemosproject.nbm" specification_version="1.5.5">
+        <file crc="581901642" name="config/Modules/net-java-nboglpack-jogldemosproject.xml"/>
+        <file crc="1042614604" name="jogl-project/jogl-demos-src.zip"/>
+        <file crc="258445205" name="modules/net-java-nboglpack-jogldemosproject.jar"/>
+    </module_version>
+</module>

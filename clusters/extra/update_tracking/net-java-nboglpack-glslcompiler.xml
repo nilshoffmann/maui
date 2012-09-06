@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="net.java.nboglpack.glslcompiler">
+    <module_version install_time="1333628634941" last="true" origin="net-java-nboglpack-glslcompiler.nbm" specification_version="1.1.5">
+        <file crc="3984496189" name="config/Modules/net-java-nboglpack-glslcompiler.xml"/>
+        <file crc="3600549032" name="modules/net-java-nboglpack-glslcompiler.jar"/>
+    </module_version>
+</module>

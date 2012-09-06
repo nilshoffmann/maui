@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="net.java.nboglpack.joglutils">
+    <module_version install_time="1333628634869" last="true" origin="net-java-nboglpack-joglutils.nbm" specification_version="1.3.4">
+        <file crc="3043705710" name="config/Modules/net-java-nboglpack-joglutils.xml"/>
+        <file crc="3400342386" name="modules/net-java-nboglpack-joglutils.jar"/>
+    </module_version>
+</module>

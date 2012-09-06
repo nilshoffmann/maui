@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module codename="com.sun.j3d/1">
+    <module_version install_time="1333628755460" last="true" origin="1300986731985_com-sun-j3d.nbm" specification_version="1.5.2">
+        <file crc="1543897093" name="config/Modules/com-sun-j3d.xml"/>
+        <file crc="1330853615" name="modules/com-sun-j3d.jar"/>
+        <file crc="229772944" name="modules/ext/j3dbool-1.1.jar"/>
+        <file crc="1948552039" name="modules/ext/j3dcore.jar"/>
+        <file crc="333711647" name="modules/ext/j3dutils.jar"/>
+        <file crc="2222990846" name="modules/ext/vecmath.jar"/>
+        <file crc="2484582553" name="modules/lib/amd64/j3dcore-ogl.dll"/>
+        <file crc="457601093" name="modules/lib/amd64/libj3dcore-ogl.so"/>
+        <file crc="281580477" name="modules/lib/sparc/libj3dcore-ogl.so"/>
+        <file crc="4035537019" name="modules/lib/sparcv9/libj3dcore-ogl.so"/>
+        <file crc="409929771" name="modules/lib/x86/j3dcore-d3d.dll"/>
+        <file crc="3844832547" name="modules/lib/x86/j3dcore-ogl-cg.dll"/>
+        <file crc="3671955058" name="modules/lib/x86/j3dcore-ogl-chk.dll"/>
+        <file crc="2855396839" name="modules/lib/x86/j3dcore-ogl.dll"/>
+        <file crc="3773906955" name="modules/lib/x86/libj3dcore-ogl-cg.so"/>
+        <file crc="3334150885" name="modules/lib/x86/libj3dcore-ogl.so"/>
+    </module_version>
+</module>
