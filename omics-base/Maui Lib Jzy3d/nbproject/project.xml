@@ -36,6 +36,7 @@
                 <package>org.jzy3d.global</package>
                 <package>org.jzy3d.io</package>
                 <package>org.jzy3d.maths</package>
+                <package>org.jzy3d.maths.algorithms</package>
                 <package>org.jzy3d.maths.graphs</package>
                 <package>org.jzy3d.picking</package>
                 <package>org.jzy3d.plot2d.primitive</package>
