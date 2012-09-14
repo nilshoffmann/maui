@@ -32,7 +32,7 @@ import org.openide.util.lookup.Lookups;
  * implementations/extensions. See @link{http://platform.netbeans.org/tutorials/nbm-projectextension.html}
  * for details on writing a project type extension.
  *
- * @author Nils.Hoffmann@CeBiTec.Uni-Bielefeld.DE
+ * @author Nils Hoffmann
  */
 public class ChromaProject implements Project{
 

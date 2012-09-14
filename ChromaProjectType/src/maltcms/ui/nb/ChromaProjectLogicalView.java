@@ -35,7 +35,7 @@ import org.openide.util.lookup.InstanceContent;
  * Creates a virtual view, which is created from the bound xml file
  * in ChromaProject.
  *
- * @author Nils.Hoffmann@CeBiTec.Uni-Bielefeld.DE
+ * @author Nils Hoffmann
  */
 public class ChromaProjectLogicalView implements LogicalViewProvider {
 

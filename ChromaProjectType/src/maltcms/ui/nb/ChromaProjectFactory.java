@@ -19,7 +19,7 @@ import org.openide.filesystems.FileObject;
  * Will look for a file <code>chromaUIProject.xml</code> in directories
  * and accept those as project directories.
  *
- * @author Nils.Hoffmann@CeBiTec.Uni-Bielefeld.DE
+ * @author Nils Hoffmann
  *
  */
 @org.openide.util.lookup.ServiceProvider(service=ProjectFactory.class)

@@ -1,20 +1,29 @@
-/*
- * The contents of this file are subject to the terms of the Common Development
- * and Distribution License (the License). You may not use this file except in
- * compliance with the License.
+/* 
+ * Maui, Maltcms User Interface. 
+ * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
- * You can obtain a copy of the License at http://www.netbeans.org/cddl.html
- * or http://www.netbeans.org/cddl.txt.
+ * Project website: http://maltcms.sf.net
  *
- * When distributing Covered Code, include this CDDL Header Notice in each file
- * and include the License file at http://www.netbeans.org/cddl.txt.
- * If applicable, add the following below the CDDL Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
+ * Maui may be used under the terms of either the
  *
- * The Original Software is NetBeans. The Initial Developer of the Original
- * Software is Sun Microsystems, Inc. Portions Copyright 1997-2007 Sun
- * Microsystems, Inc. All Rights Reserved.
+ * GNU Lesser General Public License (LGPL)
+ * http://www.gnu.org/licenses/lgpl.html
+ *
+ * or the
+ *
+ * Eclipse Public License (EPL)
+ * http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * As a user/recipient of Maui, you may choose which license to receive the code 
+ * under. Certain files or entire directories may not be covered by this 
+ * dual license, but are subject to licenses compatible to both LGPL and EPL.
+ * License exceptions are explicitly declared in all relevant files or in a 
+ * LICENSE file in the relevant directories.
+ *
+ * Maui is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
+ * for details.
  */
 package maltcms.ui.fileHandles.properties.graph;
 

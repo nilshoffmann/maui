@@ -6,7 +6,7 @@
 package net.sf.maltcms.chromaui.groovy
 
 /**
- * @author Nils.Hoffmann@CeBiTec.Uni-Bielefeld.DE
+ * @author Nils Hoffmann
  */
 class CSVFile {
 
