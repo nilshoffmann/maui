@@ -36,7 +36,7 @@ import org.jzy3d.plot3d.rendering.view.View;
 /**
  * A fast rip of {@ChartThreadController} as a standalone
  * Runnable.
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class RotationAnimator implements Runnable {
 

@@ -38,7 +38,7 @@ import org.openide.windows.CloneableTopComponent;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class Heatmap3DOpenSupport extends OpenSupport implements OpenCookie, CloseCookie{
 

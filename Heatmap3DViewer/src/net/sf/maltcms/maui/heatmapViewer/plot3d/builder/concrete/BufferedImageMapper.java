@@ -35,7 +35,7 @@ import org.jzy3d.plot3d.builder.Mapper;
  * Mapper which reads height information from the grayscale
  * values of a BufferedImage, normalized to range [0..1].
  * 
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class BufferedImageMapper extends ViewportMapper {
 

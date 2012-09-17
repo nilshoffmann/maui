@@ -32,7 +32,7 @@ import org.jzy3d.plot3d.builder.Mapper;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public abstract class ViewportMapper extends Mapper{
 

@@ -50,7 +50,7 @@ import ucar.ma2.ArrayDouble;
  * Obtain an instance of the factory and use the set methods
  * to configure the factory appropriately, before calling any
  * of the create or build methods.
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class SurfaceFactory {
 

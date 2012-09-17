@@ -4,9 +4,11 @@
 <!-- If you delete this file and reopen the project it will be recreated. -->
 <project name="ChromAUI" basedir=".">
     <description>Builds the module suite Maui.</description>
-   
+    <property name="parent.projectdir" value="${basedir}/.."/>
+    <property name="platform.parentdir" value="${parent.projectdir}"/>
+    <import file="${parent.projectdir}/nbproject/platform-defaults.xml"/>
     <import file="nbproject/build-impl.xml"/>
-     
+    
     <!-- Modify NetBeans app.conf file to use my local one-->
    <target name="build-launchers" depends="suite.build-launchers">
        <echo message="Branding conf file : Copy file ${basedir}/BrandingModule/harness/etc/maui.conf to ${build.launcher.dir}/etc/${app.name}.conf"/>

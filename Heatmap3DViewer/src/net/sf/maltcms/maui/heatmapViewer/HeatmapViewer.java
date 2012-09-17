@@ -57,7 +57,7 @@ import org.jzy3d.ui.Plugs;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class HeatmapViewer {
 

@@ -32,7 +32,7 @@ import ucar.ma2.ArrayDouble;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class ArrayD2Mapper extends ViewportMapper {
 
