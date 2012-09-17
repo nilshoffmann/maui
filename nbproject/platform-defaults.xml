@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="platform-defaults" basedir=".">
+    <fail message="Please set platform.parentdir and parent.projectdir!">
+        <condition>
+		<and>
+            		<not>
+				<isset property="platform.parentdir"/>
+            		</not>
+			<not>
+				<isset property="parent.projectdir"/>
+			</not>
+		</and>
+        </condition>
+    </fail>
+    <property file="${parent.projectdir}/nbproject/platform-defaults.properties"/>
+    <propertyfile file="nbproject/platform.properties" comment="Included properties from ${parent.projectdir}/nbproject/platform-defaults.properties">
+        <entry key="enforced.modules" value="${enforced.modules}"/>
+        <entry key="platform.version" value="${platform.version}"/>
+        <entry key="nbplatform.active.dir" value="${nbplatform.active.dir}"/>
+        <entry key="nbplatform.harness.dir" value="${nbplatform.harness.dir}"/>
+        <entry key="bootstrap.url" value="${bootstrap.url}"/>
+        <entry key="autoupdate.catalog.url" value="${autoupdate.catalog.url}"/>
+        <entry key="autoupdate_certified.catalog.url" value="${autoupdate_certified.catalog.url}"/>
+        <entry key="platform.base" value="${platform.base}"/>
+        <entry key="nbplatform.active" value="${nbplatform.active}"/>
+        <entry key="nbplatform.nb712.netbeans.dest.dir" value="${nbplatform.nb712.netbeans.dest.dir}"/>
+        <entry key="nbplatform.nb712.harness.dir" value="${nbplatform.nb712.harness.dir}"/>
+    </propertyfile>
+    <echo message="Platform location: ${nbplatform.active.dir}"/>
+    <echo message="NBplatform active: ${nbplatform.active}"/>
+</project>

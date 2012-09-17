@@ -6,6 +6,8 @@
 	<property name="proteus.dir" value="proteus"/>
 	<property name="maui.svn" value="svn+ssh://porta.cebitec.uni-bielefeld.de/vol/maltcms/repository/ChromAUI"/>
 	<property name="proteus.svn" value="https://svn.cebitec.uni-bielefeld.de/svn/aggiprojects/master/kotte/ProteomikLaborprogramm"/>
+	<property name="platform.parentdir" value="${basedir}"/>
+	<property file="nbproject/platform-defaults.properties"/>
 
 	<target name="help" description="Prints usage info using -projecthelp">
 		<java classname="org.apache.tools.ant.Main">
@@ -16,13 +18,15 @@
 	</target>
 
         <target name="clean-all" description="Clean all omics-applications.">
+		<echo message="NB Platform is at ${nbplatform.active.dir}"/>
+<!--		<delete dir="${nbplatform.active.dir}"/>-->
 		<ant dir="omics-base" target="clean"/>
 		<ant dir="maui" target="clean"/>
 		<ant dir="proteus" target="clean"/>
 	</target>
 
 	<target name="build-all" depends="clean-all" description="Build all omics-applications.">
-		<ant dir="omics-base" target="nbms"/>
+		<ant dir="omics-base" target="build"/>
 		<ant dir="maui" target="build-zip"/>
 		<ant dir="proteus" target="build-zip"/>
 	</target>

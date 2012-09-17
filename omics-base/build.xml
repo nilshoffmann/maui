@@ -4,5 +4,8 @@
 <!-- If you delete this file and reopen the project it will be recreated. -->
 <project name="omics-base" basedir=".">
     <description>Builds the module suite omics-base.</description>
+    <property name="parent.projectdir" value="${basedir}/.."/>
+    <property name="platform.parentdir" value="${parent.projectdir}"/>
+    <import file="${parent.projectdir}/nbproject/platform-defaults.xml"/>
     <import file="nbproject/build-impl.xml"/>
 </project>
