@@ -182,7 +182,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             List<IVariableFragment> l = FragmentTools.getChildren(ff);
             for (IVariableFragment ivf : l) {
                 if (Thread.interrupted()) {
-                    return true;
+                    return false;
                 } else {
                     if (ivf.getName().equals("source_files")) {
 //                        Collection<IFileFragment> sourceFiles = ff.getSourceFiles();
@@ -195,7 +195,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             try {
                 for (IFileFragment sourceFile : cross.datastructures.tools.FragmentTools.getSourceFiles(ff)) {
                     if (Thread.interrupted()) {
-                        return true;
+                        return false;
                     } else {
                         System.out.println("Adding source file: " + sourceFile);
                         list.add(sourceFile);

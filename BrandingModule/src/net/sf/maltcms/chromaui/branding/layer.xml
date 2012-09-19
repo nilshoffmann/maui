@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
+    <file name="FormDesignerPalette_hidden"/>
     <folder name="Menu">
+        <file name="BuildProject_hidden"/>
         <file name="GoTo_hidden"/>
         <file name="Refactoring_hidden"/>
         <file name="RunProject_hidden"/>
         <file name="Source_hidden"/>
+        <folder name="Tools">
+            <file name="JavaPlatformsCustomizerAction.shadow_hidden"/>
+            <file name="LibrariesCustomizerAction.shadow_hidden"/>
+            <file name="VariablesCustomizerAction.shadow_hidden"/>
+        </folder>
         <file name="Versioning_hidden"/>
         <folder name="Window">
             <file name="AnnotationManagerAction.shadow_hidden"/>
             <file name="CSV2ListAction.shadow_hidden"/>
             <file name="ChromatogramViewAction.shadow_hidden"/>
+            <file name="Debug_hidden"/>
             <file name="GCViewerAction.shadow_hidden"/>
             <file name="Heatmap3DViewerAction.shadow_hidden"/>
             <file name="Heatmap3DViewerTopComponentAction.shadow_hidden"/>
             <file name="JFCAction.shadow_hidden"/>
             <file name="MSViewAction.shadow_hidden"/>
             <file name="MassSpectrumViewAction.shadow_hidden"/>
+            <file name="Other_hidden"/>
             <file name="PipelineEditorAction.shadow_hidden"/>
             <file name="PipelineRunnerAction.shadow_hidden"/>
+            <file name="Versioning_hidden"/>
             <file name="net-sf-maltcms-chromaui-statistics-pcaViewer-PCAViewerTopComponent.shadow_hidden"/>
         </folder>
     </folder>

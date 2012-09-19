@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="platform" default="download" basedir="..">
-    <target name="check-download">
+<project name="platform" default="prepare-build" basedir="..">
+    <import file="${basedir}/../nbproject/platform-download.xml"/>
+<!--    <target name="check-download">
         <echo message="Invoked tasks: ${ant.project.invoked-targets}"/>
         <condition property="download.required">
             <and>
@@ -10,9 +11,6 @@
                 <isset property="bootstrap.url"/>
                 <isset property="autoupdate.catalog.url"/>
                 <isset property="autoupdate_certified.catalog.url"/>
-                <not>
-                    <contains substring="clean" string="${ant.project.invoked-targets}"/>
-                </not>
             </and>
         </condition>
     </target>
@@ -50,5 +48,19 @@
             <modules includes="${module.includes}.*" clusters="${download.clusters}"/>
             <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
         </autoupdate>
+    </target>-->
+    <target name="check-omics-base" depends="download">
+        <condition property="omics-base.missing">
+            <not>
+                <available file="${basedir}/../omics-base/build"/>
+            </not>
+        </condition>
+    </target>
+    <target name="build-omics-base" if="omics-base.missing" depends="check-omics-base">
+        <echo message="Invoking build of omics-base!"/>
+        <ant antfile="${basedir}/../omics-base/build.xml" inheritall="false" inheritrefs="false" target="build"/>
+    </target>
+    <target name="prepare-build" depends="build-omics-base">
+        
     </target>
 </project>

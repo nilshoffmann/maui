@@ -123,8 +123,8 @@
     </Component>
     <Component class="javax.swing.JTextField" name="maltcmsVersion">
       <Properties>
-        <Property name="columns" type="int" value="20"/>
         <Property name="editable" type="boolean" value="false"/>
+        <Property name="columns" type="int" value="20"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.maltcmsVersion.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
@@ -161,9 +161,10 @@
     <Component class="javax.swing.JComboBox" name="maltcmsOnlineVersion">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="2">
-            <StringItem index="0" value="1.2.0"/>
-            <StringItem index="1" value="1.1.0"/>
+          <StringArray count="3">
+            <StringItem index="0" value="1.2.1"/>
+            <StringItem index="1" value="1.2.0"/>
+            <StringItem index="2" value="1.1.0"/>
           </StringArray>
         </Property>
       </Properties>
