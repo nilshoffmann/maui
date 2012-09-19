@@ -17,15 +17,7 @@
 		</java>
 	</target>
 
-        <target name="clean-all" description="Clean all omics-applications.">
-		<echo message="NB Platform is at ${nbplatform.active.dir}"/>
-<!--		<delete dir="${nbplatform.active.dir}"/>-->
-		<ant dir="omics-base" target="clean"/>
-		<ant dir="maui" target="clean"/>
-		<ant dir="proteus" target="clean"/>
-	</target>
-
-	<target name="build-all" depends="clean-all" description="Build all omics-applications.">
+	<target name="build-all" description="Build all omics-applications.">
 		<ant dir="omics-base" target="build"/>
 		<ant dir="maui" target="build-zip"/>
 		<ant dir="proteus" target="build-zip"/>
