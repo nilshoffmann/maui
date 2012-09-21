@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
             *** GENERATED FROM xml_binding_cfg.xml - DO NOT EDIT  ***
             *** Configure thru JAXB Wizard.                       ***
-        --><project name="pToolsBinding_jaxb" default="default" basedir=".">
+        -->
+<project name="pToolsBinding_jaxb" default="default" basedir=".">
     <target name="xjc-typedef-target" depends="-init-project">
         <typedef classname="com.sun.tools.xjc.XJCTask" name="xjc" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig">
             <classpath path="${jaxbwiz.xjcdef.classpath}"/>
@@ -12,7 +14,7 @@
         <mkdir dir="${build.generated.sources.dir}/jaxb" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache/BioCycPtools"/>
-        <xjc package="de.unibielefeld.gi.omicsTools.biocyc.ptools" destdir="build/generated/jaxbCache/BioCycPtools" catalog="catalog.xml">
+        <xjc package="de.unibielefeld.gi.omicsTools.biocyc.ptools" destdir="build/generated/jaxbCache/BioCycPtools" catalog="catalog.xml" encoding="UTF-8">
             <classpath>
                 <pathelement location="${src.dir}"/>
                 <pathelement path="${jaxbwiz.xjcrun.classpath}"/>

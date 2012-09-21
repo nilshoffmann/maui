@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='pToolsBinding' version='1.0'>
-	<schema type='-xmlschema' package='de.unibielefeld.gi.omicsTools.biocyc.ptools' name='BioCycPtools'>
+	<schema type='-xmlschema' package='de.unibielefeld.gi.omicsTools.biocyc.ptools' name='BioCycPtools' encoding="UTF-8">
 		<xjc-options>
 		</xjc-options>
 		<schema-sources>
-			<schema-source location='xml-resources/jaxb/BioCycPtools/ptools-xml.xsd' origLocation='../../../../db/metacyc/ptools-xml.xsd'/>
+			<schema-source location='xml-resources/jaxb/BioCycPtools/ptools-xml.xsd' origLocation='ptools-xml.xsd'/>
 		</schema-sources>
 		<bindings>
 		</bindings>
