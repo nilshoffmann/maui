@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/vol/maltcms/users/hoffmann/NetBeansProjects/pToolsBinding/../../../../db/metacyc/ptools-xml.xsd" uri="xml-resources/jaxb/BioCycPtools/ptools-xml.xsd"/>
+    <system systemId="http://www.w3.org/2001/xml.xsd" uri="xml-resources/jaxb/BioCycPtools/www.w3.org/2001/xml.xsd"/>
+</catalog>

@@ -1,0 +1,2236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+            jxb:version="1.0">
+    <!--  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>-->
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+<!--    <xs:element name="getxml">
+        <xs:annotation><xs:documentation>The request element for the getxml REST service</xs:documentation></xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="id" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="detail" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+	      
+    <xs:element name="apixml">
+        <xs:annotation><xs:documentation>The request element for the apixml REST service</xs:documentation></xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="fn" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="id" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="detail" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>-->
+	      
+<!--    <xs:element name="xmlquery">
+        <xs:annotation>
+            <xs:documentation>The request element for the xmlquery (bioVelo) REST service</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="query" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="detail" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>-->
+
+    <xs:element name="ptools-xml">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="metadata"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="Compound"/>
+                    <xs:element ref="GO-Term"/>
+                    <xs:element ref="Gene"/>
+                    <xs:element ref="Genetic-Element"/>
+                    <xs:element ref="Pathway"/>
+                    <xs:element ref="Protein"/>
+                    <xs:element ref="RNA"/>
+                    <xs:element ref="Reaction"/>
+                    <xs:element ref="Transcription-Unit"/>
+                    <xs:element ref="cco"/>
+                    <xs:element ref="Error"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ptools-version" use="required" type="xs:decimal"/>
+            <xs:attribute ref="xml:base" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="metadata">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="description"/>
+                <xs:element ref="url"/>
+                <xs:element ref="service_name"/>
+                <xs:element ref="query"/>
+                <xs:element ref="num_results"/>
+                <xs:element maxOccurs="unbounded" ref="PGDB"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="description">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="service_name" type="xs:NCName"/>
+    <xs:element name="query" type="xs:string"/>
+    <xs:element name="num_results" type="xs:integer"/>
+    <xs:element name="PGDB">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="species"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="strain"/>
+                    <xs:element ref="dblink"/>
+                </xs:sequence>
+            </xs:sequence>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="version" use="required" type="xs:decimal"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="strain">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Error">
+        <xs:complexType>
+            <xs:attribute name="frameid" use="required" type="xs:NMTOKEN"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="url">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:anyURI">
+                    <xs:attribute name="datatype" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="species">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Organism"/>
+            </xs:sequence>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="dblink">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dblink-db"/>
+                <xs:element ref="dblink-oid"/>
+                <xs:element ref="dblink-relationship"/>
+                <xs:element minOccurs="0" ref="dblink-URL"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="dblink-db" type="xs:NCName"/>
+    <xs:element name="dblink-oid" type="xs:anyURI"/>
+    <xs:element name="dblink-relationship" type="xs:NCName"/>
+    <xs:element name="dblink-URL" type="xs:anyURI"/>
+    <xs:element name="Pathway">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="taxonomic-range"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="instance"/>
+                    <xs:element ref="parent"/>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="credits"/>
+                    <xs:element ref="dblink"/>
+                    <xs:element ref="enzymes-not-used"/>
+                    <xs:element ref="evidence"/>
+                    <xs:element ref="reaction-list"/>
+                    <xs:element ref="reaction-ordering"/>
+                    <xs:element ref="species"/>
+                    <xs:element ref="synonym"/>
+                    <xs:element ref="hypothetical-reactions"/>
+                    <xs:element ref="pathway-link"/>
+                    <xs:element ref="reaction-layout"/>
+                </xs:choice>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="in-pathway"/>
+                    <xs:element ref="subclass"/>
+                    <xs:element ref="sub-pathways"/>
+                    <xs:element ref="super-pathways"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:anyURI"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="taxonomic-range">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Organism"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="hypothetical-reactions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pathway-link">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice>
+                    <xs:element ref="Compound"/>
+                    <xs:element ref="Pathway"/>
+                    <xs:element ref="Protein"/>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="incoming-link-target"/>
+                    <xs:element ref="link-target"/>
+                    <xs:element ref="outgoing-link-target"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="incoming-link-target">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Enzymatic-Reaction"/>
+                <xs:element ref="Pathway"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="Reaction"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="link-target">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Enzymatic-Reaction"/>
+                <xs:element ref="Pathway"/>
+                <xs:element ref="Reaction"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="outgoing-link-target">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Pathway"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reaction-layout">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="Reaction"/>
+                <xs:element minOccurs="0" ref="direction"/>
+                <xs:element minOccurs="0" ref="left-primaries"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="Pathway"/>
+                    <xs:element ref="right-primaries"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="direction" type="xs:NCName"/>
+    <xs:element name="left-primaries">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="right-primaries">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="sub-pathways">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Pathway"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="super-pathways">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Pathway"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Protein">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice>
+                    <xs:element ref="cml"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="parent"/>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="appears-in-left-side-of"/>
+                    <xs:element ref="appears-in-right-side-of"/>
+                    <xs:element ref="citation"/>
+                    <xs:element ref="cofactors-of"/>
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="component"/>
+                    <xs:element ref="credits"/>
+                    <xs:element ref="dblink"/>
+                    <xs:element ref="evidence"/>
+                    <xs:element ref="gene"/>
+                    <xs:element ref="has-go-term"/>
+                    <xs:element ref="prosthetic-groups-of"/>
+                    <xs:element ref="regulated-by"/>
+                    <xs:element ref="regulates"/>
+                    <xs:element ref="species"/>
+                    <xs:element ref="synonym"/>
+                    <xs:element ref="consensus-sequence"/>
+                    <xs:element ref="dna-footprint-size"/>
+                    <xs:element ref="has-feature"/>
+                    <xs:element ref="intron-or-removed-segment"/>
+                    <xs:element ref="location"/>
+                    <xs:element ref="molecular-weight-exp"/>
+                    <xs:element ref="molecular-weight-seq"/>
+                    <xs:element ref="pi"/>
+                    <xs:element ref="recognized-promoters"/>
+                    <xs:element ref="symmetry"/>
+                </xs:choice>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="abbrev-name"/>
+                    <xs:element ref="component-of"/>
+                    <xs:element ref="instance"/>
+                    <xs:element ref="subclass"/>
+                    <xs:element ref="unmodified-form"/>
+                    <xs:element ref="catalyzes"/>
+                    <xs:element ref="isozyme-sequence-similarity"/>
+                    <xs:element ref="modified-form"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NMTOKEN"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="consensus-sequence">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NCName">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="dna-footprint-size">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                    <xs:attribute name="units" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="has-feature">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Feature"/>
+                <xs:element minOccurs="0" ref="state"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="state" type="xs:NCName"/>
+    <xs:element name="intron-or-removed-segment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="start-bp"/>
+                <xs:element ref="end-bp"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="start-bp">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="end-bp">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="location">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="cco"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="molecular-weight-exp">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+            <xs:attribute name="units" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="molecular-weight-seq">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+            <xs:attribute name="units" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pi">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="citation"/>
+            </xs:sequence>
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="recognized-promoters">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Promoter"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="symmetry" type="xs:NCName"/>
+    <xs:element name="catalyzes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Enzymatic-Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isozyme-sequence-similarity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="isozyme"/>
+                <xs:element ref="is-similar"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isozyme">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="is-similar">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="modified-form">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Genetic-Element">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="comment"/>
+                <xs:element ref="instance"/>
+                <xs:element ref="parent"/>
+                <xs:element ref="subclass"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="component"/>
+                    <xs:element ref="circular"/>
+                    <xs:element ref="sequence-length"/>
+                </xs:choice>
+            </xs:choice>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="circular">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="sequence-length">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Transcription-Unit">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="synonym"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="regulated-by"/>
+                    <xs:element ref="transcription-direction"/>
+                    <xs:element ref="extent-unknown"/>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="component"/>
+                    <xs:element ref="evidence"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="extent-unknown">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cco">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="parent"/>
+                    <xs:element ref="subclass"/>
+                </xs:choice>
+                <xs:element minOccurs="0" ref="definition"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="goid"/>
+                    <xs:element ref="sensu"/>
+                </xs:choice>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="component"/>
+                    <xs:element ref="component-of"/>
+                </xs:choice>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="synonym"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="instance"/>
+                    <xs:element ref="surrounded-by"/>
+                    <xs:element ref="surrounds"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="goid">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NMTOKEN">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="sensu">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Organism"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="surrounded-by">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="cco"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="surrounds">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="cco"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Gene">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="component"/>
+                    <xs:element ref="instance"/>
+                    <xs:element ref="subclass"/>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="component-of"/>
+                    <xs:element ref="dblink"/>
+                    <xs:element ref="left-end-position"/>
+                    <xs:element ref="right-end-position"/>
+                    <xs:element ref="synonym"/>
+                    <xs:element ref="transcription-direction"/>
+                    <xs:element ref="centisome-position"/>
+                    <xs:element ref="interrupted"/>
+                    <xs:element ref="product"/>
+                </xs:choice>
+                <xs:element minOccurs="0" ref="accession-2"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="parent"/>
+                    <xs:element ref="accession-1"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NMTOKEN"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="centisome-position">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                    <xs:attribute name="units" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="interrupted">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="product">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="Compound"/>
+                <xs:element ref="RNA"/>
+                <xs:element maxOccurs="unbounded" ref="Protein"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="accession-2">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NMTOKEN">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="accession-1">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NMTOKEN">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RNA">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="instance"/>
+                <xs:element minOccurs="0" ref="parent"/>
+                <xs:element minOccurs="0" ref="subclass"/>
+                <xs:element minOccurs="0" ref="unmodified-form"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="appears-in-left-side-of"/>
+                    <xs:element ref="appears-in-right-side-of"/>
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="component-of"/>
+                    <xs:element ref="credits"/>
+                    <xs:element ref="dblink"/>
+                    <xs:element ref="gene"/>
+                    <xs:element ref="has-go-term"/>
+                    <xs:element ref="n-1-name"/>
+                    <xs:element ref="n-name"/>
+                    <xs:element ref="n-plus-1-name"/>
+                    <xs:element ref="regulates"/>
+                    <xs:element ref="species"/>
+                    <xs:element ref="synonym"/>
+                </xs:choice>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="citation"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="evidence"/>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NMTOKEN"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Compound">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="parent"/>
+                <xs:element minOccurs="0" ref="subclass"/>
+                <xs:element minOccurs="0" ref="cml"/>
+                <xs:choice>
+                    <xs:element ref="instance"/>
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                        <xs:element ref="abbrev-name"/>
+                        <xs:element ref="appears-in-left-side-of"/>
+                        <xs:element ref="appears-in-right-side-of"/>
+                        <xs:element ref="citation"/>
+                        <xs:element ref="cofactors-of"/>
+                        <xs:element ref="comment"/>
+                        <xs:element ref="common-name"/>
+                        <xs:element ref="component-of"/>
+                        <xs:element ref="credits"/>
+                        <xs:element ref="dblink"/>
+                        <xs:element ref="evidence"/>
+                        <xs:element ref="n-1-name"/>
+                        <xs:element ref="n-name"/>
+                        <xs:element ref="n-plus-1-name"/>
+                        <xs:element ref="prosthetic-groups-of"/>
+                        <xs:element ref="regulates"/>
+                        <xs:element ref="synonym"/>
+                        <xs:element ref="cofactors-or-prosthetic-groups-of"/>
+                        <xs:element ref="gibbs-0"/>
+                        <xs:element ref="inchi"/>
+                        <xs:element ref="molecular-weight"/>
+                        <xs:element ref="pka1"/>
+                        <xs:element ref="pka2"/>
+                        <xs:element ref="pka3"/>
+                        <xs:element ref="systematic-name"/>
+                    </xs:choice>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:anyURI"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cofactors-or-prosthetic-groups-of">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Enzymatic-Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="gibbs-0">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="citation"/>
+            </xs:sequence>
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="inchi">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="molecular-weight">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                    <xs:attribute name="units" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pka1">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pka2">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pka3">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="systematic-name">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Reaction">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="instance"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="credits"/>
+                    <xs:element ref="dblink"/>
+                    <xs:element ref="enzymes-not-used"/>
+                    <xs:element ref="in-pathway"/>
+                    <xs:element ref="reaction-direction"/>
+                    <xs:element ref="regulated-by"/>
+                    <xs:element ref="species"/>
+                    <xs:element ref="synonym"/>
+                    <xs:element ref="deltag0"/>
+                    <xs:element ref="ec-number"/>
+                    <xs:element ref="enzymatic-reaction"/>
+                    <xs:element ref="left"/>
+                    <xs:element ref="official-ec"/>
+                    <xs:element ref="orphan"/>
+                    <xs:element ref="requirements"/>
+                    <xs:element ref="right"/>
+                    <xs:element ref="signal"/>
+                    <xs:element ref="spontaneous"/>
+                    <xs:element ref="std-reduction-potential"/>
+                </xs:choice>
+                <xs:choice>
+                    <xs:element ref="parent"/>
+                    <xs:element ref="reaction-list"/>
+                    <xs:element ref="reaction-ordering"/>
+                    <xs:element ref="subclass"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="citation"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:anyURI"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="deltag0">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+            <xs:attribute name="units" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ec-number">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NMTOKEN">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="enzymatic-reaction">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Enzymatic-Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="left">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+                <xs:element ref="coefficient"/>
+                <xs:element ref="compartment"/>
+                <xs:element ref="name-slot"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="official-ec">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orphan" type="xs:NCName"/>
+    <xs:element name="requirements">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Compound"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="right">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+                <xs:element ref="coefficient"/>
+                <xs:element ref="compartment"/>
+                <xs:element ref="name-slot"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="signal">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Compound"/>
+            </xs:sequence>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="spontaneous">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="std-reduction-potential">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                    <xs:attribute name="units" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GO-Term">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="term-members"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="synonym"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="subclass"/>
+                    <xs:sequence>
+                        <xs:element ref="definition"/>
+                        <xs:element ref="common-name"/>
+                        <xs:element ref="comment"/>
+                    </xs:sequence>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" use="required" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NMTOKEN"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="term-members">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Organism">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="parent"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="dblink"/>
+                    <xs:element ref="synonym"/>
+                    <xs:element ref="genome"/>
+                    <xs:element ref="pgdb-author"/>
+                    <xs:element ref="pgdb-copyright"/>
+                    <xs:element ref="pgdb-footer-citation"/>
+                    <xs:element ref="pgdb-home-page"/>
+                    <xs:element ref="pgdb-name"/>
+                    <xs:element ref="pgdb-tier"/>
+                    <xs:element ref="rank"/>
+                    <xs:element ref="strain-name"/>
+                    <xs:element ref="subspecies-name"/>
+                </xs:choice>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="citation"/>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="genome">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Genetic-Element"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pgdb-author">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Person"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pgdb-copyright">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pgdb-footer-citation">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pgdb-home-page">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:anyURI">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pgdb-name">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NCName">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pgdb-tier">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rank" type="xs:string"/>
+    <xs:element name="strain-name">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:anyURI">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="subspecies-name">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="instance">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="Compound"/>
+                <xs:element ref="Gene"/>
+                <xs:element ref="Genetic-Element"/>
+                <xs:element ref="Pathway"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+                <xs:element ref="Reaction"/>
+                <xs:element ref="cco"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="parent">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Evidence-Code"/>
+                <xs:element ref="Feature"/>
+                <xs:element ref="Gene"/>
+                <xs:element ref="Genetic-Element"/>
+                <xs:element ref="Organism"/>
+                <xs:element ref="Pathway"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+                <xs:element ref="Reaction"/>
+                <xs:element ref="Regulation"/>
+                <xs:element ref="Terminator"/>
+                <xs:element ref="cco"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reaction-list">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="Pathway"/>
+                <xs:element ref="Reaction"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="synonym">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="common-name">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reaction-ordering">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Reaction"/>
+                <xs:element ref="predecessor-reactions"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="predecessor-reactions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="credits">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="created"/>
+                <xs:choice>
+                    <xs:element ref="nil"/>
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                        <xs:element ref="last-curated"/>
+                        <xs:element ref="reviewed"/>
+                        <xs:element ref="revised"/>
+                    </xs:choice>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="created">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="date"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="Organization"/>
+                    <xs:element ref="Person"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="nil">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="date"/>
+                <xs:element ref="Person"/>
+                <xs:element minOccurs="0" ref="Organization"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="last-curated">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="date"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="Organization"/>
+                    <xs:element ref="Person"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reviewed">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="date"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="Organization"/>
+                    <xs:element ref="Person"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="revised">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="date"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="Organization"/>
+                    <xs:element ref="Person"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="enzymes-not-used">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Enzymatic-Reaction">
+        <xs:annotation>
+      <xs:appinfo>
+         <jxb:class name="Enzymatic-Reactions">
+         </jxb:class>
+      </xs:appinfo>
+      </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="temperature-opt"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="cofactor"/>
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="evidence"/>
+                    <xs:element ref="reaction-direction"/>
+                    <xs:element ref="regulated-by"/>
+                    <xs:element ref="synonym"/>
+                    <xs:element ref="cofactor-binding-comment"/>
+                    <xs:element ref="cofactor-or-prosthetic-group"/>
+                    <xs:element ref="enzyme"/>
+                    <xs:element ref="km"/>
+                    <xs:element ref="ph-opt"/>
+                    <xs:element ref="prosthetic-group"/>
+                    <xs:element ref="reaction"/>
+                    <xs:element ref="required-protein-complex"/>
+                </xs:choice>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="alternative-substrate"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="alternative-cofactor"/>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NMTOKEN"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="temperature-opt">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+            <xs:attribute name="units" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cofactor-binding-comment">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cofactor-or-prosthetic-group">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="enzyme">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="km">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="substrate"/>
+                <xs:element ref="value"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="units" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="value">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:double">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ph-opt">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="prosthetic-group">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reaction">
+        <xs:annotation>
+      <xs:appinfo>
+         <jxb:class name="Reactions">
+         </jxb:class>
+      </xs:appinfo>
+      </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="required-protein-complex">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="alternative-substrate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="substrate"/>
+                <xs:element ref="alternate"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="alternative-cofactor">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="cofactor"/>
+                <xs:element ref="alternate"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="citation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Publication"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="evidence">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Evidence-Code"/>
+                <xs:element minOccurs="0" ref="Publication"/>
+                <xs:element minOccurs="0" ref="with"/>
+                <xs:element minOccurs="0" ref="probability"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="with">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="probability">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Evidence-Code"/>
+            </xs:sequence>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="comment">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="subclass">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="Compound"/>
+                <xs:element ref="GO-Term"/>
+                <xs:element ref="Gene"/>
+                <xs:element ref="Genetic-Element"/>
+                <xs:element ref="Pathway"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+                <xs:element ref="Reaction"/>
+                <xs:element ref="cco"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="in-pathway">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element maxOccurs="unbounded" ref="Pathway"/>
+                <xs:element maxOccurs="unbounded" ref="Reaction"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cml">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="molecule"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="molecule">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="atomArray"/>
+                <xs:element ref="bondArray"/>
+                <xs:element ref="formula"/>
+                <xs:element minOccurs="0" ref="float"/>
+                <xs:element maxOccurs="unbounded" ref="string"/>
+            </xs:sequence>
+            <xs:attribute name="id" use="required"/>
+            <xs:attribute name="title" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="atomArray">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="atom"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="atom">
+        <xs:complexType>
+            <xs:attribute name="elementType" use="required" type="xs:NCName"/>
+            <xs:attribute name="formalCharge" type="xs:integer"/>
+            <xs:attribute name="id" use="required"/>
+            <xs:attribute name="x2" use="required" type="xs:double"/>
+            <xs:attribute name="y2" use="required" type="xs:double"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bondArray">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="bond"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bond">
+        <xs:complexType>
+            <xs:attribute name="atomRefs" use="required"/>
+            <xs:attribute name="id" use="required" type="xs:NMTOKEN"/>
+            <xs:attribute name="order" use="required" type="xs:NMTOKEN"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="formula">
+        <xs:complexType>
+            <xs:attribute name="concise" use="required"/>
+            <xs:attribute name="formalCharge" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="float">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="title" use="required" type="xs:NCName"/>
+                    <xs:attribute name="units" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="string">
+        <xs:complexType mixed="true">
+            <xs:attribute name="title" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="appears-in-right-side-of">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="appears-in-left-side-of">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cofactors-of">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Enzymatic-Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="component">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="DNA-Binding-Site"/>
+                <xs:element ref="Gene"/>
+                <xs:element ref="Promoter"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+                <xs:element ref="Terminator"/>
+                <xs:element ref="cco"/>
+                <xs:element ref="citation"/>
+                <xs:element ref="coefficient"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="gene">
+        <xs:annotation>
+      <xs:appinfo>
+         <jxb:class name="Genes">
+         </jxb:class>
+      </xs:appinfo>
+      </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Gene"/>
+                <xs:element minOccurs="0" ref="comment"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Feature">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="parent"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="evidence"/>
+                    <xs:element ref="left-end-position"/>
+                    <xs:element ref="right-end-position"/>
+                    <xs:element ref="feature-of"/>
+                    <xs:element ref="homology-motif"/>
+                    <xs:element ref="residue-number"/>
+                    <xs:element ref="residue-type"/>
+                </xs:choice>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="alternate-sequence"/>
+                    <xs:element ref="attached-group"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="feature-of">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="homology-motif">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="residue-number">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="residue-type">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Compound"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="alternate-sequence">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NCName">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="attached-group">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Compound"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="has-go-term">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="GO-Term"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="evidence"/>
+                <xs:element minOccurs="0" ref="citation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Promoter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="regulated-by"/>
+                    <xs:element ref="transcription-direction"/>
+                </xs:choice>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="synonym"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="minus-35-right"/>
+                    <xs:element ref="minus-35-left"/>
+                </xs:sequence>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="minus-10-right"/>
+                    <xs:element ref="minus-10-left"/>
+                </xs:sequence>
+                <xs:element minOccurs="0" ref="component-of"/>
+                <xs:element minOccurs="0" ref="common-name"/>
+                <xs:element minOccurs="0" ref="comment"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="evidence"/>
+                </xs:choice>
+                <xs:element minOccurs="0" ref="binds-sigma-factor"/>
+                <xs:element minOccurs="0" ref="absolute-plus-1-pos"/>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="minus-35-right">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="minus-35-left">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="minus-10-right">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="minus-10-left">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="binds-sigma-factor">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="absolute-plus-1-pos">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                    <xs:attribute name="units" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="prosthetic-groups-of">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Enzymatic-Reaction"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="regulates">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Regulation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="regulated-by">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Regulation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="unmodified-form">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="abbrev-name">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="component-of">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Protein"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="Genetic-Element"/>
+                    <xs:element ref="Transcription-Unit"/>
+                </xs:choice>
+                <xs:choice>
+                    <xs:element ref="Gene"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="cco"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="transcription-direction">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="definition">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="left-end-position">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="right-end-position">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="n-plus-1-name">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="n-name">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="n-1-name">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="coefficient">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="name-slot" type="xs:string"/>
+    <xs:element name="compartment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="cco"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reaction-direction">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="citation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Person">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="comment"/>
+                <xs:element ref="common-name"/>
+                <xs:element ref="email"/>
+                <xs:element ref="affiliations"/>
+                <xs:element ref="middle-name"/>
+            </xs:choice>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="affiliations">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Organization"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="middle-name">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NCName">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Evidence-Code">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="parent"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="comment"/>
+                    <xs:element ref="common-name"/>
+                </xs:choice>
+            </xs:choice>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" use="required" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Regulation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="evidence"/>
+                    <xs:element ref="regulated-entity"/>
+                    <xs:element ref="regulator"/>
+                </xs:choice>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="physiologically-relevant"/>
+                    <xs:sequence>
+                        <xs:element ref="pause-start-pos"/>
+                        <xs:element ref="pause-end-pos"/>
+                    </xs:sequence>
+                </xs:choice>
+                <xs:element minOccurs="0" ref="mode"/>
+                <xs:element minOccurs="0" ref="mechanism"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="comment"/>
+                <xs:element minOccurs="0" ref="associated-binding-site"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="parent"/>
+                    <xs:element ref="accessory-proteins"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="regulated-entity">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="Protein"/>
+                <xs:element ref="Reaction"/>
+                <xs:element ref="Transcription-Unit"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Enzymatic-Reaction"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Terminator"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Promoter"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="regulator">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="physiologically-relevant">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pause-start-pos">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pause-end-pos">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="mode">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="mechanism" type="xs:NCName"/>
+    <xs:element name="associated-binding-site">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="DNA-Binding-Site"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="MRNA-Binding-Site"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MRNA-Binding-Site">
+        <xs:complexType>
+            <xs:sequence minOccurs="0">
+                <xs:element ref="right-end-position"/>
+                <xs:element ref="left-end-position"/>
+                <xs:element ref="involved-in-regulation"/>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="accessory-proteins">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Protein"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Terminator">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="regulated-by"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="right-end-position"/>
+                    <xs:element ref="left-end-position"/>
+                    <xs:element ref="component-of"/>
+                </xs:sequence>
+                <xs:element minOccurs="0" ref="comment"/>
+                <xs:choice>
+                    <xs:element ref="parent"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="citation"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="class" type="xs:boolean"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="date">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NMTOKEN">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Organization">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="abbrev-name"/>
+                <xs:element ref="comment"/>
+                <xs:element ref="common-name"/>
+                <xs:element ref="email"/>
+                <xs:element ref="synonym"/>
+                <xs:element ref="url"/>
+            </xs:choice>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cofactor">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="citation"/>
+                <xs:element ref="comment"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="substrate">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="alternate">
+        <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Compound"/>
+                <xs:element ref="Protein"/>
+                <xs:element ref="RNA"/>
+            </xs:choice>
+            <xs:attribute name="datatype" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Publication">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="comment"/>
+                    <xs:element ref="url"/>
+                    <xs:element ref="author"/>
+                    <xs:element ref="pubmed-id"/>
+                    <xs:element ref="source"/>
+                    <xs:element ref="title"/>
+                    <xs:element ref="year"/>
+                </xs:choice>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="common-name"/>
+                    <xs:element ref="abstract"/>
+                    <xs:element ref="agricola-id"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="author">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pubmed-id">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="source">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="title">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="year">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="abstract">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="agricola-id">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NCName">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DNA-Binding-Site">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="synonym"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="involved-in-regulation"/>
+                    <xs:element ref="site-length"/>
+                </xs:choice>
+                <xs:element minOccurs="0" ref="dblink"/>
+                <xs:element minOccurs="0" ref="component-of"/>
+                <xs:element minOccurs="0" ref="comment"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="citation"/>
+                    <xs:element ref="evidence"/>
+                </xs:choice>
+                <xs:element minOccurs="0" ref="abs-center-pos"/>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:NMTOKEN"/>
+            <xs:attribute name="frameid" use="required" type="xs:NCName"/>
+            <xs:attribute name="orgid" use="required" type="xs:NCName"/>
+            <xs:attribute name="detail"/>
+            <xs:attribute name="resource"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="site-length">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="abs-center-pos">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:decimal">
+                    <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="email">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="involved-in-regulation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="Regulation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<ptools-xml ptools-version='16.0' xml:base='http://BioCyc.org/xmlquery?%5bx:x%3c-ecoli^^genes,x^name=%22trpA%22%5d'>
+  <metadata>
+    <url>http://BioCyc.org/</url>
+    <service_name>xmlquery</service_name>
+    <query>[x:x&lt;-ecoli^^genes,x^name=&quot;trpA&quot;]</query>
+    <num_results>1</num_results>
+    <PGDB orgid='ECOLI' version='16.1'>
+      <species datatype='string'>Escherichia coli</species>
+      <strain datatype='string'>K-12 substr. MG1655</strain>
+      <dblink>
+        <dblink-db>NCBI-TAXONOMY-DB</dblink-db>
+        <dblink-oid>511145</dblink-oid>
+        <dblink-relationship>unification</dblink-relationship>
+        <dblink-URL>http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=511145</dblink-URL>
+      </dblink>
+    </PGDB>
+  </metadata>
+  <Gene ID='ECOLI:EG11024' orgid='ECOLI' frameid='EG11024' detail='full'>
+    <parent>
+      <Gene resource='getxml?ECOLI:BC-1.5.1.15' orgid='ECOLI' frameid='BC-1.5.1.15' class='true'/>
+    </parent>
+    <parent>
+      <Gene resource='getxml?ECOLI:BC-7.1' orgid='ECOLI' frameid='BC-7.1' class='true'/>
+    </parent>
+    <dblink>
+      <dblink-db>ECOLIHUB</dblink-db>
+      <dblink-oid>trpA</dblink-oid>
+      <dblink-relationship>unification</dblink-relationship>
+      <dblink-URL>http://porteco.org/AjaxSearch.jsp?searchString=trpA</dblink-URL>
+    </dblink>
+    <dblink>
+      <dblink-db>REGULONDB</dblink-db>
+      <dblink-oid>EG11024</dblink-oid>
+      <dblink-relationship>unification</dblink-relationship>
+      <dblink-URL>http://regulondb.ccg.unam.mx/gene?term=EG11024&amp;type=gene&amp;format=jsp</dblink-URL>
+    </dblink>
+    <dblink>
+      <dblink-db>ASAP</dblink-db>
+      <dblink-oid>ABE-0004232</dblink-oid>
+      <dblink-relationship>unification</dblink-relationship>
+      <dblink-URL>http://asap.ahabs.wisc.edu/asap/feature_info.php?FeatureID=ABE-0004232</dblink-URL>
+    </dblink>
+    <dblink>
+      <dblink-db>ECHOBASE</dblink-db>
+      <dblink-oid>EB1017</dblink-oid>
+      <dblink-relationship>unification</dblink-relationship>
+      <dblink-URL>http://www.york.ac.uk/res/thomas/Gene.cfm?recordID=EB1017</dblink-URL>
+    </dblink>
+    <dblink>
+      <dblink-db>ECOGENE</dblink-db>
+      <dblink-oid>EG11024</dblink-oid>
+      <dblink-relationship>unification</dblink-relationship>
+      <dblink-URL>http://www.ecogene.org/geneInfo.php?eg_id=EG11024</dblink-URL>
+    </dblink>
+    <dblink>
+      <dblink-db>OU-MICROARRAY</dblink-db>
+      <dblink-oid>b1260</dblink-oid>
+      <dblink-relationship>unification</dblink-relationship>
+      <dblink-URL>http://genexpdb.ou.edu/main/?query=b1260</dblink-URL>
+    </dblink>
+    <dblink>
+      <dblink-db>CGSC</dblink-db>
+      <dblink-oid>74</dblink-oid>
+      <dblink-relationship>unification</dblink-relationship>
+      <dblink-URL>http://cgsc.biology.yale.edu/cgi-bin/sybgw/cgsc/Site/74</dblink-URL>
+    </dblink>
+    <component-of>
+      <Transcription-Unit resource='getxml?ECOLI:TU0-41724' orgid='ECOLI' frameid='TU0-41724'/>
+      <Transcription-Unit resource='getxml?ECOLI:TU0-41723' orgid='ECOLI' frameid='TU0-41723'/>
+      <Transcription-Unit resource='getxml?ECOLI:TU0-41722' orgid='ECOLI' frameid='TU0-41722'/>
+      <Transcription-Unit resource='getxml?ECOLI:TU0-41721' orgid='ECOLI' frameid='TU0-41721'/>
+      <Genetic-Element resource='getxml?ECOLI:COLI-K12' orgid='ECOLI' frameid='COLI-K12'/>
+      <Transcription-Unit resource='getxml?ECOLI:TU3' orgid='ECOLI' frameid='TU3'/>
+      <Transcription-Unit resource='getxml?ECOLI:TU00067' orgid='ECOLI' frameid='TU00067'/>
+    </component-of>
+    <common-name datatype='string'>trpA</common-name>
+    <centisome-position datatype='float' units='CENTISOMES'>28.330433</centisome-position>
+    <accession-2 datatype='string'>ECK1254</accession-2>
+    <accession-1 datatype='string'>b1260</accession-1>
+    <left-end-position datatype='integer'>1314440</left-end-position>
+    <transcription-direction datatype='string'>-</transcription-direction>
+    <synonym datatype='string'>try</synonym>
+    <synonym datatype='string'>tryp</synonym>
+    <right-end-position datatype='integer'>1315246</right-end-position>
+    <product>
+      <Protein resource='getxml?ECOLI:TRYPSYN-APROTEIN' orgid='ECOLI' frameid='TRYPSYN-APROTEIN'/>
+    </product>
+  </Gene>
+</ptools-xml>

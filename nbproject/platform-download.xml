@@ -34,7 +34,7 @@
         </pathconvert>
         <echo message="Downloading clusters ${download.clusters}"/>
         <echo message="Enforcing modules ${enforced.modules}"/>
-        <property name="tasks.jar" location="${java.io.tmpdir}/tasks.jar"/>
+        <property name="tasks.jar" location="${basedir}/tasks.jar"/>
         <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
         <taskdef name="autoupdate" classname="org.netbeans.nbbuild.AutoUpdate" classpath="${tasks.jar}"/>
         <autoupdate installdir="${nbplatform.active.dir}" updatecenter="${autoupdate.catalog.url}">
