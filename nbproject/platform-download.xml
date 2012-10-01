@@ -38,13 +38,12 @@
         <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
         <taskdef name="autoupdate" classname="org.netbeans.nbbuild.AutoUpdate" classpath="${tasks.jar}"/>
         <autoupdate installdir="${nbplatform.active.dir}" updatecenter="${autoupdate.catalog.url}">
-            <modules  includes="${module.includes}.*" clusters="${download.clusters}"/>
+            <modules includes="${module.includes}.*" clusters="${download.clusters}"/>
             <modules includes="${module.force.includes}.*" clusters="${download.clusters}"/>
             <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
         </autoupdate>
         <autoupdate installdir="${nbplatform.active.dir}" updatecenter="${autoupdate_certified.catalog.url}">
             <modules includes="${module.includes}.*" clusters="${download.clusters}"/>
-            <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
         </autoupdate>
     </target>
 </project>
