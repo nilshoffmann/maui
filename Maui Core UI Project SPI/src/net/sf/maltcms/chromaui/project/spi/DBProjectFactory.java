@@ -45,6 +45,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
@@ -57,6 +58,8 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.SampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.project.ChromAUIProject;
 import net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api.ChromaTOFImporter;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
 import org.apache.commons.io.FileUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
@@ -253,7 +256,7 @@ public class DBProjectFactory {
             Map<File, String> fileToGroup) throws RuntimeException, IOException {
         Boolean copyFiles = (Boolean) props.get("copy.files");
         if (copyFiles.booleanValue()) {
-            Map<File,String> newFileToGroup = new LinkedHashMap<File,String>();
+            Map<File, String> newFileToGroup = new LinkedHashMap<File, String>();
             System.out.println("Copying files to user project directory!");
             try {
                 File originalData = new File(projdir, "original");
@@ -292,6 +295,7 @@ public class DBProjectFactory {
         IChromatogramDescriptor[] icds = new IChromatogramDescriptor[inputFiles.length];
         //            IFileFragment[] fragments = new IFileFragment[inputFiles.length];
         Double modulationTime = (Double) props.get("modulationTime");
+        Double scanRate = (Double) props.get("scanRate");
         int i = 0;
         for (File f : inputFiles) {
             IFileFragment ff = getProjectFileForResource(projdir, f);
@@ -302,16 +306,28 @@ public class DBProjectFactory {
                 ArrayDouble.D0 modTime = new ArrayDouble.D0();
                 modTime.set(modulationTime.doubleValue());
                 ivf.setArray(modTime);
-
+            }
+            if (scanRate != null) {
+                System.out.println("Using user-defined scan_rate="+scanRate);
                 IVariableFragment sr = new VariableFragment(ff, "scan_rate");
-                ArrayDouble.D0 scanRate = new ArrayDouble.D0();
-                IVariableFragment sdur = ff.getChild("scan_duration");
-                final Array durationarray = sdur.getArray();
-
-                final IndexIterator iter = durationarray.getIndexIterator();
-                double scanDuration = iter.getDoubleNext();
-                scanRate.set(1.0d / scanDuration);
-                sr.setArray(scanRate);
+                ArrayDouble.D0 scanRateArr = new ArrayDouble.D0();
+                scanRateArr.set(scanRate);
+                sr.setArray(scanRateArr);
+            } else {
+//                IVariableFragment sdur = ff.getChild("scan_duration");
+//                final Array durationarray = sdur.getArray();
+//                final IndexIterator iter = durationarray.getIndexIterator();
+//                double scanDuration = iter.getDoubleNext();
+//                IVariableFragment sr = new VariableFragment(ff, "scan_rate");
+//                ArrayDouble.D0 scanRateArr = new ArrayDouble.D0();
+//                scanRateArr.set(1.0d/scanDuration);
+//                sr.setArray(scanRateArr);
+                try {
+                    IVariableFragment scanRateVar = ff.getChild("scan_rate");
+                }catch(ResourceNotAvailableException rnae) {
+                    System.err.println("Variable scan_rate not available in source file: "+ff.getName());
+                    throw rnae;
+                }
             }
 
             ff.save();
@@ -339,8 +355,23 @@ public class DBProjectFactory {
         File dataDir = new File(projdir, "data");
         try {
             FileUtil.createFolder(dataDir);
-            IFileFragment fragment = new FileFragment(dataDir, f.getName());
-            fragment.addSourceFile(new FileFragment(f));
+            IFileFragment fragment = null;
+            if (f.getName().toLowerCase().endsWith(".csv") || f.getName().toLowerCase().endsWith(".txt")) {
+                try {
+                    //try chromatof csv parser
+                    File importDir = new File(projdir, "import");
+                    FileUtil.createFolder(importDir);
+                    List<File> files = AProgressAwareCallable.createAndRun("Importing report " + f.getName(), ChromaTOFImporter.importAsVirtualChromatograms(importDir, f)).get();
+                    System.out.println("Received files: " + files);
+                    fragment = new FileFragment(dataDir, files.get(0).getName());
+                    fragment.addSourceFile(new FileFragment(files.get(0)));
+                } catch (Exception ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            } else {
+                fragment = new FileFragment(dataDir, f.getName());
+                fragment.addSourceFile(new FileFragment(f));
+            }
             return fragment;
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);

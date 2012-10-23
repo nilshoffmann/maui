@@ -33,7 +33,6 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakList1DImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.netbeans.api.progress.ProgressHandle;
@@ -83,9 +82,9 @@ public final class ChromaTofPeakListImporter implements ActionListener {
         jfc.setMultiSelectionEnabled(true);
         int result = jfc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            ChromaTofPeakList1DImporter plir = new ChromaTofPeakList1DImporter(context,
+            net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter plir = new net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter(context,
                     jfc.getSelectedFiles());
-            ChromaTofPeakList1DImporter.createAndRun("ChromaTOF Peak List Import", plir);
+            net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter.createAndRun("ChromaTOF Peak List Import", plir);
         }
     }
 }

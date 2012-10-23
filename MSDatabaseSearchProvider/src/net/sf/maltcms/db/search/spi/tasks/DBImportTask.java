@@ -28,8 +28,12 @@
 package net.sf.maltcms.db.search.spi.tasks;
 
 import cross.tools.StringTools;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -113,7 +117,36 @@ public class DBImportTask extends AProgressAwareRunnable {
 //                                FileUtil.toFile(dbFile).getAbsolutePath());
                         MSPFormatMetaboliteParser2 mfmp = new MSPFormatMetaboliteParser2();
                         mfmp.setLocale(locale);
-                        Collection<IMetabolite> metabolites = mfmp.parse(file);
+                        BufferedReader br = null;
+                        List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
+                        try {
+                            br = new BufferedReader(new FileReader(file));
+                            String line = "";
+                            while ((line = br.readLine()) != null) {
+                                IMetabolite met = mfmp.handleLine(line);
+                                if(met!=null) {
+                                    metabolites.add(met);
+                                }
+                            }
+                            // System.out.println("Found "+nnpeaks+" mass spectra!");
+                            // System.exit(-1);
+                            // handleLine("\r");
+                        } catch (FileNotFoundException e) {
+                            System.err.println(e.getLocalizedMessage());
+                            Exceptions.printStackTrace(e);
+                        } catch (IOException e) {
+                            System.err.println(e.getLocalizedMessage());
+                            Exceptions.printStackTrace(e);
+                        } finally {
+                            if (br != null) {
+                                try {
+                                    br.close();
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                            }
+                        }
+//                        Collection<IMetabolite> metabolites = mfmp.parse(file);
                         if (metabolites.isEmpty()) {
                             DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
                                     "Database import failed, please check output for details!",
@@ -128,6 +161,7 @@ public class DBImportTask extends AProgressAwareRunnable {
                                 ICrudSession session = provider.createSession();
                                 System.out.println("Adding metabolites to database!");
                                 for (IMetabolite im : metabolites) {
+                                    System.out.println("Adding metabolite "+im);
                                     session.create(im);
                                 }
                                 

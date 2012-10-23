@@ -94,7 +94,9 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         annotations = new ArrayList<XYAnnotation>(0);
         for (IChromatogramDescriptor descr : filename) {
             this.ic.add(descr);
-            //annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255,0,0,32), new Color(255,0,0,16), "TIC", new double[0]));
+            if(project!=null) {
+                annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255,0,0,32), new Color(255,0,0,16), "TIC", new double[0]));
+            }
         }
         this.ic.add(ds);
         this.ic.add(new Properties());

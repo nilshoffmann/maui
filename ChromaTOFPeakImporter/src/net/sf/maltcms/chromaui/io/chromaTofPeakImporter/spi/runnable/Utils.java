@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -50,6 +50,7 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.MAMath;
+import ucar.nc2.Dimension;
 
 /**
  *
@@ -57,10 +58,12 @@ import ucar.ma2.MAMath;
  */
 public class Utils {
     
+    enum ChromatogramType{D1,D2};
+    
     public static Locale defaultLocale = Locale.getDefault();
     
-    public static void createArtificialChromatogram(File importDir, IChromAUIProject project,
-            String peakListName, List<IPeakAnnotationDescriptor> peaks) {
+    public static File createArtificialChromatogram(File importDir,
+            String peakListName, List<IPeakAnnotationDescriptor> peaks, ChromatogramType chromatogramType) {
         try {
             //        try {
             PropertiesConfiguration pc = new PropertiesConfiguration(
@@ -71,8 +74,10 @@ public class Utils {
         }
 
         File fragment = new File(importDir, StringTools.removeFileExt(
-                peakListName));
+                peakListName)+".cdf");
         FileFragment f = new FileFragment(fragment);
+        Dimension scanNumber = new Dimension("scan_number", peaks.size(), true);
+        f.addDimensions(scanNumber);
         List<Array> masses = new ArrayList<Array>();
         List<Array> intensities = new ArrayList<Array>();
         Array sat = new ArrayDouble.D1(peaks.size());
@@ -80,6 +85,8 @@ public class Utils {
         ArrayInt.D1 tic = new ArrayInt.D1(peaks.size());
         ArrayDouble.D1 massMin = new ArrayDouble.D1(peaks.size());
         ArrayDouble.D1 massMax = new ArrayDouble.D1(peaks.size());
+        ArrayDouble.D1 firstColumnElutionTime = new ArrayDouble.D1(peaks.size());
+        ArrayDouble.D1 secondColumnElutionTime = new ArrayDouble.D1(peaks.size());
         int i = 0;
         int scanOffset = 0;
         double minMass = Double.POSITIVE_INFINITY;
@@ -95,12 +102,17 @@ public class Utils {
             sat.setDouble(i, descr.getApexTime());
             scanIndex.set(i, scanOffset);
             tic.setDouble(i, MAMath.sumDouble(intensA));
+            if(chromatogramType==ChromatogramType.D2) {
+                firstColumnElutionTime.set(i, ((IPeak2DAnnotationDescriptor)descr).getFirstColumnRt());
+                secondColumnElutionTime.set(i, ((IPeak2DAnnotationDescriptor)descr).getSecondColumnRt());
+            }
             scanOffset += descr.getMassValues().length;
             i++;
         }
         IVariableFragment scanIndexVar = new VariableFragment(f,
                 "scan_index");
         scanIndexVar.setArray(scanIndex);
+        scanIndexVar.setDimensions(new Dimension[]{scanNumber});
         IVariableFragment massValuesVar = new VariableFragment(f,
                 "mass_values");
         massValuesVar.setArray(ArrayTools.glue(masses));
@@ -110,39 +122,51 @@ public class Utils {
         IVariableFragment satVar = new VariableFragment(f,
                 "scan_acquisition_time");
         satVar.setArray(sat);
+        satVar.setDimensions(new Dimension[]{scanNumber});
         IVariableFragment ticVar = new VariableFragment(f,
                 "total_intensity");
         ticVar.setArray(tic);
+        ticVar.setDimensions(new Dimension[]{scanNumber});
         IVariableFragment minMassVar = new VariableFragment(f, "mass_range_min");
         minMassVar.setArray(massMin);
+        minMassVar.setDimensions(new Dimension[]{scanNumber});
         IVariableFragment maxMassVar = new VariableFragment(f, "mass_range_max");
         maxMassVar.setArray(massMax);
+        maxMassVar.setDimensions(new Dimension[]{scanNumber});
+        if(chromatogramType==ChromatogramType.D2) {
+            IVariableFragment firstColumnElutionTimeVar = new VariableFragment(f, "first_column_elution_time");
+            firstColumnElutionTimeVar.setArray(firstColumnElutionTime);
+            firstColumnElutionTimeVar.setDimensions(new Dimension[]{scanNumber});
+            IVariableFragment secondColumnElutionTimeVar = new VariableFragment(f, "second_column_elution_time");
+            secondColumnElutionTimeVar.setArray(secondColumnElutionTime);
+            secondColumnElutionTimeVar.setDimensions(new Dimension[]{scanNumber});
+        }
         f.save();
 //            return f;
 //        } catch (IOException ex) {
 //            Exceptions.printStackTrace(ex);
 //        }
 //        return null;
-
+        return fragment;
     }
     
     public static double[] parseDoubleArray(String fieldName, TableRow row,
             String elementSeparator) {
-        String[] values = row.get(fieldName).split(elementSeparator);
-        double[] v = new double[values.length];
-        for (int i = 0; i < v.length; i++) {
-            v[i] = parseDouble(values[i]);
+        if(row.get(fieldName).contains(elementSeparator)) {
+            String[] values = row.get(fieldName).split(elementSeparator);
+            double[] v = new double[values.length];
+            for (int i = 0; i < v.length; i++) {
+                v[i] = parseDouble(values[i]);
+            }
+            return v;
         }
-        return v;
+        return new double[]{parseDouble(row.get(fieldName))};
     }
 
     public static double parseDouble(String fieldName, TableRow tr) {
         System.out.println("Retrieving " + fieldName);
         String value = tr.get(fieldName);
         System.out.println("Value: " + value);
-        if (value.isEmpty()) {
-            return Double.NaN;
-        }
         return parseDouble(value);
     }
 
@@ -151,7 +175,7 @@ public class Utils {
     }
 
     public static double parseDouble(String s, Locale locale) {
-        if(s==null) {
+        if(s==null || s.isEmpty()) {
             return Double.NaN;
         }
         try {

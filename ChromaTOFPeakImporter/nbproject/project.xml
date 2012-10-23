@@ -88,7 +88,7 @@
                         <specification-version>8.14.1</specification-version>
                     </run-dependency>
                 </dependency>
-                </module-dependencies>
+            </module-dependencies>
             <test-dependencies>
                 <test-type>
                     <name>unit</name>
@@ -102,7 +102,9 @@
                     </test-dependency>
                 </test-type>
             </test-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

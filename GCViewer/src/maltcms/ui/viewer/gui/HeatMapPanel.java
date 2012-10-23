@@ -27,14 +27,11 @@
  */
 package maltcms.ui.viewer.gui;
 
-import cross.datastructures.fragments.FileFragment;
-import cross.datastructures.fragments.IFileFragment;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
 import maltcms.ui.viewer.InformationController;
@@ -43,6 +40,7 @@ import maltcms.ui.viewer.events.PaintScaleTarget;
 import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import maltcms.ui.viewer.tools.ChartTools;
 import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.ui.rangeSlider.RangeSlider;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -87,23 +85,13 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     }
 
     private void initChartComponents() {
-        this.showVTIC.setSelected(false);
-        XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getChromatogramDescriptor(), this.showVTIC.isSelected());
-//        PaintScale ps = null;
+        XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getChromatogramDescriptor(), false);
         if (p.getRenderer() instanceof XYBlockRenderer) {
             this.ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
             this.xyb = ((XYBlockRenderer) p.getRenderer());
-//            IFileFragment f = new FileFragment(new File(this.ic.getFilename()));
-//            Array rt = f.getChild("scan_acquisition_time").getArray();
-//            IChromatogram2D ic2d = new Chromatogram2D(f);
-//            this.xyb.setSeriesToolTipGenerator(0, new RTIXYTooltipGenerator(ic2d.getScanAcquisitionTime().getDouble(0), ic2d.getModulationDuration(), ic2d.getNumberOfModulations(), ic2d.getNumberOfScansPerModulation()));
-//            this.xyb.setSeriesItemLabelGenerator(0, new RTIXYTooltipGenerator(ic2d.getScanAcquisitionTime().getDouble(0),ic2d.getModulationDuration(), ic2d.getNumberOfModulations(), ic2d.getNumberOfScansPerModulation()));
-//            this.xyb.setBaseItemLabelsVisible(true);
         }
         p.setDomainGridlinesVisible(false);
         p.setRangeGridlinesVisible(false);
-//        JFreeChart jfc = new FastJFreeChart(p);
-//        ChartPanel cpt = new FastChartPanel(jfc, true);
         JFreeChart jfc = new JFreeChart(p);
         ChartPanel cpt = new ChartPanel(jfc, true);
         this.cp = cpt;
@@ -168,18 +156,15 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
                 if (cp.getChart().getPlot() instanceof XYPlot) {
                     System.out.println("Updating click position");
                     final XYPlot plot = cp.getChart().getXYPlot();
-//                System.out.println("Click at global: "+cmevent.getTrigger().getPoint());
                     if (getDataPoint() != null) {
                         if (box != null) {
-                            plot.removeAnnotation(box);
+                            plot.removeAnnotation(box, false);
                         }
-
                         box = new XYBoxAnnotation(dataPoint.x - 1, dataPoint.y - 1, dataPoint.x + 1, dataPoint.y + 1, new BasicStroke(2), selectionOutline, selectionFill);
                         plot.addAnnotation(box, false);
                         plot.setDomainCrosshairValue(dataPoint.x, false);
                         plot.setRangeCrosshairValue(dataPoint.y, true);
                         ic.changePoint(dataPoint);
-//                        plot.getRenderer()..setVisible(true);
                     }
                 }
             }
@@ -277,27 +262,15 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
-        showVTIC = new javax.swing.JToggleButton();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jSlider1 = new javax.swing.JSlider();
+        jSlider1 = new RangeSlider(0,1000);
         jPanel2 = new javax.swing.JPanel();
 
         jToolBar1.setRollover(true);
 
         jToolBar2.setFloatable(false);
         jToolBar2.setRollover(true);
-
-        showVTIC.setText(org.openide.util.NbBundle.getMessage(HeatMapPanel.class, "HeatMapPanel.showVTIC.text")); // NOI18N
-        showVTIC.setFocusable(false);
-        showVTIC.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        showVTIC.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        showVTIC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showVTICActionPerformed(evt);
-            }
-        });
-        jToolBar2.add(showVTIC);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("maltcms/ui/viewer/Bundle"); // NOI18N
         jButton1.setText(bundle.getString("HeatMapPanel.jButton1.text")); // NOI18N
@@ -315,8 +288,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         jToolBar2.add(jLabel1);
 
         jSlider1.setMajorTickSpacing(10);
+        jSlider1.setMaximum(1000);
         jSlider1.setMinorTickSpacing(1);
-        jSlider1.setPaintTicks(true);
         jSlider1.setValue(0);
         jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -331,8 +304,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -369,14 +342,9 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
     }//GEN-LAST:event_jSlider1StateChanged
 
-    private void showVTICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showVTICActionPerformed
-
-        initChartComponents();
-        SwingUtilities.updateComponentTreeUI(this);
-    }//GEN-LAST:event_showVTICActionPerformed
-
     private void handleSliderChange() {
         final int low = this.jSlider1.getValue();
+        final int high = ((RangeSlider)jSlider1).getUpperValue();
         Runnable r = new Runnable()   {
 
             @Override
@@ -387,6 +355,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
                     double min = gps.getLowerBound();
                     double max = gps.getUpperBound();
                     gps.setLowerBoundThreshold(min + ((max - min) * ((double) low / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
+                    gps.setUpperBoundThreshold(max + ((max - min) * ((double) high / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
                 }
                 updateChart();
             }
@@ -420,7 +389,6 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     private javax.swing.JSlider jSlider1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
-    private javax.swing.JToggleButton showVTIC;
     // End of variables declaration//GEN-END:variables
 
     @Override

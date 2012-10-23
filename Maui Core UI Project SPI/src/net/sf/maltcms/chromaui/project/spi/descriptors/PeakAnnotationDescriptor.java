@@ -118,7 +118,6 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         firePropertyChange(PROP_INTENSITYVALUES, oldIntensityValues,
                 intensityValues);
     }
-    
     private String retentionIndexMethod = "<NA>";
     public static final String PROP_RETENTIONINDEXMETHOD = "retentionIndexMethod";
 
@@ -433,7 +432,6 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.uniqueMass = uniqueMass;
         firePropertyChange(PROP_UNIQUEMASS, oldUniqueMass, uniqueMass);
     }
-    
     private IChromatogramDescriptor chromatogramDescriptor;
     public static final String PROP_CHROMATOGRAMDESCRIPTOR = "chromatogramDescriptor";
 
@@ -465,7 +463,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
 
     @Override
     public String toString() {
-        return getChromatogramDescriptor().getDisplayName()+"@" + String.format("%.2f", getApexTime()) + " sec ("+String.format("%.2f", getApexTime()/60.0d)+" min) area=" + getArea() + ", inten=" + getApexIntensity();
+        return getChromatogramDescriptor().getDisplayName() + "@" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();
     }
 
     @Override
@@ -587,5 +585,26 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         double old = this.apexIntensity;
         this.apexIntensity = apexIntensity;
         firePropertyChange(PROP_APEXINTENSITY, old, this.apexIntensity);
+    }
+
+    @Override
+    public String getDisplayName() {
+        String displayName = super.getDisplayName();
+        if (displayName.
+                matches("^M\\d{6}.*")) {
+            return displayName.substring(displayName.lastIndexOf("_") + 1);
+        }else{
+            return displayName;
+        }
+    }
+
+    @Override
+    public void setDisplayName(String displayName) {
+        if (displayName.
+                matches("^M\\d{6}.*")) {
+            super.setDisplayName(displayName.substring(displayName.lastIndexOf("_") + 1));
+        }else{
+            super.setDisplayName(displayName);
+        }
     }
 }

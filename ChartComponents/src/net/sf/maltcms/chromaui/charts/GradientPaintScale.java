@@ -74,7 +74,9 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
     private Color[] colors;
     private Color[] lookupColors;
     private double thresholdLow = Double.NaN;
+    private double thresholdHigh = Double.NaN;
     private int thresholdLowIndex = 0;
+    private int thresholdHighIndex = 0;
 
     @Deprecated
     public GradientPaintScale(double[] sampleTable, double[] breakPoints,
@@ -92,6 +94,8 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         this.ramp = colorRamp;
         this.min = min;
         this.max = max;
+        this.thresholdLow = min;
+        this.thresholdHigh = max;
         this.colors = ImageTools.rampToColorArray(colorRamp);
         this.lookupImage = createLookupImage(this.st, this.colors);
         this.lookupColors = createLookupColors();
@@ -110,6 +114,8 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         this.st = this.sampleTable;
         this.min = min;
         this.max = max;
+        this.thresholdLow = min;
+        this.thresholdHigh = max;
         this.colors = colors;
         this.lookupImage = createLookupImage(this.st, this.colors);
         this.lookupColors = createLookupColors();
@@ -182,6 +188,10 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
     public void setLowerBoundThreshold(double value) {
         this.thresholdLow = value;
     }
+    
+    public void setUpperBoundThreshold(double value) {
+        this.thresholdHigh = value;
+    }
 
     @Override
     public double getUpperBound() {
@@ -200,87 +210,20 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
     public Paint getPaint(double arg0) {
         double relativeIndex = 0;
         int sample = 0;
-        if(thresholdLow!=Double.NaN) {
-            relativeIndex = ((arg0 - thresholdLow)/(max-thresholdLow));
+//        if(thresholdLow!=Double.NaN) {
+            relativeIndex = ((arg0 - thresholdLow)/(thresholdHigh-thresholdLow));
             sample = Math.max(0, thresholdLowIndex + Math.min(
                 (int) ((this.st.length - 1 - thresholdLowIndex) * relativeIndex),
                 this.st.length - 1));
-        }else{
-            relativeIndex = ((arg0 - min) / (max - min));
-            sample = Math.max(0, Math.min(
-                (int) ((this.st.length - 1) * relativeIndex),
-                this.st.length - 1));
-        }
-        //System.out.println("RelIdx: " + relativeIndex);
-        
-        // System.out.println("value: " + arg0);
-        // System.out.println("Sample: " + sample);
+//        }else{
+//            relativeIndex = ((arg0 - min) / (max - min));
+//            sample = Math.max(0, Math.min(
+//                (int) ((this.st.length - 1) * relativeIndex),
+//                this.st.length - 1));
+//        }
         int idx = Math.max(0, Math.min(this.lookupImage.getWidth() - 1,
                 (int) ((this.st.length - 1) * this.st[sample])));
-//        if (idx >= this.thresholdMin && idx <= this.thresholdMax) {
-//            int r2Index = (int)(((double)idx/(double)(this.st.length))*(this.thresholdMax-this.thresholdMin));
-//            return this.lookupColors[r2Index];
-//        } else if (idx > this.thresholdMax) {
-//            return this.lookupColors[lookupColors.length - 1];
-//        } else if (idx < this.thresholdMin) {
-//            return this.lookupColors[0];
-//        }
-//        if (idx >= this.thresholdMin) {
-//            int r2Index = (int)(((double)(idx-this.thresholdMin)/(double)(this.st.length))*(this.thresholdMax-this.thresholdMin));
-//            return this.lookupColors[r2Index];
-//        } else if (idx < this.thresholdMin) {
-//            return this.lookupColors[0];
-//        }
-//        }else{
         return this.lookupColors[idx];
-//        }
-        // return new Color(this.ramp[(int) arg0][0], this.ramp[(int) arg0][1],
-        // this.ramp[(int) arg0][2]);
-        //
-        // double v = ImageTools.getSample(this.st, this.breakPoints, arg0);
-        // // System.out.println("Value: " + arg0 + " Sample value: " + v);
-        // final int floor = Math.max(0, ((int) Math.floor(v
-        // * (this.ramp.length - 1))));
-        // final int ceil = Math.min(this.ramp.length - 1, ((int) Math.ceil(v
-        // * this.ramp.length)));
-        // int v1, v2, v3;
-        // // if (floor != ceil) {
-        // // System.out.println("Floor: " + floor + " ceil: " + ceil);
-        // // }
-        // // if (floor == ceil) {
-        // // System.out.println("Floor=ceil");
-        // v1 = this.ramp[floor][0];
-        // v2 = this.ramp[floor][1];
-        // v3 = this.ramp[floor][2];
-        // // } else {
-        // // // System.out.println("Interpolation");
-        // // v1 = (int) Math.floor(255.0 * MathTools.getLinearInterpolatedY(
-        // // floor, this.ramp[floor][0], ceil, this.ramp[ceil][0], v));
-        // // v2 = (int) Math.floor(255.0 * MathTools.getLinearInterpolatedY(
-        // // floor, this.ramp[floor][1], ceil, this.ramp[ceil][1], v));
-        // // v3 = (int) Math.floor(255.0 * MathTools.getLinearInterpolatedY(
-        // // floor, this.ramp[floor][2], ceil, this.ramp[ceil][2], v));
-        // // }
-        // // System.out.println(v1+" "+v2+" "+v3);
-        // if (v1 < 0) {
-        // v1 = 0;
-        // }
-        // if (v1 > 255) {
-        // v1 = 255;
-        // }
-        // if (v2 < 0) {
-        // v2 = 0;
-        // }
-        // if (v2 > 255) {
-        // v2 = 255;
-        // }
-        // if (v3 < 0) {
-        // v3 = 0;
-        // }
-        // if (v3 > 255) {
-        // v3 = 255;
-        // }
-        // return new Color(v1, v2, v3);
     }
 
     @Override

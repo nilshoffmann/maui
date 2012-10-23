@@ -244,36 +244,12 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
                     gp.lineTo(apexTime, tic.getDouble(apexIdx));
                     gp.lineTo(stopTime, tic.getDouble(stopIdx));
                     gp.closePath();
-//                    Area a = new Area(bbox);
-//                    a.intersect(new Area(gp));
-//                    System.out.println("creating annotation");
-//                    StringBuilder qm = new StringBuilder();
-//                    for(double d:peakDescr.getQuantMasses()) {
-//                        qm.append(String.format("%.2f",d));
-//                        qm.append(":");
-//                    }
-//                    String massString = qm.substring(0, qm.length()-1);
                     String label = peakDescr.getDisplayName() + "@" + String.format("%.2f", apexTime);
                     XYSelectableShapeAnnotation<IPeakAnnotationDescriptor> xyssa = new XYSelectableShapeAnnotation<IPeakAnnotationDescriptor>(apexTime, tic.getDouble(apexIdx), gp, toolName + ", #" + peakDescr.getIndex() + "", TextAnchor.BASELINE_LEFT, peakDescr);
                     xyssa.setFill(containerColor);
                     xyssa.setOutline(containerColor.darker());
-//                    XYShapeAnnotation xypa = new XYShapeAnnotation(bbox,
-//                            new BasicStroke(), outline, fill);
-//                    XYTextAnnotation xyta = new XYTextAnnotation(apexTime + " m/z: " + peakDescr.
-//                            getQuantMasses() + " area: " + peakDescr.getArea() + " name: " + peakDescr.
-//                            getName(), apexTime,
-//                            tic.getDouble(scan));
-//                    XYLineAnnotation xyla = new XYLineAnnotation(peakDescr.
-//                            getStartTime(),
-//                            tic.getDouble(startIdx), peakDescr.getStopTime(), tic.
-//                            getDouble(stopIdx), new BasicStroke(),
-//                            Color.BLACK);
                     System.out.println("adding annotation");
-                    //l.add(xypa);
                     l.add(xyssa);
-//                    l.add(xyta);
-//                    l.addMembers(xyla);
-//                    XYLineAnnotation baseline = new XYLineAnnotation();
                 }
             }
         } else if (mode.equals("EIC-SUM")) {
