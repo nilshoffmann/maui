@@ -35,6 +35,7 @@ import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
+import org.openide.util.NbBundle;
 import org.openide.util.Utilities;
 
 /**
@@ -42,7 +43,7 @@ import org.openide.util.Utilities;
  * @author Nils Hoffmann
  */
 public abstract class ContextAction<T> extends AbstractAction implements
-        LookupListener, ContextAwareAction {
+        LookupListener, ContextAwareAction, Lookup.Provider {
 
     private Lookup context;
     Lookup.Result<? extends T> lkpInfo;
@@ -93,5 +94,10 @@ public abstract class ContextAction<T> extends AbstractAction implements
         doAction(lkpInfo.allInstances());
     }
 
+    @Override
+    public Lookup getLookup() {
+        return context;
+    }
+   
     public abstract void doAction(Collection<? extends T> instances);
 }
