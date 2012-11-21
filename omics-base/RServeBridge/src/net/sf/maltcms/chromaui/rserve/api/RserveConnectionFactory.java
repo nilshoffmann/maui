@@ -112,7 +112,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         }
     }
 
-    public void closeConnection() {
+    public synchronized void closeConnection() {
         if (this.activeConnection != null) {
             System.out.println("Closing connection to Rserve!");
             if (isLocalServer) {

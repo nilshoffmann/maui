@@ -43,7 +43,7 @@ import org.openide.util.NbPreferences;
 displayName = "#AdvancedOption_DisplayName_Db4oGeneralSettings",
 keywords = "#AdvancedOption_Keywords_Db4oGeneralSettings",
 keywordsCategory = "Database/Db4oGeneralSettings")
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_Db4oGeneralSettings=Db4o General Settings", "AdvancedOption_Keywords_Db4oGeneralSettings=Db4o general settings connection configuration"})
+@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_Db4oGeneralSettings=Project Database", "AdvancedOption_Keywords_Db4oGeneralSettings=project database Db4o general settings connection configuration"})
 public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPanelController {
 
     private Db4oGeneralSettingsPanel panel;
