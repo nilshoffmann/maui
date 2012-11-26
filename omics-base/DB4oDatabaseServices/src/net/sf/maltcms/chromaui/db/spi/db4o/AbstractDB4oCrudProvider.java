@@ -51,7 +51,7 @@ import org.openide.util.NbPreferences;
 public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
 
     protected EmbeddedObjectContainer eoc;
-    public static final String[] extensions = new String[]{"db4o", "mdb", "mpr", "ppr"};
+    public static final String[] extensions = new String[]{"db4o", "mdb", "mpr", "ppr", "pwpr"};
     protected boolean backupDatabase = false;
     protected ScheduledExecutorService backupService;
     protected long backupTimeInterval = 10;
