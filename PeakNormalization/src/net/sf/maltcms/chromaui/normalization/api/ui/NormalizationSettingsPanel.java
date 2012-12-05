@@ -33,6 +33,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 
@@ -51,6 +52,7 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
 
     public NormalizationSettingsPanel(PeakGroupContainer context) {
         this.peakGroups = new ArrayList<IPeakGroupDescriptor>();
+        peakGroups.add(DescriptorFactory.newPeakGroupDescriptor("No Normalization"));
         for (IPeakGroupDescriptor peakGroup : context.getMembers()) {
             HashSet<String> names = new HashSet<String>();
             for (IPeakAnnotationDescriptor ipad : peakGroup.
@@ -103,8 +105,8 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(normalizeToExternalQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
-                    .addComponent(internalNormalizationCompound, javax.swing.GroupLayout.Alignment.TRAILING, 0, 239, Short.MAX_VALUE))
+                    .addComponent(normalizeToExternalQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                    .addComponent(internalNormalizationCompound, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

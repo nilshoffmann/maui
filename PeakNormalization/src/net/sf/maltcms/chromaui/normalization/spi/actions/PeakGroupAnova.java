@@ -29,11 +29,13 @@ package net.sf.maltcms.chromaui.normalization.spi.actions;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import net.sf.maltcms.chromaui.normalization.api.ui.MissingValueDialog;
 
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
 import net.sf.maltcms.chromaui.normalization.spi.runnables.PeakGroupAnovaRunnable;
 import net.sf.maltcms.chromaui.normalization.api.ui.PvalueAdjustmentDialog;
+import net.sf.maltcms.chromaui.normalization.spi.DataTable;
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;

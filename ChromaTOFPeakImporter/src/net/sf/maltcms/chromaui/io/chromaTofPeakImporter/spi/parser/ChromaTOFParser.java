@@ -196,7 +196,7 @@ public class ChromaTOFParser {
             }
             return results.toArray(new String[results.size()]);
         } else if (fieldSeparator.equals("\t")) {
-            return line.split("\t");
+            return line.replaceAll("\"", "").split("\t");
         } else {
             throw new IllegalArgumentException("Field separator " + fieldSeparator + " is not supported, only ',' and '\t' are valid!");
         }

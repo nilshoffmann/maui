@@ -59,6 +59,7 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.project.ChromAUIProject;
 import net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api.ChromaTOFImporter;
+import net.sf.maltcms.chromaui.project.api.types.GCGC;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
 import org.apache.commons.io.FileUtils;
 import org.netbeans.api.project.Project;
@@ -66,9 +67,7 @@ import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
-import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
-import ucar.ma2.IndexIterator;
 
 /**
  *
@@ -308,7 +307,7 @@ public class DBProjectFactory {
                 ivf.setArray(modTime);
             }
             if (scanRate != null) {
-                System.out.println("Using user-defined scan_rate="+scanRate);
+                System.out.println("Using user-defined scan_rate=" + scanRate);
                 IVariableFragment sr = new VariableFragment(ff, "scan_rate");
                 ArrayDouble.D0 scanRateArr = new ArrayDouble.D0();
                 scanRateArr.set(scanRate);
@@ -322,11 +321,13 @@ public class DBProjectFactory {
 //                ArrayDouble.D0 scanRateArr = new ArrayDouble.D0();
 //                scanRateArr.set(1.0d/scanDuration);
 //                sr.setArray(scanRateArr);
-                try {
-                    IVariableFragment scanRateVar = ff.getChild("scan_rate");
-                }catch(ResourceNotAvailableException rnae) {
-                    System.err.println("Variable scan_rate not available in source file: "+ff.getName());
-                    throw rnae;
+                if (separationType instanceof GCGC) {
+                    try {
+                        IVariableFragment scanRateVar = ff.getChild("scan_rate");
+                    } catch (ResourceNotAvailableException rnae) {
+                        System.err.println("Variable scan_rate not available in source file: " + ff.getName());
+                        throw rnae;
+                    }
                 }
             }
 

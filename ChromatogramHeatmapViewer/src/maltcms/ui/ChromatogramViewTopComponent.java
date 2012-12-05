@@ -31,23 +31,30 @@ import net.sf.maltcms.ui.plot.chromatogram1D.tasks.ChromatogramViewLoaderWorker;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import maltcms.ui.views.ChromMSHeatmapPanel;
+import maltcms.ui.views.ChromatogramViewViewport;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.annotations.XYAnnotation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.openide.util.NbBundle;
 import org.openide.util.Task;
 import org.openide.windows.TopComponent;
@@ -56,24 +63,29 @@ import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 import org.openide.util.RequestProcessor;
 import org.openide.util.TaskListener;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.CloneableTopComponent;
 
 /**
- * Top component which displays something.
- * TODO add support for different renderers onto toolbar
- * TODO add support for display of annotations (annotation browser)
- * TODO add support for progress monitoring
+ * Top component which displays something. TODO add support for different
+ * renderers onto toolbar TODO add support for display of annotations
+ * (annotation browser) TODO add support for progress monitoring
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui//ChromatogramView//EN",
 autostore = false)
-public final class ChromatogramViewTopComponent extends CloneableTopComponent implements TaskListener {
+public final class ChromatogramViewTopComponent extends CloneableTopComponent implements TaskListener, PropertyChangeListener, LookupListener {
 
     private static ChromatogramViewTopComponent instance;
-    /** path to the icon used by the component and its open action */
+    /**
+     * path to the icon used by the component and its open action
+     */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "ChromatogramViewTopComponent";
 //    private MassSpectrumViewTopComponent secondaryView;
@@ -82,7 +94,10 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     private ChromMSHeatmapPanel jp;
     private boolean loading = false;
     private List<XYAnnotation> annotations = Collections.emptyList();
+    private Object selected = null;
     private ExecutorService es = Executors.newFixedThreadPool(1);
+    private Result<ChromatogramViewViewport> result;
+    private boolean syncViewport = false;
 
     public void initialize(IChromAUIProject project,
             List<IChromatogramDescriptor> filename, Chromatogram1DDataset ds) {
@@ -94,10 +109,15 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         annotations = new ArrayList<XYAnnotation>(0);
         for (IChromatogramDescriptor descr : filename) {
             this.ic.add(descr);
-            if(project!=null) {
-                annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255,0,0,32), new Color(255,0,0,16), "TIC", new double[0]));
+            if (project != null) {
+                annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
             }
         }
+        DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
+        for (int i = 0; i < ds.getSeriesCount(); i++) {
+            dcbm.addElement(ds.getSeriesKey(i));
+        }
+        seriesComboBox.setModel(dcbm);
         this.ic.add(ds);
         this.ic.add(new Properties());
         setDisplayName("Chromatogram View of " + new File(getLookup().lookup(
@@ -115,6 +135,8 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         this.jp = new ChromMSHeatmapPanel(ic, getLookup(), ds);
         add(this.jp, BorderLayout.CENTER);
         ic.add(this.jp);
+        ic.add(this);
+        result = Utilities.actionsGlobalContext().lookupResult(ChromatogramViewViewport.class);
     }
 
     public ChromatogramViewTopComponent() {
@@ -140,11 +162,11 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     public List<XYAnnotation> getAnnotations() {
         return annotations;
     }
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -152,9 +174,12 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        seriesComboBox = new javax.swing.JComboBox();
+        hideShowSeries = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
+        jCheckBox2 = new javax.swing.JCheckBox();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -172,28 +197,6 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         jToolBar1.add(jButton1);
         jToolBar1.add(jSeparator1);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.jButton2.text")); // NOI18N
-        jButton2.setFocusable(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jButton2);
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton3, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.jButton3.text")); // NOI18N
-        jButton3.setFocusable(false);
-        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jButton3);
-
         org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.jCheckBox1.text")); // NOI18N
         jCheckBox1.setFocusable(false);
         jCheckBox1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -204,6 +207,33 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
             }
         });
         jToolBar1.add(jCheckBox1);
+        jToolBar1.add(jSeparator2);
+
+        seriesComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jToolBar1.add(seriesComboBox);
+
+        org.openide.awt.Mnemonics.setLocalizedText(hideShowSeries, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.hideShowSeries.text")); // NOI18N
+        hideShowSeries.setFocusable(false);
+        hideShowSeries.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        hideShowSeries.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        hideShowSeries.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hideShowSeriesActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(hideShowSeries);
+        jToolBar1.add(jSeparator3);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox2, org.openide.util.NbBundle.getMessage(ChromatogramViewTopComponent.class, "ChromatogramViewTopComponent.jCheckBox2.text")); // NOI18N
+        jCheckBox2.setFocusable(false);
+        jCheckBox2.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jCheckBox2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox2ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jCheckBox2);
 
         add(jToolBar1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
@@ -239,24 +269,15 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-//        getChromatogramPanel().
-//                getChartPanelMouseListener()
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
-
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         if (this.jp != null) {
             ChartPanel cp = jp.getLookup().lookup(ChartPanel.class);
+            Chromatogram1DDataset dataset = getLookup().lookup(Chromatogram1DDataset.class);
             if (jCheckBox1.isSelected()) {
                 int size = annotations.size();
                 for (int i = 0; i < size - 1; i++) {
                     cp.getChart().getXYPlot().addAnnotation(annotations.get(i),
                             false);
-
                 }
                 if (size > 0) {
                     cp.getChart().getXYPlot().addAnnotation(annotations.get(
@@ -268,19 +289,49 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
             }
         }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void hideShowSeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideShowSeriesActionPerformed
+        String s = (String) seriesComboBox.getSelectedItem();
+        Chromatogram1DDataset dataset = getLookup().lookup(Chromatogram1DDataset.class);
+        ChartPanel cp = jp.getLookup().lookup(ChartPanel.class);
+        for (int i = 0; i < dataset.getSeriesCount(); i++) {
+            if (dataset.getSeriesKey(i).equals(s)) {
+                XYPlot p = cp.getChart().getXYPlot();
+                if (p != null) {
+                    XYItemRenderer renderer = p.getRenderer();
+                    if (renderer != null) {
+                        boolean isVisible = renderer.isSeriesVisible(i);
+                        renderer.setSeriesVisible(i, !isVisible);
+                    } else {
+                        System.out.println("XYItemRenderer is null!");
+                    }
+                } else {
+                    System.out.println("XYPlot is null!");
+                }
+            }
+        }
+    }//GEN-LAST:event_hideShowSeriesActionPerformed
+
+    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+        this.syncViewport = jCheckBox2.isSelected();
+    }//GEN-LAST:event_jCheckBox2ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton hideShowSeries;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JComboBox seriesComboBox;
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Gets default instance. Do not use directly: reserved for *.settings files only,
-     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
-     * To obtain the singleton instance, use {@link #findInstance}.
+     * Gets default instance. Do not use directly: reserved for *.settings files
+     * only, i.e. deserialization routines; otherwise you could get a
+     * non-deserialized instance. To obtain the singleton instance, use
+     * {@link #findInstance}.
      */
     public static synchronized ChromatogramViewTopComponent getDefault() {
         if (instance == null) {
@@ -290,7 +341,8 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     }
 
     /**
-     * Obtain the ChromatogramViewTopComponent instance. Never call {@link #getDefault} directly!
+     * Obtain the ChromatogramViewTopComponent instance. Never call
+     * {@link #getDefault} directly!
      */
     public static synchronized ChromatogramViewTopComponent findInstance() {
         TopComponent win = WindowManager.getDefault().findTopComponent(
@@ -317,6 +369,9 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
 
     @Override
     public void componentOpened() {
+        if (result != null) {
+            result.addLookupListener(this);
+        }
     }
 
     @Override
@@ -333,6 +388,9 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
 
     @Override
     public void componentClosed() {
+        if (result != null) {
+            result.removeLookupListener(this);
+        }
     }
 
     void writeProperties(java.util.Properties p) {
@@ -363,7 +421,6 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     @Override
     public void taskFinished(Task task) {
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 open();
@@ -371,5 +428,32 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
             }
         });
 
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        if (pce.getPropertyName().equals("active")) {
+            if (selected != null) {
+                ic.remove(selected);
+            }
+            Object o = pce.getNewValue();
+            ic.add(o);
+            selected = o;
+        }
+    }
+
+    @Override
+    public void resultChanged(LookupEvent le) {
+        //do not react to ourself
+        if (hasFocus()) {
+            System.out.println("I have focus, not setting viewport!");
+        } else {
+            if (syncViewport) {
+                Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();
+                if (!viewports.isEmpty()) {
+                    this.jp.setViewport(viewports.iterator().next().getViewPort());
+                }
+            }
+        }
     }
 }

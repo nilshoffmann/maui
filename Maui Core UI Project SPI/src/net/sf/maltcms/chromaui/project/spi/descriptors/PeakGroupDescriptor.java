@@ -61,6 +61,12 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     private int index = -1;
     public static final String PROP_INDEX = "index";
 
+//    public PeakGroupDescriptor() {
+//        getPropertyChangeSupport().addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, this);
+//        getPropertyChangeSupport().addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKGROUPCONTAINER, this);
+//        getPropertyChangeSupport().firePropertyChange(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, null, getPeakAnnotationDescriptors());
+//    }
+
     @Override
     public int getIndex() {
         activate(ActivationPurpose.READ);
@@ -131,7 +137,8 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         }
         firePropertyChange(PROP_PEAKANNOTATIONDESCRIPTORS,
                 oldPeakAnnotationDescriptors, peakAnnotationDescriptors);
-        setShortDescription(createDisplayName(peakAnnotationDescriptors).toString());
+        setShortDescription(createShortDescription(peakAnnotationDescriptors));
+        setDisplayName(getName()+" - "+createDisplayName(peakAnnotationDescriptors).toString());
     }
 
     @Override
@@ -155,13 +162,26 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
                 highestCount = count;
             }
         }
-        System.out.println("Counts: " + nameToCount + " highest: " + highestCount + " for name " + mostFrequentName);
+        //System.out.println("Counts: " + nameToCount + " highest: " + highestCount + " for name " + mostFrequentName);
         float percentage = (float) highestCount / (float) peakAnnotationDescriptors.size();
         sb.append(String.format("%.2f", percentage * 100.0f));
         sb.append("% ");
         sb.append(mostFrequentName);
         sb.append(")");
         return sb;
+    }
+
+    public String createShortDescription(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
+        StringBuilder sb = new StringBuilder(super.getName());
+        for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
+            sb.append(pad.getName());
+            sb.append("\n");
+        }
+        String s = sb.toString();
+        if (s.endsWith("\n")) {
+            return s.substring(0, s.length() - 1);
+        }
+        return s;
     }
     private String formula = "<NA>";
     public static final String PROP_FORMULA = "formula";
@@ -221,6 +241,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             d[i++] = pad.getApexTime();
         }
+        if(d.length<=2) {
+            return getMeanApexTime();
+        }
         return MathTools.median(d);
     }
 
@@ -229,19 +252,19 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         double d = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             double factor = normalizer.getNormalizationFactor(pad);
-            double area = pad.getArea()*factor;
+            double area = pad.getArea() * factor;
             d += area;
         }
         return d / (double) getPeakAnnotationDescriptors().size();
     }
-    
+
     @Override
     public double getMedianArea(IPeakNormalizer normalizer) {
         double[] d = new double[getPeakAnnotationDescriptors().size()];
         int i = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             double factor = normalizer.getNormalizationFactor(pad);
-            double area = pad.getArea()*factor;
+            double area = pad.getArea() * factor;
             d[i++] = area;
         }
         return MathTools.median(d);
@@ -252,7 +275,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         double d = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             double factor = normalizer.getNormalizationFactor(pad);
-            double area = pad.getArea()*factor;
+            double area = pad.getArea() * factor;
             double value = Math.log10(area);
             d += value;
         }
@@ -264,7 +287,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         double intensity = 0.0d;
         for (IPeakAnnotationDescriptor descr : getPeakAnnotationDescriptors()) {
             double factor = normalizer.getNormalizationFactor(descr);
-            double intens = descr.getApexIntensity()*factor;
+            double intens = descr.getApexIntensity() * factor;
             intensity += Math.log10(intens);
         }
         return intensity / (double) getPeakAnnotationDescriptors().size();
@@ -275,7 +298,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         double intensity = 0.0d;
         for (IPeakAnnotationDescriptor descr : getPeakAnnotationDescriptors()) {
             double factor = normalizer.getNormalizationFactor(descr);
-            double intens = descr.getApexIntensity()*factor;
+            double intens = descr.getApexIntensity() * factor;
             intensity += intens;
         }
         return intensity / (double) getPeakAnnotationDescriptors().size();
@@ -354,19 +377,19 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         }
         return Math.sqrt(d / ((double) getPeakAnnotationDescriptors().size() - 1.0d));
     }
-    
+
     @Override
     public double getAreaStdDev(IPeakNormalizer normalizer) {
         double meanArea = getMeanArea(normalizer);
         double d = 0;
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             double factor = normalizer.getNormalizationFactor(pad);
-            double area = pad.getArea()*factor;
+            double area = pad.getArea() * factor;
             d += Math.pow(area - meanArea, 2);
         }
         return Math.sqrt(d / ((double) getPeakAnnotationDescriptors().size() - 1.0d));
     }
-    
+
     @Override
     public String getMajorityName() {
         StringBuilder sb = new StringBuilder(super.getName());
@@ -393,8 +416,10 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        //if (pce.getPropertyName().equals(IPeakAnnotationDescriptor.PROP_DISPLAYNAME) || pce.getPropertyName().equals(IPeakAnnotationDescriptor.PROP_NAME)) {
-            setShortDescription(createDisplayName(peakAnnotationDescriptors).toString());
-        //}
+        if(pce.getPropertyName().equals(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS) || pce.getPropertyName().equals(PeakGroupDescriptor.PROP_PEAKGROUPCONTAINER)) {
+//            System.out.println("Received property change event in PeakGroupDescriptor");
+            setShortDescription(createShortDescription(getPeakAnnotationDescriptors()));
+            setDisplayName(createDisplayName(getPeakAnnotationDescriptors()).toString());
+        }
     }
 }

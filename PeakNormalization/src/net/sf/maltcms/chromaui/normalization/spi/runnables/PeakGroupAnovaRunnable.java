@@ -74,162 +74,162 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
     @Override
     public void run() {
 //        try {
-            progressHandle.start();
+        progressHandle.start();
+        try {
+            RConnection c = RserveConnectionFactory.getDefaultConnection();
             try {
-                RConnection c = RserveConnectionFactory.getDefaultConnection();
-                try {
-                    StatisticsContainer anovaDescriptors = new StatisticsContainer();
-                    anovaDescriptors.setName("anova");
-                    anovaDescriptors.setMethod("Anova");
-                    anovaDescriptors.setDisplayName("Analysis of Variance");
-                    int maxFactors = 0;
-                    List<double[]> pvalues = new ArrayList<double[]>();
-                    for (IPeakGroupDescriptor descr : container.getMembers()) {
-                        int i = 0;
-                        double[] peakArea = new double[descr.getPeakAnnotationDescriptors().size()];
-                        String[] treatmentGroup = new String[peakArea.length];
+                StatisticsContainer anovaDescriptors = new StatisticsContainer();
+                anovaDescriptors.setName("anova");
+                anovaDescriptors.setMethod("Anova");
+                anovaDescriptors.setDisplayName("Analysis of Variance");
+                int maxFactors = 0;
+                List<double[]> pvalues = new ArrayList<double[]>();
+                for (IPeakGroupDescriptor descr : container.getMembers()) {
+                    int i = 0;
+                    double[] peakArea = new double[descr.getPeakAnnotationDescriptors().size()];
+                    String[] treatmentGroup = new String[peakArea.length];
 //                        String[] sampleGroup = new String[peakArea.length];
-                        HashMap<String, Set<IPeakAnnotationDescriptor>> groupToPeak = new HashMap<String, Set<IPeakAnnotationDescriptor>>();
-                        for (IPeakAnnotationDescriptor pad : descr.getPeakAnnotationDescriptors()) {
-                            peakArea[i] = normalizer.getNormalizationFactor(pad)*pad.getArea();
+                    HashMap<String, Set<IPeakAnnotationDescriptor>> groupToPeak = new HashMap<String, Set<IPeakAnnotationDescriptor>>();
+                    for (IPeakAnnotationDescriptor pad : descr.getPeakAnnotationDescriptors()) {
+                        peakArea[i] = normalizer.getNormalizationFactor(pad) * pad.getArea();
 //                        sampleGroup[i] = pad.getChromatogramDescriptor().
 //                                getSampleGroup().getName();
-                            treatmentGroup[i] = pad.getChromatogramDescriptor().
-                                    getTreatmentGroup().getName();
-                            if (groupToPeak.containsKey(treatmentGroup[i])) {
-                                Set<IPeakAnnotationDescriptor> set = groupToPeak.get(
-                                        treatmentGroup[i]);
-                                set.add(pad);
-                            } else {
-                                Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<IPeakAnnotationDescriptor>();
-                                set.add(pad);
-                                groupToPeak.put(treatmentGroup[i], set);
-                            }
-                            i++;
-                        }
-                        System.out.println("Peak set contains group factor with " + groupToPeak.keySet().size() + " levels: " + groupToPeak.keySet());
-                        if (groupToPeak.keySet().size() < 2) {
-                            System.err.println("Warning: peak group " + descr.getDisplayName() + " only has one level for factor group! Omitting from ANOVA!");
+                        treatmentGroup[i] = pad.getChromatogramDescriptor().
+                                getTreatmentGroup().getName();
+                        if (groupToPeak.containsKey(treatmentGroup[i])) {
+                            Set<IPeakAnnotationDescriptor> set = groupToPeak.get(
+                                    treatmentGroup[i]);
+                            set.add(pad);
                         } else {
-                            for (String group1 : groupToPeak.keySet()) {
-                                Set<IPeakAnnotationDescriptor> set = groupToPeak.get(
-                                        group1);
-                                double[] values1 = new double[set.size()];
-                                int k = 0;
-                                for (IPeakAnnotationDescriptor pad : set) {
-                                    values1[k] = normalizer.getNormalizationFactor(pad)*pad.getArea();
-                                }
-                                for (String group2 : groupToPeak.keySet()) {
-                                    if (!group1.equals(
-                                            group2)) {
-                                    }
+                            Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<IPeakAnnotationDescriptor>();
+                            set.add(pad);
+                            groupToPeak.put(treatmentGroup[i], set);
+                        }
+                        i++;
+                    }
+                    System.out.println("Peak set contains group factor with " + groupToPeak.keySet().size() + " levels: " + groupToPeak.keySet());
+                    if (groupToPeak.keySet().size() < 2) {
+                        System.err.println("Warning: peak group " + descr.getDisplayName() + " only has one level for factor group! Omitting from ANOVA!");
+                    } else {
+                        for (String group1 : groupToPeak.keySet()) {
+                            Set<IPeakAnnotationDescriptor> set = groupToPeak.get(
+                                    group1);
+                            double[] values1 = new double[set.size()];
+                            int k = 0;
+                            for (IPeakAnnotationDescriptor pad : set) {
+                                values1[k] = normalizer.getNormalizationFactor(pad) * pad.getArea();
+                            }
+                            for (String group2 : groupToPeak.keySet()) {
+                                if (!group1.equals(
+                                        group2)) {
                                 }
                             }
-                            RList l = new RList();
-                            l.put("peakAreas", new REXPDouble(peakArea));
+                        }
+                        RList l = new RList();
+                        l.put("peakAreas", new REXPDouble(peakArea));
 //                    System.out.println("  assign x=pairlist");
-                            c.assign("groups", new REXPFactor(
-                                    new RFactor(treatmentGroup)));
+                        c.assign("groups", new REXPFactor(
+                                new RFactor(treatmentGroup)));
 //                    System.out.println("  assign y=vector");
 //                    c.assign("y", new REXPGenericVector(l));
 //                    System.out.println("  assign z=data.frame");
-                            c.assign("peaks", REXP.createDataFrame(l));
-                            String rcall = "anovaResult <- aov(peakAreas ~ groups,data=peaks)";
-                            REXP anova = c.parseAndEval(rcall);
-                            REXP pvalueResult = c.parseAndEval(
-                                    "summary(anovaResult)[[1]]$\"Pr(>F)\"");
-                            REXP fvalueResult = c.parseAndEval(
-                                    "summary(anovaResult)[[1]]$\"F value\"");
-                            REXP degrFreedom = c.parseAndEval(
-                                    "summary(anovaResult)[[1]]$\"Df\"");
-                            REXP factors = c.parseAndEval(
-                                    "row.names(summary(anovaResult)[[1]])");
-                            IAnovaDescriptor ad = DescriptorFactory.newAnovaDescriptor();
-                            if (pvalueResult.isVector()) {
-                                if (pvalueResult.isNumeric()) {
-                                    double[] pvs = pvalueResult.asDoubles();
-                                    double[] targetpvs = new double[pvs.length - 1];
-                                    maxFactors = Math.max(maxFactors,
-                                            targetpvs.length);
-                                    System.arraycopy(pvs, 0, targetpvs, 0,
-                                            pvs.length - 1);
-                                    pvalues.add(targetpvs);
-                                    ad.setPvalues(targetpvs);
+                        c.assign("peaks", REXP.createDataFrame(l));
+                        String rcall = "anovaResult <- aov(peakAreas ~ groups,data=peaks)";
+                        REXP anova = c.parseAndEval(rcall);
+                        REXP pvalueResult = c.parseAndEval(
+                                "summary(anovaResult)[[1]]$\"Pr(>F)\"");
+                        REXP fvalueResult = c.parseAndEval(
+                                "summary(anovaResult)[[1]]$\"F value\"");
+                        REXP degrFreedom = c.parseAndEval(
+                                "summary(anovaResult)[[1]]$\"Df\"");
+                        REXP factors = c.parseAndEval(
+                                "row.names(summary(anovaResult)[[1]])");
+                        IAnovaDescriptor ad = DescriptorFactory.newAnovaDescriptor();
+                        if (pvalueResult.isVector()) {
+                            if (pvalueResult.isNumeric()) {
+                                double[] pvs = pvalueResult.asDoubles();
+                                double[] targetpvs = new double[pvs.length - 1];
+                                maxFactors = Math.max(maxFactors,
+                                        targetpvs.length);
+                                System.arraycopy(pvs, 0, targetpvs, 0,
+                                        pvs.length - 1);
+                                pvalues.add(targetpvs);
+                                ad.setPvalues(targetpvs);
 
-                                    System.out.println("p-value: " + Arrays.toString(
-                                            targetpvs));
-                                }
+                                System.out.println("p-value: " + Arrays.toString(
+                                        targetpvs));
                             }
-                            if (fvalueResult.isVector()) {
-                                if (fvalueResult.isNumeric()) {
-                                    double[] fvs = fvalueResult.asDoubles();
-                                    double[] targetfvs = new double[fvs.length - 1];
-                                    System.arraycopy(fvs, 0, targetfvs, 0,
-                                            fvs.length - 1);
-                                    ad.setFvalues(targetfvs);
-
-                                    System.out.println("F-values: " + Arrays.toString(
-                                            targetfvs));
-                                }
-                            }
-                            if (degrFreedom.isVector()) {
-                                if (degrFreedom.isNumeric()) {
-                                    int[] dvs = degrFreedom.asIntegers();
-                                    int[] targetdvs = new int[dvs.length - 1];
-                                    System.arraycopy(dvs, 0, targetdvs, 0,
-                                            dvs.length - 1);
-                                    ad.setDegreesOfFreedom(targetdvs);
-
-                                    System.out.println("Degrees of freedom: " + Arrays.toString(
-                                            targetdvs));
-                                }
-                            }
-                            if (factors.isVector()) {
-                                if (factors.isString()) {
-                                    String[] svs = factors.asStrings();
-                                    String[] targetsvs = new String[svs.length - 1];
-                                    System.arraycopy(svs, 0, targetsvs, 0,
-                                            svs.length - 1);
-                                    ad.setFactors(targetsvs);
-
-                                    System.out.println("Factors: " + Arrays.toString(
-                                            targetsvs));
-                                }
-                            }
-                            ad.setPeakGroupDescriptor(descr);
-                            ad.setName("Anova " + descr.getName());
-                            System.out.println("GroupDescriptor:" + ad.getPeakGroupDescriptor().getDisplayName());
-                            ad.setDisplayName(ad.getPeakGroupDescriptor().
-                                    getDisplayName());
-                            anovaDescriptors.addMembers(ad);
-                            ad.setPvalueAdjustmentMethod(pvalueAdjustmentMethod.getDisplayName());
                         }
+                        if (fvalueResult.isVector()) {
+                            if (fvalueResult.isNumeric()) {
+                                double[] fvs = fvalueResult.asDoubles();
+                                double[] targetfvs = new double[fvs.length - 1];
+                                System.arraycopy(fvs, 0, targetfvs, 0,
+                                        fvs.length - 1);
+                                ad.setFvalues(targetfvs);
 
+                                System.out.println("F-values: " + Arrays.toString(
+                                        targetfvs));
+                            }
+                        }
+                        if (degrFreedom.isVector()) {
+                            if (degrFreedom.isNumeric()) {
+                                int[] dvs = degrFreedom.asIntegers();
+                                int[] targetdvs = new int[dvs.length - 1];
+                                System.arraycopy(dvs, 0, targetdvs, 0,
+                                        dvs.length - 1);
+                                ad.setDegreesOfFreedom(targetdvs);
+
+                                System.out.println("Degrees of freedom: " + Arrays.toString(
+                                        targetdvs));
+                            }
+                        }
+                        if (factors.isVector()) {
+                            if (factors.isString()) {
+                                String[] svs = factors.asStrings();
+                                String[] targetsvs = new String[svs.length - 1];
+                                System.arraycopy(svs, 0, targetsvs, 0,
+                                        svs.length - 1);
+                                ad.setFactors(targetsvs);
+
+                                System.out.println("Factors: " + Arrays.toString(
+                                        targetsvs));
+                            }
+                        }
+                        ad.setPeakGroupDescriptor(descr);
+                        ad.setName("Anova " + descr.getName());
+                        System.out.println("GroupDescriptor:" + ad.getPeakGroupDescriptor().getDisplayName());
+                        ad.setDisplayName(ad.getPeakGroupDescriptor().
+                                getDisplayName());
+                        anovaDescriptors.addMembers(ad);
+                        ad.setPvalueAdjustmentMethod(pvalueAdjustmentMethod.getDisplayName());
                     }
-                    adjustPvalues(pvalues, maxFactors, c, anovaDescriptors);
 
-
-                    List<StatisticsContainer> statContainers = container.getStatisticsContainers();
-                    if (statContainers == null) {
-                        statContainers = new ActivatableArrayList<StatisticsContainer>();
-                    }
-                    statContainers.add(anovaDescriptors);
-                    container.setStatisticsContainers(statContainers);
-
-                    // close RConnection, we're done
-                    c.close();
-                } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
-                    System.out.println(rse);
-                    Exceptions.printStackTrace(rse);
-                } catch (REXPMismatchException mme) { // REXP mismatch exception (we got something we didn't think we getMembers)
-                    System.out.println(mme);
-                    Exceptions.printStackTrace(mme);
-                } catch (Exception e) { // something else
-                    System.out.println("Something went wrong, but it's not the Rserve: "
-                            + e.getMessage());
-                    Exceptions.printStackTrace(e);
                 }
-                project.refresh();
+                adjustPvalues(pvalues, maxFactors, c, anovaDescriptors);
+
+
+                List<StatisticsContainer> statContainers = container.getStatisticsContainers();
+                if (statContainers == null) {
+                    statContainers = new ActivatableArrayList<StatisticsContainer>();
+                }
+                statContainers.add(anovaDescriptors);
+                container.setStatisticsContainers(statContainers);
+
+                // close RConnection, we're done
+                c.close();
+            } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
+                System.out.println(rse);
+                Exceptions.printStackTrace(rse);
+            } catch (REXPMismatchException mme) { // REXP mismatch exception (we got something we didn't think we getMembers)
+                System.out.println(mme);
+                Exceptions.printStackTrace(mme);
+            } catch (Exception e) { // something else
+                System.out.println("Something went wrong, but it's not the Rserve: "
+                        + e.getMessage());
+                Exceptions.printStackTrace(e);
+            }
+            project.refresh();
 //            } catch (RserveException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }
@@ -266,8 +266,12 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
             for (IStatisticsDescriptor descr : anovaDescriptors.getMembers()) {
                 IAnovaDescriptor anovaDescr = (IAnovaDescriptor) descr;
                 double[] pvals = anovaDescr.getPvalues();
-                pvals[i] = adjPvalues[j++];
-                anovaDescr.setPvalues(pvals);
+                if (pvals != null) {
+                    pvals[i] = adjPvalues[j++];
+                    anovaDescr.setPvalues(pvals);
+                } else {
+                    System.out.println("Skipping adjustment of empty p-values for " + anovaDescr.getDisplayName());
+                }
             }
         }
     }

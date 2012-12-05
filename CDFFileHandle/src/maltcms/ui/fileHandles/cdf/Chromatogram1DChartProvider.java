@@ -47,6 +47,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -85,6 +86,7 @@ import ucar.ma2.MAMath;
 
 /**
  * TODO finish integration of time range setting
+ *
  * @author nilshoffmann
  */
 public class Chromatogram1DChartProvider {
@@ -95,13 +97,12 @@ public class Chromatogram1DChartProvider {
         this.startScan = startScan;
         this.stopScan = stopScan;
     }
-    
     private XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
-    
+
     public void setRenderer(XYItemRenderer renderer) {
         this.renderer = renderer;
     }
-    
+
     public XYItemRenderer getRenderer() {
         return this.renderer;
     }
@@ -117,33 +118,33 @@ public class Chromatogram1DChartProvider {
         double max = 1;
         double minRT = Double.POSITIVE_INFINITY;
         double maxRT = Double.NEGATIVE_INFINITY;
- 
+
         int y = 0;
         for (IFileFragment f : fragments) {
-            
+
             double[] domainValues = null;
             if (useRT) {
                 domainValues = (double[]) f.getChild(satVar).getArray().
                         get1DJavaArray(double.class);
-            }else{
-                domainValues = (double[])f.getChild("scan_index").getArray().get1DJavaArray(double.class);
+            } else {
+                domainValues = (double[]) f.getChild("scan_index").getArray().get1DJavaArray(double.class);
             }
-            
+
             double[] tic = (double[]) f.getChild(ticvar).getArray().
                     get1DJavaArray(double.class);
             double maxtic = MathTools.max(tic);
             double mintic = MathTools.min(tic);
             double[][] values = new double[3][tic.length];
-            for(int i = 0;i<tic.length;i++) {
+            for (int i = 0; i < tic.length; i++) {
                 values[0][i] = domainValues[i];
                 values[1][i] = y;
-                values[2][i] = Math.sqrt((tic[i]-mintic)/(maxtic-mintic));
+                values[2][i] = Math.sqrt((tic[i] - mintic) / (maxtic - mintic));
             }
-            
+
             y++;
             cd.addSeries(f.getName(), values);
         }
-        
+
         // ArrayDouble.D1 a = new ArrayDouble.D1(npoints);
         // int offset = 0;
         // for (IFileFragment f : t) {
@@ -182,17 +183,16 @@ public class Chromatogram1DChartProvider {
         xyb.setBlockWidth(1);
         xyp.setBackgroundPaint(Color.BLACK);
         xyb.setBaseToolTipGenerator(new XYZToolTipGenerator() {
-
             @Override
             public String generateToolTip(XYZDataset xyzd, int i, int i1) {
-                return colnames[xyzd.getY(i, i1).intValue()] +" @" + xyzd.getXValue(i, i1) + " = "
+                return colnames[xyzd.getY(i, i1).intValue()] + " @" + xyzd.getXValue(i, i1) + " = "
                         + xyzd.getZValue(i, i1);
             }
 
             @Override
             public String generateToolTip(XYDataset xyd, int i, int i1) {
-                if(xyd instanceof XYZDataset) {
-                    return generateToolTip((XYZDataset)xyd, i, i1);
+                if (xyd instanceof XYZDataset) {
+                    return generateToolTip((XYZDataset) xyd, i, i1);
                 }
                 return colnames[xyd.getY(i, i1).intValue()] + ":"
                         + xyd.getXValue(i, i1);
@@ -221,9 +221,9 @@ public class Chromatogram1DChartProvider {
                 } catch (ResourceNotAvailableException rne) {
                 }
             }
-            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT,valueVar));
+            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT, valueVar));
             annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
-                    0, 255, 192), new Color(0, 0, 255, 32),valueVar));
+                    0, 255, 192), new Color(0, 0, 255, 32), valueVar));
             annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
             //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
             i++;
@@ -245,7 +245,6 @@ public class Chromatogram1DChartProvider {
         xyp.setRenderer(renderer);
         //xyp.setDomainCrosshairVisible(true);
         xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
-
             @Override
             public String generateToolTip(XYDataset xyd, int i, int i1) {
                 Comparable comp = xyd.getSeriesKey(i);
@@ -331,7 +330,6 @@ public class Chromatogram1DChartProvider {
 //        xyp.setDomainCrosshairVisible(true);
         xyp.setRenderer(renderer);
         xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
-
             @Override
             public String generateToolTip(XYDataset xyd, int i, int i1) {
                 Comparable comp = xyd.getSeriesKey(i);
@@ -410,7 +408,6 @@ public class Chromatogram1DChartProvider {
         xyp.setRenderer(renderer);
         //xyp.setDomainCrosshairVisible(true);
         xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
-
             @Override
             public String generateToolTip(XYDataset xyd, int i, int i1) {
                 Comparable comp = xyd.getSeriesKey(i);
@@ -446,7 +443,7 @@ public class Chromatogram1DChartProvider {
         for (IVariableFragment var : variables) {
             vars.add(var.getName());
         }
-
+        Collections.sort(vars);
         vsp.setAvailableVariables(vars.toArray(new String[]{}));
 
         DialogDescriptor nd = new DialogDescriptor(vsp,
@@ -492,13 +489,17 @@ public class Chromatogram1DChartProvider {
                 arrays[i] = fragment.getChild(valueVar).getArray();
                 //Factory.getInstance().getConfiguration().getString("var.total_intensity","total_intensity")).getArray();
                 boolean useRT = false;
-                if (domainVar.equals("scan_acquisition_time")) {
-                    domains[i] = fragment.getChild(domainVar).getArray();
-                    useRT = true;
+                if (!domainVar.equals("")) {
+                    if (domainVar.equals("scan_acquisition_time")) {
+                        domains[i] = fragment.getChild(domainVar).getArray();
+                        useRT = true;
+                    } else {
+                        domains[i] = fragment.getChild(domainVar).getArray();
+                    }
                 }
                 annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT, valueVar));
                 annotations.addAll(generatePeakShapes(fragment, useRT,
-                        new Color(0, 0, 255, 192), new Color(0, 0, 255, 32),valueVar));
+                        new Color(0, 0, 255, 192), new Color(0, 0, 255, 32), valueVar));
                 annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i],
                         useRT));
                 //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
@@ -514,7 +515,12 @@ public class Chromatogram1DChartProvider {
                             false, false);
                     //Factory.getInstance().getConfiguration().getString("var.total_intensity","total_intensity")).getArray();
                     if (!domainVar.equals("")) {
-                        domains[i] = fragment.getChild(domainVar).getArray();
+                        if (domainVar.equals("scan_acquisition_time")) {
+                            domains[i] = fragment.getChild(domainVar).getArray();
+//                            useRT = true;
+                        } else {
+                            domains[i] = fragment.getChild(domainVar).getArray();
+                        }
                     }
                 }
                 //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
@@ -538,7 +544,6 @@ public class Chromatogram1DChartProvider {
         }
         //xyp.setDomainCrosshairVisible(true);
         xyp.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
-
             @Override
             public String generateToolTip(XYDataset xyd, int i, int i1) {
                 Comparable comp = xyd.getSeriesKey(i);
@@ -559,7 +564,7 @@ public class Chromatogram1DChartProvider {
         JFreeChart jfc2 = new JFreeChart(xyp);
         return jfc2;
     }
-    
+
     public List<XYPointerAnnotation> getCSVPeakAnnotations(IFileFragment f,
             Array ordinateValues, boolean useScanAcquisitionTime) {
         List<XYPointerAnnotation> l = new ArrayList<XYPointerAnnotation>();
@@ -611,7 +616,7 @@ public class Chromatogram1DChartProvider {
         }
         return l;
     }
-    
+
     public List<XYPointerAnnotation> getANDIChromPeakAnnotations(IFileFragment f,
             boolean useScanAcquisitionTime) {
         return getANDIChromPeakAnnotations(f, useScanAcquisitionTime, "total_intensity");
@@ -668,7 +673,7 @@ public class Chromatogram1DChartProvider {
             boolean useScanAcquisitionTime, Color outline, Color fill) {
         return generatePeakShapes(f, useScanAcquisitionTime, outline, fill, "total_intensity");
     }
-    
+
     public static List<XYAnnotation> generatePeakShapes(IFileFragment f,
             boolean useScanAcquisitionTime, Color outline, Color fill, String valueVar) {
         List<XYAnnotation> l = new ArrayList<XYAnnotation>();

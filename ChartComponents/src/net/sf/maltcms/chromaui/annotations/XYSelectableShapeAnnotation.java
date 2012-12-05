@@ -36,6 +36,8 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -59,6 +61,9 @@ import org.jfree.util.PaintUtilities;
 
 public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation implements Serializable {
 
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    
+    public static final String PROP_ACTIVE = "active";
     private boolean active = false;
     private Paint highlight = new Color(192, 192, 192, 164);
     private Paint outline = new Color(192, 192, 192, 128);
@@ -69,7 +74,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     private String label = "";
     private XYPointerAnnotation xyta;
     private T t;
-    private Shape ch;
+//    private Shape ch;
 
     public XYSelectableShapeAnnotation(double x, double y, Shape s, String label, TextAnchor ta, T t) {
         this(x, y, s, label, ta);
@@ -80,7 +85,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         this.x = x;
         this.y = y;
         this.s = s;
-        this.ch = getCrosshairShape(x, y, s.getBounds2D().getWidth(), s.getBounds2D().getHeight());
+        //this.ch = getCrosshairShape(x, y, s.getBounds2D().getWidth(), s.getBounds2D().getHeight());
         this.label = label;
         this.xyta = new XYPointerAnnotation(label, x, y,-0.4);
         this.xyta.setTipRadius(0.1);
@@ -138,7 +143,9 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     }
 
     public void setActive(boolean active) {
+        boolean old = this.active;
         this.active = active;
+        pcs.firePropertyChange(PROP_ACTIVE, old, active);
     }
 
     public boolean isActive() {
@@ -188,12 +195,12 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
                     m12, m02);
             s = t1.createTransformedShape(this.s);
             s = t2.createTransformedShape(s);
-            ch = t1.createTransformedShape(this.ch);
-            ch = t2.createTransformedShape(ch);
+//            ch = t1.createTransformedShape(this.ch);
+//            ch = t2.createTransformedShape(ch);
         } else if (orientation == PlotOrientation.VERTICAL) {
             AffineTransform t = new AffineTransform(m00, 0, 0, m11, m02, m12);
             s = t.createTransformedShape(this.s);
-            ch = t.createTransformedShape(this.ch);
+//            ch = t.createTransformedShape(this.ch);
         }
 
         if (this.active) {
@@ -206,8 +213,8 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
             arg0.fill(s);
             arg0.setPaint(this.outline);
             arg0.draw(s);
-            arg0.setStroke(this.stroke);
-            arg0.draw(ch);
+//            arg0.setStroke(this.stroke);
+//            arg0.draw(ch);
         } else {
             arg0.setPaint(this.fill);
             arg0.fill(s);
@@ -337,5 +344,21 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
 
         return crosshair;
 
+    }
+    
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
+        pcs.addPropertyChangeListener(pcl);
+    }
+    
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener pcl) {
+        pcs.addPropertyChangeListener(pcl);
+    }
+    
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+        pcs.removePropertyChangeListener(pcl);
+    }
+    
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener pcl) {
+        pcs.removePropertyChangeListener(propertyName, pcl);
     }
 }

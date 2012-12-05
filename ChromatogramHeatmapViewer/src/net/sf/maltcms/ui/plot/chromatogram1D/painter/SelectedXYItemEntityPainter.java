@@ -38,6 +38,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,12 +46,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import maltcms.ui.views.ChartPanelTools;
 import maltcms.ui.views.GraphicsSettings;
+import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
 import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
 import org.jdesktop.swingx.painter.AbstractPainter;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.annotations.XYAnnotation;
+import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYAnnotationEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
@@ -61,9 +66,8 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.ui.RectangleAnchor;
 import org.jfree.util.ShapeUtilities;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
 /**
@@ -82,7 +86,8 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     private InstanceContent ic;
     private boolean isHeatmap = false;
     private Queue<TARGET> selectionQueue = new LinkedBlockingQueue<TARGET>();
-   // private TARGET lastItem = null;
+    private Queue<XYSelectableShapeAnnotation> annotationQueue = new LinkedBlockingQueue<XYSelectableShapeAnnotation>();
+    // private TARGET lastItem = null;
     private ExecutorService es = Executors.newSingleThreadExecutor();
     private AtomicBoolean updatePending = new AtomicBoolean(false);
     private ChartPanel cp;
@@ -101,8 +106,8 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     public Shape createCursor(float scale) {
         GeneralPath gp = new GeneralPath();
         gp.moveTo(0.0d, 0.0d);
-        gp.lineTo(-1 / 2.0d, -1);
-        gp.lineTo(1 / 2.0d, -1);
+        gp.lineTo(-1 / 3.0d, -0.75);
+        gp.lineTo(1 / 3.0d, -0.75);
         gp.closePath();
         return AffineTransform.getScaleInstance(scale, scale).
                 createTransformedShape(gp);
@@ -110,7 +115,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
 
     public Shape createCursorShape(Shape s) {
         Shape cursorShape = AffineTransform.getTranslateInstance(s.getBounds2D().
-                getCenterX(), s.getBounds2D().getCenterY()).
+                getCenterX(), s.getBounds2D().getMinY()).
                 createTransformedShape(cursor);
         return cursorShape;
     }
@@ -167,7 +172,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                     p.getY() - 0.5, 1.0, 1.0), hoverColor);
 
             originalSettings.apply(gd);
-        } else if(s!=null) {
+        } else if (s != null) {
             GraphicsSettings originalSettings = GraphicsSettings.create(gd);
             GraphicsSettings newSettings = GraphicsSettings.clone(
                     originalSettings);
@@ -193,10 +198,18 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
                     chartPanel));
             newSettings.apply(gd);
             if (plot instanceof XYPlot) {
-                XYPlot xyp = (XYPlot)plot;
+                XYPlot xyp = (XYPlot) plot;
+//                for (Object obj : xyp.getAnnotations()) {
+//                    XYAnnotation xya = (XYAnnotation) obj;
+//                    if (xya instanceof XYSelectableShapeAnnotation) {
+//                        XYSelectableShapeAnnotation xyssa = (XYSelectableShapeAnnotation) xya;
+//                        xyssa.setActive(true);
+//                        xyssa.draw(gd, xyp, paintArea, xyp.getDomainAxis(), xyp.getRangeAxis(), 0, chartPanel.getChartRenderingInfo().getPlotInfo());
+//                    }
+//                }
                 Shape shape = null;
                 if (xyp.getOrientation() == PlotOrientation.HORIZONTAL) {
-                    shape = ShapeUtilities.createTranslatedShape(xyie.getArea(),xyie.getDataset().getYValue(xyie.getSeriesIndex(), xyie.getItem()),
+                    shape = ShapeUtilities.createTranslatedShape(xyie.getArea(), xyie.getDataset().getYValue(xyie.getSeriesIndex(), xyie.getItem()),
                             xyie.getDataset().getXValue(xyie.getSeriesIndex(), xyie.getItem()));
                 } else if (xyp.getOrientation() == PlotOrientation.VERTICAL) {
                     shape = ShapeUtilities.createTranslatedShape(xyie.getArea(), xyie.getDataset().getXValue(xyie.getSeriesIndex(), xyie.getItem()),
@@ -212,66 +225,18 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
 
     @Override
     public void chartMouseClicked(final ChartMouseEvent cme) {
-//        p = cme.getTrigger().getPoint();
-        if (updatePending.compareAndSet(false, true)) {
-            Runnable r = new Runnable() {
-
-                @Override
-                public void run() {
-                    System.out.println("Retrieving element");
-                    ChartEntity ce = cme.getEntity();
-                    if (ce instanceof XYItemEntity) {
-                        System.out.println("Is data entity");
-                        xyie = (XYItemEntity) ce;
-                        s = xyie.getArea();
-                        //s = null;
-//                        p = null;
-                        if (!selectionQueue.isEmpty()) {
-                            System.out.println("Clearing selection queue! Removing elements from instance content!");
-                            for(TARGET t:selectionQueue) {
-                                ic.remove(t);
-                            }
-                            selectionQueue.clear();
-                        }
-                        System.out.println("Series index: "+xyie.getSeriesIndex()+" item: "+xyie.getItem());
-                        TARGET t = ds.getTarget(xyie.getSeriesIndex(), xyie.getItem());
-                        selectionQueue.add(t);
-                        for(int i = 0;i < ds.getSeriesCount(); i++) {
-                            ic.remove(ds.getSource(i));
-                        }
-                        //add ichromatogram
-                        ic.add(ds.getSource(xyie.getSeriesIndex()));
-                        //add corresponding scan
-                        ic.add(t);
-                        //remove ichromatogram
-                        ic.remove(ds.getSource(xyie.getSeriesIndex()));
-                        //re-add all chromatogram descriptors
-                        for(int i = 0;i < ds.getSeriesCount(); i++) {
-                            ic.add(ds.getSource(i));
-                        }
-                    }
-                    //else {
-                    //    xyie = null;
-                    //}
-                    updatePending.set(false);
-                    setDirty(true);
-                }
-            };
-            es.submit(r);
-        } else {
-            System.out.println("Not performing update due to pending update!");
-        }
+        updateSelection(cme);
     }
 
     @Override
     public void chartMouseMoved(ChartMouseEvent cme) {
-//        p = cme.getTrigger().getPoint();
         ChartEntity ce = cme.getEntity();
         if (ce instanceof XYItemEntity) {
             XYItemEntity xyie = (XYItemEntity) ce;
             s = xyie.getArea();
-//            p = new Point2D.Double(xyie.getDataset().getXValue(xyie.getSeriesIndex(), xyie.getItem()), xyie.getDataset().getYValue(xyie.getSeriesIndex(), xyie.getItem()));
-//            p = null;
+            if (cme.getTrigger().isShiftDown()) {
+                updateSelection(cme);
+            }
         }
         setDirty(true);
     }
@@ -290,5 +255,71 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     @Override
     public void chartChanged(ChartChangeEvent cce) {
         setDirty(true);
+    }
+
+    private void updateSelection(final ChartMouseEvent cme) {
+        //        p = cme.getTrigger().getPoint();
+        if (updatePending.compareAndSet(false, true)) {
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Retrieving element");
+                    ChartEntity ce = cme.getEntity();
+                    if (ce instanceof XYItemEntity) {
+                        System.out.println("Is data entity");
+                        xyie = (XYItemEntity) ce;
+                        s = xyie.getArea();
+                        //s = null;
+                        //                        p = null;
+                        if (!selectionQueue.isEmpty()) {
+                            System.out.println("Clearing selection queue! Removing elements from instance content!");
+                            for (TARGET t : selectionQueue) {
+                                ic.remove(t);
+                            }
+                            selectionQueue.clear();
+                        }
+                        System.out.println("Series index: " + xyie.getSeriesIndex() + " item: " + xyie.getItem());
+                        TARGET t = ds.getTarget(xyie.getSeriesIndex(), xyie.getItem());
+                        selectionQueue.add(t);
+                        for (int i = 0; i < ds.getSeriesCount(); i++) {
+                            ic.remove(ds.getSource(i));
+                        }
+                        //add ichromatogram
+                        ic.add(ds.getSource(xyie.getSeriesIndex()));
+                        //add corresponding scan
+                        ic.add(t);
+                        //remove ichromatogram
+                        ic.remove(ds.getSource(xyie.getSeriesIndex()));
+                        //re-add all chromatogram descriptors
+                        for (int i = 0; i < ds.getSeriesCount(); i++) {
+                            ic.add(ds.getSource(i));
+                        }
+                        //                    } else if (ce instanceof XYAnnotationEntity) {
+                        //                        System.out.println("Is annotation entity");
+                        //                        XYAnnotation xya = (XYAnnotation) ce;
+                        //                        if (xya instanceof XYSelectableShapeAnnotation) {
+                        //                            System.out.println("Is selectable");
+                        //                            for (XYSelectableShapeAnnotation xysa : annotationQueue) {
+                        //                                xysa.setActive(false);
+                        //                                ic.remove(xysa.getT());
+                        //                            }
+                        //                            annotationQueue.clear();
+                        //                            XYSelectableShapeAnnotation xys = (XYSelectableShapeAnnotation) xya;
+                        //                            xys.setActive(true);
+                        //                            annotationQueue.add(xys);
+                        //                            ic.add(xys.getT());
+                        //                        }
+                    }
+                    //else {
+                    //    xyie = null;
+                    //}
+                    updatePending.set(false);
+                    setDirty(true);
+                }
+            };
+            es.submit(r);
+        } else {
+            System.out.println("Not performing update due to pending update!");
+        }
     }
 }

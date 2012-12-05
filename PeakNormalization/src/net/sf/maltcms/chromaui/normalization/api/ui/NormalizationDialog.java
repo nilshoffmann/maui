@@ -32,7 +32,6 @@ import net.sf.maltcms.chromaui.normalization.spi.CompositeNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.CompoundPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.IdentityNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.NormalizationDescriptorNormalizer;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import org.openide.DialogDisplayer;
@@ -65,11 +64,19 @@ public class NormalizationDialog {
                 System.out.println("Normalizing to identity");
                 externalNormalizer = new IdentityNormalizer();
             }
-            CompoundPeakNormalizer cpn = new CompoundPeakNormalizer();
-            cpn.setReferenceGroup(normalizationGroup);
-            CompositeNormalizer cn = new CompositeNormalizer();
-            cn.setNormalizer(new IPeakNormalizer[]{cpn,externalNormalizer});
-            return cn;
+            if(normalizationGroup.getName().equals("No Normalization")) {
+                CompoundPeakNormalizer cpn = new CompoundPeakNormalizer();
+                cpn.setReferenceGroup(normalizationGroup);
+                CompositeNormalizer cn = new CompositeNormalizer();
+                cn.setNormalizer(new IPeakNormalizer[]{externalNormalizer});
+                return cn;
+            }else{
+                CompoundPeakNormalizer cpn = new CompoundPeakNormalizer();
+                cpn.setReferenceGroup(normalizationGroup);
+                CompositeNormalizer cn = new CompositeNormalizer();
+                cn.setNormalizer(new IPeakNormalizer[]{cpn,externalNormalizer});
+                return cn;
+            }
         }
         return null;
     }

@@ -97,6 +97,7 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
                     IPeakGroupDescriptor pgd = DescriptorFactory.newPeakGroupDescriptor("group-" + (rowIdx + 1));
                     pgd.setIndex(rowIdx);
                     pgd.setDisplayName("group-" + (rowIdx + 1));
+                    System.out.println("Adding group "+pgd.getDisplayName());
                     List<IPeakAnnotationDescriptor> descriptors = new ArrayList<IPeakAnnotationDescriptor>();
                     int colIdx = 0;
                     for (String element : row) {
@@ -105,7 +106,11 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
                             IPeakAnnotationDescriptor ipad = getDescriptor(
                                     peakIndex, project,
                                     indexToChrom.get(Integer.valueOf(colIdx)));
-                            descriptors.add(ipad);
+                            if(ipad!=null) {
+                                descriptors.add(ipad);
+                            }else{
+                                System.err.println("Warning: Peak at index "+peakIndex+" in file "+indexToChrom.get(Integer.valueOf(colIdx)).getDisplayName()+" could not be matched!");
+                            }
                         }
                         colIdx++;
                     }
@@ -121,6 +126,7 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
             }
             progressHandle.finish();
         } catch (Exception e) {
+            Exceptions.printStackTrace(e);
             progressHandle.finish();
         }
     }
@@ -131,10 +137,12 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
         for (Peak1DContainer p : c) {
             for (IPeakAnnotationDescriptor ipad : p.getMembers()) {
                 if (ipad.getIndex() == index) {
+                    System.out.println("matched peak to index "+index);
                     return ipad;
                 }
             }
         }
+        System.out.println("No match found!");
         return null;
     }
 }

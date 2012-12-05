@@ -53,8 +53,11 @@ public class CompoundListRenderer extends DefaultListCellRenderer {
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-
-        setText("@"+String.format("%.2f",((IPeakGroupDescriptor) value).getMedianApexTime())+": "+((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().get(0).getName());
+        if(((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().isEmpty()) {
+            setText(((IPeakGroupDescriptor) value).getDisplayName());
+        }else{
+            setText("@"+String.format("%.2f",((IPeakGroupDescriptor) value).getMedianApexTime())+": "+((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().get(0).getName());
+        }
         setFont(list.getFont());
         return this;
     }

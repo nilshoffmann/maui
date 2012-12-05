@@ -29,11 +29,13 @@ package net.sf.maltcms.maui.peakTableViewer;
 
 import java.awt.BorderLayout;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupDescriptorChildFactory;
 import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -44,6 +46,7 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -59,7 +62,7 @@ import org.openide.util.lookup.Lookups;
 autostore = false)
 @TopComponent.Description(preferredID = "PeakTableViewerTopComponent",
 //iconBase="SET/PATH/TO/ICON/HERE", 
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "output", openAtStartup = false)
 @ActionID(category = "Window",
 id = "net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent")
@@ -119,14 +122,17 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
     @Override
     public void componentOpened() {
+//        componentActivated();
         result = Utilities.actionsGlobalContext().lookupResult(
                 IPeakGroupDescriptor.class);
         result.addLookupListener(this);
+        resultChanged(new LookupEvent(result));
     }
 
     @Override
     public void componentClosed() {
         result.removeLookupListener(this);
+//        componentDeactivated();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -159,30 +165,11 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
                 iterator();
         if (iter.hasNext()) {
             container = (IPeakGroupDescriptor) iter.next();
-            setDisplayName("Peaks for " + project.getLocation().getName());
+            setDisplayName("Peaks for " + project.getLocation().getName()+" - "+container.getName());
             System.out.println("Setting node factory");
             final Lookup lkp = Lookups.fixed(container, project);
-            Children.Keys<IPeakGroupDescriptor> children = new Children.Keys<IPeakGroupDescriptor>() {
-
-                @Override
-                protected void addNotify() {
-                    setKeys(new IPeakGroupDescriptor[]{lkp.lookup(IPeakGroupDescriptor.class)});
-                }
-
-                @Override
-                protected Node[] createNodes(IPeakGroupDescriptor key) {
-                    System.out.println("Creating node for key: " + key);
-                    Node[] nodes = new Node[key.getPeakAnnotationDescriptors().size()];
-                    int i = 0;
-                    INodeFactory nodeFactory = Lookup.getDefault().lookup(INodeFactory.class);
-                    for (IPeakAnnotationDescriptor descr : key.getPeakAnnotationDescriptors()) {
-                        nodes[i++] = nodeFactory.createDescriptorNode(descr, Children.LEAF, lkp);
-                    }
-                    return nodes;
-                }
-            };
-
-            Node root = new AbstractNode(children, Lookups.fixed(container, project));
+            PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(lkp, container);
+            Node root = new AbstractNode(Children.create(childFactory, true), Lookups.fixed(container, project));
             System.out.println("Setting root context");
             manager.setRootContext(root);
 //            if (view != null) {

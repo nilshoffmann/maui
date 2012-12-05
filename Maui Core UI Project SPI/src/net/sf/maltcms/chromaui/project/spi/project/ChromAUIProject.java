@@ -140,7 +140,10 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public void addContainer(IContainer... ic) {
-        ics.create((Object) ic);
+        for(IContainer container:ic) {
+            System.out.println("Adding container: "+ic.toString());
+            ics.create(container);
+        }
         refresh();
     }
 

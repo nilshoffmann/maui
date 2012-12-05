@@ -40,6 +40,9 @@ import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -73,21 +76,20 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
     protected boolean createKeys(List<T> list) {
         try {
             Collection<T> container = this.cp.getMembers();
-            if(container==null || container.isEmpty()) {
+            if (container == null || container.isEmpty()) {
                 return true;
             }
-            
+
             for (T idesc : container) {
                 if (Thread.interrupted()) {
                     return true;
                 } else {
-                    if(idesc!=null) {
+                    if (idesc != null) {
                         list.add(idesc);
                     }
                 }
             }
             Collections.sort(list, new Comparator<IBasicDescriptor>() {
-
                 @Override
                 public int compare(IBasicDescriptor t,
                         IBasicDescriptor t1) {
@@ -141,28 +143,23 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 Exceptions.printStackTrace(ex);
             }
         } else if (key instanceof IContainer<?>) {
-            ContainerNode cn;
-            try {
-                //merge factory lookup from parent nodes with this container node lookup
-                cn = new ContainerNode((IContainer<IBasicDescriptor>) key,
-                        new ProxyLookup(lkp, Lookups.fixed(cp)));
-                key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
-                cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-                return cn;
-            } catch (IntrospectionException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            Lookup lookup = new ProxyLookup(lkp,
+                    Lookups.fixed(cp));
+            Children c = Children.create(new ContainerNodeFactory((IContainer<?>)key, lookup), true);
+            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createContainerNode((IContainer<?>)key, c, lookup);
+            key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
+            cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
+            return cn;
         } else {
-            try {
-                //leaf node, addMembers current lookup, make containter available generically
-                DescriptorNode cn = new DescriptorNode(key, new ProxyLookup(lkp,
-                        Lookups.fixed(cp)));
-                key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
-                cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-                return cn;
-            } catch (IntrospectionException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+//            try {
+            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
+                    Lookups.fixed(cp)));
+            key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
+            cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
+            return cn;
+//            } catch (IntrospectionException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
         }
         return Node.EMPTY;
     }

@@ -56,7 +56,7 @@ class XCMSMatchedFilterPeakFinder implements RawDataGroovyScript {
     double fullWidthAtHalfMaximum = 5.0
     int max = 10
     boolean useQsub = false
-    String xcmsRScriptLocation = "/home/hoffmann/maui/extensions/R/xcmsMatchedFilterPeakFinder.R"
+    String xcmsRScriptLocation = "/home/hoffmann/MauiProjects/extensions/R/xcmsMatchedFilterPeakFinder.R"
     
     private boolean cancel = false
 

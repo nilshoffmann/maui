@@ -58,6 +58,7 @@ import org.jfree.data.Range;
 import org.jfree.ui.TextAnchor;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.util.WeakListeners;
 import ucar.ma2.Array;
 
 /**
@@ -119,17 +120,18 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
         System.out.println("Plot mode is " + plotMode);
 
         handle.progress("Building plot", 3);
+        IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
         if ("TIC".equals(plotMode)) {
             System.out.println("Loading TIC");
             if ("SIDE".equals(plotType)) {
                 plot = c1p.provide1DPlot(buildFileFragments(files),
                         "total_intensity", true);
-                IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
-                if (cvtc.getAnnotations().isEmpty()) {
-                    for (IChromatogramDescriptor descr : files) {
-                        cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
-                    }
+                //if (cvtc.getAnnotations().isEmpty()) {
+                cvtc.getAnnotations().clear();
+                for (IChromatogramDescriptor descr : files) {
+                    cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
                 }
+                //}
             } else if ("TOP".equals(plotType)) {
                 plot = c1p.provide1DCoPlot(buildFileFragments(files),
                         "total_intensity", true);
@@ -139,11 +141,19 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
             plot = c1p.provide1DEICSUMPlot(buildFileFragments(files),
                     masses,
                     massResolution, true);
+            cvtc.getAnnotations().clear();
+            for (IChromatogramDescriptor descr : files) {
+                cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "EIC-SUM", masses));
+            }
         } else if ("EIC-COPLOT".equals(plotMode)) {
             System.out.println("Loading EIC-COPLOT");
             plot = c1p.provide1DEICCOPlot(buildFileFragments(files),
                     masses,
                     massResolution, true);
+            cvtc.getAnnotations().clear();
+            for (IChromatogramDescriptor descr : files) {
+                cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "EIC-COPLOT", masses));
+            }
         }
 
         handle.progress("Configuring plot", 4);
@@ -209,45 +219,49 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
                     System.out.println("Adding peak " + (cnt++) + " " + peakDescr.getName());
 
 //                System.out.println("Retrieving scan acquisition time");
-//                Array sat2 = chromatogram.getParent().getChild(
-//                        "scan_acquisition_time").getArray();
+                    Array sat2 = chromatogram.getParent().getChild(
+                            "scan_acquisition_time").getArray();
                     int scan = chromatogram.getIndexFor(peakDescr.getApexTime());
                     System.out.println("Retention time: " + peakDescr.getApexTime() + "; Scan index: " + scan);
                     int startIdx = chromatogram.getIndexFor(peakDescr.getStartTime());
                     int apexIdx = chromatogram.getIndexFor(peakDescr.getApexTime());
                     int stopIdx = chromatogram.getIndexFor(peakDescr.getStopTime());
-                    double apexTime = peakDescr.getApexTime();
-                    double startTime = peakDescr.getStartTime();
-                    double stopTime = peakDescr.getStopTime();
+//                    double apexTime = peakDescr.getApexTime();
+//                    double startTime = peakDescr.getStartTime();
+//                    double stopTime = peakDescr.getStopTime();
+
+                    double apexTime = sat2.getDouble(apexIdx);
+                    double startTime = sat2.getDouble(startIdx);
+                    double stopTime = sat2.getDouble(stopIdx);
+
 //                    System.out.println(
 //                            "Creating general path from " + startIdx + " to " + stopIdx);
-//                    GeneralPath gp = new GeneralPath();
-//                    gp.moveTo(startTime, tic.getDouble(startIdx));
-////                for (int j = startIdx + 1; j
-////                        <= stopIdx + 1; j++) {
-////                    gp.lineTo(sat2.getDouble(j), tic.getDouble(j));
-////                }
-//                    gp.lineTo(apexTime, tic.getDouble(scan));
-//                    gp.lineTo(stopTime, tic.getDouble(stopIdx));
-//                    gp.lineTo(startTime, tic.getDouble(startIdx));
-//                    gp.closePath();
+                    GeneralPath gp = new GeneralPath();
+                    gp.moveTo(startTime, 0);
+                    gp.lineTo(startTime, tic.getDouble(startIdx));
+                    for (int j = 0; j
+                            < stopIdx - startIdx + 1; j++) {
+                        gp.lineTo(sat2.getDouble(startIdx + j), tic.getDouble(startIdx + j));
+                    }
+                    gp.lineTo(stopTime, 0);
+                    gp.closePath();
                     System.out.println("creating bounding box");
-                    //gp.closePath();
 //                    Rectangle2D.Double bbox = new Rectangle2D.Double(
 //                            startTime, 0, stopTime - startTime,
 //                            tic.getDouble(scan));
 //                    Rectangle2D.Double bbox = new Rectangle2D.Double(
 //                            startTime, 0, stopTime-startTime,
 //                            tic.getDouble(scan));
-                    GeneralPath gp = new GeneralPath();
-                    gp.moveTo(startTime, tic.getDouble(startIdx));
-                    gp.lineTo(apexTime, tic.getDouble(apexIdx));
-                    gp.lineTo(stopTime, tic.getDouble(stopIdx));
-                    gp.closePath();
+//                    GeneralPath gp = new GeneralPath();
+//                    gp.moveTo(startTime, tic.getDouble(startIdx));
+//                    gp.lineTo(apexTime, tic.getDouble(apexIdx));
+//                    gp.lineTo(stopTime, tic.getDouble(stopIdx));
+//                    gp.closePath();
                     String label = peakDescr.getDisplayName() + "@" + String.format("%.2f", apexTime);
                     XYSelectableShapeAnnotation<IPeakAnnotationDescriptor> xyssa = new XYSelectableShapeAnnotation<IPeakAnnotationDescriptor>(apexTime, tic.getDouble(apexIdx), gp, toolName + ", #" + peakDescr.getIndex() + "", TextAnchor.BASELINE_LEFT, peakDescr);
                     xyssa.setFill(containerColor);
                     xyssa.setOutline(containerColor.darker());
+                    xyssa.setHighlight(containerColor.brighter());
                     System.out.println("adding annotation");
                     l.add(xyssa);
                 }

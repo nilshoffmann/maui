@@ -68,7 +68,7 @@ dtd = "-//net.sf.maltcms.chromaui.statistics.view//StatisticsViewer//EN",
 autostore = false)
 @TopComponent.Description(preferredID = "StatisticsViewerTopComponent",
 //iconBase="SET/PATH/TO/ICON/HERE", 
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 @ActionID(category = "Window",
 id = "net.sf.maltcms.chromaui.statistics.view.StatisticsViewerTopComponent")
@@ -127,6 +127,7 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
         result = Utilities.actionsGlobalContext().lookupResult(
                 StatisticsContainer.class);
         result.addLookupListener(this);
+        resultChanged(new LookupEvent(result));
     }
 
     @Override
