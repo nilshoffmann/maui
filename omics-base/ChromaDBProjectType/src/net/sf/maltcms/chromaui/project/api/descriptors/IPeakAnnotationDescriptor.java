@@ -125,4 +125,12 @@ public interface IPeakAnnotationDescriptor extends IBasicDescriptor {
     
     public void setApexIntensity(double apexIntensity);
     
+    public void setNormalizedArea(double normalizedArea);
+    
+    public double getNormalizedArea();
+    
+    public void setNormalizationMethods(String...normalizationMethod);
+    
+    public String[] getNormalizationMethods();
+    
 }
