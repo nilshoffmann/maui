@@ -28,15 +28,24 @@
 package net.sf.maltcms.chromaui.normalization.spi.runnables;
 
 import cross.datastructures.fragments.FileFragment;
+import cross.datastructures.fragments.IFileFragment;
+import cross.datastructures.fragments.IVariableFragment;
+import cross.datastructures.tools.FragmentTools;
+import cross.exception.ResourceNotAvailableException;
 import java.io.File;
 import java.util.*;
 import lombok.Data;
 import maltcms.datastructures.peak.Peak1D;
+import maltcms.datastructures.peak.PeakType;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.*;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.util.Exceptions;
+import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayInt;
 
 /**
  *
@@ -132,10 +141,10 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
 
     private List<IPeakAnnotationDescriptor> createPeaks(File file, IChromatogramDescriptor chromatogram) {
         List<IPeakAnnotationDescriptor> pads = new ArrayList<IPeakAnnotationDescriptor>();
-        List<Peak1D> peaks = Peak1D.fromFragment(new FileFragment(file));
+        List<Peak1D> peaks = fromFragment(new FileFragment(file));
         int index = 0;
         for (Peak1D peak : peaks) {
-            System.out.println("Peak "+peak.getName());
+            System.out.println("Peak " + peak.getName());
             IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
                     chromatogram,
                     peak.getName(),
@@ -152,13 +161,74 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
                     peak.getApexTime(), peak.getStopTime(), peak.getArea(),
                     peak.getApexIntensity());
             descriptor.setIndex(index++);
-//            int scanIndex = chromatogram.getChromatogram().getIndexFor(peak.getApexTime());
-//            Array masses = chromatogram.getChromatogram().getMasses().get(scanIndex);
-//            Array intensities = chromatogram.getChromatogram().getIntensities().get(scanIndex);
-//            descriptor.setMassValues((double[])masses.get1DJavaArray(double.class));
-//            descriptor.setIntensityValues((int[])intensities.get1DJavaArray(int.class));
+            descriptor.setApexIntensity(peak.getApexIntensity());
+            descriptor.setApexTime(peak.getApexTime());
+            descriptor.setArea(peak.getArea());
+            descriptor.setStartTime(peak.getStartTime());
+            descriptor.setStopTime(peak.getStopTime());
+            descriptor.setNormalizedArea(peak.getNormalizedArea());
+            descriptor.setNormalizationMethods(peak.getNormalizationMethods());
+            try {
+                Array masses = chromatogram.getChromatogram().getMasses().get(peak.getApexIndex());
+                Array intensities = chromatogram.getChromatogram().getIntensities().get(peak.getApexIndex());
+                descriptor.setMassValues((double[]) masses.get1DJavaArray(double.class));
+                descriptor.setIntensityValues((int[]) intensities.get1DJavaArray(int.class));
+            } catch (ResourceNotAvailableException rnae) {
+                Exceptions.printStackTrace(rnae);
+            }
             pads.add(descriptor);
         }
         return pads;
+    }
+
+    public static List<Peak1D> fromFragment(IFileFragment ff) {
+
+        final IVariableFragment peaks = ff.getChild(
+                "tic_peaks");
+        ArrayChar.D2 sourceFileName = (ArrayChar.D2) ff.getChild("peak_source_file").getArray();
+        ArrayChar.D2 peakNames = (ArrayChar.D2) ff.getChild("peak_name").getArray();
+        Array apexRt = ff.getChild(
+                "peak_retention_time").getArray();
+        Array startRT = ff.getChild(
+                "peak_start_time").getArray();
+        Array stopRT = ff.getChild(
+                "peak_end_time").getArray();
+        Array area = ff.getChild("peak_area").getArray();
+        Array normalizedArea = ff.getChild("peak_area_normalized").getArray();
+        Collection<String> normalizationMethods = FragmentTools.getStringArray(ff, "peak_area_normalization_methods");
+        Array baseLineStartRT = ff.getChild("baseline_start_time").getArray();
+        Array baseLineStopRT = ff.getChild("baseline_stop_time").getArray();
+        Array baseLineStartValue = ff.getChild("baseline_start_value").getArray();
+        Array baseLineStopValue = ff.getChild("baseline_stop_value").getArray();
+        Array peakStartIndex = ff.getChild("peak_start_index").getArray();
+        Array peakEndIndex = ff.getChild("peak_end_index").getArray();
+        Array snr = ff.getChild("peak_signal_to_noise").getArray();
+        ArrayChar.D2 peakType = (ArrayChar.D2) ff.getChild("peak_type").getArray();
+        Array peakDetectionChannel = ff.getChild("peak_detection_channel").getArray();
+        ArrayInt.D1 peakPositions = (ArrayInt.D1) peaks.getArray();
+        ArrayList<Peak1D> peaklist = new ArrayList<Peak1D>(peakPositions.getShape()[0]);
+        for (int i = 0; i < peakPositions.getShape()[0]; i++) {
+            Peak1D p = new Peak1D();
+            p.setNormalizationMethods(normalizationMethods.toArray(new String[normalizationMethods.size()]));
+            p.setFile(sourceFileName.getString(0));
+            p.setName(peakNames.getString(i));
+            p.setApexTime(apexRt.getDouble(i));
+            p.setStartTime(startRT.getDouble(i));
+            p.setStopTime(stopRT.getDouble(i));
+            p.setArea(area.getDouble(i));
+            p.setNormalizedArea(normalizedArea.getDouble(i));
+            p.setBaselineStartTime(baseLineStartRT.getDouble(i));
+            p.setBaselineStopTime(baseLineStopRT.getDouble(i));
+            p.setBaselineStartValue(baseLineStartValue.getDouble(i));
+            p.setBaselineStopValue(baseLineStopValue.getDouble(i));
+            p.setApexIndex(peakPositions.getInt(i));
+            p.setStartIndex(peakStartIndex.getInt(i));
+            p.setStopIndex(peakEndIndex.getInt(i));
+            p.setSnr(snr.getDouble(i));
+            p.setPeakType(PeakType.valueOf(peakType.getString(i)));
+            p.setMw(peakDetectionChannel.getDouble(i));
+            peaklist.add(p);
+        }
+        return peaklist;
     }
 }

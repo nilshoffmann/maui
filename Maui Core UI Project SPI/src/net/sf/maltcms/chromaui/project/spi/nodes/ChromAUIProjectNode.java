@@ -77,12 +77,13 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 //                CommonProjectActions.newFileAction(),
 //                null,
 //                CommonProjectActions.copyProjectAction(),
+        nodeActions.add(null);
         nodeActions.add(CommonProjectActions.deleteProjectAction());
 //                null,
 //                CommonProjectActions.setAsMainProjectAction(),
         nodeActions.add(CommonProjectActions.closeProjectAction());
 //                null,
-        nodeActions.add(SystemAction.get(PropertiesAction.class));
+        nodeActions.add(CommonProjectActions.customizeProjectAction());
 
         return nodeActions.toArray(new Action[nodeActions.size()]);
     }

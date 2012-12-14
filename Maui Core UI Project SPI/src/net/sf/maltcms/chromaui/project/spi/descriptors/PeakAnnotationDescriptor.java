@@ -607,4 +607,38 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
             super.setDisplayName(displayName);
         }
     }
+    
+    private double normalizedArea = Double.NaN;
+    public static final String PROP_NORMALIZEDAREA = "normalizedArea";
+
+    @Override
+    public double getNormalizedArea() {
+        activate(ActivationPurpose.READ);
+        return normalizedArea;
+    }
+
+    @Override
+    public void setNormalizedArea(double normalizedArea) {
+        activate(ActivationPurpose.WRITE);
+        double old = this.normalizedArea;
+        this.normalizedArea = normalizedArea;
+        firePropertyChange(PROP_NORMALIZEDAREA, old, this.normalizedArea);
+    }
+    
+    private String[] normalizationMethods = new String[0];
+    public static final String PROP_NORMALIZATIONMETHODS = "normalizationMethods";
+
+    @Override
+    public String[] getNormalizationMethods() {
+        activate(ActivationPurpose.READ);
+        return normalizationMethods;
+    }
+
+    @Override
+    public void setNormalizationMethods(String ... normalizationMethods) {
+        activate(ActivationPurpose.WRITE);
+        String[] old = this.normalizationMethods;
+        this.normalizationMethods = normalizationMethods;
+        firePropertyChange(PROP_NORMALIZATIONMETHODS, old, this.normalizationMethods);
+    }
 }
