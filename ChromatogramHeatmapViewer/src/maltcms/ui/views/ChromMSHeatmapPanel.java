@@ -174,10 +174,10 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
 
     @Override
     public void axisChanged(AxisChangeEvent ace) {
-        if (this.viewport != null) {
-            this.ic.remove(this.viewport);
-        }
-        if (this.ticplot != null) {
+        if (hasFocus()) {
+            if (this.viewport != null) {
+                this.ic.remove(this.viewport);
+            }
             double xmin = this.ticplot.getDomainAxis().getLowerBound();
             double xmax = this.ticplot.getDomainAxis().getUpperBound();
             double ymin = this.ticplot.getRangeAxis().getLowerBound();
@@ -185,7 +185,22 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
             this.viewport = new ChromatogramViewViewport();
             this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
             this.ic.add(viewport);
+        } else {
+            //received viewport change from somewhere else
+            
         }
+//        
+//        if (this.ticplot != null) {
+//            double xmin = this.ticplot.getDomainAxis().getLowerBound();
+//            double xmax = this.ticplot.getDomainAxis().getUpperBound();
+//            double ymin = this.ticplot.getRangeAxis().getLowerBound();
+//            double ymax = this.ticplot.getRangeAxis().getUpperBound();
+//            if (hasFocus() && this.viewport == null) {
+//                this.viewport = new ChromatogramViewViewport();
+//                this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
+//                this.ic.add(viewport);
+//            }
+//        }
     }
 
     private void addAxisListener() {
@@ -215,11 +230,23 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
     }
 
     public void setViewport(Rectangle2D viewport) {
-        removeAxisListener();
-        this.ticplot.getDomainAxis().setLowerBound(viewport.getMinX());
-        this.ticplot.getDomainAxis().setUpperBound(viewport.getMaxX());
-        this.ticplot.getRangeAxis().setLowerBound(viewport.getMinY());
-        this.ticplot.getRangeAxis().setUpperBound(viewport.getMaxY());
-        addAxisListener();
+        //ignore viewport changes if we have the focus
+        if(hasFocus()) {
+            System.out.println("Ignoring viewport update since we have the focus!");
+        } else {
+            //otherwise, clear our own viewport and set to new value
+            if (this.viewport != null) {
+                this.ic.remove(this.viewport);
+            }
+            this.viewport = new ChromatogramViewViewport();
+            this.viewport.setViewPort(viewport);
+            System.out.println("Setting viewport!");
+            removeAxisListener();
+            this.ticplot.getDomainAxis().setLowerBound(viewport.getMinX());
+            this.ticplot.getDomainAxis().setUpperBound(viewport.getMaxX());
+            this.ticplot.getRangeAxis().setLowerBound(viewport.getMinY());
+            this.ticplot.getRangeAxis().setUpperBound(viewport.getMaxY());
+            addAxisListener();
+        }
     }
 }

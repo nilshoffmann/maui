@@ -33,19 +33,14 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
 
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.RequestProcessor;
-import org.openide.util.Task;
-import org.openide.util.TaskListener;
 
 @ActionID(category = "Build",
 id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListImporter")
@@ -54,11 +49,11 @@ id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeak
     @ActionReference(path = "Menu/File", position = 1413)
 })
 @Messages("CTL_ChromaTofPeakListImporter=Import ChromaTOF Report")
-public final class ChromaTofPeakListImporter implements ActionListener {
+public final class ChromaTofPeakListImporterAction implements ActionListener {
 
     private final IChromAUIProject context;
 
-    public ChromaTofPeakListImporter(IChromAUIProject context) {
+    public ChromaTofPeakListImporterAction(IChromAUIProject context) {
         this.context = context;
     }
 
@@ -82,9 +77,9 @@ public final class ChromaTofPeakListImporter implements ActionListener {
         jfc.setMultiSelectionEnabled(true);
         int result = jfc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter plir = new net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter(context,
-                    jfc.getSelectedFiles());
-            net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter.createAndRun("ChromaTOF Peak List Import", plir);
+            ChromaTofPeakListImporter plir = new ChromaTofPeakListImporter(context,
+                    jfc.getSelectedFiles(),context.getImportLocation(ChromaTofPeakListImporter.class));
+            ChromaTofPeakListImporter.createAndRun("ChromaTOF Peak List Import", plir);
         }
     }
 }

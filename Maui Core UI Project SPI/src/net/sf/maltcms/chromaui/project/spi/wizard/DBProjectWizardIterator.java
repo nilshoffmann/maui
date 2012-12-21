@@ -38,12 +38,14 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import net.sf.maltcms.chromaui.project.spi.DBProjectFactory;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
-public class DBProjectWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator {
+public class DBProjectWizardIterator implements WizardDescriptor.ProgressInstantiatingIterator {
 
     private int index;
     private WizardDescriptor.Panel[] panels;
@@ -71,15 +73,13 @@ public class DBProjectWizardIterator implements WizardDescriptor./*Progress*/Ins
     }
 
     @Override
-    public Set<FileObject> instantiate(/*ProgressHandle handle*/) throws IOException {
+    public Set<FileObject> instantiate(ProgressHandle handle) throws IOException {
         Set<FileObject> resultSet = new LinkedHashSet<FileObject>();
         Map<String, Object> props = wiz.getProperties();
         System.out.println(props);
         File projdir = (File) props.get("projdir");
-        DBProjectFactory.initGroups(props, projdir);
-
+        DBProjectFactory.initGroups(handle, props, projdir);
         resultSet.add(FileUtil.createData(projdir));
-
         return resultSet;
     }
 
@@ -177,5 +177,11 @@ public class DBProjectWizardIterator implements WizardDescriptor./*Progress*/Ins
 
     @Override
     public final void removeChangeListener(ChangeListener l) {
+    }
+
+    @Override
+    public Set<FileObject> instantiate() throws IOException {
+        ProgressHandle handle = ProgressHandleFactory.createHandle("Creating project");
+        return instantiate(handle);
     }
 }

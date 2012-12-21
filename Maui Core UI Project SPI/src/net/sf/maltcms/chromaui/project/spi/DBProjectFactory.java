@@ -62,6 +62,7 @@ import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api.ChromaTOFImporter;
 import net.sf.maltcms.chromaui.project.api.types.GCGC;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
 import org.apache.commons.io.FileUtils;
+import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.filesystems.FileObject;
@@ -126,24 +127,28 @@ public class DBProjectFactory {
 
     }
 
-    public static void initGroups(Map<String, Object> props, File projdir) throws AuthenticationException, IOException {
+    public static void initGroups(ProgressHandle handle, Map<String, Object> props, File projdir) throws AuthenticationException, IOException {
         if (!projdir.exists()) {
             projdir.mkdirs();
         }
+        handle.start(5);
         String projectFileName = DBProjectFactory.PROJECT_FILE;
         IChromAUIProject icui = DBProjectFactory.getDefault();
         ISeparationType separationType = (ISeparationType) props.get(
                 "separationType");
         IDetectorType detectorType = (IDetectorType) props.get("detectorType");
         try {
+            handle.progress("Activating database", 1);
             icui.activate(new File(projdir, projectFileName).toURI().toURL());
             icui.getCrudProvider();
             Object o = props.get("input.dataInfo");
             Map<File, String> fileToGroup = (Map<File, String>) props.get(
                     "groupMapping");
             File[] inputFiles = toFileArray((String) o, ",");
+            handle.progress("Importing data",2);
             fileToGroup = importChromatograms(props, projdir, inputFiles, fileToGroup);
             LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor = new LinkedHashMap<File, IChromatogramDescriptor>();
+            handle.progress("Populating database",3);
             initChromatograms(props, inputFiles, projdir,
                     separationType, detectorType, fileToDescriptor);
             addNormalizationDescriptors(props, fileToDescriptor);
@@ -154,11 +159,15 @@ public class DBProjectFactory {
 
             System.out.println("Group to file: " + groupToFile);
             addTreatmentGroups(groupToFile, fileToDescriptor, icui);
+            handle.progress("Creating file layout",4);
             createSubdirectories(props, icui, projdir, fileToGroup);
             icui.closeSession();
+            handle.progress("Done.",5);
         } catch (MalformedURLException ex) {
             Exceptions.printStackTrace(ex);
             throw ex;
+        } finally {
+            handle.finish();
         }
     }
 

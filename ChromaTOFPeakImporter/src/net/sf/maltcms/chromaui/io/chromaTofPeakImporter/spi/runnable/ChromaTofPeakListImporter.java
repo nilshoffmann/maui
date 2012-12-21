@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable;
 import cross.datastructures.tuple.Tuple2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -46,6 +47,7 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.Utils.*;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import org.openide.util.Exceptions;
 
 /**
@@ -57,6 +59,7 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
 
     private final IChromAUIProject project;
     private final File[] files;
+    private final File importDir;
     private Locale locale = Locale.US;
 
     @Override
@@ -78,9 +81,8 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
             trd.setDisplayName(getClass().getSimpleName());
-            File importDir = null;
-            if (!reports.keySet().isEmpty()) {
-                importDir = project.getImportLocation(this);
+            if (reports.keySet().isEmpty()) {
+                return;
             }
             Utils.defaultLocale = locale;
             for (String chromName : reports.keySet()) {
@@ -88,142 +90,17 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
                         "Importing " + (peaksReportsImported + 1) + "/" + files.length,
                         peaksReportsImported);
                 System.out.println("Importing report " + chromName + ".");
-
                 IChromatogramDescriptor chromatogram = chromatograms.get(
                         chromName);
-
                 System.out.println(
                         "Using " + chromatogram.getResourceLocation() + " as chromatogram!");
-                File file = reports.get(chromName);
-                if (file.getName().toLowerCase().endsWith("csv")) {
-                    System.out.println("CSV Mode");
-                    ChromaTOFParser.FIELD_SEPARATOR = ",";
-                    ChromaTOFParser.QUOTATION_CHARACTER = "\"";
-                } else if (file.getName().toLowerCase().endsWith("tsv") || file.getName().toLowerCase().endsWith("txt")) {
-                    System.out.println("TSV Mode");
-                    ChromaTOFParser.FIELD_SEPARATOR = "\t";
-                    ChromaTOFParser.QUOTATION_CHARACTER = "";
-                }
-                Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(reports.get(chromName));
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
-                LinkedHashSet<String> header = report.getFirst();
-                System.out.println("Available fields: " + header);
-                int index = 0;
-                ChromatogramType chromatogramType = ChromatogramType.D1;
-                //FIXME Integrationbegin and end
-                for (TableRow tr : report.getSecond()) {
-                    //System.out.println("Parsing row "+(index+1)+"/"+report.getSecond().size());
-                    //System.out.println("Row data: "+tr.toString());
-                    if (tr.containsKey("R.T._(S)")) {
-                        //fused RT mode
-                        String rt = tr.get("R.T._(S)");
-                        //System.out.println("Retention Time: "+rt);
-                        if (rt.contains(",")) {//2D mode
-                            chromatogramType = ChromatogramType.D2;
-                            //System.out.println("2D chromatogram peak data detected");
-                            String[] rts = rt.split(",");
-                            double rt1 = parseDouble(rts[0].trim());
-                            double rt2 = parseDouble(rts[1].trim());
-                            //System.out.println("Adding peak "+tr.get("NAME"));
-                            IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeak2DAnnotationDescriptor(
-                                    chromatogram,
-                                    tr.get("NAME"),
-                                    parseDouble((tr.get("UNIQUEMASS"))),
-                                    parseDoubleArray("QUANT_MASSES", tr, ","),
-                                    parseDouble((tr.get("RETENTION_INDEX"))),
-                                    parseDouble((tr.get("S/N"))),
-                                    parseDouble(tr.get(
-                                    "FULL_WIDTH_AT_HALF_HEIGHT")),
-                                    parseDouble((tr.get("SIMILARITY"))),
-                                    tr.get("LIBRARY"),
-                                    tr.get("CAS"),
-                                    tr.get("FORMULA"),
-                                    "ChromaTOF", parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
-                                    rt1 + rt2, parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), parseDouble((tr.get("AREA"))),
-                                    Double.NaN, rt1, rt2);
-                            descriptor.setIndex(index++);
-                            //                descriptor.setPeak(p);
-                            Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
-                            if (massSpectrum.getFirst().length > 0) {
-                                descriptor.setMassValues(massSpectrum.getFirst());
-                                descriptor.setIntensityValues(massSpectrum.getSecond());
-                                peaks.add(descriptor);
-                            } else {
-                                System.err.println("Skipping peak with empty mass spectrum: " + descriptor.toString());
-                            }
-                        } else {
-                            //System.out.println("1D chromatogram peak data detected");
-                            IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
-                                    chromatogram,
-                                    tr.get("NAME"),
-                                    parseDouble((tr.get("UNIQUEMASS"))),
-                                    parseDoubleArray("QUANT_MASSES", tr, ","),
-                                    parseDouble((tr.get("RETENTION_INDEX"))),
-                                    parseDouble((tr.get("S/N"))),
-                                    parseDouble(tr.get(
-                                    "FULL_WIDTH_AT_HALF_HEIGHT")),
-                                    parseDouble((tr.get("SIMILARITY"))),
-                                    tr.get("LIBRARY"),
-                                    tr.get("CAS"),
-                                    tr.get("FORMULA"),
-                                    "ChromaTOF", parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
-                                    parseDouble((tr.get("R.T._(S)"))), parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), parseDouble((tr.get("AREA"))),
-                                    Double.NaN);
-                            descriptor.setIndex(index++);
-                            //                descriptor.setPeak(p);
-                            Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
-                            descriptor.setMassValues(massSpectrum.getFirst());
-                            descriptor.setIntensityValues(massSpectrum.getSecond());
-                            peaks.add(descriptor);
-                        }
-                    }else{
-                        if(tr.containsKey("1ST_DIMENSION_TIME_(S)") && tr.containsKey("2ND_DIMENSION_TIME_(S)")) {
-                            chromatogramType = ChromatogramType.D2;
-                            double rt1 = parseDouble(tr.get("1ST_DIMENSION_TIME_(S)"));
-                            double rt2 = parseDouble(tr.get("2ND_DIMENSION_TIME_(S)"));
-                            //System.out.println("Adding peak "+tr.get("NAME"));
-                            IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeak2DAnnotationDescriptor(
-                                    chromatogram,
-                                    tr.get("NAME"),
-                                    parseDouble((tr.get("UNIQUEMASS"))),
-                                    parseDoubleArray("QUANT_MASSES", tr, ","),
-                                    parseDouble((tr.get("RETENTION_INDEX"))),
-                                    parseDouble((tr.get("S/N"))),
-                                    parseDouble(tr.get(
-                                    "FULL_WIDTH_AT_HALF_HEIGHT")),
-                                    parseDouble((tr.get("SIMILARITY"))),
-                                    tr.get("LIBRARY"),
-                                    tr.get("CAS"),
-                                    tr.get("FORMULA"),
-                                    "ChromaTOF", parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
-                                    rt1 + rt2, parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), parseDouble((tr.get("AREA"))),
-                                    Double.NaN, rt1, rt2);
-                            descriptor.setIndex(index++);
-                            //                descriptor.setPeak(p);
-                            Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
-                            if (massSpectrum.getFirst().length > 0) {
-                                descriptor.setMassValues(massSpectrum.getFirst());
-                                descriptor.setIntensityValues(massSpectrum.getSecond());
-                                peaks.add(descriptor);
-                            } else {
-                                System.err.println("Skipping peak with empty mass spectrum: " + descriptor.toString());
-                            }
-                        }
-                    }
-
-//                    System.out.println("Adding peak: " + descriptor.getName() + " " + descriptor.
-//                            getApexTime());
-
-                }
-                createArtificialChromatogram(importDir,
-                        new File(chromatogram.getResourceLocation()).getName(),
-                        peaks,chromatogramType);
+                File created = importPeaks(importDir, peaks, reports, chromName, chromatogram);
                 //System.out.println("Adding peak annotations: " + peaks);
                 DescriptorFactory.addPeakAnnotations(project,
                         chromatogram,
                         peaks, trd);
                 peaksReportsImported++;
-
                 progressHandle.progress(
                         "Imported " + (peaksReportsImported + 1) + "/" + files.length);
             }
@@ -237,48 +114,4 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
         }
     }
 
-    private double parseIntegrationStartEnd(String s) {
-        if (s == null || s.isEmpty()) {
-            return Double.NaN;
-        }
-        if (s.contains(",")) {
-            String[] tokens = s.split(",");
-            return parseDouble(tokens[0]);
-        }
-        return parseDouble(s);
-    }
-
-    private LinkedHashMap<String, File> mapReports(LinkedHashMap<String, IChromatogramDescriptor> chromatograms, File[] files) {
-        LinkedHashMap<String, File> reports = new LinkedHashMap<String, File>();
-        for (File file : files) {
-            String chromName = file.getName();
-            chromName = chromName.substring(0, chromName.lastIndexOf(
-                    "."));
-            if (chromatograms.containsKey(chromName)) {
-                reports.put(chromName, file);
-                System.out.println("Adding report: " + chromName);
-            } else {
-                System.out.println(
-                        "Could not find matching chromatogram for report: " + chromName);
-            }
-        }
-        if (reports.size() != chromatograms.size()) {
-            System.err.println(
-                    "Not all chromatograms could be matched!");
-        }
-        return reports;
-    }
-
-    private LinkedHashMap<String, IChromatogramDescriptor> createChromatogramMap(IChromAUIProject project) {
-        LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<String, IChromatogramDescriptor>();
-        for (IChromatogramDescriptor descriptor : project.getChromatograms()) {
-            String chromName = new File(descriptor.getResourceLocation()).getName();
-            chromName = chromName.substring(0, chromName.lastIndexOf(
-                    "."));
-            chromatograms.put(chromName, descriptor);
-            System.out.println(
-                    "Added chromatogram " + chromName + ": " + descriptor);
-        }
-        return chromatograms;
-    }
 }

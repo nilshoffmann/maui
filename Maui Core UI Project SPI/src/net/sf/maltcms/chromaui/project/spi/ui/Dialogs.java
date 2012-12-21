@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.project.spi.ui;
 import java.beans.IntrospectionException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
@@ -43,7 +44,6 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
 /**
  *
@@ -83,7 +83,12 @@ public class Dialogs {
         NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, "Select Tool Results for Deletion",NotifyDescriptor.OK_CANCEL_OPTION);
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            return dp.getExplorerManager().getSelectedNodes()[0].getLookup().lookupAll(IToolDescriptor.class);
+            Node[] selectedNodes = dp.getExplorerManager().getSelectedNodes();
+            List<IToolDescriptor> toolDescriptors = new LinkedList<IToolDescriptor>();
+            for(Node n : selectedNodes) {
+                toolDescriptors.addAll(n.getLookup().lookupAll(IToolDescriptor.class));
+            }
+            return toolDescriptors;
         }
         return Collections.emptyList();
     }

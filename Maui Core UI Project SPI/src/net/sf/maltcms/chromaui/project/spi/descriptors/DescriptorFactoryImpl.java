@@ -175,7 +175,7 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
     }
     
     @Override
-    public IPeakAnnotationDescriptor newPeak2DAnnotationDescriptor(
+    public IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
             double snr, double fwhh,

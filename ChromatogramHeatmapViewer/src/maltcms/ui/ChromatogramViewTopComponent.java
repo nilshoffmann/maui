@@ -31,6 +31,7 @@ import net.sf.maltcms.ui.plot.chromatogram1D.tasks.ChromatogramViewLoaderWorker;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -43,6 +44,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import maltcms.ui.views.ChromMSHeatmapPanel;
@@ -81,7 +84,7 @@ import org.openide.windows.CloneableTopComponent;
 @ConvertAsProperties(dtd = "-//maltcms.ui//ChromatogramView//EN",
 autostore = false)
 public final class ChromatogramViewTopComponent extends CloneableTopComponent implements TaskListener, PropertyChangeListener, LookupListener {
-
+    
     private static ChromatogramViewTopComponent instance;
     /**
      * path to the icon used by the component and its open action
@@ -98,7 +101,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     private ExecutorService es = Executors.newFixedThreadPool(1);
     private Result<ChromatogramViewViewport> result;
     private boolean syncViewport = false;
-
+    
     public void initialize(IChromAUIProject project,
             List<IChromatogramDescriptor> filename, Chromatogram1DDataset ds) {
 //        this();
@@ -124,21 +127,17 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
                 IChromatogramDescriptor.class).getResourceLocation()).getName());
         setToolTipText(getLookup().lookup(IChromatogramDescriptor.class).
                 getResourceLocation());
-//        requestActive();
-        //      requestFocusInWindow(true);
         sp = new SettingsPanel();
         this.ic.add(sp);
-//        this.secondaryView = secondaryView;
         System.out.println("Setting ms data!");
         System.out.println("Filenames given: " + filename);
-//        secondaryView.setMSData();
         this.jp = new ChromMSHeatmapPanel(ic, getLookup(), ds);
         add(this.jp, BorderLayout.CENTER);
         ic.add(this.jp);
         ic.add(this);
         result = Utilities.actionsGlobalContext().lookupResult(ChromatogramViewViewport.class);
     }
-
+    
     public ChromatogramViewTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(ChromatogramViewTopComponent.class,
@@ -146,10 +145,10 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         setToolTipText(NbBundle.getMessage(ChromatogramViewTopComponent.class,
                 "HINT_ChromatogramViewTopComponent"));
         this.ic = new InstanceContent();
-
+        
         associateLookup(new AbstractLookup(this.ic));
     }
-
+    
     public void load() {
         SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(
                 this, getLookup().lookupAll(IChromatogramDescriptor.class),
@@ -158,7 +157,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         RequestProcessor.Task t = new RequestProcessor().post(sw);
         t.addTaskListener(this);
     }
-
+    
     public List<XYAnnotation> getAnnotations() {
         return annotations;
     }
@@ -268,7 +267,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
             load();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         if (this.jp != null) {
             ChartPanel cp = jp.getLookup().lookup(ChartPanel.class);
@@ -289,7 +288,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
             }
         }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
-
+    
     private void hideShowSeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideShowSeriesActionPerformed
         String s = (String) seriesComboBox.getSelectedItem();
         Chromatogram1DDataset dataset = getLookup().lookup(Chromatogram1DDataset.class);
@@ -311,7 +310,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
             }
         }
     }//GEN-LAST:event_hideShowSeriesActionPerformed
-
+    
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         this.syncViewport = jCheckBox2.isSelected();
     }//GEN-LAST:event_jCheckBox2ActionPerformed
@@ -361,45 +360,45 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
                 + "' ID. That is a potential source of errors and unexpected behavior.");
         return getDefault();
     }
-
+    
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
-
+    
     @Override
     public void componentOpened() {
         if (result != null) {
             result.addLookupListener(this);
         }
     }
-
+    
     @Override
     protected void componentActivated() {
         super.componentActivated();
         requestFocusInWindow();
         jp.requestFocusInWindow();
     }
-
+    
     @Override
     protected void componentDeactivated() {
         super.componentDeactivated();
     }
-
+    
     @Override
     public void componentClosed() {
         if (result != null) {
             result.removeLookupListener(this);
         }
     }
-
+    
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
         // TODO store your settings
     }
-
+    
     Object readProperties(java.util.Properties p) {
         if (instance == null) {
             instance = this;
@@ -407,17 +406,17 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
         instance.readPropertiesImpl(p);
         return instance;
     }
-
+    
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-
+    
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
     }
-
+    
     @Override
     public void taskFinished(Task task) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -427,9 +426,9 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
                 requestActive();
             }
         });
-
+        
     }
-
+    
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
         if (pce.getPropertyName().equals("active")) {
@@ -441,7 +440,7 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
             selected = o;
         }
     }
-
+    
     @Override
     public void resultChanged(LookupEvent le) {
         //do not react to ourself
