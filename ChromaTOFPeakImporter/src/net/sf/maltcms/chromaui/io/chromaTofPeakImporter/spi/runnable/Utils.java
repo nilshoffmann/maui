@@ -286,15 +286,15 @@ public class Utils {
             String key = new StringBuilder().
                     append(descriptor.getName()).append(" ").
                     append(descriptor.getArea()).append(" ").
-                    append(descriptor.getFirstColumnRt()).
-                    append(" ").append(descriptor.getSecondColumnRt()).
+//                    append(descriptor.getFirstColumnRt()).
+//                    append(" ").append(descriptor.getSecondColumnRt()).
                     toString();
             return key;
         }
         String key = new StringBuilder().
                 append(ipad.getName()).append(" ").
                 append(ipad.getArea()).append(" ").
-                append(ipad.getApexTime()).
+//                append(ipad.getApexTime()).
                 toString();
         return key;
     }
