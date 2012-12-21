@@ -110,7 +110,7 @@ public class DescriptorFactory {
         return factoryImpl.newPeakAnnotationDescriptor(chromatogram, name, uniqueMass, quantMasses, retentionIndex, snr, fwhh, similarity, library, cas, formula, method, startTime, apexTime, stopTime, area, intensity);
     }
     
-    public static IPeakAnnotationDescriptor newPeak2DAnnotationDescriptor(
+    public static IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
             double snr, double fwhh,

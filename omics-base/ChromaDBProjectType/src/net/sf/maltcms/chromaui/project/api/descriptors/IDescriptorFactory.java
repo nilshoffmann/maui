@@ -80,7 +80,7 @@ public interface IDescriptorFactory {
             String method, double startTime, double apexTime, double stopTime,
             double area, double intensity);
     
-    public IPeakAnnotationDescriptor newPeak2DAnnotationDescriptor(
+    public IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
             double snr, double fwhh,
