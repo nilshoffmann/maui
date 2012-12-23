@@ -32,25 +32,37 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.SwingUtilities;
+import maltcms.datastructures.ms.IChromatogram2D;
+import maltcms.datastructures.ms.IScan2D;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
-import maltcms.ui.viewer.InformationController;
 import maltcms.ui.viewer.events.PaintScaleDialogAction;
 import maltcms.ui.viewer.events.PaintScaleTarget;
 import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import maltcms.ui.viewer.tools.ChartTools;
-import maltcms.ui.viewer.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DDataset;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DElementProvider;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.ui.paintScales.IPaintScaleProvider;
 import net.sf.maltcms.chromaui.ui.rangeSlider.RangeSlider;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYBoxAnnotation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.panel.CrosshairOverlay;
 import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.InstanceContent;
 
 /**
  *
@@ -58,7 +70,8 @@ import org.jfree.chart.renderer.xy.XYBlockRenderer;
  */
 public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintScaleTarget, KeyListener {
 
-    private InformationController ic;
+//    private InformationController ic;
+    private final IChromatogramDescriptor chromatogram;
     private int oldTreshold;
     private int alpha = 0, beta = 1;
     private PaintScale ps = null;
@@ -71,21 +84,50 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     private Crosshair domainCrosshair = null;
     private Crosshair rangeCrosshair = null;
     private PaintScaleDialogAction psda = null;
-
-    /** Creates new form HeatMapPanel */
-    public HeatMapPanel(InformationController ic) {
-        this.ic = ic;
+    private InstanceContent content;
+    private Chromatogram2DDataset ds;
+    private IScan2D activeScan = null;
+    
+    /**
+     * Creates new form HeatMapPanel
+     */
+    public HeatMapPanel(IChromatogramDescriptor chromatogram, InstanceContent content) {
+        this.chromatogram = chromatogram;
         this.co = new CrosshairOverlay();
         this.domainCrosshair = new Crosshair();
         this.rangeCrosshair = new Crosshair();
         this.co.addDomainCrosshair(this.domainCrosshair);
         this.co.addRangeCrosshair(this.rangeCrosshair);
+        this.content = content;
         initComponents();
         initChartComponents();
     }
 
+    private XYPlot createPlot(Chromatogram2DDataset ds) {
+        XYBlockRenderer xybr = new XYBlockRenderer();
+        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
+        ips.setMin(ds.getMinZ());
+        ips.setMax(ds.getMaxZ());
+        PaintScale ps = ips.getPaintScales().get(0);
+        xybr.setPaintScale(ps);
+        xybr.setDefaultEntityRadius(5);
+        double modulationTime = chromatogram.getChromatogram().getParent().getChild("modulation_time").getArray().getDouble(0);
+        xybr.setBlockWidth(modulationTime);
+        double scanRate = chromatogram.getChromatogram().getParent().getChild("scan_rate").getArray().getDouble(0);
+        xybr.setBlockHeight(modulationTime/scanRate);
+
+        NumberAxis rt1 = new NumberAxis("RT1 [sec]");
+        NumberAxis rt2 = new NumberAxis("RT2 [sec]");
+        XYPlot heatmapPlot = new XYPlot(ds, rt1, rt2, xybr);
+        return heatmapPlot;
+    }
+    
     private void initChartComponents() {
-        XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getChromatogramDescriptor(), false);
+        List<NamedElementProvider<IChromatogram2D, IScan2D>> providers = new ArrayList<NamedElementProvider<IChromatogram2D, IScan2D>>(1);
+        providers.add(new Chromatogram2DElementProvider(chromatogram.getDisplayName(), (IChromatogram2D)chromatogram.getChromatogram()));
+        this.ds = new Chromatogram2DDataset(providers);
+        //XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getChromatogramDescriptor(), false);
+        XYPlot p = createPlot(ds);
         if (p.getRenderer() instanceof XYBlockRenderer) {
             this.ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
             this.xyb = ((XYBlockRenderer) p.getRenderer());
@@ -99,7 +141,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         this.cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
         this.cp.setFillZoomRectangle(true);
         this.cp.getChart().getLegend().setVisible(true);
-        this.cp.setBackground(Color.WHITE);
+        this.cp.setBackground((Color)this.ps.getPaint(this.ps.getLowerBound()));
         this.cp.addKeyListener(this);
         this.cp.setFocusable(true);
         this.cp.setDisplayToolTips(true);
@@ -112,9 +154,9 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         cpt.setMouseWheelEnabled(true);
         this.jPanel2.removeAll();
         this.jPanel2.add(cpt);
-        if (p != null) {
-            this.ic.changeXYPlot(ChartPositions.SouthWest, p);
-        }
+//        if (p != null) {
+//            this.ic.changeXYPlot(ChartPositions.SouthWest, p);
+//        }
         this.jPanel2.repaint();
         cpt.addChartMouseListener(this);
 
@@ -126,73 +168,72 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
     private void setDataPoint(Point p) {
         this.dataPoint = p;
-        triggerPositionUpdate();
+//        triggerPositionUpdate();
     }
 
     private Point getDataPoint() {
         return this.dataPoint;
     }
 
-    private void triggerMSUpdate() {
-        Runnable r = new Runnable()   {
-
-            @Override
-            public void run() {
-                if (cp.getChart().getPlot() instanceof XYPlot) {
-                    System.out.println("Updating ms chart");
-//                System.out.println("Click at global: "+cmevent.getTrigger().getPoint());
-                    ic.changeMS(getDataPoint());
-                }
-            }
-        };
-        SwingUtilities.invokeLater(r);
-    }
-
-    private void triggerPositionUpdate() {
-        Runnable r = new Runnable()   {
-
-            @Override
-            public void run() {
-                if (cp.getChart().getPlot() instanceof XYPlot) {
-                    System.out.println("Updating click position");
-                    final XYPlot plot = cp.getChart().getXYPlot();
-                    if (getDataPoint() != null) {
-                        if (box != null) {
-                            plot.removeAnnotation(box, false);
-                        }
-                        box = new XYBoxAnnotation(dataPoint.x - 1, dataPoint.y - 1, dataPoint.x + 1, dataPoint.y + 1, new BasicStroke(2), selectionOutline, selectionFill);
-                        plot.addAnnotation(box, false);
-                        plot.setDomainCrosshairValue(dataPoint.x, false);
-                        plot.setRangeCrosshairValue(dataPoint.y, true);
-                        ic.changePoint(dataPoint);
-                    }
-                }
-            }
-        };
-        SwingUtilities.invokeLater(r);
-    }
+//    private void triggerMSUpdate() {
+//        Runnable r = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (cp.getChart().getPlot() instanceof XYPlot) {
+//                    System.out.println("Updating ms chart");
+////                System.out.println("Click at global: "+cmevent.getTrigger().getPoint());
+////                    ic.changeMS(getDataPoint());
+//                }
+//            }
+//        };
+//        SwingUtilities.invokeLater(r);
+//    }
+//
+//    private void triggerPositionUpdate() {
+//        Runnable r = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (cp.getChart().getPlot() instanceof XYPlot) {
+//                    System.out.println("Updating click position");
+//                    final XYPlot plot = cp.getChart().getXYPlot();
+//                    if (getDataPoint() != null) {
+//                        if (box != null) {
+//                            plot.removeAnnotation(box, false);
+//                        }
+//                        box = new XYBoxAnnotation(dataPoint.x - 1, dataPoint.y - 1, dataPoint.x + 1, dataPoint.y + 1, new BasicStroke(2), selectionOutline, selectionFill);
+//                        plot.addAnnotation(box, false);
+//                        plot.setDomainCrosshairValue(dataPoint.x, false);
+//                        plot.setRangeCrosshairValue(dataPoint.y, true);
+////                        ic.changePoint(dataPoint);
+//                    }
+//                }
+//            }
+//        };
+//        SwingUtilities.invokeLater(r);
+//    }
 
     @Override
     public void chartMouseClicked(final ChartMouseEvent cmevent) {
-        cp.requestFocusInWindow();
-        Runnable r = new Runnable()   {
-
+//        cp.requestFocusInWindow();
+        Runnable r = new Runnable() {
             @Override
             public void run() {
                 if (cmevent.getTrigger().getClickCount() == 1
                         && cmevent.getTrigger().getButton() == 1) {
                     final XYPlot plot = cp.getChart().getXYPlot();
-                    final Point dataPoint = ChartTools.translatePointToImageCoord(plot,
-                            cmevent.getTrigger().getPoint(), cp.getScreenDataArea());
-                    setDataPoint(dataPoint);
-                    triggerMSUpdate();
+                    ChartEntity ce = cmevent.getEntity();
+                    if(ce instanceof XYItemEntity) {
+                        XYItemEntity xyie = (XYItemEntity)ce;
+                        int seriesIndex = xyie.getSeriesIndex();
+                        int itemIndex = xyie.getItem();
+                        IScan2D scan = ds.getTarget(seriesIndex, itemIndex);
+                        if(activeScan!=null) {
+                            content.remove(activeScan);
+                        }
+                        activeScan = scan;
+                        content.add(activeScan);
+                    }
                 }
-//                if (cmevent.getTrigger().getClickCount() == 1 && cmevent.getTrigger().isShiftDown()) {
-//                    System.out.println("Shift is down");
-//                    if (cp.getChart().getPlot() instanceof XYPlot) {
-//                        setDataPoint(cmevent.getTrigger().getPoint());
-//                    }
-//                }
             }
         };
         SwingUtilities.invokeLater(r);
@@ -250,10 +291,10 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 //        SwingUtilities.invokeLater(r);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -328,7 +369,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(psda==null) {
+        if (psda == null) {
             psda = new PaintScaleDialogAction("New Paintscale", this.alpha, this.beta, this.ps);
         }
         psda.addPaintScaleTarget(this);
@@ -344,9 +385,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
     private void handleSliderChange() {
         final int low = this.jSlider1.getValue();
-        final int high = ((RangeSlider)jSlider1).getUpperValue();
-        Runnable r = new Runnable()   {
-
+        final int high = ((RangeSlider) jSlider1).getUpperValue();
+        Runnable r = new Runnable() {
             @Override
             public void run() {
 
@@ -374,7 +414,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         XYPlot plot = ((XYPlot) this.cp.getChart().getPlot());
         ChartTools.changePaintScale(plot, this.ps);
         float[] dashPattern = new float[]{10, 5};
-        
+
         plot.setDomainCrosshairPaint(Color.WHITE);
         plot.setDomainCrosshairStroke(new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 1f, dashPattern, 0));
         plot.setRangeCrosshairPaint(Color.WHITE);
@@ -442,7 +482,7 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             }
             setDataPoint(p);
             if (!ke.isShiftDown()) {
-                triggerMSUpdate();
+//                triggerMSUpdate();
             }
         }
     }

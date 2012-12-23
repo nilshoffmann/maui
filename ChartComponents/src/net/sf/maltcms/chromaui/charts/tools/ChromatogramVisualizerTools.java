@@ -244,11 +244,11 @@ public class ChromatogramVisualizerTools {
         return s2;
     }
 
-    public static MSSeries getMSSeries(IScan2D s2, boolean top) {
+    public static MSSeries getMSSeries(IScan2D s2, String prefix, boolean top) {
         DecimalFormat rt1format = new DecimalFormat("#0");
         DecimalFormat rt2format = new DecimalFormat("#0.000");
         //System.out.println("First col scan acquisition time " + scanlineCache.);
-        MSSeries s = new MSSeries(rt1format.format(s2.
+        MSSeries s = new MSSeries(prefix+" @"+rt1format.format(s2.
                 getFirstColumnScanAcquisitionTime()) + ", " + rt2format.format(s2.
                 getSecondColumnScanAcquisitionTime()));
 
@@ -267,13 +267,13 @@ public class ChromatogramVisualizerTools {
         return s;
     }
     
-    public static MSSeries getMSSeries(IScan2D s2) {
-        return getMSSeries(s2,true);
+    public static MSSeries getMSSeries(IScan2D s2, String prefix) {
+        return getMSSeries(s2,prefix,true);
     }
 
     public static MSSeries getMSSeries(Point imagePoint,
-            IChromatogramDescriptor filename) {
-        return getMSSeries(getScanForPoint(imagePoint, filename));
+            IChromatogramDescriptor filename, String prefix) {
+        return getMSSeries(getScanForPoint(imagePoint, filename),prefix);
     }
 
     public static XYPlot createScanlinePlot(int mod, boolean horizontal,

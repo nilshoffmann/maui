@@ -27,13 +27,15 @@
  */
 package maltcms.ui.viewer;
 
+import cross.Factory;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
-import org.netbeans.api.project.Project;
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
 import org.openide.loaders.DataObject;
-import org.openide.util.Lookup;
-import org.openide.util.Utilities;
 
 /**
  * FIXME 
@@ -50,7 +52,7 @@ public final class GCViewerOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        GCViewerOpenSupport os = new GCViewerOpenSupport(((CDFDataObject) context).getPrimaryEntry());
-        os.open();
+        GCViewerTopComponent jtc = new GCViewerTopComponent(context);
+        jtc.open();
     }
 }

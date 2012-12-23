@@ -29,8 +29,6 @@ package net.sf.maltcms.chromaui.charts.dataset;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jfree.chart.annotations.XYAnnotation;
-import org.jfree.data.xy.AbstractXYDataset;
 import org.jfree.data.xy.AbstractXYZDataset;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
@@ -93,4 +91,16 @@ public abstract class Dataset2D<SOURCE, TARGET> extends AbstractXYZDataset imple
     public String getDisplayName() {
         return targetProvider.size() + " datasets";
     }
+    
+    public abstract double getMinX();
+    
+    public abstract double getMaxX();
+    
+    public abstract double getMinY();
+    
+    public abstract double getMaxY();
+    
+    public abstract double getMinZ();
+    
+    public abstract double getMaxZ();
 }

@@ -524,7 +524,7 @@ public class ChromatogramVisualizerTools {
     public static XYPlot getTICHeatMap(IChromatogramDescriptor filename,
             boolean noiseReduced) {
 
-
+        
 //        
         System.out.println("Set parameters on arrays");
         IFileFragment fragment = getTICHeatMapFragment(filename);

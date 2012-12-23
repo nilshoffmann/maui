@@ -33,6 +33,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import cross.datastructures.fragments.FileFragment;
+import cross.exception.ResourceNotAvailableException;
 import java.io.File;
 import java.util.List;
 import maltcms.datastructures.ms.ChromatogramFactory;
@@ -106,9 +107,14 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
         activate(ActivationPurpose.READ);
         if (this.chromatogram == null) {
             if (getSeparationType().getFeatureDimensions() == 2) {
-                ChromatogramFactory cf = new ChromatogramFactory();
-                this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(
-                        getResourceLocation())));
+                try {
+                    ChromatogramFactory cf = new ChromatogramFactory();
+                    this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(
+                            getResourceLocation())));
+                } catch (ResourceNotAvailableException rnae) {
+                    System.err.println("Could not find second_column_scan_index, trying first and second column elution times!");
+                    this.chromatogram = new CachingChromatogram2D(new FileFragment(new File(getResourceLocation())));
+                }
             } else {
                 this.chromatogram = new CachingChromatogram1D(new FileFragment(new File(getResourceLocation())));
             }
@@ -190,10 +196,9 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
         this.sampleGroup = sampleGroup;
         firePropertyChange(PROP_SAMPLEGROUP, oldSampleGroup, sampleGroup);
     }
-    
+
     @Override
     public int compareTo(IBasicDescriptor t) {
         return getDisplayName().compareTo(t.getDisplayName());
     }
-    
 }

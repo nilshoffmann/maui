@@ -47,11 +47,6 @@ for details.
                 <attr name="displayName" bundlevalue="maltcms.ui.viewer.Bundle#CTL_GCViewerAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
             </file>
-            <file name="maltcms-ui-viewer-MSViewAction.instance">
-                <attr name="component" methodvalue="maltcms.ui.viewer.MSViewTopComponent.findInstance"/>
-                <attr name="displayName" bundlevalue="maltcms.ui.viewer.Bundle#CTL_MSViewAction"/>
-                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
-            </file>
         </folder>
     </folder>
     <folder name="Loaders">
@@ -71,22 +66,15 @@ for details.
             <file name="GCViewerAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-viewer-GCViewerAction.instance"/>
             </file>
-            <file name="MSViewAction.shadow">
-                <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-viewer-MSViewAction.instance"/>
-            </file>
         </folder>
     </folder>
     <folder name="Windows2">
         <folder name="Components">
             <file name="GCViewerTopComponent.settings" url="GCViewerTopComponentSettings.xml"/>
-            <file name="MSViewTopComponent.settings" url="MSViewTopComponentSettings.xml"/>
         </folder>
         <folder name="Modes">
             <folder name="editor">
                 <file name="GCViewerTopComponent.wstcref" url="GCViewerTopComponentWstcref.xml"/>
-            </folder>
-            <folder name="navigator">
-                <file name="MSViewTopComponent.wstcref" url="MSViewTopComponentWstcref.xml"/>
             </folder>
         </folder>
     </folder>
