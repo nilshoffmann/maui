@@ -28,8 +28,10 @@
 package net.sf.maltcms;
 
 import cross.Factory;
+import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
 import org.openide.modules.ModuleInstall;
 import org.openide.util.Exceptions;
 
