@@ -34,6 +34,7 @@ import java.util.List;
 
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.ui.ChromatogramViewTopComponent;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
@@ -41,12 +42,9 @@ import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDatase
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.ui.plot.chromatogram1D.tasks.Chromatogram1DTopComponentLoader;
 import org.openide.awt.ActionRegistration;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.NotImplementedException;
 import org.openide.util.Utilities;
 
 @ActionID(category = "ContainerNodeActions/ChromatogramNode",
@@ -84,8 +82,18 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
             topComponent.open();
             topComponent.load();
         } else {
-            throw new NotImplementedException(
-                    "Currently no support for 2D chromatograms!");
+            System.out.println("Creating 2D data providers and dataset.");
+            List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+
+            for (IChromatogramDescriptor descr : chromatograms) {
+                providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
+            }
+
+            Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
+            ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
+            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
+            topComponent.open();
+            topComponent.load();
         }
 
     }

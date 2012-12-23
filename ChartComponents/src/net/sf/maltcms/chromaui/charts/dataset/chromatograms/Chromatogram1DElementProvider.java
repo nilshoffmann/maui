@@ -29,8 +29,10 @@ package net.sf.maltcms.chromaui.charts.dataset.chromatograms;
 
 import java.util.ArrayList;
 import java.util.List;
+import maltcms.datastructures.ms.Chromatogram1D;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -46,6 +48,11 @@ public class Chromatogram1DElementProvider implements NamedElementProvider<IChro
     private Comparable name;
     
     private IChromAUIProject project;
+    
+    public Chromatogram1DElementProvider(Comparable key, IChromatogram2D chrom) {
+        this.name = key;
+        this.chrom = new Chromatogram1D(chrom.getParent());
+    }
     
     public Chromatogram1DElementProvider(Comparable key, IChromatogram1D chrom) {
        this.chrom = chrom;
