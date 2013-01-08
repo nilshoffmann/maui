@@ -42,7 +42,6 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.loaders.DataObject;
-import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -97,7 +96,8 @@ public final class GCViewerTopComponent extends TopComponent {
             initComponents();
             setName(NbBundle.getMessage(GCViewerTopComponent.class, "CTL_GCViewerTopComponent"));
             setToolTipText(dobj.getPrimaryFile().getPath());
-            this.hmp = new HeatMapPanel(descriptor,content);
+            setEnabled(false);
+            this.hmp = new HeatMapPanel(this,descriptor,content);
             add(this.hmp, BorderLayout.CENTER);
         }
     }
@@ -123,6 +123,7 @@ public final class GCViewerTopComponent extends TopComponent {
 
     @Override
     public void componentOpened() {
+        
     }
 
     @Override

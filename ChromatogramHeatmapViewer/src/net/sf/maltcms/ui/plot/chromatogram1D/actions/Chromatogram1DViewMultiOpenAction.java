@@ -33,10 +33,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.ui.ChromatogramViewTopComponent;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
@@ -48,7 +48,6 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.NotImplementedException;
 import org.openide.util.Utilities;
 
 @ActionID(category = "ContainerNodeActions/ChromatogramNode",
@@ -65,33 +64,73 @@ public final class Chromatogram1DViewMultiOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        boolean is1D = true;
-        for (IChromatogramDescriptor descr : chromatograms) {
-//            System.out.println("descr: "+(descr instanceof IChromatogram1D));
-            if (!(descr.getChromatogram() instanceof IChromatogram1D)) {
-                is1D = false;
-            }
+        RunnableAction ra = new RunnableAction(this.chromatograms);
+        RunnableAction.createAndRun("Loading 1D chromatogram multi view", ra);
+    }
+
+    private class RunnableAction extends AProgressAwareRunnable {
+
+        private final List<IChromatogramDescriptor> chromatograms;
+
+        public RunnableAction(List<IChromatogramDescriptor> chromatograms) {
+            this.chromatograms = chromatograms;
         }
-        if (is1D) {
-            for (final IChromatogramDescriptor descr : chromatograms) {
-                System.out.println("Creating 1D data providers and dataset.");
-                List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(1);
-                providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
-                final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run() {
-                        ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
-                        topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), Arrays.asList(descr), ds);
-                        topComponent.open();
-                        topComponent.load();
+
+        public void onEdt(Runnable r) {
+            SwingUtilities.invokeLater(r);
+        }
+
+        @Override
+        public void run() {
+            try {
+                progressHandle.start(chromatograms.size());
+                int workunit = 0;
+                boolean is1D = true;
+                for (IChromatogramDescriptor descr : chromatograms) {
+                    //            System.out.println("descr: "+(descr instanceof IChromatogram1D));
+                    if (!(descr.getChromatogram() instanceof IChromatogram1D)) {
+                        is1D = false;
                     }
-                };
-                SwingUtilities.invokeLater(r);
+                }
+                if (is1D) {
+                    for (final IChromatogramDescriptor descr : chromatograms) {
+                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
+                        System.out.println("Creating 1D data providers and dataset.");
+                        List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(1);
+                        providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
+                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
+                        onEdt(new Runnable() {
+                            @Override
+                            public void run() {
+                                ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
+                                topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), Arrays.asList(descr), ds);
+                                topComponent.open();
+                                topComponent.load();
+                            }
+                        });
+
+                    }
+                } else {
+                    System.out.println("Creating 2D data providers and dataset.");
+                    for (IChromatogramDescriptor descr : chromatograms) {
+                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
+                        List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+                        providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
+                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
+                        onEdt(new Runnable() {
+                            @Override
+                            public void run() {
+                                ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
+                                topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
+                                topComponent.open();
+                                topComponent.load();
+                            }
+                        });
+                    }
+                }
+            } finally {
+                progressHandle.finish();
             }
-        } else {
-            throw new NotImplementedException(
-                    "Currently no support for 2D chromatograms!");
         }
     }
 }

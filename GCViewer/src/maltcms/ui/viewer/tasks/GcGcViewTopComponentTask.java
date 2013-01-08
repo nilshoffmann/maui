@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,27 +25,45 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package maltcms.ui.viewer;
+package maltcms.ui.viewer.tasks;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import maltcms.ui.viewer.tasks.GcGcViewTopComponentTask;
+import javax.swing.SwingUtilities;
+import maltcms.ui.viewer.GCViewerTopComponent;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.loaders.DataObject;
 
 /**
- * @author nilshoffmann
+ *
+ * @author Nils Hoffmann
  */
-public final class GCViewerOpenAction implements ActionListener {
+public class GcGcViewTopComponentTask extends AProgressAwareRunnable {
 
     private final DataObject context;
 
-    public GCViewerOpenAction(DataObject context) {
+    public GcGcViewTopComponentTask(DataObject context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent ev) {
-        GcGcViewTopComponentTask t = new GcGcViewTopComponentTask(context);
-        GcGcViewTopComponentTask.createAndRun("GCxGC TopComponent Loader", t);
+    public void run() {
+        try{
+            progressHandle.start();
+            progressHandle.switchToIndeterminate();
+            progressHandle.progress("Loading chromatogram");
+            progressHandle.progress("Opening view");
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    final GCViewerTopComponent jtc = new GCViewerTopComponent(context);
+                    jtc.open();
+                    jtc.requestActive();
+                }
+            });
+            
+        }finally{
+            progressHandle.finish();
+        }
     }
+    
 }

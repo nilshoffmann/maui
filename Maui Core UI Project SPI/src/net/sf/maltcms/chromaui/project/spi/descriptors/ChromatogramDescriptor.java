@@ -104,21 +104,21 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 
     @Override
     public IChromatogram getChromatogram() {
-        activate(ActivationPurpose.READ);
-        if (this.chromatogram == null) {
+//        activate(ActivationPurpose.READ);
+//        if (this.chromatogram == null) {
             if (getSeparationType().getFeatureDimensions() == 2) {
-                try {
-                    ChromatogramFactory cf = new ChromatogramFactory();
-                    this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(
-                            getResourceLocation())));
-                } catch (ResourceNotAvailableException rnae) {
-                    System.err.println("Could not find second_column_scan_index, trying first and second column elution times!");
+//                try {
+//                    ChromatogramFactory cf = new ChromatogramFactory();
+//                    this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(
+//                            getResourceLocation())));
+//                } catch (ResourceNotAvailableException rnae) {
+//                    System.err.println("Could not find second_column_scan_index, trying first and second column elution times!");
                     this.chromatogram = new CachingChromatogram2D(new FileFragment(new File(getResourceLocation())));
-                }
+//                }
             } else {
                 this.chromatogram = new CachingChromatogram1D(new FileFragment(new File(getResourceLocation())));
             }
-        }
+//        }
         return this.chromatogram;
     }
 

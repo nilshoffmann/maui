@@ -33,10 +33,12 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.SwingUtilities;
 
 import maltcms.datastructures.ms.Chromatogram1D;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.ui.ChromatogramViewTopComponent;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
@@ -46,6 +48,7 @@ import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElemen
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
@@ -71,29 +74,81 @@ public final class RawChromatogram1DViewOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        boolean is1D = true;
-        if (is1D) {
-            System.out.println("Creating 1D data providers and dataset.");
-            List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
-            List<IChromatogramDescriptor> chroms = new ArrayList<IChromatogramDescriptor>();
-            for (CDFDataObject chrom : chromatograms) {
-                IChromatogramDescriptor descr = DescriptorFactory.newChromatogramDescriptor();
-                descr.setDisplayName(chrom.getName());
-                descr.setName(chrom.getName());
-                descr.setResourceLocation(chrom.getPrimaryFile().getPath());
-                providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
-                chroms.add(descr);
-            }
+        RunnableAction ra = new RunnableAction(this.chromatograms);
+        RunnableAction.createAndRun("Loading 1D raw chromatogram view", ra);
+    }
 
-            Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
-            ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
-            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chroms, ds);
-            topComponent.open();
-            topComponent.load();
-        } else {
-            throw new NotImplementedException(
-                    "Currently no support for 2D chromatograms!");
+    private class RunnableAction extends AProgressAwareRunnable {
+
+        private final List<CDFDataObject> chromatograms;
+
+        public RunnableAction(List<CDFDataObject> chromatograms) {
+            this.chromatograms = chromatograms;
         }
 
+        public void onEdt(Runnable r) {
+            SwingUtilities.invokeLater(r);
+        }
+
+        @Override
+        public void run() {
+            try {
+                progressHandle.start(chromatograms.size());
+                int workunit = 0;
+                boolean is1D = true;
+                if (is1D) {
+                    System.out.println("Creating 1D data providers and dataset.");
+                    List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+                    final List<IChromatogramDescriptor> chroms = new ArrayList<IChromatogramDescriptor>();
+                    for (CDFDataObject chrom : chromatograms) {
+                        IChromatogramDescriptor descr = DescriptorFactory.newChromatogramDescriptor();
+                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
+                        descr.setDisplayName(chrom.getName());
+                        descr.setName(chrom.getName());
+                        descr.setResourceLocation(chrom.getPrimaryFile().getPath());
+                        providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
+                        chroms.add(descr);
+                    }
+
+                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
+                    onEdt(new Runnable() {
+                        @Override
+                        public void run() {
+                            ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
+                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chroms, ds);
+                            topComponent.open();
+                            topComponent.load();
+                        }
+                    });
+                } else {
+                    System.out.println("Creating 2D data providers and dataset.");
+                    List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+                    final List<IChromatogramDescriptor> chroms = new ArrayList<IChromatogramDescriptor>();
+                    for (CDFDataObject chrom : chromatograms) {
+                        IChromatogramDescriptor descr = DescriptorFactory.newChromatogramDescriptor();
+                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
+                        descr.setDisplayName(chrom.getName());
+                        descr.setName(chrom.getName());
+                        descr.setResourceLocation(chrom.getPrimaryFile().getPath());
+                        providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
+                        chroms.add(descr);
+                    }
+
+                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
+                    onEdt(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
+                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chroms, ds);
+                            topComponent.open();
+                            topComponent.load();
+                        } 
+                    });
+                }
+            } finally {
+                progressHandle.finish();
+            }
+        }
     }
 }

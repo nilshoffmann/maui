@@ -89,21 +89,23 @@ public class Utils {
                     IPeak2DAnnotationDescriptor descriptor = create2DPeak(
                             chromatogram, tr, rt1, rt2);
                     String key = key(descriptor);
-                    if (!peakRegistry.contains(key)) {
+//                    if (!peakRegistry.contains(key)) {
                         index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
-                    } else {
-                        System.err.println("Peak " + key + " already encountered, skipping!");
-                    }
+                        index++;
+//                    } else {
+//                        System.err.println("Peak " + key + " already encountered, skipping!");
+//                    }
                 } else {
                     System.out.println("1D chromatogram peak data detected");
                     IPeakAnnotationDescriptor descriptor = create1DPeak(
                             chromatogram, tr);
                     String key = key(descriptor);
-                    if (!peakRegistry.contains(key)) {
+//                    if (!peakRegistry.contains(key)) {
                         index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
-                    } else {
-                        System.err.println("Peak " + key + " already encountered, skipping!");
-                    }
+//                    } else {
+                        index++;
+//                        System.err.println("Peak " + key + " already encountered, skipping!");
+//                    }
                 }
             } else {
                 if (tr.containsKey("1ST_DIMENSION_TIME_(S)") && tr.containsKey("2ND_DIMENSION_TIME_(S)")) {
@@ -113,11 +115,12 @@ public class Utils {
                     double rt2 = parseDouble(tr.get("2ND_DIMENSION_TIME_(S)"));
                     IPeakAnnotationDescriptor descriptor = create2DPeak(chromatogram, tr, rt1, rt2);
                     String key = key(descriptor);
-                    if (!peakRegistry.contains(key)) {
+//                    if (!peakRegistry.contains(key)) {
                         index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
-                    } else {
-                        System.err.println("Peak " + key + " already encountered, skipping!");
-                    }
+//                    } else {
+                        index++;
+//                        System.err.println("Peak " + key + " already encountered, skipping!");
+//                    }
                 }
             }
         }
@@ -346,16 +349,17 @@ public class Utils {
 
     public static int addMassSpectrum(TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key) {
         Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
+        int msIndex = index++;
         if (massSpectrum.getFirst().length > 0) {
             descriptor.setMassValues(massSpectrum.getFirst());
             descriptor.setIntensityValues(massSpectrum.getSecond());
-            descriptor.setIndex(index++);
+            descriptor.setIndex(msIndex);
             peaks.add(descriptor);
             peakRegistry.add(key);
         } else {
             System.err.println("Skipping peak with empty mass spectrum: " + descriptor.toString());
         }
-        return index;
+        return msIndex;
     }
 
     public static IPeakAnnotationDescriptor create1DPeak(IChromatogramDescriptor chromatogram, TableRow tr) {
