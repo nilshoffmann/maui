@@ -31,7 +31,6 @@ import net.sf.maltcms.ui.plot.chromatogram1D.tasks.ChromatogramViewLoaderWorker;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -42,14 +41,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import maltcms.ui.views.ChromMSHeatmapPanel;
-import maltcms.ui.views.ChromatogramViewViewport;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -61,7 +56,6 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.openide.util.NbBundle;
 import org.openide.util.Task;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDisplayer;
@@ -74,7 +68,6 @@ import org.openide.util.TaskListener;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays something. TODO add support for different
@@ -83,7 +76,7 @@ import org.openide.windows.CloneableTopComponent;
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui//ChromatogramView//EN",
 autostore = false)
-public final class ChromatogramViewTopComponent extends CloneableTopComponent implements TaskListener, PropertyChangeListener, LookupListener {
+public final class ChromatogramViewTopComponent extends TopComponent implements TaskListener, PropertyChangeListener, LookupListener {
     
     private static ChromatogramViewTopComponent instance;
     /**
@@ -325,41 +318,6 @@ public final class ChromatogramViewTopComponent extends CloneableTopComponent im
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JComboBox seriesComboBox;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * Gets default instance. Do not use directly: reserved for *.settings files
-     * only, i.e. deserialization routines; otherwise you could get a
-     * non-deserialized instance. To obtain the singleton instance, use
-     * {@link #findInstance}.
-     */
-    public static synchronized ChromatogramViewTopComponent getDefault() {
-        if (instance == null) {
-            instance = new ChromatogramViewTopComponent();
-        }
-        return instance;
-    }
-
-    /**
-     * Obtain the ChromatogramViewTopComponent instance. Never call
-     * {@link #getDefault} directly!
-     */
-    public static synchronized ChromatogramViewTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(
-                PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(ChromatogramViewTopComponent.class.getName()).
-                    warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof ChromatogramViewTopComponent) {
-            return (ChromatogramViewTopComponent) win;
-        }
-        Logger.getLogger(ChromatogramViewTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
     
     @Override
     public int getPersistenceType() {

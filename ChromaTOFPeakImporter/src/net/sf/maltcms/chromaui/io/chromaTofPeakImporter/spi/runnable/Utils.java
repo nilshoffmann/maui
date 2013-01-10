@@ -33,17 +33,25 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tools.ArrayTools;
 import cross.datastructures.tuple.Tuple2D;
+import cross.exception.ConstraintViolationException;
 import cross.tools.MathTools;
 import cross.tools.StringTools;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -65,11 +73,13 @@ import ucar.nc2.Dimension;
  * @author Nils Hoffmann
  */
 public class Utils {
-    
-    public enum ChromatogramType{D1,D2};
-    
+
+    public enum ChromatogramType {
+
+        D1, D2
+    };
     public static Locale defaultLocale = Locale.getDefault();
-    
+
     public static ChromatogramType parseTable(Tuple2D<LinkedHashSet<String>, List<TableRow>> report, ChromatogramType chromatogramType, IChromatogramDescriptor chromatogram, HashSet<String> peakRegistry, List<IPeakAnnotationDescriptor> peaks) {
         int index = 0;
         for (TableRow tr : report.getSecond()) {
@@ -90,8 +100,8 @@ public class Utils {
                             chromatogram, tr, rt1, rt2);
                     String key = key(descriptor);
 //                    if (!peakRegistry.contains(key)) {
-                        index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
-                        index++;
+                    index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
+                    index++;
 //                    } else {
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
 //                    }
@@ -101,9 +111,9 @@ public class Utils {
                             chromatogram, tr);
                     String key = key(descriptor);
 //                    if (!peakRegistry.contains(key)) {
-                        index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
+                    index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
 //                    } else {
-                        index++;
+                    index++;
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
 //                    }
                 }
@@ -116,15 +126,209 @@ public class Utils {
                     IPeakAnnotationDescriptor descriptor = create2DPeak(chromatogram, tr, rt1, rt2);
                     String key = key(descriptor);
 //                    if (!peakRegistry.contains(key)) {
-                        index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
+                    index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
 //                    } else {
-                        index++;
+                    index++;
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
 //                    }
                 }
             }
         }
         return chromatogramType;
+    }
+
+    public static String toCSVString(List<String> values, boolean[] quoteColumn, String fieldSeparator, String quotationChar) {
+        StringBuilder sb = new StringBuilder();
+        if (values.size() != quoteColumn.length) {
+            throw new IllegalArgumentException("values and quoteColumn must have the same lengths!");
+        }
+        int valsize = values.size();
+        for (int i = 0; i < valsize; i++) {
+            String s = values.get(i);
+            if (quoteColumn[i]) {
+                sb.append(quotationChar).append(s).append(quotationChar);
+            } else {
+                sb.append(s);
+            }
+            if (i < values.size() - 1) {
+                sb.append(fieldSeparator);
+            }
+        }
+        return sb.toString();
+    }
+
+//    public static Map<String,Set<String>> parseWhiteList(File file) {
+//        Map<String,Set<String>> whitelist = new HashMap<String,Set<String>>();
+//        if (file.getName().toLowerCase().endsWith("csv")) {
+//            System.out.println("CSV Mode");
+//            ChromaTOFParser.FIELD_SEPARATOR = ",";
+//            ChromaTOFParser.QUOTATION_CHARACTER = "\"";
+//        } else if (file.getName().toLowerCase().endsWith("tsv") || file.getName().toLowerCase().endsWith("txt")) {
+//            System.out.println("TSV Mode");
+//            ChromaTOFParser.FIELD_SEPARATOR = "\t";
+//            ChromaTOFParser.QUOTATION_CHARACTER = "";
+//        }
+//        Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(file, false);
+//        List<String> header = new ArrayList<String>(report.getFirst());
+//        System.out.println(header);
+//        int idx = 0;
+//        for(TableRow tr:report.getSecond()) {
+//           int fileColumnIndex = ChromaTOFParser.getIndexOfHeaderColumn(header,
+//                            "File");
+//           int peakNameColumnIndex = ChromaTOFParser.getIndexOfHeaderColumn(header,
+//                            "Name");
+//           String filename = tr.get(header.get(fileColumnIndex));
+//           String peakname = tr.get(header.get(peakNameColumnIndex));
+//           if(whitelist.containsKey(filename)) {
+//               Set<String> f = whitelist.get(filename);
+//               if(f.contains(peakname)) {
+//                   System.err.println("Non-unique peakname "+peakname+" for report "+filename+" at row "+idx);
+//               }else{
+//                   f.add(peakname);
+//               }
+//           }else{
+//               HashSet<String> hs = new HashSet<String>();
+//               hs.add(peakname);
+//               whitelist.put(filename,hs);
+//           }
+//           idx++;
+//        }
+//        return whitelist;
+//    }
+    
+    public static File convertPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram) {
+        File file = reports.get(chromName);
+        if (file.getName().toLowerCase().endsWith("csv")) {
+            System.out.println("CSV Mode");
+            ChromaTOFParser.FIELD_SEPARATOR = ",";
+            ChromaTOFParser.QUOTATION_CHARACTER = "\"";
+        } else if (file.getName().toLowerCase().endsWith("tsv") || file.getName().toLowerCase().endsWith("txt")) {
+            System.out.println("TSV Mode");
+            ChromaTOFParser.FIELD_SEPARATOR = "\t";
+            ChromaTOFParser.QUOTATION_CHARACTER = "";
+        }
+        Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(reports.get(chromName), false);
+        List<String> header = new ArrayList<String>(report.getFirst());
+        System.out.println("Available fields: " + header);
+        HashSet<String> peakRegistry = new HashSet<String>();
+        ChromatogramType chromatogramType = ChromatogramType.D1;
+        chromatogramType = parseTable(report, chromatogramType, chromatogram, peakRegistry, peaks);
+        File output = new File(importDir, chromName + "." + StringTools.getFileExtension(file.getName()));
+        if (output.exists()) {
+            throw new RuntimeException("File exists: " + output);
+        }
+        //"Name","R.T. (s)","Type","UniqueMass","Concentration","Sample Concentration","Match","Quant Masses","Quant S/N","Area","BaselineModified","Quantification","Full Width at Half Height","IntegrationBegin","IntegrationEnd","Hit 1 Name","Hit 1 Similarity","Hit 1 Reverse","Hit 1 Probability","Hit 1 CAS","Hit 1 Library","Hit 1 Id","Hit 1 Formula","Hit 1 Weight","Hit 1 Contributor","Spectra"
+        //"Name","CAS","1st Dimension Time (s)","2nd Dimension Time (s)","Area","Similarity","Reverse","Probability","UniqueMass","Quant Masses","Purity","Concerns","S/N","Spectra"
+        //Name <- Name
+        //CAS <- 0-0-0
+        //1st Dimension Time (s), 2nd Dimension Time (s) <- R.T. (s)
+        //Area <- Area
+        //Similarity <- Hit 1 Similarity
+        //Reverse <- Hit 1 Reverse
+        //Probability <- Hit 1 Probability
+        //UniqueMass <- NaN
+        //Quant Masses <- Quant Masses
+        //Purity <- ""
+        //Concerns <- NaN
+        //S/N <- Quant S/N
+        //Spectra <- Spectra
+        Map<String, String> columnMap = new HashMap<String, String>();
+        List<String> newHeader = Arrays.asList("Name", "CAS", "1st Dimension Time (s)", "2nd Dimension Time (s)", "Area", "Similarity", "Reverse", "Probability", "UniqueMass", "Quant Masses", "Purity", "Concerns", "S/N", "Spectra");
+        boolean[] quoteColumn = new boolean[newHeader.size()];
+        for (int i = 0; i < quoteColumn.length; i++) {
+            quoteColumn[i] = true;
+        }
+        BufferedWriter bw = null;
+        try {
+            bw = new BufferedWriter(new FileWriter(output));
+            String headerString = toCSVString(newHeader, quoteColumn, ChromaTOFParser.FIELD_SEPARATOR, ChromaTOFParser.QUOTATION_CHARACTER);
+            bw.write(headerString);
+            bw.newLine();
+            //do not quote spectra entries
+            quoteColumn[newHeader.size() - 1] = false;
+            boolean skip = false;
+            for (TableRow tr : report.getSecond()) {
+                String[] targetRow = new String[newHeader.size()];
+                //set things that were not within our report
+                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "CAS")] = "0-0-0";
+                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Purity")] = "";
+                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "UniqueMass")] = "NaN";
+                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Concerns")] = "NaN";
+                for (String headerColumn : header) {
+                    int sourceIndex = ChromaTOFParser.getIndexOfHeaderColumn(header,
+                            headerColumn);
+                    String sourceValue = null;
+                    if (sourceIndex >= 0 && sourceIndex < header.size()) {//found column name
+                        sourceValue = tr.get(header.get(sourceIndex));
+                    } else {//did not find column name
+                        sourceValue = "NaN";
+                    }
+                    int targetIndex = ChromaTOFParser.getIndexOfHeaderColumn(newHeader, headerColumn);
+                    if (targetIndex >= 0 && targetIndex < newHeader.size()) {//found column name
+                        if (sourceValue == null) {
+                            sourceValue = "NaN";
+                        }
+                        if (headerColumn.equals("Name")) {
+                            if (sourceValue.startsWith("Unknown") || sourceValue.contains("VAR5_ALK_NA")) {
+                                System.out.println("Skipping row with label " + sourceValue+". Reason: ambiguous peak name!");
+                                skip = true;
+                            }
+//                            if(!whitelist.isEmpty()) {
+//                                Set<String> whitelistForFile = whitelist.get(chromName);
+//                                if(whitelistForFile!=null) {
+//                                    if(!whitelistForFile.contains(sourceValue)) {
+//                                        skip = true;
+//                                        System.out.println("Skipping row with label " + sourceValue+". Reason: blacklisted!");
+//                                    }
+//                                }
+//                            }
+                        }
+                        targetRow[targetIndex] = sourceValue;
+                    } else {//did not find column name
+
+                        if (headerColumn.equals("R.T. (s)")) {
+                            int targetIndex1 = ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "1st Dimension Time (s)");
+                            int targetIndex2 = ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "2nd Dimension Time (s)");
+                            String[] rts = sourceValue.split(",");
+                            targetRow[targetIndex1] = rts[0].trim();
+                            targetRow[targetIndex2] = rts[1].trim();
+                        } else if (headerColumn.equals("Hit 1 Similarity")) {
+                            targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Similarity")] = sourceValue;
+                        } else if (headerColumn.equals("Hit 1 Reverse")) {
+                            targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Reverse")] = sourceValue;
+                        } else if (headerColumn.equals("Hit 1 Probability")) {
+                            targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Probability")] = sourceValue;
+                        } else if (headerColumn.equals("Quant S/N")) {
+                            targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "S/N")] = sourceValue;
+                        } else {
+                            System.out.println("Skipping non-mappable field: " + headerColumn);
+                        }
+                    }
+                }
+                if (!skip) {
+                    String rowString = toCSVString(Arrays.asList(targetRow), quoteColumn, ChromaTOFParser.FIELD_SEPARATOR, ChromaTOFParser.QUOTATION_CHARACTER);
+                    bw.write(rowString);
+                    bw.newLine();
+                } else {
+                    skip = false;
+                }
+            }
+            bw.flush();
+            bw.close();
+
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
+
+        return output;
     }
 
     public static File importPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram) {
@@ -148,7 +352,7 @@ public class Utils {
                 new File(chromatogram.getResourceLocation()).getName(),
                 peaks, chromatogramType);
     }
-    
+
     public static File createArtificialChromatogram(File importDir,
             String peakListName, List<IPeakAnnotationDescriptor> peaks, ChromatogramType chromatogramType) {
         try {
@@ -161,7 +365,7 @@ public class Utils {
         }
 
         File fragment = new File(importDir, StringTools.removeFileExt(
-                peakListName)+".cdf");
+                peakListName) + ".cdf");
         FileFragment f = new FileFragment(fragment);
         Dimension scanNumber = new Dimension("scan_number", peaks.size(), true);
         f.addDimensions(scanNumber);
@@ -190,10 +394,10 @@ public class Utils {
             sat.setDouble(i, descr.getApexTime());
             scanIndex.set(i, scanOffset);
             tic.setDouble(i, MAMath.sumDouble(intensA));
-            originalIndex.set(i,descr.getIndex());
-            if(chromatogramType==ChromatogramType.D2) {
-                firstColumnElutionTime.set(i, ((IPeak2DAnnotationDescriptor)descr).getFirstColumnRt());
-                secondColumnElutionTime.set(i, ((IPeak2DAnnotationDescriptor)descr).getSecondColumnRt());
+            originalIndex.set(i, descr.getIndex());
+            if (chromatogramType == ChromatogramType.D2) {
+                firstColumnElutionTime.set(i, ((IPeak2DAnnotationDescriptor) descr).getFirstColumnRt());
+                secondColumnElutionTime.set(i, ((IPeak2DAnnotationDescriptor) descr).getSecondColumnRt());
             }
             scanOffset += descr.getMassValues().length;
             i++;
@@ -226,7 +430,7 @@ public class Utils {
         IVariableFragment maxMassVar = new VariableFragment(f, "mass_range_max");
         maxMassVar.setArray(massMax);
         maxMassVar.setDimensions(new Dimension[]{scanNumber});
-        if(chromatogramType==ChromatogramType.D2) {
+        if (chromatogramType == ChromatogramType.D2) {
             IVariableFragment firstColumnElutionTimeVar = new VariableFragment(f, "first_column_elution_time");
             firstColumnElutionTimeVar.setArray(firstColumnElutionTime);
             firstColumnElutionTimeVar.setDimensions(new Dimension[]{scanNumber});
@@ -242,10 +446,10 @@ public class Utils {
 //        return null;
         return fragment;
     }
-    
+
     public static double[] parseDoubleArray(String fieldName, TableRow row,
             String elementSeparator) {
-        if(row.get(fieldName).contains(elementSeparator)) {
+        if (row.get(fieldName).contains(elementSeparator)) {
             String[] values = row.get(fieldName).split(elementSeparator);
             double[] v = new double[values.length];
             for (int i = 0; i < v.length; i++) {
@@ -268,7 +472,7 @@ public class Utils {
     }
 
     public static double parseDouble(String s, Locale locale) {
-        if(s==null || s.isEmpty()) {
+        if (s == null || s.isEmpty()) {
             return Double.NaN;
         }
         try {
@@ -282,22 +486,22 @@ public class Utils {
             }
         }
     }
-    
+
     public static String key(IPeakAnnotationDescriptor ipad) {
         if (ipad instanceof IPeak2DAnnotationDescriptor) {
             IPeak2DAnnotationDescriptor descriptor = (IPeak2DAnnotationDescriptor) ipad;
             String key = new StringBuilder().
                     append(descriptor.getName()).append(" ").
                     append(descriptor.getArea()).append(" ").
-//                    append(descriptor.getFirstColumnRt()).
-//                    append(" ").append(descriptor.getSecondColumnRt()).
+                    //                    append(descriptor.getFirstColumnRt()).
+                    //                    append(" ").append(descriptor.getSecondColumnRt()).
                     toString();
             return key;
         }
         String key = new StringBuilder().
                 append(ipad.getName()).append(" ").
                 append(ipad.getArea()).append(" ").
-//                append(ipad.getApexTime()).
+                //                append(ipad.getApexTime()).
                 toString();
         return key;
     }
@@ -403,5 +607,4 @@ public class Utils {
                 Double.NaN, rt1, rt2);
         return descriptor;
     }
-    
 }

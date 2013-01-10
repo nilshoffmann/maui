@@ -27,12 +27,12 @@
  */
 package maltcms.ui.views;
 
+import maltcms.ui.ChromatogramViewViewport;
 import net.sf.maltcms.ui.plot.chromatogram1D.painter.SelectedXYItemEntityPainter;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IChromatogram;
 import net.sf.maltcms.chromaui.charts.events.DomainMarkerKeyListener;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;

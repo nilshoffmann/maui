@@ -104,9 +104,9 @@ public class ChromaTOFParser {
 //    }
     public static Tuple2D<double[], int[]> convertMassSpectrum(
             String massSpectrum) {
-        if(massSpectrum==null) {
+        if (massSpectrum == null) {
             System.err.println("Warning: mass spectral data was null!");
-            return new Tuple2D<double[],int[]>(new double[0],new int[0]);
+            return new Tuple2D<double[], int[]>(new double[0], new int[0]);
         }
         String[] mziTuples = massSpectrum.split(" ");
         TreeMap<Float, Integer> tm = new TreeMap<Float, Integer>();
@@ -130,7 +130,7 @@ public class ChromaTOFParser {
         return new Tuple2D<double[], int[]>(masses, intensities);
     }
 
-    public static LinkedHashSet<String> getHeader(File f) {
+    public static LinkedHashSet<String> getHeader(File f, boolean normalizeColumnNames) {
         LinkedHashSet<String> globalHeader = new LinkedHashSet<String>();
         ArrayList<String> header = null;
         String fileName = f.getName().substring(0, f.getName().lastIndexOf(
@@ -145,9 +145,11 @@ public class ChromaTOFParser {
                 if (!line.isEmpty()) {
                     String[] lineArray = splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER);//line.split(String.valueOf(FIELD_SEPARATOR));
                     if (header == null) {
-                        for (int i = 0; i < lineArray.length; i++) {
-                            lineArray[i] = lineArray[i].trim().toUpperCase().
-                                    replaceAll(" ", "_");
+                        if (normalizeColumnNames) {
+                            for (int i = 0; i < lineArray.length; i++) {
+                                lineArray[i] = lineArray[i].trim().toUpperCase().
+                                        replaceAll(" ", "_");
+                            }
                         }
                         header = new ArrayList<String>(Arrays.asList(
                                 lineArray));
@@ -248,7 +250,7 @@ public class ChromaTOFParser {
 //        return globalHeader;
 //    }
     public static List<TableRow> parseBody(LinkedHashSet<String> globalHeader,
-            File f) {
+            File f, boolean normalizeColumnNames) {
         List<TableRow> body = new ArrayList<TableRow>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
@@ -259,9 +261,11 @@ public class ChromaTOFParser {
                 if (!line.isEmpty()) {
                     ArrayList<String> lineList = new ArrayList<String>(Arrays.asList(splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER)));//.split(String.valueOf(FIELD_SEPARATOR))));
                     if (header == null) {
-                        for (int i = 0; i < lineList.size(); i++) {
-                            lineList.set(i, lineList.get(i).trim().toUpperCase().
-                                    replaceAll(" ", "_"));
+                        if (normalizeColumnNames) {
+                            for (int i = 0; i < lineList.size(); i++) {
+                                lineList.set(i, lineList.get(i).trim().toUpperCase().
+                                        replaceAll(" ", "_"));
+                            }
                         }
                         header = new ArrayList<String>(lineList);
                     } else {
@@ -289,8 +293,13 @@ public class ChromaTOFParser {
 
     public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(
             File f) {
-        LinkedHashSet<String> header = getHeader(f);
-        List<TableRow> table = parseBody(header, f);
+        return parseReport(f, true);
+    }
+
+    public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(
+            File f, boolean normalizeColumnNames) {
+        LinkedHashSet<String> header = getHeader(f, normalizeColumnNames);
+        List<TableRow> table = parseBody(header, f, normalizeColumnNames);
         return new Tuple2D<LinkedHashSet<String>, List<TableRow>>(header, table);
     }
 //    public static void main(String[] args) {

@@ -29,6 +29,7 @@ package maltcms.ui.viewer;
 
 import cross.datastructures.tools.EvalTools;
 import java.awt.BorderLayout;
+import java.util.Collection;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import maltcms.ui.viewer.gui.HeatMapPanel;
@@ -42,6 +43,9 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.loaders.DataObject;
+import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -52,13 +56,14 @@ import org.openide.windows.CloneableTopComponent;
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui.viewer//GCViewer//EN",
 autostore = false)
-public final class GCViewerTopComponent extends TopComponent {
+public final class GCViewerTopComponent extends TopComponent implements LookupListener {
 
     private static GCViewerTopComponent instance;
     private DataObject file = null;
     private IChromAUIProject project = null;
     private InstanceContent content = new InstanceContent();
     private HeatMapPanel hmp;
+    private Lookup.Result<Chromatogram2DViewViewport> result;
 
     public GCViewerTopComponent() {
         this(null);
@@ -72,6 +77,7 @@ public final class GCViewerTopComponent extends TopComponent {
         associateLookup(new AbstractLookup(content));
         IChromAUIProject icp = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
         IChromatogramDescriptor descriptor = Utilities.actionsGlobalContext().lookup(IChromatogramDescriptor.class);
+        result = Utilities.actionsGlobalContext().lookupResult(Chromatogram2DViewViewport.class);
         if (icp != null) {
             this.project = icp;
             content.add(this.project);
@@ -97,7 +103,8 @@ public final class GCViewerTopComponent extends TopComponent {
             setName(NbBundle.getMessage(GCViewerTopComponent.class, "CTL_GCViewerTopComponent"));
             setToolTipText(dobj.getPrimaryFile().getPath());
             setEnabled(false);
-            this.hmp = new HeatMapPanel(this,descriptor,content);
+            //project may be null
+            this.hmp = new HeatMapPanel(this.project, this,descriptor,content);
             add(this.hmp, BorderLayout.CENTER);
         }
     }
@@ -123,12 +130,28 @@ public final class GCViewerTopComponent extends TopComponent {
 
     @Override
     public void componentOpened() {
-        
+        if (result != null) {
+            result.addLookupListener(this);
+        }
     }
-
+    
+    @Override
+    protected void componentActivated() {
+        super.componentActivated();
+        requestFocusInWindow();
+        hmp.requestFocusInWindow();
+    }
+    
+    @Override
+    protected void componentDeactivated() {
+        super.componentDeactivated();
+    }
+    
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        if (result != null) {
+            result.removeLookupListener(this);
+        }
     }
 
     void writeProperties(java.util.Properties p) {
@@ -180,5 +203,20 @@ public final class GCViewerTopComponent extends TopComponent {
 //            }
 //        }
         // TODO read your settings according to their version
+    }
+
+    @Override
+    public void resultChanged(LookupEvent le) {
+        //do not react to ourself
+        if (hasFocus()) {
+            System.out.println("I have focus, not setting viewport!");
+        } else {
+            if (hmp.isSyncViewport()) {
+                Collection<? extends Chromatogram2DViewViewport> viewports = result.allInstances();
+                if (!viewports.isEmpty()) {
+                    this.hmp.setViewport(viewports.iterator().next().getViewPort());
+                }
+            }
+        }
     }
 }

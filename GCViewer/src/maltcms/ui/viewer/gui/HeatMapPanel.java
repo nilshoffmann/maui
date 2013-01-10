@@ -33,12 +33,15 @@ import java.awt.Container;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JColorChooser;
 import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
+import maltcms.ui.viewer.Chromatogram2DViewViewport;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
 import maltcms.ui.viewer.events.PaintScaleDialogAction;
 import maltcms.ui.viewer.events.PaintScaleTarget;
@@ -47,7 +50,9 @@ import maltcms.ui.viewer.tools.ChartTools;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DElementProvider;
-import net.sf.maltcms.chromaui.charts.tooltips.RTIXYTooltipGenerator;
+import net.sf.maltcms.chromaui.charts.overlay.Peak2DOverlay;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.paintScales.IPaintScaleProvider;
 import net.sf.maltcms.chromaui.ui.rangeSlider.RangeSlider;
@@ -58,15 +63,18 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYBoxAnnotation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
-import org.jfree.chart.labels.CustomXYToolTipGenerator;
+import org.jfree.chart.event.AxisChangeEvent;
+import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.labels.StandardXYZToolTipGenerator;
-import org.jfree.chart.panel.CrosshairOverlay;
-import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
 
@@ -74,7 +82,7 @@ import org.openide.util.lookup.InstanceContent;
  *
  * @author Mathias Wilhelm
  */
-public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintScaleTarget, KeyListener {
+public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintScaleTarget, KeyListener, AxisChangeListener {
 
     private final IChromatogramDescriptor chromatogram;
     private int oldTreshold;
@@ -89,24 +97,117 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     private InstanceContent content;
     private Chromatogram2DDataset ds;
     private IScan2D activeScan = null;
+    private boolean syncViewport = false;
+    private Chromatogram2DViewViewport viewport;
+    private Color backgroundColor = null;
+
+    public boolean isSyncViewport() {
+        return syncViewport;
+    }
 
     /**
      * Creates new form HeatMapPanel
      */
-    public HeatMapPanel(Container parent, IChromatogramDescriptor chromatogram, InstanceContent content) {
+    public HeatMapPanel(IChromAUIProject project, Container parent, IChromatogramDescriptor chromatogram, InstanceContent content) {
         this.chromatogram = chromatogram;
         this.content = content;
         initComponents();
-        HeatMapPanelLoader hmpl = new HeatMapPanelLoader(parent, this);
+        HeatMapPanelLoader hmpl = new HeatMapPanelLoader(project, parent, this);
         HeatMapPanelLoader.createAndRun("Creating HeatMapPanel", hmpl);
+    }
+
+    private void addAxisListener() {
+        if (this.cp != null) {
+            ValueAxis domain = this.cp.getChart().getXYPlot().getDomainAxis();
+            if (domain != null) {
+                domain.addChangeListener(this);
+            }
+            ValueAxis range = this.cp.getChart().getXYPlot().getRangeAxis();
+            if (range != null) {
+                range.addChangeListener(this);
+            }
+        }
+    }
+
+    private void removeAxisListener() {
+        if (this.cp != null) {
+            ValueAxis domain = this.cp.getChart().getXYPlot().getDomainAxis();
+            if (domain != null) {
+                domain.removeChangeListener(this);
+            }
+            ValueAxis range = this.cp.getChart().getXYPlot().getRangeAxis();
+            if (range != null) {
+                range.removeChangeListener(this);
+            }
+        }
+    }
+
+    @Override
+    public void axisChanged(AxisChangeEvent ace) {
+        if (hasFocus()) {
+            if (this.viewport != null) {
+                this.content.remove(this.viewport);
+            }
+            double xmin = this.cp.getChart().getXYPlot().getDomainAxis().getLowerBound();
+            double xmax = this.cp.getChart().getXYPlot().getDomainAxis().getUpperBound();
+            double ymin = this.cp.getChart().getXYPlot().getRangeAxis().getLowerBound();
+            double ymax = this.cp.getChart().getXYPlot().getRangeAxis().getUpperBound();
+            this.viewport = new Chromatogram2DViewViewport();
+            this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
+            this.content.add(viewport);
+        } else {
+            //received viewport change from somewhere else
+        }
+//        
+//        if (this.ticplot != null) {
+//            double xmin = this.ticplot.getDomainAxis().getLowerBound();
+//            double xmax = this.ticplot.getDomainAxis().getUpperBound();
+//            double ymin = this.ticplot.getRangeAxis().getLowerBound();
+//            double ymax = this.ticplot.getRangeAxis().getUpperBound();
+//            if (hasFocus() && this.viewport == null) {
+//                this.viewport = new ChromatogramViewViewport();
+//                this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
+//                this.ic.add(viewport);
+//            }
+//        }
+    }
+
+    public void setViewport(Rectangle2D rect) {
+        //ignore viewport changes if we have the focus
+        if (hasFocus()) {
+            System.out.println("Ignoring viewport update since we have the focus!");
+        } else {
+            //otherwise, clear our own viewport and set to new value
+            if (this.viewport != null) {
+                this.content.remove(this.viewport);
+            }
+            this.viewport = new Chromatogram2DViewViewport();
+            this.viewport.setViewPort(rect);
+            System.out.println("Setting viewport!");
+            removeAxisListener();
+            this.cp.getChart().getXYPlot().getDomainAxis().setLowerBound(rect.getMinX());
+            this.cp.getChart().getXYPlot().getDomainAxis().setUpperBound(rect.getMaxX());
+            this.cp.getChart().getXYPlot().getRangeAxis().setLowerBound(rect.getMinY());
+            this.cp.getChart().getXYPlot().getRangeAxis().setUpperBound(rect.getMaxY());
+            addAxisListener();
+        }
+    }
+
+    private void setBackgroundColor(Color c) {
+        if (cp != null) {
+            this.backgroundColor = c;
+            cp.getChart().getXYPlot().setBackgroundPaint(c);
+        }
     }
 
     private class HeatMapPanelLoader extends AProgressAwareRunnable {
 
+        private final IChromAUIProject project;
         private final Container parent;
         private final HeatMapPanel panel;
 
-        public HeatMapPanelLoader(Container parent, HeatMapPanel panel) {
+        public HeatMapPanelLoader(IChromAUIProject project, Container parent, HeatMapPanel panel) {
+            this.project = project;
             this.parent = parent;
             this.panel = panel;
         }
@@ -117,9 +218,10 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
 
         @Override
         public void run() {
-            List<NamedElementProvider<IChromatogram2D, IScan2D>> providers = new ArrayList<NamedElementProvider<IChromatogram2D, IScan2D>>(1);
+            List<NamedElementProvider<IChromatogram2D, IScan2D>> providers = new ArrayList<NamedElementProvider<IChromatogram2D, IScan2D>>();
             providers.add(new Chromatogram2DElementProvider(chromatogram.getDisplayName(), (IChromatogram2D) chromatogram.getChromatogram()));
             ds = new Chromatogram2DDataset(providers);
+            removeAxisListener();
             //XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getChromatogramDescriptor(), false);
             XYPlot p = createPlot(ds);
             if (p.getRenderer() instanceof XYBlockRenderer) {
@@ -136,9 +238,11 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             cp = new ChartPanel(jfc, true);
             cp.setZoomFillPaint(new Color(192, 192, 192, 96));
             cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
-            cp.setFillZoomRectangle(true);
+            cp.setFillZoomRectangle(false);
             cp.getChart().getLegend().setVisible(true);
-            cp.setBackground((Color) ps.getPaint(ps.getLowerBound()));
+            if (backgroundColor == null) {
+                setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
+            }
             cp.addKeyListener(panel);
             cp.addChartMouseListener(panel);
             cp.setFocusable(true);
@@ -149,6 +253,12 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             cp.setVisible(true);
             cp.setRefreshBuffer(true);
             cp.setMouseWheelEnabled(true);
+            if (project != null) {
+                for (Peak1DContainer peaks : project.getPeaks(chromatogram)) {
+                    cp.addOverlay(new Peak2DOverlay(peaks));
+                }
+            }
+            addAxisListener();
             onEdt(new Runnable() {
                 @Override
                 public void run() {
@@ -300,6 +410,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jSlider1 = new RangeSlider(0,1000);
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
 
         jToolBar1.setRollover(true);
@@ -332,6 +444,26 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             }
         });
         jToolBar2.add(jSlider1);
+
+        jCheckBox1.setText(org.openide.util.NbBundle.getMessage(HeatMapPanel.class, "HeatMapPanel.jCheckBox1.text")); // NOI18N
+        jCheckBox1.setFocusable(false);
+        jCheckBox1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(jCheckBox1);
+
+        jCheckBox2.setText(org.openide.util.NbBundle.getMessage(HeatMapPanel.class, "HeatMapPanel.jCheckBox2.text")); // NOI18N
+        jCheckBox2.setFocusable(false);
+        jCheckBox2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox2ActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(jCheckBox2);
 
         jPanel2.setLayout(new java.awt.GridLayout(1, 0));
 
@@ -376,6 +508,23 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
         handleSliderChange();
 
     }//GEN-LAST:event_jSlider1StateChanged
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        this.syncViewport = jCheckBox1.isSelected();
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+        if (jCheckBox2.isSelected()) {
+            JColorChooser jcc = new JColorChooser(backgroundColor == null ? (Color) ps.getPaint(ps.getLowerBound()) : backgroundColor);
+            DialogDescriptor dd = new DialogDescriptor(jcc, "Select background color");
+            Object result = DialogDisplayer.getDefault().notify(dd);
+            if (result == NotifyDescriptor.OK_OPTION) {
+                setBackgroundColor(jcc.getColor());
+            }
+        } else {
+            setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
+        }
+    }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void handleSliderChange() {
         final int low = this.jSlider1.getValue();
@@ -429,6 +578,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -458,8 +609,8 @@ public class HeatMapPanel extends PanelE implements ChartMouseListener, PaintSca
             JFreeChart jfc = cp.getChart();
             if (jfc != null) {
                 XYPlot plot = jfc.getXYPlot();
-                if (plot != null) {
-                    plot.setBackgroundPaint(sps.getPaint(this.ps.getLowerBound()));
+                if(!jCheckBox2.isSelected()) {
+                    setBackgroundColor((Color)sps.getPaint(this.ps.getLowerBound()));
                 }
             }
         }

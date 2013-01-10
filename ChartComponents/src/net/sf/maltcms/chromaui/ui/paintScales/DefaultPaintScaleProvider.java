@@ -75,7 +75,7 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
         this.min = min;
     }
 
-    private double max = 0.0d;
+    private double max = 1.0d;
     
     @Override
     public double getMax() {

@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package maltcms.ui.views;
+package maltcms.ui;
 
 import java.awt.geom.Rectangle2D;
 import lombok.Data;

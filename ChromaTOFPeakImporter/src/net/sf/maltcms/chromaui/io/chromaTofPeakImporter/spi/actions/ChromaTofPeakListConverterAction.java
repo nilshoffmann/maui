@@ -33,7 +33,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListConverter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 import org.openide.awt.ActionRegistration;
@@ -43,17 +43,17 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Tools",
-id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListImporter")
-@ActionRegistration(displayName = "#CTL_ChromaTofPeakListImporter")
+id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListConverter")
+@ActionRegistration(displayName = "#CTL_ChromaTofPeakListConverter")
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 1414)
+    @ActionReference(path = "Menu/File", position = 1413)
 })
-@Messages("CTL_ChromaTofPeakListImporter=Import ChromaTOF Report")
-public final class ChromaTofPeakListImporterAction implements ActionListener {
+@Messages("CTL_ChromaTofPeakListConverter=Convert ChromaTOF Report")
+public final class ChromaTofPeakListConverterAction implements ActionListener {
 
     private final IChromAUIProject context;
 
-    public ChromaTofPeakListImporterAction(IChromAUIProject context) {
+    public ChromaTofPeakListConverterAction(IChromAUIProject context) {
         this.context = context;
     }
 
@@ -62,7 +62,6 @@ public final class ChromaTofPeakListImporterAction implements ActionListener {
         JFileChooser jfc = new JFileChooser();
         jfc.setAcceptAllFileFilterUsed(true);
         jfc.addChoosableFileFilter(new FileFilter() {
-
             @Override
             public boolean accept(File file) {
                 return file.getName().toLowerCase().endsWith(".txt") || file.getName().toLowerCase().endsWith(".csv") || file.getName().toLowerCase().endsWith(".tsv");
@@ -77,9 +76,9 @@ public final class ChromaTofPeakListImporterAction implements ActionListener {
         jfc.setMultiSelectionEnabled(true);
         int result = jfc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            ChromaTofPeakListImporter plir = new ChromaTofPeakListImporter(context,
-                    jfc.getSelectedFiles(),context.getImportLocation(ChromaTofPeakListImporter.class));
-            ChromaTofPeakListImporter.createAndRun("ChromaTOF Peak List Import", plir);
+            ChromaTofPeakListConverter plir = new ChromaTofPeakListConverter(
+                    jfc.getSelectedFiles(), context.getOutputLocation(this));
+            ChromaTofPeakListConverter.createAndRun("ChromaTOF Peak List Conversion", plir);
         }
     }
 }

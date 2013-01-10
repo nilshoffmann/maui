@@ -107,35 +107,19 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private int topK = 10;
     private int activeMS = -1;
     private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
-//    private final IChromatogram f;
-//    private final ChartPanelMouseListener cpml;
     private ChartPanel cp;
-//    private Chromatogram1DMSProvider cmsp;
     private Result<IScan> lookupResult;
     private Result<IScan2D> scan2DSelection;
     private Result<IMetabolite> metaboliteSelection;
     private Result<IPeakAnnotationDescriptor> peakAnnotationDescriptorResult;
     private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<MSSeries, IScan>();
-//    private IChromAUIProject project = null;
     private DatabaseSearchPanel ddp = null;
     private Lookup contentProviderLookup;
     private boolean addSeriesToTopPlot = true;
-//    private Dataset1D<IChromatogram,IScan> dataset;
-//    private MSChartHandler msChartHandler;
 
     public MassSpectrumPanel(Lookup contentProviderLookup) {
         System.out.println("Opening MassSpectrumPanel");
-//        this.cpml = cpml;
         this.contentProviderLookup = contentProviderLookup;
-//        this.f = f;
-//        this.project = project;
-//        this.ddp = new DatabaseSearchPanel();
-//        this.dataset = dataset;
-//        final JFreeChart jfc = getMSChart1D(cpml,f);
-//        JFCPanel jfcp = new JFCPanel();
-//        jfcp.setChart(jfc);
-//        add(jfcp,BorderLayout.CENTER);
-        //TODO LOOKUP LISTENER
         initComponents();
         initChartComponents();
     }
@@ -147,42 +131,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         this(Utilities.actionsGlobalContext());
     }
 
-//    private JFreeChart getMSChart1D(ChartPanelMouseListener cpml,
-//            IFileFragment f) {
-//        XYPlot xyp = new XYPlot();
-//        XYBarRenderer xyb = new XYBarRenderer(0);
-//        xyb.setShadowVisible(false);
-//        xyb.setDrawBarOutline(false);
-//        xyp.setRenderer(xyb);
-//        NumberAxis na = new NumberAxis("m/z");
-//        xyp.setDomainAxis(na);
-//        na.setNumberFormatOverride(new DecimalFormat("###0.0000"));
-//        NumberAxis inten = new NumberAxis("Intensity");
-//        inten.setNumberFormatOverride(new DecimalFormat("###0.0000"));
-//        xyp.setRangeAxis(inten);
-//        xyb.setBaseSeriesVisibleInLegend(true);
-////        xyp.setDomainAxisLocation(AxisLocation.getOpposite(xyp.getDomainAxisLocation()));
-////        xyp.setRangeAxisLocation(AxisLocation.getOpposite(xyp.getRangeAxisLocation()));
-//        xyp.setBackgroundPaint(Color.WHITE);
-////		JFreeChart msChart = ChartFactory.createXYBarChart("", "m/z", false, "intensity", null, PlotOrientation.VERTICAL, true, true, true);
-//        JFreeChart msChart = new JFreeChart(xyp);
-//        Factory.getInstance().getConfiguration().setProperty(VariableFragment.class.
-//                getName()
-//                + ".useCachedList", true);
-//        Chromatogram1DMSProvider cmsp = new Chromatogram1DMSProvider(new Chromatogram1D(
-//                f));
-//        MSChartHandler xyeh2d = new MSChartHandler(cmsp, xyp);
-//        xyeh2d.setTopK(20);
-//        cpml.addListener(xyeh2d);
-////        msChart.setBackgroundPaint(Color.WHITE);
-//        return msChart;
-//    }
     private void initChartComponents() {
 
         this.sc = new XYSeriesCollection();
-        //XYSeries s = new XYSeries("asd");
-        //s.add(1, 1);
-        //this.sc.addSeries(s);
         XYBarDataset d = new XYBarDataset(sc, 0.5d);
         XYBarRenderer renderer = new XYBarRenderer(0.1d);
         StandardXYBarPainter sp = new StandardXYBarPainter();
@@ -223,43 +174,16 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         });
         JFreeChart msChart = new JFreeChart(this.plot);
         msChart.addChangeListener(this.defaultNumberFormat);
-
-//        Factory.getInstance().getConfiguration().setProperty(VariableFragment.class.getName()
-//                + ".useCachedList", false);
-//        Factory.getInstance().getConfiguration().setProperty(CachedList.class.getName()
-//                + ".cacheSize", 1024);
-//        Factory.getInstance().getConfiguration().setProperty(CachedList.class.getName()
-//                + ".prefetchOnMiss", true);
         System.out.println("Creating ms chart 3");
-
-//        if (f instanceof IChromatogram1D) {
-//            cmsp = new Chromatogram1DMSProvider((IChromatogram1D) f);
-//        } else if (f instanceof IChromatogram2D) {
-//            throw new NotImplementedException();
-////            cmsp = new Chromatogram2DMSProvider((IChromatogram2D)f,-1,-1);
-//        }
-
-//        msChartHandler = new MSChartHandler();
-//        xyeh2d.setTopK(20);
-//        cpml.addListener(msChartHandler);
-
         this.cp = new ChartPanel(msChart);
         this.cp.setInitialDelay(1);
         this.cp.getChart().getLegend().setVisible(true);
-
         this.clearActionPerformed(null);
         this.jPanel2.removeAll();
         this.jPanel2.add(cp);
         this.jPanel2.repaint();
     }
 
-//    public void changeMS(final Point imagePoint) {
-//        selectedPoints.add(imagePoint);
-//
-//
-//
-////        this.cp.getChart().getPlot().datasetChanged(new DatasetChangeEvent(this, this.sc));
-//    }
     public void addIdentification() {
         // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
         NotifyDescriptor nd = new NotifyDescriptor(
@@ -288,7 +212,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                             toArray(new IScan[seriesToScan.size()]));
                     try {
                         List<QueryResultList<IScan>> results = query.call();
-
                         Box outerBox = Box.createVerticalBox();
                         for (QueryResultList<IScan> mdqrl : results) {
                             for (IQueryResult<IScan> result : mdqrl) {
@@ -643,7 +566,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_addMsActionPerformed
 
     private void clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearActionPerformed
-        // TODO add your handling code here:
         this.sc.removeAllSeries();
         this.sc = new XYSeriesCollection();
         this.scales.clear();

@@ -49,7 +49,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
-import org.openide.util.WeakListeners;
 import ucar.ma2.Array;
 
 /**

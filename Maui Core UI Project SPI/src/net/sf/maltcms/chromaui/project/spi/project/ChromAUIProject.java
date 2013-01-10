@@ -214,9 +214,6 @@ public class ChromAUIProject implements IChromAUIProject {
         return l;
     }
 
-    public static void main(String[] args) {
-    }
-
     @Override
     public ICrudProvider getCrudProvider() {
         if (this.icp == null) {
@@ -290,6 +287,18 @@ public class ChromAUIProject implements IChromAUIProject {
         ProjectSettings ps = getSettings();
         ps.put("output.basedir", f);
         ics.update(ps);
+    }
+    
+    @Override
+    public File getOutputLocation(Object importer) {
+        File outputDir = FileUtil.toFile(getOutputDir());
+        outputDir = new File(outputDir, importer.getClass().getSimpleName());
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "MM-dd-yyyy_HH-mm-ss", Locale.US);
+        outputDir = new File(outputDir, dateFormat.format(
+                new Date()));
+        outputDir.mkdirs();
+        return outputDir;
     }
 
     protected <T> T getSetting(String key, Class<T> c) throws NullPointerException, ClassCastException {
