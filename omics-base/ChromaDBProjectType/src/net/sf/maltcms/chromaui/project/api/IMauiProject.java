@@ -67,6 +67,8 @@ public interface IMauiProject extends PropertyChangeListener {
     
     void removeDescriptor(IBasicDescriptor... descriptor);
     
+    File getOutputLocation(Object exporter);
+    
     File getImportLocation(Object importer);
     
 }
