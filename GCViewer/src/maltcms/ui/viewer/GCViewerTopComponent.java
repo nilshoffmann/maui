@@ -30,8 +30,6 @@ package maltcms.ui.viewer;
 import cross.datastructures.tools.EvalTools;
 import java.awt.BorderLayout;
 import java.util.Collection;
-import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 import maltcms.ui.viewer.gui.HeatMapPanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
@@ -40,8 +38,6 @@ import net.sf.maltcms.chromaui.project.api.types.GCGC;
 import net.sf.maltcms.chromaui.project.api.types.TOFMS;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
-import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -49,13 +45,12 @@ import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//maltcms.ui.viewer//GCViewer//EN",
-autostore = false)
+//@ConvertAsProperties(dtd = "-//maltcms.ui.viewer//GCViewer//EN",
+//autostore = false)
 public final class GCViewerTopComponent extends TopComponent implements LookupListener {
 
     private static GCViewerTopComponent instance;
@@ -65,15 +60,11 @@ public final class GCViewerTopComponent extends TopComponent implements LookupLi
     private HeatMapPanel hmp;
     private Lookup.Result<Chromatogram2DViewViewport> result;
 
-    public GCViewerTopComponent() {
-        this(null);
+    public GCViewerTopComponent(DataObject filename, HeatMapPanel panel) {
+        init(filename, panel);
     }
 
-    public GCViewerTopComponent(DataObject filename) {
-        init(filename);
-    }
-
-    private void init(DataObject dobj) {
+    private void init(DataObject dobj, HeatMapPanel panel) {
         associateLookup(new AbstractLookup(content));
         IChromAUIProject icp = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
         IChromatogramDescriptor descriptor = Utilities.actionsGlobalContext().lookup(IChromatogramDescriptor.class);
@@ -104,8 +95,10 @@ public final class GCViewerTopComponent extends TopComponent implements LookupLi
             setToolTipText(dobj.getPrimaryFile().getPath());
             setEnabled(false);
             //project may be null
-            this.hmp = new HeatMapPanel(this.project, this,descriptor,content);
+            this.hmp = panel;
+            this.hmp.setInstanceContent(content);
             add(this.hmp, BorderLayout.CENTER);
+            setEnabled(true);
         }
     }
 

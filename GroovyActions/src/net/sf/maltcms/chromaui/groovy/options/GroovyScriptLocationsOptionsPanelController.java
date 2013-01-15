@@ -34,7 +34,7 @@ import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
-@OptionsPanelController.SubRegistration(location = "Advanced",
+@OptionsPanelController.SubRegistration(location = "Advanced",id="GroovyScriptLocations",
 displayName = "#AdvancedOption_DisplayName_GroovyScriptLocations",
 keywords = "#AdvancedOption_Keywords_GroovyScriptLocations",
 keywordsCategory = "Advanced/GroovyScriptLocations")

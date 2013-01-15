@@ -29,7 +29,6 @@ package net.sf.maltcms.chromaui.charts.dataset;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.data.xy.AbstractXYDataset;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;

@@ -32,7 +32,6 @@ import java.util.List;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 /**
  *
@@ -44,7 +43,7 @@ public class Chromatogram2DElementProvider implements NamedElementProvider<IChro
     
     private Comparable name;
     
-    private IChromAUIProject project;
+//    private IChromAUIProject project;
     
     public Chromatogram2DElementProvider(Comparable key, IChromatogram2D chrom) {
        this.chrom = chrom;
@@ -94,14 +93,14 @@ public class Chromatogram2DElementProvider implements NamedElementProvider<IChro
         return chrom;
     }
     
-    @Override
-    public IChromAUIProject getProject() {
-        return project;
-    }
-
-    @Override
-    public void setProject(IChromAUIProject project) {
-        this.project = project;
-    }
+//    @Override
+//    public IChromAUIProject getProject() {
+//        return project;
+//    }
+//
+//    @Override
+//    public void setProject(IChromAUIProject project) {
+//        this.project = project;
+//    }
     
 }

@@ -86,8 +86,7 @@ public class ChromatogramVisualizerTools {
 //        return createBarChart();
 //    }
     public static Tuple2D<Array, Array> getMS(Point imagePoint, String filename) {
-        final IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(Factory.
-                getInstance().getFileFragmentFactory().create(filename));
+        final IScanLine scanlineCache = ScanLineCacheFactory.getScanLineCache(new FileFragment(new File(filename)));
 
         return scanlineCache.getSparseMassSpectra(imagePoint);
     }
@@ -217,8 +216,7 @@ public class ChromatogramVisualizerTools {
             ichrom = tple.getSecond();
         } else {
 
-            IFileFragment f = Factory.getInstance().getFileFragmentFactory().
-                    create(filename.getResourceLocation());
+            IFileFragment f = new FileFragment(new File(filename.getResourceLocation()));
 //        Array sat = f.getChild("scan_acquisition_time").getArray();
             isl = ScanLineCacheFactory.getScanLineCache(f);
             ChromatogramFactory cf = new ChromatogramFactory();

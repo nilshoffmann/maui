@@ -35,7 +35,6 @@ import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 /**
  *
@@ -47,7 +46,7 @@ public class Chromatogram1DElementProvider implements NamedElementProvider<IChro
     
     private Comparable name;
     
-    private IChromAUIProject project;
+//    private IChromAUIProject project;
     
     public Chromatogram1DElementProvider(Comparable key, IChromatogram2D chrom) {
         this.name = key;
@@ -100,16 +99,6 @@ public class Chromatogram1DElementProvider implements NamedElementProvider<IChro
     @Override
     public IChromatogram1D getSource() {
         return chrom;
-    }
-    
-    @Override
-    public IChromAUIProject getProject() {
-        return project;
-    }
-
-    @Override
-    public void setProject(IChromAUIProject project) {
-        this.project = project;
     }
     
 }

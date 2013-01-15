@@ -35,7 +35,7 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 @OptionsPanelController.TopLevelRegistration(
-id= "maltcmsOptions",
+id= "LocalMaltcmsExecution",
 categoryName = "#AdvancedOption_DisplayName_LocalMaltcmsExecution",
 keywords = "#AdvancedOption_Keywords_LocalMaltcmsExecution",
 keywordsCategory = "Maui Settings/LocalMaltcmsExecution",

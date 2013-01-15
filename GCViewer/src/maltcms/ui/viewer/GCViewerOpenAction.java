@@ -29,8 +29,11 @@ package maltcms.ui.viewer;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import maltcms.ui.viewer.tasks.GcGcViewTopComponentTask;
+import maltcms.ui.viewer.tasks.HeatMapPanelTask;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.openide.loaders.DataObject;
+import org.openide.util.Utilities;
 
 /**
  * @author nilshoffmann
@@ -45,7 +48,9 @@ public final class GCViewerOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        GcGcViewTopComponentTask t = new GcGcViewTopComponentTask(context);
-        GcGcViewTopComponentTask.createAndRun("GCxGC TopComponent Loader", t);
+        IChromatogramDescriptor chromatogram = Utilities.actionsGlobalContext().lookup(IChromatogramDescriptor.class);
+        IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+        HeatMapPanelTask t = new HeatMapPanelTask(project, context, chromatogram);
+        HeatMapPanelTask.createAndRun("GCxGC TopComponent Loader", t);
     }
 }

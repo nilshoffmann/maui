@@ -30,16 +30,20 @@ package net.sf.maltcms.chromaui.project.spi.nodes;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.*;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.ChildFactory;
+import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
@@ -59,7 +63,17 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     public ChromaUIProjectNodesFactory(IChromAUIProject cp) {
 //        System.out.println("Created ChromaUIProjectNodes Factory");
         this.cp = cp;
-        this.cp.addPropertyChangeListener(WeakListeners.propertyChange(this,cp));
+        this.cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
+    }
+
+    protected FileObject getPipelineFileObject() {
+        FileObject projectDir = cp.getProjectDirectory();
+        FileObject pipelinesDir;
+        pipelinesDir = projectDir.getFileObject("pipelines");
+        if(pipelinesDir!=null && pipelinesDir.isFolder()) {
+            return pipelinesDir;
+        }
+        return null;
     }
 
     protected List<FileObject> getFileChildren() {
@@ -114,9 +128,11 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                 }
             }
         }
-        
-        
 
+        FileObject fobj = getPipelineFileObject();
+        if (fobj != null) {
+            list.add(fobj);
+        }
 //        for (FileObject fo : getFileChildren()) {
 //            if (Thread.interrupted()) {
 //                return true;
@@ -157,8 +173,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
         if (key instanceof IContainer) {
             try {
                 ContainerNode cn = new ContainerNode((IContainer) key, Lookups.fixed(cp));
-                cn.addPropertyChangeListener(WeakListeners.propertyChange(this,cn));
-                ((IContainer)key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
+                cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
+                ((IContainer) key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
                 return cn;
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);
@@ -166,8 +182,10 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
         } else if (key instanceof FileObject) {
             try {
                 DataObject dobj = DataObject.find((FileObject) key);
+//                Set<FileObject> children = dobj.files();
 //                dobj.addPropertyChangeListener(this);
                 Node n = dobj.getNodeDelegate();
+//                DataFolder.FolderNode fn = new DataFolder.FolderNode();
                 FilterNode fn = new FilterNode(n, new FilterNode.Children(n),
                         new ProxyLookup(n.getLookup(), Lookups.fixed(cp)));
                 fn.addPropertyChangeListener(WeakListeners.propertyChange(this, fn));

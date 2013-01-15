@@ -27,12 +27,14 @@
  */
 package net.sf.maltcms.chromaui.charts.dataset.chromatograms;
 
-import cross.io.misc.IArrayChunkIterator;
+import cross.datastructures.fragments.IFileFragment;
+import cross.datastructures.fragments.IVariableFragment;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
 import net.sf.maltcms.chromaui.charts.dataset.Dataset2D;
 import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import ucar.ma2.Array;
 import ucar.ma2.MAMath;
 import ucar.ma2.MAMath.MinMax;
 
@@ -45,9 +47,9 @@ public class Chromatogram2DDataset extends Dataset2D<IChromatogram2D, IScan2D> {
     private String defaultDomainVariable = "first_column_elution_time";
     private String defaultValueVariable = "total_intensity";
     private String defaultRangeVariable = "second_column_elution_time";
-    private final float[][] domainVariableValues;
-    private final float[][] rangeVariableValues;
-    private final float[][] valueVariableValues;
+    private final Array[] domainVariableValues;
+    private final Array[] rangeVariableValues;
+    private final Array[] valueVariableValues;
     private final MinMax domain, value, range;
 
     public Chromatogram2DDataset(List<NamedElementProvider<IChromatogram2D, IScan2D>> l) {
@@ -55,20 +57,29 @@ public class Chromatogram2DDataset extends Dataset2D<IChromatogram2D, IScan2D> {
         MinMax domainMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MinMax valueMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MinMax rangeMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
-        domainVariableValues = new float[l.size()][];
-        rangeVariableValues = new float[l.size()][];
-        valueVariableValues = new float[l.size()][];
+        domainVariableValues = new Array[l.size()];
+        rangeVariableValues = new Array[l.size()];
+        valueVariableValues = new Array[l.size()];
+        System.out.println("Building chromatogram 2d dataset with "+l.size()+" series");
         for (int i = 0; i < l.size(); i++) {
-            MinMax _value = MAMath.getMinMax(getSource(i).getParent().getChild(defaultValueVariable).getArray());
+            IFileFragment fragment = getSource(i).getParent();
+            IVariableFragment defaultValueVar = fragment.getChild(defaultValueVariable);
+            Array defaultValueArr = defaultValueVar.getArray();
+            MinMax _value = MAMath.getMinMax(defaultValueArr);
             valueMM = new MinMax(Math.min(valueMM.min, _value.min), Math.max(valueMM.max, _value.max));
-            valueVariableValues[i] = (float[])getSource(i).getParent().getChild(defaultValueVariable).getArray().get1DJavaArray(float.class);
-            MinMax _domain = MAMath.getMinMax(getSource(i).getParent().getChild(defaultDomainVariable).getArray());
+            valueVariableValues[i] = defaultValueArr;
+            IVariableFragment defaultDomainVar = fragment.getChild(defaultDomainVariable);
+            Array defaultDomainArr = defaultDomainVar.getArray();
+            MinMax _domain = MAMath.getMinMax(defaultDomainArr);
             domainMM = new MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
-            domainVariableValues[i] = (float[])getSource(i).getParent().getChild(defaultDomainVariable).getArray().get1DJavaArray(float.class);
-            MinMax _range = MAMath.getMinMax(getSource(i).getParent().getChild(defaultRangeVariable).getArray());
+            domainVariableValues[i] = defaultDomainArr;
+            IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
+            Array defaultRangeArr = defaultRangeVar.getArray();
+            MinMax _range = MAMath.getMinMax(defaultRangeArr);
             rangeMM = new MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
-            rangeVariableValues[i] = (float[])getSource(i).getParent().getChild(defaultRangeVariable).getArray().get1DJavaArray(float.class);
+            rangeVariableValues[i] = defaultRangeArr;
         }
+        System.out.println("Done!");
         this.domain = domainMM;
         this.range = rangeMM;
         this.value = valueMM;
@@ -92,17 +103,17 @@ public class Chromatogram2DDataset extends Dataset2D<IChromatogram2D, IScan2D> {
 
     @Override
     public Number getX(int i, int i1) {
-        return domainVariableValues[i][i1];
+        return domainVariableValues[i].getDouble(i1);
     }
 
     @Override
     public Number getY(int i, int i1) {
-        return rangeVariableValues[i][i1];
+        return rangeVariableValues[i].getDouble(i1);
     }
 
     @Override
     public Number getZ(int i, int i1) {
-        return valueVariableValues[i][i1];
+        return valueVariableValues[i].getDouble(i1);
     }
 
     @Override

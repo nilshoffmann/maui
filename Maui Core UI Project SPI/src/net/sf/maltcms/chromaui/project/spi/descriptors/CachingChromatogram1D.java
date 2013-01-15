@@ -29,9 +29,9 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import cross.Factory;
 import cross.annotations.Configurable;
-import cross.datastructures.cache.CacheFactory;
-import cross.datastructures.cache.ICacheDelegate;
-import cross.datastructures.cache.ICacheElementProvider;
+import cross.cache.CacheFactory;
+import cross.cache.ICacheDelegate;
+import cross.cache.ICacheElementProvider;
 import cross.datastructures.fragments.CachedList;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;

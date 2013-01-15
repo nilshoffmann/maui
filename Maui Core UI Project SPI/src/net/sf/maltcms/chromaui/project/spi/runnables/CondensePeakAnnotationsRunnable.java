@@ -27,7 +27,7 @@
  */
 package net.sf.maltcms.chromaui.project.spi.runnables;
 
-import cross.datastructures.cache.CacheFactory;
+import cross.cache.CacheFactory;
 import cross.datastructures.tuple.Tuple2D;
 import java.awt.image.BufferedImage;
 import java.io.File;

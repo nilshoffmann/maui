@@ -29,9 +29,9 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import cross.Factory;
 import cross.annotations.Configurable;
-import cross.datastructures.cache.CacheFactory;
-import cross.datastructures.cache.ICacheDelegate;
-import cross.datastructures.cache.ICacheElementProvider;
+import cross.cache.CacheFactory;
+import cross.cache.ICacheDelegate;
+import cross.cache.ICacheElementProvider;
 import cross.datastructures.fragments.CachedList;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
@@ -44,6 +44,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import maltcms.datastructures.caches.IScanLine;
+import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IExperiment2D;
 import maltcms.datastructures.ms.IScan2D;
@@ -51,7 +53,6 @@ import maltcms.datastructures.ms.Scan2D;
 import maltcms.tools.MaltcmsTools;
 import org.apache.commons.configuration.Configuration;
 import ucar.ma2.Array;
-import ucar.nc2.stream.NcStreamProto;
 
 /**
  *
@@ -71,6 +72,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     private String second_column_elution_time_var = "second_column_elution_time";
     private List<Array> massValues;
     private List<Array> intensityValues;
+    private Array firstColumnElutionTimeArray;
+    private Array secondColumnElutionTimeArray;
     private ICacheDelegate<Integer, Scan2D> whm;
     private int scans;
     private boolean initialized = false;
@@ -78,64 +81,66 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     private double modulationTime = -1;
     private double scanRate = 0.0;
     private RtProvider rtProvider = null;
-    
+    private int prefetchSize = 2000;
+
     public CachingChromatogram2D(final IFileFragment e) {
         this.parent = e;
         whm = CacheFactory.createAutoRetrievalCache(e.getAbsolutePath(), this);
-        init();
 //        fillCache(scans,mzV,iV);
+        init();
     }
 
     private void init() {
-        if (!initialized) {
-            final String mz = Factory.getInstance().getConfiguration().getString(
-                    "var.mass_values", "mass_values");
-            final String intens = Factory.getInstance().getConfiguration().getString(
-                    "var.intensity_values", "intensity_values");
-            final String scan_index = Factory.getInstance().getConfiguration().
-                    getString("var.scan_index", "scan_index");
-            final IVariableFragment index = this.parent.getChild(scan_index);
-            this.scans = MaltcmsTools.getNumberOfScans(this.parent);
-            final IVariableFragment mzV = this.parent.getChild(mz);
-            mzV.setIndex(index);
-            activateCache(mzV);
-            massValues = mzV.getIndexedArray();
-            setPrefetchSize(scans, massValues);
-            final IVariableFragment iV = this.parent.getChild(intens);
-            iV.setIndex(index);
-            activateCache(iV);
-            intensityValues = iV.getIndexedArray();
-            setPrefetchSize(scans, intensityValues);
-            this.satOffset = parent.getChild("scan_acquisition_time").getArray().
-                    getDouble(0);
-            modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
-            scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
-            double spm = modulationTime*scanRate;
-            try {
-                this.parent.getChild("first_column_elution_time");
-                this.parent.getChild("second_column_elution_time");
-                rtProvider = new ArbitraryModulationRtProvider("first_column_elution_time", "second_column_elution_time", parent);
-            } catch (ResourceNotAvailableException rnae) {
-                rtProvider = new UniformModulationRtProvider("scan_acquisition_time", parent);
-//                System.out.println("Generating first and second column elution time!");
-                IVariableFragment fcmt = new VariableFragment(this.parent, "first_column_elution_time");
-                IVariableFragment scmt = new VariableFragment(this.parent, "second_column_elution_time");
-                Array sat = this.parent.getChild("scan_acquisition_time").getArray();
-                Array fceta = Array.factory(sat.getElementType(), sat.getShape());
-                Array sceta = Array.factory(sat.getElementType(), sat.getShape());
-                for (int i = 0; i < this.scans; i++) {
-                    int xidx = i%(int)Math.floor(spm);
-                    double sat1 = satOffset + (xidx * modulationTime);
-                    double satval = sat.getDouble(i);
-                    double sat2 = satval - sat1;
-                    fceta.setDouble(i,sat1);
-                    sceta.setDouble(i,sat2);
-                }
-                fcmt.setArray(fceta);
-                scmt.setArray(sceta);
+//        if (!initialized) {
+        final String mz = Factory.getInstance().getConfiguration().getString(
+                "var.mass_values", "mass_values");
+        final String intens = Factory.getInstance().getConfiguration().getString(
+                "var.intensity_values", "intensity_values");
+        final String scan_index = Factory.getInstance().getConfiguration().
+                getString("var.scan_index", "scan_index");
+        final IVariableFragment index = this.parent.getChild(scan_index);
+        this.scans = MaltcmsTools.getNumberOfScans(this.parent);
+        final IVariableFragment mzV = this.parent.getChild(mz);
+        mzV.setIndex(index);
+        activateCache(mzV);
+        massValues = mzV.getIndexedArray();
+        setPrefetchSize(scans, massValues);
+        final IVariableFragment iV = this.parent.getChild(intens);
+        iV.setIndex(index);
+        activateCache(iV);
+        intensityValues = iV.getIndexedArray();
+        setPrefetchSize(scans, intensityValues);
+        this.satOffset = parent.getChild("scan_acquisition_time").getArray().
+                getDouble(0);
+        modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
+        scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
+        double spm = modulationTime * scanRate;
+        try {
+            this.parent.getChild("first_column_elution_time");
+            this.parent.getChild("second_column_elution_time");
+            rtProvider = new ArbitraryModulationRtProvider("first_column_elution_time", "second_column_elution_time", parent);
+        } catch (ResourceNotAvailableException rnae) {
+            rtProvider = new UniformModulationRtProvider("scan_acquisition_time", parent);
+//                IScanLine scanLine = ScanLineCacheFactory.getDefaultScanLineCache(parent);
+            System.out.println("Generating first and second column elution time!");
+            IVariableFragment fcmt = new VariableFragment(this.parent, "first_column_elution_time");
+            IVariableFragment scmt = new VariableFragment(this.parent, "second_column_elution_time");
+            Array satA = this.parent.getChild("scan_acquisition_time").getArray();
+            Array fceta = Array.factory(satA.getElementType(), satA.getShape());
+            Array sceta = Array.factory(satA.getElementType(), satA.getShape());
+            for (int i = 0; i < this.scans; i++) {
+//                    System.out.println("Processing scan "+i);
+//                    Point p = scanLine.mapIndex(i);
+//                    final Tuple2D<Array, Array> t = scanLine.getSparseMassSpectra(p.x, p.y);
+                double[] rts = rtProvider.getRts(i);
+                fceta.setDouble(i, rts[0]);
+                sceta.setDouble(i, rts[1]);
             }
-            initialized = true;
+            fcmt.setArray(fceta);
+            scmt.setArray(sceta);
         }
+//            initialized = true;
+//        }
     }
 
 //    protected void fillCache(final int scans, final IVariableFragment masses, final IVariableFragment intensities) {
@@ -178,10 +183,13 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     protected Scan2D acquireFromCache(int i) {
         if (whm.get(i) == null) {
-            System.out.println("Retrieving scan " + i);
-            Scan2D scan = provide(i);
-            whm.put(i, scan);
-            return scan;
+//            System.out.println("Retrieving scan " + i);
+//            System.out.println("Prefetching "+" scans");
+            int minBound = Math.max(0,i-prefetchSize/2);
+            int maxBound = Math.min(getNumberOfScans(),i+prefetchSize/2);
+            for (int j = minBound; j <= maxBound; j++) {
+                whm.put(Integer.valueOf(j), provide(j));
+            }
         }
         return whm.get(Integer.valueOf(i));
 //        return provide(i);
@@ -214,7 +222,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
      */
     @Override
     public Scan2D getScan(final int scan) {
-        init();
+//        init();
         return buildScan(scan);
     }
 
@@ -224,7 +232,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     }
 
     public List<Scan2D> getScans() {
-        init();
+//        init();
         ArrayList<Scan2D> al = new ArrayList<Scan2D>();
         for (int i = 0; i < getNumberOfScans(); i++) {
             al.add(buildScan(i));
@@ -244,7 +252,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
             @Override
             public boolean hasNext() {
-                init();
+//                init();
                 if (this.currentPos < getScans().size() - 1) {
                     return true;
                 }
@@ -276,7 +284,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
      */
     @Override
     public Array getScanAcquisitionTime() {
-        init();
+//        init();
         return this.parent.getChild(this.scan_acquisition_time_var).getArray();
     }
 
@@ -287,13 +295,13 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
      */
     @Override
     public int getNumberOfScans() {
-        init();
+//        init();
         return MaltcmsTools.getNumberOfScans(this.parent);
     }
 
     @Override
     public int getIndexFor(double scan_acquisition_time) {
-        init();
+//        init();
         double[] d = (double[]) getScanAcquisitionTime().get1DJavaArray(
                 double.class);
         int idx = Arrays.binarySearch(d, scan_acquisition_time);
@@ -326,13 +334,13 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
      */
     @Override
     public IFileFragment getParent() {
-        init();
+//        init();
         return this.parent;
     }
 
     @Override
     public Scan2D provide(Integer k) {
-        init();
+//        init();
         final Array masses = massValues.get(k);
         final Array intens = intensityValues.get(k);
         final double[] rts = rtProvider.getRts(k);
@@ -382,53 +390,67 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public Point getPointFor(double d) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    private abstract class RtProvider {
+
+    public RtProvider getRtProvider() {
+        return this.rtProvider;
+    }
+
+    public abstract class RtProvider {
+
         abstract double[] getRts(int idx);
     }
-    
-    private class UniformModulationRtProvider extends RtProvider {
+
+    public class UniformModulationRtProvider extends RtProvider {
+
         private final String rtVariable;
         private final IFileFragment resource;
         private final double satOffset;
         private final double modulationTime;
         private final double scanRate;
         private final double spm;
+        private final double scanDuration;
+        private final Array satArray;
 
         public UniformModulationRtProvider(String rtVariable, IFileFragment resource) {
             this.rtVariable = rtVariable;
             this.resource = resource;
-            this.satOffset = parent.getChild(rtVariable).getArray().
+            this.satOffset = resource.getChild(rtVariable).getArray().
                     getDouble(0);
-            modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
-            scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
-            spm = modulationTime*scanRate;
+            modulationTime = resource.getChild("modulation_time").getArray().getDouble(0);
+            this.scanRate = resource.getChild("scan_rate").getArray().getDouble(0);
+            spm = modulationTime * scanRate;
+            this.satArray = resource.getChild(rtVariable).getArray();
+            this.scanDuration = 1.0d/this.scanRate;
         }
-        
+
         @Override
         double[] getRts(int idx) {
-            int xidx = idx%(int)Math.floor(spm);
-            double sat1 = satOffset + (xidx * modulationTime);
-            double satval = resource.getChild(rtVariable).getArray().getDouble(idx);
-            double sat2 = satval - sat1;
-            return new double[]{sat1,sat2};
+            final int scanspermodulation = (int) (this.scanRate * this.modulationTime);
+            final int scanLineIdx = ((int)idx)/scanspermodulation;
+            double sat1 = satOffset + (scanLineIdx*this.modulationTime);
+            double sat2 = (((((float)idx) % ((float)scanspermodulation))) * this.scanDuration);
+            return new double[]{sat1, sat2};
         }
     }
-    
-    private class ArbitraryModulationRtProvider extends RtProvider {
+
+    public class ArbitraryModulationRtProvider extends RtProvider {
+
         private final String rt1Variable;
         private final String rt2Variable;
         private final IFileFragment resource;
+        private final Array rt1, rt2;
 
         public ArbitraryModulationRtProvider(String rt1Variable, String rt2Variable, IFileFragment resource) {
             this.rt1Variable = rt1Variable;
             this.rt2Variable = rt2Variable;
             this.resource = resource;
+            this.rt1 = resource.getChild(rt1Variable).getArray();
+            this.rt2 = resource.getChild(rt2Variable).getArray();
         }
-        
+
         @Override
         double[] getRts(int idx) {
-            return new double[]{resource.getChild(rt1Variable).getArray().getDouble(idx),resource.getChild(rt2Variable).getArray().getDouble(idx)};
+            return new double[]{rt1.getDouble(idx), rt2.getDouble(idx)};
         }
     }
 }

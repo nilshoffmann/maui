@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.charts.dataset;
 
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import cross.datastructures.collections.IElementProvider;
 
 /**
@@ -42,8 +41,8 @@ public interface NamedElementProvider<SOURCE,TARGET> extends IElementProvider<TA
     
     public void setKey(Comparable key);
     
-    public IChromAUIProject getProject();
-    
-    public void setProject(IChromAUIProject project);
+//    public IChromAUIProject getProject();
+//    
+//    public void setProject(IChromAUIProject project);
     
 }

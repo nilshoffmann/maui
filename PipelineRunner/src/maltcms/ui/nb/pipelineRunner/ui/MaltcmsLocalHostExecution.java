@@ -103,7 +103,6 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
     private String locateMaltcmsJar(File baseDir) throws ConstraintViolationException {
         System.out.println("Checking files in dir: " + baseDir.getAbsolutePath());
         File[] f = baseDir.listFiles(new FileFilter() {
-
             @Override
             public boolean accept(File file) {
                 if (file.getName().toLowerCase().endsWith("jar") && file.getName().toLowerCase().startsWith("maltcms")) {
@@ -166,13 +165,17 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
     private String buildFileset() {
         StringBuilder sb = new StringBuilder();
         sb.append("\"");
+        int i = 0;
         for (File s : inputFiles) {
             sb.append(s.getAbsolutePath());
-            if (inputFiles.length > 1) {
+            if (inputFiles.length > 1 && i<inputFiles.length) {
                 sb.append(",");
             }
+            i++;
         }
-        sb.replace(sb.length() - 1, sb.length(), "");
+//        if (sb.substring(sb.length() - 1).equals(",")) {
+//            sb.replace(sb.length() - 1, sb.length(), "");
+//        }
         sb.append("\"");
         return sb.toString();
     }
@@ -227,7 +230,6 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                         System.out.println("Found result file: " + resultFile);
                         final File resFile = resultFile;
                         Runnable r = new Runnable() {
-
                             @Override
                             public void run() {
                                 Project project;
@@ -256,7 +258,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         } finally {
-            if(getProgressHandle()!=null) {
+            if (getProgressHandle() != null) {
                 getProgressHandle().finish();
             }
         }

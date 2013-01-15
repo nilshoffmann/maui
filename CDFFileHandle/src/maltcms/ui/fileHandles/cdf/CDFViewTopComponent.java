@@ -193,7 +193,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
                 }
             }
             try {
-                for (IFileFragment sourceFile : cross.datastructures.tools.FragmentTools.getSourceFiles(ff)) {
+                for (IFileFragment sourceFile : cross.datastructures.tools.FragmentTools.getSourceFiles(ff).values()) {
                     if (Thread.interrupted()) {
                         return false;
                     } else {

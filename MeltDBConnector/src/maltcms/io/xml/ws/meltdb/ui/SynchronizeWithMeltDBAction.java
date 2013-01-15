@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -29,21 +29,31 @@ package maltcms.io.xml.ws.meltdb.ui;
 
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.JComponent;
-import maltcms.datastructures.peak.Peak1D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
 import org.openide.util.ImageUtilities;
+import org.openide.util.NbBundle.Messages;
 
-public final class MeltDBSynchronizeAction implements ActionListener {
+@ActionID(
+    category = "File",
+id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction")
+@ActionRegistration(
+    displayName = "#CTL_SynchronizeWithMeltDBAction")
+@ActionReference(path = "Menu/File", position = 1423, separatorAfter = 1424)
+@Messages("CTL_SynchronizeWithMeltDBAction=Synchronize With MeltDB")
+public final class SynchronizeWithMeltDBAction implements ActionListener {
 
     private final IChromAUIProject context;
 
-    public MeltDBSynchronizeAction(IChromAUIProject context) {
+    public SynchronizeWithMeltDBAction(IChromAUIProject context) {
         this.context = context;
     }
 
@@ -62,21 +72,20 @@ public final class MeltDBSynchronizeAction implements ActionListener {
             // do something
         }
     }
-
     private WizardDescriptor.Panel[] panels;
 
     /**
-     * Initialize panels representing individual wizard's steps and sets
-     * various properties for them influencing wizard appearance.
+     * Initialize panels representing individual wizard's steps and sets various
+     * properties for them influencing wizard appearance.
      */
     private WizardDescriptor.Panel[] getPanels() {
         if (panels == null) {
             panels = new WizardDescriptor.Panel[]{
-                        new PeakImportWizardPanel1(),
-                        new PeakImportWizardPanel2(),
-                        new PeakImportWizardPanel3(),
-                        new PeakImportWizardPanel4()
-                    };
+                new PeakImportWizardPanel1(),
+                new PeakImportWizardPanel2(),
+                new PeakImportWizardPanel3(),
+                new PeakImportWizardPanel4()
+            };
             String[] steps = new String[panels.length];
             for (int i = 0; i < panels.length; i++) {
                 Component c = panels[i].getComponent();
