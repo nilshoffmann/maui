@@ -27,24 +27,12 @@
  */
 package net.sf.maltcms;
 
-import cross.Factory;
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
 import org.openide.modules.ModuleInstall;
-import org.openide.util.Exceptions;
 
 public class Installer extends ModuleInstall {
 
     @Override
     public void restored() {
-        try {
-            PropertiesConfiguration pc = new PropertiesConfiguration(
-                    "/cfg/default.properties");
-            Factory.getInstance().configure(pc);
-        } catch (ConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+
     }
 }

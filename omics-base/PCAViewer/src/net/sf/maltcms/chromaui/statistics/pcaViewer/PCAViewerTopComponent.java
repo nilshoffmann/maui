@@ -78,6 +78,7 @@ public final class PCAViewerTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setOpaque(true);
         setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 

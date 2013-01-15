@@ -48,8 +48,6 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>EDU.oswego.cs.dl.util.concurrent</package>
-                <package>EDU.oswego.cs.dl.util.concurrent.misc</package>
                 <package>antlr</package>
                 <package>antlr.ASdebug</package>
                 <package>antlr.actions.cpp</package>
@@ -82,6 +80,10 @@
                 <package>cern.jet.random.sampling</package>
                 <package>cern.jet.stat</package>
                 <package>cern.jet.stat.quantile</package>
+                <package>cfg</package>
+                <package>cfg.cv</package>
+                <package>cfg.pipelines</package>
+                <package>cfg.pipelines.xml</package>
                 <package>com.keypoint</package>
                 <package>com.sun.activation.registries</package>
                 <package>com.sun.activation.viewers</package>
@@ -102,11 +104,14 @@
                 <package>cross</package>
                 <package>cross.annotations</package>
                 <package>cross.applicationContext</package>
+                <package>cross.cache</package>
+                <package>cross.cache.ehcache</package>
+                <package>cross.cache.none</package>
+                <package>cross.cache.softReference</package>
                 <package>cross.commands</package>
                 <package>cross.commands.fragments</package>
                 <package>cross.datastructures</package>
                 <package>cross.datastructures.cache</package>
-                <package>cross.datastructures.cache.db4o</package>
                 <package>cross.datastructures.collections</package>
                 <package>cross.datastructures.fragments</package>
                 <package>cross.datastructures.pipeline</package>
@@ -125,6 +130,7 @@
                 <package>cross.ui.actions</package>
                 <package>cross.ui.events</package>
                 <package>cross.ui.filefilters</package>
+                <package>cross.vocabulary</package>
                 <package>groovy.beans</package>
                 <package>groovy.grape</package>
                 <package>groovy.inspect</package>
@@ -181,6 +187,7 @@
                 <package>info.monitorenter.cpdetector.util</package>
                 <package>info.monitorenter.cpdetector.util.collections</package>
                 <package>jargs.gnu</package>
+                <package>java_cup.runtime</package>
                 <package>javax.activation</package>
                 <package>javax.media.jai</package>
                 <package>javax.media.jai.iterator</package>
@@ -190,10 +197,19 @@
                 <package>javax.media.jai.tilecodec</package>
                 <package>javax.media.jai.util</package>
                 <package>javax.media.jai.widget</package>
+                <package>javax.xml</package>
+                <package>javax.xml.datatype</package>
+                <package>javax.xml.namespace</package>
                 <package>javax.xml.parsers</package>
                 <package>javax.xml.stream</package>
                 <package>javax.xml.stream.events</package>
                 <package>javax.xml.stream.util</package>
+                <package>javax.xml.transform</package>
+                <package>javax.xml.transform.dom</package>
+                <package>javax.xml.transform.sax</package>
+                <package>javax.xml.transform.stream</package>
+                <package>javax.xml.validation</package>
+                <package>javax.xml.xpath</package>
                 <package>jxl</package>
                 <package>jxl.biff</package>
                 <package>jxl.biff.drawing</package>
@@ -205,7 +221,6 @@
                 <package>jxl.read.biff</package>
                 <package>jxl.write</package>
                 <package>jxl.write.biff</package>
-                <package>maltcms.commands</package>
                 <package>maltcms.commands.distances</package>
                 <package>maltcms.commands.distances.dtw</package>
                 <package>maltcms.commands.distances.dtwng</package>
@@ -228,6 +243,7 @@
                 <package>maltcms.commands.fragments.warp</package>
                 <package>maltcms.commands.fragments2d.peakfinding</package>
                 <package>maltcms.commands.fragments2d.peakfinding.bbh</package>
+                <package>maltcms.commands.fragments2d.peakfinding.cwt</package>
                 <package>maltcms.commands.fragments2d.peakfinding.output</package>
                 <package>maltcms.commands.fragments2d.peakfinding.picking</package>
                 <package>maltcms.commands.fragments2d.peakfinding.srg</package>
@@ -246,6 +262,7 @@
                 <package>maltcms.datastructures.cluster</package>
                 <package>maltcms.datastructures.constraint</package>
                 <package>maltcms.datastructures.feature</package>
+                <package>maltcms.datastructures.filters.array</package>
                 <package>maltcms.datastructures.fragments</package>
                 <package>maltcms.datastructures.ms</package>
                 <package>maltcms.datastructures.peak</package>
@@ -271,6 +288,7 @@
                 <package>maltcms.experimental.ui</package>
                 <package>maltcms.io.andims</package>
                 <package>maltcms.io.csv</package>
+                <package>maltcms.io.csv.fsa</package>
                 <package>maltcms.io.misc</package>
                 <package>maltcms.io.xml.bindings.alignment</package>
                 <package>maltcms.io.xml.bindings.annotation</package>
@@ -348,6 +366,7 @@
                 <package>net.sf.ehcache.writer.writethrough</package>
                 <package>net.sf.maltcms</package>
                 <package>net.sf.maltcms.apps</package>
+                <package>net.sf.maltcms.cv</package>
                 <package>net.sf.maltcms.db.search.api</package>
                 <package>net.sf.maltcms.db.search.api.ri</package>
                 <package>net.sf.maltcms.db.search.api.similarities</package>
@@ -388,6 +407,9 @@
                 <package>org.aopalliance.aop</package>
                 <package>org.aopalliance.intercept</package>
                 <package>org.apache.batik</package>
+                <package>org.apache.batik.anim</package>
+                <package>org.apache.batik.anim.timing</package>
+                <package>org.apache.batik.anim.values</package>
                 <package>org.apache.batik.css.dom</package>
                 <package>org.apache.batik.css.engine</package>
                 <package>org.apache.batik.css.engine.sac</package>
@@ -397,47 +419,40 @@
                 <package>org.apache.batik.css.engine.value.svg12</package>
                 <package>org.apache.batik.css.parser</package>
                 <package>org.apache.batik.dom</package>
+                <package>org.apache.batik.dom.anim</package>
                 <package>org.apache.batik.dom.events</package>
                 <package>org.apache.batik.dom.svg</package>
                 <package>org.apache.batik.dom.svg12</package>
                 <package>org.apache.batik.dom.traversal</package>
                 <package>org.apache.batik.dom.util</package>
+                <package>org.apache.batik.dom.xbl</package>
                 <package>org.apache.batik.ext.awt</package>
                 <package>org.apache.batik.ext.awt.color</package>
                 <package>org.apache.batik.ext.awt.font</package>
                 <package>org.apache.batik.ext.awt.g2d</package>
                 <package>org.apache.batik.ext.awt.geom</package>
                 <package>org.apache.batik.ext.awt.image</package>
-                <package>org.apache.batik.ext.awt.image.codec</package>
-                <package>org.apache.batik.ext.awt.image.codec.tiff</package>
                 <package>org.apache.batik.ext.awt.image.renderable</package>
                 <package>org.apache.batik.ext.awt.image.rendered</package>
                 <package>org.apache.batik.ext.awt.image.spi</package>
                 <package>org.apache.batik.ext.swing</package>
-                <package>org.apache.batik.gvt</package>
-                <package>org.apache.batik.gvt.event</package>
-                <package>org.apache.batik.gvt.filter</package>
-                <package>org.apache.batik.gvt.flow</package>
-                <package>org.apache.batik.gvt.font</package>
-                <package>org.apache.batik.gvt.renderer</package>
-                <package>org.apache.batik.gvt.svg12</package>
-                <package>org.apache.batik.gvt.text</package>
                 <package>org.apache.batik.i18n</package>
                 <package>org.apache.batik.parser</package>
                 <package>org.apache.batik.svggen</package>
                 <package>org.apache.batik.svggen.font</package>
                 <package>org.apache.batik.svggen.font.table</package>
                 <package>org.apache.batik.util</package>
-                <package>org.apache.batik.util.gui</package>
-                <package>org.apache.batik.util.gui.resource</package>
                 <package>org.apache.batik.util.io</package>
                 <package>org.apache.batik.util.resources</package>
                 <package>org.apache.batik.xml</package>
-                <package>org.apache.commons.beanutils</package>
-                <package>org.apache.commons.beanutils.converters</package>
-                <package>org.apache.commons.beanutils.expression</package>
-                <package>org.apache.commons.beanutils.locale</package>
-                <package>org.apache.commons.beanutils.locale.converters</package>
+                <package>org.apache.bcel</package>
+                <package>org.apache.bcel.classfile</package>
+                <package>org.apache.bcel.generic</package>
+                <package>org.apache.bcel.util</package>
+                <package>org.apache.bcel.verifier</package>
+                <package>org.apache.bcel.verifier.exc</package>
+                <package>org.apache.bcel.verifier.statics</package>
+                <package>org.apache.bcel.verifier.structurals</package>
                 <package>org.apache.commons.cli</package>
                 <package>org.apache.commons.codec</package>
                 <package>org.apache.commons.codec.binary</package>
@@ -462,15 +477,18 @@
                 <package>org.apache.commons.configuration.interpol</package>
                 <package>org.apache.commons.configuration.plist</package>
                 <package>org.apache.commons.configuration.reloading</package>
+                <package>org.apache.commons.configuration.resolver</package>
                 <package>org.apache.commons.configuration.tree</package>
                 <package>org.apache.commons.configuration.tree.xpath</package>
                 <package>org.apache.commons.configuration.web</package>
-                <package>org.apache.commons.digester</package>
-                <package>org.apache.commons.digester.parser</package>
-                <package>org.apache.commons.digester.plugins</package>
-                <package>org.apache.commons.digester.plugins.strategies</package>
-                <package>org.apache.commons.digester.substitution</package>
-                <package>org.apache.commons.digester.xmlrules</package>
+                <package>org.apache.commons.httpclient</package>
+                <package>org.apache.commons.httpclient.auth</package>
+                <package>org.apache.commons.httpclient.cookie</package>
+                <package>org.apache.commons.httpclient.methods</package>
+                <package>org.apache.commons.httpclient.methods.multipart</package>
+                <package>org.apache.commons.httpclient.params</package>
+                <package>org.apache.commons.httpclient.protocol</package>
+                <package>org.apache.commons.httpclient.util</package>
                 <package>org.apache.commons.io</package>
                 <package>org.apache.commons.io.comparator</package>
                 <package>org.apache.commons.io.filefilter</package>
@@ -483,6 +501,7 @@
                 <package>org.apache.commons.lang.exception</package>
                 <package>org.apache.commons.lang.math</package>
                 <package>org.apache.commons.lang.mutable</package>
+                <package>org.apache.commons.lang.reflect</package>
                 <package>org.apache.commons.lang.text</package>
                 <package>org.apache.commons.lang.time</package>
                 <package>org.apache.commons.logging</package>
@@ -552,11 +571,31 @@
                 <package>org.apache.regexp</package>
                 <package>org.apache.wml</package>
                 <package>org.apache.wml.dom</package>
+                <package>org.apache.xalan</package>
+                <package>org.apache.xalan.client</package>
+                <package>org.apache.xalan.extensions</package>
+                <package>org.apache.xalan.lib</package>
+                <package>org.apache.xalan.lib.sql</package>
+                <package>org.apache.xalan.processor</package>
+                <package>org.apache.xalan.res</package>
+                <package>org.apache.xalan.serialize</package>
+                <package>org.apache.xalan.templates</package>
+                <package>org.apache.xalan.trace</package>
+                <package>org.apache.xalan.transformer</package>
+                <package>org.apache.xalan.xslt</package>
+                <package>org.apache.xalan.xsltc</package>
+                <package>org.apache.xalan.xsltc.cmdline</package>
+                <package>org.apache.xalan.xsltc.cmdline.getopt</package>
+                <package>org.apache.xalan.xsltc.compiler</package>
+                <package>org.apache.xalan.xsltc.compiler.util</package>
+                <package>org.apache.xalan.xsltc.dom</package>
+                <package>org.apache.xalan.xsltc.runtime</package>
+                <package>org.apache.xalan.xsltc.runtime.output</package>
+                <package>org.apache.xalan.xsltc.trax</package>
+                <package>org.apache.xalan.xsltc.util</package>
                 <package>org.apache.xerces.dom</package>
                 <package>org.apache.xerces.dom.events</package>
-                <package>org.apache.xerces.dom3</package>
                 <package>org.apache.xerces.dom3.as</package>
-                <package>org.apache.xerces.dom3.bootstrap</package>
                 <package>org.apache.xerces.impl</package>
                 <package>org.apache.xerces.impl.dtd</package>
                 <package>org.apache.xerces.impl.dtd.models</package>
@@ -573,18 +612,46 @@
                 <package>org.apache.xerces.impl.xs.identity</package>
                 <package>org.apache.xerces.impl.xs.models</package>
                 <package>org.apache.xerces.impl.xs.opti</package>
-                <package>org.apache.xerces.impl.xs.psvi</package>
                 <package>org.apache.xerces.impl.xs.traversers</package>
                 <package>org.apache.xerces.impl.xs.util</package>
                 <package>org.apache.xerces.jaxp</package>
+                <package>org.apache.xerces.jaxp.datatype</package>
+                <package>org.apache.xerces.jaxp.validation</package>
                 <package>org.apache.xerces.parsers</package>
                 <package>org.apache.xerces.util</package>
                 <package>org.apache.xerces.xinclude</package>
                 <package>org.apache.xerces.xni</package>
                 <package>org.apache.xerces.xni.grammars</package>
                 <package>org.apache.xerces.xni.parser</package>
-                <package>org.apache.xerces.xni.psvi</package>
+                <package>org.apache.xerces.xpointer</package>
+                <package>org.apache.xerces.xs</package>
+                <package>org.apache.xerces.xs.datatypes</package>
+                <package>org.apache.xml.dtm</package>
+                <package>org.apache.xml.dtm.ref</package>
+                <package>org.apache.xml.dtm.ref.dom2dtm</package>
+                <package>org.apache.xml.dtm.ref.sax2dtm</package>
+                <package>org.apache.xml.res</package>
+                <package>org.apache.xml.resolver</package>
+                <package>org.apache.xml.resolver.apps</package>
+                <package>org.apache.xml.resolver.helpers</package>
+                <package>org.apache.xml.resolver.readers</package>
+                <package>org.apache.xml.resolver.tools</package>
                 <package>org.apache.xml.serialize</package>
+                <package>org.apache.xml.serializer</package>
+                <package>org.apache.xml.serializer.utils</package>
+                <package>org.apache.xml.utils</package>
+                <package>org.apache.xml.utils.res</package>
+                <package>org.apache.xmlcommons</package>
+                <package>org.apache.xpath</package>
+                <package>org.apache.xpath.axes</package>
+                <package>org.apache.xpath.compiler</package>
+                <package>org.apache.xpath.domapi</package>
+                <package>org.apache.xpath.functions</package>
+                <package>org.apache.xpath.jaxp</package>
+                <package>org.apache.xpath.objects</package>
+                <package>org.apache.xpath.operations</package>
+                <package>org.apache.xpath.patterns</package>
+                <package>org.apache.xpath.res</package>
                 <package>org.codehaus.groovy</package>
                 <package>org.codehaus.groovy.ant</package>
                 <package>org.codehaus.groovy.antlr</package>
@@ -666,7 +733,6 @@
                 <package>org.h2.upgrade</package>
                 <package>org.h2.util</package>
                 <package>org.h2.value</package>
-                <package>org.jdesktop.layout</package>
                 <package>org.jdom</package>
                 <package>org.jdom.adapters</package>
                 <package>org.jdom.filter</package>
@@ -731,12 +797,8 @@
                 <package>org.mozilla.intl.chardet</package>
                 <package>org.netbeans.api.wizard</package>
                 <package>org.netbeans.api.wizard.displayer</package>
-                <package>org.netbeans.modules.openide.util</package>
                 <package>org.netbeans.modules.wizard</package>
                 <package>org.netbeans.spi.wizard</package>
-                <package>org.openide.util</package>
-                <package>org.openide.util.lookup</package>
-                <package>org.openide.util.lookup.implspi</package>
                 <package>org.slf4j</package>
                 <package>org.slf4j.bridge</package>
                 <package>org.slf4j.helpers</package>
@@ -860,16 +922,17 @@
                 <package>org.springframework.validation.support</package>
                 <package>org.systemsbiology.jrap</package>
                 <package>org.systemsbiology.jrap.stax</package>
-                <package>org.w3c.css.sac</package>
-                <package>org.w3c.css.sac.helpers</package>
                 <package>org.w3c.dom</package>
+                <package>org.w3c.dom.bootstrap</package>
+                <package>org.w3c.dom.css</package>
                 <package>org.w3c.dom.events</package>
                 <package>org.w3c.dom.html</package>
                 <package>org.w3c.dom.ls</package>
                 <package>org.w3c.dom.ranges</package>
-                <package>org.w3c.dom.smil</package>
-                <package>org.w3c.dom.svg</package>
+                <package>org.w3c.dom.stylesheets</package>
                 <package>org.w3c.dom.traversal</package>
+                <package>org.w3c.dom.views</package>
+                <package>org.w3c.dom.xpath</package>
                 <package>org.xml.sax</package>
                 <package>org.xml.sax.ext</package>
                 <package>org.xml.sax.helpers</package>
@@ -1006,36 +1069,24 @@
                 <package>uk.ac.ebi.jmzml.xml.xxindex</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/spring-asm-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spring-asm-3.0.6.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jcommon-1.0.16.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jcommon-1.0.16.jar</binary-origin>
+                <runtime-relative-path>ext/jrap-osgi-3.0.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jrap-osgi-3.0.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-io-2.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-io-2.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-exception-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-exception-1.2.11-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/jcommon-1.0.16.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jcommon-1.0.16.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/xmlParserAPIs-2.0.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/xmlParserAPIs-2.0.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-lang-2.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-lang-2.4.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.ext.awt-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.ext.awt-1.7.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-db-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-db-1.2.1-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/swing-layout-1.0.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/swing-layout-1.0.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jcl-over-slf4j-1.6.1.jar</runtime-relative-path>
@@ -1050,72 +1101,76 @@
                 <binary-origin>release/modules/ext/slf4j-api-1.6.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-main-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-main-1.2.11-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-io-openms-featurexml-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-io-openms-featurexml-1.2.1-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/maltcms-datastructures-api-1.2.1-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/maltcms-datastructures-api-1.2.1-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-server-1.6.10.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-server-1.6.10.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jdom-1.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jdom-1.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-datastructures-quadtree-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-datastructures-quadtree-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jxl-2.6.10.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jxl-2.6.10.jar</binary-origin>
+                <runtime-relative-path>ext/org.springframework.beans-3.0.6.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.beans-3.0.6.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-execution-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-execution-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-configuration-1.6.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-configuration-1.6.jar</binary-origin>
+                <runtime-relative-path>ext/netcdf-osgi-4.2.35.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/netcdf-osgi-4.2.35.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/wizard-0.998.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/wizard-0.998.1.jar</binary-origin>
+                <runtime-relative-path>ext/org.springframework.asm-3.0.6.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.asm-3.0.6.RELEASE.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/cross-math-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-math-1.2.12-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.css-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.css-1.7.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/com.springsource.org.apache.xalan-2.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.xalan-2.7.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/cross-event-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-event-1.2.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-chroma4D-cwt-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-chroma4D-cwt-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/mpaxs-spi-1.6.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-spi-1.6.12-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jrapStAX-osgi-4.0.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jrapStAX-osgi-4.0.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-sralign-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-sralign-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/ehcache-core-2.4.6.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/ehcache-core-2.4.6.jar</binary-origin>
+                <runtime-relative-path>ext/sun-drmaa-impl-osgi-1.0.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sun-drmaa-impl-osgi-1.0.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-xml-alignment-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-xml-alignment-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jrap-3.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jrap-3.0.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.parser-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.parser-1.7.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.commons.logging-1.1.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.apache.commons.logging-1.1.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-beanutils-core-1.8.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-beanutils-core-1.8.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-cli-1.2.jar</runtime-relative-path>
@@ -1126,24 +1181,16 @@
                 <binary-origin>release/modules/ext/maltcms-io-mzml-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/spring-expression-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spring-expression-3.0.6.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-datastructures-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-datastructures-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/aopalliance-1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/aopalliance-1.0.jar</binary-origin>
+                <runtime-relative-path>ext/colt-osgi-1.2.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/colt-osgi-1.2.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-spi-1.6.10.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-spi-1.6.10.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/spring-core-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spring-core-3.0.6.RELEASE.jar</binary-origin>
+                <runtime-relative-path>ext/jxl-osgi-2.6.10.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jxl-osgi-2.6.10.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-spectratyping-1.2.1-SNAPSHOT.jar</runtime-relative-path>
@@ -1154,28 +1201,32 @@
                 <binary-origin>release/modules/ext/chardet-1.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.svggen-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.svggen-1.7.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/stax-api-1.0-2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/stax-api-1.0-2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/com.springsource.org.aopalliance-1.0.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.aopalliance-1.0.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.log4j-1.2.15.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.apache.log4j-1.2.15.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-math-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-math-1.2.11-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/cross-main-api-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-main-api-1.2.11-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/groovy-all-1.8.5.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/groovy-all-1.8.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/spring-beans-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spring-beans-3.0.6.RELEASE.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.xmlcommons-1.3.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.xmlcommons-1.3.3.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/cross-exception-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-exception-1.2.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.antlr-2.7.7.jar</runtime-relative-path>
@@ -1190,20 +1241,32 @@
                 <binary-origin>release/modules/ext/commons-math-2.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-digester-1.8.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-digester-1.8.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.anim-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.anim-1.7.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/com.springsource.javax.media.jai.codec-1.1.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.javax.media.jai.codec-1.1.3.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.expression-3.0.6.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.expression-3.0.6.RELEASE.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/cross-annotations-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-annotations-1.2.12-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/com.springsource.org.apache.xml.resolver-1.2.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.xml.resolver-1.2.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-statistics-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-statistics-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/org-openide-util-lookup-RELEASE71.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org-openide-util-lookup-RELEASE71.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/batik-ext-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-ext-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.commons.httpclient-3.1.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.commons.httpclient-3.1.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/xxindex-0.11.jar</runtime-relative-path>
@@ -1218,96 +1281,88 @@
                 <binary-origin>release/modules/ext/jul-to-slf4j-1.6.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-computeHost-1.6.10.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-computeHost-1.6.10.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jargs-1.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jargs-1.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/batik-svg-dom-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-svg-dom-1.6-1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jai_core-1.1.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jai_core-1.1.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-commands-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-commands-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-ui-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-ui-1.2.11-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.jdom-1.1.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.jdom-1.1.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-chroma4D-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-chroma4D-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/cross-tools-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-tools-1.2.12-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-io-csv-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-io-csv-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-drmaa-spi-1.6.10.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-drmaa-spi-1.6.10.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.bcel-5.1.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.bcel-5.1.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-event-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-event-1.2.11-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/mpaxs-server-1.6.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-server-1.6.12-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.context-3.0.6.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.context-3.0.6.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-ui-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-ui-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-awt-util-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-awt-util-1.6-1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jakarta-regexp-1.4.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jakarta-regexp-1.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-parser-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-parser-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/maltcms-cv-1.2.1-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/maltcms-cv-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jmzml-1.6.8.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmzml-1.6.8.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.xerces-2.8.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.xerces-2.8.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-dom-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-dom-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/mpaxs-api-1.6.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-api-1.6.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-tools-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-tools-1.2.11-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-beanutils-1.7.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-beanutils-1.7.0.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.dom.svg-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.dom.svg-1.7.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/slf4j-log4j12-1.6.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/slf4j-log4j12-1.6.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jrapStAX-4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jrapStAX-4.jar</binary-origin>
+                <runtime-relative-path>ext/jmzml-osgi-1.6.8.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmzml-osgi-1.6.8.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-xml-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-xml-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.xml-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.xml-1.7.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-filters-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-filters-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jai_codec-1.1.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jai_codec-1.1.3.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.commons.codec-1.3.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.commons.codec-1.3.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/ehcache-core-osgi-2.4.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/ehcache-core-osgi-2.4.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-collections-3.2.1.jar</runtime-relative-path>
@@ -1326,12 +1381,8 @@
                 <binary-origin>release/modules/ext/commons-codec-1.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/spring-aop-3.0.5.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spring-aop-3.0.5.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/batik-svggen-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-svggen-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.javax.media.jai.core-1.1.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.javax.media.jai.core-1.1.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-math-1.2.1-SNAPSHOT.jar</runtime-relative-path>
@@ -1342,24 +1393,24 @@
                 <binary-origin>release/modules/ext/maltcms-evaluation-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/spring-context-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spring-context-3.0.6.RELEASE.jar</binary-origin>
+                <runtime-relative-path>ext/cross-cache-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-cache-1.2.12-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-configuration-1.9.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-configuration-1.9.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-xml-annotation-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-xml-annotation-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-css-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-css-1.6-1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-api-1.6.10.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-api-1.6.10.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/h2-1.3.162.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/h2-1.3.162.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.core-3.0.6.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.core-3.0.6.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-chroma4D-srg-1.2.1-SNAPSHOT.jar</runtime-relative-path>
@@ -1374,60 +1425,64 @@
                 <binary-origin>release/modules/ext/maltcms-io-mzxml-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/concurrent-1.3.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/concurrent-1.3.4.jar</binary-origin>
+                <runtime-relative-path>ext/jfreechart-osgi-1.0.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jfreechart-osgi-1.0.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/xercesImpl-2.5.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/xercesImpl-2.5.0.jar</binary-origin>
+                <runtime-relative-path>ext/wizard-osgi-0.998.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/wizard-osgi-0.998.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/activation-1.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/activation-1.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.util-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.util-1.7.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-apps-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-apps-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/sun-drmaa-impl-1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sun-drmaa-impl-1.0.jar</binary-origin>
+                <runtime-relative-path>ext/mpaxs-drmaa-spi-1.6.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-drmaa-spi-1.6.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-gvt-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-gvt-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/org.springframework.aop-3.0.6.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.aop-3.0.6.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-gui-util-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-gui-util-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/mpaxs-computeHost-1.6.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-computeHost-1.6.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.commons.io-1.4.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.apache.commons.io-1.4.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jfreechart-1.0.13.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jfreechart-1.0.13.jar</binary-origin>
+                <runtime-relative-path>ext/commons-lang-2.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-lang-2.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/colt-1.2.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/colt-1.2.0.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.batik.dom-1.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.batik.dom-1.7.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/netcdf-4.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/netcdf-4.2.jar</binary-origin>
+                <runtime-relative-path>ext/cross-main-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-main-1.2.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-resources-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-resources-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-util-1.6-1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/batik-util-1.6-1.jar</binary-origin>
+                <runtime-relative-path>ext/cross-ui-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-ui-1.2.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-annotations-1.2.11-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-annotations-1.2.11-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/com.springsource.org.apache.regexp-1.5.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/com.springsource.org.apache.regexp-1.5.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/cpdetector-1.0.7.jar</runtime-relative-path>
