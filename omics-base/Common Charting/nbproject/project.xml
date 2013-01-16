@@ -90,11 +90,10 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>cross.datastructures.collections</package>
-                <package>net.sf.maltcms.common.charts</package>
-                <package>net.sf.maltcms.common.charts.dataset</package>
-                <package>net.sf.maltcms.common.charts.overlay</package>
-                <package>net.sf.maltcms.common.charts.selection</package>
+                <package>net.sf.maltcms.common.charts.api</package>
+                <package>net.sf.maltcms.common.charts.api.dataset</package>
+                <package>net.sf.maltcms.common.charts.api.overlay</package>
+                <package>net.sf.maltcms.common.charts.api.selection</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/jcommon-1.0.17.jar</runtime-relative-path>

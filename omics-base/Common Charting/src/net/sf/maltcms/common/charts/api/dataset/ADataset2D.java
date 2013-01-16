@@ -25,20 +25,22 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.dataset;
+package net.sf.maltcms.common.charts.api.dataset;
 
-import cross.datastructures.collections.IElementProvider;
+import java.util.List;
+import org.openide.util.Lookup;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public interface INamedElementProvider<SOURCE,TARGET> extends IElementProvider<TARGET> {
+public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements Lookup.Provider {
+
+    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
+        super(l);
+    }
     
-    public SOURCE getSource();
+    public abstract double getMinZ();
     
-    public Comparable getKey();
-    
-    public void setKey(Comparable key);
-    
+    public abstract double getMaxZ();
 }

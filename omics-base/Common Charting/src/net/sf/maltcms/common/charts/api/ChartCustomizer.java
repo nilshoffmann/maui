@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts;
+package net.sf.maltcms.common.charts.api;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

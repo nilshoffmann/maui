@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.common.charts.selection;
+package net.sf.maltcms.common.charts.api.selection;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import net.sf.maltcms.common.charts.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import org.openide.util.lookup.InstanceContent;
 
 /**

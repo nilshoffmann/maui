@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.common.charts.overlay;
+package net.sf.maltcms.common.charts.api.overlay;
 
 import org.jfree.chart.panel.Overlay;
 

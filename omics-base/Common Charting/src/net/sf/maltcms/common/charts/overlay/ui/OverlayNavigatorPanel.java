@@ -6,7 +6,7 @@ package net.sf.maltcms.common.charts.overlay.ui;
 
 import java.util.Collection;
 import javax.swing.JComponent;
-import net.sf.maltcms.common.charts.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import org.netbeans.spi.navigator.NavigatorPanel;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;

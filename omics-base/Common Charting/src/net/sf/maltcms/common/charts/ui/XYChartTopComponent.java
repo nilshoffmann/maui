@@ -30,16 +30,16 @@ package net.sf.maltcms.common.charts.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Shape;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import net.sf.maltcms.common.charts.ChartCustomizer;
-import net.sf.maltcms.common.charts.XYChartBuilder;
-import net.sf.maltcms.common.charts.dataset.ADataset1D;
-import net.sf.maltcms.common.charts.overlay.SelectionOverlay;
-import net.sf.maltcms.common.charts.selection.InstanceContentSelectionHandler;
-import net.sf.maltcms.common.charts.selection.XYMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.ChartCustomizer;
+import net.sf.maltcms.common.charts.api.XYChartBuilder;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
+import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
@@ -47,8 +47,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.util.Lookup.Result;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
@@ -84,7 +82,7 @@ import org.openide.util.lookup.InstanceContent;
     "CTL_XYChartAction=XYChart",
     "CTL_XYChartTopComponent=XYChart Window",
     "HINT_XYChartTopComponent=This is a XYChart window"})
-public final class XYChartTopComponent<TARGET> extends TopComponent implements TaskListener, LookupListener {
+public final class XYChartTopComponent<TARGET> extends TopComponent implements TaskListener {
 
     private ChartPanel panel;
     private InstanceContent content = new InstanceContent();
@@ -121,15 +119,11 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jToolBar1 = new javax.swing.JToolBar();
         jComboBox1 = new javax.swing.JComboBox();
         clearSelection = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
-
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(XYChartTopComponent.class, "XYChartTopComponent.jLabel1.text")); // NOI18N
-        add(jLabel1, java.awt.BorderLayout.PAGE_END);
 
         jToolBar1.setRollover(true);
 
@@ -224,25 +218,13 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
     private void clearSelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearSelectionActionPerformed
         if (selectionHandler != null) {
             selectionHandler.clear();
-            jLabel1.setText("Selection: ");
         }
     }//GEN-LAST:event_clearSelectionActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearSelection;
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void componentOpened() {
-        result.addLookupListener(this);
-    }
-
-    @Override
-    public void componentClosed() {
-        result.removeLookupListener(this);
-    }
 
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
@@ -302,16 +284,8 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
         content.add(selectionHandler);
         content.add(sl);
     }
-
-    @Override
-    public void resultChanged(LookupEvent ev) {
-        if (result != null) {
-            Collection<? extends TARGET> c = result.allInstances();
-            if (c.isEmpty()) {
-                jLabel1.setText("Selection: ");
-            } else {
-                jLabel1.setText("Selection: " + c);
-            }
-        }
+    
+    private void addChartOverlay(ChartOverlay overlay) {
+        
     }
 }

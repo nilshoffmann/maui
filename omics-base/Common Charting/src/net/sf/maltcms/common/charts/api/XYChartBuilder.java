@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts;
+package net.sf.maltcms.common.charts.api;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -35,6 +35,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -56,6 +58,8 @@ public class XYChartBuilder {
     private ValueAxis rangeAxis = new NumberAxis();
     
     private XYItemRenderer renderer = new XYLineAndShapeRenderer(true, true);
+    
+    private XYToolTipGenerator tooltipGenerator = new StandardXYToolTipGenerator();
     
     private Map<Comparable,Color> datasetSeriesColorMap = null;
     
@@ -86,22 +90,38 @@ public class XYChartBuilder {
         chart = new JFreeChart(plot);
     }
     
+    private void notNull(Object o) {
+        if(o==null) {
+            throw new NullPointerException("Argument must not be null!");
+        }
+    }
+    
     public XYChartBuilder xy(XYDataset dataset) {
+        notNull(dataset);
         this.dataset = dataset;
         return this;
     }
     
+    public XYChartBuilder tooltips(XYToolTipGenerator tooltipGenerator) {
+        notNull(tooltipGenerator);
+        this.tooltipGenerator = tooltipGenerator;
+        return this;
+    }
+    
     public XYChartBuilder xyz(XYZDataset dataset) {
+        notNull(dataset);
         this.dataset = dataset;
         return this;
     }
     
     public XYChartBuilder colors(Map<Comparable,Color> datasetSeriesColorMap) {
+        notNull(datasetSeriesColorMap);
         this.datasetSeriesColorMap = datasetSeriesColorMap;
         return this;
     }
     
     public XYChartBuilder renderer(XYItemRenderer renderer) {
+        notNull(renderer);
         this.renderer = renderer;
         return this;
     }
@@ -112,6 +132,7 @@ public class XYChartBuilder {
     }
     
     public XYChartBuilder titleFont(Font font) {
+        notNull(font);
         this.chartTitleFont = font;
         return this;
     }
@@ -122,12 +143,14 @@ public class XYChartBuilder {
     }
     
     public XYChartBuilder chart(String title) {
+        notNull(title);
         this.chart = new JFreeChart(title, chartTitleFont, plot, chartCreateLegend);
         return this;
     }
     
     public XYChartBuilder plot() {
         this.plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
+        renderer.setBaseToolTipGenerator(tooltipGenerator);
         setDatasetSeriesColorMap(renderer, datasetSeriesColorMap);
         return this;
     }

@@ -4,21 +4,15 @@
  */
 package net.sf.maltcms.common.charts.ui;
 
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.util.LinkedList;
-import java.util.List;
 import javax.swing.SwingUtilities;
-import net.sf.maltcms.common.charts.XYChartBuilder;
-import net.sf.maltcms.common.charts.dataset.DatasetUtils;
-import net.sf.maltcms.common.charts.dataset.Numeric1DDataset;
+import net.sf.maltcms.common.charts.api.XYChartBuilder;
+import net.sf.maltcms.common.charts.api.dataset.DatasetUtils;
+import net.sf.maltcms.common.charts.api.dataset.Numeric1DDataset;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYDataset;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;

@@ -26,7 +26,7 @@
  * for details.
  */
 
-package net.sf.maltcms.common.charts.dataset;
+package net.sf.maltcms.common.charts.api.dataset;
 
 import java.awt.geom.Point2D;
 import java.util.List;

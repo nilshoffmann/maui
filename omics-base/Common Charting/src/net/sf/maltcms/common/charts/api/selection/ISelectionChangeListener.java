@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.common.charts.selection;
+package net.sf.maltcms.common.charts.api.selection;
 
 import java.util.EventListener;
 

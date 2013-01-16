@@ -5,7 +5,9 @@
 package net.sf.maltcms.common.charts.overlay.nodes;
 
 import java.beans.IntrospectionException;
-import net.sf.maltcms.common.charts.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
+import org.jfree.chart.event.OverlayChangeEvent;
+import org.jfree.chart.event.OverlayChangeListener;
 import org.openide.explorer.view.CheckableNode;
 import org.openide.nodes.BeanNode;
 
@@ -13,17 +15,17 @@ import org.openide.nodes.BeanNode;
  *
  * @author Nils Hoffmann
  */
-public class OverlayNode extends BeanNode<ChartOverlay> implements CheckableNode{
+public class OverlayNode extends BeanNode<ChartOverlay> implements CheckableNode {
 
     private boolean checkable = true;
     private boolean checkEnabled = true;
-    private boolean selected = false;
+//    private boolean selected = false;
     private final ChartOverlay overlay;
 
     public OverlayNode(ChartOverlay bean) throws IntrospectionException {
         super(bean);
         this.overlay = bean;
-        this.selected = this.overlay.isVisible();
+//        this.selected = this.overlay.isVisible();
     }
 
     @Override
@@ -53,14 +55,19 @@ public class OverlayNode extends BeanNode<ChartOverlay> implements CheckableNode
 
     @Override
     public Boolean isSelected() {
-        return selected;
+        return overlay.isVisible();
     }
 
     @Override
     public void setSelected(Boolean selected) {
-        boolean old = this.selected;
-        this.selected = selected;
         this.overlay.setVisible(selected);
     }
+
+//    @Override
+//    public void overlayChanged(OverlayChangeEvent oce) {
+//        boolean old = this.selected;
+//        this.selected = (this.overlay.isVisible());
+//        firePropertyChange("selected", old, this.selected);
+//    }
     
 }

@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.sf.maltcms.common.charts.selection;
+package net.sf.maltcms.common.charts.api.selection;
 
 import java.awt.event.MouseEvent;
 import javax.swing.event.EventListenerList;
-import net.sf.maltcms.common.charts.dataset.ADataset1D;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.entity.XYItemEntity;
 

@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.dataset;
+package net.sf.maltcms.common.charts.api.dataset;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.ActionMap;
-import net.sf.maltcms.common.charts.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.overlay.nodes.OverlayNode;
 import org.netbeans.swing.outline.Outline;
 import org.openide.explorer.ExplorerManager;
