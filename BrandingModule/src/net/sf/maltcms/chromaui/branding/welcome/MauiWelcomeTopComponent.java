@@ -34,8 +34,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
-import javax.swing.Action;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import org.netbeans.api.options.OptionsDisplayer;
@@ -45,8 +43,6 @@ import org.openide.awt.ActionReference;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.NotImplementedException;
-import org.openide.util.Utilities;
 
 /**
  * Top component which displays something.
