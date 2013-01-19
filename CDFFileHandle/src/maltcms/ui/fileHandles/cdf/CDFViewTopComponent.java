@@ -37,11 +37,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import org.netbeans.spi.navigator.NavigatorPanel;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.Node;
@@ -62,7 +62,6 @@ import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.util.Lookup;
 import org.openide.util.LookupListener;
-import org.openide.util.lookup.InstanceContent;
 
 /**
  * Top component which displays something.
@@ -149,6 +148,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
     @Override
     public void panelActivated(Lookup lkp) {
         System.out.println("panelActivated");
+//        lookup = lkp;
         result = lkp.lookupResult(IFileFragmentDataObject.class);
         result.addLookupListener(this);
         // get actual data and recompute content
@@ -161,8 +161,10 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
     @Override
     public void panelDeactivated() {
         ExplorerUtils.activateActions(em, false);
+        updateView(new ArrayList<IFileFragmentDataObject>(0));
         result.removeLookupListener(this);
         result = null;
+//        this.lookup = null;
     }
 
     public void setFile(CDFDataObject cdo) {

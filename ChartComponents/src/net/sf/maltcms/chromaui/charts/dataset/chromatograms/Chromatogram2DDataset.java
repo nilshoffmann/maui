@@ -32,8 +32,8 @@ import cross.datastructures.fragments.IVariableFragment;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
-import net.sf.maltcms.chromaui.charts.dataset.Dataset2D;
-import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import ucar.ma2.Array;
 import ucar.ma2.MAMath;
 import ucar.ma2.MAMath.MinMax;
@@ -42,7 +42,7 @@ import ucar.ma2.MAMath.MinMax;
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class Chromatogram2DDataset extends Dataset2D<IChromatogram2D, IScan2D> {
+public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> {
 
     private String defaultDomainVariable = "first_column_elution_time";
     private String defaultValueVariable = "total_intensity";
@@ -52,7 +52,7 @@ public class Chromatogram2DDataset extends Dataset2D<IChromatogram2D, IScan2D> {
     private final Array[] valueVariableValues;
     private final MinMax domain, value, range;
 
-    public Chromatogram2DDataset(List<NamedElementProvider<IChromatogram2D, IScan2D>> l) {
+    public Chromatogram2DDataset(List<INamedElementProvider<? extends IChromatogram2D, ? extends IScan2D>> l) {
         super(l);
         MinMax domainMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MinMax valueMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -144,5 +144,10 @@ public class Chromatogram2DDataset extends Dataset2D<IChromatogram2D, IScan2D> {
     @Override
     public double getMaxZ() {
         return value.max;
+    }
+
+    @Override
+    public double getZValue(int i, int i1) {
+        return valueVariableValues[i].getDouble(i1);
     }
 }

@@ -38,12 +38,12 @@ import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.ui.ChromatogramViewTopComponent;
-import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
@@ -93,7 +93,7 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
                 }
                 if (is1D) {
                     System.out.println("Creating 1D data providers and dataset.");
-                    List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
 
                     for (IChromatogramDescriptor descr : chromatograms) {
                         progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
@@ -105,14 +105,15 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
                         @Override
                         public void run() {
                             ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
-                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
                             topComponent.open();
+                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
+                            topComponent.requestActive();
                             topComponent.load();
                         }
                     });
                 } else {
                     System.out.println("Creating 2D data providers and dataset.");
-                    List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
 
                     for (IChromatogramDescriptor descr : chromatograms) {
                         progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
@@ -124,8 +125,8 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
                         @Override
                         public void run() {
                             ChromatogramViewTopComponent topComponent = new ChromatogramViewTopComponent();
-                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
                             topComponent.open();
+                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
                             topComponent.load();
                         }
                     });

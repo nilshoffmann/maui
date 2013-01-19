@@ -50,6 +50,7 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.openide.windows.WindowManager;
 
 /**
  * Top component which displays something.
@@ -125,6 +126,10 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
+        TopComponent msView = WindowManager.getDefault().findTopComponent("MassSpectrumViewerTopComponent");
+        if(msView!=null) {
+            msView.open();
+        }
     }
 
     @Override

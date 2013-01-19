@@ -38,19 +38,16 @@ import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.ui.ChromatogramViewTopComponent;
-import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
-import net.sf.maltcms.ui.plot.chromatogram1D.tasks.Chromatogram1DTopComponentLoader;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import org.openide.awt.ActionRegistration;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.NotImplementedException;
 import org.openide.util.Utilities;
 
 @ActionID(category = "ContainerNodeActions/TreatmentGroupContainer",
@@ -99,7 +96,7 @@ public final class TreatmentGroupChromatogram1DViewOpenAction implements ActionL
                 }
                 if (is1D) {
                     System.out.println("Creating 1D data providers and dataset.");
-                    List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(treatmentGroups.size());
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(treatmentGroups.size());
 
                     final ArrayList<IChromatogramDescriptor> chromatograms = new ArrayList<IChromatogramDescriptor>();
                     for (TreatmentGroupContainer treatmentGroup : treatmentGroups) {
@@ -123,7 +120,7 @@ public final class TreatmentGroupChromatogram1DViewOpenAction implements ActionL
 
                 } else {
                     System.out.println("Creating 2D data providers and dataset.");
-                    List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(treatmentGroups.size());
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(treatmentGroups.size());
                     final ArrayList<IChromatogramDescriptor> chromatograms = new ArrayList<IChromatogramDescriptor>();
                     for (TreatmentGroupContainer treatmentGroup : treatmentGroups) {
                         progressHandle.progress("Processing treatment group " + treatmentGroup.getDisplayName(), workunit++);

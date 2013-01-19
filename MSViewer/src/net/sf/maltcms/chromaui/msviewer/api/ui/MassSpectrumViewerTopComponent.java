@@ -44,7 +44,7 @@ autostore = false)
 @TopComponent.Description(preferredID = "MassSpectrumViewerTopComponent",
 //iconBase="SET/PATH/TO/ICON/HERE", 
 persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "navigator", openAtStartup = false)
+@TopComponent.Registration(mode = "output", openAtStartup = false)
 @ActionID(category = "Window", id = "net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_MassSpectrumViewerAction",

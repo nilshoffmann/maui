@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram;
@@ -48,8 +50,6 @@ import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -58,7 +58,7 @@ import org.jfree.data.Range;
 import org.jfree.ui.TextAnchor;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
-import org.openide.util.WeakListeners;
+import org.openide.util.Exceptions;
 import ucar.ma2.Array;
 
 /**
@@ -66,7 +66,7 @@ import ucar.ma2.Array;
  * @author nilshoffmann
  */
 @Data
-public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPanel, Void> {
+public class ChromatogramViewLoaderWorker extends SwingWorker<XYPlot, Void> {
 
     private final ChromatogramViewTopComponent cvtc;
     private final Collection<? extends IChromatogramDescriptor> files;
@@ -74,31 +74,32 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
     private final SettingsPanel settingsPanel;
 
     @Override
-    protected ChromMSHeatmapPanel doInBackground() throws Exception {
+    protected XYPlot doInBackground() throws Exception {
         ProgressHandle handle = ProgressHandleFactory.createHandle(
                 "Creating 1D Chromatogram plot");
-        handle.setDisplayName("Loading " + files.size() + " chromatograms");//+new File(this.files.getResourceLocation()).getName());
-        handle.start(5);
-        System.out.println("Running Chromatogram open action!");
+        try {
+            handle.setDisplayName("Loading " + files.size() + " chromatograms");//+new File(this.files.getResourceLocation()).getName());
+            handle.start(5);
+            System.out.println("Running Chromatogram open action!");
 
-        System.out.println("Storing current viewport!");
+            System.out.println("Storing current viewport!");
 
-        System.out.println("Retrieving settings from panel");
-        handle.progress("Reading settings", 1);
-        double massResolution = Double.parseDouble(sp.getProperty(
-                "massResolution", "1.0"));
-        double[] masses = null;
-        String[] massesStrings = (sp.getProperty("selectedMasses", "73.0 147.0")).trim().
-                split(
-                " ");
-        masses = new double[massesStrings.length];
-        for (int i = 0; i < massesStrings.length; i++) {
-            masses[i] = Double.parseDouble(massesStrings[i]);
-        }
-        String plotMode = sp.getProperty("plotMode", "TIC");
-        String plotType = sp.getProperty("plotType", "SIDE");
-        RTUnit rtAxisUnit = RTUnit.valueOf(sp.getProperty("rtAxisUnit",
-                "SECONDS"));
+            System.out.println("Retrieving settings from panel");
+            handle.progress("Reading settings", 1);
+            double massResolution = Double.parseDouble(sp.getProperty(
+                    "massResolution", "1.0"));
+            double[] masses = null;
+            String[] massesStrings = (sp.getProperty("selectedMasses", "73.0 147.0")).trim().
+                    split(
+                    " ");
+            masses = new double[massesStrings.length];
+            for (int i = 0; i < massesStrings.length; i++) {
+                masses[i] = Double.parseDouble(massesStrings[i]);
+            }
+            String plotMode = sp.getProperty("plotMode", "TIC");
+            String plotType = sp.getProperty("plotType", "SIDE");
+            RTUnit rtAxisUnit = RTUnit.valueOf(sp.getProperty("rtAxisUnit",
+                    "SECONDS"));
 
 //        boolean autoRange = Boolean.parseBoolean(sp.getProperty("autoRange","true"));
 //        if(autoRange) {
@@ -110,81 +111,102 @@ public class ChromatogramViewLoaderWorker extends SwingWorker<ChromMSHeatmapPane
 //        MinMax mm = MAMath.getMinMax(file.getScanAcquisitionTime());
 //        
 
-        handle.progress("Retrieving peaks", 2);
+            handle.progress("Retrieving peaks", 2);
 //        Collection<Peak1DContainer> peakContainers = project.getPeaks(file);
-        Chromatogram1DChartProvider c1p = new Chromatogram1DChartProvider();
-        c1p.setRenderer(settingsPanel.getRenderer());
+            Chromatogram1DChartProvider c1p = new Chromatogram1DChartProvider();
+            c1p.setRenderer(settingsPanel.getRenderer());
 //        c1p.setScanRange(file.getIndexFor(Math.max(mm.min, minRT)),file.getIndexFor(Math.min(mm.max, maxRT)));
 
-        XYPlot plot = null;
-        System.out.println("Plot mode is " + plotMode);
+            XYPlot plot = null;
+            System.out.println("Plot mode is " + plotMode);
 
-        handle.progress("Building plot", 3);
-        IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
-        if ("TIC".equals(plotMode)) {
-            System.out.println("Loading TIC");
-            if ("SIDE".equals(plotType)) {
-                plot = c1p.provide1DPlot(buildFileFragments(files),
-                        "total_intensity", true);
-                //if (cvtc.getAnnotations().isEmpty()) {
-                cvtc.getAnnotations().clear();
-                for (IChromatogramDescriptor descr : files) {
-                    cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
+            handle.progress("Building plot", 3);
+            IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
+            if ("TIC".equals(plotMode)) {
+                System.out.println("Loading TIC");
+                if ("SIDE".equals(plotType)) {
+                    plot = c1p.provide1DPlot(buildFileFragments(files),
+                            "total_intensity", true);
+                    //if (cvtc.getAnnotations().isEmpty()) {
+//                    cvtc.getAnnotations().clear();
+//                    for (IChromatogramDescriptor descr : files) {
+//                        cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
+//                    }
+                    //}
+                } else if ("TOP".equals(plotType)) {
+                    plot = c1p.provide1DCoPlot(buildFileFragments(files),
+                            "total_intensity", true);
                 }
-                //}
-            } else if ("TOP".equals(plotType)) {
-                plot = c1p.provide1DCoPlot(buildFileFragments(files),
-                        "total_intensity", true);
+            } else if ("EIC-SUM".equals(plotMode)) {
+                System.out.println("Loading EIC-SUM");
+                plot = c1p.provide1DEICSUMPlot(buildFileFragments(files),
+                        masses,
+                        massResolution, true);
+//                cvtc.getAnnotations().clear();
+//                for (IChromatogramDescriptor descr : files) {
+//                    cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "EIC-SUM", masses));
+//                }
+            } else if ("EIC-COPLOT".equals(plotMode)) {
+                System.out.println("Loading EIC-COPLOT");
+                plot = c1p.provide1DEICCOPlot(buildFileFragments(files),
+                        masses,
+                        massResolution, true);
+//                cvtc.getAnnotations().clear();
+//                for (IChromatogramDescriptor descr : files) {
+//                    cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "EIC-COPLOT", masses));
+//                }
             }
-        } else if ("EIC-SUM".equals(plotMode)) {
-            System.out.println("Loading EIC-SUM");
-            plot = c1p.provide1DEICSUMPlot(buildFileFragments(files),
-                    masses,
-                    massResolution, true);
-            cvtc.getAnnotations().clear();
-            for (IChromatogramDescriptor descr : files) {
-                cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "EIC-SUM", masses));
-            }
-        } else if ("EIC-COPLOT".equals(plotMode)) {
-            System.out.println("Loading EIC-COPLOT");
-            plot = c1p.provide1DEICCOPlot(buildFileFragments(files),
-                    masses,
-                    massResolution, true);
-            cvtc.getAnnotations().clear();
-            for (IChromatogramDescriptor descr : files) {
-                cvtc.getAnnotations().addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "EIC-COPLOT", masses));
-            }
-        }
 
-        handle.progress("Configuring plot", 4);
-        configurePlot(plot, rtAxisUnit);
+            handle.progress("Configuring plot", 4);
+            configurePlot(plot, rtAxisUnit);
 
-        final ChromMSHeatmapPanel cmhp = cvtc.getLookup().lookup(
-                ChromMSHeatmapPanel.class);
-        Range domainRange = null;
-        Range valueRange = null;
-        if (cmhp != null) {
-            XYPlot xyplot = cmhp.getPlot();
-            if (xyplot != null) {
-                ValueAxis domain = xyplot.getDomainAxis();
-                domainRange = domain.getRange();
-                ValueAxis range = xyplot.getRangeAxis();
-                valueRange = range.getRange();
+            final ChromMSHeatmapPanel cmhp = cvtc.getLookup().lookup(
+                    ChromMSHeatmapPanel.class);
+            Range domainRange = null;
+            Range valueRange = null;
+            if (cmhp != null) {
+                XYPlot xyplot = cmhp.getPlot();
+                if (xyplot != null) {
+                    ValueAxis domain = xyplot.getDomainAxis();
+                    domainRange = domain.getRange();
+                    ValueAxis range = xyplot.getRangeAxis();
+                    valueRange = range.getRange();
+                }
             }
-        }
 
-        if (domainRange != null) {
-            System.out.println("Setting previous domain range!");
-            plot.getDomainAxis().setRange(domainRange);
+            if (domainRange != null) {
+                System.out.println("Setting previous domain range!");
+                plot.getDomainAxis().setRange(domainRange);
+            }
+            if (valueRange != null) {
+                System.out.println("Setting previous value range!");
+                plot.getRangeAxis().setRange(valueRange);
+            }
+            handle.progress("Adding plot to panel", 5);
+//            cmhp.setPlot(plot);
+//        handle.finish();
+            return plot;
+        } finally {
+            handle.finish();
         }
-        if (valueRange != null) {
-            System.out.println("Setting previous value range!");
-            plot.getRangeAxis().setRange(valueRange);
-        }
-        handle.progress("Adding plot to panel", 5);
-        cmhp.setPlot(plot);
-        handle.finish();
-        return cmhp;
+    }
+
+    @Override
+    protected void done() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final ChromMSHeatmapPanel cmhp = cvtc.getLookup().lookup(
+                        ChromMSHeatmapPanel.class);
+                try {
+                    cmhp.setPlot(get());
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (ExecutionException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        });
     }
 
     public List<IFileFragment> buildFileFragments(

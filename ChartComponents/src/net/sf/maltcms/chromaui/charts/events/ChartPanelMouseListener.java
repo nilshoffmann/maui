@@ -52,7 +52,7 @@ import org.jfree.data.xy.XYDataset;
 
 import cross.event.EventSource;
 import javax.swing.JPopupMenu;
-import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jfree.chart.entity.LegendItemEntity;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
@@ -73,10 +73,10 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
             1);
     private InstanceContent ic = new InstanceContent();
     private Lookup lkp = new AbstractLookup(ic);
-    private Dataset1D<SOURCE, TARGET> dataset;
+    private ADataset1D<SOURCE, TARGET> dataset;
     private TARGET lastTarget = null;
 
-    public ChartPanelMouseListener(Dataset1D<SOURCE, TARGET> ds) {
+    public ChartPanelMouseListener(ADataset1D<SOURCE, TARGET> ds) {
         this.dataset = ds;
     }
     

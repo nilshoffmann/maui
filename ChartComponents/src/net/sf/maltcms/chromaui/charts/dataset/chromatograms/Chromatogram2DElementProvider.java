@@ -31,13 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
-import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 
 /**
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class Chromatogram2DElementProvider implements NamedElementProvider<IChromatogram2D,IScan2D> {
+public class Chromatogram2DElementProvider implements INamedElementProvider<IChromatogram2D,IScan2D> {
 
     private final IChromatogram2D chrom;
     

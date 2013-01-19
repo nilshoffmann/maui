@@ -82,7 +82,7 @@ public class Peak2DOverlay extends AbstractOverlay implements Overlay {
             double xx = xAxis.valueToJava2D(x, dataArea, xAxisEdge);
             double y = descr2D.getSecondColumnRt();
             double yy = yAxis.valueToJava2D(y, dataArea, yAxisEdge);
-            g2.draw(new Rectangle2D.Double(xx, yy, 1, 1));
+            g2.draw(new Rectangle2D.Double(xx-2, yy-2,5, 5));
         }
         g2.setColor(c);
         g2.setClip(savedClip);

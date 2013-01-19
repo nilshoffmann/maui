@@ -30,17 +30,17 @@ package net.sf.maltcms.chromaui.charts.dataset.chromatograms;
 import java.util.ArrayList;
 import java.util.List;
 import maltcms.datastructures.ms.Chromatogram1D;
-import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
-import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import maltcms.datastructures.ms.IScan1D;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 
 /**
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class Chromatogram1DElementProvider implements NamedElementProvider<IChromatogram,IScan> {
+public class Chromatogram1DElementProvider implements INamedElementProvider<IChromatogram1D,IScan1D> {
 
     private final IChromatogram1D chrom;
     
@@ -74,17 +74,17 @@ public class Chromatogram1DElementProvider implements NamedElementProvider<IChro
     }
 
     @Override
-    public IScan get(int i) {
+    public IScan1D get(int i) {
         System.out.println("Retrieving scan "+i+" from "+getClass().getName()+" "+getKey());
-        IScan scan = chrom.getScan(i);
+        IScan1D scan = chrom.getScan(i);
         System.out.println("Retrieved scan "+i+" from "+getClass().getName());
         return scan;
     }
 
     @Override
-    public List<IScan> get(int i, int i1) {
+    public List<IScan1D> get(int i, int i1) {
         int nscans = i1-i;
-        ArrayList<IScan> al = new ArrayList<IScan>(nscans);
+        ArrayList<IScan1D> al = new ArrayList<IScan1D>(nscans);
         for(int j = 0;j<i1;j++) {
             al.add(chrom.getScan(i+j));
         }

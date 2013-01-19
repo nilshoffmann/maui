@@ -39,12 +39,12 @@ import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.ui.ChromatogramViewTopComponent;
-import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
@@ -96,7 +96,7 @@ public final class Chromatogram1DViewMultiOpenAction implements ActionListener {
                     for (final IChromatogramDescriptor descr : chromatograms) {
                         progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
                         System.out.println("Creating 1D data providers and dataset.");
-                        List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(1);
+                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(1);
                         providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
                         final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
                         onEdt(new Runnable() {
@@ -114,7 +114,7 @@ public final class Chromatogram1DViewMultiOpenAction implements ActionListener {
                     System.out.println("Creating 2D data providers and dataset.");
                     for (IChromatogramDescriptor descr : chromatograms) {
                         progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
-                        List<NamedElementProvider<IChromatogram, IScan>> providers = new ArrayList<NamedElementProvider<IChromatogram, IScan>>(chromatograms.size());
+                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
                         providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
                         final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers);
                         onEdt(new Runnable() {

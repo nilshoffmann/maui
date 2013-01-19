@@ -30,14 +30,20 @@ package maltcms.ui.views;
 import maltcms.ui.ChromatogramViewViewport;
 import net.sf.maltcms.ui.plot.chromatogram1D.painter.SelectedXYItemEntityPainter;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import maltcms.datastructures.ms.IChromatogram;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.events.DomainMarkerKeyListener;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
-import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
-import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
+import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
+import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
 import net.sf.maltcms.ui.plot.chromatogram1D.painter.PainterLayerUI;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.swingx.painter.CompoundPainter;
@@ -46,6 +52,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
+import org.jfree.chart.panel.Overlay;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -68,13 +75,14 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
     private JFreeChart chart;
     private SelectedXYItemEntityPainter siep;
     private JXLayer<ChartPanel> jxl;
-    private Dataset1D ds;
+    private ADataset1D<IChromatogram1D, IScan> ds;
     private ChromatogramViewViewport viewport;
+    private SelectionOverlay sp;
 
     /**
      * Creates new form ChromMSHeatmapPanel
      */
-    public ChromMSHeatmapPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, Chromatogram1DDataset ds) {
+    public ChromMSHeatmapPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset1D<IChromatogram1D,IScan> ds) {
         initComponents();
         this.ds = ds;
         this.ic = topComponentInstanceContent;
@@ -83,35 +91,35 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
         cdxpanel = new ChartPanel(chart, true, true, true, true, true);
         Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
         cdxpanel.setCursor(crosshairCursor);
-        chart.addProgressListener(cdxpanel);
+//        chart.addProgressListener(cdxpanel);
         cdxpanel.setInitialDelay(100);
         cdxpanel.setDismissDelay(30000);
         cdxpanel.setReshowDelay(0);
         cdxpanel.setFocusable(true);
 
-        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>();
+//        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>();
 
-        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
-                compoundPainter);
-        jxl = new JXLayer<ChartPanel>(cdxpanel, plui);
-        add(jxl, BorderLayout.CENTER);
+//        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
+//                compoundPainter);
+//        jxl = new JXLayer<ChartPanel>(cdxpanel, plui);
+        add(cdxpanel, BorderLayout.CENTER);
         ic.add(cdxpanel);
     }
 
-    private void addCompoundPainter(InstanceContent ic, ChartPanel cp,
-            Dataset1D ds) {
-        siep = new SelectedXYItemEntityPainter(ds, ic, cp);
-        cp.addChartMouseListener(siep);
-        cp.getChart().addChangeListener(siep);
-        cp.getChart().getXYPlot().getDomainAxis().addChangeListener(siep);
-        cp.getChart().getXYPlot().getRangeAxis().addChangeListener(siep);
-        cp.getChart().addChangeListener(siep);
-        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>(
-                siep);
-        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
-                compoundPainter);
-        jxl.setUI(plui);
-    }
+//    private void addCompoundPainter(InstanceContent ic, ChartPanel cp,
+//            ADataset1D<?, IScan> ds) {
+//        siep = new SelectedXYItemEntityPainter(ds, ic, cp);
+//        cp.addChartMouseListener(siep);
+//        cp.getChart().addChangeListener(siep);
+//        cp.getChart().getXYPlot().getDomainAxis().addChangeListener(siep);
+//        cp.getChart().getXYPlot().getRangeAxis().addChangeListener(siep);
+//        cp.getChart().addChangeListener(siep);
+//        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>(
+//                siep);
+//        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
+//                compoundPainter);
+//        jxl.setUI(plui);
+//    }
 
     @Override
     public void revalidate() {
@@ -132,6 +140,13 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
     public void setPlot(final XYPlot plot) {
         removeAxisListener();
         this.ticplot = plot;
+        if (this.sp != null) {
+            this.ic.remove(sp);
+        }
+        sp = new SelectionOverlay(Color.DARK_GRAY, Color.BLACK, 1.25f, 1.25f, 0.9f);
+        this.ic.add(sp);
+        InstanceContentSelectionHandler selectionHandler = new InstanceContentSelectionHandler(this.ic, sp, InstanceContentSelectionHandler.Mode.ON_CLICK);
+        XYMouseSelectionHandler<IScan> sl = new XYMouseSelectionHandler<IScan>(this.ds);
         ticplot.setNoDataMessage("Loading Data...");
         chart = new JFreeChart(ticplot);
         cdxpanel.setChart(chart);
@@ -149,8 +164,34 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
                 ticplot);
         dmkl.setPlot(ticplot);
         cdxpanel.addKeyListener(dmkl);
-        addCompoundPainter(ic, cdxpanel, ds);
+//        addCompoundPainter(ic, cdxpanel, ds);
         addAxisListener();
+        ValueAxis domain = this.ticplot.getDomainAxis();
+        ValueAxis range = this.ticplot.getRangeAxis();
+        //add available chart overlays
+        Collection<? extends Overlay> overlays = getLookup().lookupAll(Overlay.class);
+        for (Overlay overlay : overlays) {
+            cdxpanel.removeOverlay(overlay);
+            if (overlay instanceof AxisChangeListener) {
+                AxisChangeListener listener = (AxisChangeListener) overlay;
+                if (domain != null) {
+                    domain.addChangeListener(listener);
+                }
+                if (range != null) {
+                    range.addChangeListener(listener);
+                }
+            }
+            if (overlay instanceof ISelectionChangeListener) {
+                ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
+                sl.addSelectionChangeListener(sp);
+                sl.addSelectionChangeListener(selectionHandler);
+                cdxpanel.addChartMouseListener(sl);
+                sp.addChangeListener(cdxpanel);
+//                ic.add(selectionHandler);
+//                ic.add(sl);
+            }
+            cdxpanel.addOverlay(overlay);
+        }
     }
 
     /**
@@ -187,20 +228,7 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
             this.ic.add(viewport);
         } else {
             //received viewport change from somewhere else
-            
         }
-//        
-//        if (this.ticplot != null) {
-//            double xmin = this.ticplot.getDomainAxis().getLowerBound();
-//            double xmax = this.ticplot.getDomainAxis().getUpperBound();
-//            double ymin = this.ticplot.getRangeAxis().getLowerBound();
-//            double ymax = this.ticplot.getRangeAxis().getUpperBound();
-//            if (hasFocus() && this.viewport == null) {
-//                this.viewport = new ChromatogramViewViewport();
-//                this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
-//                this.ic.add(viewport);
-//            }
-//        }
     }
 
     private void addAxisListener() {
@@ -231,7 +259,7 @@ public class ChromMSHeatmapPanel extends javax.swing.JPanel implements
 
     public void setViewport(Rectangle2D viewport) {
         //ignore viewport changes if we have the focus
-        if(hasFocus()) {
+        if (hasFocus()) {
             System.out.println("Ignoring viewport update since we have the focus!");
         } else {
             //otherwise, clear our own viewport and set to new value

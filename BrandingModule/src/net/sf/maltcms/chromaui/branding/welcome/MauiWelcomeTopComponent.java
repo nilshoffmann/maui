@@ -404,12 +404,13 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
                         System.out.println("Opening options panel: " + optionsPanelRegistration);
                         OptionsDisplayer.getDefault().open(optionsPanelRegistration);
                     } else {
-                        Collection<? extends Action> l = Utilities.actionsForPath(path);
-                        if (l.size() > 1) {
-                            throw new NotImplementedException("Support for multiple actions not yet implemented!");
-                        } else if (l.size() == 1) {
-                            l.iterator().next().actionPerformed(new ActionEvent(this, 1, u.getPath()));
-                        }
+                        Actions.execFileSystemAction(path, new ActionEvent(this, 1, u.getPath()));
+//                        Collection<? extends Action> l = Utilities.actionsForPath(path);
+//                        if (l.size() > 1) {
+//                            throw new NotImplementedException("Support for multiple actions not yet implemented!");
+//                        } else if (l.size() == 1) {
+//                            l.iterator().next().actionPerformed(new ActionEvent(this, 1, u.getPath()));
+//                        }
                     }
                 } else {
                     try {

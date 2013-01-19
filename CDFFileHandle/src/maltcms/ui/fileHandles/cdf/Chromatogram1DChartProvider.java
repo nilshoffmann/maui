@@ -221,10 +221,10 @@ public class Chromatogram1DChartProvider {
                 } catch (ResourceNotAvailableException rne) {
                 }
             }
-            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT, valueVar));
-            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
-                    0, 255, 192), new Color(0, 0, 255, 32), valueVar));
-            annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
+//            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT, valueVar));
+//            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
+//                    0, 255, 192), new Color(0, 0, 255, 32), valueVar));
+//            annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
             //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
             i++;
         }
@@ -306,9 +306,9 @@ public class Chromatogram1DChartProvider {
                 } catch (ResourceNotAvailableException rne) {
                 }
             }
-            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
-            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
-                    0, 255, 192), new Color(0, 0, 255, 32)));
+//            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
+//            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
+//                    0, 255, 192), new Color(0, 0, 255, 32)));
 //            annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
             //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
             i++;
@@ -384,9 +384,9 @@ public class Chromatogram1DChartProvider {
 
 
 
-            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
-            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
-                    0, 255, 192), new Color(0, 0, 255, 32)));
+//            annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT));
+//            annotations.addAll(generatePeakShapes(fragment, useRT, new Color(0,
+//                    0, 255, 192), new Color(0, 0, 255, 32)));
 //            annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i], useRT));
             //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
             i++;
@@ -497,11 +497,11 @@ public class Chromatogram1DChartProvider {
                         domains[i] = fragment.getChild(domainVar).getArray();
                     }
                 }
-                annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT, valueVar));
-                annotations.addAll(generatePeakShapes(fragment, useRT,
-                        new Color(0, 0, 255, 192), new Color(0, 0, 255, 32), valueVar));
-                annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i],
-                        useRT));
+//                annotations.addAll(getANDIChromPeakAnnotations(fragment, useRT, valueVar));
+//                annotations.addAll(generatePeakShapes(fragment, useRT,
+//                        new Color(0, 0, 255, 192), new Color(0, 0, 255, 32), valueVar));
+//                annotations.addAll(getCSVPeakAnnotations(fragment, arrays[i],
+//                        useRT));
                 //Factory.getInstance().getConfiguration().getString("var.scan_acquisition_time","scan_acquisition_time")).getArray();
                 i++;
             }

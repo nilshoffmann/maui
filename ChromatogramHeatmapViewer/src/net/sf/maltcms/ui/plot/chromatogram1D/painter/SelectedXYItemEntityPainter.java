@@ -38,7 +38,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,15 +46,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import maltcms.ui.views.ChartPanelTools;
 import maltcms.ui.views.GraphicsSettings;
 import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
-import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jdesktop.swingx.painter.AbstractPainter;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.annotations.XYAnnotation;
-import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.entity.XYAnnotationEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
@@ -66,7 +62,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.ui.RectangleAnchor;
 import org.jfree.util.ShapeUtilities;
 import org.openide.util.lookup.InstanceContent;
 
@@ -82,7 +77,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     private double cursorWidth = 12.0f, cursorHeight = 12.0f;
     private Shape s = null, cursor;
     private Color strokeColor = Color.GREEN, selectedStrokeColor = Color.BLUE, hoverColor = Color.LIGHT_GRAY;
-    private Dataset1D<SOURCE, TARGET> ds;
+    private ADataset1D<SOURCE, TARGET> ds;
     private InstanceContent ic;
     private boolean isHeatmap = false;
     private Queue<TARGET> selectionQueue = new LinkedBlockingQueue<TARGET>();
@@ -93,7 +88,7 @@ public class SelectedXYItemEntityPainter<U extends ChartPanel, SOURCE, TARGET>
     private ChartPanel cp;
     private XYItemEntity xyie;
 
-    public SelectedXYItemEntityPainter(Dataset1D<SOURCE, TARGET> ds,
+    public SelectedXYItemEntityPainter(ADataset1D<SOURCE, TARGET> ds,
             InstanceContent ic, ChartPanel cp) {
         cursor = createCursor(20.0f);
         setCacheable(true);

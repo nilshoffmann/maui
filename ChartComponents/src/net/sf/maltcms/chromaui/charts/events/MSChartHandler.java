@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IScan;
-import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -46,10 +46,10 @@ public class MSChartHandler<T extends IScan> implements
     private Lookup lookup = new AbstractLookup(ic);
     private IChromatogram lastChromatogram = null;
     private T scan = null;
-    private final Dataset1D<IChromatogram, T> ds;
+    private final ADataset1D<IChromatogram, T> ds;
     private ExecutorService es = Executors.newSingleThreadExecutor();
 
-    public MSChartHandler(Dataset1D<IChromatogram, T> ds) {
+    public MSChartHandler(ADataset1D<IChromatogram, T> ds) {
         this.ds = ds;
     }
 

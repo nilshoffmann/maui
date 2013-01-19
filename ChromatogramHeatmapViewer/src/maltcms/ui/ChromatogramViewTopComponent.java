@@ -44,11 +44,14 @@ import java.util.concurrent.Executors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IScan;
 import maltcms.ui.views.ChromMSHeatmapPanel;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.plot.XYPlot;
@@ -68,6 +71,7 @@ import org.openide.util.TaskListener;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.windows.WindowManager;
 
 /**
  * Top component which displays something. TODO add support for different
@@ -76,8 +80,10 @@ import org.openide.util.lookup.InstanceContent;
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui//ChromatogramView//EN",
 autostore = false)
+@TopComponent.Registration(mode="editor",openAtStartup=false)
+@TopComponent.Description(persistenceType=TopComponent.PERSISTENCE_NEVER,preferredID="ChromatogramViewTopComponent")
 public final class ChromatogramViewTopComponent extends TopComponent implements TaskListener, PropertyChangeListener, LookupListener {
-    
+
     private static ChromatogramViewTopComponent instance;
     /**
      * path to the icon used by the component and its open action
@@ -94,9 +100,9 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
     private ExecutorService es = Executors.newFixedThreadPool(1);
     private Result<ChromatogramViewViewport> result;
     private boolean syncViewport = false;
-    
+
     public void initialize(IChromAUIProject project,
-            List<IChromatogramDescriptor> filename, Chromatogram1DDataset ds) {
+            List<IChromatogramDescriptor> filename, ADataset1D<IChromatogram1D,IScan> ds) {
 //        this();
 
         if (project != null) {
@@ -105,9 +111,9 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
         annotations = new ArrayList<XYAnnotation>(0);
         for (IChromatogramDescriptor descr : filename) {
             this.ic.add(descr);
-            if (project != null) {
-                annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
-            }
+//            if (project != null) {
+//                annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
+//            }
         }
         DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
         for (int i = 0; i < ds.getSeriesCount(); i++) {
@@ -130,7 +136,7 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
         ic.add(this);
         result = Utilities.actionsGlobalContext().lookupResult(ChromatogramViewViewport.class);
     }
-    
+
     public ChromatogramViewTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(ChromatogramViewTopComponent.class,
@@ -138,19 +144,19 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
         setToolTipText(NbBundle.getMessage(ChromatogramViewTopComponent.class,
                 "HINT_ChromatogramViewTopComponent"));
         this.ic = new InstanceContent();
-        
+
         associateLookup(new AbstractLookup(this.ic));
     }
-    
+
     public void load() {
-        SwingWorker<ChromMSHeatmapPanel, Void> sw = new ChromatogramViewLoaderWorker(
+        SwingWorker<XYPlot, Void> sw = new ChromatogramViewLoaderWorker(
                 this, getLookup().lookupAll(IChromatogramDescriptor.class),
                 getLookup().lookup(Properties.class), getLookup().lookup(
                 SettingsPanel.class));
         RequestProcessor.Task t = new RequestProcessor().post(sw);
         t.addTaskListener(this);
     }
-    
+
     public List<XYAnnotation> getAnnotations() {
         return annotations;
     }
@@ -260,7 +266,7 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
             load();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-    
+
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         if (this.jp != null) {
             ChartPanel cp = jp.getLookup().lookup(ChartPanel.class);
@@ -281,7 +287,7 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
             }
         }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
-    
+
     private void hideShowSeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideShowSeriesActionPerformed
         String s = (String) seriesComboBox.getSelectedItem();
         Chromatogram1DDataset dataset = getLookup().lookup(Chromatogram1DDataset.class);
@@ -303,7 +309,7 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
             }
         }
     }//GEN-LAST:event_hideShowSeriesActionPerformed
-    
+
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         this.syncViewport = jCheckBox2.isSelected();
     }//GEN-LAST:event_jCheckBox2ActionPerformed
@@ -318,45 +324,53 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JComboBox seriesComboBox;
     // End of variables declaration//GEN-END:variables
-    
+
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
-    
+
     @Override
     public void componentOpened() {
         if (result != null) {
             result.addLookupListener(this);
         }
+        TopComponent msView = WindowManager.getDefault().findTopComponent("MassSpectrumViewerTopComponent");
+        if (msView != null) {
+            msView.open();
+        }
+        TopComponent tc = WindowManager.getDefault().findTopComponent("navigatorTC");
+        if (tc != null) {
+            tc.open();
+        }
     }
-    
+
     @Override
     protected void componentActivated() {
         super.componentActivated();
         requestFocusInWindow();
         jp.requestFocusInWindow();
     }
-    
+
     @Override
     protected void componentDeactivated() {
         super.componentDeactivated();
     }
-    
+
     @Override
     public void componentClosed() {
         if (result != null) {
             result.removeLookupListener(this);
         }
     }
-    
+
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
         // TODO store your settings
     }
-    
+
     Object readProperties(java.util.Properties p) {
         if (instance == null) {
             instance = this;
@@ -364,29 +378,29 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
         instance.readPropertiesImpl(p);
         return instance;
     }
-    
+
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-    
+
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
     }
-    
+
     @Override
     public void taskFinished(Task task) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                open();
-                requestActive();
+                invalidate();
+                revalidate();
             }
         });
-        
+
     }
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
         if (pce.getPropertyName().equals("active")) {
@@ -398,7 +412,7 @@ public final class ChromatogramViewTopComponent extends TopComponent implements 
             selected = o;
         }
     }
-    
+
     @Override
     public void resultChanged(LookupEvent le) {
         //do not react to ourself

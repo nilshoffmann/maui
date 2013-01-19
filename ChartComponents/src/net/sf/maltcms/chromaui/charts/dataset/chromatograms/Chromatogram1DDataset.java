@@ -27,24 +27,55 @@
  */
 package net.sf.maltcms.chromaui.charts.dataset.chromatograms;
 
+import cross.datastructures.fragments.IFileFragment;
+import cross.datastructures.fragments.IVariableFragment;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram;
+import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
-import net.sf.maltcms.chromaui.charts.dataset.Dataset1D;
-import net.sf.maltcms.chromaui.charts.dataset.NamedElementProvider;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
+import ucar.ma2.Array;
+import ucar.ma2.MAMath;
 
 /**
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class Chromatogram1DDataset extends Dataset1D<IChromatogram,IScan>{
+public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D,IScan>{
 
     private String defaultDomainVariable = "scan_acquisition_time";
     
-    private String defaultValueVariable = "total_intensity";
+    private String defaultRangeVariable = "total_intensity";
+    
+    private final Array[] domainVariableValues;
+    private final Array[] rangeVariableValues;
+    
+    private final MAMath.MinMax domain, range;
 
-    public Chromatogram1DDataset(List<NamedElementProvider<IChromatogram, IScan>> l) {
+    public Chromatogram1DDataset(List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> l) {
         super(l);
+        MAMath.MinMax domainMM = new MAMath.MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        MAMath.MinMax rangeMM = new MAMath.MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        domainVariableValues = new Array[l.size()];
+        rangeVariableValues = new Array[l.size()];
+        System.out.println("Building chromatogram 2d dataset with "+l.size()+" series");
+        for (int i = 0; i < l.size(); i++) {
+            IFileFragment fragment = getSource(i).getParent();
+            IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
+            Array defaultRangeArr = defaultRangeVar.getArray();
+            MAMath.MinMax _value = MAMath.getMinMax(defaultRangeArr);
+            rangeMM = new MAMath.MinMax(Math.min(rangeMM.min, _value.min), Math.max(rangeMM.max, _value.max));
+            rangeVariableValues[i] = defaultRangeArr;
+            IVariableFragment defaultDomainVar = fragment.getChild(defaultDomainVariable);
+            Array defaultDomainArr = defaultDomainVar.getArray();
+            MAMath.MinMax _domain = MAMath.getMinMax(defaultDomainArr);
+            domainMM = new MAMath.MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
+            domainVariableValues[i] = defaultDomainArr;
+        }
+        System.out.println("Done!");
+        this.domain = domainMM;
+        this.range = rangeMM;
     }
 
     public String getDefaultDomainVariable() {
@@ -55,12 +86,12 @@ public class Chromatogram1DDataset extends Dataset1D<IChromatogram,IScan>{
         this.defaultDomainVariable = defaultDomainVariable;
     }
 
-    public String getDefaultValueVariable() {
-        return defaultValueVariable;
+    public String getDefaultRangeVariable() {
+        return defaultRangeVariable;
     }
 
-    public void setDefaultValueVariable(String defaultValueVariable) {
-        this.defaultValueVariable = defaultValueVariable;
+    public void setDefaultRangeVariable(String defaultRangeVariable) {
+        this.defaultRangeVariable = defaultRangeVariable;
     }
     
     @Override
@@ -70,7 +101,26 @@ public class Chromatogram1DDataset extends Dataset1D<IChromatogram,IScan>{
 
     @Override
     public Number getY(int i, int i1) {
-        return getSource(i).getParent().getChild(defaultValueVariable).getArray().getDouble(i1);
+        return getSource(i).getParent().getChild(defaultRangeVariable).getArray().getDouble(i1);
     }
     
+    @Override
+    public double getMinX() {
+        return domain.min;
+    }
+
+    @Override
+    public double getMaxX() {
+        return domain.max;
+    }
+
+    @Override
+    public double getMinY() {
+        return range.min;
+    }
+
+    @Override
+    public double getMaxY() {
+        return range.max;
+    }
 }
