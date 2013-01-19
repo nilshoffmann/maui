@@ -28,13 +28,14 @@
 package net.sf.maltcms.common.charts.api.dataset;
 
 import java.util.List;
+import org.jfree.data.xy.XYZDataset;
 import org.openide.util.Lookup;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements Lookup.Provider {
+public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements XYZDataset, Lookup.Provider {
 
     public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
         super(l);

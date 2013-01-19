@@ -6,8 +6,6 @@ package net.sf.maltcms.common.charts.overlay.nodes;
 
 import java.beans.IntrospectionException;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
-import org.jfree.chart.event.OverlayChangeEvent;
-import org.jfree.chart.event.OverlayChangeListener;
 import org.openide.explorer.view.CheckableNode;
 import org.openide.nodes.BeanNode;
 
@@ -20,27 +18,24 @@ public class OverlayNode extends BeanNode<ChartOverlay> implements CheckableNode
     private boolean checkable = true;
     private boolean checkEnabled = true;
 //    private boolean selected = false;
-    private final ChartOverlay overlay;
-
+    
     public OverlayNode(ChartOverlay bean) throws IntrospectionException {
         super(bean);
-        this.overlay = bean;
-//        this.selected = this.overlay.isVisible();
     }
 
     @Override
     public String getName() {
-        return overlay.getName();
+        return getBean().getName();
     }
 
     @Override
     public String getDisplayName() {
-        return overlay.getDisplayName();
+        return getBean().getDisplayName();
     }
 
     @Override
     public String getShortDescription() {
-        return overlay.getShortDescription();
+        return getBean().getShortDescription();
     }
  
     @Override
@@ -55,19 +50,12 @@ public class OverlayNode extends BeanNode<ChartOverlay> implements CheckableNode
 
     @Override
     public Boolean isSelected() {
-        return overlay.isVisible();
+        return getBean().isVisible();
     }
 
     @Override
     public void setSelected(Boolean selected) {
-        this.overlay.setVisible(selected);
+        getBean().setVisible(selected);
     }
-
-//    @Override
-//    public void overlayChanged(OverlayChangeEvent oce) {
-//        boolean old = this.selected;
-//        this.selected = (this.overlay.isVisible());
-//        firePropertyChange("selected", old, this.selected);
-//    }
     
 }

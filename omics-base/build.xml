@@ -6,24 +6,37 @@
     <description>Builds the module suite omics-base.</description>
     <import file="${basedir}/../nbproject/platform-defaults.xml"/>
     <import file="nbproject/build-impl.xml"/>
-    
+
+    <target name="release-and-deploy" description="Prepare a release" depends="prepare-release,deploy">    
+    </target>
     <target name="upload-credentials" description="Ask for user credentials">
         <input addproperty="upload.username">Please enter username for upload:</input>
                 <!--<input message="Please supply password for user ${sf.username}:" addproperty="sf.username.password">
                         <handler type="secure"/>
                 </input>-->
     </target>
+
+<!--    <target name="prepare-release" description="Prepares a release" depends="build,test,nbms,build-zip">
+    </target>-->
+    <target name="prepare-release" description="Prepares a release" depends="build,test,nbms">
+    </target>
+
+<!--    <target name="deploy" description="Deploys release files" depends="prepare-release,upload-credentials,upload-updatecenter,upload-build,upload-homepage">
+    </target>-->
+    <target name="deploy" description="Deploys release files" depends="prepare-release,upload-credentials,upload-updatecenter">
+    </target>
+        
     
-    <target name="upload-homepage" description="Deploys homepage" depends="upload-credentials">
+<!--    <target name="upload-homepage" description="Deploys homepage" depends="upload-credentials">
         <exec command="rsync" inputstring="">
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="homepage/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/omics-base/1.1/beta"/>
+            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}"/>
         </exec>    
-    </target>
+    </target>-->
     
-    <target name="upload-updatecenter" description="Upload results of beta build" depends="upload-credentials,nbms">
+    <target name="upload-updatecenter" description="Upload results of build" depends="nbms,upload-credentials">
                 <!--<echo message="Do not forget to supply -Dusername -Dpassword to ant when running the upload target!" />-->
                 <!--<scp todir="${sf.username},maltcms@web.sourceforge.net:htdocs/" password="${sf.username.password}" sftp="true" trust="true" verbose="true">
                         <fileset dir="${release_dir}/site/" />
@@ -32,10 +45,10 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="build/updates/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/omics-base/1.1/beta/updatecenter/"/>
+            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}/updates/"/>
         </exec>
     </target>
-    <target name="upload-build" description="Deploys beta zip distribution and macosx app" depends="upload-credentials">
+<!--    <target name="upload-build" description="Deploys zip distribution" depends="build-zip,upload-credentials">
         <tstamp>
             <format property="deploy.time" pattern="yyyy-MM-dd"/>
         </tstamp>
@@ -43,7 +56,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="dist/"/>
-            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/omics-base/1.1/beta/"/>
+            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}"/>
         </exec>    
-    </target>
+    </target>-->
 </project>

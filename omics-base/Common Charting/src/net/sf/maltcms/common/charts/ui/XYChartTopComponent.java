@@ -30,23 +30,26 @@ package net.sf.maltcms.common.charts.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Shape;
+import java.beans.IntrospectionException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.ChartCustomizer;
 import net.sf.maltcms.common.charts.api.XYChartBuilder;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
-import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
+import net.sf.maltcms.common.charts.overlay.nodes.OverlayNode;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
-import org.openide.util.Lookup.Result;
+import org.openide.nodes.Children;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
@@ -54,6 +57,8 @@ import org.openide.util.Task;
 import org.openide.util.TaskListener;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  * Top component which displays something.
@@ -86,12 +91,16 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
 
     private ChartPanel panel;
     private InstanceContent content = new InstanceContent();
+    private Lookup lookup = new AbstractLookup(content);
     private InstanceContentSelectionHandler selectionHandler;
-    private Result<TARGET> result;
 
     public XYChartTopComponent(Class<TARGET> resultType, final ADataset1D<?, TARGET> dataset, final XYChartBuilder cb) {
-        associateLookup (new AbstractLookup (content));
-        result = getLookup().lookupResult(resultType);
+        associateLookup(new ProxyLookup(lookup, Lookups.fixed(new NavigatorLookupHint() {
+            @Override
+            public String getContentType() {
+                return "application/jfreechart+overlay";
+            }
+        })));
         initComponents();
         setName(Bundle.CTL_XYChartTopComponent());
         setToolTipText(Bundle.HINT_XYChartTopComponent());
@@ -110,7 +119,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
     public int getPersistenceType() {
         return PERSISTENCE_NEVER;
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -260,16 +269,14 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
     }
 
     private void createChartPanel(final XYChartBuilder cb, final ADataset1D<?, TARGET> dataset, final InstanceContent content) {
-        content.add(new NavigatorLookupHint() {
-            @Override
-            public String getContentType() {
-                return "application/jfreechart+overlay";
-            }
-        });
         content.add(dataset);
         ChartPanel customPanel = cb.buildPanel();
         SelectionOverlay sp = new SelectionOverlay(Color.RED, Color.BLUE, 1.75f, 1.75f, 0.66f);
-        content.add(sp);
+        try {
+            content.add(new OverlayNode(sp));
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
         customPanel.getChart().getXYPlot().getRangeAxis().addChangeListener(sp);
         customPanel.getChart().getXYPlot().getDomainAxis().addChangeListener(sp);
         InstanceContentSelectionHandler selectionHandler = new InstanceContentSelectionHandler(content, sp, InstanceContentSelectionHandler.Mode.ON_CLICK);
@@ -283,9 +290,5 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
         content.add(customPanel);
         content.add(selectionHandler);
         content.add(sl);
-    }
-    
-    private void addChartOverlay(ChartOverlay overlay) {
-        
     }
 }

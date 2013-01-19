@@ -30,6 +30,7 @@ package net.sf.maltcms.common.charts.api.dataset;
 import java.util.ArrayList;
 import java.util.List;
 import org.jfree.data.xy.AbstractXYDataset;
+import org.jfree.data.xy.XYDataset;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;

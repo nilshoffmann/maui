@@ -7,12 +7,12 @@ package net.sf.maltcms.common.charts.overlay.ui;
 import java.util.Collection;
 import javax.swing.JComponent;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.overlay.nodes.OverlayNode;
 import org.netbeans.spi.navigator.NavigatorPanel;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
@@ -29,11 +29,12 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
      * template for finding data in given context. Object used as example,
      * replace with your own data source, for example JavaDataObject etc
      */
-//    private static final Lookup.Template MY_DATA = new Lookup.Template(ChartOverlay.class);
+    private static final Lookup.Template MY_DATA = new Lookup.Template(OverlayNode.class);
     /**
      * current context to work on
      */
-    private Lookup.Result<ChartOverlay> curContext;
+    private Lookup.Result<OverlayNode> curContext;
+//    private Lookup lookup;
     /**
      * listener to context changes
      */
@@ -64,14 +65,42 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
         return panelUI;
     }
 
+//    @Override
+//    public void panelActivated(Lookup context) {
+//        // lookup context and listen to result to get notified about context changes
+////        proxyLookup = Utilities.actionsGlobalContext();//new ProxyLookup(, context);
+////        lookup = context;//context;
+//        curContext = Utilities.actionsGlobalContext().lookupResult(ChartOverlay.class);
+//        curContext.addLookupListener(getContextListener());
+//        if (curContext != null && !curContext.allInstances().isEmpty()) {
+//            // get actual data and recompute content
+//            Collection<? extends ChartOverlay> data = curContext.allInstances();
+//            setNewContent(data);
+//            ExplorerUtils.activateActions(((OverlayNavigatorPanelUI) getComponent()).getExplorerManager(), true);
+//        }
+//    }
+//
+//    @Override
+//    public void panelDeactivated() {
+//        curContext.removeLookupListener(getContextListener());
+//        curContext = null;
+//        //setNewContent(new ArrayList<ChartOverlay>(0));
+//        //ExplorerUtils.activateActions(((OverlayNavigatorPanelUI)getComponent()).getExplorerManager(),false);
+//    }
+//
+//    @Override
+//    public Lookup getLookup() {
+//        return panelUI.getLookup();
+//    }
+    
     @Override
     public void panelActivated(Lookup context) {
+        System.out.println("Received lookup: "+context);
         // lookup context and listen to result to get notified about context changes
-        Lookup proxyLookup = new ProxyLookup(Utilities.actionsGlobalContext(), context);
-        curContext = proxyLookup.lookupResult(ChartOverlay.class);
+        curContext = Utilities.actionsGlobalContext().lookup(MY_DATA);
         curContext.addLookupListener(getContextListener());
         // get actual data and recompute content
-        Collection<? extends ChartOverlay> data = curContext.allInstances();
+        Collection data = curContext.allInstances();
         setNewContent(data);
     }
 
@@ -80,9 +109,9 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
         curContext.removeLookupListener(getContextListener());
         curContext = null;
     }
-
+    
     @Override
-    public Lookup getLookup() {
+    public Lookup getLookup () {
         // go with default activated Node strategy
         return null;
     }
@@ -90,7 +119,7 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
     /**
      * *********** non - public part ***********
      */
-    private void setNewContent(Collection<? extends ChartOverlay> newData) {
+    private void setNewContent(Collection<? extends OverlayNode> newData) {
         // put your code here that grabs information you need from given
         // collection of data, recompute UI of your panel and show it.
         // Note - be sure to compute the content OUTSIDE event dispatch thread,
@@ -119,9 +148,11 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
 
         @Override
         public void resultChanged(LookupEvent ev) {
-            System.out.println("Received result changed for ChartOverlay");
-            Collection<? extends ChartOverlay> data = curContext.allInstances();
-            setNewContent(data);
+            System.out.println("Received result changed for ChartOverlay from " + ev.getSource());
+            Collection<? extends OverlayNode> data = curContext.allInstances();
+            if (curContext != null && !curContext.allInstances().isEmpty()) {
+                setNewContent(data);
+            }
         }
     } // end of ContextListener
 }

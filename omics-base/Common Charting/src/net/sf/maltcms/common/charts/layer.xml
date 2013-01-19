@@ -7,10 +7,10 @@
                 <folder name="jfreechart+overlay">
                     <file name="net-sf-maltcms-common-charts-overlay-ui-OverlayNavigatorPanel.instance">
                         <!--net.sf.maltcms.common.charts.overlay.ui.OverlayNavigatorPanel-->
-                        <attr
-                            methodvalue="org.netbeans.modules.navigator.LazyPanel.create" name="instanceCreate"/>
-                        <attr name="delegate" newvalue="net.sf.maltcms.common.charts.overlay.ui.OverlayNavigatorPanel"/>
-                        <attr name="displayName" stringvalue="Chart Overlay"/>
+<!--                        <attr
+                            methodvalue="org.netbeans.modules.navigator.LazyPanel.create" name="instanceCreate"/>-->
+                        <!--<attr name="delegate" newvalue="net.sf.maltcms.common.charts.overlay.ui.OverlayNavigatorPanel"/>-->
+                        <!--<attr name="displayName" stringvalue="Chart Overlay"/>-->
                     </file>
                 </folder>
             </folder>

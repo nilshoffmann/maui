@@ -5,7 +5,6 @@
 package net.sf.maltcms.common.charts.overlay.ui;
 
 import java.awt.BorderLayout;
-import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,10 +18,8 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -30,21 +27,21 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements ExplorerManager.Provider, Lookup.Provider {
-
-    private ExplorerManager manager;
+    
+    private ExplorerManager manager = new ExplorerManager();
     private Lookup lookup;
+
     /**
      * Creates new form OverlayNavigatorPanelUI
      */
     public OverlayNavigatorPanelUI() {
-        manager = new ExplorerManager();
         ActionMap map = getActionMap();
         initComponents();
         OutlineView outline = new OutlineView("Overlays");
         Outline o = outline.getOutline();
         o.setRootVisible(false);
-        add(outline,BorderLayout.CENTER);
-        lookup = ExplorerUtils.createLookup (manager, map);
+        add(outline, BorderLayout.CENTER);
+        lookup = ExplorerUtils.createLookup(manager, map);
     }
 
     /**
@@ -70,7 +67,7 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
     public Lookup getLookup() {
         return lookup;
     }
-
+    
     @Override
     public void addNotify() {
         super.addNotify();
@@ -83,36 +80,25 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
         super.removeNotify();
     }
     
-    public void setContent(Collection<? extends ChartOverlay> overlays) {
-        final List<ChartOverlay> l = new ArrayList<ChartOverlay>(overlays);
-        Collections.sort(l,new Comparator<ChartOverlay>() {
-
-            @Override
-            public int compare(ChartOverlay t, ChartOverlay t1) {
-                return t.getLayerPosition()-t1.getLayerPosition();
-            }
-        });
-        Node root = new AbstractNode(Children.create(new ChildFactory<ChartOverlay>() {
-
-            @Override
-            protected boolean createKeys(List<ChartOverlay> toPopulate) {
-                toPopulate.addAll(l);
-                return true;
-            }
-
-            @Override
-            protected Node createNodeForKey(ChartOverlay key) {
-                try {
-                    OverlayNode node = new OverlayNode(key);
-                    return node;
-                } catch (IntrospectionException ex) {
-                    Exceptions.printStackTrace(ex);
-                    return Node.EMPTY;
+    public void setContent(Collection<? extends OverlayNode> overlays) {
+        if (overlays.isEmpty() || overlays == null) {
+            manager.setRootContext(Node.EMPTY);
+        } else {
+            final List<OverlayNode> l = new ArrayList<OverlayNode>(overlays);
+            Collections.sort(l, new Comparator<OverlayNode>() {
+                @Override
+                public int compare(OverlayNode t, OverlayNode t1) {
+                    return t.getLookup().lookup(ChartOverlay.class).getLayerPosition() - t1.getLookup().lookup(ChartOverlay.class).getLayerPosition();
                 }
+            });
+            Children.Array ca = new Children.Array();
+            Node[] nodes = new Node[overlays.size()];
+            for (int i = 0; i < nodes.length; i++) {
+                nodes[i] = l.get(i).cloneNode();//,Children.LEAF,Lookups.fixed(co));
             }
-            
-            
-        }, true));
-        manager.setRootContext(root);
+            ca.add(nodes);
+            Node root = new AbstractNode(ca);
+            manager.setRootContext(root);
+        }
     }
 }
