@@ -27,9 +27,16 @@
  */
 package net.sf.maltcms.common.charts.api;
 
+import java.beans.IntrospectionException;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
+import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.overlay.nodes.OverlayNode;
 import net.sf.maltcms.common.charts.ui.XYChartTopComponent;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Task;
 import org.openide.util.TaskListener;
@@ -41,6 +48,36 @@ import org.openide.windows.WindowManager;
  * @author Nils Hoffmann
  */
 public class Charts {
+    
+    public static Node overlayNode(ChartOverlay chartOverlay) {
+        try {
+            OverlayNode<ChartOverlay> node = new OverlayNode<ChartOverlay>(chartOverlay);
+            return node;
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
+    }
+    
+    public static Node overlayNode(ChartOverlay chartOverlay, Children children) {
+        try {
+            OverlayNode<ChartOverlay> node = new OverlayNode<ChartOverlay>(chartOverlay, children);
+            return node;
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
+    }
+    
+    public static Node overlayNode(ChartOverlay chartOverlay, Children children, Lookup lookup) {
+        try {
+            OverlayNode<ChartOverlay> node = new OverlayNode<ChartOverlay>(chartOverlay, children, lookup);
+            return node;
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
+    }
     
     public static <TARGET> void openXYChart(final Class<TARGET> typeClass, final ADataset1D<?,TARGET> dataset, final XYChartBuilder builder, final TaskListener listener) {
         Task t = RequestProcessor.getDefault().create(new Runnable() {

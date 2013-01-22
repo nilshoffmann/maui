@@ -42,7 +42,7 @@ public final class XYChartComponentOpenAction implements ActionListener {
                 final Numeric1DDataset<Point2D> dataset = DatasetUtils.createDataset();
                 final XYChartBuilder builder = new XYChartBuilder();
                 XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
-                renderer.setSeriesToolTipGenerator(0, new StandardXYToolTipGenerator());
+                renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
                 renderer.setBaseItemLabelsVisible(true);
                 builder.xy(dataset).renderer(renderer).plot().chart("Sample plot").createLegend(true);
                 SwingUtilities.invokeLater(new Runnable() {

@@ -20,9 +20,11 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     private XYSelection selection = null;
     private final ADataset1D<?, TARGET> dataset;
     private final EventListenerList listenerList = new EventListenerList();
+    private final IDisplayPropertiesProvider provider;
 
     public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset) {
         this.dataset = dataset;
+        this.provider = dataset.getLookup().lookup(IDisplayPropertiesProvider.class);
     }
 
     @Override
@@ -43,7 +45,10 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
             XYItemEntity itemEntity = ((XYItemEntity) cme.getEntity());
-            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.CLICK, dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()));
+            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.CLICK, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),itemEntity.getArea());
+            selection.setName(provider.getName(selection));
+            selection.setDisplayName(provider.getDisplayName(selection));
+            selection.setShortDescription(provider.getShortDescription(selection));
             mouseEvent = cme.getTrigger();
             cme.getTrigger().consume();
             fireSelectionChange();
@@ -54,7 +59,10 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
             XYItemEntity itemEntity = ((XYItemEntity) cme.getEntity());
-            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.HOVER, dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()));
+            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.HOVER, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),itemEntity.getArea());
+            selection.setName(provider.getName(selection));
+            selection.setDisplayName(provider.getDisplayName(selection));
+            selection.setShortDescription(provider.getShortDescription(selection));
             mouseEvent = cme.getTrigger();
             cme.getTrigger().consume();
             fireSelectionChange();
@@ -72,5 +80,4 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     public void removeSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.remove(ISelectionChangeListener.class, listener);
     }
-
 }

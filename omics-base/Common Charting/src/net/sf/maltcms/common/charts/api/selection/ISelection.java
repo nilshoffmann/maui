@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,28 +25,46 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.api.dataset;
+package net.sf.maltcms.common.charts.api.selection;
 
-import java.util.List;
-import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
-import org.jfree.data.xy.XYZDataset;
-import org.openide.util.Lookup;
+import java.beans.PropertyChangeListener;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements XYZDataset, Lookup.Provider {
+public interface ISelection {
 
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
-        super(l, provider);
-    }
+    public final String PROP_NAME = "name";
+    public final String PROP_DISPLAY_NAME = "displayName";
+    public final String PROP_SHORT_DESCRIPTION = "shortDescription";
+    public final String PROP_VISIBLE = "visible";
+    
+    Object getSource();
 
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
-        super(l);
-    }
+    Object getTarget();
 
-    public abstract double getMinZ();
+    public String getName();
 
-    public abstract double getMaxZ();
+    public void setName(String name);
+
+    public String getDisplayName();
+
+    public void setDisplayName(String name);
+
+    public String getShortDescription();
+
+    public void setShortDescription(String name);
+
+    boolean isVisible();
+
+    void setVisible(boolean b);
+
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    void addPropertyChangeListener(String property, PropertyChangeListener listener);
+
+    void removePropertyChangeListener(PropertyChangeListener listener);
+
+    void removePropertyChangeListener(String property, PropertyChangeListener listener);
 }

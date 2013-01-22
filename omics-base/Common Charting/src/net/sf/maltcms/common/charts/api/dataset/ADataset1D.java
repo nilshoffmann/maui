@@ -29,8 +29,10 @@ package net.sf.maltcms.common.charts.api.dataset;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.maltcms.common.charts.api.selection.DefaultDisplayPropertiesProvider;
+import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
+import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.AbstractXYDataset;
-import org.jfree.data.xy.XYDataset;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -44,14 +46,26 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
     private final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
     private final InstanceContent content = new InstanceContent();
     private final Lookup lookup = new AbstractLookup(content);
+    private final IDisplayPropertiesProvider displayPropertiesProvider;
 
-    public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
+    public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
         targetProvider = new ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>>(l);
         for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
             content.add(nep.getSource());
         }
+        this.displayPropertiesProvider = provider;
+        content.add(this.displayPropertiesProvider);
+    }
+    
+    public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
+        this(l, new DefaultDisplayPropertiesProvider());
     }
 
+    @Override
+    public DomainOrder getDomainOrder() {
+        return DomainOrder.ASCENDING;
+    }
+    
     @Override
     public Lookup getLookup() {
         return lookup;
@@ -59,7 +73,7 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
 
     public TARGET getTarget(int seriesIndex, int itemIndex) {
 //        System.out.println("Retrieving target from series " + seriesIndex + ", item " + itemIndex);
-        return targetProvider.get(seriesIndex).get(itemIndex);
+        return targetProvider.get(seriesIndex).get(getRanks()[seriesIndex][itemIndex]);
     }
 
     public SOURCE getSource(int seriesIndex) {
@@ -102,4 +116,6 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
     public abstract double getMinY();
     
     public abstract double getMaxY();
+    
+    public abstract int[][] getRanks();
 }

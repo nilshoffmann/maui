@@ -12,13 +12,16 @@ import java.util.Comparator;
 import java.util.List;
 import javax.swing.ActionMap;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
-import net.sf.maltcms.common.charts.overlay.nodes.OverlayNode;
+import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayChildFactory;
 import org.netbeans.swing.outline.Outline;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
+import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
@@ -27,8 +30,10 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements ExplorerManager.Provider, Lookup.Provider {
-    
+
     private ExplorerManager manager = new ExplorerManager();
+    private OutlineView outline = null;
+    private boolean expand = true;
     private Lookup lookup;
 
     /**
@@ -37,7 +42,7 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
     public OverlayNavigatorPanelUI() {
         ActionMap map = getActionMap();
         initComponents();
-        OutlineView outline = new OutlineView("Overlays");
+        outline = new OutlineView("Overlays");
         Outline o = outline.getOutline();
         o.setRootVisible(false);
         add(outline, BorderLayout.CENTER);
@@ -62,42 +67,54 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
     public ExplorerManager getExplorerManager() {
         return manager;
     }
-    
+
     @Override
     public Lookup getLookup() {
         return lookup;
     }
-    
+
     @Override
     public void addNotify() {
         super.addNotify();
         ExplorerUtils.activateActions(manager, true);
     }
-    
+
     @Override
     public void removeNotify() {
         ExplorerUtils.activateActions(manager, false);
         super.removeNotify();
     }
-    
-    public void setContent(Collection<? extends OverlayNode> overlays) {
+
+    public void setContent(Collection<? extends Node> overlays) {
         if (overlays.isEmpty() || overlays == null) {
             manager.setRootContext(Node.EMPTY);
         } else {
-            final List<OverlayNode> l = new ArrayList<OverlayNode>(overlays);
-            Collections.sort(l, new Comparator<OverlayNode>() {
+            final List<Node> l = new ArrayList<Node>(overlays);
+            Collections.sort(l, new Comparator<Node>() {
                 @Override
-                public int compare(OverlayNode t, OverlayNode t1) {
-                    return t.getLookup().lookup(ChartOverlay.class).getLayerPosition() - t1.getLookup().lookup(ChartOverlay.class).getLayerPosition();
+                public int compare(Node t, Node t1) {
+                    ChartOverlay lhs = t.getLookup().lookup(ChartOverlay.class);
+                    ChartOverlay rhs = t1.getLookup().lookup(ChartOverlay.class);
+                    if ((lhs == null || rhs == null) || (lhs == null && rhs == null)) {
+                        return 0;
+                    }
+                    return lhs.getLayerPosition() - rhs.getLayerPosition();
                 }
             });
-            Children.Array ca = new Children.Array();
-            Node[] nodes = new Node[overlays.size()];
-            for (int i = 0; i < nodes.length; i++) {
-                nodes[i] = l.get(i).cloneNode();//,Children.LEAF,Lookups.fixed(co));
-            }
-            ca.add(nodes);
-            Node root = new AbstractNode(ca);
+            Node root = new AbstractNode(Children.create(new ChildFactory<Node>() {
+
+                @Override
+                protected boolean createKeys(List<Node> list) {
+                    list.addAll(l);
+                    return true;
+                }
+
+                @Override
+                protected Node createNodeForKey(Node key) {
+                    return new FilterNode(key);
+                }
+                
+            }, true));
             manager.setRootContext(root);
         }
     }

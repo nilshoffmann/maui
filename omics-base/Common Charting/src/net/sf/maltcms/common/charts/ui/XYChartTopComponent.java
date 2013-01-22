@@ -30,17 +30,17 @@ package net.sf.maltcms.common.charts.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Shape;
-import java.beans.IntrospectionException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.ChartCustomizer;
+import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.XYChartBuilder;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
-import net.sf.maltcms.common.charts.overlay.nodes.OverlayNode;
+import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayChildFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
@@ -48,7 +48,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.nodes.Children;
-import org.openide.util.Exceptions;
+import org.openide.nodes.FilterNode;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -119,7 +120,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
     public int getPersistenceType() {
         return PERSISTENCE_NEVER;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -164,7 +165,6 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
             @Override
             public void run() {
                 SwingUtilities.invokeLater(new Runnable() {
-
                     @Override
                     public void run() {
                         panel.setEnabled(false);
@@ -172,15 +172,15 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
                         panel.validate();
                     }
                 });
-                
+
                 int nrenderer = panel.getChart().getXYPlot().getRendererCount();
                 XYPlot plot = panel.getChart().getXYPlot();
                 int ndatasets = panel.getChart().getXYPlot().getDatasetCount();
                 List<Shape> shapes = new LinkedList<Shape>();
-                for (int i = 0; i < nrenderer ; i++) {
-                    for (int j = 0; j<plot.getDataset(i).getSeriesCount(); j++) {
+                for (int i = 0; i < nrenderer; i++) {
+                    for (int j = 0; j < plot.getDataset(i).getSeriesCount(); j++) {
                         XYDataset d = plot.getDataset(i);
-                        for(int k = 0;k<d.getSeriesCount();k++) {
+                        for (int k = 0; k < d.getSeriesCount(); k++) {
                             Shape s = plot.getRendererForDataset(d).getSeriesShape(k);
                             shapes.add(s);
                         }
@@ -198,18 +198,17 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
                     panel.getChart().getXYPlot().setRenderer(new XYAreaRenderer(XYAreaRenderer.AREA_AND_SHAPES));
                 }
                 int shapeIndex = 0;
-                for (int i = 0; i < nrenderer ; i++) {
-                    for (int j = 0; j<plot.getDataset(i).getSeriesCount(); j++) {
+                for (int i = 0; i < nrenderer; i++) {
+                    for (int j = 0; j < plot.getDataset(i).getSeriesCount(); j++) {
                         XYDataset d = plot.getDataset(i);
-                        for(int k = 0;k<d.getSeriesCount();k++) {
-                            plot.getRendererForDataset(d).setSeriesShape(k,shapes.get(shapeIndex));
+                        for (int k = 0; k < d.getSeriesCount(); k++) {
+                            plot.getRendererForDataset(d).setSeriesShape(k, shapes.get(shapeIndex));
                             shapeIndex++;
                         }
                     }
                 }
                 customizeChart(panel);
                 SwingUtilities.invokeLater(new Runnable() {
-
                     @Override
                     public void run() {
                         panel.setEnabled(true);
@@ -217,7 +216,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
                         panel.validate();
                     }
                 });
-                
+
             }
         });
         t.addTaskListener(this);
@@ -226,7 +225,12 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
 
     private void clearSelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearSelectionActionPerformed
         if (selectionHandler != null) {
-            selectionHandler.clear();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    selectionHandler.clear();
+                }
+            });
         }
     }//GEN-LAST:event_clearSelectionActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -271,21 +275,16 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
     private void createChartPanel(final XYChartBuilder cb, final ADataset1D<?, TARGET> dataset, final InstanceContent content) {
         content.add(dataset);
         ChartPanel customPanel = cb.buildPanel();
-        SelectionOverlay sp = new SelectionOverlay(Color.RED, Color.BLUE, 1.75f, 1.75f, 0.66f);
-        try {
-            content.add(new OverlayNode(sp));
-        } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        customPanel.getChart().getXYPlot().getRangeAxis().addChangeListener(sp);
-        customPanel.getChart().getXYPlot().getDomainAxis().addChangeListener(sp);
-        InstanceContentSelectionHandler selectionHandler = new InstanceContentSelectionHandler(content, sp, InstanceContentSelectionHandler.Mode.ON_CLICK);
+        SelectionOverlay so = new SelectionOverlay(Color.RED, Color.BLUE, 1.75f, 1.75f, 0.66f);
+        customPanel.getChart().getXYPlot().getRangeAxis().addChangeListener(so);
+        customPanel.getChart().getXYPlot().getDomainAxis().addChangeListener(so);
+        InstanceContentSelectionHandler selectionHandler = new InstanceContentSelectionHandler(content, so, InstanceContentSelectionHandler.Mode.ON_CLICK, dataset);
         XYMouseSelectionHandler<TARGET> sl = new XYMouseSelectionHandler<TARGET>(dataset);
-        sl.addSelectionChangeListener(sp);
+        sl.addSelectionChangeListener(so);
         sl.addSelectionChangeListener(selectionHandler);
         customPanel.addChartMouseListener(sl);
-        customPanel.addOverlay(sp);
-        sp.addChangeListener(customPanel);
+        customPanel.addOverlay(so);
+        so.addChangeListener(customPanel);
         customizeChart(customPanel);
         content.add(customPanel);
         content.add(selectionHandler);

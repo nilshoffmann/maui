@@ -4,10 +4,21 @@
  */
 package net.sf.maltcms.common.charts.api.selection;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.beans.IntrospectionException;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayNode;
+import net.sf.maltcms.common.charts.overlay.nodes.SelectionSourceChildFactory;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.Lookups;
 
 /**
  *
@@ -20,24 +31,58 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         ON_CLICK, ON_HOVER, ON_KEY
     };
     private final InstanceContent content;
-    private final Set<Object> activeSelection = new LinkedHashSet<Object>();
+    private final Deque<ISelection> activeSelection = new LinkedList<ISelection>();
     private final SelectionOverlay overlay;
     private final Mode mode;
+    private final int capacity;
+    private final ADataset1D dataset;
+    // private TARGET lastItem = null;
+    private ExecutorService es = Executors.newSingleThreadExecutor();
+    private AtomicBoolean updatePending = new AtomicBoolean(false);
+    private Node selectionOverlayNode;
 
-    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode) {
+    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D dataset) {
+        this(content, overlay, mode, dataset, Integer.MAX_VALUE);
+        updateNode();
+    }
+
+    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D dataset, int capacity) {
         this.content = content;
         this.overlay = overlay;
         this.mode = mode;
+        this.dataset = dataset;
+        this.capacity = capacity;
     }
 
-    public void addToSelection(Object point) {
-        activeSelection.add(point);
-        content.add(point);
+    private void updateNode() {
+        if (selectionOverlayNode != null) {
+            content.remove(selectionOverlayNode);
+        }
+        try {
+            selectionOverlayNode = new SelectionOverlayNode(overlay, Children.create(new SelectionSourceChildFactory(overlay, dataset), true));
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+            selectionOverlayNode = Node.EMPTY;
+        }
+        content.add(selectionOverlayNode);
     }
 
-    public void removeFromSelection(Object point) {
-        content.remove(point);
-        activeSelection.remove(point);
+    private void addToSelection(ISelection selection) {
+        if (!activeSelection.contains(selection)) {
+            if (activeSelection.size() == capacity) {
+                ISelection removed = activeSelection.removeFirst();
+                content.remove(removed);
+            }
+            activeSelection.add(selection);
+            content.add(selection);
+            updateNode();
+        }
+    }
+
+    private void removeFromSelection(ISelection selection) {
+        content.remove(selection);
+        activeSelection.remove(selection);
+        updateNode();
     }
 
     public void clear() {
@@ -46,6 +91,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         }
         activeSelection.clear();
         overlay.clear();
+        updateNode();
     }
 
     @Override
@@ -54,28 +100,29 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
             XYSelection.Type type = ce.getSelection().getType();
             switch (type) {
                 case CLEAR:
+                    System.out.println("Clearing instance content!");
                     clear();
                     break;
                 case CLICK:
                     if (mode == Mode.ON_CLICK) {
-                        if (activeSelection.contains(ce.getSelection().getPayload())) {
-                            removeFromSelection(ce.getSelection().getPayload());
+                        if (activeSelection.contains(ce.getSelection())) {
+                            removeFromSelection(ce.getSelection());
                         } else {
-                            addToSelection(ce.getSelection().getPayload());
+                            addToSelection(ce.getSelection());
                         }
                     }
                     break;
                 case HOVER:
                     if (mode == Mode.ON_HOVER) {
-                        addToSelection(ce.getSelection().getPayload());
+                        addToSelection(ce.getSelection());
                     }
                     break;
                 case KEYBOARD:
                     if (mode == Mode.ON_KEY) {
-                        if (activeSelection.contains(ce.getSelection().getPayload())) {
-                            removeFromSelection(ce.getSelection().getPayload());
+                        if (activeSelection.contains(ce.getSelection())) {
+                            removeFromSelection(ce.getSelection());
                         } else {
-                            addToSelection(ce.getSelection().getPayload());
+                            addToSelection(ce.getSelection());
                         }
                     }
                     break;

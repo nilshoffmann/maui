@@ -32,6 +32,9 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.event.AxisChangeEvent;
@@ -46,20 +49,22 @@ import org.jfree.ui.RectangleEdge;
  * @author Nils Hoffmann
  */
 public abstract class AbstractChartOverlay extends AbstractOverlay implements ChartOverlay, AxisChangeListener, ISelectionChangeListener {
+
     private boolean visible = true;
     private boolean visibilityChangeable = true;
     private int layerPosition = Integer.MAX_VALUE;
     private String displayName = "Chart Overlay";
     private String name = AbstractChartOverlay.class.getSimpleName();
     private String shortDescription = "Displays the currently active chart dataset entity selection.";
-    
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     public AbstractChartOverlay(String name, String displayName, String shortDescription, boolean visibilityChangeable) {
         this.name = name;
         this.displayName = displayName;
         this.shortDescription = shortDescription;
         this.visibilityChangeable = visibilityChangeable;
     }
-    
+
     @Override
     public String getDisplayName() {
         return displayName;
@@ -76,20 +81,28 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
     }
 
     public void setDisplayName(String displayName) {
+        String old = this.displayName;
         this.displayName = displayName;
+        firePropertyChange(PROP_DISPLAY_NAME, old, this.displayName);
     }
 
     public void setName(String name) {
+        String old = this.name;
         this.name = name;
+        firePropertyChange(PROP_NAME, old, this.name);
     }
 
     public void setShortDescription(String shortDescription) {
+        String old = this.shortDescription;
         this.shortDescription = shortDescription;
+        firePropertyChange(PROP_SHORT_DESCRIPTION, old, this.shortDescription);
     }
-    
+
     @Override
     public void setVisible(boolean b) {
+        boolean old = this.visible;
         this.visible = b;
+        firePropertyChange(PROP_VISIBLE, old, this.visible);
         fireOverlayChanged();
     }
 
@@ -110,15 +123,17 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
 
     @Override
     public void setLayerPosition(int pos) {
+        int old = this.layerPosition;
         this.layerPosition = pos;
+        firePropertyChange(PROP_LAYER_POSITION, old, this.layerPosition);
         fireOverlayChanged();
     }
-    
+
     @Override
     public void axisChanged(AxisChangeEvent ace) {
         fireOverlayChanged();
     }
-    
+
     public static Shape toView(Shape entity, ChartPanel chartPanel, XYDataset dataset, int seriesIndex, int itemIndex) {
         AffineTransform toPosition = getModelToViewTransform(chartPanel, dataset, seriesIndex, itemIndex);
         toPosition.concatenate(AffineTransform.getTranslateInstance(-entity.getBounds2D().getCenterX(), -entity.getBounds2D().getCenterY()));
@@ -162,4 +177,35 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
         return scaleAtOrigin(s, s.getBounds2D().getCenterX(), s.getBounds2D().getCenterY(), scalex, scaley);
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(property, listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(property, listener);
+    }
+
+    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        pcs.firePropertyChange(propertyName, oldValue, newValue);
+    }
+
+    public void firePropertyChange(String propertyName, int oldValue, int newValue) {
+        pcs.firePropertyChange(propertyName, oldValue, newValue);
+    }
+
+    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
+        pcs.firePropertyChange(propertyName, oldValue, newValue);
+    }
+
+    public void firePropertyChange(PropertyChangeEvent evt) {
+        pcs.firePropertyChange(evt);
+    }
 }

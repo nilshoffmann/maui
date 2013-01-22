@@ -5,24 +5,33 @@
 package net.sf.maltcms.common.charts.api.overlay;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.panel.CrosshairOverlay;
+import org.jfree.chart.plot.Crosshair;
+import org.jfree.data.xy.XYDataset;
+import org.openide.util.WeakListeners;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class SelectionOverlay extends AbstractChartOverlay {
+public class SelectionOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
 
     private XYSelection mouseHoverSelection;
     private final Set<XYSelection> mouseClickSelection = new LinkedHashSet<XYSelection>();
@@ -31,6 +40,16 @@ public class SelectionOverlay extends AbstractChartOverlay {
     private float hoverScaleX = 1.5f;
     private float hoverScaleY = 1.5f;
     private float fillAlpha = 0.5f;
+    private final Crosshair domainCrosshair;
+    private final Crosshair rangeCrosshair;
+    private final CrosshairOverlay crosshairOverlay;
+    public static final String PROP_SELECTION_FILL_COLOR = "selectionFillColor";
+    public static final String PROP_HOVER_FILL_COLOR = "hoverFillColor";
+    public static final String PROP_HOVER_SCALE_X = "hoverScaleX";
+    public static final String PROP_HOVER_SCALE_Y = "hoverScaleY";
+    public static final String PROP_FILL_ALPHA = "fillAlpha";
+    public static final String PROP_SELECTION = "selection";
+    public static final String PROP_HOVER_SELECTION = "hoverSelection";
 
     public SelectionOverlay(Color selectionFillColor, Color hoverFillColor, float hoverScaleX, float hoverScaleY, float fillAlpha) {
         super("Selection", "Selection", "Overlay for chart item entity selection", true);
@@ -39,12 +58,35 @@ public class SelectionOverlay extends AbstractChartOverlay {
         this.hoverScaleX = hoverScaleX;
         this.hoverScaleY = hoverScaleY;
         this.fillAlpha = fillAlpha;
+        BasicStroke dashed = new BasicStroke(
+                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                1.0f, new float[]{6.0f, 6.0f}, 0.0f);
+        domainCrosshair = new Crosshair(1.5d, new Color(0, 0, 0, 128), dashed);
+        domainCrosshair.setVisible(true);
+        rangeCrosshair = new Crosshair(1.5d, new Color(0, 0, 0, 128), dashed);
+        rangeCrosshair.setVisible(true);
+        crosshairOverlay = new CrosshairOverlay();
+        crosshairOverlay.addDomainCrosshair(domainCrosshair);
+        crosshairOverlay.addRangeCrosshair(rangeCrosshair);
     }
 
     public void clear() {
+        XYSelection oldHover = mouseHoverSelection;
         mouseHoverSelection = null;
+        firePropertyChange(PROP_HOVER_SELECTION, oldHover, mouseHoverSelection);
         mouseClickSelection.clear();
+        firePropertyChange(PROP_SELECTION, null, mouseClickSelection);
         fireOverlayChanged();
+    }
+
+    public XYSelection getMouseHoverSelection() {
+        return mouseHoverSelection;
+    }
+
+    public Set<XYSelection> getMouseClickSelection() {
+        synchronized (this.mouseClickSelection) {
+            return Collections.unmodifiableSet(new LinkedHashSet<XYSelection>(this.mouseClickSelection));
+        }
     }
 
     public Color getSelectionFillColor() {
@@ -52,7 +94,9 @@ public class SelectionOverlay extends AbstractChartOverlay {
     }
 
     public void setSelectionFillColor(Color selectionFillColor) {
+        Color old = this.selectionFillColor;
         this.selectionFillColor = selectionFillColor;
+        firePropertyChange(PROP_SELECTION_FILL_COLOR, old, this.selectionFillColor);
         fireOverlayChanged();
     }
 
@@ -61,7 +105,9 @@ public class SelectionOverlay extends AbstractChartOverlay {
     }
 
     public void setHoverFillColor(Color hoverFillColor) {
+        Color old = this.hoverFillColor;
         this.hoverFillColor = hoverFillColor;
+        firePropertyChange(PROP_HOVER_FILL_COLOR, old, this.hoverFillColor);
         fireOverlayChanged();
     }
 
@@ -70,7 +116,9 @@ public class SelectionOverlay extends AbstractChartOverlay {
     }
 
     public void setHoverScaleX(float hoverScaleX) {
+        float old = this.hoverScaleX;
         this.hoverScaleX = hoverScaleX;
+        firePropertyChange(PROP_HOVER_SCALE_X, old, this.hoverScaleX);
         fireOverlayChanged();
     }
 
@@ -79,7 +127,9 @@ public class SelectionOverlay extends AbstractChartOverlay {
     }
 
     public void setHoverScaleY(float hoverScaleY) {
+        float old = this.hoverScaleY;
         this.hoverScaleY = hoverScaleY;
+        firePropertyChange(PROP_HOVER_SCALE_Y, old, this.hoverScaleY);
         fireOverlayChanged();
     }
 
@@ -88,7 +138,9 @@ public class SelectionOverlay extends AbstractChartOverlay {
     }
 
     public void setFillAlpha(float fillAlpha) {
+        float old = this.fillAlpha;
         this.fillAlpha = fillAlpha;
+        firePropertyChange(PROP_FILL_ALPHA, old, this.fillAlpha);
         fireOverlayChanged();
     }
 
@@ -96,16 +148,42 @@ public class SelectionOverlay extends AbstractChartOverlay {
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
         if (isVisible()) {
             for (XYSelection selection : mouseClickSelection) {
-                Shape selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
-                Shape transformed = toView(selectedEntity, chartPanel, selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
-                drawEntity(transformed, g2, selectionFillColor, chartPanel, false);
+                if (selection.isVisible()) {
+//                Shape selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
+//                if(selectedEntity==null) {
+                    Shape selectedEntity = generate(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+//                }
+                    updateCrosshairs(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    Shape transformed = toView(selectedEntity, chartPanel, selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    drawEntity(transformed, g2, selectionFillColor, chartPanel, false);
+                }
             }
-            if (this.mouseHoverSelection != null) {
-                Shape entity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+            if (this.mouseHoverSelection != null && this.mouseHoverSelection.isVisible()) {
+//                Shape entity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+//                if (entity == null) {
+                Shape entity = generate(mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+//                }
                 Shape transformed = toView(entity, chartPanel, mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
                 drawEntity(transformed, g2, hoverFillColor, chartPanel, true);
             }
         }
+        crosshairOverlay.paintOverlay(g2, chartPanel);
+    }
+
+    private void updateCrosshairs(XYDataset ds, int seriesIndex, int itemIndex) {
+        double x = ds.getXValue(seriesIndex, itemIndex);
+        double y = ds.getYValue(seriesIndex, itemIndex);
+        domainCrosshair.setValue(x);
+        rangeCrosshair.setValue(y);
+    }
+
+    private Shape generate(XYDataset ds, int seriesIndex, int itemIndex) {
+        double width = 10.0d;
+        double height = 10.0d;
+        double x = ds.getXValue(seriesIndex, itemIndex) - (width / 2.0d);
+        double y = ds.getYValue(seriesIndex, itemIndex);
+        Ellipse2D.Double e = new Ellipse2D.Double(x, y, width, height);
+        return e;
     }
 
     private void drawEntity(Shape entity, Graphics2D g2, Color fill, ChartPanel chartPanel, boolean scale) {
@@ -136,20 +214,37 @@ public class SelectionOverlay extends AbstractChartOverlay {
     @Override
     public void selectionStateChanged(SelectionChangeEvent ce) {
         XYSelection selection = ce.getSelection();
+
         if (selection == null) {
+            if (mouseHoverSelection != null) {
+                mouseHoverSelection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
+                firePropertyChange(PROP_HOVER_SELECTION, mouseHoverSelection, null);
+            }
             mouseHoverSelection = null;
         } else {
             if (ce.getSelection().getType() == XYSelection.Type.CLICK) {
-                if(mouseClickSelection.contains(selection)) {
+                if (mouseClickSelection.contains(selection)) {
                     mouseClickSelection.remove(selection);
-                }else{
+                    selection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
+                } else {
                     mouseClickSelection.add(selection);
+                    selection.addPropertyChangeListener(XYSelection.PROP_VISIBLE, WeakListeners.propertyChange(this, selection));
                 }
+                firePropertyChange(PROP_SELECTION, null, mouseClickSelection);
             } else if (ce.getSelection().getType() == XYSelection.Type.HOVER) {
+                if (mouseHoverSelection != null) {
+                    mouseHoverSelection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
+                }
                 mouseHoverSelection = selection;
+                mouseHoverSelection.addPropertyChangeListener(XYSelection.PROP_VISIBLE, WeakListeners.propertyChange(this, mouseHoverSelection));
+                firePropertyChange(PROP_HOVER_SELECTION, null, mouseHoverSelection);
             }
         }
         fireOverlayChanged();
     }
-    
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        fireOverlayChanged();
+    }
 }

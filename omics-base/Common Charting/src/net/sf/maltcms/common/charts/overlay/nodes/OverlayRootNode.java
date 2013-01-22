@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,28 +25,24 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.api.dataset;
+package net.sf.maltcms.common.charts.overlay.nodes;
 
-import java.util.List;
-import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
-import org.jfree.data.xy.XYZDataset;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements XYZDataset, Lookup.Provider {
+public class OverlayRootNode extends AbstractNode {
 
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
-        super(l, provider);
+    public OverlayRootNode(Children children) {
+        super(children);
     }
 
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
-        super(l);
+    public OverlayRootNode(Children children, Lookup lookup) {
+        super(children, lookup);
     }
-
-    public abstract double getMinZ();
-
-    public abstract double getMaxZ();
+    
 }

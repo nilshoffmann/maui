@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,28 +25,22 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.api.dataset;
-
-import java.util.List;
-import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
-import org.jfree.data.xy.XYZDataset;
-import org.openide.util.Lookup;
+package net.sf.maltcms.common.charts.api.selection;
 
 /**
  *
- * @author Nils Hoffmann
+ *  @author Nils Hoffmann
  */
-public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements XYZDataset, Lookup.Provider {
-
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
-        super(l, provider);
-    }
-
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
-        super(l);
-    }
-
-    public abstract double getMinZ();
-
-    public abstract double getMaxZ();
+public interface IDisplayPropertiesProvider {
+    public String getName(ISelection selection);
+    public String getDisplayName(ISelection selection);
+    public String getShortDescription(ISelection selection);
+    
+    public String getSourceName(ISelection selection);
+    public String getSourceDisplayName(ISelection selection);
+    public String getSourceShortDescription(ISelection selection);
+    
+    public String getTargetName(ISelection selection);
+    public String getTargetDisplayName(ISelection selection);
+    public String getTargetShortDescription(ISelection selection);
 }

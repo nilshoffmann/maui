@@ -30,6 +30,8 @@ package net.sf.maltcms.common.charts.api.dataset;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
 
 /**
  *
@@ -38,21 +40,76 @@ import java.util.List;
 public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> {
 
     private final double minX, maxX, minY, maxY;
+    private final int[][] ranks;
 
     public Numeric1DDataset(List<INamedElementProvider<? extends List<Point2D>, ? extends TARGET>> l) {
-        super(l);
+        super(l, new IDisplayPropertiesProvider() {
+
+            @Override
+            public String getName(ISelection selection) {
+                Point2D target = (Point2D)selection.getTarget();
+                return "The point at position: "+target.getX()+" "+target.getY();
+            }
+
+            @Override
+            public String getDisplayName(ISelection selection) {
+                Point2D target = (Point2D)selection.getTarget();
+                return "The point at position: "+target.getX()+" "+target.getY();
+            }
+
+            @Override
+            public String getShortDescription(ISelection selection) {
+                Point2D target = (Point2D)selection.getTarget();
+                return "The point at position: "+target.getX()+" "+target.getY()+" of source "+selection.getSource().toString();
+            }
+
+            @Override
+            public String getSourceName(ISelection selection) {
+                return "Point List";
+            }
+
+            @Override
+            public String getSourceDisplayName(ISelection selection) {
+                return "Point List";
+            }
+
+            @Override
+            public String getSourceShortDescription(ISelection selection) {
+                return "A Point List";
+            }
+
+            @Override
+            public String getTargetName(ISelection selection) {
+                return getName(selection);
+            }
+
+            @Override
+            public String getTargetDisplayName(ISelection selection) {
+                return getDisplayName(selection);
+            }
+
+            @Override
+            public String getTargetShortDescription(ISelection selection) {
+                return getShortDescription(selection);
+            }
+        });
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
         double maxX = Double.NEGATIVE_INFINITY;
         double maxY = Double.NEGATIVE_INFINITY;
+        ranks = new int[l.size()][];
+        int nepCnt = 0;
         for (INamedElementProvider<? extends List<Point2D>, ? extends TARGET> nep : l) {
+            int[] nranks = new int[nep.size()];
             for (int i = 0; i < nep.size(); i++) {
                 Point2D point = nep.getSource().get(i);
                 minX = Math.min(minX, point.getX());
                 minY = Math.min(minY, point.getY());
                 maxX = Math.max(maxX, point.getX());
                 maxY = Math.max(maxY, point.getY());
+                nranks[i] = i;
             }
+            ranks[nepCnt++] = nranks;
         }
         this.minX = minX;
         this.minY = minY;
@@ -88,6 +145,11 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
     @Override
     public Number getY(int i, int i1) {
         return getSource(i).get(i1).getY();
+    }
+
+    @Override
+    public int[][] getRanks() {
+        return ranks;
     }
 
 }

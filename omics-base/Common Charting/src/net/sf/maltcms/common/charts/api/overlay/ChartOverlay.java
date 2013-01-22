@@ -23,4 +23,9 @@ public interface ChartOverlay extends Overlay {
     
     public final int LAYER_LOWEST = Integer.MIN_VALUE;
     public final int LAYER_HIGHEST = Integer.MAX_VALUE;
+    public final String PROP_VISIBLE = "visible";
+    public final String PROP_LAYER_POSITION = "layerPosition";
+    public final String PROP_NAME = "name";
+    public final String PROP_DISPLAY_NAME = "displayName";
+    public final String PROP_SHORT_DESCRIPTION = "shortDescription";
 }
