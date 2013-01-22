@@ -59,7 +59,11 @@ import net.sf.maltcms.chromaui.charts.dataset.MSSeries;
 import net.sf.maltcms.chromaui.charts.format.ScaledNumberFormatter;
 import net.sf.maltcms.chromaui.charts.labels.TopKItemsLabelGenerator;
 import net.sf.maltcms.chromaui.charts.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.lookupResultListener.api.AbstractLookupResultListener;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
+import net.sf.maltcms.chromaui.lookupResultListener.api.LookupResultListeners;
 import net.sf.maltcms.db.search.api.IQuery;
 import net.sf.maltcms.db.search.api.IQueryFactory;
 import net.sf.maltcms.db.search.api.IQueryResult;
@@ -108,8 +112,8 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private int activeMS = -1;
     private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
     private ChartPanel cp;
-    private Result<IScan> lookupResult;
-    private Result<IScan2D> scan2DSelection;
+    private Result<ISelection> lookupResult;
+//    private Result<IScan2D> scan2DSelection;
     private Result<IMetabolite> metaboliteSelection;
     private Result<IPeakAnnotationDescriptor> peakAnnotationDescriptorResult;
     private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<MSSeries, IScan>();
@@ -668,45 +672,74 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     @Override
     public void resultChanged(LookupEvent ev) {
         System.out.println("MassSpectrumPanel received LookupEvent");
-        Collection<? extends IScan> coll = lookupResult.allInstances();
+        Collection<? extends ISelection> coll = lookupResult.allInstances();
         if (coll.size() > 0) {
-            System.out.println("Received " + coll.size() + " IScans from lookup");
-            System.out.println("Found " + contentProviderLookup.lookupAll(IChromatogram.class).size() + " chromatograms in lookup!");
-            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
-            if (ichromDescr != null) {
-                for (IScan scan : coll) {
-                    String name = ichromDescr.getParent().getName();
-                    setData(scan, name);
+            System.out.println("Received " + coll.size() + " ISelection objects from lookup");
+//            System.out.println("Found " + contentProviderLookup.lookupAll(IChromatogram.class).size() + " chromatograms in lookup!");
+//            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
+            boolean add = addMs.isSelected();
+            if (coll.size() > 1) {
+                add = true;
+            }
+//            if (ichromDescr != null) {
+            for (ISelection scan : coll) {
+                IScan target = null;
+                if (scan.getTarget() instanceof IScan) {
+                    System.out.println("Target is IScan");
+                    target = (IScan) scan.getTarget();
+                }
+                IChromatogram source = null;
+                if (scan.getSource() instanceof IChromatogram) {
+                    System.out.println("Source if IChromatogram");
+                    source = (IChromatogram) scan.getSource();
+                }
+                if (source != null && target != null) {
+                    System.out.println("Source and target are not null!");
+                    String name = source.getParent().getName();
+                    setData(target, name, add);
                 }
             }
+//            }
         }
         if (!metaboliteSelection.allInstances().isEmpty()) {
             System.out.println("Received MetaboliteProxy from lookup");
+            boolean add = addMs.isSelected();
+            if (metaboliteSelection.allInstances().size() > 1) {
+                add = true;
+            }
             for (IMetabolite metabolite : metaboliteSelection.allInstances()) {
                 final IScan scan = new Scan1D(metabolite.getMassSpectrum().getFirst(), metabolite.getMassSpectrum().getSecond(), metabolite.getScanIndex(), metabolite.getRetentionTime());
-                setData(scan, metabolite.getID());
+                setData(scan, metabolite.getID(), add);
             }
         }
         if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
             System.out.println("Received peak annotations from lookup");
+            boolean add = addMs.isSelected();
+            if (peakAnnotationDescriptorResult.allInstances().size() > 1) {
+                add = true;
+            }
             for (IPeakAnnotationDescriptor ipad : peakAnnotationDescriptorResult.allInstances()) {
                 final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
-                setData(scan, ipad.getDisplayName());
+                setData(scan, ipad.getDisplayName(), add);
             }
         }
-        if (!scan2DSelection.allInstances().isEmpty()) {
-            System.out.println("Received scan 2d from lookup");
-            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
-            if (ichromDescr != null) {
-                for (IScan2D scan : scan2DSelection.allInstances()) {
-                    String name = ichromDescr.getParent().getName();
-                    setData(scan, name);
-                }
-            }
-        }
+//        if (!scan2DSelection.allInstances().isEmpty()) {
+//            System.out.println("Received scan 2d from lookup");
+//            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
+//            if (ichromDescr != null) {
+//                boolean add = addMs.isSelected();
+//                if (scan2DSelection.allInstances().size() > 1) {
+//                    add = true;
+//                }
+//                for (IScan2D scan : scan2DSelection.allInstances()) {
+//                    String name = ichromDescr.getParent().getName();
+//                    setData(scan, name, add);
+//                }
+//            }
+//        }
     }
 
-    protected void setData(final IScan scan, final String name) {
+    protected void setData(final IScan scan, final String name, final boolean add) {
         Runnable s = new Runnable() {
             @Override
             public void run() {
@@ -715,7 +748,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                     MSSeries s = ChromatogramVisualizerTools.getMSSeries(
                             (IScan2D) scan, name, addSeriesToTopPlot);
                     s.setNormalize(absoluteRelativeToggle.isSelected());
-                    if (addMs.isSelected()) {
+                    if (add) {
                         try {
                             sc.getSeries(s.getKey());
                         } catch (Exception e) {
@@ -742,7 +775,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                             (IScan1D) scan, name, addSeriesToTopPlot);
                     //s.setKey(s.getKey());
                     s.setNormalize(absoluteRelativeToggle.isSelected());
-                    if (addMs.isSelected()) {
+                    if (add) {
                         try {
                             sc.getSeries(s.getKey());
                         } catch (Exception e) {
@@ -772,14 +805,12 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }
 
     public void componentOpened() {
-        lookupResult = contentProviderLookup.lookupResult(IScan.class);
+        lookupResult = contentProviderLookup.lookupResult(ISelection.class);
         lookupResult.addLookupListener(this);
         metaboliteSelection = contentProviderLookup.lookupResult(IMetabolite.class);
         metaboliteSelection.addLookupListener(this);
         peakAnnotationDescriptorResult = contentProviderLookup.lookupResult(IPeakAnnotationDescriptor.class);
         peakAnnotationDescriptorResult.addLookupListener(this);
-        scan2DSelection = contentProviderLookup.lookupResult(IScan2D.class);
-        scan2DSelection.addLookupListener(this);
     }
 
     public void componentClosed() {
@@ -791,9 +822,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         }
         if (peakAnnotationDescriptorResult != null) {
             peakAnnotationDescriptorResult.removeLookupListener(this);
-        }
-        if (scan2DSelection != null) {
-            scan2DSelection.removeLookupListener(this);
         }
     }
 }

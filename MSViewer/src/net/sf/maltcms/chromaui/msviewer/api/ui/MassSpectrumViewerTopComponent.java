@@ -58,7 +58,7 @@ public final class MassSpectrumViewerTopComponent extends TopComponent {
         setName(NbBundle.getMessage(MassSpectrumViewerTopComponent.class, "CTL_MassSpectrumViewerTopComponent"));
         setToolTipText(NbBundle.getMessage(MassSpectrumViewerTopComponent.class, "HINT_MassSpectrumViewerTopComponent"));
         add(msp, BorderLayout.CENTER);
-        setDisplayName("Mass Spectrum Viewer");// " + f.getDisplayName());
+//        setDisplayName("Mass Spectrum Viewer");// " + f.getDisplayName());
     }
 
     /** This method is called from within the constructor to

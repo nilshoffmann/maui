@@ -36,6 +36,7 @@ import cross.io.IDataSourceFactory;
 import cross.datastructures.tools.ArrayTools;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,7 +63,7 @@ public class FragmentTools {
         }
         return Collections.emptyList();
     }
-    
+
     public static List<IVariableFragment> getAggregatedVariables(IFileFragment fragment) {
         IDataSourceFactory dsf = Factory.getInstance().getDataSourceFactory();
         HashMap<String, IVariableFragment> names = new HashMap<String, IVariableFragment>();
@@ -74,18 +75,21 @@ public class FragmentTools {
             IFileFragment parent = parentsToExplore.remove(0);
             try {
                 IVariableFragment sf = parent.getChild("source_files", true);
-                Collection<String> c = ArrayTools.getStringsFromArray(sf.getArray());
-                for (String s : c) {
-                    Logger.getLogger(FragmentTools.class.getName()).log(Level.INFO,"Processing file "+s);
-                    File file = new File(s);
-                    if (file.isAbsolute()) {
-                        parentsToExplore.add(new FileFragment(file));
-                    } else {
-                        try {
-                            file = new File(cross.datastructures.tools.FileTools.resolveRelativeFile(new File(fragment.getAbsolutePath()).getParentFile(), new File(s)));
-                            parentsToExplore.add(new FileFragment(file.getCanonicalFile()));
-                        } catch (IOException ex) {
-                            Logger.getLogger(FragmentTools.class.getName()).log(Level.SEVERE, null, ex);
+                if (sf != null && sf.getArray() != null) {
+                    Collection<String> c = ArrayTools.getStringsFromArray(sf.getArray());
+                    for (String s : c) {
+                        Logger.getLogger(FragmentTools.class.getName()).log(Level.INFO, "Processing file " + s);
+                        URI uri = URI.create(s);
+                        File file = new File(uri);
+                        if (file.isAbsolute()) {
+                            parentsToExplore.add(new FileFragment(file));
+                        } else {
+                            try {
+                                file = new File(cross.datastructures.tools.FileTools.resolveRelativeFile(new File(fragment.getAbsolutePath()).getParentFile(), new File(s)));
+                                parentsToExplore.add(new FileFragment(file.getAbsoluteFile()));
+                            } catch (IOException ex) {
+                                Logger.getLogger(FragmentTools.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 }

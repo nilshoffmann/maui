@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IScan;
 import maltcms.io.csv.ColorRampReader;
 import maltcms.tools.ImageTools;
 import maltcms.tools.MaltcmsTools;
@@ -59,6 +61,7 @@ import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.ui.VariableSelectionPanel;
+import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.annotations.XYLineAnnotation;
@@ -66,6 +69,7 @@ import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.SymbolAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.labels.XYZToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
@@ -263,6 +267,35 @@ public class Chromatogram1DChartProvider {
 //        xyp.getRenderer().setDefaultEntityRadius(20);
 
         return xyp;
+    }
+
+    public XYPlot provide1DPlot(ADataset1D<IChromatogram1D,IScan> dataset) {
+        String[] labels = new String[dataset.getSeriesCount()];
+        IFileFragment fragment = null;
+        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = dataset.getSeriesKey(i) + " TIC";
+        }
+        ValueAxis domainAxis = new NumberAxis("time [s]");
+        ValueAxis rangeAxis = new NumberAxis("value");
+        XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
+        plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                Comparable comp = xyd.getSeriesKey(i);
+                double x = xyd.getXValue(i, i1);
+                double y = xyd.getYValue(i, i1);
+                StringBuilder sb = new StringBuilder();
+                sb.append(comp);
+                sb.append(": ");
+                sb.append("x=");
+                sb.append(x);
+                sb.append(" y=");
+                sb.append(y);
+                return sb.toString();
+            }
+        });
+        return plot;
     }
 
     public XYPlot provide1DEICSUMPlot(List<IFileFragment> fragments,

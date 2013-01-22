@@ -15,10 +15,11 @@
         </folder>
         <file name="Versioning_hidden"/>
         <folder name="Window">
+            <file name="LookupMonitorAction.shadow_hidden"/>
+            <file name="net-sf-maltcms-chromaui-charts-ui-XYChartComponentOpenAction.shadow_hidden"/>
             <file name="AnnotationManagerAction.shadow_hidden"/>
             <file name="CSV2ListAction.shadow_hidden"/>
             <file name="ChromatogramViewAction.shadow_hidden"/>
-            <file name="Debug_hidden"/>
             <file name="GCViewerAction.shadow_hidden"/>
             <file name="Heatmap3DViewerAction.shadow_hidden"/>
             <file name="Heatmap3DViewerTopComponentAction.shadow_hidden"/>
@@ -29,11 +30,36 @@
             <file name="PipelineEditorAction.shadow_hidden"/>
             <file name="PipelineRunnerAction.shadow_hidden"/>
             <file name="Versioning_hidden"/>
+            <file name="net-sf-maltcms-chromaui-metabolitedb-MetaboliteDatabaseViewerTopComponent.shadow_hidden"/>
+            <file name="net-sf-maltcms-chromaui-normalization-spi-ui-PeakGroupBoxPlotTopComponent.shadow_hidden"/>
             <file name="net-sf-maltcms-chromaui-statistics-pcaViewer-PCAViewerTopComponent.shadow_hidden"/>
+            <file name="net-sf-maltcms-maui-heatmapViewer-HeatmapViewerTopComponent.shadow_hidden"/>
         </folder>
     </folder>
     <folder name="OptionsDialog">
         <file name="ExecutionSupport.instance_hidden"/>
+    </folder>
+    <folder name="Shortcuts">
+        <!-- Welcome center -->
+        <file name="DS-1.shadow">
+           <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-branding-welcome-MauiWelcomeTopComponent.instance"/> 
+        </file>
+        <!-- ms view -->
+        <file name="DS-2.shadow">
+             <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-msviewer-api-ui-MassSpectrumViewerTopComponent.instance"/>
+        </file>
+        <!-- peak groups view -->
+        <file name="DS-3.shadow">
+             <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-maui-peakTableViewer-PeakTableViewerTopComponent.instance"/>
+        </file>
+        <!-- statistics view -->
+        <file name="DS-4.shadow">
+             <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-statistics-view-StatisticsViewerTopComponent.instance"/>
+        </file>
+        <!-- lookup monitor window -->
+        <file name="DS-L.shadow">
+            <attr name="originalFile" stringvalue="Actions/Window/de-unibielefeld-gi-kotte-laborprogramm-debug-LookupMonitorAction.instance"/>
+        </file>
     </folder>
     <folder name="Services">
         <folder name="AutoupdateType">

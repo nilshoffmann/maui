@@ -33,7 +33,13 @@ import java.util.List;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
+import net.sf.maltcms.common.charts.api.dataset.DatasetUtils;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
+import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
+import org.jfree.data.DomainOrder;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.ProxyLookup;
 import ucar.ma2.Array;
 import ucar.ma2.MAMath;
 import ucar.ma2.MAMath.MinMax;
@@ -48,19 +54,76 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
     private String defaultValueVariable = "total_intensity";
     private String defaultRangeVariable = "second_column_elution_time";
     private final Array[] domainVariableValues;
+    private final int[][] domainVariableValueRanks;
     private final Array[] rangeVariableValues;
     private final Array[] valueVariableValues;
     private final MinMax domain, value, range;
+    private final Lookup lookup;
 
-    public Chromatogram2DDataset(List<INamedElementProvider<? extends IChromatogram2D, ? extends IScan2D>> l) {
-        super(l);
+    public Chromatogram2DDataset(List<INamedElementProvider<? extends IChromatogram2D, ? extends IScan2D>> l, Lookup lookup) {
+        super(l, new IDisplayPropertiesProvider() {
+            @Override
+            public String getName(ISelection selection) {
+                IScan2D scan = (IScan2D) selection.getTarget();
+                IChromatogram2D chrom = (IChromatogram2D) selection.getSource();
+                return "Scan " + scan.getScanIndex() + " @" + scan.getFirstColumnScanAcquisitionTime() + "| " + scan.getSecondColumnScanAcquisitionTime() + " " + chrom.getScanAcquisitionTimeUnit();
+            }
+
+            @Override
+            public String getDisplayName(ISelection selection) {
+                IScan2D scan = (IScan2D) selection.getTarget();
+                IChromatogram2D chrom = (IChromatogram2D) selection.getSource();
+                return "Scan " + scan.getScanIndex() + " @" + scan.getFirstColumnScanAcquisitionTime() + "| " + scan.getSecondColumnScanAcquisitionTime() + " " + chrom.getScanAcquisitionTimeUnit();
+            }
+
+            @Override
+            public String getShortDescription(ISelection selection) {
+                IScan2D scan = (IScan2D) selection.getTarget();
+                IChromatogram2D chrom = (IChromatogram2D) selection.getSource();
+                return "Chromatogram: " + chrom.getParent().getName() + " Scan " + scan.getScanIndex() + " @" + scan.getFirstColumnScanAcquisitionTime() + "| " + scan.getSecondColumnScanAcquisitionTime() + " " + chrom.getScanAcquisitionTimeUnit();
+            }
+
+            @Override
+            public String getSourceName(ISelection selection) {
+                IChromatogram2D chrom = (IChromatogram2D) selection.getSource();
+                return chrom.getParent().getName();
+            }
+
+            @Override
+            public String getSourceDisplayName(ISelection selection) {
+                IChromatogram2D chrom = (IChromatogram2D) selection.getSource();
+                return chrom.getParent().getName();
+            }
+
+            @Override
+            public String getSourceShortDescription(ISelection selection) {
+                IChromatogram2D chrom = (IChromatogram2D) selection.getSource();
+                return chrom.getParent().getName();
+            }
+
+            @Override
+            public String getTargetName(ISelection selection) {
+                return getName(selection);
+            }
+
+            @Override
+            public String getTargetDisplayName(ISelection selection) {
+                return getDisplayName(selection);
+            }
+
+            @Override
+            public String getTargetShortDescription(ISelection selection) {
+                return getTargetShortDescription(selection);
+            }
+        });
         MinMax domainMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MinMax valueMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MinMax rangeMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         domainVariableValues = new Array[l.size()];
+        domainVariableValueRanks = new int[l.size()][];
         rangeVariableValues = new Array[l.size()];
         valueVariableValues = new Array[l.size()];
-        System.out.println("Building chromatogram 2d dataset with "+l.size()+" series");
+        System.out.println("Building chromatogram 2d dataset with " + l.size() + " series");
         for (int i = 0; i < l.size(); i++) {
             IFileFragment fragment = getSource(i).getParent();
             IVariableFragment defaultValueVar = fragment.getChild(defaultValueVariable);
@@ -73,18 +136,31 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
             MinMax _domain = MAMath.getMinMax(defaultDomainArr);
             domainMM = new MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
             domainVariableValues[i] = defaultDomainArr;
+            domainVariableValueRanks[i] = DatasetUtils.ranks((double[])defaultDomainArr.get1DJavaArray(double.class), false);
             IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
             Array defaultRangeArr = defaultRangeVar.getArray();
             MinMax _range = MAMath.getMinMax(defaultRangeArr);
             rangeMM = new MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
             rangeVariableValues[i] = defaultRangeArr;
+            
         }
         System.out.println("Done!");
         this.domain = domainMM;
         this.range = rangeMM;
         this.value = valueMM;
+        this.lookup = new ProxyLookup(super.getLookup(),lookup);
+    }
+    
+    @Override
+    public Lookup getLookup() {
+        return this.lookup;
     }
 
+    @Override
+    public DomainOrder getDomainOrder() {
+        return DomainOrder.ASCENDING;
+    }
+    
     public String getDefaultDomainVariable() {
         return defaultDomainVariable;
     }
@@ -102,18 +178,18 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
     }
 
     @Override
-    public Number getX(int i, int i1) {
-        return domainVariableValues[i].getDouble(i1);
+    public Number getX(int series, int item) {
+        return domainVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
     @Override
-    public Number getY(int i, int i1) {
-        return rangeVariableValues[i].getDouble(i1);
+    public Number getY(int series, int item) {
+        return rangeVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
     @Override
-    public Number getZ(int i, int i1) {
-        return valueVariableValues[i].getDouble(i1);
+    public Number getZ(int series, int item) {
+        return valueVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
     @Override
@@ -147,7 +223,23 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
     }
 
     @Override
-    public double getZValue(int i, int i1) {
-        return valueVariableValues[i].getDouble(i1);
+    public double getXValue(int series, int item) {
+        return domainVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
+
+    @Override
+    public double getYValue(int series, int item) {
+        return rangeVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
+    }
+
+    @Override
+    public double getZValue(int series, int item) {
+        return valueVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
+    }
+
+    @Override
+    public int[][] getRanks() {
+        return domainVariableValueRanks;
+    }
+    
 }

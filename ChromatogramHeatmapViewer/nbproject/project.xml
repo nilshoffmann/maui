@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.apisupport.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
-            <code-name-base>maltcms.ui</code-name-base>
+            <code-name-base>net.sf.maltcms.chromaui.chromatogram1Dviewer</code-name-base>
             <suite-component/>
             <module-dependencies>
                 <dependency>
@@ -98,6 +98,15 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.spi.navigator</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.20.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.openide.awt</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -127,6 +136,14 @@
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>7.10.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.nodes</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.25.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -177,7 +194,7 @@
                 </test-type>
             </test-dependencies>
             <public-packages>
-                <package>maltcms.ui</package>
+                <package>net.sf.maltcms.chromaui.chromatogram1Dviewer.api</package>
             </public-packages>
         </data>
     </configuration>

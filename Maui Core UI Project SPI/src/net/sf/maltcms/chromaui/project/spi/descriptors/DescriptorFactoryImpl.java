@@ -253,4 +253,9 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
     public ITreatmentGroupDescriptor newTreatmentGroupDescriptor() {
         return new TreatmentGroupDescriptor();
     }
+    
+    @Override
+    public IScanSelectionDescriptor newScanSelectionDescriptor() {
+        return new ScanSelectionDescriptor();
+    }
 }

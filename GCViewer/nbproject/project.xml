@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.apisupport.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
-            <code-name-base>maltcms.ui.viewer</code-name-base>
+            <code-name-base>net.sf.maltcms.chromaui.chromatogram2Dviewer</code-name-base>
             <suite-component/>
             <module-dependencies>
                 <dependency>
@@ -94,7 +94,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.22.1.1</specification-version>
+                        <specification-version>1.33.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -185,13 +185,10 @@
                 </test-type>
             </test-dependencies>
             <public-packages>
-                <package>maltcms.ui.viewer</package>
-                <package>maltcms.ui.viewer.datastructures</package>
-                <package>maltcms.ui.viewer.datastructures.tree</package>
-                <package>maltcms.ui.viewer.events</package>
-                <package>maltcms.ui.viewer.extensions</package>
-                <package>maltcms.ui.viewer.gui</package>
-                <package>maltcms.ui.viewer.tools</package>
+                <package>net.sf.maltcms.chromaui.chromatogram2Dviewer.api</package>
+                <package>net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures</package>
+                <package>net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures.annotations</package>
+                <package>net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures.tree</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/swingx-core-1.6.2.jar</runtime-relative-path>
