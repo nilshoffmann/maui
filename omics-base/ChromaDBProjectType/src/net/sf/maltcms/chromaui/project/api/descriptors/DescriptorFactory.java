@@ -137,5 +137,9 @@ public class DescriptorFactory {
     public static Image getImage(IBasicDescriptor descriptor) {
         return factoryImpl.getImage(descriptor);
     }
+    
+    public static IScanSelectionDescriptor newScanSelectionDescriptor() {
+        return factoryImpl.newScanSelectionDescriptor();
+    }
 
 }

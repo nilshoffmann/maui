@@ -2,4 +2,14 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/IScanSelectionDescriptor.java</file>
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/IChromatogramDescriptor.java</file>
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/IResourceDescriptor.java</file>
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/IBasicDescriptor.java</file>
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/IPeakAnnotationDescriptor.java</file>
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/DescriptorFactory.java</file>
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/IDescriptorFactory.java</file>
+        <file>file:/opt/projects/omics/omics-base/ChromaDBProjectType/src/net/sf/maltcms/chromaui/project/api/descriptors/IToolDescriptor.java</file>
+    </open-files>
 </project-private>

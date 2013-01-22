@@ -89,7 +89,6 @@ public final class LookupMonitorTopComponent extends TopComponent implements
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         jLabel1 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
 
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -99,13 +98,6 @@ public final class LookupMonitorTopComponent extends TopComponent implements
         jScrollPane1.setViewportView(jList1);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(LookupMonitorTopComponent.class, "LookupMonitorTopComponent.jLabel1.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(LookupMonitorTopComponent.class, "LookupMonitorTopComponent.jCheckBox1.text")); // NOI18N
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -117,34 +109,21 @@ public final class LookupMonitorTopComponent extends TopComponent implements
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
-                        .addComponent(jCheckBox1)))
+                        .addGap(0, 245, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jCheckBox1))
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        keepContent = jCheckBox1.isSelected();
-        if (keepContent) {
-            update = true;
-        } else {
-            jList1.setModel(new DefaultListModel());
-            update = false;
-        }
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -233,22 +212,22 @@ public final class LookupMonitorTopComponent extends TopComponent implements
     @Override
     public void resultChanged(LookupEvent ev) {
         if (r != null) {
-            System.out.println("Keeping content: "+keepContent+" updating: "+update);
-            if (keepContent && update) {
-                if (!activeSelection.isEmpty()) {
-                    for (Object object : activeSelection) {
-                        content.remove(object);
-                    }
+//            System.out.println("Keeping content: "+keepContent+" updating: "+update);
+//            if (keepContent && update) {
+            if (!activeSelection.isEmpty()) {
+                for (Object object : activeSelection) {
+                    content.remove(object);
                 }
-                dlm = new DefaultListModel();
-                for (Object obj : r.allInstances()) {
-                    dlm.addElement(obj);
-                    content.add(obj);
-                    activeSelection.add(obj);
-                }
-                jList1.setModel(dlm);
-                update = false;
             }
+            dlm = new DefaultListModel();
+            for (Object obj : r.allInstances()) {
+                dlm.addElement(obj);
+                content.add(obj);
+                activeSelection.add(obj);
+            }
+            jList1.setModel(dlm);
+//            update = false;
+//            }
         }
     }
 }

@@ -97,4 +97,6 @@ public interface IDescriptorFactory {
             List<IPeakAnnotationDescriptor> peaks, IToolDescriptor trd);
 
     public Image getImage(IBasicDescriptor descriptor);
+    
+    public IScanSelectionDescriptor newScanSelectionDescriptor();
 }
