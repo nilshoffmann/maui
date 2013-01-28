@@ -18,7 +18,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
 
     private MouseEvent mouseEvent = null;
     private XYSelection selection = null;
-    private final ADataset1D<?, TARGET> dataset;
+    private ADataset1D<?, TARGET> dataset;
     private final EventListenerList listenerList = new EventListenerList();
     private final IDisplayPropertiesProvider provider;
 
@@ -41,6 +41,10 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
         }
     }
 
+    public void setDataset(ADataset1D<?, TARGET> dataset) {
+        this.dataset = dataset;
+    }
+
     @Override
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
@@ -50,7 +54,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
             mouseEvent = cme.getTrigger();
-            cme.getTrigger().consume();
+//            cme.getTrigger().consume();
             fireSelectionChange();
         }
     }
@@ -64,7 +68,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
             mouseEvent = cme.getTrigger();
-            cme.getTrigger().consume();
+//            cme.getTrigger().consume();
             fireSelectionChange();
         } else {
             clear();

@@ -19,7 +19,8 @@ public class XYSelection implements ISelection {
 
         CLEAR, KEYBOARD, HOVER, CLICK
     };
-    private final XYDataset dataset;
+    public static final String PROP_DATASET = "dataset";
+    private XYDataset dataset;
     private final int seriesIndex;
     private final int itemIndex;
     private final Type type;
@@ -61,6 +62,12 @@ public class XYSelection implements ISelection {
 
     public XYDataset getDataset() {
         return dataset;
+    }
+
+    public void setDataset(XYDataset dataset) {
+        XYDataset old = dataset;
+        this.dataset = dataset;
+        pcs.firePropertyChange(PROP_DATASET, old, this.dataset);
     }
 
     public int getSeriesIndex() {
@@ -124,7 +131,7 @@ public class XYSelection implements ISelection {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (this.dataset != null ? this.dataset.hashCode() : 0);
+        hash = 79 * hash + (this.dataset != null ? this.dataset.getSeriesKey(this.seriesIndex).hashCode() : 0);
         hash = 79 * hash + this.seriesIndex;
         hash = 79 * hash + this.itemIndex;
         hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
@@ -142,7 +149,7 @@ public class XYSelection implements ISelection {
             return false;
         }
         final XYSelection other = (XYSelection) obj;
-        if (this.dataset != other.dataset && (this.dataset == null || !this.dataset.equals(other.dataset))) {
+        if (this.dataset.getSeriesKey(this.seriesIndex) != other.getDataset().getSeriesKey(this.seriesIndex) && (this.dataset.getSeriesKey(this.seriesIndex) == null || !this.dataset.getSeriesKey(this.seriesIndex).equals(other.getDataset().getSeriesKey(this.seriesIndex)))) {
             return false;
         }
         if (this.seriesIndex != other.seriesIndex) {

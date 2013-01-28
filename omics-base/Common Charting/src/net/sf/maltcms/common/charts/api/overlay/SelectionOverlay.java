@@ -37,8 +37,8 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
     private final Set<XYSelection> mouseClickSelection = new LinkedHashSet<XYSelection>();
     private Color selectionFillColor = new Color(255, 64, 64);
     private Color hoverFillColor = new Color(64, 64, 255);
-    private float hoverScaleX = 1.5f;
-    private float hoverScaleY = 1.5f;
+    private float hoverScaleX = 2.5f;
+    private float hoverScaleY = 2.5f;
     private float fillAlpha = 0.5f;
     private final Crosshair domainCrosshair;
     private final Crosshair rangeCrosshair;
@@ -68,6 +68,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         crosshairOverlay = new CrosshairOverlay();
         crosshairOverlay.addDomainCrosshair(domainCrosshair);
         crosshairOverlay.addRangeCrosshair(rangeCrosshair);
+        setLayerPosition(0);
     }
 
     public void clear() {
@@ -149,20 +150,20 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         if (isVisible()) {
             for (XYSelection selection : mouseClickSelection) {
                 if (selection.isVisible()) {
-//                Shape selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
-//                if(selectedEntity==null) {
-                    Shape selectedEntity = generate(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
-//                }
+                    Shape selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
+                    if (selectedEntity == null) {
+                        selectedEntity = generate(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    }
                     updateCrosshairs(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
                     Shape transformed = toView(selectedEntity, chartPanel, selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
                     drawEntity(transformed, g2, selectionFillColor, chartPanel, false);
                 }
             }
             if (this.mouseHoverSelection != null && this.mouseHoverSelection.isVisible()) {
-//                Shape entity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
-//                if (entity == null) {
-                Shape entity = generate(mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
-//                }
+                Shape entity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+                if (entity == null) {
+                    entity = generate(mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+                }
                 Shape transformed = toView(entity, chartPanel, mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
                 drawEntity(transformed, g2, hoverFillColor, chartPanel, true);
             }

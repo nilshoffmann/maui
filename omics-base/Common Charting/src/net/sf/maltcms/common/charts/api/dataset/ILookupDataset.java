@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -27,25 +27,26 @@
  */
 package net.sf.maltcms.common.charts.api.dataset;
 
-import java.util.List;
-import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
-import org.jfree.data.xy.XYZDataset;
+import org.openide.util.Lookup;
+import org.openide.util.Lookup.Provider;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements XYZDataset {
+public interface ILookupDataset<SOURCE, TARGET> extends Lookup.Provider {
 
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
-        super(l, provider);
-    }
+    String getDescription();
 
-    public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
-        super(l);
-    }
+    String getDisplayName();
 
-    public abstract double getMinZ();
+    @Override
+    Lookup getLookup();
 
-    public abstract double getMaxZ();
+    int[][] getRanks();
+
+    SOURCE getSource(int seriesIndex);
+
+    TARGET getTarget(int seriesIndex, int itemIndex);
+    
 }

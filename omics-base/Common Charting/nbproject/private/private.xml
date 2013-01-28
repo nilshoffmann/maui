@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/layer.xml</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/Charts.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/XYChartBuilder.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/InstanceContentSelectionHandler.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/SelectionChangeEvent.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/ChartCustomizer.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/overlay/ChartOverlay.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/overlay/SelectionOverlay.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/overlay/AbstractChartOverlay.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/XYSelection.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/ISelection.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/XYMouseSelectionHandler.java</file>
-        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/overlay/nodes/OverlayNode.java</file>
-    </open-files>
 </project-private>

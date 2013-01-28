@@ -35,7 +35,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
     private final SelectionOverlay overlay;
     private final Mode mode;
     private final int capacity;
-    private final ADataset1D dataset;
+    private ADataset1D dataset;
     // private TARGET lastItem = null;
     private ExecutorService es = Executors.newSingleThreadExecutor();
     private AtomicBoolean updatePending = new AtomicBoolean(false);
@@ -52,6 +52,11 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         this.mode = mode;
         this.dataset = dataset;
         this.capacity = capacity;
+    }
+
+    public void setDataset(ADataset1D dataset) {
+        this.dataset = dataset;
+        updateNode();
     }
 
     private void updateNode() {

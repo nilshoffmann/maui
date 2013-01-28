@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
-import net.sf.maltcms.common.charts.api.selection.ISelection;
 
 /**
  *

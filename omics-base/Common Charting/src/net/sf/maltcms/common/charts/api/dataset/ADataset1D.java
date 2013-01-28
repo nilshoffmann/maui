@@ -33,6 +33,7 @@ import net.sf.maltcms.common.charts.api.selection.DefaultDisplayPropertiesProvid
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.AbstractXYDataset;
+import org.jfree.data.xy.XYRangeInfo;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -41,7 +42,7 @@ import org.openide.util.lookup.InstanceContent;
  *
  * @author Nils Hoffmann
  */
-public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset implements Lookup.Provider {
+public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset implements ILookupDataset<SOURCE, TARGET> {
 
     private final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
     private final InstanceContent content = new InstanceContent();
@@ -71,11 +72,13 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
         return lookup;
     }
 
+    @Override
     public TARGET getTarget(int seriesIndex, int itemIndex) {
 //        System.out.println("Retrieving target from series " + seriesIndex + ", item " + itemIndex);
         return targetProvider.get(seriesIndex).get(getRanks()[seriesIndex][itemIndex]);
     }
 
+    @Override
     public SOURCE getSource(int seriesIndex) {
 //        System.out.println("Retrieving source for index: " + seriesIndex);
         return targetProvider.get(seriesIndex).getSource();
@@ -96,6 +99,7 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
         return targetProvider.get(i).size();
     }
 
+    @Override
     public String getDescription() {
         StringBuilder sb = new StringBuilder();
         for (INamedElementProvider<? extends SOURCE, ? extends TARGET> np : targetProvider) {
@@ -105,6 +109,7 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
         return sb.toString();
     }
 
+    @Override
     public String getDisplayName() {
         return targetProvider.size() + " datasets";
     }
@@ -116,6 +121,4 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
     public abstract double getMinY();
     
     public abstract double getMaxY();
-    
-    public abstract int[][] getRanks();
 }
