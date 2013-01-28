@@ -34,6 +34,7 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.exception.ResourceNotAvailableException;
 import cross.io.IDataSourceFactory;
 import cross.datastructures.tools.ArrayTools;
+import cross.datastructures.tools.FileTools;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -79,7 +80,7 @@ public class FragmentTools {
                     Collection<String> c = ArrayTools.getStringsFromArray(sf.getArray());
                     for (String s : c) {
                         Logger.getLogger(FragmentTools.class.getName()).log(Level.INFO, "Processing file " + s);
-                        URI uri = URI.create(s);
+                        URI uri = FileTools.resolveRelativeUri(parent.getUri(), URI.create(s));
                         File file = new File(uri);
                         if (file.isAbsolute()) {
                             parentsToExplore.add(new FileFragment(file));

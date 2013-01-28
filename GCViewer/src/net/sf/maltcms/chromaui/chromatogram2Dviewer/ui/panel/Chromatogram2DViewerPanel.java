@@ -27,50 +27,60 @@
  */
 package net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.panel;
 
-import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import javax.swing.JColorChooser;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
+import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.api.Chromatogram2DViewViewport;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.events.PaintScaleDialogAction;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.events.PaintScaleTarget;
-import net.sf.maltcms.chromaui.chromatogram2Dviewer.tasks.Chromatogram2DViewerLoaderTask;
 import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.tools.ChartTools;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DDataset;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.charts.events.DomainMarkerKeyListener;
 import net.sf.maltcms.chromaui.ui.rangeSlider.RangeSlider;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
+import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
+import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
+import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYBoxAnnotation;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
+import org.jfree.chart.panel.Overlay;
+import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
 
 /**
  *
  * @author Mathias Wilhelm
  */
-public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListener, PaintScaleTarget, KeyListener, AxisChangeListener {
+public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider, PaintScaleTarget, KeyListener, AxisChangeListener {
 
     private int oldTreshold;
     private int alpha = 0, beta = 1;
@@ -82,22 +92,53 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
     private Color selectionOutline = Color.BLACK;
     private PaintScaleDialogAction psda = null;
     private InstanceContent content;
-    private Chromatogram2DDataset ds;
+    private ADataset2D<IChromatogram2D, IScan2D> ds;
     private IScan2D activeScan = null;
     private boolean syncViewport = false;
     private Chromatogram2DViewViewport viewport;
     private Color backgroundColor = null;
-
-    public boolean isSyncViewport() {
-        return syncViewport;
-    }
+    private SelectionOverlay sp;
+    private Crosshair domainCrosshair;
+    private Crosshair rangeCrosshair;
+    private InstanceContentSelectionHandler selectionHandler;
+    private XYMouseSelectionHandler<IScan2D> mouseSelectionHandler;
+    private ChartPanel cp;
+    private XYPlot ticplot;
+    private JFreeChart chart;
+    private DomainMarkerKeyListener dmkl;
+    private final Lookup lookup;
 
     /**
      * Creates new form Chromatogram2DViewerPanel
      */
-    public Chromatogram2DViewerPanel() {
-//        this.content = content;
+    public Chromatogram2DViewerPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset2D<IChromatogram2D, IScan2D> ds) {
         initComponents();
+        this.content = topComponentInstanceContent;
+        this.lookup = tcLookup;
+        this.ds = ds;
+        chart = new JFreeChart(new XYPlot());
+        cp = new ChartPanel(chart, true, true, true, true, true);
+        Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+        cp.setCursor(crosshairCursor);
+//        chart.addProgressListener(cdxpanel);
+        cp.setInitialDelay(100);
+        cp.setDismissDelay(30000);
+        cp.setReshowDelay(0);
+        cp.setFocusable(true);
+        jPanel2.add(cp, BorderLayout.CENTER);
+        content.add(cp);
+    }
+    
+    public boolean isSyncViewport() {
+        return syncViewport;
+    }
+
+    @Override
+    public void revalidate() {
+        super.revalidate();
+        if (this.cp != null) {
+            this.cp.requestFocusInWindow();
+        }
     }
 
     public void addAxisListener() {
@@ -196,45 +237,44 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
         return this.dataPoint;
     }
 
-    @Override
-    public void chartMouseClicked(final ChartMouseEvent cmevent) {
-//        cp.requestFocusInWindow();
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                if (cmevent.getTrigger().getClickCount() == 1
-                        && cmevent.getTrigger().getButton() == 1) {
-                    final XYPlot plot = cp.getChart().getXYPlot();
-                    ChartEntity ce = cmevent.getEntity();
-                    if (ce instanceof XYItemEntity) {
-                        XYItemEntity xyie = (XYItemEntity) ce;
-                        int seriesIndex = xyie.getSeriesIndex();
-                        int itemIndex = xyie.getItem();
-                        IScan2D scan = ds.getTarget(seriesIndex, itemIndex);
-                        if (activeScan != null) {
-                            content.remove(activeScan);
-                        }
-                        activeScan = scan;
-                        content.add(activeScan);
-//                        plot.setDomainCrosshairValue(scan.getFirstColumnScanAcquisitionTime(), false);
-//                        plot.setRangeCrosshairValue(scan.getSecondColumnScanAcquisitionTime());
-                    } else {
-                        if (activeScan != null) {
-                            content.remove(activeScan);
-                        }
-                        activeScan = null;
-                    }
-//                    updateCrossHairs();
-                }
-            }
-        };
-        SwingUtilities.invokeLater(r);
-    }
-
-    @Override
-    public void chartMouseMoved(final ChartMouseEvent cmevent) {
-    }
-
+//    @Override
+//    public void chartMouseClicked(final ChartMouseEvent cmevent) {
+////        cp.requestFocusInWindow();
+//        Runnable r = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (cmevent.getTrigger().getClickCount() == 1
+//                        && cmevent.getTrigger().getButton() == 1) {
+//                    final XYPlot plot = cp.getChart().getXYPlot();
+//                    ChartEntity ce = cmevent.getEntity();
+//                    if (ce instanceof XYItemEntity) {
+//                        XYItemEntity xyie = (XYItemEntity) ce;
+//                        int seriesIndex = xyie.getSeriesIndex();
+//                        int itemIndex = xyie.getItem();
+//                        IScan2D scan = ds.getTarget(seriesIndex, itemIndex);
+//                        if (activeScan != null) {
+//                            content.remove(activeScan);
+//                        }
+//                        activeScan = scan;
+//                        content.add(activeScan);
+////                        plot.setDomainCrosshairValue(scan.getFirstColumnScanAcquisitionTime(), false);
+////                        plot.setRangeCrosshairValue(scan.getSecondColumnScanAcquisitionTime());
+//                    } else {
+//                        if (activeScan != null) {
+//                            content.remove(activeScan);
+//                        }
+//                        activeScan = null;
+//                    }
+////                    updateCrossHairs();
+//                }
+//            }
+//        };
+//        SwingUtilities.invokeLater(r);
+//    }
+//
+//    @Override
+//    public void chartMouseMoved(final ChartMouseEvent cmevent) {
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -247,6 +287,7 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
         jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
+        settingsButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jSlider1 = new RangeSlider(0,1000);
@@ -258,6 +299,17 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
 
         jToolBar2.setFloatable(false);
         jToolBar2.setRollover(true);
+
+        settingsButton.setText(org.openide.util.NbBundle.getMessage(Chromatogram2DViewerPanel.class, "Chromatogram2DViewerPanel.settingsButton.text")); // NOI18N
+        settingsButton.setFocusable(false);
+        settingsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        settingsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        settingsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingsButtonActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(settingsButton);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/sf/maltcms/chromaui/chromatogram2Dviewer/ui/panel/Bundle"); // NOI18N
         jButton1.setText(bundle.getString("Chromatogram2DViewerPanel.jButton1.text")); // NOI18N
@@ -305,13 +357,13 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
         });
         jToolBar2.add(jCheckBox2);
 
-        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
+        jPanel2.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 648, Short.MAX_VALUE)
+            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -319,7 +371,7 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -365,6 +417,10 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
             setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
         }
     }//GEN-LAST:event_jCheckBox2ActionPerformed
+
+    private void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_settingsButtonActionPerformed
 
     private void handleSliderChange() {
         final int low = this.jSlider1.getValue();
@@ -426,6 +482,7 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
     private javax.swing.JSlider jSlider1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JButton settingsButton;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -503,12 +560,105 @@ public class Chromatogram2DViewerPanel extends PanelE implements ChartMouseListe
         jPanel2.invalidate();
         jPanel2.validate();
     }
-    
-    public void setDataset(Chromatogram2DDataset dataset) {
-        this.ds = dataset;
+
+    public void setPlot(final XYPlot plot) {
+        removeAxisListener();
+        this.ticplot = plot;
+        if (this.sp != null) {
+            this.content.remove(sp);
+        }
+        if (sp == null) {
+            sp = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
+            cp.addOverlay(sp);
+            sp.addChangeListener(cp);
+            this.content.add(sp);
+        } else {
+            for (XYSelection selection : sp.getMouseClickSelection()) {
+                selection.setDataset(plot.getDataset());
+            }
+
+            XYSelection selection = sp.getMouseHoverSelection();
+            if (selection != null) {
+                selection.setDataset(plot.getDataset());
+            }
+        }
+//        this.ic.add(Charts.overlayNode(sp));
+        if (selectionHandler == null) {
+            selectionHandler = new InstanceContentSelectionHandler(this.content, sp, InstanceContentSelectionHandler.Mode.ON_CLICK, this.ds, 1);
+        } else {
+            selectionHandler.setDataset(ds);
+        }
+        if (mouseSelectionHandler == null) {
+            mouseSelectionHandler = new XYMouseSelectionHandler<IScan2D>(this.ds);
+            mouseSelectionHandler.addSelectionChangeListener(sp);
+            mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
+            cp.addChartMouseListener(mouseSelectionHandler);
+        } else {
+            mouseSelectionHandler.setDataset(ds);
+        }
+
+        AxisChangeListener listener = sp;
+        ValueAxis domain = this.ticplot.getDomainAxis();
+        ValueAxis range = this.ticplot.getRangeAxis();
+        if (domain != null) {
+            domain.addChangeListener(listener);
+        }
+        if (range != null) {
+            range.addChangeListener(listener);
+        }
+
+        ticplot.setNoDataMessage("Loading Data...");
+        chart = new JFreeChart(ticplot);
+        cp.setChart(chart);
+//        XYItemRenderer r = ticplot.getRenderer();
+//        if (r instanceof XYLineAndShapeRenderer) {
+//            ((XYLineAndShapeRenderer) r).setDrawSeriesLineAsPath(true);
+//            ((XYLineAndShapeRenderer) r).setBaseShapesVisible(false);
+//            ((XYLineAndShapeRenderer) r).setBaseShapesFilled(true);
+//        } else if (r instanceof XYAreaRenderer) {
+//            ((XYAreaRenderer) r).setOutline(true);
+//        }
+//        ChartCustomizer.setSeriesColors(ticplot, 0.8f);
+//        ChartCustomizer.setSeriesStrokes(ticplot, 2.0f);
+        dmkl = new DomainMarkerKeyListener(
+                ticplot);
+        dmkl.setPlot(ticplot);
+        cp.addKeyListener(dmkl);
+//        addCompoundPainter(ic, cdxpanel, ds);
+        addAxisListener();
+//        ValueAxis domain = this.ticplot.getDomainAxis();
+//        ValueAxis range = this.ticplot.getRangeAxis();
+        //add available chart overlays
+        Collection<? extends Overlay> overlays = getLookup().lookupAll(Overlay.class);
+        for (Overlay overlay : overlays) {
+            if (!(overlay instanceof SelectionOverlay)) {
+                cp.removeOverlay(overlay);
+                if (overlay instanceof AxisChangeListener) {
+                    AxisChangeListener axisChangeListener = (AxisChangeListener) overlay;
+                    if (domain != null) {
+                        domain.addChangeListener(axisChangeListener);
+                    }
+                    if (range != null) {
+                        range.addChangeListener(axisChangeListener);
+                    }
+                }
+                if (overlay instanceof ISelectionChangeListener) {
+                    ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
+                    mouseSelectionHandler.addSelectionChangeListener(sp);
+                    mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
+                    //cdxpanel.addChartMouseListener(mouseSelectionHandler);
+                    sp.addChangeListener(cp);
+//                ic.add(selectionHandler);
+//                ic.add(sl);
+                }
+                cp.addOverlay(overlay);
+                overlay.addChangeListener(cp);
+            }
+        }
     }
 
-    public void setInstanceContent(InstanceContent content) {
-        this.content = content;
+    @Override
+    public Lookup getLookup() {
+        return this.lookup;
     }
 }

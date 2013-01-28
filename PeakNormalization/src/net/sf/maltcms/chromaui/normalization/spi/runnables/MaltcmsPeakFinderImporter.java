@@ -168,16 +168,22 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
             descriptor.setStopTime(peak.getStopTime());
             descriptor.setNormalizedArea(peak.getNormalizedArea());
             descriptor.setNormalizationMethods(peak.getNormalizationMethods());
+            System.out.println("Created peak descriptor!");
             try {
+                System.out.println("Adding mass spectra!");
                 Array masses = chromatogram.getChromatogram().getMasses().get(peak.getApexIndex());
                 Array intensities = chromatogram.getChromatogram().getIntensities().get(peak.getApexIndex());
                 descriptor.setMassValues((double[]) masses.get1DJavaArray(double.class));
                 descriptor.setIntensityValues((int[]) intensities.get1DJavaArray(int.class));
+                System.out.println("Added mass spectra!");
             } catch (ResourceNotAvailableException rnae) {
-                Exceptions.printStackTrace(rnae);
+//                Exceptions.printStackTrace(rnae);
+                System.out.println("Mass spec data not available!");
             }
             pads.add(descriptor);
+            System.out.println("Added descriptor!");
         }
+        System.out.println("Created "+pads.size()+" peaks!");
         return pads;
     }
 
@@ -229,6 +235,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
             p.setMw(peakDetectionChannel.getDouble(i));
             peaklist.add(p);
         }
+        System.out.println("Imported "+peaklist.size()+" peaks!");
         return peaklist;
     }
 }

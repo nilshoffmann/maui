@@ -111,6 +111,51 @@ public class Chromatogram1DChartProvider {
         return this.renderer;
     }
 
+    public XYPlot provide1DCoPlot(XYZDataset dataset, double minRange, double maxRange, boolean useRT) {
+        XYBlockRenderer xyb = new XYBlockRenderer();
+        GradientPaintScale ps = new GradientPaintScale(
+                ImageTools.createSampleTable(256), minRange, maxRange,
+                ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(
+                "res/colorRamps/bcgyr.csv")));
+
+        xyb.setPaintScale(ps);
+        final String[] colnames = new String[dataset.getSeriesCount()];
+        for (int i = 0; i < dataset.getSeriesCount(); i++) {
+            colnames[i] = "" + dataset.getSeriesKey(i);//StringTools.removeFileExt(fragments.get(i).getName());
+        }
+        NumberAxis na = null;
+        if (useRT) {
+            na = new NumberAxis("retention time [sec]");
+            na.setAutoRangeIncludesZero(false);
+            na.setLowerMargin(0);
+            na.setUpperMargin(0);
+        } else {
+            na = new NumberAxis("scan index");
+        }
+        // na.setVerticalTickLabels(true);
+        XYPlot xyp = new XYPlot(dataset, na, new SymbolAxis("chromatogram", colnames),
+                xyb);
+        //xyb.setBlockWidth(1);
+        xyp.setBackgroundPaint(ps.getPaint(ps.getLowerBound()));
+        xyb.setBaseToolTipGenerator(new XYZToolTipGenerator() {
+            @Override
+            public String generateToolTip(XYZDataset xyzd, int i, int i1) {
+                return colnames[xyzd.getY(i, i1).intValue()] + " @" + xyzd.getXValue(i, i1) + " = "
+                        + xyzd.getZValue(i, i1);
+            }
+
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                if (xyd instanceof XYZDataset) {
+                    return generateToolTip((XYZDataset) xyd, i, i1);
+                }
+                return colnames[xyd.getY(i, i1).intValue()] + ":"
+                        + xyd.getXValue(i, i1);
+            }
+        });
+        return xyp;
+    }
+
     public XYPlot provide1DCoPlot(List<IFileFragment> fragments, String ticvar,
             boolean useRT) {
 
@@ -269,9 +314,8 @@ public class Chromatogram1DChartProvider {
         return xyp;
     }
 
-    public XYPlot provide1DPlot(ADataset1D<IChromatogram1D,IScan> dataset) {
+    public XYPlot provide1DPlot(ADataset1D<IChromatogram1D, IScan> dataset) {
         String[] labels = new String[dataset.getSeriesCount()];
-        IFileFragment fragment = null;
         List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
         for (int i = 0; i < labels.length; i++) {
             labels[i] = dataset.getSeriesKey(i) + " TIC";
@@ -295,6 +339,16 @@ public class Chromatogram1DChartProvider {
                 return sb.toString();
             }
         });
+//        for (int i = 0; i < dataset.getSeriesCount(); i++) {
+//            IFileFragment fragment = dataset.getSource(i).getParent();
+//            annotations.addAll(generatePeakShapes(fragment, true, Color.DARK_GRAY, Color.LIGHT_GRAY, "total_intensity"));
+//        }
+//        XYAnnotation last = annotations.remove(annotations.size() - 1);
+//        for (XYAnnotation annotation : annotations) {
+//            plot.addAnnotation(annotation, false);
+//        }
+//        plot.addAnnotation(last);
+//        annotations.add(last);
         return plot;
     }
 

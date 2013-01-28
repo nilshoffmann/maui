@@ -30,13 +30,30 @@ package net.sf.maltcms.chromaui.chromatogram2Dviewer.ui;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.api.Chromatogram2DViewViewport;
 import cross.datastructures.tools.EvalTools;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.text.DecimalFormat;
 import java.util.Collection;
+import maltcms.datastructures.ms.IChromatogram2D;
+import maltcms.datastructures.ms.IScan2D;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DDataset;
+import net.sf.maltcms.chromaui.charts.overlay.Peak2DOverlay;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.panel.Chromatogram2DViewerPanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.GCGC;
 import net.sf.maltcms.chromaui.project.api.types.TOFMS;
+import net.sf.maltcms.chromaui.ui.paintScales.IPaintScaleProvider;
+import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardXYZToolTipGenerator;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.PaintScale;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.jfree.ui.RectangleAnchor;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -62,13 +79,16 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
     private InstanceContent content = new InstanceContent();
     private Chromatogram2DViewerPanel hmp;
     private Lookup.Result<Chromatogram2DViewViewport> result;
+    private ADataset2D<IChromatogram2D, IScan2D> ds;
 
-    public Chromatogram2DViewTopComponent(DataObject filename, Chromatogram2DViewerPanel panel) {
-        init(filename, panel);
+    public Chromatogram2DViewTopComponent(DataObject filename, ADataset2D<IChromatogram2D, IScan2D> ds) {
+        associateLookup(new AbstractLookup(content));
+        init(filename, ds);
     }
 
-    private void init(DataObject dobj, Chromatogram2DViewerPanel panel) {
-        associateLookup(new AbstractLookup(content));
+    private void init(DataObject dobj, ADataset2D<IChromatogram2D, IScan2D> ds) {
+        this.ds = ds;
+        content.add(ds);
         IChromAUIProject icp = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
         IChromatogramDescriptor descriptor = Utilities.actionsGlobalContext().lookup(IChromatogramDescriptor.class);
         result = Utilities.actionsGlobalContext().lookupResult(Chromatogram2DViewViewport.class);
@@ -85,8 +105,8 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         } else {
             EvalTools.notNull(descriptor.getChromatogram(), this);
         }
-        System.out.println("Found project: " + icp + " in active nodes lookup!");
-        System.out.println("Found descriptor: " + descriptor + " in active nodes lookup!");
+        System.out.println("Using project: " + icp + " from active nodes lookup!");
+        System.out.println("Using descriptor: " + descriptor + " from active nodes lookup!");
         if (dobj != null) {
             content.add(dobj);
             setToolTipText(dobj.getPrimaryFile().getPath());
@@ -107,10 +127,89 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         setName(NbBundle.getMessage(Chromatogram2DViewTopComponent.class, "CTL_Chromatogram2DViewerTopComponent"));
         setEnabled(false);
         //project may be null
-        this.hmp = panel;
-        this.hmp.setInstanceContent(content);
+        this.hmp = createPanel(descriptor, ds);
         add(this.hmp, BorderLayout.CENTER);
         setEnabled(true);
+    }
+
+    private Chromatogram2DViewerPanel createPanel(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds) {
+//        progressHandle.progress("Creating heatmap panel");
+        //        XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getChromatogramDescriptor(), false);
+//            progressHandle.progress("Creating plot");
+        XYPlot p = createPlot(chromatogram, ds);
+        final PaintScale ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
+        XYBlockRenderer xyb = ((XYBlockRenderer) p.getRenderer());
+        p.setDomainGridlinesVisible(false);
+        p.setRangeGridlinesVisible(false);
+//            p.setRangeCrosshairVisible(true);
+//            p.setRangeCrosshairLockedOnData(true);
+//            p.setDomainCrosshairVisible(true);
+//            p.setDomainCrosshairLockedOnData(true);
+        JFreeChart jfc = new JFreeChart(p);
+        final ChartPanel cp = new ChartPanel(jfc, true);
+        cp.setZoomFillPaint(new Color(192, 192, 192, 96));
+        cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
+        cp.setFillZoomRectangle(false);
+        cp.getChart().getLegend().setVisible(true);
+        Chromatogram2DViewerPanel panel = new Chromatogram2DViewerPanel(content, getLookup(), ds);
+        if (panel.getBackgroundColor() == null) {
+            panel.setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
+        }
+        cp.addKeyListener(panel);
+        cp.setFocusable(true);
+        cp.setDisplayToolTips(true);
+        cp.setDismissDelay(3000);
+        cp.setInitialDelay(0);
+        cp.setReshowDelay(0);
+        cp.setVisible(true);
+        cp.setRefreshBuffer(true);
+        cp.setMouseWheelEnabled(true);
+//            progressHandle.progress("Adding peak overlays");
+        if (project != null) {
+            for (Peak1DContainer peaks : project.getPeaks(chromatogram)) {
+                cp.addOverlay(new Peak2DOverlay(peaks));
+            }
+        }
+//            panel.addAxisListener();
+//            panel.removeAxisListener();
+        panel.setChartPanel(cp);
+        if (ps != null) {
+            panel.setPaintScale(ps);
+        }
+        panel.setPlot(p);
+        return panel;
+    }
+
+    private XYPlot createPlot(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds) {
+        XYBlockRenderer xybr = new XYBlockRenderer();
+        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
+        ips.setMin(ds.getMinZ());
+        ips.setMax(ds.getMaxZ());
+        PaintScale ps = ips.getPaintScales().get(0);
+        xybr.setPaintScale(ps);
+        double modulationTime = chromatogram.getChromatogram().getParent().getChild("modulation_time").getArray().getDouble(0);
+        double scanRate = chromatogram.getChromatogram().getParent().getChild("scan_rate").getArray().getDouble(0);
+        xybr.setDefaultEntityRadius(1);//Math.max(1, (int)(modulationTime / scanRate)));
+        xybr.setBlockWidth(modulationTime);
+        xybr.setBlockAnchor(RectangleAnchor.CENTER);
+        double spm = modulationTime * scanRate;
+        double scanDuration = modulationTime / spm;
+        xybr.setBlockHeight(scanDuration);
+        xybr.setToolTipGenerator(new StandardXYZToolTipGenerator("{0}: @({1}, {2}) = {3}", DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance()));
+        NumberAxis rt1 = new NumberAxis("RT1 [sec]");
+        NumberAxis rt2 = new NumberAxis("RT2 [sec]");
+        rt1.setAutoRange(false);
+        rt1.setLowerBound(ds.getMinX());
+        rt1.setUpperBound(ds.getMaxX());
+        rt1.setRangeWithMargins(ds.getMinX(), ds.getMaxX());
+        rt2.setFixedAutoRange(ds.getMaxX() - ds.getMinX());
+        rt2.setAutoRange(false);
+        rt2.setLowerBound(ds.getMinY());
+        rt2.setUpperBound(ds.getMaxY());
+        rt2.setFixedAutoRange(ds.getMaxY() - ds.getMinY());
+        rt2.setRangeWithMargins(ds.getMinY(), ds.getMaxY());
+        XYPlot heatmapPlot = new XYPlot(ds, rt1, rt2, xybr);
+        return heatmapPlot;
     }
 
     /**

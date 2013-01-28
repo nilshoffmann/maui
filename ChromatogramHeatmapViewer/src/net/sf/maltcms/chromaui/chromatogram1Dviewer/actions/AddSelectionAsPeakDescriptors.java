@@ -141,7 +141,9 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
         IChromAUIProject project = null;
         for (XYSelection selection : so.getMouseClickSelection()) {
             XYDataset dataset = selection.getDataset();
-            if (dataset instanceof ADataset1D) {
+            if (dataset instanceof ADataset2D) {
+                throw new NotImplementedException("Manual peak annotation import for 2D chromatograms is not available yet!");
+            } else if (dataset instanceof ADataset1D && !(dataset instanceof ADataset2D)) {
                 IChromatogram1D source = (IChromatogram1D) selection.getSource();
                 IScan target = (IScan) selection.getTarget();
                 ADataset1D ds = (ADataset1D) dataset;
@@ -167,9 +169,6 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
                         }
                     }
                 }
-
-            } else if (dataset instanceof ADataset2D) {
-                throw new NotImplementedException("Manual peak annotation import for 2D chromatograms is not available yet!");
             }
         }
         IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();

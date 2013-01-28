@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.panel;
 
-import java.awt.BasicStroke;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.api.ChromatogramViewViewport;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,12 +43,12 @@ import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
-import org.jfree.chart.panel.CrosshairOverlay;
 import org.jfree.chart.panel.Overlay;
 import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.XYPlot;
@@ -77,6 +76,8 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
     private SelectionOverlay sp;
     private Crosshair domainCrosshair;
     private Crosshair rangeCrosshair;
+    private InstanceContentSelectionHandler selectionHandler;
+    private XYMouseSelectionHandler<IScan> mouseSelectionHandler;
 
     /**
      * Creates new form Chromatogram1DViewPanel
@@ -141,13 +142,36 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
         if (this.sp != null) {
             this.ic.remove(sp);
         }
-        sp = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
+        if (sp == null) {
+            sp = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
+            cdxpanel.addOverlay(sp);
+            sp.addChangeListener(cdxpanel);
+            this.ic.add(sp);
+        } else {
+            for (XYSelection selection : sp.getMouseClickSelection()) {
+                selection.setDataset(plot.getDataset());
+            }
+
+            XYSelection selection = sp.getMouseHoverSelection();
+            if (selection != null) {
+                selection.setDataset(plot.getDataset());
+            }
+        }
 //        this.ic.add(Charts.overlayNode(sp));
-        InstanceContentSelectionHandler selectionHandler = new InstanceContentSelectionHandler(this.ic, sp, InstanceContentSelectionHandler.Mode.ON_CLICK, this.ds, 1);
-        XYMouseSelectionHandler<IScan> sl = new XYMouseSelectionHandler<IScan>(this.ds);
-        ISelectionChangeListener isl = sp;
-        sl.addSelectionChangeListener(sp);
-        sl.addSelectionChangeListener(selectionHandler);
+        if (selectionHandler == null) {
+            selectionHandler = new InstanceContentSelectionHandler(this.ic, sp, InstanceContentSelectionHandler.Mode.ON_CLICK, this.ds, 1);
+        } else {
+            selectionHandler.setDataset(ds);
+        }
+        if (mouseSelectionHandler == null) {
+            mouseSelectionHandler = new XYMouseSelectionHandler<IScan>(this.ds);
+            mouseSelectionHandler.addSelectionChangeListener(sp);
+            mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
+            cdxpanel.addChartMouseListener(mouseSelectionHandler);
+        } else {
+            mouseSelectionHandler.setDataset(ds);
+        }
+
         AxisChangeListener listener = sp;
         ValueAxis domain = this.ticplot.getDomainAxis();
         ValueAxis range = this.ticplot.getRangeAxis();
@@ -157,9 +181,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
         if (range != null) {
             range.addChangeListener(listener);
         }
-        cdxpanel.addChartMouseListener(sl);
-        cdxpanel.addOverlay(sp);
-        sp.addChangeListener(cdxpanel);
+
         ticplot.setNoDataMessage("Loading Data...");
         chart = new JFreeChart(ticplot);
         cdxpanel.setChart(chart);
@@ -183,28 +205,31 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 //        ValueAxis range = this.ticplot.getRangeAxis();
         //add available chart overlays
         Collection<? extends Overlay> overlays = getLookup().lookupAll(Overlay.class);
-//        for (Overlay overlay : overlays) {
-//            cdxpanel.removeOverlay(overlay);
-//            if (overlay instanceof AxisChangeListener) {
-//                AxisChangeListener listener = (AxisChangeListener) overlay;
-//                if (domain != null) {
-//                    domain.addChangeListener(listener);
-//                }
-//                if (range != null) {
-//                    range.addChangeListener(listener);
-//                }
-//            }
-////            if (overlay instanceof ISelectionChangeListener) {
-////                ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
-////                sl.addSelectionChangeListener(sp);
-////                sl.addSelectionChangeListener(selectionHandler);
-////                cdxpanel.addChartMouseListener(sl);
-////                sp.addChangeListener(cdxpanel);
-//////                ic.add(selectionHandler);
-//////                ic.add(sl);
-////            }
-//            cdxpanel.addOverlay(overlay);
-//        }
+        for (Overlay overlay : overlays) {
+            if (!(overlay instanceof SelectionOverlay)) {
+                cdxpanel.removeOverlay(overlay);
+                if (overlay instanceof AxisChangeListener) {
+                    AxisChangeListener axisChangeListener = (AxisChangeListener) overlay;
+                    if (domain != null) {
+                        domain.addChangeListener(axisChangeListener);
+                    }
+                    if (range != null) {
+                        range.addChangeListener(axisChangeListener);
+                    }
+                }
+                if (overlay instanceof ISelectionChangeListener) {
+                    ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
+                    mouseSelectionHandler.addSelectionChangeListener(sp);
+                    mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
+                    //cdxpanel.addChartMouseListener(mouseSelectionHandler);
+                    sp.addChangeListener(cdxpanel);
+//                ic.add(selectionHandler);
+//                ic.add(sl);
+                }
+                cdxpanel.addOverlay(overlay);
+                overlay.addChangeListener(cdxpanel);
+            }
+        }
     }
 
     /**

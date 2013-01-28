@@ -32,7 +32,9 @@ import java.awt.Color;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.swing.SwingUtilities;
 import lombok.Data;
@@ -43,6 +45,7 @@ import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComp
 import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.panel.Chromatogram1DViewPanel;
 import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
+import net.sf.maltcms.chromaui.charts.dataset.chromatograms.TopViewDataset;
 import net.sf.maltcms.chromaui.charts.format.RTNumberFormatter;
 import net.sf.maltcms.chromaui.charts.units.RTUnit;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -70,7 +73,7 @@ public class ChromatogramViewLoaderWorker implements Runnable {
 
     private final Chromatogram1DViewTopComponent cvtc;
     private final Collection<? extends IChromatogramDescriptor> files;
-    private final ADataset1D<IChromatogram1D,IScan> dataset;
+    private final ADataset1D<IChromatogram1D, IScan> dataset;
     private final Properties sp;
     private final SettingsPanel settingsPanel;
 
@@ -113,16 +116,23 @@ public class ChromatogramViewLoaderWorker implements Runnable {
 //        
 
             handle.progress("Retrieving peaks", 2);
-//        Collection<Peak1DContainer> peakContainers = project.getPeaks(file);
+            IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
+//            Map<IChromatogramDescriptor,Collection<Peak1DContainer>> filePeakMap = new LinkedHashMap<IChromatogramDescriptor, Collection<Peak1DContainer>>();
+//            if(project!=null) {
+//                for(IChromatogramDescriptor file:files) {
+//                    Collection<Peak1DContainer> peakContainers = project.getPeaks(file);
+//                    filePeakMap.put(file, peakContainers);
+//                }
+//            }
             Chromatogram1DChartProvider c1p = new Chromatogram1DChartProvider();
             c1p.setRenderer(settingsPanel.getRenderer());
+//            c1p.setPeakData(filePeakMap);
 //        c1p.setScanRange(file.getIndexFor(Math.max(mm.min, minRT)),file.getIndexFor(Math.min(mm.max, maxRT)));
 
             XYPlot plot = null;
             System.out.println("Plot mode is " + plotMode);
 
             handle.progress("Building plot", 3);
-            IChromAUIProject project = cvtc.getLookup().lookup(IChromAUIProject.class);
             if ("TIC".equals(plotMode)) {
                 System.out.println("Loading TIC");
                 if ("SIDE".equals(plotType)) {
@@ -136,8 +146,8 @@ public class ChromatogramViewLoaderWorker implements Runnable {
 //                    }
                     //}
                 } else if ("TOP".equals(plotType)) {
-                    plot = c1p.provide1DCoPlot(buildFileFragments(files),
-                            "total_intensity", true);
+                    plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(dataset), dataset.getMinY(), dataset.getMaxY(), true);//buildFileFragments(files),
+                    //"total_intensity", true);
                 }
             } else if ("EIC-SUM".equals(plotMode)) {
                 System.out.println("Loading EIC-SUM");

@@ -63,54 +63,22 @@ import org.openide.util.lookup.Lookups;
  * @author Nils Hoffmann
  */
 public class Chromatogram2DViewerLoaderTask extends AProgressAwareRunnable {
-    
+
     private final IChromAUIProject project;
     private final DataObject dobj;
     private final IChromatogramDescriptor chromatogram;
-    private Chromatogram2DViewerPanel panel;
-    
+//    private Chromatogram2DViewerPanel panel;
+
     public Chromatogram2DViewerLoaderTask(IChromAUIProject project, DataObject dobj, IChromatogramDescriptor chromatogram) {
         this.project = project;
         this.dobj = dobj;
         this.chromatogram = chromatogram;
     }
-    
+
     public void onEdt(Runnable r) {
         SwingUtilities.invokeLater(r);
     }
-    
-    private XYPlot createPlot(Chromatogram2DDataset ds) {
-        XYBlockRenderer xybr = new XYBlockRenderer();
-        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
-        ips.setMin(ds.getMinZ());
-        ips.setMax(ds.getMaxZ());
-        PaintScale ps = ips.getPaintScales().get(0);
-        xybr.setPaintScale(ps);
-        double modulationTime = chromatogram.getChromatogram().getParent().getChild("modulation_time").getArray().getDouble(0);
-        double scanRate = chromatogram.getChromatogram().getParent().getChild("scan_rate").getArray().getDouble(0);
-        xybr.setDefaultEntityRadius(1);//Math.max(1, (int)(modulationTime / scanRate)));
-        xybr.setBlockWidth(modulationTime);
-        xybr.setBlockAnchor(RectangleAnchor.CENTER);
-        double spm = modulationTime * scanRate;
-        double scanDuration = modulationTime / spm;
-        xybr.setBlockHeight(scanDuration);
-        xybr.setToolTipGenerator(new StandardXYZToolTipGenerator("{0}: @({1}, {2}) = {3}", DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance()));
-        NumberAxis rt1 = new NumberAxis("RT1 [sec]");
-        NumberAxis rt2 = new NumberAxis("RT2 [sec]");
-        rt1.setAutoRange(false);
-        rt1.setLowerBound(ds.getMinX());
-        rt1.setUpperBound(ds.getMaxX());
-        rt1.setRangeWithMargins(ds.getMinX(), ds.getMaxX());
-        rt2.setFixedAutoRange(ds.getMaxX() - ds.getMinX());
-        rt2.setAutoRange(false);
-        rt2.setLowerBound(ds.getMinY());
-        rt2.setUpperBound(ds.getMaxY());
-        rt2.setFixedAutoRange(ds.getMaxY() - ds.getMinY());
-        rt2.setRangeWithMargins(ds.getMinY(), ds.getMaxY());
-        XYPlot heatmapPlot = new XYPlot(ds, rt1, rt2, xybr);
-        return heatmapPlot;
-    }
-    
+
     @Override
     public void run() {
         try {
@@ -121,56 +89,11 @@ public class Chromatogram2DViewerLoaderTask extends AProgressAwareRunnable {
                 throw new IllegalArgumentException("Action only of 2D chromatograms!");
             }
             providers.add(new Chromatogram2DElementProvider(chromatogram.getDisplayName(), (IChromatogram2D) chromatogram.getChromatogram()));
-            Chromatogram2DDataset ds = new Chromatogram2DDataset(providers, Lookups.fixed(chromatogram, project));
-            progressHandle.progress("Creating heatmap panel");
-            panel = new Chromatogram2DViewerPanel();
-            panel.setDataset(ds);
-            panel.removeAxisListener();
-            //        XYPlot p = ChromatogramVisualizerTools.getTICHeatMap(this.ic.getChromatogramDescriptor(), false);
-            progressHandle.progress("Creating plot");
-            XYPlot p = createPlot(ds);
-            final PaintScale ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
-            XYBlockRenderer xyb = ((XYBlockRenderer) p.getRenderer());
-            p.setDomainGridlinesVisible(false);
-            p.setRangeGridlinesVisible(false);
-//            p.setRangeCrosshairVisible(true);
-//            p.setRangeCrosshairLockedOnData(true);
-//            p.setDomainCrosshairVisible(true);
-//            p.setDomainCrosshairLockedOnData(true);
-            JFreeChart jfc = new JFreeChart(p);
-            final ChartPanel cp = new ChartPanel(jfc, true);
-            cp.setZoomFillPaint(new Color(192, 192, 192, 96));
-            cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
-            cp.setFillZoomRectangle(false);
-            cp.getChart().getLegend().setVisible(true);
-            if (panel.getBackgroundColor() == null) {
-                panel.setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
-            }
-            cp.addKeyListener(panel);
-            cp.addChartMouseListener(panel);
-            cp.setFocusable(true);
-            cp.setDisplayToolTips(true);
-            cp.setDismissDelay(3000);
-            cp.setInitialDelay(0);
-            cp.setReshowDelay(0);
-            cp.setVisible(true);
-            cp.setRefreshBuffer(true);
-            cp.setMouseWheelEnabled(true);
-            progressHandle.progress("Adding peak overlays");
-            if (project != null) {
-                for (Peak1DContainer peaks : project.getPeaks(chromatogram)) {
-                    cp.addOverlay(new Peak2DOverlay(peaks));
-                }
-            }
-            panel.addAxisListener();
+            final Chromatogram2DDataset ds = new Chromatogram2DDataset(providers, Lookups.fixed(chromatogram, project));
             onEdt(new Runnable() {
                 @Override
                 public void run() {
-                    panel.setChartPanel(cp);
-                    if (ps != null) {
-                        panel.setPaintScale(ps);
-                    }
-                    final Chromatogram2DViewTopComponent jtc = new Chromatogram2DViewTopComponent(dobj, panel);
+                    final Chromatogram2DViewTopComponent jtc = new Chromatogram2DViewTopComponent(dobj,ds);
                     jtc.open();
                     jtc.requestActive();
                 }

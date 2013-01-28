@@ -47,9 +47,12 @@ import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.api.ChromatogramViewViewport;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.panel.Chromatogram1DViewPanel;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
+import net.sf.maltcms.chromaui.charts.overlay.Peak1DOverlay;
 
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.annotations.XYAnnotation;
@@ -59,7 +62,6 @@ import org.openide.util.NbBundle;
 import org.openide.util.Task;
 import org.openide.windows.TopComponent;
 //import org.openide.util.ImageUtilities;
-import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -111,9 +113,15 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         annotations = new ArrayList<XYAnnotation>(0);
         for (IChromatogramDescriptor descr : filename) {
             this.ic.add(descr);
-//            if (project != null) {
+            if (project != null) {
+                Collection<Peak1DContainer> peaks = project.getPeaks(descr);
+                for(Peak1DContainer container:peaks) {
+                    Peak1DOverlay overlay = new Peak1DOverlay(container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
+                    this.ic.add(overlay);
+                    this.ic.add(Charts.overlayNode(overlay));
+                }
 //                annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
-//            }
+            }
         }
         DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
         for (int i = 0; i < ds.getSeriesCount(); i++) {
@@ -175,7 +183,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jCheckBox1 = new javax.swing.JCheckBox();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         seriesComboBox = new javax.swing.JComboBox();
         hideShowSeries = new javax.swing.JButton();
@@ -197,17 +204,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         });
         jToolBar1.add(jButton1);
         jToolBar1.add(jSeparator1);
-
-        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(Chromatogram1DViewTopComponent.class, "Chromatogram1DViewTopComponent.jCheckBox1.text")); // NOI18N
-        jCheckBox1.setFocusable(false);
-        jCheckBox1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jCheckBox1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jCheckBox1);
         jToolBar1.add(jSeparator2);
 
         seriesComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -270,27 +266,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        if (this.jp != null) {
-            ChartPanel cp = jp.getLookup().lookup(ChartPanel.class);
-            Chromatogram1DDataset dataset = getLookup().lookup(Chromatogram1DDataset.class);
-            if (jCheckBox1.isSelected()) {
-                int size = annotations.size();
-                for (int i = 0; i < size - 1; i++) {
-                    cp.getChart().getXYPlot().addAnnotation(annotations.get(i),
-                            false);
-                }
-                if (size > 0) {
-                    cp.getChart().getXYPlot().addAnnotation(annotations.get(
-                            size - 1),
-                            true);
-                }
-            } else {
-                cp.getChart().getXYPlot().clearAnnotations();
-            }
-        }
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
-
     private void hideShowSeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideShowSeriesActionPerformed
         String s = (String) seriesComboBox.getSelectedItem();
         Chromatogram1DDataset dataset = getLookup().lookup(Chromatogram1DDataset.class);
@@ -319,7 +294,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton hideShowSeries;
     private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
