@@ -34,7 +34,7 @@
         <exec command="rsync" inputstring="">
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
-            <arg value="homepage/"/>
+            <arg value="site/public_html/"/>
             <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/maui/1.2/"/>
         </exec>    
     </target>
