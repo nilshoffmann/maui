@@ -131,7 +131,7 @@ public class ChromaProject implements Project{
         for(FileObject fobj:fo) {
             ResourceType rtype = new ResourceType();
             rtype.setType("inputFile");
-            rtype.setUri(FileUtil.toFile(fobj).toURI().toASCIIString());
+            rtype.setUri(FileUtil.toFile(fobj).toURI().toString());
             l.add(rtype);
         }
     }

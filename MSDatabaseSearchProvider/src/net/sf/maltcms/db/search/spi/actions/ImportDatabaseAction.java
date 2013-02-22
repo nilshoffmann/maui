@@ -47,7 +47,7 @@ id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction")
 @ActionRegistration(displayName = "#CTL_ImportDatabaseAction")
 @ActionReferences({
     @ActionReference(path = "Menu/File", position = 1414),
-    @ActionReference(path="Actions/ChromAUIProjectLogicalView")
+    @ActionReference(path="Actions/ChromAUIProjectLogicalView/Database")
 })
 @Messages("CTL_ImportDatabaseAction=Import Database")
 public final class ImportDatabaseAction implements ActionListener {

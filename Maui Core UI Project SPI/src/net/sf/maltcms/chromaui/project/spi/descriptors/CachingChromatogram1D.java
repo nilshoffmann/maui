@@ -41,6 +41,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IExperiment1D;
@@ -66,7 +69,11 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     private List<Array> intensityValues;
     private ICacheDelegate<Integer, Scan1D> whm;
     private int scans;
+    private int prefetchSize = 10000;
     private boolean initialized = false;
+    private AtomicBoolean loading = new AtomicBoolean(false);
+    private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(2);
+    private int[] lastPrefetchRange = new int[]{-1,-1};
 
     public CachingChromatogram1D(final IFileFragment e) {
         this.parent = e;
@@ -120,10 +127,10 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 //    }
 
     protected void setPrefetchSize(int scans, List<Array> list) {
-        if (list instanceof CachedList) {
-            ((CachedList) list).setCacheSize(scans / 10);
-            ((CachedList) list).setPrefetchOnMiss(true);
-        }
+//        if (list instanceof CachedList) {
+//            ((CachedList) list).setCacheSize(scans / 10);
+//            ((CachedList) list).setPrefetchOnMiss(true);
+//        }
     }
 
     protected void activateCache(IVariableFragment ivf) {
@@ -137,15 +144,28 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
         }
     }
 
-    protected Scan1D acquireFromCache(int i) {
+    protected Scan1D acquireFromCache(final int i) {
         if(whm.get(i) == null) {
-            System.out.println("Retrieving scan "+i);
-            Scan1D scan = provide(i);
-            whm.put(i, scan);
-            return scan;
+//            System.out.println("Retrieving scan "+i);
+            whm.put(Integer.valueOf(i), provide(i));
+            if(!loading.get()) {
+                Runnable r = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        int minBound = Math.max(0,i-prefetchSize);
+                        int maxBound = Math.min(getNumberOfScans(),i+prefetchSize);
+                        for (int j = minBound; j <= maxBound; j++) {
+                            whm.put(Integer.valueOf(j), provide(j));
+                        }
+                        lastPrefetchRange = new int[]{minBound,maxBound};
+                        loading.compareAndSet(true, false);
+                    }
+                };
+                prefetchLoader.submit(r);
+            }
         }
         return whm.get(Integer.valueOf(i));
-//        return provide(i);
     }
 
     protected Scan1D buildScan(int i) {

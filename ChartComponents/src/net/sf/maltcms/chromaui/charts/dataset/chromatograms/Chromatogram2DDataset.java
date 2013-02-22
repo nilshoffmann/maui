@@ -38,6 +38,7 @@ import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.jfree.data.DomainOrder;
+import org.jfree.data.xy.IntervalXYZDataset;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ProxyLookup;
 import ucar.ma2.Array;
@@ -242,4 +243,44 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
         return domainVariableValueRanks;
     }
     
+	@Override
+	public Number getStartX(int i, int i1) {
+		return getX(i, i1);
+	}
+
+	@Override
+	public double getStartXValue(int i, int i1) {
+		return getXValue(i, i1);
+	}
+
+	@Override
+	public Number getEndX(int i, int i1) {
+		return getXValue(i, i1);
+	}
+
+	@Override
+	public double getEndXValue(int i, int i1) {
+		return getXValue(i, i1);
+	}
+
+	@Override
+	public Number getStartY(int i, int i1) {
+		return getY(i, i1);
+	}
+
+	@Override
+	public double getStartYValue(int i, int i1) {
+		return getYValue(i, i1);
+	}
+
+	@Override
+	public Number getEndY(int i, int i1) {
+		return getY(i, i1);
+	}
+
+	@Override
+	public double getEndYValue(int i, int i1) {
+		return getYValue(i, i1);
+	}
+	
 }

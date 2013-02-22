@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListConverter")
 @ActionRegistration(displayName = "#CTL_ChromaTofPeakListConverter")
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 1413)
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks", position = 1413)
 })
 @Messages("CTL_ChromaTofPeakListConverter=Convert ChromaTOF Report")
 public final class ChromaTofPeakListConverterAction implements ActionListener {

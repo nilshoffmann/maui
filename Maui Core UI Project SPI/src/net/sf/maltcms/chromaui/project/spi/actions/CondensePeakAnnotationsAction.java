@@ -49,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.chromaui.project.spi.actions.CondensePeakAnnotationsAction")
 @ActionRegistration(displayName = "#CTL_CondensePeakAnnotationsAction")
 @ActionReferences({
-    @ActionReference(path = "Actions/ChromAUIProjectLogicalView")})
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks")})
 @Messages("CTL_CondensePeakAnnotationsAction=Condense Peak Annotations")
 public final class CondensePeakAnnotationsAction implements ActionListener {
 

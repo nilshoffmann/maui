@@ -27,9 +27,8 @@
  */
 package maltcms.ui.heatmap3Dviewer;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.sun.media.jai.codec.JPEGEncodeParam;
+import com.sun.media.jai.codecimpl.JPEGImageEncoder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.BorderLayout;
@@ -523,13 +522,11 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
 
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-                JPEGEncodeParam p = encoder.getDefaultJPEGEncodeParam(img);
-                // set JPEG quality to 50% with baseline optimization
-                p.setQuality(0.5f, true);
-                encoder.setJPEGEncodeParam(p);
+                JPEGEncodeParam p = new JPEGEncodeParam();
+				p.setQuality(0.5f);
+                JPEGImageEncoder encoder = new JPEGImageEncoder(out,p);
+                encoder.setParam(p);
                 encoder.encode(img);
-
                 FileOutputStream fo = new FileOutputStream(output);
                 out.writeTo(fo);
             } catch (FileNotFoundException e) {

@@ -63,7 +63,7 @@ import org.openide.util.NbPreferences;
 id = "maltcms.ui.nb.pipelineRunner.actions.ImportMaltcmsPipelinesAction")
 @ActionRegistration(displayName = "#CTL_ImportMaltcmsPipelinesAction")
 @ActionReferences({
-    @ActionReference(path = "Actions/ChromAUIProjectLogicalView")})
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Pipelines")})
 @Messages("CTL_ImportMaltcmsPipelinesAction=Import Maltcms Pipelines")
 public final class ImportMaltcmsPipelinesAction implements ActionListener, PreferenceChangeListener {
     

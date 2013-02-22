@@ -28,8 +28,8 @@
 package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import org.jzy3d.plot3d.builder.Mapper;
 
 /**
  * Mapper which reads height information from the grayscale
@@ -41,13 +41,13 @@ public class BufferedImageMapper extends ViewportMapper {
 
     private final BufferedImage bi;
     private final int maxRow;
-    private final Rectangle maxViewPort;
+    private final Rectangle2D maxViewPort;
 
     public BufferedImageMapper(BufferedImage bi) {
         this.bi = bi;
         System.out.println("BufferedImage has dimensions: " + new Rectangle(0, 0, bi.getWidth(), bi.getHeight()));
         this.maxRow = this.bi.getHeight() - 1;
-        this.maxViewPort = new Rectangle(0, 0, bi.getWidth(), bi.getHeight());
+        this.maxViewPort = new Rectangle2D.Double(0, 0, bi.getWidth(), bi.getHeight());
     }
 
     /**
@@ -58,8 +58,8 @@ public class BufferedImageMapper extends ViewportMapper {
      * @return
      */
     @Override
-    public Rectangle getClippedViewport(Rectangle roi) {
-        return this.maxViewPort.intersection(roi);
+    public Rectangle2D getClippedViewport(Rectangle2D roi) {
+        return this.maxViewPort.createIntersection(roi);
     }
 
     @Override

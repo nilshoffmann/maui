@@ -30,12 +30,12 @@ package net.sf.maltcms.maui.heatmapViewer;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
 import net.sf.maltcms.maui.heatmapViewer.chart.controllers.LabeledMouseSelector;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.BufferedImageMapper;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
@@ -64,7 +64,7 @@ public class HeatmapViewer {
     public static void main(String[] args) {
         ViewportMapper mapper = null;
         CompileableComposite cc = null;
-        Rectangle roi = null;
+        Rectangle2D roi = null;
         SurfaceFactory sf = new SurfaceFactory();
 
         try {
@@ -76,17 +76,17 @@ public class HeatmapViewer {
                 //select a smaller rectangle, if the complete image is too large
                 //Rectangle roi = new Rectangle(200, 200, 300, 300);
 //                roi = new Rectangle(200, 200, 300, 300);
-                roi = new Rectangle(0,0,bi.getWidth(),bi.getHeight());
+                roi = new Rectangle2D.Double(0,0,bi.getWidth(),bi.getHeight());
                 boolean fastTesselation = true;
                 cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
-                        fastTesselation, roi.width/16, roi.height/16);
+                        fastTesselation, (int) (roi.getWidth()/16), (int)(roi.getHeight()/16));
             }
 
             Chart chart = new Chart(Quality.Intermediate, "awt");
             chart.getScene().getGraph().add(cc);
             for (int i = 0; i < 10; i++) {
-                int xpos = roi.x + (int) (Math.random() * (roi.width));
-                int ypos = roi.y + (int) (Math.random() * (roi.height));
+                int xpos = (int)(roi.getX() + (int) (Math.random() * (roi.getWidth())));
+                int ypos = (int)(roi.getY() + (int) (Math.random() * (roi.getHeight())));
                 String item = xpos + " " + ypos;
                 BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
                         item);

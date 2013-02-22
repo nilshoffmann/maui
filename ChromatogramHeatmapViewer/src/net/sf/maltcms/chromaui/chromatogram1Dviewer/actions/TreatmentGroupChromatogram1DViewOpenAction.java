@@ -118,7 +118,7 @@ public final class TreatmentGroupChromatogram1DViewOpenAction implements ActionL
                             Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
                             topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
                             topComponent.open();
-                            topComponent.load();
+//                            topComponent.load();
                         }
                     });
 
@@ -143,7 +143,7 @@ public final class TreatmentGroupChromatogram1DViewOpenAction implements ActionL
                             Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
                             topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
                             topComponent.open();
-                            topComponent.load();
+//                            topComponent.load();
                         }
                     });
 

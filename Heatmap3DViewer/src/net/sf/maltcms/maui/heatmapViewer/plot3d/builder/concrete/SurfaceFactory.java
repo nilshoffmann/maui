@@ -27,7 +27,7 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import org.jzy3d.colors.Color;
@@ -35,11 +35,19 @@ import org.jzy3d.colors.ColorMapper;
 import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.colors.colormaps.IColorMap;
 import org.jzy3d.maths.Coord3d;
+import org.jzy3d.maths.Coordinates;
 import org.jzy3d.maths.Range;
+import org.jzy3d.plot3d.builder.CoordinateValidator;
 import org.jzy3d.plot3d.builder.Mapper;
 import org.jzy3d.plot3d.builder.Tesselator;
 import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid;
 import org.jzy3d.plot3d.builder.concrete.OrthonormalTesselator;
+import org.jzy3d.plot3d.builder.delaunay.DelaunayCoordinateValidator;
+import org.jzy3d.plot3d.builder.delaunay.DelaunayTessellator;
+import org.jzy3d.plot3d.builder.delaunay.OrthonormalCoordinateValidator;
+import org.jzy3d.plot3d.builder.delaunay.Triangulation;
+import org.jzy3d.plot3d.builder.delaunay.jdt.Delaunay_Triangulation;
+import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.primitives.Shape;
 import ucar.ma2.ArrayDouble;
@@ -80,11 +88,11 @@ public class SurfaceFactory {
         this.wireframeDisplayed = wireframeDisplayed;
     }
 
-    public CompileableComposite createSurface(final Rectangle r, final Mapper m, boolean fast, int stepsx, int stepsy) {
-        final int columns = r.width - 1;
-        final int rows = r.height - 1;
-        Range rangex = new Range(r.x, r.x + columns);
-        Range rangey = new Range(r.y, r.y + rows);
+    public CompileableComposite createSurface(final Rectangle2D r, final Mapper m, boolean fast, int stepsx, int stepsy) {
+        final int columns = (int) (r.getWidth() - 1);
+        final int rows = (int) (r.getHeight() - 1);
+        Range rangex = new Range(r.getX(), r.getX() + columns);
+        Range rangey = new Range(r.getY(), r.getY() + rows);
         System.out.println("Building surface for rect: " + r.toString());
         final int sx = stepsx == -1 ? columns : stepsx;
         final int sy = stepsy == -1 ? rows : stepsy;
@@ -94,11 +102,11 @@ public class SurfaceFactory {
         return sls;
     }
 
-    public CompileableComposite createSurface(final Rectangle r, final Mapper m) {
+    public CompileableComposite createSurface(final Rectangle2D r, final Mapper m) {
         return createSurface(r, m, true, -1, -1);
     }
 
-    public CompileableComposite createSurface(final Rectangle r, final Mapper m, int stepsx, int stepsy) {
+    public CompileableComposite createSurface(final Rectangle2D r, final Mapper m, int stepsx, int stepsy) {
         return createSurface(r, m, true, stepsx, stepsy);
     }
 
@@ -154,5 +162,13 @@ public class SurfaceFactory {
         sls.setWireframeDisplayed(s.getWireframeDisplayed());
         sls.setWireframeColor(s.getWireframeColor());
         return sls;
+    }
+
+    public AbstractDrawable createDelaunaySurface(List<Coord3d> coords) {
+        Triangulation t = new Delaunay_Triangulation();
+        CoordinateValidator cv = new DelaunayCoordinateValidator(new Coordinates(coords));
+        DelaunayTessellator tesselator = new DelaunayTessellator(cv, t);
+        AbstractDrawable ad = tesselator.buildDrawable();
+        return ad;
     }
 }

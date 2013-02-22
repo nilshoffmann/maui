@@ -35,7 +35,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="homepage/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/maui/1.1/beta"/>
+            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/maui/1.2/"/>
         </exec>    
     </target>
     
@@ -48,7 +48,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="build/updates/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/maui/1.1/beta/updatecenter/"/>
+            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/maui/1.2/updates/updatecenter/"/>
         </exec>
     </target>
     <target name="upload-build" description="Deploys beta zip distribution and macosx app" depends="upload-credentials">
@@ -59,7 +59,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="dist/"/>
-            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/maui/1.1/beta/"/>
+            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/maui/1.2/"/>
         </exec>    
     </target>
 </project>

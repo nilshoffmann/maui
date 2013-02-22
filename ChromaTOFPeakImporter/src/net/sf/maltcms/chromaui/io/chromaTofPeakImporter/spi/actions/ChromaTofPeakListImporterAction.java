@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListImporter")
 @ActionRegistration(displayName = "#CTL_ChromaTofPeakListImporter")
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 1414)
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks", position = 1414)
 })
 @Messages("CTL_ChromaTofPeakListImporter=Import ChromaTOF Report")
 public final class ChromaTofPeakListImporterAction implements ActionListener {

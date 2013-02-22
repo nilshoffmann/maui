@@ -43,6 +43,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
@@ -62,7 +65,7 @@ import ucar.ma2.Array;
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 @Slf4j
-public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProvider<Integer, Scan2D> {
+public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProvider<Integer, SerializableScan2D> {
 
     private IFileFragment parent;
     private final String scanAcquisitionTimeUnit = "seconds";
@@ -74,14 +77,19 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     private List<Array> intensityValues;
     private Array firstColumnElutionTimeArray;
     private Array secondColumnElutionTimeArray;
-    private ICacheDelegate<Integer, Scan2D> whm;
+    private ICacheDelegate<Integer, SerializableScan2D> whm;
     private int scans;
     private boolean initialized = false;
     private double satOffset = 0;
     private double modulationTime = -1;
     private double scanRate = 0.0;
     private RtProvider rtProvider = null;
-    private int prefetchSize = 2000;
+    private int prefetchSize = 100000;
+    private int spm = -1;
+    private int modulations = -1;
+    private AtomicBoolean loading = new AtomicBoolean(false);
+    private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(2);
+    private int[] lastPrefetchRange = new int[]{-1,-1};
 
     public CachingChromatogram2D(final IFileFragment e) {
         this.parent = e;
@@ -114,7 +122,9 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
                 getDouble(0);
         modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
         scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
-        double spm = modulationTime * scanRate;
+        spm = (int)(Math.ceil(modulationTime * scanRate));
+        modulations = (int)(scans/spm);
+//        this.prefetchSize = scans/10;
         try {
             this.parent.getChild("first_column_elution_time");
             this.parent.getChild("second_column_elution_time");
@@ -164,10 +174,10 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 //        es.shutdown();
 //    }
     protected void setPrefetchSize(int scans, List<Array> list) {
-        if (list instanceof CachedList) {
-            ((CachedList) list).setCacheSize(scans / 10);
-            ((CachedList) list).setPrefetchOnMiss(true);
-        }
+//        if (list instanceof CachedList) {
+//            ((CachedList) list).setCacheSize(prefetchSize);
+//            ((CachedList) list).setPrefetchOnMiss(true);
+//        }
     }
 
     protected void activateCache(IVariableFragment ivf) {
@@ -181,18 +191,27 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
         }
     }
 
-    protected Scan2D acquireFromCache(int i) {
+    protected Scan2D acquireFromCache(final int i) {
         if (whm.get(i) == null) {
-//            System.out.println("Retrieving scan " + i);
-//            System.out.println("Prefetching "+" scans");
-            int minBound = Math.max(0,i-prefetchSize/2);
-            int maxBound = Math.min(getNumberOfScans(),i+prefetchSize/2);
-            for (int j = minBound; j <= maxBound; j++) {
-                whm.put(Integer.valueOf(j), provide(j));
+            whm.put(Integer.valueOf(i), provide(i));
+            if(!loading.get()) {
+                Runnable r = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        int minBound = Math.max(0,i-prefetchSize);
+                        int maxBound = Math.min(getNumberOfScans(),i+prefetchSize);
+                        for (int j = minBound; j <= maxBound; j++) {
+                            whm.put(Integer.valueOf(j), provide(j));
+                        }
+                        lastPrefetchRange = new int[]{minBound,maxBound};
+                        loading.compareAndSet(true, false);
+                    }
+                };
+                prefetchLoader.submit(r);
             }
         }
-        return whm.get(Integer.valueOf(i));
-//        return provide(i);
+        return whm.get(Integer.valueOf(i)).getScan();
     }
 
     protected Scan2D buildScan(int i) {
@@ -339,7 +358,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     }
 
     @Override
-    public Scan2D provide(Integer k) {
+    public SerializableScan2D provide(Integer k) {
 //        init();
         final Array masses = massValues.get(k);
         final Array intens = intensityValues.get(k);
@@ -347,7 +366,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
         Scan2D s = new Scan2D(masses, intens, k,
                 this.parent.getChild(scan_acquisition_time_var).getArray().
                 getDouble(k), k, k, rts[0], rts[1]);
-        return s;
+        return new SerializableScan2D(s);
     }
 
     @Override
@@ -357,12 +376,12 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     @Override
     public int getNumberOfModulations() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return modulations;
     }
 
     @Override
     public int getNumberOfScansPerModulation() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return spm;
     }
 
     @Override
@@ -378,7 +397,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     @Override
     public String getSecondColumnScanAcquisitionTimeUnit() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "seconds";
     }
 
     @Override

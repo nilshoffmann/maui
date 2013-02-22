@@ -95,6 +95,7 @@ public final class RawChromatogram1DViewOpenAction implements ActionListener {
                 progressHandle.start(chromatograms.size());
                 int workunit = 0;
                 boolean is1D = true;
+                IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
                 if (is1D) {
                     System.out.println("Creating 1D data providers and dataset.");
                     List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
@@ -110,15 +111,18 @@ public final class RawChromatogram1DViewOpenAction implements ActionListener {
                         chroms.add(descr);
                         ic.add(descr);
                     }
+                    if (project != null) {
+                        ic.add(project);
+                    }
 
-                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(new AbstractLookup(ic), Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
+                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, new AbstractLookup(ic));
                     onEdt(new Runnable() {
                         @Override
                         public void run() {
                             Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
                             topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chroms, ds);
                             topComponent.open();
-                            topComponent.load();
+//                            topComponent.load();
                         }
                     });
                 } else {
@@ -137,16 +141,18 @@ public final class RawChromatogram1DViewOpenAction implements ActionListener {
                         ic.add(descr);
                     }
 
-                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(new AbstractLookup(ic), Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
+                    if (project != null) {
+                        ic.add(project);
+                    }
+                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, new AbstractLookup(ic));
                     onEdt(new Runnable() {
-
                         @Override
                         public void run() {
                             Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
                             topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chroms, ds);
                             topComponent.open();
-                            topComponent.load();
-                        } 
+//                            topComponent.load();
+                        }
                     });
                 }
             } finally {

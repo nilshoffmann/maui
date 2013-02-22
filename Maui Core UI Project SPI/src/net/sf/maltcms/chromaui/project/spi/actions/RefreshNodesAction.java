@@ -40,7 +40,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Maui",
 id = "net.sf.maltcms.chromaui.project.spi.actions.RefreshNodesAction")
 @ActionRegistration(displayName = "#CTL_RefreshNodesAction")
-@ActionReferences({@ActionReference(path="Actions/ChromAUIProjectLogicalView"),@ActionReference(path="Actions/ContainerNodeActions/DefaultActions"),@ActionReference(path="Actions/DescriptorNodeActions/DefaultActions")})
+@ActionReferences({@ActionReference(path="Actions/ContainerNodeActions/DefaultActions"),@ActionReference(path="Actions/DescriptorNodeActions/DefaultActions")})
 @Messages("CTL_RefreshNodesAction=Refresh")
 public final class RefreshNodesAction implements ActionListener {
 

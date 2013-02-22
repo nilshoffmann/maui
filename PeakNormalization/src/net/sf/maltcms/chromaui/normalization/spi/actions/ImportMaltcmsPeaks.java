@@ -47,8 +47,8 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportMaltcmsPeaks")
 @ActionRegistration(displayName = "#CTL_ImportMaltcmsPeaks")
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 1420),
-    @ActionReference(path = "Actions/ChromAUIProjectLogicalView")
+//    @ActionReference(path = "Menu/File", position = 1420),
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks")
 })
 @Messages("CTL_ImportMaltcmsPeaks=Import Maltcms Peaks")
 public final class ImportMaltcmsPeaks implements ActionListener {

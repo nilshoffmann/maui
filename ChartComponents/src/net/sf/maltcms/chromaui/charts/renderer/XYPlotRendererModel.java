@@ -42,8 +42,11 @@ public class XYPlotRendererModel extends DefaultComboBoxModel {
 
     public XYPlotRendererModel() {
         XYLineAndShapeRenderer l = new XYLineAndShapeRenderer(true,false);
-        l.setDrawSeriesLineAsPath(true);
+        l.setDrawSeriesLineAsPath(false);
         addElement(l);
+		XYAreaRenderer xya = new XYAreaRenderer(XYAreaRenderer.AREA);
+        addElement(xya);
+        addElement(new SamplingXYLineRenderer());
         XYBarRenderer xyb = new XYBarRenderer(0.0d);
         xyb.setBarAlignmentFactor(0.5);
         xyb.setDrawBarOutline(false);
@@ -51,9 +54,6 @@ public class XYPlotRendererModel extends DefaultComboBoxModel {
         StandardXYBarPainter barPainter = new StandardXYBarPainter();
         xyb.setBarPainter(barPainter);
         addElement(xyb);
-        XYAreaRenderer xya = new XYAreaRenderer(XYAreaRenderer.AREA);
-        addElement(xya);
-        addElement(new SamplingXYLineRenderer());
         //addElement(new XYSplineRenderer(5));
     }
     

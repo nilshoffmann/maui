@@ -35,11 +35,13 @@ import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import lombok.Data;
 
 /**
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
+@Data
 public class GraphicsSettings {
 
     private Stroke stroke;
@@ -82,65 +84,5 @@ public class GraphicsSettings {
         g2.setFont(font);
         g2.setClip(clip);
         g2.setPaint(paint);
-    }
-
-    public Color getBackground() {
-        return background;
-    }
-
-    public void setBackground(Color background) {
-        this.background = background;
-    }
-
-    public Shape getClip() {
-        return clip;
-    }
-
-    public void setClip(Shape clip) {
-        this.clip = clip;
-    }
-
-    public void setColor(Color color) {
-        this.paint = color;
-    }
-
-    public Composite getComposite() {
-        return composite;
-    }
-
-    public void setComposite(Composite composite) {
-        this.composite = composite;
-    }
-
-    public Font getFont() {
-        return font;
-    }
-
-    public void setFont(Font font) {
-        this.font = font;
-    }
-
-    public Paint getPaint() {
-        return paint;
-    }
-
-    public void setPaint(Paint paint) {
-        this.paint = paint;
-    }
-
-    public Stroke getStroke() {
-        return stroke;
-    }
-
-    public void setStroke(Stroke stroke) {
-        this.stroke = stroke;
-    }
-
-    public AffineTransform getTransform() {
-        return transform;
-    }
-
-    public void setTransform(AffineTransform transform) {
-        this.transform = transform;
     }
 }

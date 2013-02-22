@@ -27,8 +27,9 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
-import java.awt.Rectangle;
-import ucar.ma2.ArrayDouble;
+import java.awt.geom.Rectangle2D;
+import ucar.ma2.Array;
+import ucar.ma2.Index2D;
 
 /**
  *
@@ -36,13 +37,18 @@ import ucar.ma2.ArrayDouble;
  */
 public class ArrayD2Mapper extends ViewportMapper {
 
-    private final ArrayDouble.D2 bi;
-    private final Rectangle maxViewPort;
+    private final Array bi;
+    private final Rectangle2D maxViewPort;
+    private final Index2D idx;
 
-    public ArrayD2Mapper(ArrayDouble.D2 arr) {
+    public ArrayD2Mapper(Array arr) {
+        if(arr.getRank()!= 2) {
+            throw new IllegalArgumentException("Array must have rank 2!");
+        }
         this.bi = arr;
+        this.idx = new Index2D(this.bi.getShape());
         //System.out.println("BufferedImage has dimensions: " + new Rectangle(0, 0, bi.getWidth(), bi.getHeight()));
-        this.maxViewPort = new Rectangle(0, 0, this.bi.getShape()[0]-1, this.bi.getShape()[1]-1);
+        this.maxViewPort = new Rectangle2D.Double(0, 0, this.bi.getShape()[0]-1, this.bi.getShape()[1]-1);
     }
 
     /**
@@ -53,8 +59,8 @@ public class ArrayD2Mapper extends ViewportMapper {
      * @return
      */
     @Override
-    public Rectangle getClippedViewport(Rectangle roi) {
-        return this.maxViewPort.intersection(roi);
+    public Rectangle2D getClippedViewport(Rectangle2D roi) {
+        return this.maxViewPort.createIntersection(roi);
     }
 
     @Override
@@ -62,7 +68,9 @@ public class ArrayD2Mapper extends ViewportMapper {
         if (x == Double.NaN || y == Double.NaN || !this.maxViewPort.contains(x, y)) {
             return Double.NaN;
         }
-        double d = this.bi.get((int) x, ((int) y));
+        
+        idx.set((int) x, ((int) y));
+        double d = this.bi.getInt(idx);
         
         if(Double.isInfinite(d)) {
             return Double.NaN;

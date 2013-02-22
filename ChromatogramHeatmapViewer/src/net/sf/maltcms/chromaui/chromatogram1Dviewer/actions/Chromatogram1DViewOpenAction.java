@@ -111,7 +111,7 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
                             topComponent.open();
                             topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
                             topComponent.requestActive();
-                            topComponent.load();
+//                            topComponent.load();
                         }
                     });
                 } else {
@@ -131,7 +131,7 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
                             Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
                             topComponent.open();
                             topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
-                            topComponent.load();
+//                            topComponent.load();
                         }
                     });
                 }

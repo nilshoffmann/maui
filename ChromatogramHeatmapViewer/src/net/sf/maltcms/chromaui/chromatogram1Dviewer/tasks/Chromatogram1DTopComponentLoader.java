@@ -63,7 +63,6 @@ public class Chromatogram1DTopComponentLoader extends AProgressAwareRunnable {
 
             boolean is1D = true;
             for (IChromatogramDescriptor descr : chromatograms) {
-//            System.out.println("descr: "+(descr instanceof IChromatogram1D));
                 if (!(descr.getChromatogram() instanceof IChromatogram1D)) {
                     is1D = false;
                 }

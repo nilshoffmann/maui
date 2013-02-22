@@ -49,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject")
 @ActionRegistration(displayName = "#CTL_AnnotatePeaksOnProject")
 @ActionReferences({
-    @ActionReference(path = "Actions/ChromAUIProjectLogicalView")})
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks")})
 @Messages("CTL_AnnotatePeaksOnProject=Search DB")
 public final class AnnotatePeaksOnProject implements ActionListener {
 

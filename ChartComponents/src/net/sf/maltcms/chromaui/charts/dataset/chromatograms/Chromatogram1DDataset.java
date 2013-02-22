@@ -214,5 +214,45 @@ public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D,IScan>{
     public int[][] getRanks() {
         return domainVariableValueRanks;
     }
+
+	@Override
+	public Number getStartX(int i, int i1) {
+		return getX(i, i1);
+	}
+
+	@Override
+	public double getStartXValue(int i, int i1) {
+		return getXValue(i, i1);
+	}
+
+	@Override
+	public Number getEndX(int i, int i1) {
+		return getXValue(i, i1);
+	}
+
+	@Override
+	public double getEndXValue(int i, int i1) {
+		return getXValue(i, i1);
+	}
+
+	@Override
+	public Number getStartY(int i, int i1) {
+		return getY(i, i1);
+	}
+
+	@Override
+	public double getStartYValue(int i, int i1) {
+		return getYValue(i, i1);
+	}
+
+	@Override
+	public Number getEndY(int i, int i1) {
+		return getY(i, i1);
+	}
+
+	@Override
+	public double getEndYValue(int i, int i1) {
+		return getYValue(i, i1);
+	}
     
 }
