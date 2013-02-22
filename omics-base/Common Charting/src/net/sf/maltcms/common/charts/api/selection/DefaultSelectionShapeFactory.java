@@ -24,29 +24,25 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
- */
-package net.sf.maltcms.common.charts.api.dataset;
+ */ 
+package net.sf.maltcms.common.charts.api.selection;
 
-import java.util.List;
+import java.awt.Shape;
+import org.jfree.chart.entity.XYItemEntity;
 
 /**
- *
- * @author Nils Hoffmann
+ * Default implementation of selection shapes. Simply returns the area as 
+ * returned by the passed in XYItemEntity.
+ * 
+ * @author hoffmann
  */
-public interface INamedElementProvider<SOURCE,TARGET> {
-    
-    public SOURCE getSource();
-    
-    public Comparable<?> getKey();
-    
-    public void setKey(Comparable<?> key);
-    
-    int size();
 
-    TARGET get(int i);
 
-    List<TARGET> get(int start, int stop);
+public class DefaultSelectionShapeFactory implements ISelectionShapeFactory {
 
-    void reset();
-    
+	@Override
+	public Shape createSelectionShape(XYItemEntity entity) {
+		return entity.getArea();
+	}
+	
 }

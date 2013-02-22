@@ -27,19 +27,24 @@
  */
 package net.sf.maltcms.common.charts.overlay.nodes;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.beans.IntrospectionException;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 
 /**
  *
  *  @author Nils Hoffmann
  */
-public class SourceNode extends BeanNode {
+public class SourceNode extends BeanNode<Object> {
 
     public SourceNode(Object bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children, lkp);

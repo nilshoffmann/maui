@@ -21,10 +21,16 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     private ADataset1D<?, TARGET> dataset;
     private final EventListenerList listenerList = new EventListenerList();
     private final IDisplayPropertiesProvider provider;
+	private final ISelectionShapeFactory shapeFactory;
 
-    public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset) {
+	public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset) {
+        this(dataset, new DefaultSelectionShapeFactory());
+    }
+	
+    public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset, ISelectionShapeFactory shapeFactory) {
         this.dataset = dataset;
         this.provider = dataset.getLookup().lookup(IDisplayPropertiesProvider.class);
+		this.shapeFactory = shapeFactory;
     }
 
     @Override
@@ -49,7 +55,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
             XYItemEntity itemEntity = ((XYItemEntity) cme.getEntity());
-            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.CLICK, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),itemEntity.getArea());
+            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.CLICK, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),shapeFactory.createSelectionShape(itemEntity));
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
@@ -63,7 +69,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
             XYItemEntity itemEntity = ((XYItemEntity) cme.getEntity());
-            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.HOVER, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),itemEntity.getArea());
+            selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.HOVER, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),shapeFactory.createSelectionShape(itemEntity));
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));

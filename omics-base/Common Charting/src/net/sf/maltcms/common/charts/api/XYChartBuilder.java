@@ -63,7 +63,7 @@ public class XYChartBuilder {
     
     private XYToolTipGenerator tooltipGenerator = new StandardXYToolTipGenerator();
     
-    private Map<Comparable,Color> datasetSeriesColorMap = null;
+    private Map<Comparable<?>,Color> datasetSeriesColorMap = null;
     
     private Plot plot;
     
@@ -116,7 +116,7 @@ public class XYChartBuilder {
         return this;
     }
     
-    public XYChartBuilder colors(Map<Comparable,Color> datasetSeriesColorMap) {
+    public XYChartBuilder colors(Map<Comparable<?>,Color> datasetSeriesColorMap) {
         notNull(datasetSeriesColorMap);
         this.datasetSeriesColorMap = datasetSeriesColorMap;
         return this;
@@ -157,13 +157,13 @@ public class XYChartBuilder {
         return this;
     }
     
-    protected void setDatasetSeriesColorMap(XYItemRenderer renderer, Map<Comparable,Color> datasetSeriesColorMap) {
+    protected void setDatasetSeriesColorMap(XYItemRenderer renderer, Map<Comparable<?>,Color> datasetSeriesColorMap) {
         if(datasetSeriesColorMap!=null) {
             if(datasetSeriesColorMap.keySet().size()!=dataset.getSeriesCount()) {
                 throw new IllegalArgumentException("Mismatch in series colors and series count!");
             }
             for (int i = 0; i < dataset.getSeriesCount(); i++) {
-                Comparable key = dataset.getSeriesKey(i);
+                Comparable<?> key = dataset.getSeriesKey(i);
                 renderer.setSeriesPaint(i, datasetSeriesColorMap.get(key));
             }
         }

@@ -33,6 +33,7 @@ import net.sf.maltcms.common.charts.api.selection.DefaultDisplayPropertiesProvid
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.AbstractXYDataset;
+import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYRangeInfo;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
@@ -42,7 +43,7 @@ import org.openide.util.lookup.InstanceContent;
  *
  * @author Nils Hoffmann
  */
-public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset implements ILookupDataset<SOURCE, TARGET> {
+public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset implements ILookupDataset<SOURCE, TARGET>, IntervalXYDataset {
 
     private final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
     private final InstanceContent content = new InstanceContent();
@@ -90,7 +91,7 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
     }
 
     @Override
-    public Comparable getSeriesKey(int i) {
+    public Comparable<?> getSeriesKey(int i) {
         return targetProvider.get(i).getKey();
     }
 

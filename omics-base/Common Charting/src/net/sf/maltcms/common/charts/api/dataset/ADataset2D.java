@@ -29,6 +29,7 @@ package net.sf.maltcms.common.charts.api.dataset;
 
 import java.util.List;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
+import org.jfree.data.xy.IntervalXYZDataset;
 import org.jfree.data.xy.XYZDataset;
 
 /**

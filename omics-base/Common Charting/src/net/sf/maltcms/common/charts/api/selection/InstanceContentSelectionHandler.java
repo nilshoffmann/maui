@@ -35,18 +35,18 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
     private final SelectionOverlay overlay;
     private final Mode mode;
     private final int capacity;
-    private ADataset1D dataset;
+    private ADataset1D<?,?> dataset;
     // private TARGET lastItem = null;
     private ExecutorService es = Executors.newSingleThreadExecutor();
     private AtomicBoolean updatePending = new AtomicBoolean(false);
     private Node selectionOverlayNode;
 
-    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D dataset) {
+    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D<?,?> dataset) {
         this(content, overlay, mode, dataset, Integer.MAX_VALUE);
         updateNode();
     }
 
-    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D dataset, int capacity) {
+    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D<?,?> dataset, int capacity) {
         this.content = content;
         this.overlay = overlay;
         this.mode = mode;
@@ -54,7 +54,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         this.capacity = capacity;
     }
 
-    public void setDataset(ADataset1D dataset) {
+    public void setDataset(ADataset1D<?,?> dataset) {
         this.dataset = dataset;
         updateNode();
     }

@@ -56,9 +56,9 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
 
     private final Map<Object, Set<ISelection>> sourceToSelection = new LinkedHashMap<Object, Set<ISelection>>();
     private final SelectionOverlay so;
-    private final ADataset1D dataset;
+    private final ADataset1D<?,?> dataset;
 
-    public SelectionSourceChildFactory(SelectionOverlay so, ADataset1D dataset) {
+    public SelectionSourceChildFactory(SelectionOverlay so, ADataset1D<?,?> dataset) {
         recreateSelection();
         so.addPropertyChangeListener(WeakListeners.propertyChange(this, so));
         this.so = so;
