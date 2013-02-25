@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="platform" default="download" basedir="..">
+<project name="platform" default="download" basedir=".">
     <import file="preparation.xml"/>
     <fileset dir="${nbplatform.nb721.netbeans.dest.dir}" id="platform.path"/>
     <mkdir dir="${nbplatform.nb721.netbeans.dest.dir}"/>
-    <!--<pathconvert refid="platform.path"
+    <pathconvert refid="platform.path"
                  property="platform.notempty"
-                 setonempty="false"/>-->
+                 setonempty="false"/>
                  
     <condition property="download.enabled">
         <and>
             <isset property="bootstrap.url"/>
             <isset property="autoupdate.catalog.url"/>
-<!--            <not>
+            <not>
                 <isset property="platform.notempty"/>
-            </not>-->
+            </not>
         </and>
     </condition>
     
@@ -45,14 +45,6 @@
                 <filelist files="${disabled.modules}" dir="."/>
             </path>
         </pathconvert>
-        <property name="module.force.includes" value=""/>
-        <pathconvert property="enforced.modules" pathsep="">
-            <mapper type="glob" from="${basedir}${file.separator}${enforced.modules}" to="(?!\Q*\E)"/>
-            <path>
-                <filelist files="${module.force.includes}" dir="."/>
-            </path>
-        </pathconvert>
-
         <property file="nbproject/platform.properties" prefix="urls."/>
         <propertyselector property="urls" match="urls.autoupdate.catalog\.(.*)" select="\1"/>
 
@@ -68,14 +60,14 @@
                 <download-platform url="${autoupdate.catalog.@{url}}"/>
             </sequential>
         </for>
-        <!--<echo>Installing plug-ins from ../netbeans</echo>
+        <echo>Installing plug-ins from ../netbeans</echo>
         <mkdir dir="${nbplatform.active.dir}/extra"/>
         <autoupdate todir="${nbplatform.active.dir}/extra">
             <nbms dir="../netbeans">
                 <include name="*.nbm"/>
             </nbms>
             <modules includes=".+"/>
-        </autoupdate>-->
+        </autoupdate>
     </target>
     
     <macrodef name="download-platform">
@@ -83,7 +75,6 @@
         <sequential>
             <autoupdate installdir="${nbplatform.active.dir}" updatecenter="@{url}">
                 <modules includes="${module.includes}.*" clusters="${download.clusters}"/>
-                <modules includes="${module.force.includes}.*" clusters="${download.clusters}"/>
                 <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
             </autoupdate>
         </sequential>

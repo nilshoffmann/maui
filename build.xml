@@ -17,10 +17,4 @@
 		</java>
 	</target>
 
-	<target name="build-all" description="Build all omics-applications.">
-		<ant dir="omics-base" target="build"/>
-		<ant dir="maui" target="build-zip"/>
-		<ant dir="proteus" target="build-zip"/>
-	</target>
-
 </project>

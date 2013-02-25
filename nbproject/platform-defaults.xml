@@ -13,11 +13,11 @@
             <entry key="nbplatform.harness.dir" value="${nbplatform.harness.dir}"/>
             <entry key="bootstrap.url" value="${bootstrap.url}"/>
             <entry key="autoupdate.catalog.url" value="${autoupdate.catalog.url}"/>
-            <entry key="autoupdate_certified.catalog.url" value="${autoupdate_certified.catalog.url}"/>
+            <entry key="autoupdate.catalog.url1" value="${autoupdate.catalog.url1}"/>
             <entry key="platform.base" value="${platform.base}"/>
             <entry key="nbplatform.active" value="${nbplatform.active}"/>
-            <entry key="nbplatform.nb712.netbeans.dest.dir" value="${nbplatform.nb712.netbeans.dest.dir}"/>
-            <entry key="nbplatform.nb712.harness.dir" value="${nbplatform.nb712.harness.dir}"/>
+            <entry key="nbplatform.721.netbeans.dest.dir" value="${nbplatform.nb721.netbeans.dest.dir}"/>
+            <entry key="nbplatform.721.harness.dir" value="${nbplatform.nb721.harness.dir}"/>
         </propertyfile>
         <echo message="Platform location: ${nbplatform.active.dir}"/>
         <echo message="NBplatform active: ${nbplatform.active}"/>
