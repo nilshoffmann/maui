@@ -26,6 +26,13 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
 for details.
 -->
-
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
-<filesystem/>
+<filesystem>
+    <folder name="Loaders">
+        <folder name="text">
+            <folder name="csv">
+                <folder name="Actions"/>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

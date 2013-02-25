@@ -8,12 +8,15 @@ import java.text.SimpleDateFormat
 
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
-import net.sf.maltcms.chromaui.groovy.RawDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.CSVDataGroovyScript;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import maltcms.ui.fileHandles.cdf.CDFDataObject;
+import maltcms.ui.fileHandles.csv.CSVDataObject;
 import org.openide.loaders.DataObject;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.windows.IOProvider;
+import org.openide.windows.InputOutput;
+import org.openide.windows.OutputWriter;
 import org.openide.util.Cancellable;
 import net.sf.maltcms.*;
 import cross.*;
@@ -24,23 +27,23 @@ import cross.datastructures.fragments.IFileFragment
  *
  * @author ${user}
  */
-class ${name} implements RawDataGroovyScript {
+class ${name} implements CSVDataGroovyScript {
     
     String name = "${name}"
-	String category = "Raw data processing"
+	String category = "Project modification"
     IChromAUIProject project
-    Collection<CDFDataObject> dataObjects
+    Collection<CSVDataObject> dataObjects
     ProgressHandle progressHandle
     
-	public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
-		this.project = project
-		this.progressHandle = progressHandle
-		this.dataObjects = dobjects
+	public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CSVDataObject> dobjs) {
+		this.project = project;
+		this.progressHandle = progressHandle;
+		this.dataObjects = dobjs;
 	}
     
     @Override
     public boolean cancel() {
-        //implement cancellation logic
+        //implement custom cancellation logic
     }
     
     @Override
@@ -48,10 +51,10 @@ class ${name} implements RawDataGroovyScript {
 		File outdir = project.getOutputLocation(this);
 		try {
 			progressHandle.setDisplayName(name)
-			progressHandle.start(dataObjects.size())
+			progressHandle.start(dataObjects.length)
 			def i = 1;
 			dataObjects.each{ it ->
-				progressHandle.progress("Processing ${r"${it.fragment.name}"}",i)
+				progressHandle.progress("Processing ${r"${rootFragment.getName()}"}",i)
 				//do something
 
 				i++

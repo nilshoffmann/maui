@@ -1,4 +1,4 @@
-/* 
+ /* 
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -27,18 +27,16 @@
  */
 package net.sf.maltcms.chromaui.groovy.api;
 
-import java.util.Collection;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
-import org.openide.loaders.DataObject;
 import org.openide.util.Cancellable;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
-public interface GroovyProjectDataObjectScript<T extends Project, U extends DataObject> extends Runnable, Cancellable {
+public interface GroovyProjectScript<T extends Project> extends Runnable, Cancellable {
     public String getName();
     public String getCategory();
-    public void create(T project, ProgressHandle progressHandle, Collection<? extends U> dobjects);
+    public void create(T project, ProgressHandle progressHandle);    
 }

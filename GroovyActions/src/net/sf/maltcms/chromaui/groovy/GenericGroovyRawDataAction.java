@@ -65,7 +65,7 @@ id = "net.sf.maltcms.chromaui.groovy.GenericGroovyRawDataAction")
 @ActionReferences({
     @ActionReference(path = "Loaders/application/x-cdf/Actions", position = 500)
 })
-@Messages("CTL_GenericGroovyRawDataAction=Run Groovy Action")
+@Messages("CTL_GenericGroovyRawDataAction=Run CDF Groovy Action")
 public final class GenericGroovyRawDataAction implements ActionListener {
 
     private final List<CDFDataObject> context;

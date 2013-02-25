@@ -25,20 +25,13 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy.api;
+@TemplateRegistrations(value={
+	@TemplateRegistration(scriptEngine="freemarker",displayName="Groovy Project Script",folder="Maui",content="templates/DefaultProjectScript.groovy"),
+	@TemplateRegistration(scriptEngine="freemarker",displayName="Groovy CDF Script",folder="Maui",content="templates/DefaultRawDataScript.groovy"),
+	@TemplateRegistration(scriptEngine="freemarker",displayName="Groovy CSV Script",folder="Maui",content="templates/DefaultCSVScript.groovy")
+})
+package net.sf.maltcms.chromaui.groovy;
 
-import java.util.Collection;
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.project.Project;
-import org.openide.loaders.DataObject;
-import org.openide.util.Cancellable;
+import org.netbeans.api.templates.TemplateRegistration;
+import org.netbeans.api.templates.TemplateRegistrations;
 
-/**
- *
- * @author nilshoffmann
- */
-public interface GroovyProjectDataObjectScript<T extends Project, U extends DataObject> extends Runnable, Cancellable {
-    public String getName();
-    public String getCategory();
-    public void create(T project, ProgressHandle progressHandle, Collection<? extends U> dobjects);
-}

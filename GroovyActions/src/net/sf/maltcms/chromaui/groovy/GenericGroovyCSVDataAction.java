@@ -61,9 +61,11 @@ import org.openide.util.Utilities;
 id = "net.sf.maltcms.chromaui.groovy.GenericGroovyCSVDataAction")
 @ActionRegistration(displayName = "#CTL_GenericGroovyCSVDataAction")
 @ActionReferences({
-    @ActionReference(path = "Loaders/text/csv/Actions", position = -500)
+    @ActionReference(path = "Loaders/text/csv/Actions", position = -500),
+	@ActionReference(path = "Loaders/text/tsv/Actions", position = -500),
+	@ActionReference(path = "Loaders/text/txt/Actions", position = -500),
 })
-@Messages("CTL_GenericGroovyCSVDataAction=Run Groovy Action")
+@Messages("CTL_GenericGroovyCSVDataAction=Run CSV Groovy Action")
 public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
 
     public GenericGroovyCSVDataAction() {
