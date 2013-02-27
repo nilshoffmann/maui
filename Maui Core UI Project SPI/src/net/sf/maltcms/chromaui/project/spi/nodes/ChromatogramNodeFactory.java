@@ -42,6 +42,7 @@ import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
@@ -87,7 +88,7 @@ public class ChromatogramNodeFactory extends ChildFactory<IChromatogramDescripto
 
     @Override
     protected Node createNodeForKey(IChromatogramDescriptor cd) {
-        Lookup lookup = Lookups.fixed(cd, cp);
+        Lookup lookup = new ProxyLookup(cp.getLookup(),Lookups.fixed(cd));
         AbstractNode an = new AbstractNode(
                 Children.create(new ChromatogramChildNodeFactory(
                 cd, lookup), true));

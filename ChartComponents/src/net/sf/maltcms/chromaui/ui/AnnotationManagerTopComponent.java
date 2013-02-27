@@ -27,10 +27,8 @@
  */
 package net.sf.maltcms.chromaui.ui;
 
-import java.util.logging.Logger;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 
@@ -41,7 +39,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 autostore = false)
 public final class AnnotationManagerTopComponent extends TopComponent {
 
-    private static AnnotationManagerTopComponent instance;
     /** path to the icon used by the component and its open action */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "AnnotationManagerTopComponent";
@@ -81,35 +78,35 @@ public final class AnnotationManagerTopComponent extends TopComponent {
      * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
      * To obtain the singleton instance, use {@link #findInstance}.
      */
-    public static synchronized AnnotationManagerTopComponent getDefault() {
-        if (instance == null) {
-            instance = new AnnotationManagerTopComponent();
-        }
-        return instance;
-    }
-
-    /**
-     * Obtain the AnnotationManagerTopComponent instance. Never call {@link #getDefault} directly!
-     */
-    public static synchronized AnnotationManagerTopComponent findInstance() {
-        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-        if (win == null) {
-            Logger.getLogger(AnnotationManagerTopComponent.class.getName()).warning(
-                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-            return getDefault();
-        }
-        if (win instanceof AnnotationManagerTopComponent) {
-            return (AnnotationManagerTopComponent) win;
-        }
-        Logger.getLogger(AnnotationManagerTopComponent.class.getName()).warning(
-                "There seem to be multiple components with the '" + PREFERRED_ID
-                + "' ID. That is a potential source of errors and unexpected behavior.");
-        return getDefault();
-    }
+//    public static synchronized AnnotationManagerTopComponent getDefault() {
+//        if (instance == null) {
+//            instance = new AnnotationManagerTopComponent();
+//        }
+//        return instance;
+//    }
+//
+//    /**
+//     * Obtain the AnnotationManagerTopComponent instance. Never call {@link #getDefault} directly!
+//     */
+//    public static synchronized AnnotationManagerTopComponent findInstance() {
+//        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+//        if (win == null) {
+//            Logger.getLogger(AnnotationManagerTopComponent.class.getName()).warning(
+//                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
+//            return getDefault();
+//        }
+//        if (win instanceof AnnotationManagerTopComponent) {
+//            return (AnnotationManagerTopComponent) win;
+//        }
+//        Logger.getLogger(AnnotationManagerTopComponent.class.getName()).warning(
+//                "There seem to be multiple components with the '" + PREFERRED_ID
+//                + "' ID. That is a potential source of errors and unexpected behavior.");
+//        return getDefault();
+//    }
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
@@ -129,13 +126,10 @@ public final class AnnotationManagerTopComponent extends TopComponent {
         // TODO store your settings
     }
 
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
-    }
+	Object readProperties(java.util.Properties p) {
+			this.readPropertiesImpl(p);
+			return this;
+	}
 
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");

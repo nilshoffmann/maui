@@ -60,7 +60,8 @@ import org.openide.util.lookup.Lookups;
 id = "maltcms.ui.RawChromatogram1DViewOpenAction")
 @ActionRegistration(displayName = "#CTL_RawChromatogram1DViewOpenAction")
 @ActionReferences({
-    @ActionReference(path = "Loaders/application/x-cdf/Actions", position = 0)
+    @ActionReference(path = "Loaders/application/x-cdf/Actions", position = 0),
+	@ActionReference(path = "Actions/ContainerNodeActions/ChromatogramNode/Open", position = 0)
 })
 @Messages("CTL_RawChromatogram1DViewOpenAction=Open Raw in Chromatogram Viewer")
 public final class RawChromatogram1DViewOpenAction implements ActionListener {

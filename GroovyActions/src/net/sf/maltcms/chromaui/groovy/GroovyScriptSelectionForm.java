@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.groovy;
 
 import java.awt.Component;
+import java.io.IOException;
 import java.util.List;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
@@ -35,21 +36,42 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import net.sf.maltcms.chromaui.groovy.api.GroovyProjectDataObjectScript;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.api.project.Project;
 import org.openide.ErrorManager;
 import org.openide.cookies.InstanceCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.Utilities;
+import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
  * @author nilshoffmann
  */
-public class GroovyScriptSelectionForm extends javax.swing.JPanel {
+public class GroovyScriptSelectionForm extends javax.swing.JPanel implements Lookup.Provider {
 
+	private Lookup lookup;
+	
     /** Creates new form GroovyScriptSelectionForm */
     public GroovyScriptSelectionForm() {
         initComponents();
+		Project p = Utilities.actionsGlobalContext().lookup(Project.class);
+		DataFolder groovyDir = null;
+		if(p instanceof IChromAUIProject) {
+			IChromAUIProject project = (IChromAUIProject)p;
+			try {
+				groovyDir = DataFolder.findFolder(FileUtil.createFolder(project.getLocation(),"groovy"));
+			} catch (IOException ex) {
+				Exceptions.printStackTrace(ex);
+			}
+		}
+		lookup = new ProxyLookup(Utilities.actionsGlobalContext(),Lookups.fixed(groovyDir));
     }
     
     public void setModel(List<?> l) {
@@ -87,8 +109,15 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
+        scriptDetailsPanel = new javax.swing.JPanel();
 
         jLabel1.setText(org.openide.util.NbBundle.getMessage(GroovyScriptSelectionForm.class, "GroovyScriptSelectionForm.jLabel1.text")); // NOI18N
+
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText(org.openide.util.NbBundle.getMessage(GroovyScriptSelectionForm.class, "GroovyScriptSelectionForm.jButton1.text")); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -97,15 +126,29 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel {
             }
         });
 
+        javax.swing.GroupLayout scriptDetailsPanelLayout = new javax.swing.GroupLayout(scriptDetailsPanel);
+        scriptDetailsPanel.setLayout(scriptDetailsPanelLayout);
+        scriptDetailsPanelLayout.setHorizontalGroup(
+            scriptDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        scriptDetailsPanelLayout.setVerticalGroup(
+            scriptDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 209, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, 0, 314, Short.MAX_VALUE)
-                    .addComponent(jLabel1))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scriptDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, 314, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -119,7 +162,9 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addContainerGap(227, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scriptDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -128,10 +173,15 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel {
         a.actionPerformed(evt);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel scriptDetailsPanel;
     // End of variables declaration//GEN-END:variables
 
     public Action findAction(String key) {
@@ -154,4 +204,9 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel {
         }
         return null;
     }
+
+	@Override
+	public Lookup getLookup() {
+		return lookup;
+	}
 }

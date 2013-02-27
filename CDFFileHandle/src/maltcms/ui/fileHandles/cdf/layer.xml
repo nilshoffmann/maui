@@ -64,10 +64,10 @@ for details.
         <folder name="application">
             <folder name="x-cdf">
                 <folder name="Actions">
-                    <file name="maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.instance"/>
-                        <attr name="position" intvalue="-300"/>
-                    </file>
+					<file name="maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.shadow">
+						<attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-cdf-CDF2ChartOpenAction.instance"/>
+						<attr name="position" intvalue="-300"/>
+					</file>
                     <!--
                     <file name="maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-fileHandles-cdf-CDF2ToolsUIOpenAction.instance"/>

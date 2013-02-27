@@ -31,18 +31,18 @@ import java.awt.Image;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.swing.Action;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.util.*;
 import org.openide.util.Lookup.Result;
-import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
@@ -62,44 +62,30 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 
     public ChromAUIProjectNode(IChromAUIProject bean) throws IntrospectionException {
         super(bean,Children.create(new ChromaUIProjectNodesFactory(bean), true),
-                Lookups.singleton(bean));
+                new ProxyLookup(bean.getLookup()));
         setName(bean.getProjectDirectory().getName());
         setShortDescription(bean.getLocation().getPath());
         bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
         metaboliteSelection = Utilities.actionsGlobalContext().lookupResult(IMetabolite.class);
     }
-
-	protected Action createMenuItem(String name, String path) {
-		Collection<? extends Action> actions = Utilities.
-                actionsForPath(path);
-		ProjectNodePopupAction pnia = new ProjectNodePopupAction(name);
-		pnia.setActions(actions.toArray(new Action[actions.size()]));
-		return pnia;
-	}
 	
     @Override
     public Action[] getActions(boolean arg0) {
         Set<Action> nodeActions = new LinkedHashSet<Action>();
-		nodeActions.add(createMenuItem("Pipelines","Actions/ChromAUIProjectLogicalView/Pipelines"));
-		nodeActions.add(createMenuItem("Peaks","Actions/ChromAUIProjectLogicalView/Peaks"));
-		nodeActions.add(createMenuItem("Database","Actions/ChromAUIProjectLogicalView/Database"));
-		nodeActions.add(createMenuItem("Scripts","Actions/ChromAUIProjectLogicalView/Scripts"));
+		INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
+		nodeActions.add(f.createMenuItem("Pipelines","Actions/ChromAUIProjectLogicalView/Pipelines"));
+		nodeActions.add(f.createMenuItem("Peaks","Actions/ChromAUIProjectLogicalView/Peaks"));
+		nodeActions.add(f.createMenuItem("Database","Actions/ChromAUIProjectLogicalView/Database"));
+		nodeActions.add(f.createMenuItem("Scripts","Actions/ChromAUIProjectLogicalView/Scripts"));
 		nodeActions.add(null);
 		nodeActions.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/DefaultActions"));
-		
-//		Collection<? extends Action> projectActions = Utilities.
-//                actionsForPath("Actions/ChromAUIProjectLogicalView");
-//		nodeActions.addAll(projectActions);
-//                CommonProjectActions.newFileAction(),
-//                null,
-//                CommonProjectActions.copyProjectAction(),
         nodeActions.add(null);
-//        nodeActions.add(CommonProjectActions.deleteProjectAction());
-//                null,
-//                CommonProjectActions.setAsMainProjectAction(),
+		nodeActions.add(CommonProjectActions.copyProjectAction());
+        nodeActions.add(CommonProjectActions.deleteProjectAction());
+		nodeActions.add(null);
         nodeActions.add(CommonProjectActions.closeProjectAction());
 //                null,
-//        nodeActions.add(CommonProjectActions.customizeProjectAction());
+        nodeActions.add(CommonProjectActions.customizeProjectAction());
 
         return nodeActions.toArray(new Action[nodeActions.size()]);
     }

@@ -28,15 +28,11 @@
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import org.openide.awt.Actions;
-import org.openide.filesystems.FileSystem;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -45,22 +41,22 @@ import org.openide.util.actions.Presenter;
  */
 
 
-public class ProjectNodePopupAction extends AbstractAction implements Presenter.Popup {
+public class NodePopupAction extends AbstractAction implements Presenter.Popup {
 
 	private Action[] actions = new Action[0];
 
 	private String name;
 	
-	public ProjectNodePopupAction() {
+	public NodePopupAction() {
 		this.name = "Undefined";
 	}
 
-	public ProjectNodePopupAction(String name) {
+	public NodePopupAction(String name) {
 		super(name);
 		this.name = name;
 	}
 
-	public ProjectNodePopupAction(String name, Icon icon) {
+	public NodePopupAction(String name, Icon icon) {
 		super(name, icon);
 		this.name = name;
 	}

@@ -40,6 +40,8 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.maui.heatmapViewer.HeatmapViewerTopComponent;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ArrayD2Mapper;
 import org.jzy3d.maths.Coord3d;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
@@ -48,7 +50,7 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayInt;
 
 @ActionID(
-    category = "ContainerNodeActions/ChromatogramNode",
+    category = "ContainerNodeActions/ChromatogramNode/Open",
 id = "net.sf.maltcms.maui.heatmapViewer.actions.ViewAs3DHeatmap")
 @ActionRegistration(
     displayName = "#CTL_ViewAs3DHeatmap")
@@ -63,8 +65,13 @@ public final class ViewAs3DHeatmap implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        ViewAs3DHeatmapRunnable vr = new ViewAs3DHeatmapRunnable();
-        ViewAs3DHeatmapRunnable.createAndRun("Creating 3D Heatmap View", vr);
+		if(context.getSeparationType().getFeatureDimensions()==2) {
+			ViewAs3DHeatmapRunnable vr = new ViewAs3DHeatmapRunnable();
+			ViewAs3DHeatmapRunnable.createAndRun("Creating 3D Heatmap View", vr);
+		}else {
+			NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + context.getSeparationType().getFeatureDimensions() + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
+			DialogDisplayer.getDefault().notify(nd);			
+		}
     }
 
     private class ViewAs3DHeatmapRunnable extends AProgressAwareRunnable {

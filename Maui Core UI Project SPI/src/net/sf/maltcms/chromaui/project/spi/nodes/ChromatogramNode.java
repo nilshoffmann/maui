@@ -39,6 +39,7 @@ import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
@@ -199,8 +200,14 @@ public class ChromatogramNode extends FilterNode implements
     @Override
     public Action[] getActions(boolean context) {
         Set<Action> allActions = new LinkedHashSet<Action>();
+		INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
         allActions.addAll(Utilities.actionsForPath(
                 "Actions/ContainerNodeActions/ChromatogramNode"));
+		allActions.removeAll(Utilities.actionsForPath(
+                "Actions/ContainerNodeActions/ChromatogramNode/Open"));
+		allActions.add(f.createMenuItem("Open","Actions/ContainerNodeActions/ChromatogramNode/Open"));
+		
+		
         Action[] originalActions = super.getActions(context);
         allActions.addAll(Arrays.asList(originalActions));
         List<String> exclusions = Arrays.asList("maltcms.ui.RawChromatogram1DViewOpenAction");

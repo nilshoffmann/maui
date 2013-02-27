@@ -39,12 +39,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import maltcms.ui.project.SimpleChromAProject;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.IMauiSubprojectProviderFactory;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.ProjectSettings;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
@@ -55,8 +57,13 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.spi.project.ActionProvider;
+import org.netbeans.spi.project.CopyOperationImplementation;
+import org.netbeans.spi.project.DeleteOperationImplementation;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.SubprojectProvider;
 import org.netbeans.spi.project.ui.ProjectOpenedHook;
+import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
@@ -110,6 +117,7 @@ public class ChromAUIProject implements IChromAUIProject {
         if (state != null) {
             ic.add(state);
         }
+		ic.add(this);
         //allow outside code to mark the project as needing saving
         ic.add(new Info());
         //Project information implementation
@@ -118,6 +126,15 @@ public class ChromAUIProject implements IChromAUIProject {
         ic.add(new OpenCloseHook());
         //ClassPath Provider for Maltcms installations
         ic.add(new MaltcmsClassPathProvider());
+		//Action provider for default project actions
+		ic.add(new ActionProviderImpl(this));
+		ic.add(new DeleteOperationImpl(this));
+		ic.add(new CopyOperationImpl(this));
+		//SubProject Providers for Maltcms processing results
+		for(IMauiSubprojectProviderFactory factory:Lookup.getDefault().lookupAll(IMauiSubprojectProviderFactory.class)) {
+			System.out.println("Found factory: "+factory.getClass().getName());
+			ic.add(factory.provide(this));
+		}
     }
 
     @Override
@@ -208,10 +225,13 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public <T extends IContainer> Collection<T> getContainer(Class<T> c) {
-        ICrudSession ics = icp.createSession();
-        Collection<T> l = ics.retrieve(c);
-        ics.close();
-        return l;
+		if(icp!=null) {
+			ICrudSession ics = icp.createSession();
+			Collection<T> l = ics.retrieve(c);
+			ics.close();
+			return l;
+		}
+		return Collections.emptyList();
     }
 
     @Override
@@ -310,6 +330,9 @@ public class ChromAUIProject implements IChromAUIProject {
     }
 
     protected ProjectSettings getSettings() {
+		if(ics==null) {
+			openSession();
+		}
         Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
         if (l.isEmpty()) {
             ProjectSettings ps = new ProjectSettings();
@@ -461,6 +484,111 @@ public class ChromAUIProject implements IChromAUIProject {
         @Override
         public Project getProject() {
             return ChromAUIProject.this;
+        }
+    }
+	
+	private final class DeleteOperationImpl implements DeleteOperationImplementation {
+
+		private final IChromAUIProject project;
+		
+		public DeleteOperationImpl(IChromAUIProject project) {
+			this.project = project;
+		}
+
+		@Override
+		public List<FileObject> getMetadataFiles() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public List<FileObject> getDataFiles() {
+			Enumeration<? extends FileObject> e = project.getLocation().getChildren(true);
+			ArrayList<FileObject> list = new ArrayList<FileObject>(Collections.list(e));
+			list.add(project.getLocation());
+			return list;
+		}
+
+		@Override
+		public void notifyDeleting() throws IOException {
+			closeSession();
+		}
+
+		@Override
+		public void notifyDeleted() throws IOException {
+
+		}
+		
+	}
+	
+	private final class CopyOperationImpl implements CopyOperationImplementation {
+
+		private final IChromAUIProject project;
+		
+		public CopyOperationImpl(IChromAUIProject project) {
+			this.project = project;
+		}
+		
+		@Override
+		public void notifyCopying() throws IOException {
+			project.closeSession();
+		}
+
+		@Override
+		public void notifyCopied(Project prjct, File file, String string) throws IOException {
+			project.openSession();
+		}
+
+		@Override
+		public List<FileObject> getMetadataFiles() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public List<FileObject> getDataFiles() {
+			Enumeration<? extends FileObject> e = project.getLocation().getChildren(true);
+			ArrayList<FileObject> list = new ArrayList<FileObject>(Collections.list(e));
+			list.add(project.getLocation());
+			return list;
+		}
+		
+	}
+	
+	private final class ActionProviderImpl implements ActionProvider {
+
+        private String[] supported = new String[]{
+            ActionProvider.COMMAND_DELETE,
+            ActionProvider.COMMAND_COPY,};
+
+		private final IChromAUIProject project;
+		
+		public ActionProviderImpl(IChromAUIProject project) {
+			this.project = project;
+		}
+		
+        @Override
+        public String[] getSupportedActions() {
+            return supported;
+        }
+
+        @Override
+        public void invokeAction(String string, Lookup lookup) throws IllegalArgumentException {
+            if (string.equalsIgnoreCase(ActionProvider.COMMAND_DELETE)) {
+                DefaultProjectOperations.performDefaultDeleteOperation(project);
+            }
+            if (string.equalsIgnoreCase(ActionProvider.COMMAND_COPY)) {
+                DefaultProjectOperations.performDefaultCopyOperation(project);
+            }
+        }
+
+        @Override
+        public boolean isActionEnabled(String command, Lookup lookup) throws IllegalArgumentException {
+            if ((command.equals(ActionProvider.COMMAND_DELETE))) {
+                return true;
+            } else if ((command.equals(ActionProvider.COMMAND_COPY))) {
+                return true;
+            } else {
+                throw new IllegalArgumentException(command);
+            }
         }
     }
 }

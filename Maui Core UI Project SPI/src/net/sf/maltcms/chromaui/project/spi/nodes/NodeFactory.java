@@ -29,18 +29,17 @@ package net.sf.maltcms.chromaui.project.spi.nodes;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
+import java.util.Collection;
+import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.WeakListeners;
-import org.openide.util.lookup.Lookups;
-import org.openide.util.lookup.ProxyLookup;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -67,10 +66,6 @@ public class NodeFactory implements INodeFactory {
         return an;
     }
 
-//    @Override
-//    public <T> Node createContainerNode(IContainer<? extends T> key, Children children, Lookup lookup) {
-//        return null;
-//    }
     @Override
     public Node createContainerNode(IContainer key, Children children, Lookup lookup) {
         ContainerNode cn;
@@ -88,4 +83,13 @@ public class NodeFactory implements INodeFactory {
         }
         return Node.EMPTY;
     }
+	
+	@Override
+	public Action createMenuItem(String name, String path) {
+		Collection<? extends Action> actions = Utilities.
+                actionsForPath(path);
+		NodePopupAction pnia = new NodePopupAction(name);
+		pnia.setActions(actions.toArray(new Action[actions.size()]));
+		return pnia;
+	}
 }

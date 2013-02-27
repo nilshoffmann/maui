@@ -89,7 +89,7 @@ for details.
     <folder name="Windows2">
         <folder name="Components">
             <file name="Heatmap3DViewerTopComponent.settings" url="Heatmap3DViewerTopComponentSettings.xml"/>
-            <file name="Heatmap3DViewerTopComponentTopComponent.settings" url="Heatmap3DViewerTopComponentTopComponentSettings.xml"/>
+            <!--<file name="Heatmap3DViewerTopComponentTopComponent.settings" url="Heatmap3DViewerTopComponentTopComponentSettings.xml"/>-->
         </folder>
         <folder name="Modes">
             <folder name="editor">

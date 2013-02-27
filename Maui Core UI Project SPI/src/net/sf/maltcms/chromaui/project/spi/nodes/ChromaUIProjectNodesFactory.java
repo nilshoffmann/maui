@@ -30,25 +30,24 @@ package net.sf.maltcms.chromaui.project.spi.nodes;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import javax.swing.event.ChangeListener;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.*;
+import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.nodes.AbstractNode;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.WeakListeners;
-import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
@@ -133,6 +132,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
         if (fobj != null) {
             list.add(fobj);
         }
+		list.add("MALTCMS");
 //        for (FileObject fo : getFileChildren()) {
 //            if (Thread.interrupted()) {
 //                return true;
@@ -172,7 +172,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     protected Node createNodeForKey(Object key) {
         if (key instanceof IContainer) {
             try {
-                ContainerNode cn = new ContainerNode((IContainer) key, Lookups.fixed(cp));
+                ContainerNode cn = new ContainerNode((IContainer) key, new ProxyLookup(cp.getLookup()));
                 cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
                 ((IContainer) key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
                 return cn;
@@ -187,14 +187,24 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                 Node n = dobj.getNodeDelegate();
 //                DataFolder.FolderNode fn = new DataFolder.FolderNode();
                 FilterNode fn = new FilterNode(n, new FilterNode.Children(n),
-                        new ProxyLookup(n.getLookup(), Lookups.fixed(cp)));
+                        new ProxyLookup(n.getLookup(), cp.getLookup()));
                 fn.addPropertyChangeListener(WeakListeners.propertyChange(this, fn));
                 dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
                 return fn;
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             }
-        }
+        }else if(key instanceof String) {
+			String keyValue = (String)key;
+			if(keyValue.equals("MALTCMS")) {
+				Children children = NodeFactorySupport.createCompositeChildren(cp, "Projects/net-sf-maltcms-chromaui-project/Nodes");
+				Node n = new AbstractNode(children, new ProxyLookup(cp.getLookup()));
+				n.setDisplayName("Maltcms Results");
+				n.setName("maltcmsResults");
+				n.addPropertyChangeListener(WeakListeners.propertyChange(this, n));
+				return n;
+			}
+		}
         return Node.EMPTY;
     }
 

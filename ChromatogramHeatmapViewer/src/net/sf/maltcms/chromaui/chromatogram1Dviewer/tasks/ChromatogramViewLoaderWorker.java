@@ -219,94 +219,16 @@ public class ChromatogramViewLoaderWorker implements Runnable {
         return al;
     }
 
-    public static List<XYAnnotation> generatePeakShapes(
-            IChromatogramDescriptor file, IChromAUIProject project,
-            Color outline, Color fill, String mode, double[] masses) {
-        List<XYAnnotation> l = new ArrayList<XYAnnotation>();
-//        System.out.println(
-//                "Adding " + peaks.size() + " peak annotations in mode " + mode);
-
-        IChromatogram chromatogram = file.getChromatogram();
-        if (mode.equals("TIC")) {
-            int cnt = 0;
-            System.out.println("Retrieving tic info for peak");
-            Array tic = chromatogram.getParent().getChild(
-                    "total_intensity").getArray();
-            for (Peak1DContainer container : project.getPeaks(file)) {
-                System.out.println(
-                        "Container has " + container.getMembers().size() + " peak annotations!");
-                String toolName = container.getTool().getName();
-                Color containerColor = container.getColor();
-                for (IPeakAnnotationDescriptor peakDescr : container.getMembers()) {
-//                    Peak1D peak = peakDescr.getPeak();
-                    System.out.println("Adding peak " + (cnt++) + " " + peakDescr.getName());
-
-//                System.out.println("Retrieving scan acquisition time");
-                    Array sat2 = chromatogram.getParent().getChild(
-                            "scan_acquisition_time").getArray();
-                    int scan = chromatogram.getIndexFor(peakDescr.getApexTime());
-                    System.out.println("Retention time: " + peakDescr.getApexTime() + "; Scan index: " + scan);
-                    int startIdx = chromatogram.getIndexFor(peakDescr.getStartTime());
-                    int apexIdx = chromatogram.getIndexFor(peakDescr.getApexTime());
-                    int stopIdx = chromatogram.getIndexFor(peakDescr.getStopTime());
-//                    double apexTime = peakDescr.getApexTime();
-//                    double startTime = peakDescr.getStartTime();
-//                    double stopTime = peakDescr.getStopTime();
-
-                    double apexTime = sat2.getDouble(apexIdx);
-                    double startTime = sat2.getDouble(startIdx);
-                    double stopTime = sat2.getDouble(stopIdx);
-
-//                    System.out.println(
-//                            "Creating general path from " + startIdx + " to " + stopIdx);
-                    GeneralPath gp = new GeneralPath();
-                    gp.moveTo(startTime, 0);
-                    gp.lineTo(startTime, tic.getDouble(startIdx));
-                    for (int j = 0; j
-                            < stopIdx - startIdx + 1; j++) {
-                        gp.lineTo(sat2.getDouble(startIdx + j), tic.getDouble(startIdx + j));
-                    }
-                    gp.lineTo(stopTime, 0);
-                    gp.closePath();
-                    System.out.println("creating bounding box");
-//                    Rectangle2D.Double bbox = new Rectangle2D.Double(
-//                            startTime, 0, stopTime - startTime,
-//                            tic.getDouble(scan));
-//                    Rectangle2D.Double bbox = new Rectangle2D.Double(
-//                            startTime, 0, stopTime-startTime,
-//                            tic.getDouble(scan));
-//                    GeneralPath gp = new GeneralPath();
-//                    gp.moveTo(startTime, tic.getDouble(startIdx));
-//                    gp.lineTo(apexTime, tic.getDouble(apexIdx));
-//                    gp.lineTo(stopTime, tic.getDouble(stopIdx));
-//                    gp.closePath();
-                    String label = peakDescr.getDisplayName() + "@" + String.format("%.2f", apexTime);
-                    XYSelectableShapeAnnotation<IPeakAnnotationDescriptor> xyssa = new XYSelectableShapeAnnotation<IPeakAnnotationDescriptor>(apexTime, tic.getDouble(apexIdx), gp, toolName + ", #" + peakDescr.getIndex() + "", TextAnchor.BASELINE_LEFT, peakDescr);
-                    xyssa.setFill(containerColor);
-                    xyssa.setOutline(containerColor.darker());
-                    xyssa.setHighlight(containerColor.brighter());
-                    System.out.println("adding annotation");
-                    l.add(xyssa);
-                }
-            }
-        } else if (mode.equals("EIC-SUM")) {
-        } else if (mode.equals("EIC-COPLOT")) {
-        }
-
-
-        return l;
-    }
-
     private void configurePlot(XYPlot plot, RTUnit rtAxisUnit) {
         NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
         domainAxis.setNumberFormatOverride(new RTNumberFormatter(rtAxisUnit));
         domainAxis.setLabel("RT[" + rtAxisUnit.name().toLowerCase() + "]");
-//        plot.setDomainCrosshairVisible(true);
-//        plot.setDomainCrosshairLockedOnData(true);
         plot.setRangeZeroBaselineVisible(true);
         plot.setDomainZeroBaselineVisible(false);
-        plot.getDomainAxis().setAutoRange(true);
-        plot.getRangeAxis().setAutoRange(true);
+        domainAxis.setAutoRange(true);
+		domainAxis.setAutoRangeIncludesZero(false);
+        ((NumberAxis)plot.getRangeAxis()).setAutoRange(true);
+		((NumberAxis)plot.getRangeAxis()).setAutoRangeIncludesZero(true);
         System.out.println("Adding chart");
         plot.setBackgroundPaint(Color.WHITE);
     }

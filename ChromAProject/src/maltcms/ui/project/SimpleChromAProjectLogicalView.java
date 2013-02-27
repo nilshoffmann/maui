@@ -72,7 +72,7 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
             Node realTextFolderNode = textDataObject.getNodeDelegate();
 
             //This FilterNode will be our project node
-            TextNode node = new TextNode(realTextFolderNode, project);
+            MaltcmsProjectNode node = new MaltcmsProjectNode(realTextFolderNode, project);
             return node;
 
         } catch (DataObjectNotFoundException donfe) {
@@ -90,18 +90,18 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
     }
 
     /** This is the node you actually see in the project tab for the project */
-    private static final class TextNode extends FilterNode {
+    private static final class MaltcmsProjectNode extends FilterNode {
 
         final SimpleChromAProject project;
 
-        public TextNode(Node node, SimpleChromAProject project) throws DataObjectNotFoundException {
+        public MaltcmsProjectNode(Node node, SimpleChromAProject project) throws DataObjectNotFoundException {
             super(node, new FilterNode.Children(node),
                     //The projects system wants the project in the Node's lookup.
                     //NewAction and friends want the original Node's lookup.
                     //Make a merge of both
-                    new ProxyLookup(new Lookup[]{Lookups.singleton(project),
+                    new ProxyLookup(Lookups.singleton(project),
                         node.getLookup()
-                    }));
+                    ));
             this.project = project;
         }
 

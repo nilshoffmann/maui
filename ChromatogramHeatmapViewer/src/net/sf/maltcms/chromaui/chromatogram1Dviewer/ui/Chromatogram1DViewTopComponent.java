@@ -116,6 +116,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 			final List<IChromatogramDescriptor> filename, final ADataset1D<IChromatogram1D, IScan> ds) {
 		boolean initializedSucccess = initialized.compareAndSet(false, true);
 		if (initializedSucccess) {
+			final Chromatogram1DViewTopComponent instance = this;
 			final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading chart");
 			final JComponent progressComponent = ProgressHandleFactory.createProgressComponent(handle);
 			final JPanel box = new JPanel();
@@ -141,7 +142,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 							if (project != null) {
 								Collection<Peak1DContainer> peaks = project.getPeaks(descr);
 								for (Peak1DContainer container : peaks) {
-									Peak1DOverlay overlay = new Peak1DOverlay(container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
+									Peak1DOverlay overlay = new Peak1DOverlay(descr,container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
 									ic.add(overlay);
 									ic.add(Charts.overlayNode(overlay));
 								}
@@ -158,6 +159,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 						sp = new SettingsPanel();
 						ic.add(sp);
 						result = Utilities.actionsGlobalContext().lookupResult(ChromatogramViewViewport.class);
+						result.addLookupListener(instance);
 						handle.progress("Creating panel...");
 						jp = new Chromatogram1DViewPanel(ic, getLookup(), ds);
 						ic.add(jp);
@@ -443,6 +445,8 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 				Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();
 				if (!viewports.isEmpty()) {
 					this.jp.setViewport(viewports.iterator().next().getViewPort());
+				}else{
+					System.err.println("No viewports received!");
 				}
 			}
 		}

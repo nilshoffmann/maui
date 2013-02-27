@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -37,12 +36,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
-import net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -66,7 +62,6 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
     private Lookup lkp;
 
     public ContainerNodeFactory(IContainer<T> cp, Lookup lkp) {
-//        System.out.println("Created ContainerNode Factory for " + cp.getClass());
         this.cp = cp;
         this.lkp = lkp;
         cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
@@ -114,27 +109,17 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
             try {
                 dobj = DataObject.find(FileUtil.toFileObject(new File(cd.
                         getResourceLocation())));
-                //System.out.println("Trying to retrieve data object from location : " + cd.
-                //        getResourceLocation());
                 Node n = dobj.getNodeDelegate();
                 //merge lookups of data object node and container node
                 Lookup lookup = new ProxyLookup(n.getLookup(), Lookups.fixed(cp,
                         cd), lkp);
-//                try {
                 ChromatogramNode cn = new ChromatogramNode(n,
                         Children.create(new ChromatogramChildNodeFactory(
                         cd, lkp), true), lookup);
-//                cd.addPropertyChangeListener(this);
                 dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
                 key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
                 cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
                 return cn;
-//                        Children.create(new ChromatogramChildNodeFactory(
-//                        cd, lookup), true), lookup);
-                //                new FilterNode.Children(n), lookup);
-//                } catch (IntrospectionException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             } catch (IOException ex) {
@@ -151,15 +136,11 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
             cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
             return cn;
         } else {
-//            try {
             Node cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
                     Lookups.fixed(cp)));
             key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
             cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
             return cn;
-//            } catch (IntrospectionException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
         }
         return Node.EMPTY;
     }

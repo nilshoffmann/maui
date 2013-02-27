@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.io.File;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.CopyOperationImplementation;
@@ -41,11 +42,13 @@ import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class SimpleChromAProject implements Project {
 
@@ -86,14 +89,21 @@ public class SimpleChromAProject implements Project {
     @Override
     public Lookup getLookup() {
         if (lkp == null) {
-            lkp = Lookups.fixed(new Object[]{
-                        state, //allow outside code to mark the project as needing saving
-                        new ActionProviderImpl(), //Provides standard actions like Build and Clean
-                        new DemoDeleteOperation(),
-                        new DemoCopyOperation(this),
-                        new SimpleChromAProjectInformation(this), //Project information implementation
-                        new SimpleChromAProjectLogicalView(this), //Logical view of project implementation
-                    });
+			IChromAUIProject parentProject = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+			Object[] obj = new Object[]{
+                state, //allow outside code to mark the project as needing saving
+                new ActionProviderImpl(), //Provides standard actions like Build and Clean
+				new DemoDeleteOperation(),
+				new DemoCopyOperation(this),
+				new SimpleChromAProjectInformation(this), //Project information implementation
+				new SimpleChromAProjectLogicalView(this), //Logical view of project implementation
+			};
+			if(parentProject!=null) {
+				System.out.println("Exposing parent project in lookup!");
+				lkp = new ProxyLookup(Lookups.fixed(obj), parentProject.getLookup());
+			}else{ 
+				lkp = new ProxyLookup(Lookups.fixed(obj));
+			}
         }
         return lkp;
     }

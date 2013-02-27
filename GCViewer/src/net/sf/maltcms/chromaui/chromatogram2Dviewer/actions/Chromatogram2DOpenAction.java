@@ -32,6 +32,8 @@ import java.awt.event.ActionListener;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.tasks.Chromatogram2DViewerLoaderTask;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
@@ -40,7 +42,7 @@ import org.openide.util.Utilities;
 /**
  * @author nilshoffmann
  */
-@ActionID(category = "ContainerNodeActions/ChromatogramNode",
+@ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
 id = "net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Chromatogram2DOpenAction")
 @ActionRegistration(displayName = "#CTL_Chromatogram2DOpenAction")
 @NbBundle.Messages("CTL_Chromatogram2DOpenAction=Open in 2D Chromatogram Viewer")
@@ -55,8 +57,13 @@ public final class Chromatogram2DOpenAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         IChromatogramDescriptor descr = context;
-        IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
-        Chromatogram2DViewerLoaderTask t = new Chromatogram2DViewerLoaderTask(project, null, descr);
-        Chromatogram2DViewerLoaderTask.createAndRun("2D Chromatogram TopComponent Loader", t);
+		if(descr.getSeparationType().getFeatureDimensions()==2) {
+			IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+			Chromatogram2DViewerLoaderTask t = new Chromatogram2DViewerLoaderTask(project, null, descr);
+			Chromatogram2DViewerLoaderTask.createAndRun("2D Chromatogram TopComponent Loader", t);
+		} else {
+			NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with "+descr.getSeparationType().getFeatureDimensions()+" separation dimension(s)!",NotifyDescriptor.Message.INFORMATION_MESSAGE);
+			DialogDisplayer.getDefault().notify(nd);
+		}
     }
 }

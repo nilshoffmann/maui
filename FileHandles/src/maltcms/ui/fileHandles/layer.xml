@@ -452,15 +452,15 @@ for details.
     </folder>
     <folder name="Windows2">
         <folder name="Components">
-            <file name="CSV2ListTopComponent.settings" url="csv/CSV2ListTopComponentSettings.xml"/>
-            <file name="JFCTopComponent.settings" url="serialized/JFCTopComponentSettings.xml"/>
-            <file name="PipelineEditorTopComponent.settings" url="properties/PipelineEditorTopComponentSettings.xml"/>
+            <!--<file name="CSV2ListTopComponent.settings" url="csv/CSV2ListTopComponentSettings.xml"/>-->
+            <!--<file name="JFCTopComponent.settings" url="serialized/JFCTopComponentSettings.xml"/>-->
+            <!--<file name="PipelineEditorTopComponent.settings" url="properties/PipelineEditorTopComponentSettings.xml"/>-->
         </folder>
         <folder name="Modes">
             <folder name="editor">
-                <file name="CSV2ListTopComponent.wstcref" url="csv/CSV2ListTopComponentWstcref.xml"/>
-                <file name="JFCTopComponent.wstcref" url="serialized/JFCTopComponentWstcref.xml"/>
-                <file name="PipelineEditorTopComponent.wstcref" url="properties/PipelineEditorTopComponentWstcref.xml"/>
+                <!--<file name="CSV2ListTopComponent.wstcref" url="csv/CSV2ListTopComponentWstcref.xml"/>-->
+                <!--<file name="JFCTopComponent.wstcref" url="serialized/JFCTopComponentWstcref.xml"/>-->
+                <!--<file name="PipelineEditorTopComponent.wstcref" url="properties/PipelineEditorTopComponentWstcref.xml"/>-->
             </folder>
         </folder>
     </folder>

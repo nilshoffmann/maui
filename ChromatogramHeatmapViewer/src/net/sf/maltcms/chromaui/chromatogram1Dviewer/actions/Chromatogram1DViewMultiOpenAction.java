@@ -50,7 +50,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 
-@ActionID(category = "ContainerNodeActions/ChromatogramNode",
+@ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
 id = "maltcms.ui.Chromatogram1DViewMultiOpenAction")
 @ActionRegistration(displayName = "#CTL_Chromatogram1DViewMultiOpenAction")
 @Messages("CTL_Chromatogram1DViewMultiOpenAction=Open in Chromatogram Viewer (separate)")

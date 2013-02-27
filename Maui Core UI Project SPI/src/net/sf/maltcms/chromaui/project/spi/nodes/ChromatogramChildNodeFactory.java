@@ -42,6 +42,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
@@ -90,7 +91,7 @@ public class ChromatogramChildNodeFactory extends ChildFactory<Peak1DContainer>
     protected Node createNodeForKey(Peak1DContainer key) {
         try {
             //container node, add current lookup, make container available generically
-            ContainerNode cn = new ContainerNode(key, Lookups.fixed(this.chromatogramDescriptor, this.lkp.lookup(IChromAUIProject.class)));
+            ContainerNode cn = new ContainerNode(key, new ProxyLookup(this.lkp.lookup(IChromAUIProject.class).getLookup(),Lookups.fixed(this.chromatogramDescriptor)));
             IChromAUIProject project = this.lkp.lookup(IChromAUIProject.class);
             project.addPropertyChangeListener(WeakListeners.propertyChange(this, project));
             key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
