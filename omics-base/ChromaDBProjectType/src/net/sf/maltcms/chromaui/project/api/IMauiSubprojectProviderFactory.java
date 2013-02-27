@@ -25,21 +25,16 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project.api.nodes;
+package net.sf.maltcms.chromaui.project.api;
 
-import javax.swing.Action;
-import net.sf.maltcms.chromaui.project.api.container.IContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
-import org.openide.nodes.Children;
-import org.openide.nodes.Node;
-import org.openide.util.Lookup;
+import org.netbeans.spi.project.SubprojectProvider;
 
 /**
  *
- * @author Nils Hoffmann
+ * @author hoffmann
  */
-public interface INodeFactory {
-    Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup);
-    Node createContainerNode(IContainer key, Children children, Lookup lookup);
-	Action createMenuItem(String name, String path);
+
+
+public interface IMauiSubprojectProviderFactory {
+	public SubprojectProvider provide(IChromAUIProject project);
 }
