@@ -39,8 +39,6 @@ public interface ISeparationType {
 
     /**
      * Returns the number of dimensions ONE acquired feature has.
-     * For single dimension detectors, such as FID, this is just one dimension.
-     * For two-dimensional detectors, such as MS, this is two dimensions.
      *
      * Note: This has nothing to do with the actual number of features acquired
      * at a certain step, it just describes, how many dimensons such a feature

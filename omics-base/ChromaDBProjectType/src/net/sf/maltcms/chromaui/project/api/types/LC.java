@@ -33,16 +33,16 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IDetectorType.class)
-public class TOFMS implements IDetectorType {
+@ServiceProvider(service=ISeparationType.class)
+public class LC implements ISeparationType {
 
-    private final String detectorType = "TOF-MS";
-    private final String longName = "time-of-flight mass spectrometer";
-    private final int featureDimensions = 2;
+    private final String separationType = "LC";
+    private final String longName = "liquid chromatography";
+    private final int separationDimensions = 1;
 
     @Override
-    public String getDetectorType() {
-        return detectorType;
+    public String getSeparationType() {
+        return separationType;
     }
 
     @Override
@@ -52,12 +52,12 @@ public class TOFMS implements IDetectorType {
 
     @Override
     public int getFeatureDimensions() {
-        return featureDimensions;
+        return separationDimensions;
     }
 
     @Override
     public String toString() {
-        return getDetectorType();
+        return getSeparationType();
     }
 
 }

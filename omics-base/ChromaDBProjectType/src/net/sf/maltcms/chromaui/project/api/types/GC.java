@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.project.api.types;
 
-import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

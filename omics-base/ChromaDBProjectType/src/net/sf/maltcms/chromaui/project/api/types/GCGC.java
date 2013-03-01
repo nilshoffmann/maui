@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.project.api.types;
 
-import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -36,8 +35,8 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=ISeparationType.class)
 public class GCGC implements ISeparationType {
-    private final String separationType = "GCGC";
-    private final String longName = "comprehensive two-dimensional chromatography";
+    private final String separationType = "GCxGC";
+    private final String longName = "comprehensive two-dimensional gas chromatography";
     private int featureDimensions = 2;
 
     @Override

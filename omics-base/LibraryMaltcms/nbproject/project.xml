@@ -4,7 +4,7 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
             <code-name-base>net.sf.maltcms</code-name-base>
-            <suite-component/>
+            <standalone/>
             <module-dependencies>
                 <dependency>
                     <code-name-base>javax.xml.bind</code-name-base>
@@ -116,6 +116,7 @@
                 <package>cross.datastructures</package>
                 <package>cross.datastructures.cache</package>
                 <package>cross.datastructures.collections</package>
+                <package>cross.datastructures.combinations</package>
                 <package>cross.datastructures.fragments</package>
                 <package>cross.datastructures.pipeline</package>
                 <package>cross.datastructures.threads</package>
@@ -232,6 +233,8 @@
                 <package>maltcms.commands.filters.array.wavelet</package>
                 <package>maltcms.commands.fragments.alignment</package>
                 <package>maltcms.commands.fragments.alignment.peakCliqueAlignment</package>
+                <package>maltcms.commands.fragments.alignment.peakCliqueAlignment.peakFactory</package>
+                <package>maltcms.commands.fragments.alignment.peakCliqueAlignment2</package>
                 <package>maltcms.commands.fragments.assignment</package>
                 <package>maltcms.commands.fragments.cluster</package>
                 <package>maltcms.commands.fragments.cluster.pairwiseDistanceCalculator</package>
@@ -403,7 +406,6 @@
                 <package>net.sf.mpaxs.spi.server.consoleInput</package>
                 <package>net.sf.mpaxs.spi.server.dirWatcher</package>
                 <package>net.sf.mpaxs.spi.server.gui</package>
-                <package>net.sf.mpaxs.spi.server.jmx</package>
                 <package>net.sf.mpaxs.spi.server.logging</package>
                 <package>net.sf.mpaxs.spi.server.messages</package>
                 <package>net.sf.mpaxs.spi.server.settings</package>
@@ -771,6 +773,7 @@
                 <package>org.springframework.asm</package>
                 <package>org.springframework.asm.commons</package>
                 <package>org.springframework.asm.signature</package>
+                <package>org.springframework.asm.util</package>
                 <package>org.springframework.beans</package>
                 <package>org.springframework.beans.annotation</package>
                 <package>org.springframework.beans.factory</package>
@@ -785,6 +788,20 @@
                 <package>org.springframework.beans.factory.xml</package>
                 <package>org.springframework.beans.propertyeditors</package>
                 <package>org.springframework.beans.support</package>
+                <package>org.springframework.cache</package>
+                <package>org.springframework.cache.annotation</package>
+                <package>org.springframework.cache.concurrent</package>
+                <package>org.springframework.cache.config</package>
+                <package>org.springframework.cache.interceptor</package>
+                <package>org.springframework.cache.support</package>
+                <package>org.springframework.cglib</package>
+                <package>org.springframework.cglib.beans</package>
+                <package>org.springframework.cglib.core</package>
+                <package>org.springframework.cglib.proxy</package>
+                <package>org.springframework.cglib.reflect</package>
+                <package>org.springframework.cglib.transform</package>
+                <package>org.springframework.cglib.transform.impl</package>
+                <package>org.springframework.cglib.util</package>
                 <package>org.springframework.context</package>
                 <package>org.springframework.context.access</package>
                 <package>org.springframework.context.annotation</package>
@@ -800,6 +817,7 @@
                 <package>org.springframework.core.convert.converter</package>
                 <package>org.springframework.core.convert.support</package>
                 <package>org.springframework.core.enums</package>
+                <package>org.springframework.core.env</package>
                 <package>org.springframework.core.io</package>
                 <package>org.springframework.core.io.support</package>
                 <package>org.springframework.core.serializer</package>
@@ -831,6 +849,7 @@
                 <package>org.springframework.instrument.classloading.jboss</package>
                 <package>org.springframework.instrument.classloading.oc4j</package>
                 <package>org.springframework.instrument.classloading.weblogic</package>
+                <package>org.springframework.instrument.classloading.websphere</package>
                 <package>org.springframework.jmx</package>
                 <package>org.springframework.jmx.access</package>
                 <package>org.springframework.jmx.export</package>
@@ -867,6 +886,7 @@
                 <package>org.springframework.util.comparator</package>
                 <package>org.springframework.util.xml</package>
                 <package>org.springframework.validation</package>
+                <package>org.springframework.validation.annotation</package>
                 <package>org.springframework.validation.beanvalidation</package>
                 <package>org.springframework.validation.support</package>
                 <package>org.systemsbiology.jrap</package>
@@ -1054,20 +1074,12 @@
                 <binary-origin>release/modules/ext/maltcms-datastructures-quadtree-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/org.springframework.beans-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org.springframework.beans-3.0.6.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-execution-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-execution-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/netcdf-osgi-4.2.35.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/netcdf-osgi-4.2.35.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/org.springframework.asm-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org.springframework.asm-3.0.6.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/cross-math-1.2.12-SNAPSHOT.jar</runtime-relative-path>
@@ -1090,10 +1102,6 @@
                 <binary-origin>release/modules/ext/maltcms-chroma4D-cwt-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-spi-1.6.12-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-spi-1.6.12-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jrapStAX-osgi-4.0.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jrapStAX-osgi-4.0.0.jar</binary-origin>
             </class-path-extension>
@@ -1108,6 +1116,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-xml-alignment-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-xml-alignment-1.2.1-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/mpaxs-computeHost-1.6.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-computeHost-1.6.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.batik.parser-1.7.0.jar</runtime-relative-path>
@@ -1154,6 +1166,10 @@
                 <binary-origin>release/modules/ext/stax-api-1.0-2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.context-3.2.1.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.context-3.2.1.RELEASE.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.aopalliance-1.0.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.aopalliance-1.0.0.jar</binary-origin>
             </class-path-extension>
@@ -1194,16 +1210,20 @@
                 <binary-origin>release/modules/ext/com.springsource.javax.media.jai.codec-1.1.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/org.springframework.expression-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org.springframework.expression-3.0.6.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/cross-annotations-1.2.12-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/cross-annotations-1.2.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/mpaxs-api-1.6.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-api-1.6.13.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.xml.resolver-1.2.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.apache.xml.resolver-1.2.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.expression-3.2.1.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.expression-3.2.1.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-statistics-1.2.1-SNAPSHOT.jar</runtime-relative-path>
@@ -1254,16 +1274,12 @@
                 <binary-origin>release/modules/ext/com.springsource.org.apache.bcel-5.1.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-server-1.6.12-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-server-1.6.12-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/org.springframework.context-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org.springframework.context-3.0.6.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-ui-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-ui-1.2.1-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.aop-3.2.1.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.aop-3.2.1.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jakarta-regexp-1.4.jar</runtime-relative-path>
@@ -1276,10 +1292,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.xerces-2.8.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.apache.xerces-2.8.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-api-1.6.12-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-api-1.6.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.batik.dom.svg-1.7.0.jar</runtime-relative-path>
@@ -1304,6 +1316,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.commons.codec-1.3.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.apache.commons.codec-1.3.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.beans-3.2.1.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.beans-3.2.1.RELEASE.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/ehcache-core-osgi-2.4.6.jar</runtime-relative-path>
@@ -1338,12 +1354,12 @@
                 <binary-origin>release/modules/ext/maltcms-evaluation-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cross-cache-1.2.12-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cross-cache-1.2.12-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/commons-configuration-1.9.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-configuration-1.9.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/cross-cache-1.2.12-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cross-cache-1.2.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-xml-annotation-1.2.1-SNAPSHOT.jar</runtime-relative-path>
@@ -1354,16 +1370,16 @@
                 <binary-origin>release/modules/ext/h2-1.3.162.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/org.springframework.core-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org.springframework.core-3.0.6.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/maltcms-chroma4D-srg-1.2.1-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/maltcms-chroma4D-srg-1.2.1-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/mpaxs-spi-1.6.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-spi-1.6.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-io-netcdf-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-io-netcdf-1.2.1-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/maltcms-chroma4D-srg-1.2.1-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/maltcms-chroma4D-srg-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/maltcms-io-mzxml-1.2.1-SNAPSHOT.jar</runtime-relative-path>
@@ -1386,18 +1402,6 @@
                 <binary-origin>release/modules/ext/maltcms-apps-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-drmaa-spi-1.6.12-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-drmaa-spi-1.6.12-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/org.springframework.aop-3.0.6.RELEASE.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/org.springframework.aop-3.0.6.RELEASE.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/mpaxs-computeHost-1.6.12-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mpaxs-computeHost-1.6.12-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.commons.io-1.4.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.springsource.org.apache.commons.io-1.4.0.jar</binary-origin>
             </class-path-extension>
@@ -1414,12 +1418,24 @@
                 <binary-origin>release/modules/ext/cross-main-1.2.12-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/org.springframework.core-3.2.1.RELEASE.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.springframework.core-3.2.1.RELEASE.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/maltcms-resources-1.2.1-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/maltcms-resources-1.2.1-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/cross-ui-1.2.12-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/cross-ui-1.2.12-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/mpaxs-server-1.6.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-server-1.6.13.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/mpaxs-drmaa-spi-1.6.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mpaxs-drmaa-spi-1.6.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/com.springsource.org.apache.regexp-1.5.0.jar</runtime-relative-path>

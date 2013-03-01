@@ -34,30 +34,30 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Nils Hoffmann
  */
 @ServiceProvider(service=IDetectorType.class)
-public class TOFMS implements IDetectorType {
+public class FID implements IDetectorType {
 
-    private final String detectorType = "TOF-MS";
-    private final String longName = "time-of-flight mass spectrometer";
-    private final int featureDimensions = 2;
+	private final String detectorType = "FID";
+    private final String longName = "flame ionization detector";
+    private final int featureDimensions = 1;
+	
+	@Override
+	public String getDetectorType() {
+		return detectorType;
+	}
 
-    @Override
-    public String getDetectorType() {
-        return detectorType;
-    }
+	@Override
+	public String getLongName() {
+		return longName;
+	}
 
-    @Override
-    public String getLongName() {
-        return longName;
-    }
+	@Override
+	public int getFeatureDimensions() {
+		return featureDimensions;
+	}
 
-    @Override
-    public int getFeatureDimensions() {
-        return featureDimensions;
-    }
-
-    @Override
-    public String toString() {
-        return getDetectorType();
-    }
-
+	@Override
+	public String toString() {
+		return getDetectorType();
+	}
+	
 }
