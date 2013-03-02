@@ -41,7 +41,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class TypedListModel<T> extends AbstractListModel {
     
-    private List<T> model = new LinkedList<T>();
+    private List<T> model = new LinkedList<>();
 
     @Override
     public int getSize() {
