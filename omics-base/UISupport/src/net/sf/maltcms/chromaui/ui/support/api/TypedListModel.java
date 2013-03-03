@@ -30,15 +30,11 @@ package net.sf.maltcms.chromaui.ui.support.api;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractListModel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author Nils Hoffmann
  */
-@Data
-@EqualsAndHashCode(callSuper=false)
 public class TypedListModel<T> extends AbstractListModel {
     
     private List<T> model = new LinkedList<T>();
