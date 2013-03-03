@@ -97,6 +97,7 @@ public class DBProjectFactory {
         File[] f = new File[str.length];
         for (int i = 0; i < str.length; i++) {
             f[i] = new File(str[i]);
+			System.out.println("Adding file: "+f[i].getAbsolutePath());
         }
         return f;
     }
@@ -382,6 +383,7 @@ public class DBProjectFactory {
                 fragment = new FileFragment(dataDir, f.getName());
                 fragment.addSourceFile(new FileFragment(f));
             }
+			System.out.println("Returning fragment: "+fragment.getUri());
             return fragment;
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);

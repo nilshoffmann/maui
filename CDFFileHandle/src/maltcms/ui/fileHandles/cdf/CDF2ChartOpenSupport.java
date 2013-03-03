@@ -41,6 +41,7 @@ import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.OpenSupport;
+import org.openide.util.Utilities;
 import org.openide.windows.CloneableTopComponent;
 
 /**
@@ -80,7 +81,7 @@ public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, Clo
     protected CloneableTopComponent createCloneableTopComponent() {
         final HashSet<IFileFragment> fragments = new LinkedHashSet<IFileFragment>();
         for (CDFDataObject dataObject : auxDataObjects) {
-            fragments.add(new FileFragment(new File(dataObject.getPrimaryFile().getPath())));
+            fragments.add(new FileFragment(dataObject.getPrimaryFile().toURI()));
         }
 
         Chromatogram1DChartProvider c1d = new Chromatogram1DChartProvider();

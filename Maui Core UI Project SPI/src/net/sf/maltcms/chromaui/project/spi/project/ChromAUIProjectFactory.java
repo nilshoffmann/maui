@@ -32,7 +32,6 @@ import net.sf.maltcms.chromaui.project.spi.DBProjectFactory;
 import org.netbeans.spi.project.ProjectFactory;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 
 /**
  * Implementation of @see{ProjectFactory} service provider.
@@ -58,7 +57,7 @@ public class ChromAUIProjectFactory implements ProjectFactory {
             System.out.println("Loading project from "+fo.getPath());
             ChromAUIProject cp = new ChromAUIProject();
             cp.setState(ps);
-            cp.activate(FileUtil.toFile(fo.getFileObject(DBProjectFactory.PROJECT_FILE)).toURI().toURL());
+            cp.activate(fo.getFileObject(DBProjectFactory.PROJECT_FILE).toURI().toURL());
             return cp;
         }else{
             return null;

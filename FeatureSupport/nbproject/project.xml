@@ -7,7 +7,7 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
-                    <code-name-base>net.sf.maltcms</code-name-base>
+                    <code-name-base>net.sf.maltcms.nbm</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
