@@ -1,0 +1,71 @@
+<!-- 
+
+A DTD for project data.
+
+-->
+
+<!ELEMENT projectData   (projects)>
+
+<!ELEMENT projects      (project*)>
+
+<!ELEMENT project       (description, creationDate, projectId, gelgroups, groups)>
+
+<!ATTLIST project
+  author                CDATA       #IMPLIED
+  name                  ID          #REQUIRED
+>
+
+<!ELEMENT description   (#PCDATA)>
+
+<!ELEMENT creationDate  (#PCDATA)>
+
+<!ELEMENT projectId     EMPTY>
+
+<!ATTLIST projectId
+  id                    ID          #REQUIRED
+>
+
+<!ELEMENT gelgroups     ((gelpointer | grouppointer)* ) >
+
+<!ELEMENT gelpointer    EMPTY>
+
+<!ATTLIST gelpointer
+  gelid                 CDATA       #REQUIRED
+>
+
+<!ELEMENT grouppointer  EMPTY>
+
+<!ATTLIST grouppointer
+  groupid               CDATA       #REQUIRED
+  currentgelid          CDATA       #IMPLIED
+>
+
+
+<!ELEMENT groups        (group*)>
+
+<!ELEMENT group         (gels, color)>
+
+<!ATTLIST group
+  id                    CDATA       #REQUIRED
+  name                  CDATA       #REQUIRED
+>
+
+<!ELEMENT gels          (gel*)>
+
+<!ELEMENT gel           EMPTY>
+
+<!ATTLIST gel
+  
+  gelid                 CDATA       #REQUIRED
+  
+>
+
+<!ELEMENT color         EMPTY>
+
+
+<!ATTLIST color
+  coloralpha            CDATA       #REQUIRED
+  colorred              CDATA       #REQUIRED
+  colorgreen            CDATA       #REQUIRED
+  colorblue             CDATA       #REQUIRED
+>

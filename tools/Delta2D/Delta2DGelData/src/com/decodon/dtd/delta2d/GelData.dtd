@@ -1,0 +1,68 @@
+<!-- 
+
+A DTD for gel data.
+
+-->
+
+<!ELEMENT gelData       (gelImages)>
+
+<!ELEMENT gelImages     (gelImage*) >
+
+<!ELEMENT gelImage      (description, creationDate, gelImageId, quantitation+, label+, calibration+, properties+)>
+
+<!ELEMENT gelImageId    EMPTY>
+
+<!ATTLIST gelImageId
+  id                    ID       #REQUIRED
+>
+
+<!ELEMENT description   (#PCDATA)>
+
+<!ELEMENT creationDate  (#PCDATA)>
+
+<!ATTLIST gelImage
+  name                  ID       #REQUIRED
+  author                CDATA    #IMPLIED
+  imageFormat           CDATA    #REQUIRED
+  mwMax                 CDATA    #IMPLIED
+  mwMin                 CDATA    #IMPLIED
+  piMax                 CDATA    #IMPLIED
+  piMin                 CDATA    #IMPLIED
+  sourceImage           CDATA    #REQUIRED
+  subFormat             CDATA    #IMPLIED
+>
+
+<!ELEMENT quantitation  EMPTY>
+
+<!ATTLIST quantitation
+   xmlns:xlink          CDATA    #FIXED "http://www.w3.org/1999/xlink"
+   xlink:type           (simple) #FIXED "simple"
+   xlink:href           CDATA    #REQUIRED
+>
+
+<!ELEMENT label         EMPTY>
+
+<!ATTLIST label
+   xmlns:xlink          CDATA    #FIXED "http://www.w3.org/1999/xlink"
+   xlink:type           (simple) #FIXED "simple"
+   xlink:href           CDATA    #REQUIRED
+>
+
+<!ELEMENT calibration   EMPTY>
+
+<!ATTLIST calibration
+   xmlns:xlink          CDATA    #FIXED "http://www.w3.org/1999/xlink"
+   xlink:type           (simple) #FIXED "simple"
+   xlink:href           CDATA    #REQUIRED
+>
+
+<!ELEMENT properties    EMPTY>
+
+<!ATTLIST properties
+   histogramScale       CDATA    #IMPLIED
+   histogramOffset      CDATA    #IMPLIED
+   spotLayerVisibility  CDATA    #IMPLIED
+   labelLayerVisibility CDATA    #IMPLIED
+>
+
+	

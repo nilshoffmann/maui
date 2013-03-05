@@ -1,0 +1,77 @@
+<!--
+
+A DTD for quantitation data.
+
+-->
+
+<!ELEMENT quantitationData      (algorithm, spotList, backgroundSegmentList?, markerList?, originalSpotList?)>
+
+<!ELEMENT algorithm             (parameterList)>
+
+<!ATTLIST algorithm
+  name                          CDATA        #REQUIRED
+>
+
+<!ELEMENT parameterList         EMPTY>
+
+<!ATTLIST parameterList
+  localBackgroundRegion         CDATA        #REQUIRED
+  avarageSpotSize               CDATA        #REQUIRED
+  weakSpotSensitivity           CDATA        #REQUIRED
+  noiseCutOff                   CDATA        #REQUIRED
+>
+
+
+<!ELEMENT spotList              (spot*)>
+
+<!ELEMENT spot                  (center, spotData, boundary)>
+
+<!ATTLIST spot
+  id                            ID           #REQUIRED
+>
+
+<!ELEMENT center                EMPTY>
+
+<!ATTLIST center
+  x                             CDATA        #REQUIRED
+  y                             CDATA        #REQUIRED
+>
+
+<!ELEMENT spotData              EMPTY>
+
+<!ATTLIST spotData
+  quantity                      CDATA        #REQUIRED
+  area                          CDATA        #REQUIRED
+  background                    CDATA        #REQUIRED
+  segment                       CDATA        #REQUIRED
+  significance                  CDATA        #REQUIRED
+  marked                        CDATA        #IMPLIED
+  selected                      CDATA        #IMPLIED
+  hidden                        CDATA        #IMPLIED
+  filtered                      CDATA        #IMPLIED
+  canceled                      CDATA        #IMPLIED
+  inNormalizationSet            CDATA        #IMPLIED
+>
+
+<!ELEMENT boundary              (#PCDATA)>
+
+<!ELEMENT backgroundSegmentList	(backgroundSegment+)>
+
+<!ELEMENT backgroundSegment		  (boundary)>
+
+<!ELEMENT markerList	    		  (marker*)>
+
+<!ELEMENT marker	              EMPTY>
+
+<!ATTLIST marker
+  x                             CDATA        #REQUIRED
+  y                             CDATA        #REQUIRED
+  gelType                       CDATA        #REQUIRED
+  markerType                    CDATA        #REQUIRED
+>
+
+<!ELEMENT originalSpotList      (originalSpot+)>
+
+<!ELEMENT originalSpot          (boundary)>
+
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/opt/projects/omics/tools/Delta2D/Delta2DQuantitationData/src/com/decodon/dtd/delta2d/QuantitationData.dtd" uri="xml-resources/jaxb/delta2DQuantitationDataBinding/QuantitationData.dtd"/>
+</catalog>

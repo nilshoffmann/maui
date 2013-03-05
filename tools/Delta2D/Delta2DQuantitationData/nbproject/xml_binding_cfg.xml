@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='Delta2DQuantitationData' version='1.0'>
+	<schema type='-dtd' package='de.unibielefeld.gi.kotte.laborprogramm.xml.quantitationData' name='delta2DQuantitationDataBinding'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/delta2DQuantitationDataBinding/QuantitationData.dtd' origLocation='../../../../../../home/hoffmann/Uni/projects/omics/tools/Delta2D/Delta2DQuantitationData/src/com/decodon/dtd/delta2d/QuantitationData.dtd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+</schemas>
