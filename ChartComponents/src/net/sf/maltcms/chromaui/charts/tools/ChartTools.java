@@ -33,7 +33,6 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import maltcms.ui.charts.XYBPlot;
 import net.sf.maltcms.chromaui.charts.FastHeatMapPlot;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -80,31 +79,31 @@ public class ChartTools {
         return null;
     }
 
-    public static XYPlot getChartPanelByPNG(String filename, NumberAxis x,
-            NumberAxis y) throws IOException {
-        final XYPlot p1 = new XYBPlot(filename, x, y);
-        return p1;
-    }
+//    public static XYPlot getChartPanelByPNG(String filename, NumberAxis x,
+//            NumberAxis y) throws IOException {
+//        final XYPlot p1 = new XYBPlot(filename, x, y);
+//        return p1;
+//    }
+//
+//    public static XYPlot getChartPanelByPNG(String filename, String xlabel,
+//            String ylabel) throws IOException {
+//        return getChartPanelByPNG(filename, new NumberAxis(xlabel),
+//                new NumberAxis(ylabel));
+//    }
 
-    public static XYPlot getChartPanelByPNG(String filename, String xlabel,
-            String ylabel) throws IOException {
-        return getChartPanelByPNG(filename, new NumberAxis(xlabel),
-                new NumberAxis(ylabel));
-    }
-
-    public static XYPlot getChartPanelBySER(String filename) throws IOException {
-        JFreeChart chart = null;
-        try {
-            final ObjectInputStream ois = new ObjectInputStream(
-                    new BufferedInputStream(new FileInputStream(filename)));
-            chart = (JFreeChart) ois.readObject();
-            ois.close();
-        } catch (final ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return (XYPlot) chart.getPlot();
-    }
+//    public static XYPlot getChartPanelBySER(String filename) throws IOException {
+//        JFreeChart chart = null;
+//        try {
+//            final ObjectInputStream ois = new ObjectInputStream(
+//                    new BufferedInputStream(new FileInputStream(filename)));
+//            chart = (JFreeChart) ois.readObject();
+//            ois.close();
+//        } catch (final ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return (XYPlot) chart.getPlot();
+//    }
 
     public static XYPlot getPlot3(XYPlot plot) {
         XYPlot p = new XYPlot(plot.getDataset(), new NumberAxis(plot.getRangeAxis().getLabel()), new NumberAxis(plot.getDomainAxis().getLabel()), plot.getRenderer());

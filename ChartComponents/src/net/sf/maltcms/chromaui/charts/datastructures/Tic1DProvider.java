@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.sf.maltcms.chromaui.charts.tools.ChromatogramVisualizerTools;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import ucar.ma2.Array;
 
@@ -58,7 +57,7 @@ public class Tic1DProvider {
     }
 
     private Tic1DProvider(IChromatogramDescriptor filename) throws IOException {
-        this.ff = ChromatogramVisualizerTools.getFragments(filename).getFirst();
+        this.ff = filename.getChromatogram().getParent();
     }
 
     private void loadTotalIntensity() {

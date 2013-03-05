@@ -60,7 +60,7 @@ public class TicProvider {
     }
 
     private TicProvider(IChromatogramDescriptor filename) throws IOException {
-        this.ff = ChromatogramVisualizerTools.getFragments(filename).getFirst();
+        this.ff = filename.getChromatogram().getParent();
         loadTotalIntensity();
     }
 

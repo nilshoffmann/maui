@@ -745,7 +745,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             public void run() {
                 System.out.println("Change ms called in MassSpectrumPanel");
                 if (scan instanceof IScan2D) {
-                    MSSeries s = ChromatogramVisualizerTools.getMSSeries(
+                    MSSeries s = ChromatogramVisualizerTools.getMSSeries2D(
                             (IScan2D) scan, name, addSeriesToTopPlot);
                     s.setNormalize(absoluteRelativeToggle.isSelected());
                     if (add) {

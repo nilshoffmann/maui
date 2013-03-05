@@ -86,7 +86,7 @@ import org.jfree.util.PaintUtilities;
 
 /**
  *
- * @author nhofman
+ * @author Nils Hoffmann
  */
 public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         Zoomable, Cloneable, Serializable {

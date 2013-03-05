@@ -190,10 +190,6 @@
                 <package>net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures.annotations</package>
                 <package>net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures.tree</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/swingx-core-1.6.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/swingx-core-1.6.2.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>
