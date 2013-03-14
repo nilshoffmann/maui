@@ -34,9 +34,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import org.netbeans.api.project.Project;
 import org.openide.windows.TopComponent;
 import org.openide.util.Utilities;
+
 /**
  * A registry for open
  *
@@ -46,101 +48,114 @@ import org.openide.util.Utilities;
  */
 public class Registry implements IRegistry {
 
-    private Map<Project, Map<Object, TopComponent>> typeToTopComponent = new ConcurrentHashMap<Project, Map<Object, TopComponent>>();
+	private Map<Project, Map<Object, TopComponent>> typeToTopComponent = new ConcurrentHashMap<Project, Map<Object, TopComponent>>();
 
-    @Override
-    public TopComponent openTopComponentFor(Object object,
-            Class<? extends TopComponent> topComponentClass) {
-        Project project = getSelectedProject();
-        Map<Object, TopComponent> map = getTopComponentsForProject(project);
-        TopComponent tc = map.get(object);
-        if (tc == null) {
-            System.out.println("Creating new TopComponent instance for class: " + topComponentClass.
-                    getName() + "; active project: " + project.
-                    getProjectDirectory().getName());
-            try {
-                tc = topComponentClass.newInstance();
-                map.put(object, tc);
-                tc.open();
-                tc.requestActive();
-            } catch (InstantiationException ex) {
-                Logger.getLogger(Registry.class.getName()).log(Level.SEVERE,
-                        null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(Registry.class.getName()).log(Level.SEVERE,
-                        null, ex);
-            }
-        } else {
-            tc.requestActive();
-        }
-        return tc;
-    }
+	@Override
+	public TopComponent openTopComponentFor(Object object,
+			Class<? extends TopComponent> topComponentClass) {
+		Project project = getSelectedProject();
+		Map<Object, TopComponent> map = getTopComponentsForProject(project);
+		TopComponent tc = map.get(object);
+		if (tc == null) {
+			System.out.println("Creating new TopComponent instance for class: " + topComponentClass.
+					getName() + "; active project: " + project.
+					getProjectDirectory().getName());
+			try {
+				tc = topComponentClass.newInstance();
+				map.put(object, tc);
+				tc.open();
+				tc.requestActive();
+			} catch (InstantiationException ex) {
+				Logger.getLogger(Registry.class.getName()).log(Level.SEVERE,
+						null, ex);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(Registry.class.getName()).log(Level.SEVERE,
+						null, ex);
+			}
+		} else {
+			tc.requestActive();
+		}
+		return tc;
+	}
 
-    @Override
-    public List<TopComponent> closeTopComponentsFor(Object object) {
-        List<TopComponent> closedComponents = new LinkedList<TopComponent>();
-        for (Map<Object, TopComponent> map : typeToTopComponent.values()) {
-            TopComponent tc = map.remove(object);
-            if (tc != null) {
-                Logger.getLogger(getClass().getName()).info("Closing TopComponent for Object: " + object.getClass().getName());
-                tc.close();
-                closedComponents.add(tc);
-            }
-        }
-        return closedComponents;
-    }
+	@Override
+	public List<TopComponent> closeTopComponentsFor(final Object object) {
+		final List<TopComponent> closedComponents = new LinkedList<TopComponent>();
+		for (final Map<Object, TopComponent> map : typeToTopComponent.values()) {
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					TopComponent tc = map.remove(object);
+					if (tc != null) {
+						Logger.getLogger(Registry.class.getName()).info("Closing TopComponent for Object: " + object.getClass().getName());
+						tc.close();
+						closedComponents.add(tc);
+					}
+				}
+			};
+			SwingUtilities.invokeLater(r);
+		}
+		return closedComponents;
+	}
 
-    /**
-     * Queries
-     *
-     * @see Utilities.actionsGlobalContext() to retrieve selected project.
-     * Returns the selected project if present in the lookup, otherwise, throws
-     * an illegal state exception. This method is not intended for external use!
-     *
-     * @return the active project in global selection scope
-     * @throws IllegalStateException if no project is selected
-     */
-    protected Project getSelectedProject() throws IllegalStateException {
-        Project project = Utilities.actionsGlobalContext().lookup(Project.class);
-        if (project == null) {
-            throw new IllegalStateException(
-                    "Can not open TopComponent with no project in selection!");
-        }
-        return project;
-    }
+	/**
+	 * Queries
+	 *
+	 * @see Utilities.actionsGlobalContext() to retrieve selected project.
+	 * Returns the selected project if present in the lookup, otherwise, throws
+	 * an illegal state exception. This method is not intended for external use!
+	 *
+	 * @return the active project in global selection scope
+	 * @throws IllegalStateException if no project is selected
+	 */
+	protected Project getSelectedProject() throws IllegalStateException {
+		Project project = Utilities.actionsGlobalContext().lookup(Project.class);
+		if (project == null) {
+			throw new IllegalStateException(
+					"Can not open TopComponent with no project in selection!");
+		}
+		return project;
+	}
 
-    @Override
-    public Map<Object, TopComponent> getTopComponentsForProject(Project project) {
-        Map<Object, TopComponent> map = null;
-        if (typeToTopComponent.containsKey(project)) {
-            map = typeToTopComponent.get(project);
-        } else {
-            map = new ConcurrentHashMap<Object, TopComponent>();
-            typeToTopComponent.put(project, map);
-        }
-        return map;
-    }
+	@Override
+	public Map<Object, TopComponent> getTopComponentsForProject(Project project) {
+		Map<Object, TopComponent> map = null;
+		if (typeToTopComponent.containsKey(project)) {
+			map = typeToTopComponent.get(project);
+		} else {
+			map = new ConcurrentHashMap<Object, TopComponent>();
+			typeToTopComponent.put(project, map);
+		}
+		return map;
+	}
 
-    @Override
-    public TopComponent getTopComponentFor(Object object) {
-        Project project = getSelectedProject();
-        Map<Object, TopComponent> map = getTopComponentsForProject(project);
-        if (map.containsKey(object)) {
-            Logger.getLogger(getClass().getName()).fine("Found TopComponent instance");
-            return map.get(object);
-        }
-        return null;
-    }
+	@Override
+	public TopComponent getTopComponentFor(Object object) {
+		Project project = getSelectedProject();
+		Map<Object, TopComponent> map = getTopComponentsForProject(project);
+		if (map.containsKey(object)) {
+			Logger.getLogger(getClass().getName()).fine("Found TopComponent instance");
+			return map.get(object);
+		}
+		return null;
+	}
 
-    @Override
-    public List<TopComponent> closeTopComponentsForProject(final Project project) {
-        List<TopComponent> closedComponents = new LinkedList<TopComponent>();
-        Map<Object, TopComponent> map = getTopComponentsForProject(project);
-        for (Object obj : map.keySet()) {
-            TopComponent tc = map.get(obj);
-            tc.close();
-            closedComponents.add(tc);
-        }
-        return closedComponents;
-    }
+	@Override
+	public List<TopComponent> closeTopComponentsForProject(final Project project) {
+		final List<TopComponent> closedComponents = new LinkedList<TopComponent>();
+		final Map<Object, TopComponent> map = getTopComponentsForProject(project);
+		for (final Object obj : map.keySet()) {
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					Logger.getLogger(Registry.class.getName()).info("Closing TopComponent for Object: " + obj.getClass().getName());
+					TopComponent tc = map.get(obj);
+					tc.close();
+					closedComponents.add(tc);
+				}
+			};
+			SwingUtilities.invokeLater(r);
+		}
+		return closedComponents;
+	}
 }

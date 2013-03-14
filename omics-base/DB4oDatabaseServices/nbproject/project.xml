@@ -7,7 +7,7 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
-                    <code-name-base>net.sf.maltcms.chromaui.db</code-name-base>
+                    <code-name-base>com.db4o</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -15,7 +15,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>net.sf.maltcms.chromaui.db4o</code-name-base>
+                    <code-name-base>net.sf.maltcms.chromaui.db</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -28,7 +28,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.13.1.121</specification-version>
+                        <specification-version>1.15.1.121</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
