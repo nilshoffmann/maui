@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: cross
+OpenIDE-Module-Localizing-Bundle: cross/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
