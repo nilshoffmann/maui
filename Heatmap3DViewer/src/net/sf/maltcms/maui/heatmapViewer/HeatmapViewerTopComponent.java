@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.maui.heatmapViewer.chart.controllers.LabeledMouseSelector;
@@ -45,19 +44,16 @@ import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.controllers.ControllerType;
-import org.jzy3d.chart.controllers.mouse.ChartMouseController;
+import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
 import org.jzy3d.demos.histogram.barchart.BarChartBar;
 import org.jzy3d.events.ControllerEvent;
 import org.jzy3d.events.ControllerEventListener;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.IntegerCoord2d;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
-import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.scene.Graph;
 import org.jzy3d.plot3d.rendering.tooltips.ITooltipRenderer;
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -306,7 +302,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 //
 //                }
 //            });
-            ChartMouseController mouse = new ChartMouseController();
+            CameraMouseController mouse = new CameraMouseController();
             chart.addController(mouse);
             mouse.addControllerEventListener(new ControllerEventListener() {
                 public void controllerEventFired(ControllerEvent e) {

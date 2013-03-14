@@ -32,7 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.controllers.mouse.AbstractChartMouseSelector;
+import org.jzy3d.chart.controllers.mouse.selection.AbstractMouseSelector;
 import org.jzy3d.demos.histogram.barchart.BarChartBar;
 import org.jzy3d.maths.BoundingBox2d;
 import org.jzy3d.maths.Coord2d;
@@ -44,7 +44,7 @@ import org.jzy3d.plot3d.rendering.view.View;
  *
  * @author ao
  */
-public class LabeledMouseSelector extends AbstractChartMouseSelector implements KeyListener {
+public class LabeledMouseSelector extends AbstractMouseSelector implements KeyListener {
     private final Chart target;
 
     public LabeledMouseSelector(Chart target) {
@@ -89,7 +89,7 @@ public class LabeledMouseSelector extends AbstractChartMouseSelector implements 
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SHIFT:
-                this.releaseChart();
+                unregister();
                 break;
             default:
                 break;
@@ -105,7 +105,7 @@ public class LabeledMouseSelector extends AbstractChartMouseSelector implements 
         if (!holding) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_SHIFT:
-                    this.attachChart(target);
+                    register(target);
                     break;
                 default:
                     break;
@@ -115,4 +115,9 @@ public class LabeledMouseSelector extends AbstractChartMouseSelector implements 
         }
     }
     protected boolean holding = false;
+
+	@Override
+	public void clearLastSelection() {
+		
+	}
 }

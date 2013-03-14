@@ -2,4 +2,27 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/project/ChromAUIProjectFactory.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/project/ChromAUIProject.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/ChromAUIProjectLogicalView.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/DBProjectFactory.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/descriptors/AnovaDescriptor.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/runnables/CondensePeakAnnotationsRunnable.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/actions/CondensePeakAnnotationsAction.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/chromaProject.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/cdflogo.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/Tool.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/inkscape_pasted_image_20111121_212806.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/Peaks2D.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/Peaks.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/Peak.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/MauiProjectOpen.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/Group.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/resources/DBDescriptor.png</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/nodes/ChromaUIProjectNodesFactory.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/nodes/ChromatogramNodeFactory.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/nodes/ChromatogramNode.java</file>
+        <file>file:/opt/projects/omics/maui/Maui%20Core%20UI%20Project%20SPI/src/net/sf/maltcms/chromaui/project/spi/nodes/ChromAUIProjectNode.java</file>
+    </open-files>
 </project-private>

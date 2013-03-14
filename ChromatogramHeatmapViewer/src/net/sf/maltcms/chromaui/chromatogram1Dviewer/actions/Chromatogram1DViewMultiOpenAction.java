@@ -46,6 +46,7 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionID;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;

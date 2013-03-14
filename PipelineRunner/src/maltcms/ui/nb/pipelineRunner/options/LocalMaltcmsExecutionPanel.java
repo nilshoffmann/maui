@@ -47,8 +47,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.netbeans.api.options.OptionsDisplayer;
 import org.openide.filesystems.FileChooserBuilder;
+import org.openide.modules.Places;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
@@ -266,10 +266,12 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                 for(Component c:getComponents()) {
                     c.setEnabled(false);
                 }
-                FileChooserBuilder fcb = new FileChooserBuilder(LocalMaltcmsExecutionPanel.class);
-                fcb.setDirectoriesOnly(true);
-                File targetDirectory = fcb.showSaveDialog();
-                if(targetDirectory!=null) {
+				File userDir = Places.getUserDirectory();
+				File targetDirectory = new File(userDir,"maltcms");
+//                FileChooserBuilder fcb = new FileChooserBuilder(LocalMaltcmsExecutionPanel.class);
+//                fcb.setDirectoriesOnly(true);
+//                File targetDirectory = fcb.showSaveDialog();
+//                if(targetDirectory!=null) {
                     targetDirectory.mkdirs();
                     progressHandle.progress("Downloading Maltcms " + (String) maltcmsOnlineVersion.getSelectedItem());
                     String[] majorMinorMicro = ((String) maltcmsOnlineVersion.getSelectedItem()).split("\\.");
@@ -286,9 +288,9 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                     checkVersion(maltcmsInstallationDir.getAbsolutePath());
                     controller.changed();
                     store();
-                }else{
-                    System.out.println("Download location dialog cancelled by user!");
-                }
+//                }else{
+//                    System.out.println("Download location dialog cancelled by user!");
+//                }
                 for(Component c:getComponents()) {
                     c.setEnabled(true);
                 }

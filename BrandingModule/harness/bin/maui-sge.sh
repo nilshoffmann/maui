@@ -1,14 +1,27 @@
 #!/bin/sh
+#######################################################
+# Wrapper script to run Maui on a cluster host
+# Requires working installation of OpenGrid engine or 
+# drmaa compatible grid submission systems.
+#
+# This script requires that X11 binaries are on the 
+# executing user's path!
+#######################################################
+# set maui bin location
 
-# wrapper script to invoke netbeans in a cluster host
-
-MAUI=/vol/maltcms/maui/1.1/bin/maui
-
-if [ -z "$MAUI" ]; then
-    /vol/x11/bin/xmessage "Maui executable $MAUI not found, aborting."
-    exit 1;
+if [ -z "$MAUI_HOME" ]; then
+	echo "Maui installation not found, aborting. Please set MAUI_HOME to point to the base directory of your Maui installation!"
+	xmessage "Maui installation not found, aborting. Please set MAUI_HOME to point to the base directory of your Maui installation!"
+	exit 1;
 fi
 
+MAUI="$MAUI_HOME/bin/maui"
+
+if [ -z "$MAUI" ]; then
+	echo "Maui executable $MAUI not found, aborting."
+    xmessage "Maui executable $MAUI not found, aborting."
+    exit 1;
+fi
 
 if [ -z "$SGE_ARCH" ]; then
         # start netbeans on a cluster host
@@ -20,7 +33,7 @@ if [ -z "$SGE_ARCH" ]; then
         NWORDS=`echo $DISPLAY | tr : ' ' | wc -w` 
         if [ "$NWORDS" -ne 2 -o "$DISPLAY" = "unix:0.0" ]; then
                 HOSTNAME=`uname -n` 
-                DISP=`/vol/X11/bin/display | cut -d: -f2`
+                DISP=`display | cut -d: -f2`
                 DISPLAY=${HOSTNAME}:${DISP}
         fi
         export DISPLAY

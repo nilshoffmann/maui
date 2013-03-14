@@ -27,7 +27,6 @@
  */
 package maltcms.ui.nb.pipelineRunner.actions;
 
-import cross.datastructures.tools.FileTools;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.BufferedInputStream;
@@ -42,7 +41,6 @@ import java.util.prefs.Preferences;
 import maltcms.ui.nb.pipelineRunner.ui.PipelineRunnerTopComponent;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.netbeans.api.options.OptionsDisplayer;
@@ -141,6 +139,7 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
                             FileUtils.moveFile(propertyFile, new File(propertyFile.getParentFile(), FilenameUtils.getBaseName(propertyFile.getName()) + ".mpl"));
                         }
                     }
+					context.refresh();
                 } else {
                     System.out.println("No maltcmsInstallationPath given!");
                 }

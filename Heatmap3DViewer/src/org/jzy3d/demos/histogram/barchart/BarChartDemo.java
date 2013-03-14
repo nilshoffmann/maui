@@ -36,17 +36,12 @@ import org.jzy3d.bridge.swing.FrameSwing;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.colors.Color;
 import org.jzy3d.demos.AbstractDemo;
-import org.jzy3d.maths.BoundingBox3d;
-import org.jzy3d.plot3d.primitives.AbstractDrawable;
-import org.jzy3d.plot3d.primitives.Shape;
-import org.jzy3d.plot3d.primitives.axes.AxeBox;
 import org.jzy3d.plot3d.primitives.axes.layout.renderers.ITickRenderer;
 import org.jzy3d.plot3d.rendering.canvas.CanvasSwing;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.scene.Scene;
 import org.jzy3d.plot3d.rendering.view.Renderer2d;
 import org.jzy3d.plot3d.rendering.view.modes.ViewPositionMode;
-import org.jzy3d.plot3d.text.TextRenderer;
 
 public class BarChartDemo extends AbstractDemo {
 
@@ -140,7 +135,7 @@ public class BarChartDemo extends AbstractDemo {
         chart.getAxeLayout().setYAxeLabel("Feature");
         chart.getAxeLayout().setYTickRenderer(new ITickRenderer() {
 
-            public String format(float value) {
+            public String format(double value) {
                 return "f" + "\u4E51";//getFeatureIndex(value);
             }
         });

@@ -36,9 +36,9 @@ package org.jzy3d.demos.histogram.barchart;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.controllers.mouse.ChartMouseController;
+import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
 import org.jzy3d.chart.controllers.mouse.MouseUtilities;
-import org.jzy3d.chart.controllers.thread.ChartThreadController;
+import org.jzy3d.chart.controllers.thread.camera.CameraThreadController;
 import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord2d;
 import org.jzy3d.maths.Scale;
@@ -47,7 +47,7 @@ import org.jzy3d.maths.Scale;
  *
  * @author ao
  */
-public class CustomMouseControl extends ChartMouseController {
+public class CustomMouseControl extends CameraMouseController {
 
     private final Chart chart;
 
@@ -99,7 +99,7 @@ public class CustomMouseControl extends ChartMouseController {
     }
 
     public void install() {
-        ChartThreadController threadCamera = new ChartThreadController(chart);
+        CameraThreadController threadCamera = new CameraThreadController(chart);
         this.addSlaveThreadController(threadCamera);
         chart.addController(this);
     }

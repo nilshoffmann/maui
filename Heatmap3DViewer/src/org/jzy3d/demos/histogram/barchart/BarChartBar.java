@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.colors.Color;
@@ -119,7 +120,7 @@ public class BarChartBar<ITEM> extends HistogramBar {
     }
 
     @Override
-    public void draw(GL gl, GLU glu, Camera camera) {
+    public void draw(GL2 gl, GLU glu, Camera camera) {
         super.draw(gl, glu, camera);
     }
 
@@ -192,7 +193,7 @@ public class BarChartBar<ITEM> extends HistogramBar {
         Quad q = new Quad() {
 
             @Override
-            public void draw(GL gl, GLU glu, Camera cam) {
+            public void draw(GL2 gl, GLU glu, Camera cam) {
                 super.draw(gl, glu, cam);
                 gluObj = glu;
             }

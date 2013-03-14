@@ -33,7 +33,7 @@ import java.awt.Rectangle;
 
 import org.jzy3d.chart.Chart;
 import org.jzy3d.global.Settings;
-import org.jzy3d.ui.ChartLauncher;
+import org.jzy3d.chart.ChartLauncher;
 
 
 public class Launcher {

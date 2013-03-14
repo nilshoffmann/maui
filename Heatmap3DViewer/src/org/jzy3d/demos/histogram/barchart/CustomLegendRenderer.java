@@ -65,8 +65,8 @@ public class CustomLegendRenderer implements Renderer2d {
                 new ColorMapper(new org.jzy3d.demos.histogram.barchart.AffinityColorGen(), 0f, 2f),
                 new AbstractTickProvider() {
 
-                    public float[] generateTicks(float min, float max, int steps) {
-                        return new float[]{0f, 1f, 2f};
+                    public double[] generateTicks(double min, double max, int steps) {
+                        return new double[]{0f, 1f, 2f};
                     }
 
                     public int getDefaultSteps() {
@@ -75,7 +75,7 @@ public class CustomLegendRenderer implements Renderer2d {
                 },
                 new ITickRenderer() {
 
-                    public String format(float value) {
+                    public String format(double value) {
                         switch ((int) value) {
                             case 0:
                                 return "Single-feat.";

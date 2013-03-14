@@ -42,7 +42,7 @@ import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.controllers.ControllerType;
-import org.jzy3d.chart.controllers.mouse.ChartMouseController;
+import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
 import org.jzy3d.colors.Color;
 import org.jzy3d.demos.histogram.barchart.BarChartBar;
 import org.jzy3d.events.ControllerEvent;
@@ -52,8 +52,7 @@ import org.jzy3d.maths.IntegerCoord2d;
 import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.tooltips.ITooltipRenderer;
-import org.jzy3d.ui.ChartLauncher;
-import org.jzy3d.ui.Plugs;
+import org.jzy3d.chart.ChartLauncher;
 
 /**
  *
@@ -140,7 +139,7 @@ public class HeatmapViewer {
 //
 //                }
 //            });
-            ChartMouseController mouse = new ChartMouseController();
+            CameraMouseController mouse = new CameraMouseController();
             chart.addController(mouse);
             mouse.addControllerEventListener(new ControllerEventListener() {
 
@@ -167,7 +166,7 @@ public class HeatmapViewer {
     }
 
     public static void openFrame(final Chart chart, final Rectangle rect) {
-        Plugs.frame(chart, rect, "SurfaceViewerPanel");
+        ChartLauncher.frame(chart, rect, "SurfaceViewerPanel");
 
     }
 }

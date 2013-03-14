@@ -35,7 +35,7 @@ import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
 import org.jzy3d.maths.Array;
 import org.jzy3d.maths.Coord3d;
-import org.jzy3d.plot3d.builder.Tesselator;
+import org.jzy3d.plot3d.builder.Tessellator;
 import org.jzy3d.plot3d.primitives.AbstractComposite;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
@@ -65,7 +65,7 @@ import org.jzy3d.plot3d.primitives.Shape;
  * @author Martin Pernollet
  *
  */
-public class FastOrthonormalTesselator extends Tesselator {
+public class FastOrthonormalTessellator extends Tessellator {
 
     @Override
     public AbstractComposite build(float[] x, float[] y, float[] z) {
