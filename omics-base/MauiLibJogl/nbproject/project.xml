@@ -17,13 +17,6 @@
                 <package>com.jogamp.common.util</package>
                 <package>com.jogamp.common.util.cache</package>
                 <package>com.jogamp.common.util.locks</package>
-                <package>com.jogamp.gluegen</package>
-                <package>com.jogamp.gluegen.ant</package>
-                <package>com.jogamp.gluegen.cgram</package>
-                <package>com.jogamp.gluegen.cgram.types</package>
-                <package>com.jogamp.gluegen.jgram</package>
-                <package>com.jogamp.gluegen.pcpp</package>
-                <package>com.jogamp.gluegen.procaddress</package>
                 <package>com.jogamp.gluegen.runtime</package>
                 <package>com.jogamp.gluegen.runtime.opengl</package>
                 <package>com.jogamp.graph.curve</package>
@@ -112,7 +105,6 @@
                 <package>jogamp.common.awt</package>
                 <package>jogamp.common.jvm</package>
                 <package>jogamp.common.os</package>
-                <package>jogamp.common.os.elf</package>
                 <package>jogamp.common.util.locks</package>
                 <package>jogamp.graph.curve.opengl</package>
                 <package>jogamp.graph.curve.opengl.shader</package>
@@ -174,11 +166,14 @@
                 <package>jogamp.opengl.windows.wgl</package>
                 <package>jogamp.opengl.windows.wgl.awt</package>
                 <package>jogamp.opengl.x11.glx</package>
-                <package>net.highteq.nativetaglet</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/jogl-all-natives-linux-armv7.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jogl-all-natives-linux-armv7.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/gluegen-rt.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/gluegen-rt.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/gluegen-rt-natives-solaris-amd64.jar</runtime-relative-path>
@@ -203,10 +198,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/jogl-all-natives-windows-i586.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jogl-all-natives-windows-i586.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/gluegen.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/gluegen.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/gluegen-rt-natives-linux-armv7hf.jar</runtime-relative-path>

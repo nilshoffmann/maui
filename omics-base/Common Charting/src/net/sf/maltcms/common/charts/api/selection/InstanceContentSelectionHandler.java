@@ -33,7 +33,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
     private final InstanceContent content;
     private final Deque<ISelection> activeSelection = new LinkedList<ISelection>();
     private final SelectionOverlay overlay;
-    private final Mode mode;
+    private Mode mode;
     private final int capacity;
     private ADataset1D<?,?> dataset;
     // private TARGET lastItem = null;
@@ -53,6 +53,11 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         this.dataset = dataset;
         this.capacity = capacity;
     }
+	
+	public void setMode(Mode mode) {
+		clear();
+		this.mode = mode;
+	}
 
     public void setDataset(ADataset1D<?,?> dataset) {
         this.dataset = dataset;
@@ -119,7 +124,12 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
                     break;
                 case HOVER:
                     if (mode == Mode.ON_HOVER) {
-                        addToSelection(ce.getSelection());
+//                        addToSelection(ce.getSelection());
+						if (activeSelection.contains(ce.getSelection())) {
+                            removeFromSelection(ce.getSelection());
+                        } else {
+                            addToSelection(ce.getSelection());
+                        }
                     }
                     break;
                 case KEYBOARD:

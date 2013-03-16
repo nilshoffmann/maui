@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/XYMouseSelectionHandler.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/InstanceContentSelectionHandler.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/overlay/SelectionOverlay.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/overlay/ui/OverlayNavigatorPanel.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/overlay/nodes/actions/ClearSelection.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/overlay/nodes/SourceNode.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/overlay/nodes/SelectionSourceChildFactory.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/selection/XYSelection.java</file>
+        <file>file:/opt/projects/omics/omics-base/Common%20Charting/src/net/sf/maltcms/common/charts/api/overlay/ChartOverlay.java</file>
+    </open-files>
 </project-private>
