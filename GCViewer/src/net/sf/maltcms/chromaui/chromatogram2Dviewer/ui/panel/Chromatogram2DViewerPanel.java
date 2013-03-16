@@ -122,6 +122,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         cp.setFocusable(true);
         jPanel2.add(cp, BorderLayout.CENTER);
         content.add(cp);
+		addKeyListener(this);
     }
     
     public boolean isSyncViewport() {
@@ -288,6 +289,10 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jSlider1 = new RangeSlider(0,1000);
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        jLabel2 = new javax.swing.JLabel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
+        modeSpinner = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
 
         jToolBar1.setRollover(true);
@@ -351,6 +356,21 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             }
         });
         jToolBar2.add(jCheckBox2);
+        jToolBar2.add(jSeparator1);
+
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(Chromatogram2DViewerPanel.class, "Chromatogram2DViewerPanel.jLabel2.text")); // NOI18N
+        jToolBar2.add(jLabel2);
+        jToolBar2.add(filler1);
+
+        modeSpinner.setModel(new javax.swing.SpinnerListModel(new String[] {"ON_CLICK", "ON_HOVER"}));
+        modeSpinner.setToolTipText(org.openide.util.NbBundle.getMessage(Chromatogram2DViewerPanel.class, "Chromatogram2DViewerPanel.modeSpinner.toolTipText")); // NOI18N
+        modeSpinner.setMinimumSize(new java.awt.Dimension(120, 28));
+        modeSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                modeSpinnerStateChanged(evt);
+            }
+        });
+        jToolBar2.add(modeSpinner);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
@@ -358,8 +378,8 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 858, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 858, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -417,6 +437,12 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         // TODO add your handling code here:
     }//GEN-LAST:event_settingsButtonActionPerformed
 
+    private void modeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_modeSpinnerStateChanged
+        if(selectionHandler!=null) {
+			selectionHandler.setMode(InstanceContentSelectionHandler.Mode.valueOf((String)modeSpinner.getValue()));
+		}
+    }//GEN-LAST:event_modeSpinnerStateChanged
+
     private void handleSliderChange() {
         final int low = this.jSlider1.getValue();
         final int high = ((RangeSlider) jSlider1).getUpperValue();
@@ -468,15 +494,19 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         cp.repaint();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.Box.Filler filler1;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JSpinner modeSpinner;
     private javax.swing.JButton settingsButton;
     // End of variables declaration//GEN-END:variables
 
@@ -521,6 +551,9 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     @Override
     public void keyPressed(KeyEvent ke) {
         System.out.println("Received key event: " + ke.toString());
+		if (ke.isControlDown()) {
+			modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
+        }
         if (getDataPoint() != null) {
             System.out.println("Data point is not null!");
             Point p = null;
@@ -546,6 +579,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
     @Override
     public void keyReleased(KeyEvent ke) {
+		modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_CLICK.toString());
     }
 
     public void setChartPanel(ChartPanel cp) {
@@ -579,7 +613,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         }
 //        this.ic.add(Charts.overlayNode(sp));
         if (selectionHandler == null) {
-            selectionHandler = new InstanceContentSelectionHandler(this.content, sp, InstanceContentSelectionHandler.Mode.ON_CLICK, this.ds, 1);
+            selectionHandler = new InstanceContentSelectionHandler(this.content, sp, InstanceContentSelectionHandler.Mode.valueOf((String)modeSpinner.getValue()), this.ds, 1);
         } else {
             selectionHandler.setDataset(ds);
         }
@@ -605,24 +639,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         ticplot.setNoDataMessage("Loading Data...");
         chart = new JFreeChart(ticplot);
         cp.setChart(chart);
-//        XYItemRenderer r = ticplot.getRenderer();
-//        if (r instanceof XYLineAndShapeRenderer) {
-//            ((XYLineAndShapeRenderer) r).setDrawSeriesLineAsPath(true);
-//            ((XYLineAndShapeRenderer) r).setBaseShapesVisible(false);
-//            ((XYLineAndShapeRenderer) r).setBaseShapesFilled(true);
-//        } else if (r instanceof XYAreaRenderer) {
-//            ((XYAreaRenderer) r).setOutline(true);
-//        }
-//        ChartCustomizer.setSeriesColors(ticplot, 0.8f);
-//        ChartCustomizer.setSeriesStrokes(ticplot, 2.0f);
         dmkl = new DomainMarkerKeyListener(
                 ticplot);
         dmkl.setPlot(ticplot);
         cp.addKeyListener(dmkl);
-//        addCompoundPainter(ic, cdxpanel, ds);
         addAxisListener();
-//        ValueAxis domain = this.ticplot.getDomainAxis();
-//        ValueAxis range = this.ticplot.getRangeAxis();
         //add available chart overlays
         Collection<? extends Overlay> overlays = getLookup().lookupAll(Overlay.class);
         for (Overlay overlay : overlays) {
