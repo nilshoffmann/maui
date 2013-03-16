@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="ucar.netcdf.nbm">
+    <module_version install_time="1363424001636" last="true" origin="installer" specification_version="1.2.12">
+        <file crc="2572260410" name="config/Modules/ucar-netcdf-nbm.xml"/>
+        <file crc="4143736251" name="modules/ext/edu.ucar.unidata/netcdf-osgi-4.2.35.jar"/>
+        <file crc="2602685667" name="modules/ucar-netcdf-nbm.jar"/>
+    </module_version>
+</module>

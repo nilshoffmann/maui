@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="net.sf.mpaxs.mpaxs.nbm">
+    <module_version install_time="1363424000043" last="true" origin="installer" specification_version="1.2.12">
+        <file crc="1688787418" name="config/Modules/net-sf-mpaxs-mpaxs-nbm.xml"/>
+        <file crc="3000654385" name="modules/ext/net.sf.mpaxs/mpaxs-api-1.6.14.jar"/>
+        <file crc="3569802059" name="modules/ext/net.sf.mpaxs/mpaxs-computeHost-1.6.14.jar"/>
+        <file crc="998860993" name="modules/ext/net.sf.mpaxs/mpaxs-drmaa-spi-1.6.14.jar"/>
+        <file crc="2844503450" name="modules/ext/net.sf.mpaxs/mpaxs-server-1.6.14.jar"/>
+        <file crc="1197096006" name="modules/ext/net.sf.mpaxs/mpaxs-spi-1.6.14.jar"/>
+        <file crc="4062144378" name="modules/ext/org.gff.drmaa/sun-drmaa-impl-osgi-1.0.0.jar"/>
+        <file crc="2256007160" name="modules/net-sf-mpaxs-mpaxs-nbm.jar"/>
+    </module_version>
+</module>
