@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<module codename="net.java.nboglpack.joglintegration">
-    <module_version install_time="1333628635070" last="true" origin="net-java-nboglpack-joglintegration.nbm" specification_version="1.0.2">
-        <file crc="2186497877" name="config/Modules/net-java-nboglpack-joglintegration.xml"/>
-        <file crc="1743993230" name="modules/net-java-nboglpack-joglintegration.jar"/>
-    </module_version>
-</module>

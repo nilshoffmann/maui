@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<module codename="net.java.nboglpack.quicksearch">
-    <module_version install_time="1333628634887" last="true" origin="net-java-nboglpack-quicksearch.nbm" specification_version="1.0">
-        <file crc="382530560" name="config/Modules/net-java-nboglpack-quicksearch.xml"/>
-        <file crc="3465979893" name="modules/net-java-nboglpack-quicksearch.jar"/>
-    </module_version>
-</module>
