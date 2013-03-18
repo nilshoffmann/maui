@@ -9,10 +9,14 @@
 #######################################################
 # set maui bin location
 
+MAUI_DEFAULT_HOME="/vol/maltcms/maui"
+
 if [ -z "$MAUI_HOME" ]; then
-	echo "Maui installation not found, aborting. Please set MAUI_HOME to point to the base directory of your Maui installation!"
-	xmessage "Maui installation not found, aborting. Please set MAUI_HOME to point to the base directory of your Maui installation!"
-	exit 1;
+	echo "MAUI_HOME variable not set, using default location: $MAUI_DEFAULT_HOME"
+	MAUI_HOME="$MAUI_DEFAULT_HOME"
+	#echo "Maui installation not found, aborting. Please set MAUI_HOME to point to the base directory of your Maui installation!"
+	#xmessage "Maui installation not found, aborting. Please set MAUI_HOME to point to the base directory of your Maui installation!"
+	#exit 1;
 fi
 
 MAUI="$MAUI_HOME/bin/maui"
