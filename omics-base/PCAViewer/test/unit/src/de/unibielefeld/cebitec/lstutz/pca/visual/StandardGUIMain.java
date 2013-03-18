@@ -40,15 +40,11 @@ import org.openide.util.Exceptions;
  *
  * @author hoffmann
  */
-public class StandardGUITest {
-	
-	public StandardGUITest() {
-	}
-
+public class StandardGUIMain {
 	
 	public static void main(String[] args) {
 		String name = "MeltDB 3D Viewer";
-        URL url = StandardGUITest.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/meltdb.xml");
+        URL url = StandardGUIMain.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/meltdb.xml");
 ////        URL url = getClass().getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/end_test.xml");
 ////        if (args[0].equals("xml")) {
 //        //ImportUtilities.get_url_input_stream(url)
@@ -63,7 +59,7 @@ public class StandardGUITest {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-		URL url2 = StandardGUITest.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/assault.txt");
+		URL url2 = StandardGUIMain.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/assault.txt");
 		InputStream is = null;
 		try {
 			is = url2.openStream();
