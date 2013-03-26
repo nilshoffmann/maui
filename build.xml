@@ -26,6 +26,35 @@
     <target name="fix-test-dependencies" depends="-init">
        <subant target="fix-test-dependencies" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
     </target>
+	
+	<target name="check-installers" description="Check that installers are ready">
+		<fail message="Installers have not been created! Please create them manually!">
+			<condition>
+				<and>
+					<not>
+						<available file="dist/maui-linux.sh"/>
+					</not>
+					<not>
+						<available file="dist/maui-macosx.tgz"/>
+					</not>					
+					<not>
+						<available file="dist/maui-solaris.sh"/>
+					</not>
+					<not>
+						<available file="dist/maui-windows.exe"/>
+					</not>
+				</and>
+			</condition>
+		</fail>
+	</target>
+	
+	<target name="prepare-release" description="Prepares a release" depends="build,test,nbms,check-installers">
+    </target>
+
+<!--    <target name="deploy" description="Deploys release files" depends="prepare-release,upload-credentials,upload-updatecenter,upload-build,upload-homepage">
+    </target>-->
+    <target name="deploy" description="Deploys release files" depends="prepare-release,upload-credentials,upload-updatecenter,upload-homepage,upload-build">
+    </target>
     
     <target name="upload-credentials" description="Ask for user credentials">
         <input addproperty="upload.username">Please enter username for upload:</input>
@@ -55,7 +84,7 @@
             <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}/updates/"/>
         </exec>
     </target>
-    <target name="upload-build" description="Deploys beta zip distribution and macosx app" depends="upload-credentials">
+    <target name="upload-build" description="Deploys the distribution installers and zip file" depends="upload-credentials">
         <tstamp>
             <format property="deploy.time" pattern="yyyy-MM-dd"/>
         </tstamp>
