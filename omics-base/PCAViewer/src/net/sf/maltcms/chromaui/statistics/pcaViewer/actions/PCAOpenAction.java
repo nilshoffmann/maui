@@ -44,7 +44,7 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.chromaui.statistics.pcaViewer.actions.PCAOpenAction")
 @ActionRegistration(displayName = "#CTL_PCAOpenAction")
 @ActionReferences({})
-@Messages("CTL_PCAOpenAction=PCA")
+@Messages("CTL_PCAOpenAction=View PCA")
 public final class PCAOpenAction implements ActionListener {
 
     private final IPcaDescriptor context;
