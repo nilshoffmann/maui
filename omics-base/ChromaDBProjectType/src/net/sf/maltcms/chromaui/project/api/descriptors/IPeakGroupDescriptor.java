@@ -71,6 +71,8 @@ public interface IPeakGroupDescriptor extends IBasicDescriptor {
     public double getAreaStdDev(IPeakNormalizer normalizer);
     
     public String getMajorityName();
+	
+	public String getMajorityDisplayName();
     
     public String getCas();
     
