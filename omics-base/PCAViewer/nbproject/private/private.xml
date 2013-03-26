@@ -14,5 +14,7 @@
         <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/data/ImportUtilities.java</file>
         <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/data/CSVParser.java</file>
         <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/dataset/pca_results.txt</file>
+        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/net/sf/maltcms/chromaui/statistics/pcaViewer/Bundle.properties</file>
+        <file>file:/opt/projects/omics/omics-base/PCAViewer/nbproject/project.properties</file>
     </open-files>
 </project-private>

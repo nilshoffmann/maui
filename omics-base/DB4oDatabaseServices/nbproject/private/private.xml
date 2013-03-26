@@ -6,5 +6,6 @@
         <file>file:/opt/projects/omics/omics-base/DB4oDatabaseServices/src/net/sf/maltcms/chromaui/db/spi/db4o/options/Db4oGeneralSettingsPanel.java</file>
         <file>file:/opt/projects/omics/omics-base/DB4oDatabaseServices/test/unit/src/net/sf/maltcms/chromaui/project/spi/DB4oCrudProviderTest.java</file>
         <file>file:/opt/projects/omics/omics-base/DB4oDatabaseServices/src/net/sf/maltcms/chromaui/db/spi/db4o/AbstractDB4oCrudProvider.java</file>
+        <file>file:/opt/projects/omics/omics-base/DB4oDatabaseServices/nbproject/project.properties</file>
     </open-files>
 </project-private>
