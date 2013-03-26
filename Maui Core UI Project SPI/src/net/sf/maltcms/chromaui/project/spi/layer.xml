@@ -26,7 +26,6 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
 for details.
 -->
-
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Loaders">
@@ -64,13 +63,6 @@ for details.
                     <file name="org-openide-actions-ToolsAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-ToolsAction.instance"/>
                         <attr name="position" intvalue="1200"/>
-                    </file>
-                </folder>
-                <folder name="Factories">
-                    <file name="MauiProjectDataLoader.instance">
-                        <attr name="dataObjectClass" stringvalue="net.sf.maltcms.chromaui.project.MauiProjectDataObject"/>
-                        <attr name="instanceCreate" methodvalue="org.openide.loaders.DataLoaderPool.factory"/>
-                        <attr name="mimeType" stringvalue="application/db4o"/>
                     </file>
                 </folder>
             </folder>

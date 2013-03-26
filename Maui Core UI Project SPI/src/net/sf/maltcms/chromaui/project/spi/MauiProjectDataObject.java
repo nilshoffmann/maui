@@ -28,11 +28,10 @@
 package net.sf.maltcms.chromaui.project.spi;
 
 import java.io.IOException;
-import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.netbeans.api.project.ProjectManager;
-import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
@@ -41,6 +40,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ProxyLookup;
 
+@DataObject.Registration(displayName = "Maui Project", mimeType = "application/db4o")
 public class MauiProjectDataObject extends MultiDataObject {
 
     public MauiProjectDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
