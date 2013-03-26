@@ -80,28 +80,7 @@ public class ChromaTOFParser {
         }
         return -1;
     }
-
-//    public static String rearrangeMassSpectra(String massSpectrum) {
-//        String[] mziTuples = massSpectrum.split(" ");
-//        TreeMap<Float, Integer> tm = new TreeMap<Float, Integer>();
-//        for (String tuple : mziTuples) {
-//            if (tuple.contains(":")) {
-//                String[] tplArray = tuple.split(":");
-//                tm.put(Float.valueOf(tplArray[0]), Integer.valueOf(tplArray[1]));
-//            } else {
-//                System.err.println(
-//                        "Warning: encountered strange tuple: " + tuple + " within ms: " + massSpectrum);
-//            }
-//        }
-//        StringBuilder sb = new StringBuilder();
-//        for (Float mz : tm.keySet()) {
-//            sb.append(mz);
-//            sb.append(":");
-//            sb.append(tm.get(mz));
-//            sb.append(" ");
-//        }
-//        return sb.toString();
-//    }
+	
     public static Tuple2D<double[], int[]> convertMassSpectrum(
             String massSpectrum) {
         if (massSpectrum == null) {
@@ -182,18 +161,11 @@ public class ChromaTOFParser {
             List<String> results = new LinkedList<String>();
             int match = 1;
             while (m.find()) {
-//                System.out.println("Match " + (match++));
-//                for (int i = 0; i < m.groupCount(); i++) {
-//                    System.out.println("Group " + i + ": " + m.group(i));
-//                }
                 results.add(m.group(3).trim());
             }
             Pattern endPattern = Pattern.compile(",([\"]{0,1}([^\"]*)[^\"]{0,1}$)");
             Matcher m2 = endPattern.matcher(line);
             while (m2.find()) {
-//                for (int i = 0; i < m2.groupCount(); i++) {
-//                    System.out.println("Group " + i + ": " + m2.group(i));
-//                }
                 results.add(m2.group(1).trim());
             }
             return results.toArray(new String[results.size()]);
@@ -204,51 +176,6 @@ public class ChromaTOFParser {
         }
     }
 
-//    public static LinkedHashSet<String> getHeader(File[] inputFiles,
-//            HashMap<String, String> filenameToGroupMap) {
-//        LinkedHashSet<String> globalHeader = new LinkedHashSet<String>();
-//        for (File f : inputFiles) {
-//            ArrayList<String> header = null;
-//            String fileName = f.getName().substring(0, f.getName().lastIndexOf(
-//                    "."));
-//            System.out.println("Processing report " + fileName);
-//            BufferedReader br = null;
-//            try {
-//                br = new BufferedReader(new FileReader(f));
-//                String line = "";
-//                int lineCount = 0;
-//                while ((line = br.readLine()) != null) {
-//                    if (!line.isEmpty()) {
-//                        String[] lineArray = line.split(String.valueOf(FIELD_SEPARATOR));
-//                        if (header == null) {
-//                            for (int i = 0; i < lineArray.length; i++) {
-//                                lineArray[i] = lineArray[i].trim().toUpperCase().
-//                                        replaceAll(" ", "_");
-//                            }
-//                            header = new ArrayList<String>(Arrays.asList(
-//                                    lineArray));
-//                            header.add("SOURCE_FILE");
-//                            header.add("GROUP");
-//                            break;
-//                        }
-//                        lineCount++;
-//                    }
-//                }
-//            } catch (IOException ex) {
-//                Logger.getLogger(ChromaTOFParser.class.getName()).log(
-//                        Level.SEVERE, null, ex);
-//            } finally {
-//                try {
-//                    br.close();
-//                } catch (IOException ex) {
-//                    Logger.getLogger(ChromaTOFParser.class.getName()).log(
-//                            Level.SEVERE, null, ex);
-//                }
-//            }
-//            globalHeader.addAll(header);
-//        }
-//        return globalHeader;
-//    }
     public static List<TableRow> parseBody(LinkedHashSet<String> globalHeader,
             File f, boolean normalizeColumnNames) {
         List<TableRow> body = new ArrayList<TableRow>();
@@ -302,101 +229,4 @@ public class ChromaTOFParser {
         List<TableRow> table = parseBody(header, f, normalizeColumnNames);
         return new Tuple2D<LinkedHashSet<String>, List<TableRow>>(header, table);
     }
-//    public static void main(String[] args) {
-//        File groupFile = new File(args[0]);
-//        HashMap<String, String> filenameToGroupMap = getFilenameToGroupMap(
-//                groupFile);
-//
-//
-//        List<TableRow> body = new ArrayList<TableRow>();
-//        File baseDir = new File(args[1]);
-//        File[] inputFiles = baseDir.listFiles(new FileFilter() {
-//
-//            @Override
-//            public boolean accept(File pathname) {
-//                return pathname.getName().toLowerCase().endsWith(".txt");
-//            }
-//        });
-//        LinkedHashSet<String> globalHeader = getHeader(inputFiles,
-//                filenameToGroupMap);
-//        for (File f : inputFiles) {
-//            String fileName = f.getName().substring(0, f.getName().lastIndexOf(
-//                    "."));
-//            System.out.println("Processing report " + fileName);
-//            try {
-//                BufferedReader br = new BufferedReader(new FileReader(f));
-//                String line = "";
-//                int lineCount = 0;
-//                List<String> header = null;
-//                while ((line = br.readLine()) != null) {
-//                    if (!line.isEmpty()) {
-//                        ArrayList<String> lineList = new ArrayList<String>(Arrays.
-//                                asList(line.split("\t")));
-//                        if (header == null) {
-//                            for (int i = 0; i < lineList.size(); i++) {
-//                                lineList.set(i, lineList.get(i).trim().
-//                                        toUpperCase().replaceAll(" ", "_"));
-//                            }
-//                            header = new ArrayList<String>(lineList);
-//                            header.add("SOURCE_FILE");
-//                            header.add("GROUP");
-//                        } else {
-//                            TableRow tr = new TableRow();
-//                            for (String headerColumn : globalHeader) {
-//                                int localIndex = getIndexOfHeaderColumn(header,
-//                                        headerColumn);
-//                                if (localIndex >= 0 && localIndex < lineList.
-//                                        size()) {//found column name
-//                                    tr.put(headerColumn,
-//                                            lineList.get(localIndex));
-//                                } else {//did not find column name
-//                                    tr.put(headerColumn, null);
-//                                }
-//                            }
-//                            tr.put("SOURCE_FILE", fileName);
-//                            tr.put("GROUP", filenameToGroupMap.get(fileName));
-//                            body.add(tr);
-//                        }
-//                        lineCount++;
-//                    }
-//                }
-//            } catch (IOException ex) {
-//                Logger.getLogger(ChromaTOFParser.class.getName()).log(
-//                        Level.SEVERE, null, ex);
-//            }
-//        }
-//        String[] columnsToWrite = new String[]{"SOURCE_FILE", "GROUP", "NAME",
-//            "R.T._(S)", "UNIQUEMASS", "QUANT_MASSES", "QUANT_S/N", "AREA",
-//            "RETENTION_INDEX", "S/N", "SIMILARITY", "PROBABILITY",
-//            "APEXING_MASSES", "FULL_WIDTH_AT_HALF_HEIGHT", "INTEGRATIONBEGIN",
-//            "INTEGRATIONEND", "NOISE", "SPECTRA"};
-//        try {
-//            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-//                    "theresaChromatofConcat.txt")));
-//            for (String str : columnsToWrite) {
-//                bw.write(str);
-//                bw.write("\t");
-//            }
-//            bw.write("\n");
-//            for (TableRow tr : body) {
-//                for (String str : columnsToWrite) {
-//                    if (str != null) {
-//                        String obj = tr.get(str);
-//                        if (obj != null) {
-//                            bw.write(tr.get(str));
-//                        } else {
-//                            bw.write("NA");
-//                        }
-//                    }
-//                    bw.write("\t");
-//                }
-//                bw.write("\n");
-//            }
-//            bw.flush();
-//            bw.close();
-//        } catch (IOException ex) {
-//            Logger.getLogger(ChromaTOFParser.class.getName()).log(Level.SEVERE,
-//                    null, ex);
-//        }
-//    }
 }

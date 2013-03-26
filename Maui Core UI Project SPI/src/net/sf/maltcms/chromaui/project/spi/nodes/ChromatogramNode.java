@@ -43,8 +43,11 @@ import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
+import org.openide.filesystems.FileSystemCapability;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
+import static org.openide.nodes.Node.PROP_ICON;
+import static org.openide.nodes.Node.PROP_OPENED_ICON;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
@@ -238,7 +241,6 @@ public class ChromatogramNode extends FilterNode implements
                 BufferedImage bi = new BufferedImage(w / 10, h / 10,
                         BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g2 = bi.createGraphics();
-
                 g2.setColor(c);
                 g2.fillRect(0, 0, bi.getWidth(), bi.getHeight());
                 descrImage = ImageUtilities.mergeImages(descrImage, bi,
@@ -265,7 +267,14 @@ public class ChromatogramNode extends FilterNode implements
         if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
             fireShortDescriptionChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-        firePropertyChange(pce.getPropertyName(), pce.getOldValue(), pce.
-                getNewValue());
+        if(pce.getPropertyName().equals(PROP_ICON)) {
+            fireIconChange();
+        }
+		if(pce.getPropertyName().equals(PROP_OPENED_ICON)) {
+            fireOpenedIconChange();
+        }
+		if(pce.getPropertyName().equals("color")) {
+			fireIconChange();
+		}
     }
 }

@@ -60,6 +60,7 @@ public class ChromatogramChildNodeFactory extends ChildFactory<Peak1DContainer>
 //        System.out.println("Created ContainerNode Factory for " + cp.getClass());
         this.chromatogramDescriptor = chromatogramDescriptor;
         this.lkp = lkp;
+		chromatogramDescriptor.addPropertyChangeListener(WeakListeners.propertyChange(this, chromatogramDescriptor));
 //        this.lkp.lookup(IChromAUIProject.class).getLookup().lookup(
 //                ProjectInformation.class).addPropertyChangeListener(this);
     }

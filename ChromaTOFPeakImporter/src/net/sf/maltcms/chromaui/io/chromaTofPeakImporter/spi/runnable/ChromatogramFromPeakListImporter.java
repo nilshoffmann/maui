@@ -27,20 +27,14 @@
  */
 package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable;
 
-import cross.datastructures.tuple.Tuple2D;
 import cross.tools.StringTools;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import lombok.Data;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
@@ -48,7 +42,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
 import org.openide.util.Exceptions;
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.Utils.*;
 import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.GC;

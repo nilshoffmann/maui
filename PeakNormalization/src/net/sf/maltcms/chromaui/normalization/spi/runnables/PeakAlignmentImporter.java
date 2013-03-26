@@ -103,21 +103,28 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
                     for (String element : row) {
                         if (!element.trim().equals("-")) {
                             int peakIndex = Integer.parseInt(element.trim());
-                            IPeakAnnotationDescriptor ipad = getDescriptor(
-                                    peakIndex, project,
-                                    indexToChrom.get(Integer.valueOf(colIdx)));
-                            if(ipad!=null) {
-                                descriptors.add(ipad);
-                            }else{
-                                System.err.println("Warning: Peak at index "+peakIndex+" in file "+indexToChrom.get(Integer.valueOf(colIdx)).getDisplayName()+" could not be matched!");
-                            }
+							IChromatogramDescriptor chrom = indexToChrom.get(Integer.valueOf(colIdx));
+							if(chrom!=null) {
+								IPeakAnnotationDescriptor ipad = getDescriptor(
+										peakIndex, project,
+										chrom);
+								if(ipad!=null) {
+									descriptors.add(ipad);
+								}else{
+									System.err.println("Warning: Peak at index "+peakIndex+" in file "+indexToChrom.get(Integer.valueOf(colIdx)).getDisplayName()+" could not be matched!");
+								}
+							}else{
+								System.err.println("Warning: Chromatogram at column index "+colIdx+" was not found in project!");
+							}
                         }
                         colIdx++;
                     }
-                    pgd.setPeakGroupContainer(pgc);
-                    pgd.setPeakAnnotationDescriptors(descriptors);
+					if(!descriptors.isEmpty()) {
+						pgd.setPeakGroupContainer(pgc);
+						pgd.setPeakAnnotationDescriptors(descriptors);
 
-                    pgc.addMembers(pgd);
+						pgc.addMembers(pgd);
+					}
                     rowIdx++;
                 }
                 project.addContainer(pgc);

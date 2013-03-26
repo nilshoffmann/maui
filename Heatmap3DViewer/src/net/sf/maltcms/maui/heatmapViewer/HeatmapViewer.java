@@ -81,7 +81,7 @@ public class HeatmapViewer {
                         fastTesselation, (int) (roi.getWidth()/16), (int)(roi.getHeight()/16));
             }
 
-            Chart chart = new Chart(Quality.Intermediate, "awt");
+            Chart chart = new Chart(Quality.Intermediate, "newt");
             chart.getScene().getGraph().add(cc);
             for (int i = 0; i < 10; i++) {
                 int xpos = (int)(roi.getX() + (int) (Math.random() * (roi.getWidth())));

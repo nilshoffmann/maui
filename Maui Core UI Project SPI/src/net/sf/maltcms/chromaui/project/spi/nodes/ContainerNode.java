@@ -44,6 +44,8 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import org.openide.actions.PropertiesAction;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
+import static org.openide.nodes.Node.PROP_ICON;
+import static org.openide.nodes.Node.PROP_SHORT_DESCRIPTION;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
@@ -150,6 +152,11 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
         if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
             fireShortDescriptionChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-        firePropertyChange(pce.getPropertyName(), pce.getOldValue(), pce.getNewValue());
+		if(pce.getPropertyName().equals(PROP_ICON) || pce.getPropertyName().equals("color")) {
+            fireIconChange();
+        }
+		if(pce.getPropertyName().equals(PROP_OPENED_ICON) || pce.getPropertyName().equals("color")) {
+            fireOpenedIconChange();
+        }
     }
 }

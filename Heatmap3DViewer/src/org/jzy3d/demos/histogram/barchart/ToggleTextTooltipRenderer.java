@@ -60,7 +60,7 @@ class ToggleTextTooltipRenderer extends TextTooltipRenderer {
     @Override
     public void render(Graphics2D g2d) {
         if (visible) {
-            System.out.println("Setting tooltip");
+            //System.out.println("Setting tooltip");
             updateTargetCoordinate(ad.getBounds().getCenter());
             IntegerCoord2d c2d = ad.getCenterToScreenProj();
             updateScreenPosition(c2d);

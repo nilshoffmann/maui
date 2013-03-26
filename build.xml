@@ -6,6 +6,10 @@
     <description>Builds the module suite Maui.</description>
     <import file="${basedir}/../nbproject/platform-defaults.xml"/>
     <import file="nbproject/build-impl.xml"/>
+	
+	<property name="project.release.name" value="maui"/>
+    <property name="project.release.version" value="1.2"/>
+    <property name="project.release.path" value="${project.release.name}/${project.release.version}"/>
     
     <!-- Modify NetBeans app.conf file to use my local one-->
    <target name="build-launchers" depends="suite.build-launchers">
@@ -35,7 +39,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="site/public_html/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/maui/1.2/"/>
+            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}/"/>
         </exec>    
     </target>
     
@@ -48,7 +52,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="build/updates/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/maui/1.2/updates/updatecenter/"/>
+            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}/updates/"/>
         </exec>
     </target>
     <target name="upload-build" description="Deploys beta zip distribution and macosx app" depends="upload-credentials">
@@ -59,7 +63,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="dist/"/>
-            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/maui/1.2/"/>
+            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}/"/>
         </exec>    
     </target>
 </project>

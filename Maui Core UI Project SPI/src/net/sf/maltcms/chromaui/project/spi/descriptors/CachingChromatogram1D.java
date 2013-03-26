@@ -93,12 +93,12 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
             this.scans = MaltcmsTools.getNumberOfScans(this.parent);
             final IVariableFragment mzV = this.parent.getChild(mz);
             mzV.setIndex(index);
-            activateCache(mzV);
+			activateCache(mzV);
             massValues = mzV.getIndexedArray();
             setPrefetchSize(scans, massValues);
             final IVariableFragment iV = this.parent.getChild(intens);
             iV.setIndex(index);
-            activateCache(iV);
+			activateCache(iV);
             intensityValues = iV.getIndexedArray();
             setPrefetchSize(scans, intensityValues);
             initialized = true;

@@ -223,6 +223,6 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
 		System.out.println("Received prop change event for property " + pce.getPropertyName() + ": " + pce.getOldValue() + "=>" + pce.getNewValue() + " from " + pce.getSource().getClass());
-		refresh(true);
+		refresh(false);
 	}
 }

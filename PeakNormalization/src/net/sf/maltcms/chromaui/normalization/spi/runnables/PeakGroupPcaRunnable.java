@@ -145,7 +145,7 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                     statContainers.add(pcaDescriptor);
                     container.setStatisticsContainers(statContainers);
                     // close RConnection, we're done
-                    c.close();
+                    //c.close();
                 } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
                     System.out.println(rse);
                     Exceptions.printStackTrace(rse);

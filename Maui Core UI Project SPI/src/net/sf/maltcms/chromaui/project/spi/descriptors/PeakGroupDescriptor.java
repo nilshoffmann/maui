@@ -146,10 +146,10 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         sb.append(" (");
         Map<String, Integer> nameToCount = new HashMap<String, Integer>();
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
-            if (nameToCount.containsKey(pad.getName())) {
-                nameToCount.put(pad.getName(), Integer.valueOf(nameToCount.get(pad.getName()).intValue() + 1));
+            if (nameToCount.containsKey(pad.getDisplayName())) {
+                nameToCount.put(pad.getDisplayName(), Integer.valueOf(nameToCount.get(pad.getDisplayName()).intValue() + 1));
             } else {
-                nameToCount.put(pad.getName(), Integer.valueOf(1));
+                nameToCount.put(pad.getDisplayName(), Integer.valueOf(1));
             }
         }
         String mostFrequentName = "";
@@ -173,7 +173,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public String createShortDescription(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
         StringBuilder sb = new StringBuilder(super.getName());
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
-            sb.append(pad.getName());
+            sb.append(pad.getDisplayName());
             sb.append("\n");
         }
         String s = sb.toString();
@@ -399,6 +399,30 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
                 nameToCount.put(pad.getName(), Integer.valueOf(nameToCount.get(pad.getName()).intValue() + 1));
             } else {
                 nameToCount.put(pad.getName(), Integer.valueOf(1));
+            }
+        }
+        String mostFrequentName = "";
+        float highestCount = 0;
+        for (String key : nameToCount.keySet()) {
+            int count = nameToCount.get(key).intValue();
+            if (count > highestCount) {
+                mostFrequentName = key;
+                highestCount = count;
+            }
+        }
+        return mostFrequentName;
+    }
+	
+	@Override
+    public String getMajorityDisplayName() {
+        StringBuilder sb = new StringBuilder(super.getName());
+        sb.append(" (");
+        Map<String, Integer> nameToCount = new HashMap<String, Integer>();
+        for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
+            if (nameToCount.containsKey(pad.getDisplayName())) {
+                nameToCount.put(pad.getDisplayName(), Integer.valueOf(nameToCount.get(pad.getDisplayName()).intValue() + 1));
+            } else {
+                nameToCount.put(pad.getDisplayName(), Integer.valueOf(1));
             }
         }
         String mostFrequentName = "";

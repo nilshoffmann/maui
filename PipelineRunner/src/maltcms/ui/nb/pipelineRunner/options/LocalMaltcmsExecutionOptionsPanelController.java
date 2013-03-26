@@ -35,8 +35,8 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 @OptionsPanelController.TopLevelRegistration(
-id= "LocalMaltcmsExecution",
-categoryName = "#AdvancedOption_DisplayName_LocalMaltcmsExecution",
+id= "maltcmsOptions",
+categoryName = "Maltcms",
 keywords = "#AdvancedOption_Keywords_LocalMaltcmsExecution",
 keywordsCategory = "Maui Settings/LocalMaltcmsExecution",
         iconBase = "maltcms/ui/nb/pipelineRunner/media-playback-start32.png")

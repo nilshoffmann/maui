@@ -80,7 +80,7 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
             System.out.println("Installation path is empty, opening settings!");
             boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
         } else {
-            preferenceChange(new PreferenceChangeEvent(prefs, "maltcmsInstallationPath", installationPath));
+			importPipelines();
         }
         
     }
@@ -90,6 +90,11 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
         PipelineImporter pi = new PipelineImporter();
         PipelineImporter.createAndRun("Maltcms Pipeline Importer", pi);
     }
+	
+	private void importPipelines() {
+		PipelineImporter pi = new PipelineImporter();
+        PipelineImporter.createAndRun("Maltcms Pipeline Importer", pi);
+	}
     
     private class PipelineImporter extends AProgressAwareRunnable {
         

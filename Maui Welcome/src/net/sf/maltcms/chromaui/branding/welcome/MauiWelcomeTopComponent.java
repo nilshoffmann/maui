@@ -137,6 +137,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         editorPane = new javax.swing.JEditorPane();
 
         org.openide.awt.Mnemonics.setLocalizedText(quantify, org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.quantify.text")); // NOI18N
+        quantify.setEnabled(false);
         quantify.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 quantifyActionPerformed(evt);
@@ -144,6 +145,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(searchAndIdentify, org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.searchAndIdentify.text")); // NOI18N
+        searchAndIdentify.setEnabled(false);
         searchAndIdentify.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchAndIdentifyActionPerformed(evt);
@@ -151,6 +153,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(visualize, org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.visualize.text")); // NOI18N
+        visualize.setEnabled(false);
         visualize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 visualizeActionPerformed(evt);
@@ -165,6 +168,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(jButton6, org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.jButton6.text")); // NOI18N
+        jButton6.setEnabled(false);
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -192,12 +196,10 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(newProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(firstSteps, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(searchAndIdentify, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(visualize, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(newProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(firstSteps, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchAndIdentify, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(visualize, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(quantify, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(importPeaks, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -223,7 +225,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
                 .addComponent(quantify)
                 .addGap(18, 18, 18)
                 .addComponent(jButton6)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
@@ -243,6 +245,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(maltcmsIntegration, org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.maltcmsIntegration.text")); // NOI18N
+        maltcmsIntegration.setEnabled(false);
         maltcmsIntegration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 maltcmsIntegrationActionPerformed(evt);

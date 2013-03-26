@@ -131,6 +131,9 @@ public final class ExportAnovaResults implements ActionListener {
                     StringBuilder header = new StringBuilder();
                     List<String> headerStrings = new ArrayList<String>();
                     headerStrings.add("PutativeIdentification");
+					headerStrings.add("DatabaseId");
+					headerStrings.add("RetentionTimeAvg");
+					headerStrings.add("RetentionTimeStdev");
                     headerStrings.addAll(chromatogramNames);
                     headerStrings.addAll(Arrays.asList(new String[]{"Name", "PeakGroupId", "Factors", "DegreesOfFreedom", "Fvalues", "PvalueAdjustment", "Pvalues"}));
                     for (String head : headerStrings) {
@@ -152,7 +155,10 @@ public final class ExportAnovaResults implements ActionListener {
                                 return;
                             }
                         }
-                        sb.append(group.getPeakGroupDescriptor().getMajorityName()).append("\t");
+                        sb.append(group.getPeakGroupDescriptor().getMajorityDisplayName()).append("\t");
+						sb.append(group.getPeakGroupDescriptor().getMajorityName()).append("\t");
+						sb.append(group.getPeakGroupDescriptor().getMeanApexTime()).append("\t");
+						sb.append(group.getPeakGroupDescriptor().getApexTimeStdDev()).append("\t");
                         String[] peaks = new String[chromatogramNames.size()];
                         for (IPeakAnnotationDescriptor peak : peakGroup.getPeakAnnotationDescriptors()) {
                             IChromatogramDescriptor peakChrom = peak.getChromatogramDescriptor();
