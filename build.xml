@@ -16,7 +16,7 @@
        <echo message="Branding conf file : Copy file ${basedir}/BrandingModule/harness/etc/maui.conf to ${build.launcher.dir}/etc/${app.name}.conf"/>
        <delete file="${build.launcher.dir}/etc/${app.name}.conf"/>
        <copy file="${basedir}/BrandingModule/harness/etc/${app.name}.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf"/>
-	   <copy file="${basedir}/BrandingModule/harness/bin/*" tofile="${build.launcher.dir}/bin"/>
+	   <copy file="${basedir}/BrandingModule/harness/bin/${app.name}-sge.sh" tofile="${build.launcher.dir}/bin"/>
    </target>   
    
    	<!-- additional task to fix dependencies for all modules at once -->
