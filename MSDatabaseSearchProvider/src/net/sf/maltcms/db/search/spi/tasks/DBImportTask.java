@@ -109,12 +109,6 @@ public class DBImportTask extends AProgressAwareRunnable {
                         FileObject dbFile = FileUtil.createData(dbFile1);
                         createdFiles.add(dbFile);
                         getProgressHandle().progress("Parsing msp", unit);
-//                        EmbeddedConfiguration ec = com.db4o.Db4oEmbedded.
-//                                newConfiguration();
-//                        ec.common().reflectWith(new JdkReflector(
-//                                Lookup.getDefault().lookup(ClassLoader.class)));
-//                        EmbeddedObjectContainer eoc = Db4oEmbedded.openFile(ec,
-//                                FileUtil.toFile(dbFile).getAbsolutePath());
                         MSPFormatMetaboliteParser2 mfmp = new MSPFormatMetaboliteParser2();
                         mfmp.setLocale(locale);
                         BufferedReader br = null;

@@ -57,75 +57,74 @@ import org.openide.util.lookup.Lookups;
  */
 public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements PropertyChangeListener {
 
-    private ICrudSession session;
-    private Collection<IMetabolite> metabolites;
-    private BufferedImage image;
-    private URL databaseLocation;
-    public final static String ACTION_PATH = "Actions/Maui/Metabolite";
+	private ICrudSession session;
+	private Collection<IMetabolite> metabolites;
+	private BufferedImage image;
+	private URL databaseLocation;
+	public final static String ACTION_PATH = "Actions/Maui/Metabolite";
 
-    public MetaboliteNodeFactory(URL databaseLocation, ICrudSession session) {
-        this.session = session;
-        this.databaseLocation = databaseLocation;
-        metabolites = this.session.retrieve(IMetabolite.class);
-        image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = image.createGraphics();
-        g2.setColor(new Color(255, 0, 0, 0));
-        g2.fillRect(0, 0, 16, 16);
-        g2.dispose();
-    }
+	public MetaboliteNodeFactory(URL databaseLocation, ICrudSession session) {
+		this.session = session;
+		this.databaseLocation = databaseLocation;
+		metabolites = this.session.retrieve(IMetabolite.class);
+		image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setColor(new Color(255, 0, 0, 0));
+		g2.fillRect(0, 0, 16, 16);
+		g2.dispose();
+	}
 
-    @Override
-    protected boolean createKeys(List<IMetabolite> toPopulate) {
-        for (IMetabolite metabolite : metabolites) {
-            if (Thread.interrupted()) {
-                return false;
-            } else {
-                toPopulate.add(metabolite);
-            }
-        }
-        return true;
-    }
+	@Override
+	protected boolean createKeys(List<IMetabolite> toPopulate) {
+		for (IMetabolite metabolite : metabolites) {
+			if (Thread.interrupted()) {
+				return false;
+			} else {
+				toPopulate.add(metabolite);
+			}
+		}
+		return true;
+	}
 
-    @Override
-    protected Node createNodeForKey(IMetabolite key) {
-        MetaboliteProxy proxy = new MetaboliteProxy(key);
-        try {
-            MetaboliteNode node = new MetaboliteNode(proxy, Children.LEAF, Lookups.singleton(proxy)) {
+	@Override
+	protected Node createNodeForKey(IMetabolite key) {
+		MetaboliteProxy proxy = new MetaboliteProxy(key);
+		try {
+			MetaboliteNode node = new MetaboliteNode(proxy, Children.LEAF, Lookups.singleton(proxy)) {
+				@Override
+				public Image getIcon(int type) {
+					return image;
+				}
 
-                @Override
-                public Image getIcon(int type) {
-                    return image;
-                }
+				@Override
+				public Action[] getActions(boolean context) {
+					List<Action> actionList = new LinkedList<Action>();
+					List<? extends Action> l = Utilities.actionsForPath(ACTION_PATH);
+					Action[] actions = super.getActions(context);
+					actionList.addAll(Arrays.asList(actions));
+					actionList.addAll(l);
+					return actionList.toArray(new Action[actionList.size()]);
+				}
+			};
+			proxy.setOrigin(databaseLocation.toString());
+			if (proxy.getName().
+					matches("^M\\d{6}.*")) {
+				node.setDisplayName(proxy.getName().substring(proxy.getName().lastIndexOf("_") + 1));
+				proxy.setShortName(node.getDisplayName());
+			} else {
+				node.setDisplayName(proxy.getName());
+			}
+			WeakListeners.propertyChange(this, proxy.getPropertyChangeSupport());
+			return node;
+		} catch (IntrospectionException ie) {
+			return Node.EMPTY;
+		}
+	}
 
-                @Override
-                public Action[] getActions(boolean context) {
-                    List<Action> actionList = new LinkedList<Action>();
-                    List<? extends Action> l = Utilities.actionsForPath(ACTION_PATH);
-                    Action[] actions = super.getActions(context);
-                    actionList.addAll(Arrays.asList(actions));
-                    actionList.addAll(l);
-                    return actionList.toArray(new Action[actionList.size()]);
-                }
-            };
-            proxy.setOrigin(databaseLocation.toString());
-            if (proxy.getName().
-                    matches("^M\\d{6}.*")) {
-                node.setDisplayName(proxy.getName().substring(proxy.getName().lastIndexOf("_") + 1));
-                proxy.setShortName(node.getDisplayName());
-            } else {
-                node.setDisplayName(proxy.getName());
-            }
-            WeakListeners.propertyChange(this, proxy.getPropertyChangeSupport());
-            return node;
-        } catch (IntrospectionException ie) {
-            return Node.EMPTY;
-        }
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent pce) {
-        System.out.println("Retrieved property change from " + pce.getSource().getClass());
-        System.out.println("Updating metabolite " + ((MetaboliteProxy) pce.getSource()).getMetabolite());
-        session.update((IMetabolite) ((MetaboliteProxy) pce.getSource()).getMetabolite());
-    }
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		System.out.println("Retrieved property change from " + pce.getSource().getClass());
+		System.out.println("Updating metabolite " + ((MetaboliteProxy) pce.getSource()).getMetabolite());
+		session.update(((MetaboliteProxy) pce.getSource()).getMetabolite());
+	}
 }

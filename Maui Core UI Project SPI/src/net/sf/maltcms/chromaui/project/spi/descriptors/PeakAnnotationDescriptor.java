@@ -641,4 +641,21 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.normalizationMethods = normalizationMethods;
         firePropertyChange(PROP_NORMALIZATIONMETHODS, old, this.normalizationMethods);
     }
+	
+	private String nativeDatabaseId = "NA";
+	public static final String PROP_NATIVEDATABASEID = "nativeDatbaseId";
+
+	@Override
+	public String getNativeDatabaseId() {
+		activate(ActivationPurpose.READ);
+		return nativeDatabaseId;
+	}
+
+	@Override
+	public void setNativeDatabaseId(String id) {
+		activate(ActivationPurpose.WRITE);
+		String old = this.nativeDatabaseId;
+		this.nativeDatabaseId = id;
+		firePropertyChange(PROP_NATIVEDATABASEID, old, this.nativeDatabaseId);
+	}
 }

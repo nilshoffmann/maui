@@ -29,6 +29,7 @@ package net.sf.maltcms.chromaui.metabolitedb.spi.nodes;
 
 import cross.datastructures.tuple.Tuple2D;
 import java.beans.PropertyChangeSupport;
+import java.net.URI;
 import maltcms.datastructures.ms.IAnchor;
 import maltcms.datastructures.ms.IMetabolite;
 import ucar.ma2.ArrayDouble.D1;
@@ -321,5 +322,19 @@ public class MetaboliteProxy implements IMetabolite {
     public void setMw(double d) {
         setMW((int)d);
     }
+
+	public static final String PROP_LINK = "link";
+	
+	@Override
+	public URI getLink() {
+		return metabolite.getLink();
+	}
+
+	@Override
+	public void setLink(URI uri) {
+		URI old = metabolite.getLink();
+		metabolite.setLink(uri);
+		pcs.firePropertyChange(PROP_LINK, old, uri);
+	}
 
 }

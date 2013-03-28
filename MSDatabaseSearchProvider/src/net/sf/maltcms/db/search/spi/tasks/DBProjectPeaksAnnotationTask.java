@@ -88,6 +88,7 @@ public class DBProjectPeaksAnnotationTask extends AProgressAwareRunnable impleme
                     System.out.println("Resetting peak match information!");
                     for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
                         ipad.setSimilarity(Double.NaN);
+						ipad.setNativeDatabaseId("NA");
                         ipad.setName("Unknown Compound");
                         ipad.setFormula("NA");
                         ipad.setDisplayName("Unknown Compound");
@@ -133,11 +134,12 @@ public class DBProjectPeaksAnnotationTask extends AProgressAwareRunnable impleme
 //                                result.getScan().setName(bestHit.getName());
 //                                result.getScan().setFormula(bestHit.getFormula());
 //                                result.getScan().setDisplayName(bestHit.getName());
+								ipad.setNativeDatabaseId(bestHit.getID());
                                 ipad.setSimilarity(result.getScoreFor(bestHit));
                                 ipad.setName(bestHit.getName());
                                 ipad.setFormula(bestHit.getFormula());
                                 ipad.setDisplayName(bestHit.getName());
-                                ipad.setLibrary("custom");
+                                ipad.setLibrary(result.getDatabaseDescriptor().getName());
                                 ipad.setRetentionIndex(result.getRetentionIndex());
                             } else {
                                 //System.out.println("No results returned for query on "+container.getDisplayName());
