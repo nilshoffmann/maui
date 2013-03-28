@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><module codename="org.slf4j.slf4j.nbm">
-    <module_version install_time="1363776730998" last="true" origin="installer" specification_version="1.2.12">
+    <module_version install_time="1364465173318" last="true" origin="installer" specification_version="1.2.12">
         <file crc="3866966079" name="config/Modules/org-slf4j-slf4j-nbm.xml"/>
         <file crc="648025248" name="modules/ext/log4j/log4j-1.2.17.jar"/>
         <file crc="2981876936" name="modules/ext/org.slf4j/jcl-over-slf4j-1.7.2.jar"/>
         <file crc="1260996294" name="modules/ext/org.slf4j/jul-to-slf4j-1.7.2.jar"/>
         <file crc="2937480614" name="modules/ext/org.slf4j/slf4j-api-1.7.2.jar"/>
         <file crc="3148387242" name="modules/ext/org.slf4j/slf4j-log4j12-1.7.2.jar"/>
-        <file crc="1060065728" name="modules/org-slf4j-slf4j-nbm.jar"/>
-        <file crc="1194688983" name="update_tracking/org-slf4j-slf4j-nbm.xml"/>
+        <file crc="381876624" name="modules/org-slf4j-slf4j-nbm.jar"/>
     </module_version>
 </module>

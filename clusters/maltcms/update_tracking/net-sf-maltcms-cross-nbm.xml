@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><module codename="net.sf.maltcms.cross.nbm">
-    <module_version install_time="1363776731904" last="true" origin="installer" specification_version="1.2.12">
+    <module_version install_time="1364465177554" last="true" origin="installer" specification_version="1.2.12">
         <file crc="1100194781" name="config/Modules/net-sf-maltcms-cross-nbm.xml"/>
         <file crc="1412519224" name="modules/ext/net.sf.ehcache/ehcache-core-osgi-2.4.6.jar"/>
-        <file crc="882303391" name="modules/ext/net.sf.maltcms/cross-annotations-1.2.12-SNAPSHOT.jar"/>
-        <file crc="3857582923" name="modules/ext/net.sf.maltcms/cross-cache-1.2.12-SNAPSHOT.jar"/>
-        <file crc="2781577470" name="modules/ext/net.sf.maltcms/cross-event-1.2.12-SNAPSHOT.jar"/>
-        <file crc="3023835816" name="modules/ext/net.sf.maltcms/cross-exception-1.2.12-SNAPSHOT.jar"/>
-        <file crc="2101674951" name="modules/ext/net.sf.maltcms/cross-main-1.2.12-SNAPSHOT.jar"/>
-        <file crc="2039272637" name="modules/ext/net.sf.maltcms/cross-math-1.2.12-SNAPSHOT.jar"/>
-        <file crc="3399066439" name="modules/ext/net.sf.maltcms/cross-tools-1.2.12-SNAPSHOT.jar"/>
+        <file crc="3486574688" name="modules/ext/net.sf.maltcms/cross-annotations-1.2.12-SNAPSHOT.jar"/>
+        <file crc="4062271" name="modules/ext/net.sf.maltcms/cross-cache-1.2.12-SNAPSHOT.jar"/>
+        <file crc="2478996729" name="modules/ext/net.sf.maltcms/cross-event-1.2.12-SNAPSHOT.jar"/>
+        <file crc="949630006" name="modules/ext/net.sf.maltcms/cross-exception-1.2.12-SNAPSHOT.jar"/>
+        <file crc="1610095627" name="modules/ext/net.sf.maltcms/cross-main-1.2.12-SNAPSHOT.jar"/>
+        <file crc="1623380057" name="modules/ext/net.sf.maltcms/cross-math-1.2.12-SNAPSHOT.jar"/>
+        <file crc="1496686472" name="modules/ext/net.sf.maltcms/cross-tools-1.2.12-SNAPSHOT.jar"/>
         <file crc="1239321251" name="modules/ext/org.aopalliance/com.springsource.org.aopalliance-1.0.0.jar"/>
         <file crc="52490762" name="modules/ext/org.jdom/com.springsource.org.jdom-1.1.0.jar"/>
         <file crc="3687383632" name="modules/ext/org.springframework/org.springframework.aop-3.2.1.RELEASE.jar"/>
@@ -16,7 +16,6 @@
         <file crc="2981156843" name="modules/ext/org.springframework/org.springframework.context-3.2.1.RELEASE.jar"/>
         <file crc="1879866346" name="modules/ext/org.springframework/org.springframework.core-3.2.1.RELEASE.jar"/>
         <file crc="1848763078" name="modules/ext/org.springframework/org.springframework.expression-3.2.1.RELEASE.jar"/>
-        <file crc="89699621" name="modules/net-sf-maltcms-cross-nbm.jar"/>
-        <file crc="3880573845" name="update_tracking/net-sf-maltcms-cross-nbm.xml"/>
+        <file crc="1592484978" name="modules/net-sf-maltcms-cross-nbm.jar"/>
     </module_version>
 </module>

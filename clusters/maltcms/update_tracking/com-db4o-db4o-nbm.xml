@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><module codename="com.db4o.db4o.nbm">
-    <module_version install_time="1363776923865" last="true" origin="installer" specification_version="1.2.1">
+    <module_version install_time="1364465364474" last="true" origin="installer" specification_version="1.2.1">
         <file crc="4168798303" name="config/Modules/com-db4o-db4o-nbm.xml"/>
-        <file crc="4121577591" name="modules/com-db4o-db4o-nbm.jar"/>
+        <file crc="2159465771" name="modules/com-db4o-db4o-nbm.jar"/>
         <file crc="2863199596" name="modules/ext/com.db4o/db4o-all-8.0.249.jar"/>
     </module_version>
 </module>
