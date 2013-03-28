@@ -72,6 +72,10 @@ public interface IPeakGroupDescriptor extends IBasicDescriptor {
     
     public String getMajorityName();
 	
+	public double getMajorityNamePercentage();
+	
+	public String getMajorityNativeDatabaseId();
+	
 	public String getMajorityDisplayName();
     
     public String getCas();

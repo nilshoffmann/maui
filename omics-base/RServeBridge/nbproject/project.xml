@@ -7,6 +7,20 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.keyring</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.11.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.keyring.impl</code-name-base>
+                    <run-dependency>
+                        <specification-version>1.7.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.options.api</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -16,11 +30,27 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.openide.actions</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>6.26.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.openide.awt</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>7.31.2</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.dialogs</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.25.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -68,8 +98,8 @@
                 <package>org.rosuda.REngine.Rserve.protocol</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/RserveEngine.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/RserveEngine.jar</binary-origin>
+                <runtime-relative-path>ext/Rserve.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/Rserve.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/REngine.jar</runtime-relative-path>

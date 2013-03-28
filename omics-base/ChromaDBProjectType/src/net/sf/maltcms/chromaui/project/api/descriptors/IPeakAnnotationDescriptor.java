@@ -41,6 +41,10 @@ public interface IPeakAnnotationDescriptor extends IBasicDescriptor {
     
     public void setUniqueMass(double uniqueMass);
     
+	public String getNativeDatabaseId();
+	
+	public void setNativeDatabaseId(String id);
+	
     public double[] getQuantMasses();
     
     public void setQuantMasses(double[] quantMasses);
