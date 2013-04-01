@@ -38,16 +38,17 @@
         </exec>    
     </target>-->
     
-    <target name="upload-updatecenter" description="Upload results of build" depends="upload-credentials">
+    <target name="upload-updatecenter" description="Upload update center" depends="upload-credentials">
                 <!--<echo message="Do not forget to supply -Dusername -Dpassword to ant when running the upload target!" />-->
                 <!--<scp todir="${sf.username},maltcms@web.sourceforge.net:htdocs/" password="${sf.username.password}" sftp="true" trust="true" verbose="true">
                         <fileset dir="${release_dir}/site/" />
                 </scp>-->
         <exec command="rsync" inputstring="">
             <arg value="-avtruP"/>
+			<arg value="--recursive"/>
             <arg value="-e ssh "/>
             <arg value="build/updates/"/>
-            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}/updates/"/>
+            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}/updates/"/>
         </exec>
     </target>
 <!--    <target name="upload-build" description="Deploys zip distribution" depends="build-zip,upload-credentials">
