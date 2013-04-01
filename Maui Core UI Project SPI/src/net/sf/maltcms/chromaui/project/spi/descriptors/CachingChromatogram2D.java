@@ -32,7 +32,6 @@ import cross.annotations.Configurable;
 import cross.cache.CacheFactory;
 import cross.cache.ICacheDelegate;
 import cross.cache.ICacheElementProvider;
-import cross.datastructures.fragments.CachedList;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.ImmutableVariableFragment2;
@@ -43,12 +42,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
-import maltcms.datastructures.caches.IScanLine;
-import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IExperiment2D;
 import maltcms.datastructures.ms.IScan2D;
@@ -93,7 +91,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	public CachingChromatogram2D(final IFileFragment e) {
 		this.parent = e;
-		whm = CacheFactory.createAutoRetrievalCache(e.getAbsolutePath(), this);
+		whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(e.getUri().toString().getBytes()).toString(), this);
 //        fillCache(scans,mzV,iV);
 		init();
 	}

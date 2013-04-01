@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -77,7 +78,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
     public CachingChromatogram1D(final IFileFragment e) {
         this.parent = e;
-        whm = CacheFactory.createAutoRetrievalCache(e.getAbsolutePath(),this);
+        whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(e.getUri().toString().getBytes()).toString(),this);
 //        fillCache(scans,mzV,iV);
     }
 

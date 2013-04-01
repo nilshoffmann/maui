@@ -40,10 +40,17 @@ for details.
         from your local computer.</p>
         <ol>
             <li>Install <a href="http://www.r-project.org">GNU R</a></li>
-            <li>Install <a href="http://www.rforge.net/Rserve/">Rserve</a></li>
-            <li><a href="http://www.maltcms.de/maui/OptionsDialog/Advanced/RServe">Check your R and Rserve installation</a></li>
+			<li>Start up R (preferrably a 64 bit session as Administrator</li>
+			<li>At the command prompt, type <code>install.packages("Rserve")</code> and hit Enter</li>
+			<li>Select a download mirror and install the package</li>
+			<li>At the command prompt, type <code>library(Rserve); Rserve()</code> and hit Enter</li>
+			<li>On Windows, a dialog may pop up asking you to allow Network connections for Rserve on your private network</li> 
+			<li><a href="http://www.maltcms.de/maui/OptionsDialog/Advanced/RServe">Check your R and Rserve installation</a></li>
+			<li>Close R</li>
+            <li><a href="http://www.maltcms.de/maui/OptionsDialog/Advanced/RServe">Check your R and Rserve installation</a> again. Maui should start up a new local instance of Rserve.</li>
             <!--<li>Check your graphics card setup at <a href="http://www.maltcms.de/maui/Menu/Tools/net-java-nboglpack-glcapabilities-OpenGLCapabilitiesAction.instance">OpenGL Capabilities</a></li>-->
             <li>Install <a href="http://www.maltcms.de/maui/OptionsDialog/maltcmsOptions">Maltcms</a></li>
         </ol>
+		<p>Should you encounter any problems during the installation, please <a href='http://maltcms.sourceforge.net/info/contact.html'>contact the authors</a> and report what you tried to do together with Maui's output (View->IDE Log).</p>
     </body>
 </html>
