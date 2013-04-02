@@ -51,7 +51,7 @@
         <available file="${ant-contrib-loc}" property="ant-contrib.present"/>
         <fail unless="ant-contrib.present" message="The ant-contrib jar doesn't exist at: ${ant-contrib-loc}, can't build. Check your settings!" />
         <!--We are in not Hudson-->
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <taskdef resource="net/sf/antcontrib/antlib.xml">
             <classpath>
                 <pathelement location="${ant-contrib-loc}"/>
             </classpath>

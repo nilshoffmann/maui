@@ -131,7 +131,7 @@
 		<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
 	</target> 
 
-    <target name="-pre-init" depends="init-platform-config">
-    </target>
-    <target name="-init" depends="-pre-init,suite.-init"/>
+<!--    <target name="-pre-init" depends="">
+    </target>-->
+    <!--<target name="-init" depends="-pre-init,suite.-init"/>-->
 </project>

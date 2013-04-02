@@ -6,14 +6,16 @@
 
     <target name="init-platform-config" depends="copy-platform-config,copy-platform-build-files"/>
 
-    <target name="copy-platform-build-files" unless="is.suite.module">
-        <copy file="${basedir}/nbproject/platform.xml" tofile="${basedir}/nbproject/platform.xml.bak"/>
+    <target name="copy-platform-build-files">
+        <echo message="Copying platform build files"/>
+        <copy failonerror="false" file="${basedir}/nbproject/platform.xml" tofile="${basedir}/nbproject/platform.xml.bak"/>
         <copy file="${basedir}/../nbproject/platform.xml" tofile="${basedir}/nbproject/platform.xml"/>
-        <copy file="${basedir}/nbproject/preparation.xml" tofile="${basedir}/nbproject/preparation.xml.bak"/>
+        <copy failonerror="false" file="${basedir}/nbproject/preparation.xml" tofile="${basedir}/nbproject/preparation.xml.bak"/>
         <copy file="${basedir}/../nbproject/preparation.xml" tofile="${basedir}/nbproject/preparation.xml"/>
     </target>
     
-    <target name="copy-platform-config" unless="is.suite.module"> 
+    <target name="copy-platform-config"> 
+        <echo message="Copying platform configuration"/>
         <copy file="${basedir}/../nbproject/platform-defaults.properties" tofile="${basedir}/nbproject/platform-defaults.properties"/>
         <property file="${basedir}/../nbproject/platform-defaults.properties"/>
         <propertyfile file="nbproject/platform.properties" comment="Included properties from ${basedir}/../nbproject/platform-defaults.properties">
