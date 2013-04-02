@@ -16,7 +16,14 @@
             </not>
         </and>
     </condition>
-    
+    <condition property="download.tasks.required">
+        <and>
+            <not>
+                <available file="${java.io.tmpdir}/tasks.jar"/>
+            </not>
+        </and>
+    </condition>    
+
     <condition property="download.harness.required">
         <and>
             <not>
@@ -32,8 +39,16 @@
             <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
         </autoupdate>
     </target>
+
+    <target name="prepare-tasks">
+        <property name="tasks.jar" location="${java.io.tmpdir}/tasks.jar"/>
+    </target>
+
+    <target name="download-tasks" depends="prepare-tasks" if="download.tasks.required">
+        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
+    </target>
     
-    <target name="download" depends="-init-netbeans, -init-hudson" if="download.enabled">
+    <target name="download" depends="-init-netbeans, -init-hudson, download-tasks" if="download.enabled">
         <pathconvert pathsep="|" property="download.clusters">
             <mapper type="flatten"/>
             <path path="${cluster.path}"/>
@@ -47,10 +62,8 @@
         </pathconvert>
         <property file="nbproject/platform.properties" prefix="urls."/>
         <propertyselector property="urls" match="urls.autoupdate.catalog\.(.*)" select="\1"/>
-
         <property file="nbproject/platform.properties"/>
         <echo message="Downloading clusters ${download.clusters}"/>
-        <property name="tasks.jar" location="${java.io.tmpdir}/tasks.jar"/>
         <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
         <taskdef name="autoupdate" classname="org.netbeans.nbbuild.AutoUpdate" classpath="${tasks.jar}"/>
         <antcall target="download-harness"/>

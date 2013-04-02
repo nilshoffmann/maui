@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="platform-defaults" default="copy-platform-config" basedir=".">
+<project name="platform-defaults" default="init-platform-config" basedir=".">
     <condition property="is.suite.module">
         <available file="${basedir}/nbproject/suite.properties"/>
     </condition>
+
+    <target name="init-platform-config" depends="copy-platform-config,copy-platform-build-files"/>
+
+    <target name="copy-platform-build-files" unless="is.suite.module">
+        <copy file="${basedir}/nbproject/platform.xml" tofile="${basedir}/nbproject/platform.xml.bak"/>
+        <copy file="${basedir}/../nbproject/platform.xml" tofile="${basedir}/nbproject/platform.xml"/>
+        <copy file="${basedir}/nbproject/preparation.xml" tofile="${basedir}/nbproject/preparation.xml.bak"/>
+        <copy file="${basedir}/../nbproject/preparation.xml" tofile="${basedir}/nbproject/preparation.xml"/>
+    </target>
+    
     <target name="copy-platform-config" unless="is.suite.module"> 
         <copy file="${basedir}/../nbproject/platform-defaults.properties" tofile="${basedir}/nbproject/platform-defaults.properties"/>
         <property file="${basedir}/../nbproject/platform-defaults.properties"/>
