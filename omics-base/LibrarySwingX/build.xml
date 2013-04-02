@@ -5,4 +5,10 @@
 <project name="org.swinglabs.swingx" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project org.swinglabs.swingx.</description>
     <import file="nbproject/build-impl.xml"/>
+	<target name="javadoc">
+		<echo message="Skipping target javadoc"/>
+	</target>
+	<target name="javadoc-nb">
+		<echo message="Skipping target javadoc-nb"/>
+	</target>
 </project>

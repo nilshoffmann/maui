@@ -3,18 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/data/PcaDescriptorAdapter.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/Startup.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/net/sf/maltcms/chromaui/statistics/pcaViewer/PCAViewerTopComponent.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/net/sf/maltcms/chromaui/statistics/pcaViewer/actions/PCAOpenAction.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/test/unit/src/de/unibielefeld/cebitec/lstutz/pca/visual/StandardGUIMain.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/visual/StandardGUI.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/data/XMLParser.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/data/ParserUtilities.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/data/ImportUtilities.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/data/CSVParser.java</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/de/unibielefeld/cebitec/lstutz/pca/dataset/pca_results.txt</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/src/net/sf/maltcms/chromaui/statistics/pcaViewer/Bundle.properties</file>
-        <file>file:/opt/projects/omics/omics-base/PCAViewer/nbproject/project.properties</file>
+        <file>file:/opt/projects/omics/omics-base/PCAViewer/build.xml</file>
     </open-files>
 </project-private>

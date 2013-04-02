@@ -5,4 +5,10 @@
 <project name="de.unibielefeld.gi.kotte.laborprogramm.debug" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project de.unibielefeld.gi.kotte.laborprogramm.debug.</description>
     <import file="nbproject/build-impl.xml"/>
+	<target name="javadoc">
+		<echo message="Skipping target javadoc"/>
+	</target>
+	<target name="javadoc-nb">
+		<echo message="Skipping target javadoc-nb"/>
+	</target>
 </project>
