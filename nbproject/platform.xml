@@ -32,7 +32,7 @@
             <not>
                 <available file="${harness.dir}${file.separator}suite.xml"/>
             </not>
-            <isset property="download.enabled"/>
+            <!--<isset property="download.enabled"/>-->
         </and>
     </condition>
     
@@ -40,6 +40,7 @@
         <mkdir dir="${harness.dir}"/>
         <autoupdate installdir="${nbplatform.active.dir}" updatecenter="${autoupdate.catalog.url}">
             <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
+				<!--<modules includes="org[.]netbeans[.]*" clusters="harness"/>-->
         </autoupdate>
     </target>
 
@@ -51,28 +52,13 @@
         <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
     </target>
     
-    <target name="download" depends="-init-netbeans, -init-hudson, download-tasks" if="download.enabled">
-        <pathconvert pathsep="|" property="download.clusters">
+	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks">
+		<!--if="download.enabled">-->
+        <pathconvert pathsep="|" property="download.clusters" setonempty="true">
             <mapper type="flatten"/>
             <path path="${cluster.path}"/>
         </pathconvert>
-        <property name="disabled.modules" value=""/>
-        <pathconvert property="module.includes" pathsep="">
-            <mapper type="glob" from="${basedir}${file.separator}*" to="(?!\Q*\E)"/>
-            <path>
-                <filelist files="${disabled.modules}" dir="."/>
-				<filelist files="${enforced.modules}" dir="."/>
-            </path>
-        </pathconvert>
-        <echo message="Included modules: ${module.includes}"/>
-        <!--<property name="enforced.modules" value=""/>-->
-        <!--<pathconvert property="enforced.modules.includes" pathsep="">-->
-            <!--<mapper type="glob" from="${basedir}${file.separator}*" to="(?!\Q*\E)"/>-->
-            <!--<path>-->
-                <!--<filelist files="${enforced.modules}" dir="."/>-->
-            <!--</path>-->
-        <!--</pathconvert>-->
-        <!--<echo message="Enforced modules: ${enforced.modules.includes}"/>-->
+        
         <property file="${basedir}${file.separator}nbproject${file.separator}platform.properties" prefix="urls."/>
         <propertyselector property="urls" match="urls.autoupdate.catalog\.(.*)" select="\1"/>
         <property file="${basedir}${file.separator}nbproject${file.separator}platform.properties"/>
@@ -86,20 +72,14 @@
                 <download-platform url="${autoupdate.catalog.@{url}}"/>
             </sequential>
         </for>
-        <touch file="${nbplatform.active.dir}${file.separator}platform.complete"/>
+		<touch file="${nbplatform.active.dir}${file.separator}platform.complete"/>
     </target>
     
     <macrodef name="download-platform">
         <attribute name="url"/>
-		<!--<echo message="Downloading enforced modules: ${enforced.modules.includes}"/>-->
         <sequential>
             <autoupdate installdir="${nbplatform.active.dir}" updatecenter="@{url}">
-				<modules includes=".*" clusters="platform[0-9]*"/>
-				<modules includes=".*" clusters="ide[0-9]*"/>
-				<modules includes=".*" clusters="java[0-9]*"/>
-				<!--<modules includes=".*" clusters="apisupport[0-9]*"/>-->
-                <!--<modules includes="${module.includes}.*" clusters="${download.clusters}"/>-->
-                <!--<modules includes="${enforced.modules.includes}.*" clusters="${download.clusters}"/>-->
+				<modules includes=".*" clusters="${download.clusters}"/>
                 <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
             </autoupdate>
         </sequential>

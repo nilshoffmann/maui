@@ -19,7 +19,6 @@
         <copy file="${basedir}/../nbproject/platform-defaults.properties" tofile="${basedir}/nbproject/platform-defaults.properties"/>
         <property file="${basedir}/../nbproject/platform-defaults.properties"/>
         <propertyfile file="nbproject/platform.properties" comment="Included properties from ${basedir}/../nbproject/platform-defaults.properties">
-            <entry key="enforced.modules" value="${enforced.modules}"/>
             <entry key="platform.version" value="${platform.version}"/>
             <entry key="nbplatform.active.dir" value="${nbplatform.active.dir}"/>
             <entry key="nbplatform.harness.dir" value="${nbplatform.harness.dir}"/>
