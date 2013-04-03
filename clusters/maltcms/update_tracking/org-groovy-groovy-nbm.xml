@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><module codename="org.groovy.groovy.nbm">
-    <module_version install_time="1364465367830" last="true" origin="installer" specification_version="1.2.1">
+    <module_version install_time="1364988270629" last="true" origin="installer" specification_version="1.2.1">
         <file crc="682214749" name="config/Modules/org-groovy-groovy-nbm.xml"/>
         <file crc="2989975027" name="modules/ext/org.codehaus.groovy/groovy-all-1.8.9.jar"/>
-        <file crc="2866103773" name="modules/org-groovy-groovy-nbm.jar"/>
+        <file crc="2611626709" name="modules/org-groovy-groovy-nbm.jar"/>
     </module_version>
 </module>

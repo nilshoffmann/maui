@@ -163,6 +163,7 @@ public class StartRserve {
                 rp.waitFor();
                 regHog.join();
                 installPath = regHog.getInstallPath();
+				System.out.println("Using R install path: "+installPath);
             } catch (Exception rge) {
                 System.out.println(
                         "ERROR: unable to run REG to find the location of R: " + rge);
