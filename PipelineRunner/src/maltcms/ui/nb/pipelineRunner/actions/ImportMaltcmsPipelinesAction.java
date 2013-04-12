@@ -29,18 +29,22 @@ package maltcms.ui.nb.pipelineRunner.actions;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import maltcms.ui.nb.pipelineRunner.ui.PipelineRunnerTopComponent;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.netbeans.api.options.OptionsDisplayer;
@@ -137,21 +141,41 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
 						Exceptions.printStackTrace(ex);
 					}
 					Collection<File> propertiesFiles = FileUtils.listFiles(projectMaltcmsPipelinesPath, new String[]{"properties"}, true);
+					Map<File, File> nameToRenamed = new HashMap<File, File>();
+					List<File> replacementCandidates = new LinkedList<File>();
 					for (File propertyFile : propertiesFiles) {
 						if (propertyFile.getName().endsWith(".properties")) {
-							Properties pc = new Properties();
-							BufferedInputStream bis = null;
 							try {
-								bis = new BufferedInputStream(new FileInputStream(propertyFile));
-								pc.load(bis);
+								PropertiesConfiguration pc = new PropertiesConfiguration();
+								pc.load(propertyFile);
 								if (pc.containsKey("pipeline.xml")) {
-									FileUtils.moveFile(propertyFile, new File(propertyFile.getParentFile(), FilenameUtils.getBaseName(propertyFile.getName()) + ".mpl"));
+									File targetFile = new File(propertyFile.getParentFile(), FilenameUtils.getBaseName(propertyFile.getName()) + ".mpl");
+									nameToRenamed.put(propertyFile, targetFile);
 								}
-							} catch (IOException ioex) {
-								System.err.println("Caught exception while processing file " + propertyFile);
-							} finally {
-								bis.close();
+							} catch (ConfigurationException ce) {
+								replacementCandidates.add(f);
 							}
+						}
+					}
+					for (File source : nameToRenamed.keySet()) {
+						FileUtils.moveFile(source, nameToRenamed.get(source));
+						for (File replacementCandidate : replacementCandidates) {
+							PropertiesConfiguration pc = new PropertiesConfiguration();
+							pc.load(replacementCandidate);
+							Iterator<String> keyIter = pc.getKeys();
+							while(keyIter.hasNext()) {
+								String key = keyIter.next();
+								Object value = pc.getProperty(key);
+								if (value instanceof String) {
+									String strValue = (String) value;
+									if (strValue.equals(source.getName())) {
+										pc.setProperty(key, nameToRenamed.get(source).getName());
+									} else if (strValue.equals(replacementCandidate.getAbsolutePath())) {
+										pc.setProperty(key, nameToRenamed.get(source).getAbsolutePath());
+									}
+								}
+							}
+							pc.save(replacementCandidate);
 						}
 					}
 					context.refresh();

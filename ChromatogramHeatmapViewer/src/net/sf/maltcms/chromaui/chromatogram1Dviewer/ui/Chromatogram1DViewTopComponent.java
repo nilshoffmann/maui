@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.ui;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks.ChromatogramViewLoaderWorker;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -146,7 +147,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 									ic.add(overlay);
 									ic.add(Charts.overlayNode(overlay));
 								}
-								//                annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
+//								annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
 							}
 						}
 						final DefaultComboBoxModel dcbm = new DefaultComboBoxModel();

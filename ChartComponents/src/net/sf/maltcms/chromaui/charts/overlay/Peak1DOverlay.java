@@ -35,6 +35,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -104,18 +105,40 @@ public class Peak1DOverlay extends AbstractChartOverlay implements Overlay, Prop
 				Shape x = shapes.get(i);
 				IPeakAnnotationDescriptor descr = iter.next();
 				Rectangle2D bbox = x.getBounds2D();
+				if (bbox.getWidth() == 0) {
+					bbox = new Rectangle2D.Double(bbox.getMinX(), bbox.getMinY(), bbox.getWidth() + 1, bbox.getHeight());
+				}
+				if (bbox.getHeight() == 0) {
+					bbox = new Rectangle2D.Double(bbox.getMinX(), bbox.getMinY(), bbox.getWidth(), bbox.getHeight() + 1);
+				}
+				double apexX = xAxis.valueToJava2D(bbox.getCenterX(), dataArea, xAxisEdge);
+				double apexY = yAxis.valueToJava2D(bbox.getCenterY(), dataArea, yAxisEdge);
 				double startX = xAxis.valueToJava2D(bbox.getMinX(), dataArea, xAxisEdge);
 				double startY = yAxis.valueToJava2D(bbox.getMinY(), dataArea, yAxisEdge);
 				double stopX = xAxis.valueToJava2D(bbox.getMaxX(), dataArea, xAxisEdge);
-				double stopY = yAxis.valueToJava2D(bbox.getMinY(), dataArea, yAxisEdge);
-				AffineTransform at = AffineTransform.getTranslateInstance(startX, startY);
-				AffineTransform scale = scaleAtOrigin(x,
-						(float) ((bbox.getMaxX() - bbox.getMinX())/(stopX - startX)),
-						(float) ((bbox.getMaxY() - bbox.getMinY())/(stopY - startY)));
+				double stopY = yAxis.valueToJava2D(bbox.getMaxY(), dataArea, yAxisEdge);
+				Shape pointer = generate(bbox.getMinX()-10,bbox.getMaxY()-10,bbox.getCenterX(),bbox.getMaxY(),bbox.getMaxX()+10,bbox.getMaxY()-10);
+//				pointer = toView(pointer, chartPanel);
+				AffineTransform at = AffineTransform.getTranslateInstance(startX, startY+((stopY-startY)/2));
+				float scalex = (float) ((Math.abs(stopX - startX)) / (bbox.getWidth()));
+				float scaley = (float) ((Math.abs(stopY - startY)) / (bbox.getHeight()));
+				if (Double.isNaN(scalex) || scalex == 0 || (bbox.getWidth()*scalex<1)) {
+					scalex = 1.0f;
+				}
+				if (Double.isNaN(scaley) || scaley == 0) {
+					scaley = 1.0f;
+				}
+				AffineTransform scale = AffineTransform.getScaleInstance(scalex, scaley);
+				System.out.println("Scale x: " + scale.getScaleX());
+				System.out.println("Scale y: " + scale.getScaleY());
 				at.concatenate(scale);
 				at.concatenate(AffineTransform.getTranslateInstance(-bbox.getCenterX(), -bbox.getCenterY()));
-				Shape s = at.createTransformedShape(x);
+				Shape s = at.createTransformedShape(bbox);
+//				Shape s = toView(bbox, chartPanel);
+//				System.out.println("Original: " + bbox);
+//				System.out.println("Transformed: " + s.getBounds2D());
 				drawEntity(s, g2, fillColor, chartPanel, false);
+//				drawEntity(pointer, g2, c, chartPanel, true);
 			}
 //			for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
 //				double startX = xAxis.valueToJava2D(descr.getStartTime(), dataArea, xAxisEdge);
@@ -218,7 +241,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements Overlay, Prop
 			g2.setComposite(comp);
 			g2.setColor(c);
 			g2.setClip(savedClip);
-		}else{
+		} else {
 			System.out.println("Entity is null!");
 		}
 	}

@@ -67,7 +67,7 @@ public final class ImportMaltcmsPeaks implements ActionListener {
             @Override
             public boolean accept(File file) {
                 if (file.getName().endsWith(
-                        "TICPeakFinder")) {
+                        "TICPeakFinder") || file.isDirectory()) {
                     return true;
                 }
                 return false;
@@ -83,15 +83,15 @@ public final class ImportMaltcmsPeaks implements ActionListener {
         if (value == JFileChooser.APPROVE_OPTION) {
             File f = jfc.getSelectedFile();
             //output directory
-            File[] peakFiles = f.listFiles(new FilenameFilter() {
+            File[] peakFiles = f.listFiles(new java.io.FileFilter() {
 
-                @Override
-                public boolean accept(File file, String string) {
-                    if (string.toLowerCase().endsWith("cdf")) {
-                        return true;
-                    }
-                    return false;
-                }
+				@Override
+				public boolean accept(File f) {
+					if(f.getName().toLowerCase().endsWith(".cdf")) {
+						return true;
+					}
+					return false;
+				}
             });
             MaltcmsPeakFinderImporter tc = new MaltcmsPeakFinderImporter(context, peakFiles);
             MaltcmsPeakFinderImporter.createAndRun("Maltcms peak import", tc);

@@ -123,7 +123,7 @@ public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D,IScan>{
         domainVariableValues = new Array[l.size()];
         rangeVariableValues = new Array[l.size()];
         domainVariableValueRanks = new int[l.size()][];
-        System.out.println("Building chromatogram 2d dataset with "+l.size()+" series");
+        System.out.println("Building chromatogram 1d dataset with "+l.size()+" series");
         for (int i = 0; i < l.size(); i++) {
             IFileFragment fragment = getSource(i).getParent();
             IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);

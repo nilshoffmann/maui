@@ -68,6 +68,9 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     private String scan_acquisition_time_var = "scan_acquisition_time";
     private List<Array> massValues;
     private List<Array> intensityValues;
+	private IVariableFragment intensityValuesVariable;
+	private IVariableFragment massValuesVariable;
+	private IVariableFragment indexVariable;
     private ICacheDelegate<Integer, Scan1D> whm;
     private int scans;
     private int prefetchSize = 10000;
@@ -90,17 +93,17 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
                     "var.intensity_values", "intensity_values");
             final String scan_index = Factory.getInstance().getConfiguration().
                     getString("var.scan_index", "scan_index");
-            final IVariableFragment index = this.parent.getChild(scan_index);
+            indexVariable = this.parent.getChild(scan_index);
             this.scans = MaltcmsTools.getNumberOfScans(this.parent);
-            final IVariableFragment mzV = this.parent.getChild(mz);
-            mzV.setIndex(index);
-			activateCache(mzV);
-            massValues = mzV.getIndexedArray();
+            massValuesVariable = this.parent.getChild(mz);
+            massValuesVariable.setIndex(indexVariable);
+			activateCache(massValuesVariable);
+            massValues = massValuesVariable.getIndexedArray();
             setPrefetchSize(scans, massValues);
-            final IVariableFragment iV = this.parent.getChild(intens);
-            iV.setIndex(index);
-			activateCache(iV);
-            intensityValues = iV.getIndexedArray();
+            intensityValuesVariable = this.parent.getChild(intens);
+            intensityValuesVariable.setIndex(indexVariable);
+			activateCache(intensityValuesVariable);
+            intensityValues = intensityValuesVariable.getIndexedArray();
             setPrefetchSize(scans, intensityValues);
             initialized = true;
         }

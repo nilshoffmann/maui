@@ -142,6 +142,11 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                 }
             }
         }
+		File jul = new File(baseDir,"cfg"+File.separator+"logging.properties");
+		File l4j = new File(baseDir,"cfg"+File.separator+"log4j.properties");
+		l.add("-Dlog4j.configuration="+l4j.toURI().toString());
+		l.add("-Djava.util.logging.config.file="+jul.getAbsolutePath());
+		l.add("-Dmaltcms.home="+baseDir.getAbsolutePath());
         l.add("-DomitUserTimePrefix=true");
         l.add("-jar");
         l.add(maltcmsJarFileName);
@@ -150,7 +155,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         l.add("-f");
         l.add(buildFileset());
         l.add("-c");
-        l.add(escapeString(configurationFile.getAbsolutePath(), "\""));
+        l.add(configurationFile.getAbsolutePath());
         return l.toArray(new String[l.size()]);
     }
 
@@ -168,7 +173,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         int i = 0;
         for (File s : inputFiles) {
             sb.append(s.getAbsolutePath());
-            if (inputFiles.length > 1 && i<inputFiles.length) {
+            if (inputFiles.length > 1 && i<inputFiles.length-1) {
                 sb.append(",");
             }
             i++;
