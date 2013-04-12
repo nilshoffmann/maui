@@ -27,16 +27,18 @@
  */
 package net.sf.maltcms.chromaui.rserve.options;
 
-import static java.awt.image.ImageObserver.WIDTH;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
-import static net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory.defaultRserveArgs;
 import net.sf.maltcms.chromaui.rserve.spi.PlotDemo;
 import org.netbeans.api.keyring.Keyring;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
+import org.openide.util.RequestProcessor;
+import org.openide.util.RequestProcessor.Task;
+import org.openide.util.TaskListener;
 import org.rosuda.REngine.Rserve.RConnection;
 
 final class RServePanel extends javax.swing.JPanel {
@@ -168,11 +170,11 @@ final class RServePanel extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(testButton)
-                                .addGap(12, 12, 12))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(useLocalInstance)
-                                .addContainerGap())))))
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(testButton)
+                                .addGap(12, 12, 12))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -220,22 +222,41 @@ final class RServePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_userNameFieldActionPerformed
 
     private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testButtonActionPerformed
-		if (useLocalInstance.isSelected()) {
-			store();
-			RConnection testConnection = RserveConnectionFactory.hotfixConnection();
-			PlotDemo.createPlotDemo(testConnection);
-		} else {
-			try {
-				InetAddress address = InetAddress.getByName(remoteHostIpField.getText().trim());
-				int port = Integer.parseInt(remoteHostPortField.getText().trim());
-				store();
-				RConnection testConnection = RserveConnectionFactory.getInstance().getRemoteConnection(address, port, userNameField.getText(), passwordField.getPassword());
-				PlotDemo.createPlotDemo(testConnection);
-			} catch (UnknownHostException ex) {
-				Exceptions.printStackTrace(ex);
-			}
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				testButton.setEnabled(false);
+				if (useLocalInstance.isSelected()) {
+					store();
+					RConnection testConnection = RserveConnectionFactory.getDefaultConnection();
+					PlotDemo.createPlotDemo(testConnection);
+				} else {
+					try {
+						InetAddress address = InetAddress.getByName(remoteHostIpField.getText().trim());
+						int port = Integer.parseInt(remoteHostPortField.getText().trim());
+						store();
+						RConnection testConnection = RserveConnectionFactory.getInstance().getRemoteConnection(address, port, userNameField.getText(), passwordField.getPassword());
+						PlotDemo.createPlotDemo(testConnection);
+					} catch (UnknownHostException ex) {
+						Exceptions.printStackTrace(ex);
+					}
 
-		}
+				}
+				testButton.setEnabled(true);
+			}
+		};
+		RequestProcessor rp = new RequestProcessor("Rserve connection test thread pool", 1, false);
+		Task t = rp.create(r);
+		final ProgressHandle ph = ProgressHandleFactory.createHandle("Rserve connection test", t);
+        t.addTaskListener(new TaskListener() {
+            public void taskFinished(org.openide.util.Task task) {
+                //make sure that we get rid of the ProgressHandle
+                //when the task is finished
+                ph.finish();
+            }
+        });
+        ph.start();
+        t.schedule(0);
     }//GEN-LAST:event_testButtonActionPerformed
 
     private void remoteHostPortFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remoteHostPortFieldActionPerformed
@@ -257,7 +278,7 @@ final class RServePanel extends javax.swing.JPanel {
 			passwordField.setEnabled(true);
 		}
 	}
-	
+
 	void load() {
 		// TODO read settings and initialize GUI
 		// Example:        
@@ -270,22 +291,22 @@ final class RServePanel extends javax.swing.JPanel {
 		remoteHostIpField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_HOST, "127.0.0.1"));
 		remoteHostPortField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_PORT, "6311"));
 		userNameField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_USER, ""));
-		useLocalInstance.setSelected(Boolean.parseBoolean(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_LOCAL,"true")));
-		char[] password = Keyring.read("Rserve://"+remoteHostIpField.getText().trim());
-		if(password!=null) {
+		useLocalInstance.setSelected(Boolean.parseBoolean(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_LOCAL, "true")));
+		char[] password = Keyring.read("Rserve://" + remoteHostIpField.getText().trim());
+		if (password != null) {
 			passwordField.setText(String.valueOf(password));
 		}
 		updateUseLocalInstance();
 	}
 
 	void store() {
-		NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_LOCAL, useLocalInstance.isSelected()+"");
+		NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_LOCAL, useLocalInstance.isSelected() + "");
 		NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVEARGS, localRserveSettingsField.getText());
 		NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_HOST, remoteHostIpField.getText());
 		NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_PORT, remoteHostPortField.getText());
 		NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_USER, userNameField.getText());
-		if(!remoteHostIpField.getText().isEmpty()) {
-			Keyring.save("Rserve://"+remoteHostIpField.getText().trim(), passwordField.getPassword(), "Rserve password for host "+remoteHostIpField.getText());
+		if (!remoteHostIpField.getText().isEmpty()) {
+			Keyring.save("Rserve://" + remoteHostIpField.getText().trim(), passwordField.getPassword(), "Rserve password for host " + remoteHostIpField.getText());
 		}
 		// TODO store modified settings
 		// Example:

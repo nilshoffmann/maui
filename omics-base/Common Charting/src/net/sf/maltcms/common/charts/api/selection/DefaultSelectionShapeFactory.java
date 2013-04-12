@@ -34,10 +34,8 @@ import org.jfree.chart.entity.XYItemEntity;
  * Default implementation of selection shapes. Simply returns the area as 
  * returned by the passed in XYItemEntity.
  * 
- * @author hoffmann
+ * @author Nils Hoffmann
  */
-
-
 public class DefaultSelectionShapeFactory implements ISelectionShapeFactory {
 
 	@Override

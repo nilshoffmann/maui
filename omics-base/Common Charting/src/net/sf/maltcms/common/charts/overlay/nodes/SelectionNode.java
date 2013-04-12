@@ -86,24 +86,6 @@ public class SelectionNode extends BeanNode<ISelection> implements CheckableNode
             return ImageUtilities.loadImage(
                 "net/sf/maltcms/common/charts/resources/SelectionHidden.png");
         }
-//        Image descrImage = 
-//        int w = descrImage.getWidth(null);
-//        int h = descrImage.getHeight(null);
-//        if (descr != null) {
-//            Color c = descr.getTreatmentGroup().getColor();
-//            if (c != null) {
-//                BufferedImage bi = new BufferedImage(w / 10, h / 10,
-//                        BufferedImage.TYPE_INT_ARGB);
-//                Graphics2D g2 = bi.createGraphics();
-//
-//                g2.setColor(c);
-//                g2.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-//                descrImage = ImageUtilities.mergeImages(descrImage, bi,
-//                        w - bi.getWidth(), h - bi.getHeight());
-//            }
-//
-//        }
-//        return descrImage;
     }
     
 }

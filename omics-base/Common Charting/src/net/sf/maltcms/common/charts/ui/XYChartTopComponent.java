@@ -34,22 +34,17 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.ChartCustomizer;
-import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.XYChartBuilder;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
-import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayChildFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
-import org.openide.nodes.Children;
-import org.openide.nodes.FilterNode;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -62,28 +57,8 @@ import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
- * Top component which displays something.
+ * Top component which displays an XYChart.
  */
-//@ConvertAsProperties(
-//    dtd = "-//net.sf.maltcms.chromaui.charts//XYChart//EN",
-//autostore = false)
-//@TopComponent.Description(
-//    preferredID = "XYChartTopComponent",
-////iconBase="SET/PATH/TO/ICON/HERE", 
-//persistenceType = TopComponent.PERSISTENCE_NEVER)
-//@TopComponent.Registration(mode = "editor", openAtStartup = true)
-//@ActionID(
-//        category = "Window", 
-//        id = "net.sf.maltcms.chromaui.charts.ui.XYChartTopComponent")
-//@ActionReferences({
-//    @ActionReference(
-//        path = "Menu/Window", 
-//        position = 0)
-////    @ActionReference(
-////        path = "Toolbars/File", 
-////        position = 0)
-//})
-//@TopComponent.OpenActionRegistration(displayName="#CTL_XYChartTopComponent")
 @Messages({
     "CTL_XYChartAction=XYChart",
     "CTL_XYChartTopComponent=XYChart Window",

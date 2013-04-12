@@ -40,6 +40,7 @@ import java.awt.event.WindowListener;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.NotificationDisplayer;
@@ -104,18 +105,19 @@ public class PlotDemo extends JLabel {
 			f.addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowClosed(WindowEvent e) {
-					try {
-						c.serverShutdown();
-					} catch (RserveException ex) {
-						Exceptions.printStackTrace(ex);
-						try {
-							c.shutdown();
-						} catch (RserveException ex1) {
-							Exceptions.printStackTrace(ex1);
-						}
-						// close RConnection, we're done
-					}
-					c.close();
+					RserveConnectionFactory.getInstance().closeConnection();
+//					try {
+//						c.serverShutdown();
+//					} catch (RserveException ex) {
+//						Exceptions.printStackTrace(ex);
+//						try {
+//							c.shutdown();
+//						} catch (RserveException ex1) {
+//							Exceptions.printStackTrace(ex1);
+//						}
+//						// close RConnection, we're done
+//					}
+//					c.close();
 				}
 			});
 			f.pack();

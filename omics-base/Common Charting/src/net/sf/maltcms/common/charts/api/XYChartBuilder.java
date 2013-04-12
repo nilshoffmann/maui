@@ -27,11 +27,9 @@
  */
 package net.sf.maltcms.common.charts.api;
 
-import net.sf.maltcms.common.charts.api.selection.DefaultDisplayPropertiesProvider;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Map;
-import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;

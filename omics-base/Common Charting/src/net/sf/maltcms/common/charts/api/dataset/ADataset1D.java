@@ -34,7 +34,6 @@ import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.AbstractXYDataset;
 import org.jfree.data.xy.IntervalXYDataset;
-import org.jfree.data.xy.XYRangeInfo;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;

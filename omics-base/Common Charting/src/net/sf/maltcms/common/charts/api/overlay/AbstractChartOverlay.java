@@ -133,14 +133,22 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
     public void axisChanged(AxisChangeEvent ace) {
         fireOverlayChanged();
     }
+	
+	public static Shape toView(Shape entity, ChartPanel chartPanel) {
+		AffineTransform toPosition = getModelToViewTransform(chartPanel, entity.getBounds2D().getCenterX(),entity.getBounds2D().getCenterY());
+		toPosition.concatenate(AffineTransform.getTranslateInstance(-entity.getBounds2D().getCenterX(), -entity.getBounds2D().getCenterY()));
+        return toPosition.createTransformedShape(entity);
+	}
 
     public static Shape toView(Shape entity, ChartPanel chartPanel, XYDataset dataset, int seriesIndex, int itemIndex) {
-        AffineTransform toPosition = getModelToViewTransform(chartPanel, dataset, seriesIndex, itemIndex);
+		double x1 = dataset.getXValue(seriesIndex, itemIndex);
+        double y1 = dataset.getYValue(seriesIndex, itemIndex);
+        AffineTransform toPosition = getModelToViewTransform(chartPanel, x1, y1);
         toPosition.concatenate(AffineTransform.getTranslateInstance(-entity.getBounds2D().getCenterX(), -entity.getBounds2D().getCenterY()));
         return toPosition.createTransformedShape(entity);
     }
 
-    public static AffineTransform getModelToViewTransform(ChartPanel chartPanel, XYDataset dataset, int seriesIndex, int itemIndex) {
+    public static AffineTransform getModelToViewTransform(ChartPanel chartPanel, double x1, double y1) {
         double zoomX = chartPanel.getScaleX();
         double zoomY = chartPanel.getScaleY();
         Insets insets = chartPanel.getInsets();
@@ -149,8 +157,6 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
         at.concatenate(AffineTransform.getScaleInstance(zoomX, zoomY));
         RectangleEdge xAxisLocation = chartPanel.getChart().getXYPlot().getDomainAxisEdge();
         RectangleEdge yAxisLocation = chartPanel.getChart().getXYPlot().getRangeAxisEdge();
-        double x1 = dataset.getXValue(seriesIndex, itemIndex);
-        double y1 = dataset.getYValue(seriesIndex, itemIndex);
         PlotOrientation orientation = chartPanel.getChart().getXYPlot().getOrientation();
         Rectangle2D dataArea = chartPanel.getChartRenderingInfo().getPlotInfo().getDataArea();
         double transX = chartPanel.getChart().getXYPlot().getDomainAxis().valueToJava2D(x1, dataArea, xAxisLocation);

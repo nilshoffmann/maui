@@ -28,7 +28,6 @@
 package net.sf.maltcms.common.charts.api.dataset;
 
 import org.openide.util.Lookup;
-import org.openide.util.Lookup.Provider;
 
 /**
  *

@@ -34,7 +34,6 @@ public class Installer extends ModuleInstall {
 
     @Override
     public void restored() {
-        Runtime.getRuntime().addShutdownHook(RserveConnectionFactory.getInstance().getShutdownHook());
     }
 
     @Override
@@ -42,6 +41,5 @@ public class Installer extends ModuleInstall {
         super.close();
         RserveConnectionFactory.getInstance().closeConnection();
     }
-    
     
 }
