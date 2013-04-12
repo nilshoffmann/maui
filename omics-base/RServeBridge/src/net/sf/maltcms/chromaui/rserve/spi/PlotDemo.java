@@ -105,7 +105,7 @@ public class PlotDemo extends JLabel {
 			f.addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowClosed(WindowEvent e) {
-					RserveConnectionFactory.getInstance().closeConnection();
+//					RserveConnectionFactory.getInstance().closeConnection();
 //					try {
 //						c.serverShutdown();
 //					} catch (RserveException ex) {
