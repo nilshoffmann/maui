@@ -355,14 +355,15 @@ public class Utils {
 
     public static File createArtificialChromatogram(File importDir,
             String peakListName, List<IPeakAnnotationDescriptor> peaks, ChromatogramType chromatogramType) {
-        try {
-            //        try {
-            PropertiesConfiguration pc = new PropertiesConfiguration(
-                    "/cfg/default.properties");
-            Factory.getInstance().configure(pc);
-        } catch (ConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+		//FIXME this should be handled by the Maltcms module Installer
+//        try {
+//            //        try {
+//            PropertiesConfiguration pc = new PropertiesConfiguration(
+//                    "/cfg/default.properties");
+//            Factory.getInstance().configure(pc);
+//        } catch (ConfigurationException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
 
         File fragment = new File(importDir, StringTools.removeFileExt(
                 peakListName) + ".cdf");
