@@ -172,7 +172,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
 					"TICPeakFinder", peak.getStartTime(),
 					peak.getApexTime(), peak.getStopTime(), peak.getArea(),
 					peak.getApexIntensity());
-			descriptor.setIndex(index++);
+			descriptor.setIndex(peak.getApexIndex());//index++);
 			if(peak.getStartIndex()==-1) {
 				peak.setStartIndex(peak.getApexIndex());
 			}

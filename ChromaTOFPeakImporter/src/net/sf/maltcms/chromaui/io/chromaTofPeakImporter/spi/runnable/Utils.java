@@ -553,17 +553,17 @@ public class Utils {
 
     public static int addMassSpectrum(TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key) {
         Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
-        int msIndex = index++;
+//        int msIndex = index++;
         if (massSpectrum.getFirst().length > 0) {
             descriptor.setMassValues(massSpectrum.getFirst());
             descriptor.setIntensityValues(massSpectrum.getSecond());
-            descriptor.setIndex(msIndex);
+            descriptor.setIndex(index);
             peaks.add(descriptor);
             peakRegistry.add(key);
         } else {
             System.err.println("Skipping peak with empty mass spectrum: " + descriptor.toString());
         }
-        return msIndex;
+        return index;
     }
 
     public static IPeakAnnotationDescriptor create1DPeak(IChromatogramDescriptor chromatogram, TableRow tr) {
