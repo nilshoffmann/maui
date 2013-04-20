@@ -131,6 +131,10 @@ public class PlotDemo extends JLabel {
 			DialogDisplayer.getDefault().notify(new NotifyDescriptor.Confirmation("Received unexpected result from Rserve!", "Unexpected Result", NotifyDescriptor.DEFAULT_OPTION, NotifyDescriptor.WARNING_MESSAGE));
 			System.out.println(mme);
 			mme.printStackTrace();
+                } catch (REngineException ree) {
+                        DialogDisplayer.getDefault().notify(new NotifyDescriptor.Confirmation("Received Rengine Exception!", "Rengine Exception", NotifyDescriptor.DEFAULT_OPTION, NotifyDescriptor.WARNING_MESSAGE));
+			System.out.println(ree);
+                        ree.printStackTrace();
 		} catch (Exception e) { // something else
 			DialogDisplayer.getDefault().notify(new NotifyDescriptor.Confirmation("Could not connect to Rserve! Please check connection settings!", "Connection failed", NotifyDescriptor.DEFAULT_OPTION, NotifyDescriptor.WARNING_MESSAGE));
 			System.out.println("Something went wrong, but it's not the Rserve: "

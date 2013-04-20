@@ -27,127 +27,47 @@
  */
 package net.sf.maltcms.chromaui.rserve.api;
 
+import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.openide.util.Exceptions;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
 
 /**
  *
  * @author Nils Hoffmann
  */
 public class RserveConnectionFactoryTest {
-    
-    public RserveConnectionFactoryTest() {
-    }
-
-    /**
-     * Test of getInstance method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testGetInstance() {
-    }
 
     /**
      * Test of getDefaultConnection method, of class RserveConnectionFactory.
      */
     @Test
-    public void testGetDefaultConnection() {
-    }
-
-    /**
-     * Test of closeConnection method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testCloseConnection() {
-    }
-
-    /**
-     * Test of isWindows method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testIsWindows() {
-    }
-
-    /**
-     * Test of buildExecString method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testBuildExecString() {
-    }
-
-    /**
-     * Test of hotfixConnection method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testHotfixConnection() {
-    }
-
-    /**
-     * Test of startProcess method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testStartProcess() {
-    }
-
-    /**
-     * Test of startProcessAndWait method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testStartProcessAndWait() {
-    }
-
-    /**
-     * Test of getRBinaryLocation method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testGetRBinaryLocation() {
-    }
-
-    /**
-     * Test of setRBinaryLocation method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testSetRBinaryLocation() {
-    }
-
-    /**
-     * Test of getRBinaryLocationUnix method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testGetRBinaryLocationUnix() {
-    }
-
-    /**
-     * Test of getRBinaryLocationWindows method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testGetRBinaryLocationWindows() {
-    }
-
-    /**
-     * Test of getLocalConnection method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testGetLocalConnection() {
-    }
-
-    /**
-     * Test of getRemoteConnection method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testGetRemoteConnection() {
-    }
-
-    /**
-     * Test of preferenceChange method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testPreferenceChange() {
-    }
-
-    /**
-     * Test of getShutdownHook method, of class RserveConnectionFactory.
-     */
-    @Test
-    public void testGetShutdownHook() {
+    public void testGetDefaultConnection() throws RserveException, REXPMismatchException {
+        RConnection connection = RserveConnectionFactory.getDefaultConnection();
+        try {
+            REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
+            try {
+                System.out.println("Result: "
+                        + Arrays.toString(rexp.asDoubles()));
+            } catch (REXPMismatchException ex) {
+                throw ex;
+            }
+        } catch (RserveException ex) {
+            throw ex;
+        } finally {
+            try{
+                connection.serverShutdown();
+            }catch(RserveException re) {
+                System.err.println("serverShutdown failed, trying normal shutdown!");
+            }
+            System.out.println("Shutting down connection!");
+            connection.shutdown();
+            System.out.println("Closing connection!");
+            connection.close();
+        } 
     }
 }

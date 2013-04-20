@@ -38,10 +38,12 @@ public class StreamHog extends Thread {
     InputStream is;
     boolean capture;
     String installPath;
+    String name = "Process";
 
-    public StreamHog(InputStream is, boolean capture) {
+    public StreamHog(String name, InputStream is, boolean capture) {
         this.is = is;
         this.capture = capture;
+        this.name = name;
         start();
     }
 
@@ -66,7 +68,7 @@ public class StreamHog extends Thread {
                         System.out.println("R InstallPath = " + s);
                     }
                 } else {
-                    System.out.println("Rserve>" + line);
+                    System.out.println(name+">" + line);
                 }
             }
         } catch (IOException e) {

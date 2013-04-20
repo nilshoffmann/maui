@@ -57,9 +57,8 @@ public class StartRserve {
      * @param cmd command necessary to start R
      * @param rargs arguments are are to be passed to R
      * @param rsrvargs arguments to be passed to Rserve
-     * @return
-     * <code>true</code> if Rserve is running or was successfully started,
-     * <code>false</code> otherwise.
+     * @return <code>true</code> if Rserve is running or was successfully
+     * started, <code>false</code> otherwise.
      */
     public static boolean launchRserve(String cmd, String rargs, String rsrvargs,
             boolean debug) {
@@ -81,17 +80,61 @@ public class StartRserve {
                     String execString = cmd + " CMD Rserve " + rargs;
                     System.out.println("Starting via " + execString);
                     p = Runtime.getRuntime().exec(execString);
-                } catch (Exception e) {
-                    try {
-                        String execString = cmd + " -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs;
-                        System.out.println("Starting via " + execString);
-                        p = Runtime.getRuntime().exec(execString);
-                    } catch (Exception e1) {
-                        String execString = "/bin/sh" + " -c"
-                                + " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs;
-                        System.out.println("Starting via " + execString);
-                        p = Runtime.getRuntime().exec(execString);
+                    if (!isWindows) /*
+                     * on Windows the process will never return, so we cannot wait
+                     */ {
+                        p.waitFor();
                     }
+                    if (p.exitValue() != 0) {
+                        System.err.println("Something went wrong while trying to start the server!");
+                        throw new RuntimeException("Server startup failed!");
+                    }
+                } catch (Exception e) {
+
+                    try {
+                        String execString = cmd + " CMD /Library/Frameworks/R.framework/Resources/library/Rserve/libs/Rserve-bin.so " + rargs;
+                        System.out.print("Starting via " + execString);
+                        p = Runtime.getRuntime().exec(execString);
+                        if (!isWindows) /*
+                         * on Windows the process will never return, so we cannot wait
+                         */ {
+                            p.waitFor();
+                        }
+                        if (p.exitValue() != 0) {
+                            System.out.println("...failed!");
+                            throw new RuntimeException("Server startup failed!");
+                        }
+                    } catch (Exception e1) {
+                        try {
+                            String execString = cmd + " -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs;
+                            System.out.print("Starting via " + execString);
+                            p = Runtime.getRuntime().exec(execString);
+                            if (!isWindows) /*
+                             * on Windows the process will never return, so we cannot wait
+                             */ {
+                                p.waitFor();
+                            }
+                            if (p.exitValue() != 0) {
+                                System.out.println("...failed!");
+                                throw new RuntimeException("Server startup failed!");
+                            }
+                        } catch (Exception e2) {
+                            String execString = "/bin/sh" + " -c"
+                                    + " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs;
+                            System.out.println("Starting via " + execString);
+                            p = Runtime.getRuntime().exec(execString);
+                            if (!isWindows) /*
+                             * on Windows the process will never return, so we cannot wait
+                             */ {
+                                p.waitFor();
+                            }
+                            if (p.exitValue() != 0) {
+                                System.out.println("...failed!");
+                                return false;
+                            }
+                        }
+                    }
+
                 }
 //                p = Runtime.getRuntime().exec(
 //                            "/bin/sh"+" -c"+
@@ -100,8 +143,8 @@ public class StartRserve {
             }
             System.out.println("waiting for Rserve to start ... (" + p + ")");
             // we need to fetch the output - some platforms will die if you don't ...
-            StreamHog errorHog = new StreamHog(p.getErrorStream(), false);
-            StreamHog outputHog = new StreamHog(p.getInputStream(), false);
+            StreamHog errorHog = new StreamHog("Rserve",p.getErrorStream(), false);
+            StreamHog outputHog = new StreamHog("Rserve",p.getInputStream(), false);
             if (!isWindows) /*
              * on Windows the process will never return, so we cannot wait
              */ {
@@ -143,8 +186,8 @@ public class StartRserve {
      * checks whether Rserve is running and if that's not the case it attempts
      * to start it using the defaults for the platform where it is run on. This
      * method is meant to be set-and-forget and cover most default setups. For
-     * special setups you may get more control over R with <<code>launchRserve</code>
-     * instead.
+     * special setups you may get more control over R with
+     * <<code>launchRserve</code> instead.
      */
     public static boolean checkLocalRserve() {
         if (isRserveRunning()) {
@@ -159,11 +202,11 @@ public class StartRserve {
             try {
                 Process rp = Runtime.getRuntime().exec(
                         "reg query HKLM\\Software\\R-core\\R");
-                StreamHog regHog = new StreamHog(rp.getInputStream(), true);
+                StreamHog regHog = new StreamHog("reg query",rp.getInputStream(), true);
                 rp.waitFor();
                 regHog.join();
                 installPath = regHog.getInstallPath();
-				System.out.println("Using R install path: "+installPath);
+                System.out.println("Using R install path: " + installPath);
             } catch (Exception rge) {
                 System.out.println(
                         "ERROR: unable to run REG to find the location of R: " + rge);
@@ -181,14 +224,15 @@ public class StartRserve {
         } else {
 //            return ((new File("/opt/bin/R")).exists() && launchRserve(
 //                "/opt/bin/R"));
+            /*
+             * try some common unix locations of R
+             */
             return (((new File("/opt/bin/R")).exists() && launchRserve(
-                    "/opt/bin/R")) || /*
-                     * try some common unix locations of R
-                     */ ((new File(
-                    "/Library/Frameworks/R.framework/Resources/bin/R")).exists() && launchRserve(
-                    "/Library/Frameworks/R.framework/Resources/bin/R"))
-                    || ((new File("/usr/local/lib/R/bin/R")).exists() && launchRserve(
-                    "/usr/local/lib/R/bin/R"))
+                    "/opt/bin/R"))
+                    || ((new File("/Library/Frameworks/R.framework/Resources/bin/R")).exists()
+                    && launchRserve("/Library/Frameworks/R.framework/Resources/bin/R"))
+                    || ((new File("/usr/local/lib/R/bin/R")).exists()
+                    && launchRserve("/usr/local/lib/R/bin/R"))
                     || ((new File("/usr/lib/R/bin/R")).exists() && launchRserve(
                     "/usr/lib/R/bin/R"))
                     || ((new File("/usr/local/bin/R")).exists() && launchRserve(
@@ -197,8 +241,7 @@ public class StartRserve {
                     || ((new File("/usr/common/bin/R")).exists() && launchRserve(
                     "/usr/common/bin/R"))
                     || ((new File("/opt/bin/R")).exists() && launchRserve(
-                    "/opt/bin/R"))
-                    );
+                    "/opt/bin/R")));
         }
     }
 
@@ -206,8 +249,7 @@ public class StartRserve {
      * check whether Rserve is currently running (on local machine and default
      * port).
      *
-     * @return
-     * <code>true</code> if local Rserve instance is running,
+     * @return <code>true</code> if local Rserve instance is running,
      * <code>false</code> otherwise
      */
     public static boolean isRserveRunning() {

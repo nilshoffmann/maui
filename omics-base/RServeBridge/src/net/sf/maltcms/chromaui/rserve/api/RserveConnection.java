@@ -65,7 +65,7 @@ public class RserveConnection extends Thread {
 
     public RserveConnection(InetAddress hostIp, int hostPort, String userName, String password, boolean startedLocalRserve) {
         super("RserveSession" + (sessionCounter++));
-        if (hostIp.isLoopbackAddress()) {
+        if (hostIp == null || hostIp.isLoopbackAddress()) {
             scope = Scope.LOCAL;
         } else {
             scope = Scope.REMOTE;
@@ -80,7 +80,13 @@ public class RserveConnection extends Thread {
 
     protected RConnection connect() throws RserveException, IllegalStateException, IllegalArgumentException {
         if (state == State.INITIALIZED) {
-            connection = new RConnection(hostIp.getHostAddress(), hostPort);
+            if(hostIp == null) {
+                Logger.getLogger(RserveConnection.class.getName()).info("Localhost session.");
+                connection = new RConnection();
+            }else{
+                Logger.getLogger(RserveConnection.class.getName()).info("Session on: " + hostIp.toString()+ " at port "+hostPort);
+                connection = new RConnection(hostIp.getHostAddress(), hostPort);
+            }
             if (connection.needLogin()) {
                 if (userName == null) {
                     throw new IllegalArgumentException("Connection requires login but userName is null!");
