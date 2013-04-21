@@ -158,27 +158,27 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         }
     }
 
-//    public synchronized void closeConnection() {
-//        if (this.activeConnection != null) {
-//            Logger.getLogger(RserveConnectionFactory.class.getName()).info("Closing connection to Rserve!");
-//            if (isLocalServer) {
-//                try {
-//                    Logger.getLogger(RserveConnectionFactory.class.getName()).info("Shutting down local server!");
-//                    this.activeConnection.serverShutdown();
-//                } catch (RserveException ex) {
-//                    try {
-//                        this.activeConnection.shutdown();
-//                    } catch (RserveException ex1) {
-//                        Exceptions.printStackTrace(ex1);
-//                    }
-//                } finally {
-//                }
-//            }
-//            this.activeConnection.close();
-////			this.activeConnection.unlock(lock);
-//            this.activeConnection = null;
-//        }
-//    }
+    public synchronized void closeConnection() {
+        if (this.activeConnection != null) {
+            Logger.getLogger(RserveConnectionFactory.class.getName()).info("Closing connection to Rserve!");
+            if (isLocalServer) {
+                try {
+                    Logger.getLogger(RserveConnectionFactory.class.getName()).info("Shutting down local server!");
+                    this.activeConnection.serverShutdown();
+                } catch (RserveException ex) {
+                    try {
+                        this.activeConnection.shutdown();
+                    } catch (RserveException ex1) {
+                        Exceptions.printStackTrace(ex1);
+                    }
+                } finally {
+                }
+            }
+            this.activeConnection.close();
+//			this.activeConnection.unlock(lock);
+            this.activeConnection = null;
+        }
+    }
 
     public boolean isWindows() {
         String osname = System.getProperty("os.name");

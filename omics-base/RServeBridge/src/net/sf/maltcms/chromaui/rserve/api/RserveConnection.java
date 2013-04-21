@@ -76,6 +76,7 @@ public class RserveConnection extends Thread {
         this.userName = userName;
         this.password = password;
         this.startedLocalRserve = startedLocalRserve;
+        Runtime.getRuntime().addShutdownHook(this);
     }
 
     protected RConnection connect() throws RserveException, IllegalStateException, IllegalArgumentException {
@@ -97,7 +98,6 @@ public class RserveConnection extends Thread {
                 connection.login(userName, password);
             }
             //connectionLock = connection.lock();
-            Runtime.getRuntime().addShutdownHook(this);
             return connection;
         } else {
             throw new IllegalStateException("RConnection was already INITIALIZED");

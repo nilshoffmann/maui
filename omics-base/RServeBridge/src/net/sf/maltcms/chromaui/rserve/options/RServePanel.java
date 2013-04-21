@@ -29,6 +29,7 @@ package net.sf.maltcms.chromaui.rserve.options;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
@@ -37,11 +38,15 @@ import net.sf.maltcms.chromaui.rserve.spi.StartRserve;
 import org.netbeans.api.keyring.Keyring;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.openide.util.RequestProcessor.Task;
 import org.openide.util.TaskListener;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
@@ -232,6 +237,23 @@ final class RServePanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_userNameFieldActionPerformed
 
+    public boolean testRserve() {
+        try {
+            RConnection connection = RserveConnectionFactory.getDefaultConnection();
+            REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
+            try {
+                System.out.println("Result: "
+                        + Arrays.toString(rexp.asDoubles()));
+                return true;
+            } catch (REXPMismatchException ex) {
+                ex.printStackTrace();
+            }
+        } catch (RserveException ex) {
+            ex.printStackTrace(); 
+        } 
+        return false;
+    }
+    
     private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testButtonActionPerformed
         Runnable r = new Runnable() {
             @Override
@@ -241,15 +263,25 @@ final class RServePanel extends javax.swing.JPanel {
 //                    StartRserve.checkLocalRserve();
                     if (useLocalInstance.isSelected()) {
                         store();
-                        RConnection testConnection = RserveConnectionFactory.getDefaultConnection();
-                        PlotDemo.createPlotDemo(testConnection);
+//                        RConnection testConnection = RserveConnectionFactory.getDefaultConnection();
+//                        PlotDemo.createPlotDemo(testConnection);
+                        if(testRserve()) {
+                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!",NotifyDescriptor.INFORMATION_MESSAGE));
+                        }else{
+                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve failed!",NotifyDescriptor.ERROR_MESSAGE));
+                        }
                     } else {
                         try {
                             InetAddress address = InetAddress.getByName(remoteHostIpField.getText().trim());
                             int port = Integer.parseInt(remoteHostPortField.getText().trim());
                             store();
-                            RConnection testConnection = RserveConnectionFactory.getInstance().getRemoteConnection(address, port, userNameField.getText(), passwordField.getPassword());
-                            PlotDemo.createPlotDemo(testConnection);
+//                            RConnection testConnection = RserveConnectionFactory.getInstance().getRemoteConnection(address, port, userNameField.getText(), passwordField.getPassword());
+//                            PlotDemo.createPlotDemo(testConnection);
+                            if(testRserve()) {
+                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!",NotifyDescriptor.INFORMATION_MESSAGE));
+                            }else{
+                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve failed!",NotifyDescriptor.ERROR_MESSAGE));
+                            }
                         } catch (UnknownHostException ex) {
                             Exceptions.printStackTrace(ex);
                         }
