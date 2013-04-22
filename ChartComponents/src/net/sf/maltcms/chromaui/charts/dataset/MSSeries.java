@@ -27,7 +27,14 @@
  */
 package net.sf.maltcms.chromaui.charts.dataset;
 
+import java.util.TreeMap;
+import maltcms.datastructures.ms.IScan;
+import maltcms.datastructures.ms.Scan1D;
 import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
+import ucar.ma2.ArrayInt;
 
 /**
  *
@@ -49,6 +56,45 @@ public class MSSeries extends XYSeries{
     public MSSeries(Comparable key) {
         super(key);
     }
+	
+	public MSSeries differenceTo(MSSeries other) {
+		MSSeries newSeries = new MSSeries("DIFFERENCE",getAutoSort(),getAllowDuplicateXValues());
+//		XYSeriesCollection xyds = new XYSeriesCollection();
+//		xyds.addSeries(this);
+//		xyds.addSeries(other);
+		TreeMap<Number,Number> domainToRange = new TreeMap<Number,Number>();
+		for(int i = 0;i < getItemCount(); i++) {
+			Number x = getX(i);
+			Number y = getY(i);
+			domainToRange.put(x, Math.abs(y.doubleValue()));
+		}
+		for(int i = 0;i < other.getItemCount(); i++) {
+			Number x = other.getX(i);
+			Number y = other.getY(i);
+			if(domainToRange.containsKey(x)) {
+				Number myY = domainToRange.get(x);
+				domainToRange.put(x,myY.doubleValue()-Math.abs(y.doubleValue()));
+			}else{
+				domainToRange.put(x,-Math.abs(y.doubleValue()));
+			}
+		}
+		for(Number x:domainToRange.keySet()) {
+			newSeries.add(x, domainToRange.get(x));
+		}
+		return newSeries;
+	}
+	
+	public IScan asScan() {
+		Array masses = new ArrayDouble.D1(getItemCount());
+		Array intensities = new ArrayInt.D1(getItemCount());
+		for(int i = 0;i < getItemCount(); i++) {
+			Number x = getX(i);
+			Number y = getY(i);
+			masses.setDouble(i, x.doubleValue());
+			intensities.setInt(i, y.intValue());
+		}
+		return new Scan1D(masses, intensities, -1, Double.NaN);
+	}
     
     public boolean isNormalize() {
         return normalize;

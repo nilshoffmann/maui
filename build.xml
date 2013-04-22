@@ -69,7 +69,7 @@
 			<arg value="-avtruP"/>
 			<arg value="-e ssh "/>
 			<arg value="site/public_html/"/>
-			<arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}/"/>
+			<arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/"/>
 		</exec>    
 	</target>
     
@@ -83,7 +83,7 @@
 			<arg value="--recursive"/>
 			<arg value="-e ssh "/>
 			<arg value="build/updates/"/>
-			<arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}/updates/"/>
+			<arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>
 		</exec>
 	</target>
 	<target name="upload-build" description="Deploys the distribution installers and zip file" depends="upload-credentials">
@@ -95,7 +95,7 @@
 			<arg value="--recursive"/>
 			<arg value="-e ssh "/>
 			<arg value="dist/"/>
-			<arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}/"/>
+			<arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/downloads/"/>
 		</exec>    
 	</target>
 	
@@ -152,7 +152,7 @@
 			<property name="build.dir" value="${suite.build.dir}"/>
 			<resources refid="zip.platform.clusters"/>
 		</subant>
-		<zip destfile="${dist.dir}/${app.title}_${app.version}.zip">
+		<zip destfile="${dist.dir}/${app.title}-${app.version}.zip">
 			<zipfileset dir="${build.launcher.dir}/bin/" filemode="755" prefix="${app.name}/bin"/>
 			<zipfileset dir="${build.launcher.dir}/etc/" prefix="${app.name}/etc"/>
 			<zipfileset dir="${temp.dir.nbexec}" filemode="755" prefix="${app.name}"/>
@@ -167,6 +167,14 @@
 	</target>
 	
 	<target name="javadoc" depends="-init,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
-		<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
+		<!--<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>-->
+		<mkdir dir="${basedir}/build/javadoc"/>
+		<copy todir="${basedir}/build/javadoc" flatten="false">
+			<fileset dir="${basedir}">
+				<include name="**/build/javadoc/**"/>
+				<exclude name="build/javadoc/**"/>
+			</fileset>
+			<cutdirsmapper dirs="3"/>
+		</copy>
 	</target> 
 </project>

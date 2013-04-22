@@ -27,10 +27,10 @@
  */
 package net.sf.maltcms.chromaui.charts.labels;
 
-import java.util.ArrayList;
+import java.awt.Point;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeSet;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.data.xy.XYDataset;
 
@@ -40,22 +40,36 @@ import org.jfree.data.xy.XYDataset;
  */
 public class TopKItemsLabelGenerator implements XYItemLabelGenerator {
 
-    private final SortedMap<Double, Double> sm;
-    private final Set<Double> ks;
-    
-    public TopKItemsLabelGenerator(SortedMap<Double, Double> sm, int k) {
-        this.sm = sm;
-        this.ks = new TreeSet<Double>(new ArrayList<Double>(this.sm.keySet()).subList(Math.max(0, sm.size() - k), sm.size()));
-    }
+//	private final SortedMap<Double, Double> sm;
+//	private final Set<Double> ks;
+	private final Set<Point> topK;
+	private final List<Point> sublist;
+	
+	public TopKItemsLabelGenerator(List<Point> sm, int k) {
+		System.out.println("Length of list: "+sm.size());
+		System.out.println("K="+k);
+		this.sublist = sm.subList(Math.max(0, sm.size() - k), sm.size());
+		topK = new HashSet<Point>();
+		System.out.println("Sublist length: "+this.sublist.size());
+		topK.addAll(this.sublist);
+		System.out.println("Top K: "+topK);
+//        this.ks = new TreeSet<Double>(new ArrayList<Double>(this.sm.keySet()).subList(Math.max(0, sm.size() - k), sm.size()));
+	}
+			
+//	public TopKItemsLabelGenerator(SortedMap<Double, Double> sm, int k) {
+//		this.sm = sm;
+//        this.ks = new TreeSet<Double>(new ArrayList<Double>(this.sm.keySet()).subList(Math.max(0, sm.size() - k), sm.size()));
+//	}
 
-    @Override
-    public String generateLabel(XYDataset arg0, int arg1, int arg2) {
-        if (this.ks.contains(arg0.getYValue(arg1, arg2))) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%.2f", arg0.getXValue(arg1, arg2)));
-            return sb.toString();
-        }
+	@Override
+	public String generateLabel(XYDataset arg0, int arg1, int arg2) {
+//		if (this.ks.contains(arg0.getYValue(arg1, arg2))) {
+		if (this.topK.contains(new Point(arg1,arg2))) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%.2f", arg0.getXValue(arg1, arg2)));
+			return sb.toString();
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

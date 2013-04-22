@@ -29,40 +29,30 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks;
 
 import cross.datastructures.fragments.IFileFragment;
 import java.awt.Color;
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import javax.swing.SwingUtilities;
 import lombok.Data;
-import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent;
 import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.panel.Chromatogram1DViewPanel;
-import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.TopViewDataset;
 import net.sf.maltcms.chromaui.charts.format.RTNumberFormatter;
 import net.sf.maltcms.chromaui.charts.units.RTUnit;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
-import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
-import org.jfree.ui.TextAnchor;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
-import ucar.ma2.Array;
 
 /**
  *
