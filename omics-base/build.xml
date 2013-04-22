@@ -45,7 +45,7 @@
 			<arg value="--recursive"/>
             <arg value="-e ssh "/>
             <arg value="build/updates/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}/updates/"/>
+            <arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>
         </exec>
     </target>
 <!--    <target name="upload-build" description="Deploys zip distribution" depends="build-zip,upload-credentials">
