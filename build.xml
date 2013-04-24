@@ -86,6 +86,7 @@
 			<arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>
 		</exec>
 	</target>
+	
 	<target name="upload-build" description="Deploys the distribution installers and zip file" depends="upload-credentials">
 		<tstamp>
 			<format property="deploy.time" pattern="yyyy-MM-dd"/>
@@ -99,26 +100,32 @@
 		</exec>    
 	</target>
 	
+	<target name="-pre-build" depends="-init,branding,release,-hide-excluded-modules,build-dev" description="Build all modules in the suite while updating version and timestamp.">
+		
+	</target>
+	
+	<target name="build" depends="-pre-build,suite.build"></target>
+	
 	<!-- Alternative build target to add update branding version number -->
-	<target name="build-versioned" depends="-init,branding,release,-hide-excluded-modules,build-brand" description="Build all modules in the suite while updating version timestamp.">
+	<target name="build-versioned" depends="-init,branding,release,-hide-excluded-modules,build-brand" description="Build all modules in the suite while updating version.">
 		<subant target="netbeans" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false">
 			<property name="cluster.path.evaluated" value="${cluster.path.evaluated}"/> <!-- Just for speed of pre-7.0 projects -->
 		</subant>
 	</target>
 	
 	<!-- Alternative build target to add update branding version number -->
-	<target name="build-brand" depends="pre-init,-init">
+	<target name="build-brand" depends="-init">
 		<propertyfile
 			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
 			comment="Updated by build script">
-			<entry key="currentVersion" value="${app.title} ${app.version} " />
+			<entry key="currentVersion" value="${app.title} ${app.version.release} " />
 		</propertyfile>
 
 		<propertyfile
 			file="${basedir}/branding/modules/org-netbeans-core-windows.jar/org/netbeans/core/windows/view/ui/Bundle.properties"
 			comment="Updated by build script">
-			<entry key="CTL_MainWindow_Title" value="${app.title} ${app.version}" />
-			<entry key="CTL_MainWindow_Title_No_Project" value="${app.title} ${app.version}" />
+			<entry key="CTL_MainWindow_Title" value="${app.title} ${app.version.release}" />
+			<entry key="CTL_MainWindow_Title_No_Project" value="${app.title} ${app.version.release}" />
 		</propertyfile>
 
 		<propertyfile
@@ -128,43 +135,37 @@
 		</propertyfile>
 
 	</target>
+	
+	<target name="build-dev" depends="pre-init,-init">
+		<propertyfile
+			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
+			comment="Updated by build script">
+			<entry key="currentVersion" value="${app.title} ${app.version.release} ${app.build}" />
+		</propertyfile>
+
+		<propertyfile
+			file="${basedir}/branding/modules/org-netbeans-core-windows.jar/org/netbeans/core/windows/view/ui/Bundle.properties"
+			comment="Updated by build script">
+			<entry key="CTL_MainWindow_Title" value="${app.title} ${app.version.release} ${app.build}" />
+			<entry key="CTL_MainWindow_Title_No_Project" value="${app.title} ${app.version.release} ${app.build}" />
+		</propertyfile>
+
+		<propertyfile
+			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
+			comment="Updated by build script">
+			<entry key="LBL_ProductInformation" value="${app.title}" />
+		</propertyfile>
+	</target>
+	
 	<!-- Additional target needed to generate the App version number based on compile time -->
 	<target name="pre-init">
 		<tstamp prefix="build"/>
 		<propertyfile file="${basedir}/nbproject/project.properties"
 					  comment="Updated by build script">
-			<entry key="app.version" value="${build.DSTAMP}_${build.TSTAMP}" />
+			<entry key="app.build" value="${build.DSTAMP}_${build.TSTAMP}" />
 		</propertyfile>
 		<echo>APP.VERSION=${app.title}_${build.DSTAMP}_${build.TSTAMP} </echo>
 	</target>
-	
-	<!-- OVERRIDE build-zip so that it produces a .zip file with the App Title and Version number in it.  -->
-	<!-- Requires App.Version and App Title generated -->
-<!--	<target name="build-zip" depends="build-versioned,build-launchers" description="Builds a ZIP distribution of the suite, launchers, and selected modules from the platform.">
-		<mkdir dir="${dist.dir}"/>
-		 pathfileset does not support 'prefix' and 'filemode' parameters,
-		we have to copy them to temp location 
-		<tempfile property="temp.dir.nbexec" destdir="${suite.build.dir}" deleteonexit="true" prefix="nbexec"/>
-		<tempfile property="temp.dir.rest" destdir="${suite.build.dir}" deleteonexit="delete" prefix="rest"/>
-		<subant genericantfile="${harness.dir}/suite.xml" target="copy-cluster" inheritrefs="true">
-			<property name="dest.dir" value="${temp.dir.rest}"/>
-			<property name="nbexec.dir" value="${temp.dir.nbexec}"/>
-			<property name="build.dir" value="${suite.build.dir}"/>
-			<resources refid="zip.platform.clusters"/>
-		</subant>
-		<zip destfile="${dist.dir}/${app.title}-${app.version}.zip">
-			<zipfileset dir="${build.launcher.dir}/bin/" filemode="755" prefix="${app.name}/bin"/>
-			<zipfileset dir="${build.launcher.dir}/etc/" prefix="${app.name}/etc"/>
-			<zipfileset dir="${temp.dir.nbexec}" filemode="755" prefix="${app.name}"/>
-			<zipfileset dir="${temp.dir.rest}" prefix="${app.name}"/>
-
-			 Yes, the doubled app.name is a bit ugly, but better than the alternative; cf. #66441: 
-			<zipfileset dir="${cluster}" prefix="${app.name}/${app.name}">
-				<exclude name="config/Modules/*.xml_hidden"/>
-			</zipfileset>
-            
-		</zip>
-	</target>-->
 	
 	<target name="javadoc" depends="-init,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
 		<!--<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>-->
