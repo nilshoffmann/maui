@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
 import com.db4o.ta.Activatable;
 import java.util.Date;
 import java.util.UUID;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.util.HelpCtx;
 
 /**
@@ -43,6 +44,11 @@ public interface IBasicDescriptor extends Activatable, Comparable<IBasicDescript
     final String PROP_DATE = "date";
     final String PROP_ID = "id";
     final String PROP_SHORTDESCRIPTION = "shortDescription";
+	final String PROP_PROJECT = "project";
+	
+	public IChromAUIProject getProject();
+	
+	public void setProject(IChromAUIProject project);
 
     public String getDisplayName();
 

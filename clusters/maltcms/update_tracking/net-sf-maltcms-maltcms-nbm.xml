@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><module codename="net.sf.maltcms.maltcms.nbm">
-    <module_version install_time="1364988276863" last="true" origin="installer" specification_version="1.2.1">
+    <module_version install_time="1366726818163" last="true" origin="installer" specification_version="1.2.1">
         <file crc="1326963864" name="config/Modules/net-sf-maltcms-maltcms-nbm.xml"/>
         <file crc="2607852128" name="modules/ext/acs.lbl.gov/colt-osgi-1.2.0.jar"/>
         <file crc="3970097148" name="modules/ext/com.h2database/h2-1.3.170.jar"/>
@@ -11,38 +11,38 @@
         <file crc="984909869" name="modules/ext/javax.activation/activation-1.1.jar"/>
         <file crc="3224142146" name="modules/ext/javax.xml.bind/jaxb-api-2.1.jar"/>
         <file crc="1775435017" name="modules/ext/javax.xml.stream/stax-api-1.0-2.jar"/>
-        <file crc="4026060179" name="modules/ext/net.sf.maltcms.net.sf.jexcelapi/jxl-osgi-2.6.12.jar"/>
-        <file crc="3117750408" name="modules/ext/net.sf.maltcms.org.apache.poi/poi-osgi-3.9.jar"/>
+        <file crc="2992788984" name="modules/ext/net.sf.maltcms.net.sf.jexcelapi/jxl-osgi-2.6.12.jar"/>
+        <file crc="3775134289" name="modules/ext/net.sf.maltcms.org.apache.poi/poi-osgi-3.9.jar"/>
         <file crc="2037690933" name="modules/ext/net.sf.maltcms/jxl-osgi-1.2.1-SNAPSHOT.jar"/>
-        <file crc="2533825734" name="modules/ext/net.sf.maltcms/maltcms-ap-1.2.1-SNAPSHOT.jar"/>
-        <file crc="2384631394" name="modules/ext/net.sf.maltcms/maltcms-apps-1.2.1-SNAPSHOT.jar"/>
-        <file crc="3886523170" name="modules/ext/net.sf.maltcms/maltcms-chroma-1.2.1-SNAPSHOT.jar"/>
-        <file crc="577085284" name="modules/ext/net.sf.maltcms/maltcms-chroma4D-1.2.1-SNAPSHOT.jar"/>
-        <file crc="2881806123" name="modules/ext/net.sf.maltcms/maltcms-chroma4D-cwt-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1383176424" name="modules/ext/net.sf.maltcms/maltcms-chroma4D-srg-1.2.1-SNAPSHOT.jar"/>
-        <file crc="2292759128" name="modules/ext/net.sf.maltcms/maltcms-commands-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1224170111" name="modules/ext/net.sf.maltcms/maltcms-cv-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1690064396" name="modules/ext/net.sf.maltcms/maltcms-datastructures-1.2.1-SNAPSHOT.jar"/>
-        <file crc="3366135575" name="modules/ext/net.sf.maltcms/maltcms-datastructures-quadtree-1.2.1-SNAPSHOT.jar"/>
-        <file crc="942435319" name="modules/ext/net.sf.maltcms/maltcms-db-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1565538907" name="modules/ext/net.sf.maltcms/maltcms-evaluation-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1818710458" name="modules/ext/net.sf.maltcms/maltcms-execution-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1342270509" name="modules/ext/net.sf.maltcms/maltcms-experimental-1.2.1-SNAPSHOT.jar"/>
-        <file crc="2255318039" name="modules/ext/net.sf.maltcms/maltcms-filters-1.2.1-SNAPSHOT.jar"/>
-        <file crc="2720329502" name="modules/ext/net.sf.maltcms/maltcms-io-1.2.1-SNAPSHOT.jar"/>
-        <file crc="345100648" name="modules/ext/net.sf.maltcms/maltcms-io-csv-1.2.1-SNAPSHOT.jar"/>
-        <file crc="408835069" name="modules/ext/net.sf.maltcms/maltcms-io-mzdata-1.2.1-SNAPSHOT.jar"/>
-        <file crc="73086100" name="modules/ext/net.sf.maltcms/maltcms-io-mzml-1.2.1-SNAPSHOT.jar"/>
-        <file crc="3748336921" name="modules/ext/net.sf.maltcms/maltcms-io-netcdf-1.2.1-SNAPSHOT.jar"/>
-        <file crc="2008411519" name="modules/ext/net.sf.maltcms/maltcms-io-openms-featurexml-1.2.1-SNAPSHOT.jar"/>
-        <file crc="3295162921" name="modules/ext/net.sf.maltcms/maltcms-io-xlsx-1.2.1-SNAPSHOT.jar"/>
-        <file crc="123707262" name="modules/ext/net.sf.maltcms/maltcms-resources-1.2.1-SNAPSHOT.jar"/>
-        <file crc="3902472240" name="modules/ext/net.sf.maltcms/maltcms-spectratyping-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1554993714" name="modules/ext/net.sf.maltcms/maltcms-sralign-1.2.1-SNAPSHOT.jar"/>
-        <file crc="3987121865" name="modules/ext/net.sf.maltcms/maltcms-statistics-1.2.1-SNAPSHOT.jar"/>
-        <file crc="716335241" name="modules/ext/net.sf.maltcms/maltcms-ui-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1238526341" name="modules/ext/net.sf.maltcms/maltcms-xml-alignment-1.2.1-SNAPSHOT.jar"/>
-        <file crc="1499842031" name="modules/ext/net.sf.maltcms/maltcms-xml-annotation-1.2.1-SNAPSHOT.jar"/>
+        <file crc="2352518736" name="modules/ext/net.sf.maltcms/maltcms-ap-1.2.1-SNAPSHOT.jar"/>
+        <file crc="4247828719" name="modules/ext/net.sf.maltcms/maltcms-apps-1.2.1-SNAPSHOT.jar"/>
+        <file crc="859597945" name="modules/ext/net.sf.maltcms/maltcms-chroma-1.2.1-SNAPSHOT.jar"/>
+        <file crc="3982178209" name="modules/ext/net.sf.maltcms/maltcms-chroma4D-1.2.1-SNAPSHOT.jar"/>
+        <file crc="2877984244" name="modules/ext/net.sf.maltcms/maltcms-chroma4D-cwt-1.2.1-SNAPSHOT.jar"/>
+        <file crc="2411261289" name="modules/ext/net.sf.maltcms/maltcms-chroma4D-srg-1.2.1-SNAPSHOT.jar"/>
+        <file crc="271053938" name="modules/ext/net.sf.maltcms/maltcms-commands-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1543496241" name="modules/ext/net.sf.maltcms/maltcms-cv-1.2.1-SNAPSHOT.jar"/>
+        <file crc="2651174475" name="modules/ext/net.sf.maltcms/maltcms-datastructures-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1248549410" name="modules/ext/net.sf.maltcms/maltcms-datastructures-quadtree-1.2.1-SNAPSHOT.jar"/>
+        <file crc="3856781622" name="modules/ext/net.sf.maltcms/maltcms-db-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1434000755" name="modules/ext/net.sf.maltcms/maltcms-evaluation-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1564678885" name="modules/ext/net.sf.maltcms/maltcms-execution-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1479678925" name="modules/ext/net.sf.maltcms/maltcms-experimental-1.2.1-SNAPSHOT.jar"/>
+        <file crc="3801694460" name="modules/ext/net.sf.maltcms/maltcms-filters-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1947038528" name="modules/ext/net.sf.maltcms/maltcms-io-1.2.1-SNAPSHOT.jar"/>
+        <file crc="3760227334" name="modules/ext/net.sf.maltcms/maltcms-io-csv-1.2.1-SNAPSHOT.jar"/>
+        <file crc="3066197641" name="modules/ext/net.sf.maltcms/maltcms-io-mzdata-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1342687965" name="modules/ext/net.sf.maltcms/maltcms-io-mzml-1.2.1-SNAPSHOT.jar"/>
+        <file crc="131519998" name="modules/ext/net.sf.maltcms/maltcms-io-netcdf-1.2.1-SNAPSHOT.jar"/>
+        <file crc="2097768605" name="modules/ext/net.sf.maltcms/maltcms-io-openms-featurexml-1.2.1-SNAPSHOT.jar"/>
+        <file crc="176505932" name="modules/ext/net.sf.maltcms/maltcms-io-xlsx-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1550537506" name="modules/ext/net.sf.maltcms/maltcms-resources-1.2.1-SNAPSHOT.jar"/>
+        <file crc="2219873906" name="modules/ext/net.sf.maltcms/maltcms-spectratyping-1.2.1-SNAPSHOT.jar"/>
+        <file crc="536241403" name="modules/ext/net.sf.maltcms/maltcms-sralign-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1868094032" name="modules/ext/net.sf.maltcms/maltcms-statistics-1.2.1-SNAPSHOT.jar"/>
+        <file crc="1913368186" name="modules/ext/net.sf.maltcms/maltcms-ui-1.2.1-SNAPSHOT.jar"/>
+        <file crc="596285302" name="modules/ext/net.sf.maltcms/maltcms-xml-alignment-1.2.1-SNAPSHOT.jar"/>
+        <file crc="874695365" name="modules/ext/net.sf.maltcms/maltcms-xml-annotation-1.2.1-SNAPSHOT.jar"/>
         <file crc="2913998947" name="modules/ext/net.sourceforge.jexcelapi/jxl-2.6.12.jar"/>
         <file crc="3083290856" name="modules/ext/org.antlr/com.springsource.antlr-2.7.7.jar"/>
         <file crc="3909108127" name="modules/ext/org.apache.log4j/com.springsource.org.apache.log4j-1.2.15.jar"/>
@@ -51,13 +51,13 @@
         <file crc="1517778327" name="modules/ext/org.apache.poi/poi-ooxml-schemas-3.9.jar"/>
         <file crc="3116060521" name="modules/ext/org.apache.xmlbeans/xmlbeans-2.3.0.jar"/>
         <file crc="3220182848" name="modules/ext/org.jfree/jcommon-osgi-1.0.16.jar"/>
-        <file crc="3795419508" name="modules/ext/org.jfree/jfreechart-osgi-1.0.14.jar"/>
+        <file crc="4256752942" name="modules/ext/org.jfree/jfreechart-osgi-1.0.14.jar"/>
         <file crc="1542025154" name="modules/ext/org.mozilla.intl/chardet-1.0.jar"/>
         <file crc="4193240857" name="modules/ext/org.netbeans.api/wizard-osgi-0.998.1.jar"/>
         <file crc="1560048859" name="modules/ext/psidev.psi.tools/xxindex-0.11.jar"/>
         <file crc="718358633" name="modules/ext/stax/stax-api-1.0.1.jar"/>
         <file crc="3328062988" name="modules/ext/uk.ac.ebi.jmzml/jmzml-osgi-1.6.8.jar"/>
         <file crc="3563037387" name="modules/ext/xml-apis/xml-apis-1.0.b2.jar"/>
-        <file crc="779113768" name="modules/net-sf-maltcms-maltcms-nbm.jar"/>
+        <file crc="3863263103" name="modules/net-sf-maltcms-maltcms-nbm.jar"/>
     </module_version>
 </module>

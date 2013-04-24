@@ -10,10 +10,7 @@
 	<property name="project.release.name" value="${app.name}"/>
     <property name="project.release.version" value="${app.version.release}"/>
     <property name="project.release.path" value="${app.name}/${app.version.major}.${app.version.minor}"/>
-	
-    <property name="project.release.name" value="omics-base"/>
-    <property name="project.release.version" value="1.2"/>
-    <property name="project.release.path" value="${project.release.name}/${project.release.version}"/>
+
     <target name="release-and-deploy" description="Prepare a release" depends="prepare-release,deploy">    
     </target>
     <target name="upload-credentials" description="Ask for user credentials">

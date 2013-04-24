@@ -158,4 +158,19 @@ public class Registry implements IRegistry {
 		}
 		return closedComponents;
 	}
+
+	@Override
+	public void registerTopComponentFor(Object object, TopComponent topComponent) {
+		Project project = getSelectedProject();
+		Map<Object, TopComponent> map = getTopComponentsForProject(project);
+		TopComponent tc = map.get(object);
+		if (tc == null) {
+			System.out.println("Adding TopComponent instance for class: " + topComponent.getClass().
+					getName() + "; active project: " + project.
+					getProjectDirectory().getName());
+			map.put(object, topComponent);
+		} else {
+			System.err.println("TopComponent "+topComponent+" already registered for object: "+object);
+		}
+	}
 }

@@ -35,6 +35,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Date;
 import java.util.UUID;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.util.HelpCtx;
 
 /**
@@ -120,6 +121,22 @@ public class ABasicDescriptor implements IBasicDescriptor {
     public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
         getPropertyChangeSupport().addPropertyChangeListener(pl);
     }
+	
+	private transient IChromAUIProject project;
+	
+	@Override
+	public IChromAUIProject getProject() {
+		return project;
+	}
+	
+	@Override
+	public void setProject(IChromAUIProject project) {
+		IChromAUIProject old = this.project;
+		this.project = project;
+//		if(old!=project) {
+//			getPropertyChangeSupport().firePropertyChange(IDescriptor.PROP_PROJECT, old, this.project);
+//		}
+	}
 
     private transient Activator activator;
 
