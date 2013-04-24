@@ -40,6 +40,7 @@ import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import org.openide.actions.PropertiesAction;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
@@ -131,13 +132,13 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        if(pce.getPropertyName().equals(PROP_NAME)) {
+        if(pce.getPropertyName().equals(PROP_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_NAME)) {
             fireNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals("displayName")) {
+        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_DISPLAYNAME)) {
             fireDisplayNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
+        if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)  || pce.getPropertyName().equals(IDescriptor.PROP_SHORTDESCRIPTION)) {
             fireShortDescriptionChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
         if(pce.getPropertyName().equals(PROP_ICON)) {
@@ -146,7 +147,7 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
 		if(pce.getPropertyName().equals(PROP_OPENED_ICON)) {
             fireOpenedIconChange();
         }
-		if(pce.getPropertyName().equals("color")) {
+		if(pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
 			fireIconChange();
 		}
     }

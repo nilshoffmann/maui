@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.openide.nodes.ChildFactory;
@@ -75,7 +76,7 @@ public class ChromatogramChildNodeFactory extends ChildFactory<Peak1DContainer>
         }
         for (Peak1DContainer pad : peakContainer) {
             if (Thread.interrupted()) {
-                return true;
+                return false;
             } else {
                 if (pad != null) {
                     list.add(pad);
@@ -96,6 +97,7 @@ public class ChromatogramChildNodeFactory extends ChildFactory<Peak1DContainer>
             IChromAUIProject project = this.lkp.lookup(IChromAUIProject.class);
             project.addPropertyChangeListener(WeakListeners.propertyChange(this, project));
             key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
+			key.setProject(project);
             cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
             return cn;
         } catch (IntrospectionException ex) {

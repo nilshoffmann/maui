@@ -68,7 +68,7 @@ public class ChromatogramNodeFactory extends ChildFactory<IChromatogramDescripto
         Collection<? extends IChromatogramDescriptor> container = this.cp.getChromatograms();
         for (IChromatogramDescriptor idesc : container) {
             if (Thread.interrupted()) {
-                return true;
+                return false;
             } else {
                 if (idesc != null) {
                     list.add(idesc);
@@ -95,6 +95,7 @@ public class ChromatogramNodeFactory extends ChildFactory<IChromatogramDescripto
         an.addPropertyChangeListener(WeakListeners.propertyChange(this, an));
         cd.addPropertyChangeListener(WeakListeners.propertyChange(this, cd));
         an.setName(cd.getDisplayName());
+		cd.setProject(cp);
         return an;
     }
 

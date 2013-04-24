@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -77,7 +78,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
 
             for (T idesc : container) {
                 if (Thread.interrupted()) {
-                    return true;
+                    return false;
                 } else {
                     if (idesc != null) {
                         list.add(idesc);
@@ -119,6 +120,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
                 key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
                 cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
+				key.setProject(lkp.lookup(IChromAUIProject.class));
                 return cn;
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);

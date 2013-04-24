@@ -41,6 +41,7 @@ import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import org.openide.actions.PropertiesAction;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
@@ -143,19 +144,19 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        if(pce.getPropertyName().equals(PROP_NAME)) {
+        if(pce.getPropertyName().equals(PROP_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_NAME)) {
             fireNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME)) {
+        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_DISPLAYNAME)) {
             fireDisplayNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
+        if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION) || pce.getPropertyName().equals(IDescriptor.PROP_SHORTDESCRIPTION)) {
             fireShortDescriptionChange((String)pce.getOldValue(),(String)pce.getNewValue());
         }
-		if(pce.getPropertyName().equals(PROP_ICON) || pce.getPropertyName().equals("color")) {
+		if(pce.getPropertyName().equals(PROP_ICON) || pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
             fireIconChange();
         }
-		if(pce.getPropertyName().equals(PROP_OPENED_ICON) || pce.getPropertyName().equals("color")) {
+		if(pce.getPropertyName().equals(PROP_OPENED_ICON) || pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
             fireOpenedIconChange();
         }
     }

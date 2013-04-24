@@ -27,35 +27,19 @@
  */
 package net.sf.maltcms.chromaui.chromatogram2Dviewer.tasks;
 
-import java.awt.Color;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import maltcms.datastructures.ms.Chromatogram2D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.Chromatogram2DViewTopComponent;
-import net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.panel.Chromatogram2DViewerPanel;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DElementProvider;
-import net.sf.maltcms.chromaui.charts.overlay.Peak2DOverlay;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.ui.paintScales.IPaintScaleProvider;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.labels.StandardXYZToolTipGenerator;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.PaintScale;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
-import org.jfree.ui.RectangleAnchor;
 import org.openide.loaders.DataObject;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**

@@ -11,4 +11,7 @@
 	<target name="javadoc-nb">
 		<echo message="Skipping target javadoc-nb"/>
 	</target>
+<!--	<target name="-pre-jar">
+		<filter></filter>
+	</target>-->
 </project>

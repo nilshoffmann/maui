@@ -27,17 +27,12 @@
  */
 package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable;
 
-import cross.datastructures.tuple.Tuple2D;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import lombok.Data;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -47,7 +42,6 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.Utils.*;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import org.openide.util.Exceptions;
 
 /**

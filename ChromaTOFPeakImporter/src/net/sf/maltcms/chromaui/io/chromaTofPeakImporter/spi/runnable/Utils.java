@@ -27,13 +27,11 @@
  */
 package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable;
 
-import cross.Factory;
 import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tools.ArrayTools;
 import cross.datastructures.tuple.Tuple2D;
-import cross.exception.ConstraintViolationException;
 import cross.tools.MathTools;
 import cross.tools.StringTools;
 import java.io.BufferedWriter;
@@ -51,7 +49,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import maltcms.datastructures.ms.IChromatogram;
+import maltcms.datastructures.ms.IChromatogram2D;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -59,8 +58,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openide.util.Exceptions;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
@@ -82,6 +79,7 @@ public class Utils {
 
     public static ChromatogramType parseTable(Tuple2D<LinkedHashSet<String>, List<TableRow>> report, ChromatogramType chromatogramType, IChromatogramDescriptor chromatogram, HashSet<String> peakRegistry, List<IPeakAnnotationDescriptor> peaks) {
         int index = 0;
+		IChromatogram chrom = chromatogram.getChromatogram();
         for (TableRow tr : report.getSecond()) {
             //System.out.println("Parsing row "+(index+1)+"/"+report.getSecond().size());
             //System.out.println("Row data: "+tr.toString());
@@ -98,9 +96,15 @@ public class Utils {
                     double rt2 = parseDouble(rts[1].trim());
                     IPeak2DAnnotationDescriptor descriptor = create2DPeak(
                             chromatogram, tr, rt1, rt2);
+					int idx = index;
+					try{
+						idx = chrom.getIndexFor(rt1+rt2);
+					}catch(IllegalArgumentException iae) {
+						//we are importing from a peak list
+					}
                     String key = key(descriptor);
 //                    if (!peakRegistry.contains(key)) {
-                    index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
+                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key);
                     index++;
 //                    } else {
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
@@ -111,9 +115,15 @@ public class Utils {
                             chromatogram, tr);
                     String key = key(descriptor);
 //                    if (!peakRegistry.contains(key)) {
-                    index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
+					int idx = index;
+					try{
+						idx = chrom.getIndexFor(descriptor.getApexTime());
+					}catch(IllegalArgumentException iae) {
+						//we are importing from a peak list
+					}
+                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key);
+					index++;
 //                    } else {
-                    index++;
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
 //                    }
                 }
@@ -125,10 +135,17 @@ public class Utils {
                     double rt2 = parseDouble(tr.get("2ND_DIMENSION_TIME_(S)"));
                     IPeakAnnotationDescriptor descriptor = create2DPeak(chromatogram, tr, rt1, rt2);
                     String key = key(descriptor);
+					int idx = index;
+					try{
+						idx = chrom.getIndexFor(rt1+rt2);
+					}catch(IllegalArgumentException iae) {
+						//we are importing from a peak list
+					}
 //                    if (!peakRegistry.contains(key)) {
-                    index = addMassSpectrum(tr, descriptor, index, peaks, peakRegistry, key);
+                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key);
+					index++;
 //                    } else {
-                    index++;
+                    
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
 //                    }
                 }
@@ -552,7 +569,7 @@ public class Utils {
         return chromatograms;
     }
 
-    public static int addMassSpectrum(TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key) {
+    public static void addMassSpectrum(TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key) {
         Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
 //        int msIndex = index++;
         if (massSpectrum.getFirst().length > 0) {
@@ -564,7 +581,6 @@ public class Utils {
         } else {
             System.err.println("Skipping peak with empty mass spectrum: " + descriptor.toString());
         }
-        return index;
     }
 
     public static IPeakAnnotationDescriptor create1DPeak(IChromatogramDescriptor chromatogram, TableRow tr) {

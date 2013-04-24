@@ -96,10 +96,12 @@ public class PeakGroupRtBoxPlot {
             }
             BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
             renderer.setFillBox(true);
-            renderer.setMeanVisible(true);
+            renderer.setMeanVisible(false);
             renderer.setMedianVisible(true);
             renderer.setArtifactPaint(new Color(0,0,0,128));
-            renderer.setMaximumBarWidth(0.2);
+            renderer.setMaximumBarWidth(0.1);
+			
+			renderer.setUseOutlinePaintForWhiskers(false);
 //            renderer.setAutoPopulateSeriesFillPaint(true);
 //            renderer.setAutoPopulateSeriesPaint(true);
 //            renderer.setAutoPopulateSeriesOutlinePaint(true);

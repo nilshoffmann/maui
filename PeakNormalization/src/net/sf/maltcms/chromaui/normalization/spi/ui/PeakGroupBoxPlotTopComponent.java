@@ -41,7 +41,7 @@ dtd = "-//net.sf.maltcms.chromaui.normalization.spi.ui//PeakGroupBoxPlot//EN",
 autostore = false)
 @TopComponent.Description(preferredID = "PeakGroupBoxPlotTopComponent",
 //iconBase="SET/PATH/TO/ICON/HERE", 
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window",
 id = "net.sf.maltcms.chromaui.normalization.spi.ui.PeakGroupBoxPlotTopComponent")

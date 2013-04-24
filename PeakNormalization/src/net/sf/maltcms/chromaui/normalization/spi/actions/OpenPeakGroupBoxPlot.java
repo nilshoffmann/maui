@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.actions;
 
+import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
+import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -37,9 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
-import net.sf.maltcms.chromaui.normalization.api.ui.PvalueAdjustmentDialog;
-import net.sf.maltcms.chromaui.normalization.spi.NormalizationDescriptorNormalizer;
-import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
 import net.sf.maltcms.chromaui.normalization.spi.charts.PeakGroupBoxPlot;
 import net.sf.maltcms.chromaui.normalization.spi.ui.PeakGroupBoxPlotTopComponent;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -50,6 +49,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
@@ -90,7 +90,11 @@ public final class OpenPeakGroupBoxPlot implements ActionListener {
 
             JScrollPane jsp = new JScrollPane(bg);
             pgbpt.add(jsp, BorderLayout.CENTER);
-            pgbpt.open();
+            IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
+			for(IPeakGroupDescriptor pgd:context) {
+				registry.registerTopComponentFor(pgd, pgbpt);
+			}
+			pgbpt.open();
             pgbpt.requestActive();
         }else{
             System.err.println("No IChromAUI project is in lookup!");

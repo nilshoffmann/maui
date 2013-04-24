@@ -31,6 +31,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import javax.swing.Action;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
@@ -58,6 +59,8 @@ public class NodeFactory implements INodeFactory {
                 key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
                 key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
             }
+			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+			key.setProject(project);
             an = new DescriptorNode(key, children, lookup);
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);
@@ -77,6 +80,8 @@ public class NodeFactory implements INodeFactory {
             //merge factory lookup from parent nodes with this container node lookup
             cn = new ContainerNode((IContainer<IBasicDescriptor>) key, c, 
                     lookup);
+			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+			key.setProject(project);
             return cn;
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);

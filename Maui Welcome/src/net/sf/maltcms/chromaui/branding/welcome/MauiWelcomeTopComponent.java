@@ -28,14 +28,17 @@
 package net.sf.maltcms.chromaui.branding.welcome;
 
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -100,10 +103,15 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
 
     private void setContent(URL u) {
         editorPane.setContentType("text/html");
+//		Font font = UIManager.getFont("Label.font");
+		Font font = new Font("Arial", 12, Font.PLAIN);
+        String bodyRule = "body { font-family: " + font.getFamily() + "; " +
+                "font-size: " + font.getSize() + "pt; }";
         try {
             editorPane.setPage(u);
             editorPane.removeHyperlinkListener(this);
             editorPane.addHyperlinkListener(this);
+			((HTMLDocument)editorPane.getDocument()).getStyleSheet().addRule(bodyRule);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

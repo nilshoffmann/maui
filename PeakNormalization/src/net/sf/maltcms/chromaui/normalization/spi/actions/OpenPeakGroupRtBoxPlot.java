@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.actions;
 
+import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
+import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -45,6 +47,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
@@ -81,6 +84,10 @@ public final class OpenPeakGroupRtBoxPlot implements ActionListener {
 
             JScrollPane jsp = new JScrollPane(bg);
             pgbpt.add(jsp, BorderLayout.CENTER);
+			IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
+			for(IPeakGroupDescriptor pgd:context) {
+				registry.registerTopComponentFor(pgd, pgbpt);
+			}
             pgbpt.open();
             pgbpt.requestActive();
         }else{

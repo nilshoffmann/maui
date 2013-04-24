@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.project.spi.project;
 
+import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
+import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -39,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import maltcms.ui.project.SimpleChromAProject;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
@@ -61,7 +62,6 @@ import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.CopyOperationImplementation;
 import org.netbeans.spi.project.DeleteOperationImplementation;
 import org.netbeans.spi.project.ProjectState;
-import org.netbeans.spi.project.SubprojectProvider;
 import org.netbeans.spi.project.ui.ProjectOpenedHook;
 import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.DialogDisplayer;
@@ -160,6 +160,9 @@ public class ChromAUIProject implements IChromAUIProject {
         for(IContainer container:ic) {
             System.out.println("Adding container: "+ic.toString());
             ics.create(container);
+			if(container.getProject()==null) {
+				container.setProject(this);
+			}
         }
         refresh();
     }
@@ -229,6 +232,11 @@ public class ChromAUIProject implements IChromAUIProject {
 			ICrudSession ics = icp.createSession();
 			Collection<T> l = ics.retrieve(c);
 			ics.close();
+			for(IContainer container:l) {
+				if(container.getProject()==null) {
+					container.setProject(this);
+				}
+			}
 			return l;
 		}
 		return Collections.emptyList();
@@ -299,7 +307,17 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public FileObject getOutputDir() {
-        return getSetting("output.basedir", FileObject.class);
+		try{
+			return getSetting("output.basedir", FileObject.class);
+		}catch(NullPointerException npe) {
+			try {
+				return FileUtil.createFolder(parentFile, "output");
+			} catch (IOException ex) {
+				File outdir = new File(FileUtil.toFile(parentFile),"output");
+				outdir.mkdirs();
+				return FileUtil.toFileObject(outdir);
+			}
+		}
     }
 
     @Override
@@ -441,6 +459,9 @@ public class ChromAUIProject implements IChromAUIProject {
 
         @Override
         protected void projectClosed() {
+			IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
+			Project project = getLookup().lookup(Project.class);
+			registry.closeTopComponentsForProject(project);
             closeSession();
         }
     }

@@ -37,6 +37,7 @@ import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DDataset;
 import net.sf.maltcms.chromaui.charts.overlay.Peak2DOverlay;
+import net.sf.maltcms.chromaui.charts.units.RTUnit;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.panel.Chromatogram2DViewerPanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
@@ -167,7 +168,9 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
 //            progressHandle.progress("Adding peak overlays");
         if (project != null) {
             for (Peak1DContainer peaks : project.getPeaks(chromatogram)) {
-                cp.addOverlay(new Peak2DOverlay(peaks));
+				Peak2DOverlay overlay = new Peak2DOverlay(chromatogram, peaks.getName(), peaks.getDisplayName(), peaks.getShortDescription(), true, peaks);
+                cp.addOverlay(overlay);
+				content.add(overlay);
             }
         }
 //            panel.addAxisListener();
@@ -194,10 +197,11 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         xybr.setBlockAnchor(RectangleAnchor.CENTER);
         double spm = modulationTime * scanRate;
         double scanDuration = modulationTime / spm;
+		RTUnit rtUnit = RTUnit.SECONDS;
         xybr.setBlockHeight(scanDuration);
         xybr.setToolTipGenerator(new StandardXYZToolTipGenerator("{0}: @({1}, {2}) = {3}", DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance()));
-        NumberAxis rt1 = new NumberAxis("RT1 [sec]");
-        NumberAxis rt2 = new NumberAxis("RT2 [sec]");
+        NumberAxis rt1 = new NumberAxis("RT1 ["+rtUnit.name().toLowerCase()+"]");
+        NumberAxis rt2 = new NumberAxis("RT2 ["+rtUnit.name().toLowerCase()+"]");
         rt1.setAutoRange(false);
         rt1.setLowerBound(ds.getMinX());
         rt1.setUpperBound(ds.getMaxX());

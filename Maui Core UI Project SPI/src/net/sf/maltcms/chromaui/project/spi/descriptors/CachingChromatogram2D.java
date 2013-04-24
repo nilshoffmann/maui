@@ -317,28 +317,42 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public int getIndexFor(double scan_acquisition_time) {
-//        init();
 		double[] d = (double[]) getScanAcquisitionTime().get1DJavaArray(
 				double.class);
+		double[] ds = (double[]) getScanAcquisitionTime().get1DJavaArray(
+				double.class);
+		Arrays.sort(ds);
+		if (!Arrays.equals(d, ds)) {
+			throw new IllegalStateException("scan_acquisition_time values must be sorted!");
+		}
 		int idx = Arrays.binarySearch(d, scan_acquisition_time);
 		if (idx >= 0) {// exact hit
 			log.info("sat {}, scan_index {}",
 					scan_acquisition_time, idx);
 			return idx;
 		} else {// imprecise hit, find closest element
-
+			//insertion index
+			//insert after
+			idx = -idx - 1;
+			int insertAfter = Math.max(0, Math.min(idx, d.length - 1));
+			int next = Math.min(idx + 1, d.length - 1);
+			if (insertAfter == next) {
+				return insertAfter;
+			}
+			System.out.println("InsertAfter: "+insertAfter + " @"+d[insertAfter]);
+			System.out.println("Next: "+next+" @"+d[next]);
 			//FIXME validate
-			double current = d[Math.min(d.length - 1, (-idx) + 1)];
-			double previous = d[Math.max(0, Math.min((-idx), d.length - 1))];
-			if (Math.abs(scan_acquisition_time - previous) < Math.abs(
-					scan_acquisition_time - current)) {
+			double currentSat = d[insertAfter];
+			double nextSat = d[next];
+			if (Math.abs(scan_acquisition_time - currentSat) < Math.abs(
+					scan_acquisition_time - nextSat)) {
 				log.info("sat {}, scan_index {}",
-						scan_acquisition_time, (-idx) + 1);
-				return Math.max(0, Math.min((-idx) + 1, d.length - 1));
+						scan_acquisition_time, insertAfter);
+				return insertAfter;
 			} else {
 				log.info("sat {}, scan_index {}",
-						scan_acquisition_time, -idx);
-				return Math.max(0, Math.min((-idx), d.length - 1));
+						scan_acquisition_time, next);
+				return next;
 			}
 		}
 	}

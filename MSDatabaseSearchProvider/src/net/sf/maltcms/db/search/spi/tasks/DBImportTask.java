@@ -84,8 +84,7 @@ public class DBImportTask extends AProgressAwareRunnable {
 
     @Override
     public void run() {
-        getProgressHandle().setDisplayName(getClass().
-                getName());
+        getProgressHandle().setDisplayName("Importing "+databaseType+" database");
         getProgressHandle().start(selectedDatabases.length);
         DatabaseContainer dbContainer = new DatabaseContainer();
         dbContainer.setName(getDatabaseContainerName());
@@ -197,10 +196,11 @@ public class DBImportTask extends AProgressAwareRunnable {
                 }
                 return;
             }
-            getProgressHandle().finish();
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
-        }
+        } finally {
+			getProgressHandle().finish();
+		}
     }
 
     @Override

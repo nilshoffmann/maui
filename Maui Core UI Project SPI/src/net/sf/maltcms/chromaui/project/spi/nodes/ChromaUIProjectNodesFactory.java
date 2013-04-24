@@ -176,6 +176,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 				ContainerNode cn = new ContainerNode((IContainer) key, new ProxyLookup(cp.getLookup()));
 				cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
 				((IContainer) key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
+				((IContainer)key).setProject(cp);
 				return cn;
 			} catch (IntrospectionException ex) {
 				Exceptions.printStackTrace(ex);
