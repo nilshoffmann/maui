@@ -67,9 +67,9 @@
 	<target name="upload-homepage" description="Deploys homepage" depends="upload-credentials">
 		<exec command="rsync" inputstring="">
 			<arg value="-avtruP"/>
-			<arg value="-e ssh "/>
+			<arg value="--rsh='ssh -p25011'"/>
 			<arg value="site/public_html/"/>
-			<arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/"/>
+			<arg value="${upload.username}@maltcms.de:/var/www/maui/"/>
 		</exec>    
 	</target>
     
@@ -81,7 +81,7 @@
 		<exec command="rsync" inputstring="">
 			<arg value="-avtruP"/>
 			<arg value="--recursive"/>
-			<arg value="-e ssh "/>
+			<arg value="--rsh='ssh -p25011'"/>
 			<arg value="build/updates/"/>
 			<arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>
 		</exec>
@@ -93,9 +93,9 @@
 		<exec command="rsync" inputstring="">
 			<arg value="-avtruP"/>
 			<arg value="--recursive"/>
-			<arg value="-e ssh "/>
+			<arg value="-e ssh"/>
 			<arg value="dist/"/>
-			<arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/downloads/"/>
+            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}/"/>
 		</exec>    
 	</target>
 	
@@ -140,10 +140,10 @@
 	
 	<!-- OVERRIDE build-zip so that it produces a .zip file with the App Title and Version number in it.  -->
 	<!-- Requires App.Version and App Title generated -->
-	<target name="build-zip" depends="build,build-launchers" description="Builds a ZIP distribution of the suite, launchers, and selected modules from the platform.">
+<!--	<target name="build-zip" depends="build-versioned,build-launchers" description="Builds a ZIP distribution of the suite, launchers, and selected modules from the platform.">
 		<mkdir dir="${dist.dir}"/>
-		<!-- pathfileset does not support 'prefix' and 'filemode' parameters,
-		we have to copy them to temp location -->
+		 pathfileset does not support 'prefix' and 'filemode' parameters,
+		we have to copy them to temp location 
 		<tempfile property="temp.dir.nbexec" destdir="${suite.build.dir}" deleteonexit="true" prefix="nbexec"/>
 		<tempfile property="temp.dir.rest" destdir="${suite.build.dir}" deleteonexit="delete" prefix="rest"/>
 		<subant genericantfile="${harness.dir}/suite.xml" target="copy-cluster" inheritrefs="true">
@@ -158,13 +158,13 @@
 			<zipfileset dir="${temp.dir.nbexec}" filemode="755" prefix="${app.name}"/>
 			<zipfileset dir="${temp.dir.rest}" prefix="${app.name}"/>
 
-			<!-- Yes, the doubled app.name is a bit ugly, but better than the alternative; cf. #66441: -->
+			 Yes, the doubled app.name is a bit ugly, but better than the alternative; cf. #66441: 
 			<zipfileset dir="${cluster}" prefix="${app.name}/${app.name}">
 				<exclude name="config/Modules/*.xml_hidden"/>
 			</zipfileset>
             
 		</zip>
-	</target>
+	</target>-->
 	
 	<target name="javadoc" depends="-init,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
 		<!--<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>-->
