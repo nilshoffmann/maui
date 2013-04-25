@@ -172,7 +172,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         sb.append("\"");
         int i = 0;
         for (File s : inputFiles) {
-            sb.append(s.getAbsolutePath());
+            sb.append(s.toURI().toString());
             if (inputFiles.length > 1 && i<inputFiles.length-1) {
                 sb.append(",");
             }
