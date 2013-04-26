@@ -74,7 +74,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
     @Override
     public void run() {
 //        try {
-        progressHandle.start();
+        progressHandle.start(container.getMembers().size());
         try {
             RConnection c = RserveConnectionFactory.getDefaultConnection();
             try {
@@ -83,6 +83,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                 anovaDescriptors.setMethod("Anova");
                 anovaDescriptors.setDisplayName("Analysis of Variance");
                 int maxFactors = 0;
+				int unit = 0;
                 List<double[]> pvalues = new ArrayList<double[]>();
                 for (IPeakGroupDescriptor descr : container.getMembers()) {
                     int i = 0;
@@ -204,7 +205,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                         anovaDescriptors.addMembers(ad);
                         ad.setPvalueAdjustmentMethod(pvalueAdjustmentMethod.getDisplayName());
                     }
-
+					progressHandle.progress(unit++);
                 }
                 adjustPvalues(pvalues, maxFactors, c, anovaDescriptors);
 
@@ -215,7 +216,8 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                 }
                 statContainers.add(anovaDescriptors);
                 container.setStatisticsContainers(statContainers);
-
+				progressHandle.progress("Adding Anova results");
+				project.updateContainer(container);
                 // close RConnection, we're done
                 //c.close();
             } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
@@ -229,7 +231,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                         + e.getMessage());
                 Exceptions.printStackTrace(e);
             }
-            project.refresh();
+//            project.refresh();
 //            } catch (RserveException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }
