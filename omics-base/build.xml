@@ -36,7 +36,7 @@
         <exec executable="rsync" inputstring="">
             <arg value="-avtruP"/>
 			<arg value="--recursive"/>
-            <arg value="--rsh='ssh -p25011'"/>
+            <arg value="-e ssh"/>
             <arg value="build/updates/"/>
             <arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>
         </exec>
