@@ -147,6 +147,18 @@ public class XYChartBuilder {
         this.chart = new JFreeChart(title, chartTitleFont, plot, chartCreateLegend);
         return this;
     }
+	
+	public XYChartBuilder domainAxis(ValueAxis axis) {
+		notNull(axis);
+		this.domainAxis = axis;
+		return this;
+	}
+	
+	public XYChartBuilder rangeAxis(ValueAxis axis) {
+		notNull(axis);
+		this.rangeAxis = axis;
+		return this;
+	}
     
     public XYChartBuilder plot() {
         this.plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);

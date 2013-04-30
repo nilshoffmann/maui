@@ -33,6 +33,7 @@ import com.db4o.collections.ActivatableCollection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 

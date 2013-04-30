@@ -36,4 +36,5 @@ public interface ITreatmentGroupDescriptor extends IBasicDescriptor, IColorizabl
     String getComment();
 
     void setComment(String comment);
+	
 }

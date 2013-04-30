@@ -43,7 +43,7 @@ public class DatasetUtils {
 
     public static Numeric1DDataset<Point2D> createDataset() {
         INamedElementProvider<? extends List<Point2D>, ? extends Point2D> nep = new INamedElementProvider<List<Point2D>, Point2D>() {
-            private List<Point2D> points = createSamplePoints(5000);
+            private List<Point2D> points = createSamplePoints(500);
 
             @Override
             public List<Point2D> getSource() {
@@ -89,7 +89,12 @@ public class DatasetUtils {
         Random r = new Random(System.nanoTime());
         List<Point2D> points = new ArrayList<Point2D>();
         for (int i = 0; i < n; i++) {
-            points.add(new Point2D.Double(2 * i + (r.nextGaussian() - 0.5d), r.nextDouble() * 256.0d));
+			double random = Math.random();
+//			if(random>0.95) {
+//				points.add(new Point2D.Double(Double.POSITIVE_INFINITY,r.nextDouble() * 256.0d));
+//			}else{
+				points.add(new Point2D.Double(2 * i + (r.nextGaussian() - 0.5d), r.nextDouble() * 256.0d));
+//			}
         }
         return points;
     }

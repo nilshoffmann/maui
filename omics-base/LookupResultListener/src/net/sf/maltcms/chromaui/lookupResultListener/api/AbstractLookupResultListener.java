@@ -34,7 +34,10 @@ import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 
 /**
- *
+ * Abstract base class for implementations of a typed {@link org.openide.util.LookupListener}, 
+ * supporting additional methods from {@link ILookupResultListener} for dynamic registration and 
+ * deregistration.
+ * 
  * @author Nils Hoffmann
  */
 public abstract class AbstractLookupResultListener<T> implements LookupListener, ILookupResultListener {

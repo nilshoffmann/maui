@@ -30,14 +30,13 @@ package net.sf.maltcms.chromaui.project.api.container;
 import com.db4o.activation.ActivationPurpose;
 import java.awt.Color;
 import java.awt.Image;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import org.openide.util.ImageUtilities;
 
 /**
- *
+ * Container for chromatogram descriptors belonging to one specific treatment group.
+ * 
  * @author Nils Hoffmann
  */
 public class TreatmentGroupContainer extends ADatabaseBackedContainer<IChromatogramDescriptor>
@@ -68,21 +67,21 @@ public class TreatmentGroupContainer extends ADatabaseBackedContainer<IChromatog
 
     @Override
     public String getComment() {
-        return treatmentGroup.getComment();
+        return getTreatmentGroup().getComment();
     }
 
     @Override
     public void setComment(String comment) {
-        treatmentGroup.setComment(comment);
+        getTreatmentGroup().setComment(comment);
     }
 
     @Override
     public Color getColor() {
-        return treatmentGroup.getColor();
+        return getTreatmentGroup().getColor();
     }
 
     @Override
     public void setColor(Color color) {
-        treatmentGroup.setColor(color);
+        getTreatmentGroup().setColor(color);
     }
 }

@@ -20,24 +20,20 @@
     <target name="prepare-release" description="Prepares a release" depends="build,test,nbms">
     </target>
 
-    <target name="deploy" description="Deploys release files" depends="upload-credentials,upload-updatecenter">
+    <target name="deploy" description="Deploys release files" depends="upload-credentials,upload-homepage,upload-updatecenter">
     </target>
     
-<!--    <target name="upload-homepage" description="Deploys homepage" depends="upload-credentials">
+    <target name="upload-homepage" description="Deploys homepage" depends="upload-credentials">
         <exec command="rsync" inputstring="">
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
-            <arg value="homepage/"/>
-            <arg value="${upload.username},maltcms@web.sourceforge.net:htdocs/${project.release.path}"/>
+            <arg value="build/site/"/>
+            <arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/"/>
         </exec>    
-    </target>-->
+    </target>
     
     <target name="upload-updatecenter" description="Upload update center" depends="upload-credentials">
-                <!--<echo message="Do not forget to supply -Dusername -Dpassword to ant when running the upload target!" />-->
-                <!--<scp todir="${sf.username},maltcms@web.sourceforge.net:htdocs/" password="${sf.username.password}" sftp="true" trust="true" verbose="true">
-                        <fileset dir="${release_dir}/site/" />
-                </scp>-->
-        <exec command="rsync" inputstring="">
+        <exec executable="rsync" inputstring="">
             <arg value="-avtruP"/>
 			<arg value="--recursive"/>
             <arg value="--rsh='ssh -p25011'"/>
@@ -45,90 +41,121 @@
             <arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>
         </exec>
     </target>
-<!--    <target name="upload-build" description="Deploys zip distribution" depends="build-zip,upload-credentials">
-        <tstamp>
-            <format property="deploy.time" pattern="yyyy-MM-dd"/>
-        </tstamp>
-        <exec command="rsync" inputstring="">
-            <arg value="-avtruP"/>
-            <arg value="-e ssh "/>
-            <arg value="dist/"/>
-            <arg value="${upload.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}"/>
-        </exec>    
-    </target>-->
 	
-<!--	 Alternative build target to add update branding version number 
-	<target name="build-versioned" depends="-init,branding,release,-hide-excluded-modules,build-brand" description="Build all modules in the suite while updating version timestamp.">
-		<subant target="netbeans" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false">
-			<property name="cluster.path.evaluated" value="${cluster.path.evaluated}"/>  Just for speed of pre-7.0 projects 
-		</subant>
+	<target name="-init-ant-contrib">
+		<echo>Configuring ant-contrib for Netbeans use...</echo>
+		<property name="ant-contrib-loc" value="${basedir}/../tools/ant/ant-contrib-1.0b3.jar"/>
+		<available file="${ant-contrib-loc}" property="ant-contrib.present"/>
+		<fail unless="ant-contrib.present" message="The ant-contrib jar doesn't exist at: ${ant-contrib-loc}, can't build. Check your settings!" />
+		<!--We are not in Hudson-->
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<pathelement location="${ant-contrib-loc}"/>
+			</classpath>
+		</taskdef>
 	</target>
 	
-	 Alternative build target to add update branding version number 
-	<target name="build-brand" depends="pre-init,-init">
-		<propertyfile
-			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
-			comment="Updated by build script">
-			<entry key="currentVersion" value="${app.title} ${app.version} " />
-		</propertyfile>
-
-		<propertyfile
-			file="${basedir}/branding/modules/org-netbeans-core-windows.jar/org/netbeans/core/windows/view/ui/Bundle.properties"
-			comment="Updated by build script">
-			<entry key="CTL_MainWindow_Title" value="${app.title} ${app.version}" />
-			<entry key="CTL_MainWindow_Title_No_Project" value="${app.title} ${app.version}" />
-		</propertyfile>
-
-		<propertyfile
-			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
-			comment="Updated by build script">
-			<entry key="LBL_ProductInformation" value="${app.title}" />
-		</propertyfile>
-
-	</target>
-	 Additional target needed to generate the App version number based on compile time 
-	<target name="pre-init">
-		<tstamp prefix="build"/>
-		<propertyfile file="${basedir}/nbproject/project.properties"
-					  comment="Updated by build script">
-			<entry key="app.version" value="${build.DSTAMP}_${build.TSTAMP}" />
-		</propertyfile>
-		<echo>APP.VERSION=${app.title}_${build.DSTAMP}_${build.TSTAMP} </echo>
-	</target>
-	
-	 OVERRIDE build-zip so that it produces a .zip file with the App Title and Version number in it.  
-	 Requires App.Version and App Title generated 
-	<target name="build-zip" depends="build,build-launchers" description="Builds a ZIP distribution of the suite, launchers, and selected modules from the platform.">
-		<mkdir dir="${dist.dir}"/>
-		 pathfileset does not support 'prefix' and 'filemode' parameters,
-		we have to copy them to temp location 
-		<tempfile property="temp.dir.nbexec" destdir="${suite.build.dir}" deleteonexit="true" prefix="nbexec"/>
-		<tempfile property="temp.dir.rest" destdir="${suite.build.dir}" deleteonexit="delete" prefix="rest"/>
-		<subant genericantfile="${harness.dir}/suite.xml" target="copy-cluster" inheritrefs="true">
-			<property name="dest.dir" value="${temp.dir.rest}"/>
-			<property name="nbexec.dir" value="${temp.dir.nbexec}"/>
-			<property name="build.dir" value="${suite.build.dir}"/>
-			<resources refid="zip.platform.clusters"/>
-		</subant>
-		<zip destfile="${dist.dir}/${app.title}_${app.version}.zip">
-			<zipfileset dir="${build.launcher.dir}/bin/" filemode="755" prefix="${app.name}/bin"/>
-			<zipfileset dir="${build.launcher.dir}/etc/" prefix="${app.name}/etc"/>
-			<zipfileset dir="${temp.dir.nbexec}" filemode="755" prefix="${app.name}"/>
-			<zipfileset dir="${temp.dir.rest}" prefix="${app.name}"/>
-
-			 Yes, the doubled app.name is a bit ugly, but better than the alternative; cf. #66441: 
-			<zipfileset dir="${cluster}" prefix="${app.name}/${app.name}">
-				<exclude name="config/Modules/*.xml_hidden"/>
-			</zipfileset>
-            
-		</zip>
-	</target>-->
-	
-	<target name="javadoc" depends="-init,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
+	<target name="javadoc" depends="-init,-init-ant-contrib,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
+		<!-- create a path for later reference -->
+		<path id="modules.sorted.path">
+			<pathelement path="${modules.sorted}"/>
+		</path>
 		<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
+		<mkdir dir="${basedir}/build/site/javadoc"/>
+		<copy todir="${basedir}/build/site/javadoc" flatten="false">
+			<fileset dir="${basedir}">
+				<include name="**/build/javadoc/**"/>
+				<exclude name="build/javadoc/**"/>
+			</fileset>
+			<cutdirsmapper dirs="3"/>
+		</copy>
+		<copy todir="${basedir}/build/site/" flatten="false">
+			<fileset dir="${basedir}/site/public_html">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<echo>Modules sorted: ${modules.sorted}</echo>
+		<echo file="${basedir}/build/site/javadoc/index.html"><![CDATA[
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
+	<body>
+		<div>Modules</div>
+		<ul>
+]]></echo>
+		<for param="file">
+			<path refid="modules.sorted.path"/>
+			<sequential>
+				<echo>Adding JavaDoc for Module: @{file}</echo>
+				<pathconvert property="relative-path">
+					<path path="@{file}"/>
+					<chainedmapper>
+						<regexpmapper from=".*/(.+)$" to="\1" casesensitive="no"/>
+					</chainedmapper>
+				</pathconvert>
+				<echo level="info">Module Relative Path: ${relative-path}</echo>
+				<!-- Retrieve official module name, not the javadoc link name -->
+				<loadfile srcfile="${relative-path}/manifest.mf" property="localizing-bundle.location">
+					<filterchain>
+						<linecontains>
+							<contains value="OpenIDE-Module-Localizing-Bundle"/>
+						</linecontains>
+						<!-- avoid newlines in filtered output -->
+						<tokenfilter delimoutput="">
+							<!-- remove prefix, trim whitespace -->
+							<replacestring from="OpenIDE-Module-Localizing-Bundle:" to=""/>
+							<trim/>
+						</tokenfilter>
+					</filterchain>
+				</loadfile>
+				<loadfile srcfile="${relative-path}/manifest.mf" property="module-javadoc.location">
+					<filterchain>
+						<linecontains>
+							<contains value="OpenIDE-Module:"/>
+						</linecontains>
+						<!-- avoid newlines in filtered output -->
+						<tokenfilter delimoutput="">
+							<!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
+							<replacestring from="OpenIDE-Module:" to=""/>
+							<replaceregex pattern="/[0-9]+" replace="" flags="gi"/>
+							<trim/>
+						</tokenfilter>
+					</filterchain>
+				</loadfile>
+				<!-- replace dots with hyphens/dashes -->
+				<propertyregex property="module-javadoc-hyphenated.location" input="${module-javadoc.location}" regexp="\." replace="-" global="true" />
+				<echo level="info">Localizing Bundle location: ${localizing-bundle.location}</echo>
+				<echo level="info">Module javadoc relative location: ${module-javadoc-hyphenated.location}</echo>
+				<if>
+					<available file="${basedir}/build/site/javadoc/${module-javadoc-hyphenated.location}/index.html"/>
+					<then>
+						<!-- append link to index.html-->
+						<echo file="${basedir}/build/site/javadoc/index.html" append="true"><![CDATA[
+<li><a href="${module-javadoc-hyphenated.location}/index.html">${relative-path}</a></li>
+]]></echo>
+					</then>
+					<else>
+						<echo level="warn">Skipping due to missing javadoc at ${basedir}/build/site/javadoc/${module-javadoc-hyphenated.location}</echo>
+					</else>
+				</if>
+				<!-- reset properties for next module -->
+				<var name="relative-path" unset="true"/>
+				<var name="localizing-bundle.location" unset="true"/>
+				<var name="module-javadoc.location" unset="true"/>
+				<var name="module-javadoc-hyphenated.location" unset="true"/>
+			</sequential>
+		</for>
+		<echo file="${basedir}/build/site/javadoc/index.html" append="true"><![CDATA[
+</ul>
+	</body>
+</html>
+]]></echo>		
 	</target> 
-
-<!--    <target name="-pre-init" depends="">
-    </target>-->
-<!--    <target name="-init" depends="-pre-init,suite.-init"/>-->
+	
+	<target name="zip-javadoc" depends="javadoc">
+		<zip destfile="${basedir}/build/site/javadoc.zip" basedir="${basedir}/build/site/javadoc"/>
+	</target>
 </project>

@@ -32,9 +32,11 @@ import java.io.File;
 import java.util.Collection;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 
 /**
@@ -60,6 +62,10 @@ public interface IMauiProject extends PropertyChangeListener {
     Collection<Peak1DContainer> getPeaks(IChromatogramDescriptor descriptor);
 
     Collection<ITreatmentGroupDescriptor> getTreatmentGroups();
+	
+	Collection<ISampleGroupDescriptor> getSampleGroups();
+	
+	Collection<SampleGroupContainer> getSampleGroupsForTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup);
 
     void removeContainer(IContainer... ic);
 
@@ -70,5 +76,5 @@ public interface IMauiProject extends PropertyChangeListener {
     File getOutputLocation(Object exporter);
     
     File getImportLocation(Object importer);
-    
+	
 }

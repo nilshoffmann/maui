@@ -28,45 +28,61 @@
 package net.sf.maltcms.chromaui.project.api.container;
 
 import com.db4o.activation.ActivationPurpose;
+import java.awt.Color;
 import java.awt.Image;
-import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import org.openide.util.ImageUtilities;
 
 /**
- * FIXME IStatisticsDescriptor needs a refactoring 
+ * Container for chromatogram descriptors belonging to one specific sample group, 
+ * for example for technical sample replicates.  
+ * 
  * @author Nils Hoffmann
  */
-public class StatisticsContainer extends ADatabaseBackedContainer<IStatisticsDescriptor> {
-
-    private String method;
-    public static final String PROP_METHOD = "method";
-
-    /**
-     * Get the value of method
-     *
-     * @return the value of method
-     */
-    public String getMethod() {
-        activate(ActivationPurpose.READ);
-        return method;
-    }
-
-    /**
-     * Set the value of method
-     *
-     * @param method new value of method
-     */
-    public void setMethod(String method) {
-        activate(ActivationPurpose.WRITE);
-        String oldMethod = this.method;
-        this.method = method;
-        firePropertyChange(PROP_METHOD, oldMethod, method);
-    }
+public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogramDescriptor>
+        implements ISampleGroupDescriptor {
     
+    private ISampleGroupDescriptor sampleGroup;
+
+    public static String PROP_SAMPLEGROUP = "sampleGroup";
+    
+    public ISampleGroupDescriptor getSampleGroup() {
+        activate(ActivationPurpose.READ);
+        return this.sampleGroup;
+    }
+
+    public void setSampleGroup(ISampleGroupDescriptor sampleGroup) {
+        activate(ActivationPurpose.WRITE);
+        ISampleGroupDescriptor old = this.sampleGroup;
+        this.sampleGroup = sampleGroup;
+        firePropertyChange(PROP_SAMPLEGROUP,
+                old, this.sampleGroup);
+    }
+
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
-                "net/sf/maltcms/chromaui/project/resources/Statistics.png");
+                "net/sf/maltcms/chromaui/project/resources/Replicate.png");
     }
 
+    @Override
+    public String getComment() {
+        return getSampleGroup().getComment();
+    }
+
+    @Override
+    public void setComment(String comment) {
+        getSampleGroup().setComment(comment);
+    }
+
+    @Override
+    public Color getColor() {
+        return getSampleGroup().getColor();
+    }
+
+    @Override
+    public void setColor(Color color) {
+        getSampleGroup().setColor(color);
+    }
 }

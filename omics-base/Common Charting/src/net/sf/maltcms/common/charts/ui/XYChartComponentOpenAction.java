@@ -30,10 +30,14 @@ package net.sf.maltcms.common.charts.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.XYChartBuilder;
 import net.sf.maltcms.common.charts.api.dataset.DatasetUtils;
 import net.sf.maltcms.common.charts.api.dataset.Numeric1DDataset;
+import org.jfree.chart.axis.InfNumberAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.openide.awt.ActionID;
@@ -67,7 +71,41 @@ public final class XYChartComponentOpenAction implements ActionListener {
                 XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
                 renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
                 renderer.setBaseItemLabelsVisible(true);
-                builder.xy(dataset).renderer(renderer).plot().chart("Sample plot").createLegend(true);
+				InfNumberAxis domain = new InfNumberAxis("x-axis");
+				domain.setLowerBound(-100);
+				domain.setUpperBound(1000);
+				domain.setLowerMargin(0.1);
+				domain.setUpperMargin(0.1);
+				domain.setPositiveArrowVisible(true);
+				domain.setNegativeArrowVisible(true);
+				domain.setAutoRange(false);
+				domain.setNumberFormatOverride(new NumberFormat() {
+
+					@Override
+					public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+						if(Double.isInfinite(number)) {
+							if(number==Double.NEGATIVE_INFINITY){
+								toAppendTo.append("-Inf");
+							}else{
+								toAppendTo.append("+Inf");
+							}
+						}else{
+							toAppendTo.append(String.format("%.2f", number));
+						}
+						return toAppendTo;
+					}
+
+					@Override
+					public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+						return format((double)number ,toAppendTo, pos);
+					}
+
+					@Override
+					public Number parse(String source, ParsePosition parsePosition) {
+						return null;
+					}
+				});
+                builder.xy(dataset).renderer(renderer).domainAxis(domain).plot().chart("Sample plot").createLegend(true);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
