@@ -5,5 +5,5 @@ OpenIDE-Module-Layer: net/sf/maltcms/chromaui/project/spi/layer.xml
 OpenIDE-Module-Requires: 
   cnb.org.netbeans.modules.projectui,
   net.sf.maltcms.chromaui.project.subprojectProvider
-OpenIDE-Module-Specification-Version: 1.0
+OpenIDE-Module-Specification-Version: 1.0.1
 

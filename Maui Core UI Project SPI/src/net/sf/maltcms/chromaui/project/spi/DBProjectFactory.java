@@ -59,6 +59,7 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.project.ChromAUIProject;
 import net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api.ChromaTOFImporter;
+import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
 import net.sf.maltcms.chromaui.project.api.types.GCGC;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
 import org.apache.commons.io.FileUtils;
@@ -147,19 +148,30 @@ public class DBProjectFactory {
                     "groupMapping");
             File[] inputFiles = toFileArray((String) o, ",");
             handle.progress("Importing data",2);
-            fileToGroup = importChromatograms(props, projdir, inputFiles, fileToGroup);
+			Map<File, File> importFileMap = new LinkedHashMap<File,File>();
+            fileToGroup = importChromatograms(props, projdir, inputFiles, fileToGroup, importFileMap);
             LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor = new LinkedHashMap<File, IChromatogramDescriptor>();
             handle.progress("Populating database",3);
             initChromatograms(props, inputFiles, projdir,
                     separationType, detectorType, fileToDescriptor);
             addNormalizationDescriptors(props, fileToDescriptor);
-
+			//add treatment groups
             LinkedHashSet<String> groups = new LinkedHashSet<String>();
             LinkedHashMap<String, Set<File>> groupToFile = new LinkedHashMap<String, Set<File>>();
             initGroups(groups, fileToGroup, groupToFile);
-
             System.out.println("Group to file: " + groupToFile);
             addTreatmentGroups(groupToFile, fileToDescriptor, icui);
+			//add sample groups
+			LinkedHashSet<String> sampleGroups = new LinkedHashSet<String>();
+			LinkedHashMap<String, Set<File>> sampleGroupToFile = new LinkedHashMap<String, Set<File>>();
+			Map<File, String> fileToSampleGroup = (Map<File, String>) props.get(
+                    "sampleGroupMapping");
+			System.out.println("File to sample group 1: " + fileToSampleGroup);
+			fileToSampleGroup = remapInputFiles(fileToSampleGroup, importFileMap);
+			System.out.println("File to sample group 2: " + fileToSampleGroup);
+			initSampleGroups(sampleGroups, fileToSampleGroup, sampleGroupToFile);
+			System.out.println("Sample group to file: " + sampleGroupToFile);
+			addSampleGroups(sampleGroupToFile, fileToDescriptor, icui);
             handle.progress("Creating file layout",4);
             createSubdirectories(props, icui, projdir, fileToGroup);
             icui.closeSession();
@@ -171,6 +183,14 @@ public class DBProjectFactory {
             handle.finish();
         }
     }
+	
+	private static Map<File,String> remapInputFiles(Map<File,String> fileToStringMap, Map<File,File> importFileMap) {
+		Map<File,String> remappedMap = new LinkedHashMap<File,String>();
+		for(File file:fileToStringMap.keySet()) {
+			remappedMap.put(importFileMap.get(file),fileToStringMap.get(file));
+		}
+		return remappedMap;
+	}
 
     private static void createSubdirectories(Map<String, Object> props,
             IChromAUIProject icui, File projdir,
@@ -206,12 +226,36 @@ public class DBProjectFactory {
         }
     }
 
+	private static void addSampleGroups(LinkedHashMap<String, Set<File>> sampleGroupToFile,
+            LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor,
+            IChromAUIProject icui) {
+		for (String group : sampleGroupToFile.keySet()) {
+            ISampleGroupDescriptor sampleGroupDescriptor = new SampleGroupDescriptor();
+            sampleGroupDescriptor.setName(group);
+            sampleGroupDescriptor.setDisplayName(group);
+            SampleGroupContainer tgc = new SampleGroupContainer();
+            tgc.setSampleGroup(
+                    sampleGroupDescriptor);
+            ISampleGroupDescriptor sgd = new SampleGroupDescriptor();
+            sgd.setName(group);
+            sgd.setDisplayName(group);
+            Set<File> files = sampleGroupToFile.get(group);
+            for (File f : files) {
+                IChromatogramDescriptor descr = fileToDescriptor.get(f);
+                descr.setSampleGroup(sampleGroupDescriptor);
+                tgc.addMembers(descr);
+            }
+            tgc.setName(group);
+            tgc.setDisplayName(group);
+            icui.addContainer(tgc);
+        }
+	}
+	
     private static void addTreatmentGroups(
             LinkedHashMap<String, Set<File>> groupToFile,
             LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor,
             IChromAUIProject icui) {
         for (String group : groupToFile.keySet()) {
-//                TreatmentGroupDescriptor tg = new TreatmentGroupDescriptor(group);
             ITreatmentGroupDescriptor treatmentGroupDescriptor = new TreatmentGroupDescriptor();
             treatmentGroupDescriptor.setName(group);
             treatmentGroupDescriptor.setDisplayName(group);
@@ -222,21 +266,15 @@ public class DBProjectFactory {
             sgd.setName(group);
             sgd.setDisplayName(group);
             Set<File> files = groupToFile.get(group);
-//                Set<IChromatogramDescriptor> s = new LinkedHashSet<IChromatogramDescriptor>();
             for (File f : files) {
-//                    s.addMembers(
                 IChromatogramDescriptor descr = fileToDescriptor.get(f);
                 descr.setTreatmentGroup(treatmentGroupDescriptor);
                 tgc.addMembers(descr);
             }
-//                tgc.addMembers(s.toArray(new IChromatogramDescriptor[s.size()]));
             tgc.setName(group);
             tgc.setDisplayName(group);
-//                tg.setName(group);
-//                tgc.addMembers(tg);
             icui.addContainer(tgc);
         }
-//            icui.addContainer(tgc);
     }
 
     private static void initGroups(LinkedHashSet<String> groups,
@@ -259,10 +297,31 @@ public class DBProjectFactory {
             }
         }
     }
+	
+	private static void initSampleGroups(LinkedHashSet<String> sampleGroups,
+            Map<File, String> fileToSampleGroup,
+            LinkedHashMap<String, Set<File>> groupToFile) {
+        sampleGroups.addAll(fileToSampleGroup.values());
+        for (String sampleGroup : sampleGroups) {
+            for (File key : fileToSampleGroup.keySet()) {
+                if (fileToSampleGroup.get(key).equals(sampleGroup)) {
+                    if (groupToFile.containsKey(sampleGroup)) {
+                        Set<File> s = groupToFile.get(sampleGroup);
+                        s.add(key);
+                    } else {
+                        Set<File> s = new LinkedHashSet<File>();
+                        s.add(key);
+                        groupToFile.put(sampleGroup, s);
+                    }
+
+                }
+            }
+        }
+    }
 
     private static Map<File, String> importChromatograms(Map<String, Object> props,
             File projdir, File[] inputFiles,
-            Map<File, String> fileToGroup) throws RuntimeException, IOException {
+            Map<File, String> fileToGroup, Map<File, File> importFileMap) throws RuntimeException, IOException {
         Boolean copyFiles = (Boolean) props.get("copy.files");
         if (copyFiles.booleanValue()) {
             Map<File, String> newFileToGroup = new LinkedHashMap<File, String>();
@@ -282,6 +341,7 @@ public class DBProjectFactory {
                         String group = fileToGroup.get(file);
                         //fileToGroup.remove(file);
                         newFileToGroup.put(newFile, group);
+						importFileMap.put(file, newFile);
                         inputFiles[i] = newFile;
                     } else {
                         throw new RuntimeException(
@@ -294,7 +354,11 @@ public class DBProjectFactory {
                 Exceptions.printStackTrace(ex);
                 throw ex;
             }
-        }
+        }else{
+			for(File file:fileToGroup.keySet()) {
+				importFileMap.put(file, file);
+			}
+		}
         return fileToGroup;
     }
 

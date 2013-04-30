@@ -87,11 +87,9 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 
 	@Override
 	protected boolean createKeys(List<Object> list) {
+		//filter the following containers from the primary project view
 		List<IContainer> containers = filter(this.cp.getContainer(
-				IContainer.class), Peak1DContainer.class);
-//        List<IContainer> containers = new ArrayList<IContainer>(this.cp.
-//                getContainer(
-//                IContainer.class));
+				IContainer.class), Peak1DContainer.class, SampleGroupContainer.class);
 		for (IContainer ic : containers) {
 			if (Thread.interrupted()) {
 				return false;
@@ -99,6 +97,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 			if (ic.getPrecedence() == 0) {
 				if (ic instanceof TreatmentGroupContainer) {
 					ic.setPrecedence(100000);
+				} else if(ic instanceof SampleGroupContainer) {
+					ic.setPrecedence(150000);
 				} else if (ic instanceof DatabaseContainer) {
 					ic.setPrecedence(200000);
 				} else if (ic instanceof Peak1DContainer) {
@@ -116,9 +116,6 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 		if (Thread.interrupted()) {
 			return false;
 		} else {
-//                if (!ic.getClass().getName().equals(ChromatogramContainer.class.getName()) && !ic.getClass().getName().equals(TreatmentGroupContainer.class.getName())) {
-//                    list.add("db:" + ic.getClass().getName());
-//                }
 			for (IContainer ic : containers) {
 				if (Thread.interrupted()) {
 					return false;
@@ -134,33 +131,24 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 			list.add(fobj);
 		}
 		list.add("MALTCMS");
-//        for (FileObject fo : getFileChildren()) {
-//            if (Thread.interrupted()) {
-//                return true;
-//            } else {
-////                System.out.println(fobj.getNameExt());
-//                if (!fo.getNameExt().endsWith(DBProjectFactory.PROJECT_FILE)) {
-//                    list.add(fo);
-//                }
-//            }
-//        }
 		return true;
-
-//        System.out.println("Retrieved these containers: "+container.toString());
-//        list.addAll(filter(filter(container,ChromatogramContainer.class),TreatmentGroupContainer.class));
-//        list.addAll(getFileChildren());
-//        return true;
 	}
 
 	protected List<IContainer> filter(Collection<IContainer> l,
-			Class<? extends IContainer> toFilter) {
+			Class<? extends IContainer>... toFilter) {
 		List<IContainer> r = new ArrayList<IContainer>();
 		for (IContainer ic : l) {
 			if (Thread.interrupted()) {
 				return Collections.emptyList();
 			} else {
 				if (ic != null) {
-					if (!ic.getClass().getName().equals(toFilter.getName())) {
+					boolean add = true;
+					for(Class<? extends IContainer> contClass:toFilter) {
+						if (ic.getClass().getName().equals(contClass.getName())) {
+							add = false;
+						}
+					}
+					if(add) {
 						r.add(ic);
 					}
 				}

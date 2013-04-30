@@ -36,12 +36,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
-import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -58,44 +55,36 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author nilshoffmann
  */
-public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFactory<T> implements
+public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends ChildFactory<T> implements
         PropertyChangeListener {
 
-    final IContainer<T> cp;
+    final SampleGroupContainer cp;
     private Lookup lkp;
+	private IChromAUIProject project;
 
-    public ContainerNodeFactory(IContainer<T> cp, Lookup lkp) {
+    public SampleGroupContainerNodeFactory(SampleGroupContainer cp, Lookup lkp) {
         this.cp = cp;
         this.lkp = lkp;
+		this.project = lkp.lookup(IChromAUIProject.class);
         cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
     }
 
     @Override
     protected boolean createKeys(List<T> list) {
         try {
-			//if the parent is a TreatmentGroupContainer, insert
-			//appropriate SampleGroupContainers, if there are any
-			if(cp instanceof TreatmentGroupContainer) {
-				Collection c = lkp.lookup(IChromAUIProject.class).getSampleGroupsForTreatmentGroup((TreatmentGroupContainer)cp);
-				if(!c.isEmpty()) {
-					list.addAll(c);
-					return true;
-				}
-			}
-            Collection<T> container = this.cp.getMembers();
+            Collection<IChromatogramDescriptor> container = this.cp.getMembers();
             if (container == null || container.isEmpty()) {
                 return true;
             }
-
-            for (T idesc : container) {
-                if (Thread.interrupted()) {
-                    return false;
-                } else {
-                    if (idesc != null) {
-                        list.add(idesc);
-                    }
-                }
-            }
+			for (IChromatogramDescriptor idesc : container) {
+				if (Thread.interrupted()) {
+					return false;
+				} else {
+					if (idesc != null) {
+						list.add((T) idesc);
+					}
+				}
+			}
             Collections.sort(list, new Comparator<IBasicDescriptor>() {
                 @Override
                 public int compare(IBasicDescriptor t,
@@ -112,28 +101,10 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
     }
 
     @Override
-    protected Node createNodeForKey(T key) {
-		System.out.println("Adding Node for "+key);
-		if (key instanceof SampleGroupContainer) {
-			//add treatment group nodes
-			Lookup lookup = new ProxyLookup(lkp,
-                    Lookups.fixed(cp));
-            Children c = Children.create(new SampleGroupContainerNodeFactory((SampleGroupContainer)key, lookup), true);
-            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createContainerNode((IContainer<?>)key, c, lookup);
-            key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
-            cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-            return cn;
-		} else if (key instanceof IContainer<?>) {
-            Lookup lookup = new ProxyLookup(lkp,
-                    Lookups.fixed(cp));
-            Children c = Children.create(new ContainerNodeFactory((IContainer<?>)key, lookup), true);
-            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createContainerNode((IContainer<?>)key, c, lookup);
-            key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
-            cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-            return cn; 
-		} else if (key instanceof IChromatogramDescriptor) {
+    protected Node createNodeForKey(IBasicDescriptor key) {
+		if (key instanceof IChromatogramDescriptor) {
             IChromatogramDescriptor cd = (IChromatogramDescriptor) key;
-//            System.out.println(cd.getResourceLocation());
+            System.out.println(cd.getResourceLocation());
 
             DataObject dobj;
             try {
@@ -158,12 +129,6 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
             } catch (IllegalArgumentException ex) {
                 Exceptions.printStackTrace(ex);
             }
-        } else {
-            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
-                    Lookups.fixed(cp)));
-            key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
-            cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-            return cn;
         }
         return Node.EMPTY;
     }

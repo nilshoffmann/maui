@@ -27,6 +27,7 @@
  */
 package net.sf.maltcms.chromaui.project.spi.project;
 
+import com.db4o.ext.DatabaseFileLockedException;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
@@ -51,10 +52,12 @@ import net.sf.maltcms.chromaui.project.api.IMauiSubprojectProviderFactory;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.ProjectSettings;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
 import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
@@ -88,430 +91,458 @@ import org.openide.util.lookup.InstanceContent;
 @org.openide.util.lookup.ServiceProvider(service = Project.class)
 public class ChromAUIProject implements IChromAUIProject {
 
-    private ICrudProvider icp;
-    private ICrudSession ics;
-    private ProjectState state;
-    private Lookup lkp;
-    private FileObject projectDatabaseFile;
-    private FileObject parentFile;
-    private InstanceContent ic = new InstanceContent();
-    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private ICrudProvider icp;
+	private ICrudSession ics;
+	private ProjectState state;
+	private Lookup lkp;
+	private FileObject projectDatabaseFile;
+	private FileObject parentFile;
+	private InstanceContent ic = new InstanceContent();
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    public synchronized void removePropertyChangeListener(String string, PropertyChangeListener pl) {
-        pcs.removePropertyChangeListener(string, pl);
-    }
+	public synchronized void removePropertyChangeListener(String string, PropertyChangeListener pl) {
+		pcs.removePropertyChangeListener(string, pl);
+	}
 
-    @Override
-    public synchronized void removePropertyChangeListener(PropertyChangeListener pl) {
-        pcs.removePropertyChangeListener(pl);
-    }
+	@Override
+	public synchronized void removePropertyChangeListener(PropertyChangeListener pl) {
+		pcs.removePropertyChangeListener(pl);
+	}
 
-    @Override
-    public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
-        pcs.addPropertyChangeListener(pl);
-    }
+	@Override
+	public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
+		pcs.addPropertyChangeListener(pl);
+	}
 
-    public ChromAUIProject() {
-        lkp = new AbstractLookup(
-                ic);
-        if (state != null) {
-            ic.add(state);
-        }
+	public ChromAUIProject() {
+		lkp = new AbstractLookup(
+				ic);
+		if (state != null) {
+			ic.add(state);
+		}
 		ic.add(this);
-        //allow outside code to mark the project as needing saving
-        ic.add(new Info());
-        //Project information implementation
-        ic.add(new ChromAUIProjectLogicalView(this));
-        //Logical view of project implementation
-        ic.add(new OpenCloseHook());
-        //ClassPath Provider for Maltcms installations
-        ic.add(new MaltcmsClassPathProvider());
+		//Logical view of project implementation
+		ic.add(new OpenCloseHook());
+		//allow outside code to mark the project as needing saving
+		ic.add(new Info());
+		//Project information implementation
+		ic.add(new ChromAUIProjectLogicalView(this));
+		//Customization dialogs
+		ic.add(new ChromAUIProjectCustomizerProvider(this));
+		//ClassPath Provider for Maltcms installations
+		ic.add(new MaltcmsClassPathProvider());
 		//Action provider for default project actions
 		ic.add(new ActionProviderImpl(this));
 		ic.add(new DeleteOperationImpl(this));
 		ic.add(new CopyOperationImpl(this));
 		//SubProject Providers for Maltcms processing results
-		for(IMauiSubprojectProviderFactory factory:Lookup.getDefault().lookupAll(IMauiSubprojectProviderFactory.class)) {
-			System.out.println("Found factory: "+factory.getClass().getName());
-			ic.add(factory.provide(this));
+		for (IMauiSubprojectProviderFactory factory : Lookup.getDefault().lookupAll(IMauiSubprojectProviderFactory.class)) {
+			ic.add(factory.provide(getLookup().lookup(IChromAUIProject.class)));
 		}
-    }
+	}
 
-    @Override
-    public void activate(URL projectDatabaseFile) {
-        if (this.icp != null) {
-            this.icp.close();
-        }
-        File pdbf;
-        try {
-            pdbf = new File(projectDatabaseFile.toURI());
-            this.parentFile = FileUtil.toFileObject(pdbf.getParentFile());
-            this.projectDatabaseFile = FileUtil.createData(parentFile, pdbf.getName());//FileUtil.toFileObject(pdbf);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (URISyntaxException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+	@Override
+	public void activate(URL projectDatabaseFile) {
+		if (this.icp != null) {
+			this.icp.close();
+		}
+		File pdbf;
+		try {
+			pdbf = new File(projectDatabaseFile.toURI());
+			this.parentFile = FileUtil.toFileObject(pdbf.getParentFile());
+			this.projectDatabaseFile = FileUtil.createData(parentFile, pdbf.getName());//FileUtil.toFileObject(pdbf);
+		} catch (IOException ex) {
+			Exceptions.printStackTrace(ex);
+		} catch (URISyntaxException ex) {
+			Exceptions.printStackTrace(ex);
+		}
 
-    }
+	}
 
-    @Override
-    public void addContainer(IContainer... ic) {
-        for(IContainer container:ic) {
-            System.out.println("Adding container: "+ic.toString());
-            ics.create(container);
-			if(container.getProject()==null) {
+	@Override
+	public void addContainer(IContainer... ic) {
+		for (IContainer container : ic) {
+			System.out.println("Adding container: " + ic.toString());
+			ics.create(container);
+			if (container.getProject() == null) {
 				container.setProject(this);
 			}
-        }
-        refresh();
-    }
+		}
+		refresh();
+	}
 
-    @Override
-    public void removeContainer(IContainer... ic) {
-        DialogDisplayer dd = DialogDisplayer.getDefault();
-        Object result = dd.notify(new NotifyDescriptor.Confirmation(
-                "Really delete " + ic.length + " container" + (ic.length > 1 ? "s" : "") + "?",
-                "Confirm container deletion", NotifyDescriptor.YES_NO_OPTION));
-        if (result.equals(NotifyDescriptor.YES_OPTION)) {
-            for (IContainer container : ic) {
-                ics.delete(container);
-            }
-            refresh();
-        }
-    }
+	@Override
+	public void removeContainer(IContainer... ic) {
+		DialogDisplayer dd = DialogDisplayer.getDefault();
+		Object result = dd.notify(new NotifyDescriptor.Confirmation(
+				"Really delete " + ic.length + " container" + (ic.length > 1 ? "s" : "") + "?",
+				"Confirm container deletion", NotifyDescriptor.YES_NO_OPTION));
+		if (result.equals(NotifyDescriptor.YES_OPTION)) {
+			for (IContainer container : ic) {
+				ics.delete(container);
+			}
+			refresh();
+		}
+	}
 
-    @Override
-    public void removeDescriptor(IBasicDescriptor... descriptor) {
-        DialogDisplayer dd = DialogDisplayer.getDefault();
-        boolean deleteAll = true;
-        if (descriptor.length > 1) {
-            Object result = dd.notify(new NotifyDescriptor.Confirmation(
-                    "Delete " + descriptor.length + " descriptor" + (descriptor.length > 1 ? "s" : "") + "?",
-                    "Confirm descriptor deletion", NotifyDescriptor.YES_NO_CANCEL_OPTION));
-            if (result.equals(NotifyDescriptor.CANCEL_OPTION)) {
-                return;
-            } else if (result.equals(NotifyDescriptor.NO_OPTION)) {
-                deleteAll = false;
-            }
-        }
-        if (deleteAll) {
-            ics.delete(Arrays.asList(descriptor));
-        } else {
-            for (IBasicDescriptor descr : descriptor) {
-                if (!(descr instanceof IContainer)) {
-                    Object result = dd.notify(new NotifyDescriptor.Confirmation(
-                            "Really delete descriptor: " + descr.getDisplayName() + "?",
-                            "Confirm descriptor deletion", NotifyDescriptor.YES_NO_OPTION));
-                    if (result.equals(NotifyDescriptor.YES_OPTION)) {
-                        ics.delete(descr);
-                    }
-                }
-            }
-        }
-        refresh();
-    }
+	@Override
+	public void removeDescriptor(IBasicDescriptor... descriptor) {
+		DialogDisplayer dd = DialogDisplayer.getDefault();
+		boolean deleteAll = true;
+		if (descriptor.length > 1) {
+			Object result = dd.notify(new NotifyDescriptor.Confirmation(
+					"Delete " + descriptor.length + " descriptor" + (descriptor.length > 1 ? "s" : "") + "?",
+					"Confirm descriptor deletion", NotifyDescriptor.YES_NO_CANCEL_OPTION));
+			if (result.equals(NotifyDescriptor.CANCEL_OPTION)) {
+				return;
+			} else if (result.equals(NotifyDescriptor.NO_OPTION)) {
+				deleteAll = false;
+			}
+		}
+		if (deleteAll) {
+			ics.delete(Arrays.asList(descriptor));
+		} else {
+			for (IBasicDescriptor descr : descriptor) {
+				if (!(descr instanceof IContainer)) {
+					Object result = dd.notify(new NotifyDescriptor.Confirmation(
+							"Really delete descriptor: " + descr.getDisplayName() + "?",
+							"Confirm descriptor deletion", NotifyDescriptor.YES_NO_OPTION));
+					if (result.equals(NotifyDescriptor.YES_OPTION)) {
+						ics.delete(descr);
+					}
+				}
+			}
+		}
+		refresh();
+	}
 
-    @Override
-    public void updateContainer(IContainer... ic) {
-        ics.update((Object) ic);
-        refresh();
-    }
+	@Override
+	public void updateContainer(IContainer... ic) {
+		ics.update((Object) ic);
+		refresh();
+	}
 
-    @Override
-    public void refresh() {
-        pcs.firePropertyChange(new PropertyChangeEvent(
-                this, "container", false, true));
+	@Override
+	public void refresh() {
+		pcs.firePropertyChange(new PropertyChangeEvent(
+				this, "container", false, true));
 //        getLookup().lookup(Info.class).firePropertyChange(new PropertyChangeEvent(
 //                this, "REFRESH_NODES", null, this));
-    }
+	}
 
-    @Override
-    public <T extends IContainer> Collection<T> getContainer(Class<T> c) {
-		if(icp!=null) {
+	@Override
+	public <T extends IContainer> Collection<T> getContainer(Class<T> c) {
+		if (icp != null) {
 			ICrudSession ics = icp.createSession();
 			Collection<T> l = ics.retrieve(c);
 			ics.close();
-			for(IContainer container:l) {
-				if(container.getProject()==null) {
+			for (IContainer container : l) {
+				if (container.getProject() == null) {
 					container.setProject(this);
 				}
 			}
 			return l;
 		}
 		return Collections.emptyList();
-    }
+	}
 
-    @Override
-    public ICrudProvider getCrudProvider() {
-        if (this.icp == null) {
-            openSession();
-        }
-        return this.icp;
-    }
-
-    @Override
-    public FileObject getProjectDirectory() {
-        return this.parentFile;
-    }
-
-    @Override
-    public Lookup getLookup() {
-        return lkp;
-
-    }
-
-    @Override
-    public void setState(ProjectState state) {
-        if (this.state != null) {
-            ic.remove(this.state);
-        }
-        ic.add(state);
-        this.state = state;
-    }
-
-    @Override
-    public Collection<IChromatogramDescriptor> getChromatograms() {
-        ArrayList<IChromatogramDescriptor> al = new ArrayList<IChromatogramDescriptor>();
-        for (TreatmentGroupContainer cc : getContainer(
-                TreatmentGroupContainer.class)) {
-            al.addAll(cc.getMembers());
-        }
-        return al;
-    }
-
-    @Override
-    public Collection<ITreatmentGroupDescriptor> getTreatmentGroups() {
-        HashSet<ITreatmentGroupDescriptor> tgs = new LinkedHashSet<ITreatmentGroupDescriptor>();
-        for (TreatmentGroupContainer cc : getContainer(
-                TreatmentGroupContainer.class)) {
-            for (IChromatogramDescriptor icd : cc.getMembers()) {
-                tgs.add(icd.getTreatmentGroup());
-            }
-        }
-        return tgs;
-    }
-
-    @Override
-    public Collection<IDatabaseDescriptor> getDatabases() {
-//        getContainer(DatabaseContainer.class);
-        HashSet<IDatabaseDescriptor> tgs = new LinkedHashSet<IDatabaseDescriptor>();
-        for (DatabaseContainer cc : getContainer(
-                DatabaseContainer.class)) {
-            for (IDatabaseDescriptor icd : cc.getMembers()) {
-                tgs.add(icd);
-            }
-        }
-        return tgs;
-    }
-
-    @Override
-    public FileObject getOutputDir() {
-		try{
-			return getSetting("output.basedir", FileObject.class);
-		}catch(NullPointerException npe) {
-			try {
-				return FileUtil.createFolder(parentFile, "output");
-			} catch (IOException ex) {
-				File outdir = new File(FileUtil.toFile(parentFile),"output");
-				outdir.mkdirs();
-				return FileUtil.toFileObject(outdir);
-			}
-		}
-    }
-
-    @Override
-    public void setOutputDir(FileObject f) {
-        ProjectSettings ps = getSettings();
-        ps.put("output.basedir", f);
-        ics.update(ps);
-    }
-    
-    @Override
-    public File getOutputLocation(Object importer) {
-        File outputDir = FileUtil.toFile(getOutputDir());
-        outputDir = new File(outputDir, importer.getClass().getSimpleName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "MM-dd-yyyy_HH-mm-ss", Locale.US);
-        outputDir = new File(outputDir, dateFormat.format(
-                new Date()));
-        outputDir.mkdirs();
-        return outputDir;
-    }
-
-    protected <T> T getSetting(String key, Class<T> c) throws NullPointerException, ClassCastException {
-        ProjectSettings ps = getSettings();
-        if (ps.containsKey(key)) {
-            return c.cast(ps.get(key));
-        }
-        throw new NullPointerException("No element for key: " + key);
-    }
-
-    protected ProjectSettings getSettings() {
-		if(ics==null) {
+	@Override
+	public ICrudProvider getCrudProvider() {
+		if (this.icp == null) {
 			openSession();
 		}
-        Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
-        if (l.isEmpty()) {
-            ProjectSettings ps = new ProjectSettings();
-            ics.create(Arrays.asList(ps));
-            l = ics.retrieve(ProjectSettings.class);
-        }
-        ProjectSettings ps = l.toArray(new ProjectSettings[l.size()])[0];
+		return this.icp;
+	}
 
-        return ps;
-    }
+	@Override
+	public FileObject getProjectDirectory() {
+		return this.parentFile;
+	}
 
-    @Override
-    public FileObject getLocation() {
-        return this.parentFile;
-    }
+	@Override
+	public Lookup getLookup() {
+		return lkp;
 
-    @Override
-    public synchronized void openSession() {
-        try {
-            if (icp != null) {
-                closeSession();
-            }
-            if (projectDatabaseFile == null) {
-                throw new IllegalStateException(
-                        "Project database file not set, please call 'activate(URL url)' with the appropriate location before 'openSession()' is called!");
-            }
-            icp = Lookup.getDefault().lookup(ICrudProviderFactory.class).
-                    getCrudProvider(projectDatabaseFile.getURL(),
-                    new NoAuthCredentials(), Lookup.getDefault().lookup(
-                    ClassLoader.class));//new DB4oCrudProvider(pdbf, new NoAuthCredentials(), this.getClass().getClassLoader());
-            icp.open();
-            ics = icp.createSession();
+	}
 
-            ics.open();
-        } catch (FileStateInvalidException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
+	@Override
+	public void setState(ProjectState state) {
+		if (this.state != null) {
+			ic.remove(this.state);
+		}
+		ic.add(state);
+		this.state = state;
+	}
 
-    @Override
-    public synchronized void closeSession() {
-        if (icp != null) {
-            //ics.close();
-            icp.close();
-            icp = null;
-        }
-    }
+	@Override
+	public Collection<IChromatogramDescriptor> getChromatograms() {
+		ArrayList<IChromatogramDescriptor> al = new ArrayList<IChromatogramDescriptor>();
+		for (TreatmentGroupContainer cc : getContainer(
+				TreatmentGroupContainer.class)) {
+			al.addAll(cc.getMembers());
+		}
+		return al;
+	}
 
-    @Override
-    public void propertyChange(PropertyChangeEvent pce) {
-        pcs.firePropertyChange(pce);
-    }
+	@Override
+	public Collection<ITreatmentGroupDescriptor> getTreatmentGroups() {
+		HashSet<ITreatmentGroupDescriptor> tgs = new LinkedHashSet<ITreatmentGroupDescriptor>();
+		for (TreatmentGroupContainer cc : getContainer(
+				TreatmentGroupContainer.class)) {
+			for (IChromatogramDescriptor icd : cc.getMembers()) {
+				tgs.add(icd.getTreatmentGroup());
+			}
+		}
+		return tgs;
+	}
 
-    @Override
-    public void addToLookup(Object... obj) {
-        for (Object object : obj) {
-            if (object != null) {
-                this.ic.add(object);
-            }
-        }
-    }
+	@Override
+	public Collection<ISampleGroupDescriptor> getSampleGroups() {
+		HashSet<ISampleGroupDescriptor> tgs = new LinkedHashSet<ISampleGroupDescriptor>();
+		for (SampleGroupContainer cc : getContainer(
+				SampleGroupContainer.class)) {
+			for (IChromatogramDescriptor icd : cc.getMembers()) {
+				tgs.add(icd.getSampleGroup());
+			}
+		}
+		return tgs;
+	}
 
-    @Override
-    public Collection<Peak1DContainer> getPeaks(
-            IChromatogramDescriptor descriptor) {
-        Collection<Peak1DContainer> containers = getContainer(
-                Peak1DContainer.class);
-        List<Peak1DContainer> peaks = new ArrayList<Peak1DContainer>();
+	@Override
+	public Collection<SampleGroupContainer> getSampleGroupsForTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup) {
+		HashSet<SampleGroupContainer> tgs = new LinkedHashSet<SampleGroupContainer>();
+		for (SampleGroupContainer cc : getContainer(
+				SampleGroupContainer.class)) {
+			for (IChromatogramDescriptor icd : cc.getMembers()) {
+				if (icd.getTreatmentGroup().getName().equals(treatmentGroup.getName())) {
+					tgs.add(cc);
+				}
+			}
+		}
+		System.out.println("Sample groups: " + tgs);
+		return tgs;
+	}
 
-        for (Peak1DContainer container : containers) {
-            if (container != null) {
-                IChromatogramDescriptor chrom = container.getChromatogram();
-                if (chrom != null) {
-                    String chromName = chrom.getDisplayName();
-                    String descrName = descriptor.getDisplayName();
-//            System.out.println("ChromName: "+chromName+" descrName: "+descrName);
-                    if (chromName.equals(descrName)) {
-                        peaks.add(container);
-                    }
-                }
-            }
-        }
+	@Override
+	public Collection<IDatabaseDescriptor> getDatabases() {
+		HashSet<IDatabaseDescriptor> tgs = new LinkedHashSet<IDatabaseDescriptor>();
+		for (DatabaseContainer cc : getContainer(
+				DatabaseContainer.class)) {
+			for (IDatabaseDescriptor icd : cc.getMembers()) {
+				tgs.add(icd);
+			}
+		}
+		return tgs;
+	}
 
-        return peaks;
-    } 
+	@Override
+	public FileObject getOutputDir() {
+		try {
+			return getSetting("output.basedir", FileObject.class);
+		}catch(NullPointerException npe) {
+			
+		}catch(DatabaseFileLockedException dfle) {
+			
+		}
+		try {
+			return FileUtil.createFolder(parentFile, "output");
+		} catch (IOException ex) {
+			File outdir = new File(FileUtil.toFile(parentFile), "output");
+			outdir.mkdirs();
+			return FileUtil.toFileObject(outdir);
+		}
+	}
 
-    @Override
-    public File getImportLocation(Object importer) {
-        File importDir = new File(FileUtil.toFile(getProjectDirectory()),
-                "import");
-        importDir = new File(importDir, importer.getClass().getSimpleName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "MM-dd-yyyy_HH-mm-ss", Locale.US);
-        importDir = new File(importDir, dateFormat.format(
-                new Date()));
-        importDir.mkdirs();
-        return importDir;
-    }
+	@Override
+	public void setOutputDir(FileObject f) {
+		ProjectSettings ps = getSettings();
+		ps.put("output.basedir", f);
+		ics.update(ps);
+	}
 
-    private final class OpenCloseHook extends ProjectOpenedHook {
+	@Override
+	public File getOutputLocation(Object importer) {
+		File outputDir = FileUtil.toFile(getOutputDir());
+		outputDir = new File(outputDir, importer.getClass().getSimpleName());
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"MM-dd-yyyy_HH-mm-ss", Locale.US);
+		outputDir = new File(outputDir, dateFormat.format(
+				new Date()));
+		outputDir.mkdirs();
+		return outputDir;
+	}
 
-        @Override
-        protected void projectOpened() {
-            openSession();
-        }
+	protected synchronized <T> T getSetting(String key, Class<T> c) throws NullPointerException, ClassCastException {
+		ProjectSettings ps = getSettings();
+		if (ps.containsKey(key)) {
+			return c.cast(ps.get(key));
+		}
+		throw new NullPointerException("No element for key: " + key);
+	}
 
-        @Override
-        protected void projectClosed() {
+	protected synchronized ProjectSettings getSettings() {
+		if (ics == null) {
+			openSession();
+		}
+		Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
+		if (l.isEmpty()) {
+			ProjectSettings ps = new ProjectSettings();
+			ics.create(Arrays.asList(ps));
+			l = ics.retrieve(ProjectSettings.class);
+		}
+		ProjectSettings ps = l.toArray(new ProjectSettings[l.size()])[0];
+
+		return ps;
+	}
+
+	@Override
+	public FileObject getLocation() {
+		return this.parentFile;
+	}
+
+	@Override
+	public synchronized void openSession() {
+		try {
+			if (icp != null) {
+				closeSession();
+			}
+			if (projectDatabaseFile == null) {
+				throw new IllegalStateException(
+						"Project database file not set, please call 'activate(URL url)' with the appropriate location before 'openSession()' is called!");
+			}
+			icp = Lookup.getDefault().lookup(ICrudProviderFactory.class).
+					getCrudProvider(projectDatabaseFile.getURL(),
+					new NoAuthCredentials(), Lookup.getDefault().lookup(
+					ClassLoader.class));//new DB4oCrudProvider(pdbf, new NoAuthCredentials(), this.getClass().getClassLoader());
+			icp.open();
+			ics = icp.createSession();
+
+			ics.open();
+		} catch (FileStateInvalidException ex) {
+			Exceptions.printStackTrace(ex);
+		}
+	}
+
+	@Override
+	public synchronized void closeSession() {
+		if (icp != null) {
+			icp.close();
+			icp = null;
+		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		pcs.firePropertyChange(pce);
+	}
+
+	@Override
+	public void addToLookup(Object... obj) {
+		for (Object object : obj) {
+			if (object != null) {
+				this.ic.add(object);
+			}
+		}
+	}
+
+	@Override
+	public Collection<Peak1DContainer> getPeaks(
+			IChromatogramDescriptor descriptor) {
+		Collection<Peak1DContainer> containers = getContainer(
+				Peak1DContainer.class);
+		List<Peak1DContainer> peaks = new ArrayList<Peak1DContainer>();
+
+		for (Peak1DContainer container : containers) {
+			if (container != null) {
+				IChromatogramDescriptor chrom = container.getChromatogram();
+				if (chrom != null) {
+					String chromName = chrom.getDisplayName();
+					String descrName = descriptor.getDisplayName();
+					if (chromName.equals(descrName)) {
+						peaks.add(container);
+					}
+				}
+			}
+		}
+
+		return peaks;
+	}
+
+	@Override
+	public File getImportLocation(Object importer) {
+		File importDir = new File(FileUtil.toFile(getProjectDirectory()),
+				"import");
+		importDir = new File(importDir, importer.getClass().getSimpleName());
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"MM-dd-yyyy_HH-mm-ss", Locale.US);
+		importDir = new File(importDir, dateFormat.format(
+				new Date()));
+		importDir.mkdirs();
+		return importDir;
+	}
+
+	private final class OpenCloseHook extends ProjectOpenedHook {
+
+		@Override
+		protected void projectOpened() {
+			openSession();
+		}
+
+		@Override
+		protected void projectClosed() {
 			IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
 			Project project = getLookup().lookup(Project.class);
 			registry.closeTopComponentsForProject(project);
-            closeSession();
-        }
-    }
+			closeSession();
+		}
+	}
 
-    private final class Info implements ProjectInformation {
+	private final class Info implements ProjectInformation {
 
-        private PropertyChangeSupport pcs = new PropertyChangeSupport(
-                getProject());
+		private PropertyChangeSupport pcs = new PropertyChangeSupport(
+				getProject());
 
-        public void firePropertyChange(PropertyChangeEvent pce) {
-            pcs.firePropertyChange(pce);
-        }
+		public void firePropertyChange(PropertyChangeEvent pce) {
+			pcs.firePropertyChange(pce);
+		}
 
-        @Override
-        public Icon getIcon() {
-            return new ImageIcon(
-                    ImageUtilities.loadImage(
-                    "net/sf/maltcms/chromaui/project/resources/MauiProject.png"));
-        }
+		@Override
+		public Icon getIcon() {
+			return new ImageIcon(
+					ImageUtilities.loadImage(
+					"net/sf/maltcms/chromaui/project/resources/MauiProject.png"));
+		}
 
-        @Override
-        public String getName() {
-            return getProjectDirectory().getName();
-        }
+		@Override
+		public String getName() {
+			return getProjectDirectory().getName();
+		}
 
-        @Override
-        public String getDisplayName() {
-            return getName();
-        }
+		@Override
+		public String getDisplayName() {
+			return getName();
+		}
 
-        @Override
-        public void addPropertyChangeListener(PropertyChangeListener pcl) {
-            this.pcs.addPropertyChangeListener(pcl);
-        }
+		@Override
+		public void addPropertyChangeListener(PropertyChangeListener pcl) {
+			this.pcs.addPropertyChangeListener(pcl);
+		}
 
-        @Override
-        public void removePropertyChangeListener(PropertyChangeListener pcl) {
-            this.pcs.removePropertyChangeListener(pcl);
-        }
+		@Override
+		public void removePropertyChangeListener(PropertyChangeListener pcl) {
+			this.pcs.removePropertyChangeListener(pcl);
+		}
 
-        @Override
-        public Project getProject() {
-            return ChromAUIProject.this;
-        }
-    }
-	
+		@Override
+		public Project getProject() {
+			return ChromAUIProject.this;
+		}
+	}
+
 	private final class DeleteOperationImpl implements DeleteOperationImplementation {
 
 		private final IChromAUIProject project;
-		
+
 		public DeleteOperationImpl(IChromAUIProject project) {
 			this.project = project;
 		}
@@ -536,19 +567,17 @@ public class ChromAUIProject implements IChromAUIProject {
 
 		@Override
 		public void notifyDeleted() throws IOException {
-
 		}
-		
 	}
-	
+
 	private final class CopyOperationImpl implements CopyOperationImplementation {
 
 		private final IChromAUIProject project;
-		
+
 		public CopyOperationImpl(IChromAUIProject project) {
 			this.project = project;
 		}
-		
+
 		@Override
 		public void notifyCopying() throws IOException {
 			project.closeSession();
@@ -571,45 +600,43 @@ public class ChromAUIProject implements IChromAUIProject {
 			list.add(project.getLocation());
 			return list;
 		}
-		
 	}
-	
+
 	private final class ActionProviderImpl implements ActionProvider {
 
-        private String[] supported = new String[]{
-            ActionProvider.COMMAND_DELETE,
-            ActionProvider.COMMAND_COPY,};
-
+		private String[] supported = new String[]{
+			ActionProvider.COMMAND_DELETE,
+			ActionProvider.COMMAND_COPY};
 		private final IChromAUIProject project;
-		
+
 		public ActionProviderImpl(IChromAUIProject project) {
 			this.project = project;
 		}
-		
-        @Override
-        public String[] getSupportedActions() {
-            return supported;
-        }
 
-        @Override
-        public void invokeAction(String string, Lookup lookup) throws IllegalArgumentException {
-            if (string.equalsIgnoreCase(ActionProvider.COMMAND_DELETE)) {
-                DefaultProjectOperations.performDefaultDeleteOperation(project);
-            }
-            if (string.equalsIgnoreCase(ActionProvider.COMMAND_COPY)) {
-                DefaultProjectOperations.performDefaultCopyOperation(project);
-            }
-        }
+		@Override
+		public String[] getSupportedActions() {
+			return supported;
+		}
 
-        @Override
-        public boolean isActionEnabled(String command, Lookup lookup) throws IllegalArgumentException {
-            if ((command.equals(ActionProvider.COMMAND_DELETE))) {
-                return true;
-            } else if ((command.equals(ActionProvider.COMMAND_COPY))) {
-                return true;
-            } else {
-                throw new IllegalArgumentException(command);
-            }
-        }
-    }
+		@Override
+		public void invokeAction(String string, Lookup lookup) throws IllegalArgumentException {
+			if (string.equalsIgnoreCase(ActionProvider.COMMAND_DELETE)) {
+				DefaultProjectOperations.performDefaultDeleteOperation(project);
+			}
+			if (string.equalsIgnoreCase(ActionProvider.COMMAND_COPY)) {
+				DefaultProjectOperations.performDefaultCopyOperation(project);
+			}
+		}
+
+		@Override
+		public boolean isActionEnabled(String command, Lookup lookup) throws IllegalArgumentException {
+			if ((command.equals(ActionProvider.COMMAND_DELETE))) {
+				return true;
+			} else if ((command.equals(ActionProvider.COMMAND_COPY))) {
+				return true;
+			} else {
+				throw new IllegalArgumentException(command);
+			}
+		}
+	}
 }
