@@ -28,7 +28,7 @@
             <arg value="-avtruP"/>
             <arg value="-e ssh "/>
             <arg value="build/site/"/>
-            <arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/"/>
+            <arg value="${upload.username}@maltcms.de:/var/www/omics-base/1.2/"/>
         </exec>    
     </target>
     
@@ -38,7 +38,7 @@
 			<arg value="--recursive"/>
             <arg value="-e ssh"/>
             <arg value="build/updates/"/>
-            <arg value="${upload.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>
+            <arg value="${upload.username}@maltcms.de:/var/www/omics-base/1.2/updates/"/>
         </exec>
     </target>
 	
