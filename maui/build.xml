@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="ChromAUI" basedir=".">
+	<description>Builds the module suite Maui.</description>
+	<import file="${basedir}/../nbproject/platform-defaults.xml"/>
+	<import file="nbproject/build-impl.xml"/>
+	
+	<property name="project.release.name" value="${app.name}"/>
+	<property name="project.release.version" value="${app.version.release}"/>
+	<property name="project.release.path" value="${app.name}/${app.version.major}.${app.version.minor}"/>
+    
+	<!-- Modify NetBeans app.conf file to use my local one-->
+	<target name="build-launchers" depends="suite.build-launchers">
+		<echo message="Branding conf file : Copy file ${basedir}/BrandingModule/harness/etc/maui.conf to ${build.launcher.dir}/etc/${app.name}.conf"/>
+		<delete file="${build.launcher.dir}/etc/${app.name}.conf"/>
+		<copy file="${basedir}/BrandingModule/harness/etc/${app.name}.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf"/>
+		<copy file="${basedir}/BrandingModule/harness/bin/${app.name}-sge.sh" tofile="${build.launcher.dir}/bin"/>
+	</target>   
+   
+	<!-- additional task to fix dependencies for all modules at once -->
+	<target name="fix-dependencies" depends="-init">
+		<subant target="fix-dependencies" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
+	</target>
+    
+	<target name="fix-test-dependencies" depends="-init">
+		<subant target="fix-test-dependencies" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
+	</target>
+	
+	<target name="check-installers" description="Check that installers are ready">
+		<fail message="Installers have not been created! Please create them manually!">
+			<condition>
+				<and>
+					<not>
+						<available file="dist/maui-linux.sh"/>
+					</not>
+					<not>
+						<available file="dist/maui-macosx.tgz"/>
+					</not>					
+					<not>
+						<available file="dist/maui-solaris.sh"/>
+					</not>
+					<not>
+						<available file="dist/maui-windows.exe"/>
+					</not>
+				</and>
+			</condition>
+		</fail>
+	</target>
+	
+	<target name="prepare-release" description="Prepares a release" depends="build-versioned,test,nbms,check-installers">
+	</target>
+
+	<!--    <target name="deploy" description="Deploys release files" depends="prepare-release,upload-credentials,upload-updatecenter,upload-build,upload-homepage">
+	</target>-->
+	<target name="deploy" description="Prepares and deploys release files" depends="prepare-release,upload-all">
+	</target>
+	
+	<target name="upload-all" description="Deploy all release files" depends="-init,upload-updatecenter,upload-homepage,upload-build">
+	</target>
+    
+<!--	<target name="upload-credentials" description="Ask for user credentials">
+		<input addproperty="upload.username">Please enter username for upload:</input>
+		<input message="Please supply password for user ${sf.username}:" addproperty="sf.username.password">
+				<handler type="secure"/>
+		</input>
+	</target>-->
+    
+	<target name="upload-homepage" description="Deploys homepage" depends="-init">
+		<input addproperty="upload-homepage.username">Please enter username for upload to maltcms.de:</input>
+		<exec executable="rsync" inputstring="">
+			<arg value="-avtruP"/>
+			<arg value="--recursive"/>
+			<arg value="-e ssh"/>
+			<arg value="site/public_html/"/>
+			<arg value="${upload-homepage.username}@maltcms.de:/var/www/maui/"/>
+		</exec>    
+	</target>
+    
+	<target name="upload-updatecenter" description="Upload results of beta build" depends="-init,nbms">
+		<input addproperty="upload-updatecenter.username">Please enter username for upload to maltcms.de:</input>
+		<echo message="Release path: ${project.release.path}"/>
+		<echo message="Project name: ${project.release.name}"/>
+		<echo message="Release version: ${project.release.version}"/>
+		<exec executable="rsync" inputstring="">
+			<arg value="-avtruP"/>
+			<arg value="--recursive"/>
+			<arg value="-e ssh"/>
+			<arg value="build/updates/"/>
+<!--			<arg value="${upload-updatecenter.username}@maltcms.de:/var/www/${project.release.path}/updates/"/>-->
+			<arg value="${upload-updatecenter.username}@maltcms.de:/var/www/maui/1.2/updates/"/>
+		</exec>
+	</target>
+	
+	<target name="upload-build" description="Deploys the distribution installers and zip file" depends="-init">
+		<tstamp>
+			<format property="deploy.time" pattern="yyyy-MM-dd"/>
+		</tstamp>
+		<input addproperty="upload-build.username">Please enter username for upload to sourceforge:</input>
+		<exec executable="rsync" inputstring="">
+			<arg value="-avtruP"/>
+			<arg value="--recursive"/>
+			<arg value="-e ssh"/>
+			<arg value="dist/"/>
+<!--            <arg value="${upload-build.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/${project.release.path}/"/>-->
+			<arg value="${upload-build.username},maltcms@frs.sourceforge.net:/home/frs/project/m/ma/maltcms/maui/1.2.1/"/>
+		</exec>    
+	</target>
+	
+	<target name="-pre-build" depends="-init,branding,release,-hide-excluded-modules,build-dev" description="Build all modules in the suite while updating version and timestamp.">
+		
+	</target>
+	
+	<target name="build" depends="-pre-build,suite.build"></target>
+	
+	<!-- Alternative build target to add update branding version number -->
+	<target name="build-versioned" depends="-init,branding,release,-hide-excluded-modules,build-brand" description="Build all modules in the suite while updating version.">
+		<subant target="netbeans" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false">
+			<property name="cluster.path.evaluated" value="${cluster.path.evaluated}"/> <!-- Just for speed of pre-7.0 projects -->
+		</subant>
+	</target>
+	
+	<!-- Alternative build target to add update branding version number -->
+	<target name="build-brand" depends="-init">
+		<propertyfile
+			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
+			comment="Updated by build script">
+			<entry key="currentVersion" value="${app.title} ${app.version.release} " />
+		</propertyfile>
+
+		<propertyfile
+			file="${basedir}/branding/modules/org-netbeans-core-windows.jar/org/netbeans/core/windows/view/ui/Bundle.properties"
+			comment="Updated by build script">
+			<entry key="CTL_MainWindow_Title" value="${app.title} ${app.version.release}" />
+			<entry key="CTL_MainWindow_Title_No_Project" value="${app.title} ${app.version.release}" />
+		</propertyfile>
+
+		<propertyfile
+			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
+			comment="Updated by build script">
+			<entry key="LBL_ProductInformation" value="${app.title}" />
+		</propertyfile>
+
+	</target>
+	
+	<target name="build-dev" depends="pre-init,-init">
+		<propertyfile
+			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
+			comment="Updated by build script">
+			<entry key="currentVersion" value="${app.title} ${app.version.release} ${app.build}" />
+		</propertyfile>
+
+		<propertyfile
+			file="${basedir}/branding/modules/org-netbeans-core-windows.jar/org/netbeans/core/windows/view/ui/Bundle.properties"
+			comment="Updated by build script">
+			<entry key="CTL_MainWindow_Title" value="${app.title} ${app.version.release} ${app.build}" />
+			<entry key="CTL_MainWindow_Title_No_Project" value="${app.title} ${app.version.release} ${app.build}" />
+		</propertyfile>
+
+		<propertyfile
+			file="${basedir}/branding/core/core.jar/org/netbeans/core/startup/Bundle.properties" 
+			comment="Updated by build script">
+			<entry key="LBL_ProductInformation" value="${app.title}" />
+		</propertyfile>
+	</target>
+	
+	<!-- Additional target needed to generate the App version number based on compile time -->
+	<target name="pre-init">
+		<tstamp prefix="build"/>
+		<propertyfile file="${basedir}/nbproject/project.properties"
+					  comment="Updated by build script">
+			<entry key="app.build" value="${build.DSTAMP}_${build.TSTAMP}" />
+		</propertyfile>
+		<echo>APP.VERSION=${app.title}_${build.DSTAMP}_${build.TSTAMP} </echo>
+	</target>
+	
+	<target name="-init-ant-contrib">
+		<echo>Configuring ant-contrib for Netbeans use...</echo>
+		<property name="ant-contrib-loc" value="${basedir}/../tools/ant/ant-contrib-1.0b3.jar"/>
+		<available file="${ant-contrib-loc}" property="ant-contrib.present"/>
+		<fail unless="ant-contrib.present" message="The ant-contrib jar doesn't exist at: ${ant-contrib-loc}, can't build. Check your settings!" />
+		<!--We are not in Hudson-->
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<pathelement location="${ant-contrib-loc}"/>
+			</classpath>
+		</taskdef>
+	</target>
+	
+	<target name="javadoc" depends="-init,-init-ant-contrib,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
+		<!-- create a path for later reference -->
+		<path id="modules.sorted.path">
+			<pathelement path="${modules.sorted}"/>
+		</path>
+		<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
+		<mkdir dir="${basedir}/build/site/javadoc"/>
+		<copy todir="${basedir}/build/site/javadoc" flatten="false">
+			<fileset dir="${basedir}">
+				<include name="**/build/javadoc/**"/>
+				<exclude name="build/javadoc/**"/>
+			</fileset>
+			<cutdirsmapper dirs="3"/>
+		</copy>
+		<copy todir="${basedir}/build/site/" flatten="false">
+			<fileset dir="${basedir}/site/public_html">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<echo>Modules sorted: ${modules.sorted}</echo>
+		<echo file="${basedir}/build/site/javadoc/index.html"><![CDATA[
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
+	<body>
+		<div>Modules</div>
+		<ul>
+]]></echo>
+		<for param="file">
+			<path refid="modules.sorted.path"/>
+			<sequential>
+				<echo>Adding JavaDoc for Module: @{file}</echo>
+				<pathconvert property="relative-path">
+					<path path="@{file}"/>
+					<chainedmapper>
+						<regexpmapper from=".*/(.+)$" to="\1" casesensitive="no"/>
+					</chainedmapper>
+				</pathconvert>
+				<echo level="info">Module Relative Path: ${relative-path}</echo>
+				<!-- Retrieve official module name, not the javadoc link name -->
+				<loadfile srcfile="${relative-path}/manifest.mf" property="localizing-bundle.location">
+					<filterchain>
+						<linecontains>
+							<contains value="OpenIDE-Module-Localizing-Bundle"/>
+						</linecontains>
+						<!-- avoid newlines in filtered output -->
+						<tokenfilter delimoutput="">
+							<!-- remove prefix, trim whitespace -->
+							<replacestring from="OpenIDE-Module-Localizing-Bundle:" to=""/>
+							<trim/>
+						</tokenfilter>
+					</filterchain>
+				</loadfile>
+				<loadfile srcfile="${relative-path}/manifest.mf" property="module-javadoc.location">
+					<filterchain>
+						<linecontains>
+							<contains value="OpenIDE-Module:"/>
+						</linecontains>
+						<!-- avoid newlines in filtered output -->
+						<tokenfilter delimoutput="">
+							<!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
+							<replacestring from="OpenIDE-Module:" to=""/>
+							<replaceregex pattern="/[0-9]+" replace="" flags="gi"/>
+							<trim/>
+						</tokenfilter>
+					</filterchain>
+				</loadfile>
+				<!-- replace dots with hyphens/dashes -->
+				<propertyregex property="module-javadoc-hyphenated.location" input="${module-javadoc.location}" regexp="\." replace="-" global="true" />
+				<echo level="info">Localizing Bundle location: ${localizing-bundle.location}</echo>
+				<echo level="info">Module javadoc relative location: ${module-javadoc-hyphenated.location}</echo>
+				<if>
+					<available file="${basedir}/build/site/javadoc/${module-javadoc-hyphenated.location}/index.html"/>
+					<then>
+						<!-- append link to index.html-->
+						<echo file="${basedir}/build/site/javadoc/index.html" append="true"><![CDATA[
+<li><a href="${module-javadoc-hyphenated.location}/index.html">${relative-path}</a></li>
+]]></echo>
+					</then>
+					<else>
+						<echo level="warn">Skipping due to missing javadoc at ${basedir}/build/site/javadoc/${module-javadoc-hyphenated.location}</echo>
+					</else>
+				</if>
+				<!-- reset properties for next module -->
+				<var name="relative-path" unset="true"/>
+				<var name="localizing-bundle.location" unset="true"/>
+				<var name="module-javadoc.location" unset="true"/>
+				<var name="module-javadoc-hyphenated.location" unset="true"/>
+			</sequential>
+		</for>
+		<echo file="${basedir}/build/site/javadoc/index.html" append="true"><![CDATA[
+</ul>
+	</body>
+</html>
+]]></echo>		
+	</target> 
+	
+	<target name="zip-javadoc" depends="javadoc">
+		<zip destfile="${basedir}/build/site/javadoc.zip" basedir="${basedir}/build/site/javadoc"/>
+	</target>
+	
+</project>

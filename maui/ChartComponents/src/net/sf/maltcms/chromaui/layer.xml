@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Maui, Maltcms User Interface. 
+Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
+
+Project website: http://maltcms.sf.net
+
+Maui may be used under the terms of either the
+
+GNU Lesser General Public License (LGPL)
+http://www.gnu.org/licenses/lgpl.html
+
+or the
+
+Eclipse Public License (EPL)
+http://www.eclipse.org/org/documents/epl-v10.php
+
+As a user/recipient of Maui, you may choose which license to receive the code 
+under. Certain files or entire directories may not be covered by this 
+dual license, but are subject to licenses compatible to both LGPL and EPL.
+License exceptions are explicitly declared in all relevant files or in a 
+LICENSE file in the relevant directories.
+
+Maui is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
+for details.
+-->
+
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="Window">
+            <file name="net-sf-maltcms-chromaui-ui-AnnotationManagerAction.instance">
+                <attr name="component" methodvalue="net.sf.maltcms.chromaui.ui.AnnotationManagerTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="net.sf.maltcms.chromaui.ui.Bundle#CTL_AnnotationManagerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="AnnotationManagerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-ui-AnnotationManagerAction.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+<!--        <folder name="Components">
+            <file name="AnnotationManagerTopComponent.settings" url="net/sf/maltcms/chromaui/ui/AnnotationManagerTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="navigator">
+                <file name="AnnotationManagerTopComponent.wstcref" url="net/sf/maltcms/chromaui/ui/AnnotationManagerTopComponentWstcref.xml"/>
+            </folder>
+        </folder>-->
+    </folder>
+</filesystem>

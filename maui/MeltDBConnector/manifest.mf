@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: maltcms.io.xml.ws.meltdb
+OpenIDE-Module-Layer: maltcms/io/xml/ws/meltdb/layer.xml
+OpenIDE-Module-Localizing-Bundle: maltcms/io/xml/ws/meltdb/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.1
+

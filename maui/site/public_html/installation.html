@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Download and Installation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
+
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="index.html">Maui</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About</a></li>
+							<li class="active"><a href="installation.html">Download</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                    </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+			<h2>Installation of Maui</h2>
+			<p>Download one of the following installers suitable for your operating system and run it to install Maui on your system.</p>
+			<h3>Release History</h3>
+			<h4 class="alert alert-success">Maui 1.2.1</h4>
+			<p>Released on April 24th, 2013</p>
+			<h5>Requirements</h5>
+			<ul>
+				<li>Maui 1.2.1 requires a <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment (JRE) 7</a> in order to run. We recommend to install a 64 bit version of Java where possible to allow more memory to be allocated.</li>
+				<li>The statistical backend of Maui is based on <a href="http://www.r-project.org">R</a> and accessed using <a href="http://www.rforge.net/Rserve/">Rserve</a>. Please consult the respective sites on notes how to install R for your operating system.<br /> Rserve may be installed from within a running R session via <code>install.packages("Rserve")</code>.</li>
+			</ul>
+			<h5>New Features</h5>
+			<ul>
+				<li>Peak overlays are now better visible for 1D chromatogram views</li>
+				<li>Peak overlays are colored according to peak descriptor container color, or by treatment group color</li>
+				<li>Added a diff button to mass spectral viewer to show a difference spectrum of two mass spectra</li>
+				<li>Peak groups now show a percentage of covered chromatograms</li>
+			</ul>
+			<h5>Bug Fixes</h5>
+			<ul>
+				<li>Fixed Rserve connection testing on Mac OS X related to the cairo library</li>
+				<li>Fixed invalid cache paths for Ehcache on Windows</li>
+				<li>Fixed EIC display options for 1D chromatogram views</li> 
+				<li>Fixed label display of masses with highest intensities in mass spectral view</li>
+				<li>Changed update center locations, SF FRS location is incompatible with NetBeans updater</li>
+			</ul>
+			<h5>Known Issues</h5>
+			<ul>
+				<li>Retention time to peak index mapping for ChromaTOF data is disfunctional when importing peaks additionally to raw data.</li>
+			</ul>
+			<h5>Installers</h5>
+			<ul class="inline">
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-windows.exe">Windows</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-macosx.tgz">MacOS X</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-linux.sh">Linux</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-solaris.sh">Solaris</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui.zip">Platform Independent ZIP</a></li>
+			</ul>
+			<hr>
+			<h4 class="alert alert-success">Maui 1.2</h4>
+			<p>Released on March 26th, 2013</p>
+			<h5>Requirements</h5>
+			<ul>
+				<li>Maui 1.2 requires a <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment (JRE) 7</a> in order to run. We recommend to install a 64 bit version of Java where possible to allow more memory to be allocated.</li>
+				<li>The statistical backend of Maui is based on <a href="http://www.r-project.org">R</a> and accessed using <a href="http://www.rforge.net/Rserve/">Rserve</a>. Please consult the respective sites on notes how to install R for your operating system.<br /> Rserve may be installed from within a running R session via <code>install.packages("Rserve")</code>.</li>
+			</ul>
+			<h5>New Features</h5>
+			<ul>
+				<li>Welcome center to aid with first steps in Maui</li>
+				<li>Viewport synchronization for chromatogram views</li>
+				<li>Selection system for chromatogram views</li>
+				<li>Improved integration and configuration of external tools</li>
+				<li>Import of ChromaTOF peak lists as pseudo-chromatograms</li>
+				<li>Completed integration of Anova and PCA via RServe</li>
+				<li>Interactive visualization of PCA results</li>
+			</ul>
+			<h5>Installers</h5>
+			<ul class="inline">
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-windows.exe">Windows</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-macosx.tgz">MacOS X</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-linux.sh">Linux</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-solaris.sh">Solaris</a></li>
+				<li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui.zip">Platform Independent ZIP</a></li>
+			</ul>
+			
+		<hr>
+
+		<footer>
+			<p>&copy; Nils Hoffmann 2013</p>
+		</footer>
+
+	</div> <!-- /container -->
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.js"><\/script>')</script>
+
+	<script src="js/vendor/bootstrap.min.js"></script>
+
+	<script src="js/main.js"></script>
+
+	<script>
+		var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
+		(function(d, t) {
+			var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+			g.src = ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+			s.parentNode.insertBefore(g, s)
+		}(document, 'script'));
+	</script>
+</body>
+</html>

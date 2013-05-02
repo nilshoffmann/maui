@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.maltcms.chromaui.project.spi
+OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/project/spi/Bundle.properties
+OpenIDE-Module-Layer: net/sf/maltcms/chromaui/project/spi/layer.xml
+OpenIDE-Module-Requires: 
+  cnb.org.netbeans.modules.projectui,
+  net.sf.maltcms.chromaui.project.subprojectProvider
+OpenIDE-Module-Specification-Version: 1.0.1
+

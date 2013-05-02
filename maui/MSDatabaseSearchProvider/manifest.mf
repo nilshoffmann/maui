@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.maltcms.db.search
+OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/db/search/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.1
+
