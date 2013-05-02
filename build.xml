@@ -4,8 +4,6 @@
 	<property environment="env" />
 	<property name="maui.dir" value="maui"/>
 	<property name="proteus.dir" value="proteus"/>
-	<property name="maui.svn" value="svn+ssh://porta.cebitec.uni-bielefeld.de/vol/maltcms/repository/ChromAUI"/>
-	<property name="proteus.svn" value="https://svn.cebitec.uni-bielefeld.de/svn/aggiprojects/master/kotte/ProteomikLaborprogramm"/>
 	<property name="platform.parentdir" value="${basedir}"/>
 	<property file="nbproject/platform-defaults.properties"/>
 
