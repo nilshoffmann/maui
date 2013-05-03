@@ -68,7 +68,7 @@ public interface IDescriptorFactory {
     /**
      * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a 
      * normalization value of 1.0;
-     * @return 
+     * @return a new default normalization descriptor
      */
     public INormalizationDescriptor newNormalizationDescriptor();
 

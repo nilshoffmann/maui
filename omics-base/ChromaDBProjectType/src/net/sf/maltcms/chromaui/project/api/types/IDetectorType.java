@@ -54,7 +54,7 @@ public interface IDetectorType {
      * of the detector. E.g. in GC-MS, the separation type has one elementary feature dimension, time,
      * while the detector type has two elementary feature dimensions, mass and intensity.
      * Thus, for GC-MS, the total feature dimension is 1+2=3 for each acquired feature.
-     * @return
+     * @return the number of feature dimensions
      */
     int getFeatureDimensions();
 }

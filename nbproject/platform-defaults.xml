@@ -5,7 +5,7 @@
     </condition>
 
     <target name="init-platform-config" depends="copy-platform-config,copy-platform-build-files"/>
-
+	
     <target name="copy-platform-build-files">
         <echo message="Copying platform build files"/>
         <copy failonerror="false" file="${basedir}/nbproject/platform.xml" tofile="${basedir}/nbproject/platform.xml.bak"/>

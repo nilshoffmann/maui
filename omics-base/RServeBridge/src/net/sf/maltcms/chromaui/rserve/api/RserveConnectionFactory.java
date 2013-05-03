@@ -428,7 +428,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
     /**
      * Returns the r binary location
      *
-     * @return
+     * @return the location of the R binary
      */
     public File getRBinaryLocation() {
         if (rBinaryLocation != null) {
@@ -503,7 +503,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
      * running local instance of Rserve. If that fails, it will try to launch a
      * new Rserve instance and connect to it. Otherwise it will return null.
      *
-     * @return
+     * @return the local connection
      * @throws RserveException
      */
     public RConnection getLocalConnection() {

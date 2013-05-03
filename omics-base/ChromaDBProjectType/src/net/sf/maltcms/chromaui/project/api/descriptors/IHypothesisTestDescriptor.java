@@ -76,14 +76,15 @@ public interface IHypothesisTestDescriptor {
     /**
      * Set the value of pValues
      *
-     * @param pValue new values of pValues
+     * @param pValues new values of pValues
      */
     void setPvalues(double[] pValues);
     
     /**
-     * Set the value of pvalueAdjustmentMethod
+     * Set the value of pvalueAdjustmentMethod for pvalue correction
+	 * in multiple testing.
      *
-     * @param pValue new values of pValues
+     * @param method the pvalue adjustment method to use
      */
     void setPvalueAdjustmentMethod(String method);
     

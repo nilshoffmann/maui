@@ -42,6 +42,9 @@
             <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
 				<!--<modules includes="org[.]netbeans[.]*" clusters="harness"/>-->
         </autoupdate>
+		<echo message="Copying patched build xml to harness"/>
+		<copy failonerror="true" file="${harness.dir}${file.separator}build.xml" tofile="${harness.dir}${file.separator}build.xml.bak"/>
+        <copy file="${basedir}${file.separator}..${file.separator}nbproject${file.separator}harness-build.xml" tofile="${harness.dir}${file.separator}build.xml"/>
     </target>
 
     <target name="prepare-tasks">

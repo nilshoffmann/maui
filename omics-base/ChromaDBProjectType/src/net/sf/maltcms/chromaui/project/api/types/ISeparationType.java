@@ -55,7 +55,7 @@ public interface ISeparationType {
      *
      * For GCxGC-MS, we have two separation dimensions plus two detector dimensions, thus,
      * each GCxGC-MS feature has a total feature dimension of 4.
-     * @return
+     * @return the number of feature dimensions
      */
     public int getFeatureDimensions();
 

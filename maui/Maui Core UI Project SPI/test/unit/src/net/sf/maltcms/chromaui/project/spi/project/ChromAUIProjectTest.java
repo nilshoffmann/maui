@@ -28,38 +28,27 @@
 package net.sf.maltcms.chromaui.project.spi.project;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
-import junit.framework.TestCase;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.netbeans.junit.NbModuleSuite;
 import org.netbeans.junit.NbModuleSuite.Configuration;
-import org.openide.util.Exceptions;
+import org.netbeans.junit.NbTestCase;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class ChromAUIProjectTest extends TestCase{
+public class ChromAUIProjectTest extends NbTestCase {
 
-    public ChromAUIProjectTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	public ChromAUIProjectTest(String name) {
+		super(name);
+	}
 
     public static junit.framework.Test suite() {
         Configuration config = NbModuleSuite.createConfiguration(ChromAUIProjectTest.class);
@@ -70,22 +59,22 @@ public class ChromAUIProjectTest extends TestCase{
      * Test of addContainer method, of class ChromAUIProject.
      */
     @Test
-    public void testAddContainer() {
+    public void testAddContainer() throws Exception {
         System.out.println("addContainer");
+		ChromAUIProject cap = null;
         try {
             File f;
-            ChromAUIProject cap;
-            File userdir = new File(System.getProperty("user.home"));
+            
+            File userdir = new File(System.getProperty("java.io.tmpdir"));
             f = new File(new File(userdir, UUID.randomUUID().toString()), "chromauiproject.db4o");
             f.getParentFile().mkdirs();
             f.createNewFile();
             f.deleteOnExit();
             f.getParentFile().deleteOnExit();
-            //Db4oEmbedded.openFile(f.getAbsolutePath());
-
 
             cap = new ChromAUIProject();
             cap.activate(f.toURI().toURL());
+			cap.openSession();
             cap.getCrudProvider();
 //            ChromatogramContainer icc = new ChromatogramContainer();
             ChromatogramDescriptor gcd1 = new ChromatogramDescriptor();
@@ -144,10 +133,10 @@ public class ChromAUIProjectTest extends TestCase{
 //                    System.out.println(sa.toString());
 //                }
             }
-        }catch(IOException ioex) {
-            Exceptions.printStackTrace(ioex);
         } finally {
-            
+            if(cap!=null) {
+				cap.closeSession();
+			}
         }
         // TODO review the generated test code and removeMembers the default call to fail.
         //fail("The test case is a prototype.");
@@ -156,40 +145,40 @@ public class ChromAUIProjectTest extends TestCase{
     /**
      * Test of removeContainer method, of class ChromAUIProject.
      */
-    @Test
-    public void testRemoveContainer() {
-//        System.out.println("removeContainer");
-//        IContainer[] ic = null;
-//        ChromAUIProject instance = null;
-//        instance.removeContainer(ic);
-        // TODO review the generated test code and removeMembers the default call to fail.
-        //fail("The test case is a prototype.");
-    }
+//    @Test
+//    public void testRemoveContainer() {
+////        System.out.println("removeContainer");
+////        IContainer[] ic = null;
+////        ChromAUIProject instance = null;
+////        instance.removeContainer(ic);
+//        // TODO review the generated test code and removeMembers the default call to fail.
+//        //fail("The test case is a prototype.");
+//    }
 
     /**
      * Test of getContainer method, of class ChromAUIProject.
      */
-    @Test
-    public void testGetContainer() {
-//        System.out.println("getContainer");
-//        Class<IContainer> c = null;
-//        ChromAUIProject instance = null;
-//        Collection expResult = null;
-//        Collection result = instance.getContainer(c);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and removeMembers the default call to fail.
-//        fail("The test case is a prototype.");
-    }
+//    @Test
+//    public void testGetContainer() {
+////        System.out.println("getContainer");
+////        Class<IContainer> c = null;
+////        ChromAUIProject instance = null;
+////        Collection expResult = null;
+////        Collection result = instance.getContainer(c);
+////        assertEquals(expResult, result);
+////        // TODO review the generated test code and removeMembers the default call to fail.
+////        fail("The test case is a prototype.");
+//    }
 
     /**
      * Test of main method, of class ChromAUIProject.
      */
-    @Test
-    public void testMain() {
-//        System.out.println("main");
-//        String[] args = null;
-//        ChromAUIProject.main(args);
-//        // TODO review the generated test code and removeMembers the default call to fail.
-//        fail("The test case is a prototype.");
-    }
+//    @Test
+//    public void testMain() {
+////        System.out.println("main");
+////        String[] args = null;
+////        ChromAUIProject.main(args);
+////        // TODO review the generated test code and removeMembers the default call to fail.
+////        fail("The test case is a prototype.");
+//    }
 }

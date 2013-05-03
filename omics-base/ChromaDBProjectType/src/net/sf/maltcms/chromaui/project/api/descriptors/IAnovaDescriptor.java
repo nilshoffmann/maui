@@ -42,9 +42,9 @@ public interface IAnovaDescriptor extends IStatisticsDescriptor, IHypothesisTest
     double[] getFvalues();
 
     /**
-     * Set the value of fValue
+     * Set the value of fValues
      *
-     * @param fValue new value of fValue
+     * @param fValues new value of fValues
      */
     void setFvalues(double[] fValues);
     

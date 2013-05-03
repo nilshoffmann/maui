@@ -94,7 +94,7 @@ public class DescriptorFactory {
     /**
      * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a 
      * normalization value of 1.0;
-     * @return 
+     * @return a default normalization descriptor
      */
     public static INormalizationDescriptor newNormalizationDescriptor() {
         return factoryImpl.newNormalizationDescriptor();
