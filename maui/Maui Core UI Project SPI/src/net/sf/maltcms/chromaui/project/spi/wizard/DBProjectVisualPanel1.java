@@ -273,9 +273,11 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                 if (f.isDirectory()) {
                     Collection<File> l = FileUtils.listFiles(f, fileExtensions, true);
                     for(File file:l) {
+						System.err.println("Adding file below selected directory: "+file);
                         getListModel().addElement(file);
                     }
                 } else {
+					System.err.println("Adding selected file: "+f);
                     getListModel().addElement(f);
                 }
             }
@@ -426,7 +428,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
         StringBuilder sb = new StringBuilder();
         for (Object o : getListModel().toArray()) {
             File of = (File) o;
-            sb.append(of.getAbsolutePath() + ",");
+            sb.append(of.getAbsolutePath()).append(",");
         }
         if (sb.length() > 0) {
             d.putProperty("input.dataInfo", sb.substring(0, sb.length() - 1));

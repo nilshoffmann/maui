@@ -75,6 +75,7 @@ import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -117,7 +118,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 	private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<MSSeries, IScan>();
 	private DatabaseSearchPanel ddp = null;
 	private Lookup contentProviderLookup;
+	private double barWidth = 0.5d;
 	private boolean addSeriesToTopPlot = true;
+	private XYBarDataset barDataset = null;
 
 	public MassSpectrumPanel(Lookup contentProviderLookup) {
 		System.out.println("Opening MassSpectrumPanel");
@@ -136,7 +139,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 	private void initChartComponents() {
 
 		this.sc = new XYSeriesCollection();
-		XYBarDataset d = new XYBarDataset(sc, 0.5d);
+		barDataset = new XYBarDataset(sc, barWidth);
 		XYBarRenderer renderer = new XYBarRenderer(0.1d);
 		StandardXYBarPainter sp = new StandardXYBarPainter();
 		renderer.setBarPainter(sp);
@@ -147,7 +150,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		intensityAxis.setUpperMargin(0.10d);
 		NumberAxis mzAxis = new NumberAxis("m/z");
 		mzAxis.setAutoRangeIncludesZero(false);
-		this.plot = new XYPlot(d, mzAxis, intensityAxis, renderer);
+		this.plot = new XYPlot(barDataset, mzAxis, intensityAxis, renderer);
 		this.plot.setForegroundAlpha(0.85f);
 
 		plot.setDomainCrosshairLockedOnData(true);
@@ -168,9 +171,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				sb.append(comp);
 				sb.append(": ");
 				sb.append("x=");
-				sb.append(String.format("%.2f", x));
+				sb.append(String.format("%.4f", x));
 				sb.append(" y=");
-				sb.append(String.format("%.2f", y));
+				sb.append(String.format("%.4f", y));
 				return sb.toString();
 			}
 		});
@@ -436,80 +439,29 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
         jPanel1 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
-        clear = new javax.swing.JButton();
-        addMs = new javax.swing.JToggleButton();
-        addSeriesTop = new javax.swing.JToggleButton();
-        absoluteRelativeToggle = new javax.swing.JToggleButton();
-        diffToggle = new javax.swing.JToggleButton();
         fixXAxis = new javax.swing.JToggleButton();
         fixYAxis = new javax.swing.JToggleButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
         hideAnnotations = new javax.swing.JToggleButton();
         activeMassSpectrum = new javax.swing.JComboBox();
         remove = new javax.swing.JButton();
-        identify = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        jLabel1 = new javax.swing.JLabel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 32767));
+        barWidthSpinner = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
+        jToolBar2 = new javax.swing.JToolBar();
+        clear = new javax.swing.JButton();
+        addMs = new javax.swing.JToggleButton();
+        addSeriesTop = new javax.swing.JToggleButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
+        absoluteRelativeToggle = new javax.swing.JToggleButton();
+        diffToggle = new javax.swing.JToggleButton();
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/sf/maltcms/chromaui/msviewer/spi/Bundle"); // NOI18N
-        clear.setText(bundle.getString("MassSpectrumPanel.clear.text")); // NOI18N
-        clear.setFocusable(false);
-        clear.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        clear.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        clear.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(clear);
-
-        addMs.setText(bundle.getString("MassSpectrumPanel.addMs.text")); // NOI18N
-        addMs.setFocusable(false);
-        addMs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        addMs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        addMs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addMsActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(addMs);
-
-        addSeriesTop.setSelected(true);
-        addSeriesTop.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.addSeriesTop.text")); // NOI18N
-        addSeriesTop.setFocusable(false);
-        addSeriesTop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        addSeriesTop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        addSeriesTop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addSeriesTopActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(addSeriesTop);
-
-        absoluteRelativeToggle.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.absoluteRelativeToggle.text")); // NOI18N
-        absoluteRelativeToggle.setFocusable(false);
-        absoluteRelativeToggle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        absoluteRelativeToggle.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        absoluteRelativeToggle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                absoluteRelativeToggleActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(absoluteRelativeToggle);
-
-        diffToggle.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.diffToggle.text")); // NOI18N
-        diffToggle.setFocusable(false);
-        diffToggle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        diffToggle.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        diffToggle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                diffToggleActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(diffToggle);
 
         fixXAxis.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.fixXAxis.text")); // NOI18N
         fixXAxis.setFocusable(false);
@@ -532,6 +484,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             }
         });
         jToolBar1.add(fixYAxis);
+        jToolBar1.add(jSeparator2);
 
         hideAnnotations.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.hideAnnotations.text")); // NOI18N
         hideAnnotations.setFocusable(false);
@@ -561,23 +514,88 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             }
         });
         jToolBar1.add(remove);
+        jToolBar1.add(jSeparator1);
 
-        identify.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.identify.text")); // NOI18N
-        identify.setEnabled(false);
-        identify.setFocusable(false);
-        identify.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        identify.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        identify.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                identifyActionPerformed(evt);
+        jLabel1.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jLabel1.text")); // NOI18N
+        jToolBar1.add(jLabel1);
+        jToolBar1.add(filler1);
+
+        barWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(0.5d, 0.009999999776482582d, 1.0d, 0.009999999776482582d));
+        barWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                barWidthSpinnerStateChanged(evt);
             }
         });
-        jToolBar1.add(identify);
+        jToolBar1.add(barWidthSpinner);
 
         jPanel1.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         jPanel2.setLayout(new java.awt.GridLayout(1, 0));
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        jToolBar2.setFloatable(false);
+        jToolBar2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        jToolBar2.setRollover(true);
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/sf/maltcms/chromaui/msviewer/spi/Bundle"); // NOI18N
+        clear.setText(bundle.getString("MassSpectrumPanel.clear.text")); // NOI18N
+        clear.setFocusable(false);
+        clear.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        clear.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        clear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(clear);
+
+        addMs.setText(bundle.getString("MassSpectrumPanel.addMs.text")); // NOI18N
+        addMs.setFocusable(false);
+        addMs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        addMs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        addMs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addMsActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(addMs);
+
+        addSeriesTop.setSelected(true);
+        addSeriesTop.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.addSeriesTop.text")); // NOI18N
+        addSeriesTop.setFocusable(false);
+        addSeriesTop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        addSeriesTop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        addSeriesTop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSeriesTopActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(addSeriesTop);
+        jToolBar2.add(jSeparator3);
+
+        absoluteRelativeToggle.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.absoluteRelativeToggle.text")); // NOI18N
+        absoluteRelativeToggle.setFocusable(false);
+        absoluteRelativeToggle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        absoluteRelativeToggle.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        absoluteRelativeToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                absoluteRelativeToggleActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(absoluteRelativeToggle);
+
+        diffToggle.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.diffToggle.text")); // NOI18N
+        diffToggle.setFocusable(false);
+        diffToggle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        diffToggle.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        diffToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                diffToggleActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(diffToggle);
+
+        jPanel1.add(jToolBar2, java.awt.BorderLayout.WEST);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -650,22 +668,11 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
 		int key = activeMassSpectrum.getSelectedIndex();
 		if (!seriesToScan.isEmpty()) {
-			seriesToScan.remove(this.sc.getSeries(key));
+			seriesToScan.remove((MSSeries)this.sc.getSeries(key));
 			this.sc.removeSeries(key);
 			updateActiveMassSpectrum();
 		}
     }//GEN-LAST:event_removeActionPerformed
-
-    private void identifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identifyActionPerformed
-		System.out.println("Identifying");
-		if (seriesToScan.isEmpty()) {
-			NotifyDescriptor nd = new NotifyDescriptor.Message(
-					"Please select at least one mass spectrum!");
-			DialogDisplayer.getDefault().notify(nd);
-		} else {
-			addIdentification();
-		}
-    }//GEN-LAST:event_identifyActionPerformed
 
     private void absoluteRelativeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRelativeToggleActionPerformed
 //        this.defaultNumberFormat.setRelativeMode(absoluteRelativeToggle.isSelected());
@@ -709,20 +716,36 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 			}
 		}
     }//GEN-LAST:event_diffToggleActionPerformed
+
+    private void barWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_barWidthSpinnerStateChanged
+        System.out.println("Received spinner state changed!");
+		if(this.barDataset!=null) {
+			barWidth = ((Double)barWidthSpinner.getValue()).doubleValue();
+			barDataset = new XYBarDataset(sc, barWidth);
+			this.plot.setDataset(barDataset);
+		}
+    }//GEN-LAST:event_barWidthSpinnerStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton absoluteRelativeToggle;
     private javax.swing.JComboBox activeMassSpectrum;
     private javax.swing.JToggleButton addMs;
     private javax.swing.JToggleButton addSeriesTop;
+    private javax.swing.JSpinner barWidthSpinner;
     private javax.swing.JButton clear;
     private javax.swing.JToggleButton diffToggle;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.JToggleButton fixXAxis;
     private javax.swing.JToggleButton fixYAxis;
     private javax.swing.JToggleButton hideAnnotations;
-    private javax.swing.JButton identify;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
     private javax.swing.JButton remove;
     // End of variables declaration//GEN-END:variables
 

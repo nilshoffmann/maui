@@ -85,9 +85,9 @@ public final class ViewAs3DHeatmap implements ActionListener {
                     IChromatogram chrom = context.getChromatogram();
                     if (chrom instanceof IChromatogram2D) {
                         IChromatogram2D chrom2d = (IChromatogram2D) chrom;
-                        int modulations = chrom2d.getNumberOfModulations();
-                        int spm = chrom2d.getNumberOfScansPerModulation();
-                        ArrayInt.D2 surface = new ArrayInt.D2(modulations, spm);
+                        final int modulations = chrom2d.getNumberOfModulations();
+                        final int spm = chrom2d.getNumberOfScansPerModulation();
+                        final ArrayInt.D2 surface = new ArrayInt.D2(modulations, spm);
                         int scanIndex = 0;
                         progressHandle.progress("Creating surface");
                         Array tic = chrom2d.getParent().getChild("total_intensity").getArray();
@@ -99,17 +99,18 @@ public final class ViewAs3DHeatmap implements ActionListener {
 //                                coords.add(new Coord3d(i, j, height));
                             }
                         }
-                        final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
-                        hvtc.setMapper(new ArrayD2Mapper(surface), new Rectangle2D.Double(0, 0, modulations, spm), null);
+                        
                         progressHandle.progress("Creating Top Component");
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
+								final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
                                 hvtc.open();
                                 hvtc.requestActive();
-                                progressHandle.progress("Done!");
+								hvtc.setMapper(new ArrayD2Mapper(surface), new Rectangle2D.Double(0, 0, modulations, spm), null);
                             }
                         });
+						progressHandle.progress("Done!");
                     }
                 } finally {
                     progressHandle.finish();

@@ -66,7 +66,7 @@ public class TopKItemsLabelGenerator implements XYItemLabelGenerator {
 //		if (this.ks.contains(arg0.getYValue(arg1, arg2))) {
 		if (this.topK.contains(new Point(arg1,arg2))) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(String.format("%.2f", arg0.getXValue(arg1, arg2)));
+			sb.append(String.format("%.4f", arg0.getXValue(arg1, arg2)));
 			return sb.toString();
 		}
 

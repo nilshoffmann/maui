@@ -118,11 +118,17 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 		setPrefetchSize(scans, intensityValues);
 		this.satOffset = parent.getChild("scan_acquisition_time").getArray().
 				getDouble(0);
+//        this.prefetchSize = scans/10;
 		modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
 		scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
+		if(scanRate==0) {
+			Array satA = this.parent.getChild("scan_acquisition_time").getArray();
+			double s0 = satA.getDouble(0);
+			double s1 = satA.getDouble(1);
+			scanRate = 1.0d/(s1-s0);
+		}
 		spm = (int) (Math.ceil(modulationTime * scanRate));
 		modulations = (int) (scans / spm);
-//        this.prefetchSize = scans/10;
 		try {
 			this.parent.getChild("first_column_elution_time");
 			this.parent.getChild("second_column_elution_time");
@@ -339,8 +345,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 			if (insertAfter == next) {
 				return insertAfter;
 			}
-			System.out.println("InsertAfter: "+insertAfter + " @"+d[insertAfter]);
-			System.out.println("Next: "+next+" @"+d[next]);
+			System.out.println("InsertAfter: " + insertAfter + " @" + d[insertAfter]);
+			System.out.println("Next: " + next + " @" + d[next]);
 			//FIXME validate
 			double currentSat = d[insertAfter];
 			double nextSat = d[next];

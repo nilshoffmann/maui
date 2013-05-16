@@ -82,7 +82,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
     private ViewportMapper mapper = null;
     private List<Coord3d> coords = null;
     private Rectangle2D roi;
-    private int sampling = 1;
+    private int sampling = 5;
 
     public HeatmapViewerTopComponent() {
         initComponents();
@@ -175,13 +175,14 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 
     @Override
     public void componentOpened() {
-        buildScene();
+        
     }
 
     public void setMapper(ViewportMapper mapper, Rectangle2D roi, List<Coord3d> coords) {
         this.mapper = mapper;
         this.roi = roi;
         this.coords = coords;
+		buildScene();
     }
 
     private class SceneUpdater extends AProgressAwareRunnable {
@@ -198,7 +199,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
                 setEnabled(false);
                 progressHandle.start();
                 progressHandle.progress("Removing old scene elements");
-                synchronized (graph) {
+//                synchronized (graph) {
                     if (cc != null) {
                         graph.remove(cc, false);
                     }
@@ -220,7 +221,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
                     progressHandle.progress("Adding to scene");
                     System.out.println("Adding surface to scene graph");
                     graph.add(cc);
-                }
+//                }
 
 //            for (int i = 0; i < 10; i++) {
 //                int xpos = (int) (roi.getX() + (double) (Math.random() * (roi.getWidth())));

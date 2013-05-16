@@ -192,6 +192,25 @@ public class ChromatogramNode extends FilterNode implements
             }
         };
         set.put(normalizationValue);
+		
+		Property resourceLocation = new PropertySupport.ReadWrite<String>(
+                "resourceLocation", String.class,
+                "Resource Location",
+                "The location of the raw data file.") {
+
+            @Override
+            public String getValue() throws IllegalAccessException, InvocationTargetException {
+                return icd.getResourceLocation();
+            }
+
+            @Override
+            public void setValue(String location) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+                String oldValue = icd.getResourceLocation();
+                icd.setResourceLocation(location);
+                firePropertyChange("resourceLocation", oldValue, location);
+            }
+        };
+        set.put(resourceLocation);
 //            } catch (NoSuchMethodException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }
