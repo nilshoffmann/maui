@@ -49,3 +49,38 @@
 /maui/ChromAProject/nbproject/private/
 /maui-ext/module7/build/
 /maui-ext/module7/nbproject/private/
+/omics-base/DebuggingModule/release/docs/
+/omics-base/CentralLookup/release/docs/
+/omics-base/ChromaDBProjectType/release/docs/
+/omics-base/Common Charting/release/docs/
+/omics-base/DB4oDatabaseServices/release/docs/
+/omics-base/DatabaseServices/release/docs/
+/omics-base/LookupResultListener/release/docs/
+/omics-base/PCAViewer/release/docs/
+/omics-base/RServeBridge/release/docs/
+/omics-base/TopComponentTypeRegistry/release/docs/
+/omics-base/UISupport/release/docs/
+/maui/BrandingModule/release/docs/
+/maui/CDFFileHandle/release/docs/
+/maui/ChartComponents/release/docs/
+/maui/ChromAProject/release/docs/
+/maui/ChromaTOFPeakImporter/release/docs/
+/maui/ChromatogramHeatmapViewer/release/docs/
+/maui/ExecutionSupport/release/docs/
+/maui/FeatureSupport/release/docs/
+/maui/FileHandles/release/docs/
+/maui/GCViewer/release/docs/
+/maui/GroovyActions/release/docs/
+/maui/Heatmap3DViewer/release/docs/
+/maui/MSDatabaseSearchProvider/release/docs/
+/maui/MSViewer/release/docs/
+/maui/Maui CeBiTec Branding/release/docs/
+/maui/Maui Core Pipeline Editor/release/docs/
+/maui/Maui Core UI Project SPI/release/docs/
+/maui/Maui Welcome/release/docs/
+/maui/MeltDBConnector/release/docs/
+/maui/MetaboliteDatabaseViewer/release/docs/
+/maui/PeakNormalization/release/docs/
+/maui/PeakTableViewer/release/docs/
+/maui/PipelineRunner/release/docs/
+/maui/StatisticsView/release/docs/
