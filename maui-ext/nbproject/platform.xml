@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="platform" default="download" basedir=".">
+    <import file="preparation.xml"/>
+    <fileset dir="${nbplatform.nb721.netbeans.dest.dir}" id="platform.path"/>
+    <mkdir dir="${nbplatform.nb721.netbeans.dest.dir}"/>
+    <pathconvert refid="platform.path"
+                 property="platform.notempty"
+                 setonempty="false"/>
+                 
+    <condition property="download.enabled">
+        <and>
+            <isset property="bootstrap.url"/>
+            <isset property="autoupdate.catalog.url"/>
+            <not>
+                <available file="${nbplatform.active.dir}${file.separator}platform.complete"/>
+            </not>
+<!--            <not>
+                <isset property="platform.notempty"/>
+            </not>-->
+        </and>
+    </condition>
+    <condition property="download.tasks.required">
+        <and>
+            <not>
+                <available file="${java.io.tmpdir}${file.separator}tasks.jar"/>
+            </not>
+        </and>
+    </condition>    
+
+    <condition property="download.harness.required">
+        <and>
+            <not>
+                <available file="${harness.dir}${file.separator}suite.xml"/>
+            </not>
+            <!--<isset property="download.enabled"/>-->
+        </and>
+    </condition>
+    
+    <target name="download-harness" if="download.harness.required">
+        <mkdir dir="${harness.dir}"/>
+        <autoupdate installdir="${nbplatform.active.dir}" updatecenter="${autoupdate.catalog.url}">
+            <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
+				<!--<modules includes="org[.]netbeans[.]*" clusters="harness"/>-->
+        </autoupdate>
+		<echo message="Copying patched build xml to harness"/>
+		<copy failonerror="true" file="${harness.dir}${file.separator}build.xml" tofile="${harness.dir}${file.separator}build.xml.bak"/>
+        <copy file="${basedir}${file.separator}..${file.separator}nbproject${file.separator}harness-build.xml" tofile="${harness.dir}${file.separator}build.xml"/>
+    </target>
+
+    <target name="prepare-tasks">
+        <property name="tasks.jar" location="${java.io.tmpdir}${file.separator}tasks.jar"/>
+    </target>
+
+    <target name="download-tasks" depends="prepare-tasks" if="download.tasks.required">
+        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
+    </target>
+    
+	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks">
+		<!--if="download.enabled">-->
+        <pathconvert pathsep="|" property="download.clusters" setonempty="true">
+            <mapper type="flatten"/>
+            <path path="${cluster.path}"/>
+        </pathconvert>
+        
+        <property file="${basedir}${file.separator}nbproject${file.separator}platform.properties" prefix="urls."/>
+        <propertyselector property="urls" match="urls.autoupdate.catalog\.(.*)" select="\1"/>
+        <property file="${basedir}${file.separator}nbproject${file.separator}platform.properties"/>
+        <echo message="Downloading clusters ${download.clusters}"/>
+        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
+        <taskdef name="autoupdate" classname="org.netbeans.nbbuild.AutoUpdate" classpath="${tasks.jar}"/>
+        <antcall target="download-harness"/>
+        <for list="${urls}" param="url">
+            <sequential>
+                <echo message="Attempting to download plug-ins from ${autoupdate.catalog.@{url}}" />
+                <download-platform url="${autoupdate.catalog.@{url}}"/>
+            </sequential>
+        </for>
+		<touch file="${nbplatform.active.dir}${file.separator}platform.complete"/>
+    </target>
+    
+    <macrodef name="download-platform">
+        <attribute name="url"/>
+        <sequential>
+            <autoupdate installdir="${nbplatform.active.dir}" updatecenter="@{url}">
+				<modules includes=".*" clusters="${download.clusters}"/>
+                <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
+            </autoupdate>
+        </sequential>
+    </macrodef>
+</project>
