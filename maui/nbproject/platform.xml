@@ -52,10 +52,10 @@
     </target>
 
     <target name="download-tasks" depends="prepare-tasks" if="download.tasks.required">
-        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
+        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true" skipexisting="true"/>
     </target>
     
-	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks">
+	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks" if="download.tasks.required">
 		<!--if="download.enabled">-->
         <pathconvert pathsep="|" property="download.clusters" setonempty="true">
             <mapper type="flatten"/>
@@ -66,7 +66,7 @@
         <propertyselector property="urls" match="urls.autoupdate.catalog\.(.*)" select="\1"/>
         <property file="${basedir}${file.separator}nbproject${file.separator}platform.properties"/>
         <echo message="Downloading clusters ${download.clusters}"/>
-        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
+        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true" skipexisting="true"/>
         <taskdef name="autoupdate" classname="org.netbeans.nbbuild.AutoUpdate" classpath="${tasks.jar}"/>
         <antcall target="download-harness"/>
         <for list="${urls}" param="url">
