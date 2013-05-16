@@ -5,4 +5,30 @@
 <project name="net.sf.maltcms.chromaui.db.spi.db4o" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project net.sf.maltcms.chromaui.db.spi.db4o.</description>
     <import file="nbproject/build-impl.xml"/>
+	
+	<target name="nbm" depends="init,netbeans,-nbm-prompt-for-storepass,-init-executables,nbm-src-javadoc" description="Build NBM archive.">
+		<!-- call harness build.xml nbm target -->
+		<antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
+    </target>
+	
+	<target name="-nbm-src-javadoc-prepare" depends="-javadoc-init">
+		<!-- inclusion base in nbm is below the release folder -->
+		<mkdir dir="release/docs"/>
+	</target>
+	
+	<target name="nbm-src" depends="-nbm-src-javadoc-prepare" if="${nbm.bundle.src}">
+		<!-- bundle src -->
+		<echo>Bundling src for nbm</echo>
+		<zip basedir="src/" destfile="build/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-src.zip" includes="**" />
+		<copy file="build/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-src.zip" todir="release/docs" />
+	</target>
+	
+	<target name="nbm-javadoc" depends="-nbm-src-javadoc-prepare,javadoc" if="${nbm.bundle.javadoc}">
+		<!-- bundle javadoc -->
+		<echo>Bundling javadoc for nbm</echo>
+		<zip basedir="build/javadoc/${code.name.base.dashes}/" destfile="build/javadoc/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-doc.zip" includes="**" />
+		<copy file="build/javadoc/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-doc.zip" todir="release/docs" />
+	</target>
+	
+	<target name="nbm-src-javadoc" depends="nbm-src,nbm-javadoc"/>
 </project>
