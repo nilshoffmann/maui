@@ -79,6 +79,7 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 		nodeActions.add(f.createMenuItem("Scripts","Actions/ChromAUIProjectLogicalView/Scripts"));
 		nodeActions.add(null);
 		nodeActions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
+//		nodeActions.add(f.createMenuItem("Default","Actions/ChromAUIProjectLogicalView/DefaultActions"));
         nodeActions.add(null);
 		nodeActions.add(CommonProjectActions.copyProjectAction());
         nodeActions.add(CommonProjectActions.deleteProjectAction());
