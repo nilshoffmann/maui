@@ -31,8 +31,8 @@ import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures.tree.ElementNotFoundException;
-import net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures.tree.QuadTree;
+import maltcms.datastructures.quadTree.ElementNotFoundException;
+import maltcms.datastructures.quadTree.QuadTree;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.EntityCollection;
 

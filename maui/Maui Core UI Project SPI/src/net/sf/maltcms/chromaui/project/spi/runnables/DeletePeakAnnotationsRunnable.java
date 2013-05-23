@@ -64,7 +64,6 @@ public class DeletePeakAnnotationsRunnable extends AProgressAwareRunnable {
                 tools.clear();
                 tools.addAll(selectedTools);
 
-                
                 progressHandle.progress("Retrieving Peak Containers for " + tools.size() + " Tools", 2);
                 List<Peak1DContainer> peakContainers = new ArrayList<Peak1DContainer>();
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
@@ -76,6 +75,7 @@ public class DeletePeakAnnotationsRunnable extends AProgressAwareRunnable {
                 }
                 progressHandle.progress("Removing Peak Containers for " + tools.size() + " Tools", 3);
                 project.removeContainer(peakContainers.toArray(new Peak1DContainer[peakContainers.size()]));
+				project.removeDescriptor(selectedTools.toArray(new IToolDescriptor[selectedTools.size()]));
                 project.refresh();
 
             }

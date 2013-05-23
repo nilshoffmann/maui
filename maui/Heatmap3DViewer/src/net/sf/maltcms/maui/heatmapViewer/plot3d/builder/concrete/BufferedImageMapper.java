@@ -61,6 +61,11 @@ public class BufferedImageMapper extends ViewportMapper {
     public Rectangle2D getClippedViewport(Rectangle2D roi) {
         return this.maxViewPort.createIntersection(roi);
     }
+	
+	@Override
+    public Rectangle2D getViewport() {
+        return this.maxViewPort;
+    }
 
     @Override
     public double f(double x, double y) {

@@ -50,6 +50,7 @@ import org.jzy3d.events.ControllerEvent;
 import org.jzy3d.events.ControllerEventListener;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.IntegerCoord2d;
+import org.jzy3d.plot3d.builder.Mapper;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.scene.Graph;
@@ -80,8 +81,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
     private AbstractDrawable cc;
     private List<BarChartBar<String>> barChartBars = new ArrayList<BarChartBar<String>>();
     private ViewportMapper mapper = null;
-    private List<Coord3d> coords = null;
-    private Rectangle2D roi;
+	private Rectangle2D roi = null;
     private int sampling = 5;
 
     public HeatmapViewerTopComponent() {
@@ -178,10 +178,9 @@ public final class HeatmapViewerTopComponent extends TopComponent {
         
     }
 
-    public void setMapper(ViewportMapper mapper, Rectangle2D roi, List<Coord3d> coords) {
+    public void setMapper(ViewportMapper mapper) {
         this.mapper = mapper;
-        this.roi = roi;
-        this.coords = coords;
+		this.roi = mapper.getViewport();
 		buildScene();
     }
 
@@ -254,14 +253,14 @@ public final class HeatmapViewerTopComponent extends TopComponent {
         }
     }
 
-    private void addComposite(Graph graph) {
-        SceneUpdater su = new SceneUpdater(graph);
-        SceneUpdater.createAndRun("Scene Updater", su);
-    }
+//    private void addComposite(Graph graph) {
+//        SceneUpdater su = new SceneUpdater(graph);
+//        SceneUpdater.createAndRun("Scene Updater", su);
+//    }
 
     private Chart getChart() {
         if (chart == null) {
-            chart = new Chart(Quality.Intermediate, "swing");
+            chart = new Chart(Quality.Intermediate, "awt");
             LabeledMouseSelector lms = new LabeledMouseSelector(chart);
             chart.getCanvas().addKeyListener(lms);
 
@@ -344,7 +343,13 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 //            @Override
 //            public void run() {
 //                setEnabled(false);
-        addComposite(getChart().getScene().getGraph());
+//        addComposite(getChart().getScene().getGraph());
+//		getChart();
+		if(cc==null) {
+			SurfaceFactory sf = new SurfaceFactory();
+			cc = sf.createSurface(mapper.getClippedViewport(roi), mapper);
+			getChart().addDrawable(cc);
+		}
 //                setEnabled(true);
 ////                requestActive();
 //            }

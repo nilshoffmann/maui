@@ -44,6 +44,7 @@ import javax.swing.ListCellRenderer;
 import net.sf.maltcms.chromaui.project.api.types.GCGC;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
+import net.sf.maltcms.chromaui.project.api.types.LCLC;
 import net.sf.maltcms.chromaui.project.api.types.TypeFactory;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
@@ -389,7 +390,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 
     private void separationTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_separationTypeComboBoxActionPerformed
         ISeparationType ist = (ISeparationType) separationTypeComboBox.getSelectedItem();
-        if (ist instanceof GCGC) {
+        if (ist instanceof GCGC || ist instanceof LCLC) {
             modulationTimeTextField.setEnabled(true);
             scanRateTextField.setEnabled(true);
         } else {

@@ -34,10 +34,12 @@ import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.util.Utilities;
 
 /**
- * Top component which displays something.
+ * Top component which displays mass spectra received through the current 
+ * active selection.
+ * 
+ * @author Nils Hoffmann
  */
 @ConvertAsProperties(dtd = "-//net.sf.maltcms.chromaui.msviewer.api.ui//MassSpectrumViewer//EN",
 autostore = false)

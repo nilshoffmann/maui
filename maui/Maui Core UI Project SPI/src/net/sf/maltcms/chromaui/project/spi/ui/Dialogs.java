@@ -67,20 +67,26 @@ public class Dialogs {
             }
 
             @Override
-            protected Node createNodeForKey(IToolDescriptor key) {
+            protected Node createNodeForKey(final IToolDescriptor key) {
                 Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, lookup);
-                Node customerNode;
+                Node toolNode;
                 try {
-                    customerNode = new DescriptorNode(key);
+                    toolNode = new DescriptorNode(key){
+
+						@Override
+						public String getDisplayName() {
+							return key.getDisplayName()+" "+key.getDate();
+						}
+					};
                 } catch (IntrospectionException ex) {
                     Exceptions.printStackTrace(ex);
-                    customerNode = Node.EMPTY;
+                    toolNode = Node.EMPTY;
                 }
                 //customerNode.setDisplayName(key.getName());
-                return customerNode;
+                return toolNode;
             }
         }, true)));
-        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, "Select Tool Results for Deletion",NotifyDescriptor.OK_CANCEL_OPTION);
+			NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, "Select Tool Results for Deletion",NotifyDescriptor.OK_CANCEL_OPTION);
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             Node[] selectedNodes = dp.getExplorerManager().getSelectedNodes();

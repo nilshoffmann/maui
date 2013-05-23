@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
 id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteMatchingPeakAnnotationsAction")
 @ActionRegistration(displayName = "#CTL_DeleteMatchingPeakAnnotationsAction")
 @ActionReferences({@ActionReference(path="Actions/ChromAUIProjectLogicalView/Peaks")})
-@Messages("CTL_DeleteMatchingPeakAnnotationsAction=Remove Matching Peak Annotations")
+@Messages("CTL_DeleteMatchingPeakAnnotationsAction=Remove All Peak Annotations")
 public final class DeleteMatchingPeakAnnotationsAction implements ActionListener {
 
     private final IChromAUIProject context;

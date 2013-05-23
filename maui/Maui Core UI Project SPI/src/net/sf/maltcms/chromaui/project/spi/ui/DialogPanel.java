@@ -27,10 +27,13 @@
  */
 package net.sf.maltcms.chromaui.project.spi.ui;
 
-import java.awt.FlowLayout;
+import java.awt.Component;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.ListView;
 
@@ -39,24 +42,29 @@ import org.openide.explorer.view.ListView;
  * @author Nils Hoffmann
  */
 public class DialogPanel extends JPanel implements ExplorerManager.Provider {
-
-    private ExplorerManager em = new ExplorerManager();
-
-    public void init(String label, boolean singleSelectionOnly) {
-        removeAll();
-        setLayout(new FlowLayout(FlowLayout.LEADING));
-        add(new JLabel(label));
-        ListView cv = new ListView();
-        if(singleSelectionOnly) {
-            cv.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        }else{
-            cv.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        }
-        add(cv);
-    }
-
-    @Override
-    public ExplorerManager getExplorerManager() {
-        return em;
-    }
+	
+	private ExplorerManager em = new ExplorerManager();
+	
+	public void init(String label, boolean singleSelectionOnly) {
+		removeAll();
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		JLabel jlabel = new JLabel(label);
+		jlabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		add(jlabel);
+		add(Box.createVerticalStrut(10));
+		ListView cv = new ListView();
+		if (singleSelectionOnly) {
+			cv.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+		} else {
+			cv.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		}
+		JScrollPane jsp = new JScrollPane(cv);
+		jsp.setAlignmentX(Component.LEFT_ALIGNMENT);
+		add(jsp);
+	}
+	
+	@Override
+	public ExplorerManager getExplorerManager() {
+		return em;
+	}
 }

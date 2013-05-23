@@ -33,7 +33,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import net.sf.maltcms.chromaui.chromatogram2Dviewer.datastructures.tree.QuadTree;
+import maltcms.datastructures.quadTree.QuadTree;
 import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.axis.ValueAxis;
