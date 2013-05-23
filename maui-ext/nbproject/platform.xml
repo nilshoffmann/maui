@@ -52,10 +52,10 @@
     </target>
 
     <target name="download-tasks" depends="prepare-tasks" if="download.tasks.required">
-        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true" skipexisting="true"/>
+        <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
     </target>
     
-	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks" if="download.tasks.required">
+	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks">
 		<!--if="download.enabled">-->
         <pathconvert pathsep="|" property="download.clusters" setonempty="true">
             <mapper type="flatten"/>

@@ -12,3 +12,7 @@ platform-*
 /maui/CDFFileHandle/build/
 /maui/ChromaTOFPeakImporter/build/
 /maui/GroovyActions/build/
+/maui/ToolsUILibraryWrapper/nbproject/private/
+/maui-ext/module8/build/
+/maui-ext/module8/nbproject/private/
+proteus*
