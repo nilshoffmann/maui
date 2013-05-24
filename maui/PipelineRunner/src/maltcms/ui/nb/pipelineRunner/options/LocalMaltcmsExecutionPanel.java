@@ -34,6 +34,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -277,18 +279,25 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 				File targetFile = null;
 				String maltcmsBasename = null;
 				if (version.equals("NIGHTLY-SNAPSHOT")) {
-					maltcmsBasename = "maltcms-1.2.1-SNAPSHOT";
-					u = new URL("http://maltcms.de:8080/artifactory/libs-snapshot-local/net/sf/maltcms/maltcms-distribution/1.2.1-SNAPSHOT/maltcms-distribution-1.2.1-SNAPSHOT.zip");
+					u = new URL("http://maltcms.de/maltcms/latest/maltcms-distribution-latest.zip");
+					Path p = Files.createTempDirectory("maltcms-download-tmp");
+					File downloadedFile = new File(p.toFile(),"maltcms-distribution-latest.zip");
+					FileUtils.copyURLToFile(u, downloadedFile);
+					String topLevelArchiveName = getTopLevelArchiveDirectoryName(downloadedFile);
+					System.err.println("Top level archive directory name: "+topLevelArchiveName);
+					maltcmsBasename = topLevelArchiveName.substring(0, topLevelArchiveName.length()-1);
 					targetFile = new File(targetDirectory, maltcmsBasename + "-bin.zip");
+					System.err.println("moving to target file "+targetFile);
+					FileUtils.moveFile(downloadedFile, targetFile);
 				} else {
 					String[] majorMinorMicro = version.split("\\.");
 					maltcmsBasename = "maltcms-" + majorMinorMicro[0] + "." + majorMinorMicro[1] + "." + majorMinorMicro[2];
 					String filename = maltcmsBasename + "-bin.zip";
 					u = new URL(maltcmsDownloadBase + majorMinorMicro[0] + "." + majorMinorMicro[1] + "/" + filename);
 					targetFile = new File(targetDirectory, filename);
+					FileUtils.copyURLToFile(u, targetFile);
 				}
 
-				FileUtils.copyURLToFile(u, targetFile);
 				progressHandle.progress("Extracting Maltcms " + (String) maltcmsOnlineVersion.getSelectedItem());
 				unzipArchive(targetFile, targetDirectory);
 				File maltcmsInstallationDir = new File(targetDirectory, maltcmsBasename);
@@ -310,6 +319,21 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 				progressHandle.finish();
 			}
 		}
+	}
+	
+	public String getTopLevelArchiveDirectoryName(File archive) {
+		try {
+			ZipFile zipfile = new ZipFile(archive);
+			for (Enumeration e = zipfile.entries(); e.hasMoreElements();) {
+				ZipEntry entry = (ZipEntry) e.nextElement();
+				if(entry.isDirectory()) {
+					return entry.getName();
+				}
+			}
+		} catch (Exception e) {
+			Exceptions.printStackTrace(e);
+		}
+		return null;
 	}
 
 	public void unzipArchive(File archive, File outputDir) {

@@ -3,6 +3,9 @@
 */nbproject/private/
 */build/
 platform-*
+*/private.xml
+*-doc.zip
+*-src.zip
 /maui/PipelineRunner/build/
 /maui/ChartComponents/build/
 /maui/PeakNormalization/build/

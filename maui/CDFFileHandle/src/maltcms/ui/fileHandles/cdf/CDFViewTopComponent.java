@@ -37,11 +37,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import javax.swing.JComponent;
+import maltcms.ui.fileHandles.cdf.nodes.VariableFragmentNode;
 import org.netbeans.spi.navigator.NavigatorPanel;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.Node;
@@ -56,7 +56,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.BeanNode;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
@@ -213,7 +212,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             if (key instanceof IVariableFragment) {
                 try {
                     System.out.println("Creating VariableFragment node: " + key);
-                    return new Node[]{new BeanNode((IVariableFragment) key)};
+                    return new Node[]{new VariableFragmentNode((IVariableFragment) key)};
                 } catch (IntrospectionException ex) {
                     Exceptions.printStackTrace(ex);
                 }

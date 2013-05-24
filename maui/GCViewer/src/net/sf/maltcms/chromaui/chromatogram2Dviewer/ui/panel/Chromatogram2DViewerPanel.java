@@ -65,6 +65,7 @@ import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -293,6 +294,14 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jLabel2 = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
         modeSpinner = new javax.swing.JSpinner();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        jLabel3 = new javax.swing.JLabel();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
+        boxWidthSpinner = new javax.swing.JSpinner();
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
+        jLabel4 = new javax.swing.JLabel();
+        filler4 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
+        boxHeightSpinner = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
 
         jToolBar1.setRollover(true);
@@ -371,6 +380,32 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             }
         });
         jToolBar2.add(modeSpinner);
+        jToolBar2.add(jSeparator2);
+
+        jLabel3.setText(org.openide.util.NbBundle.getMessage(Chromatogram2DViewerPanel.class, "Chromatogram2DViewerPanel.jLabel3.text")); // NOI18N
+        jToolBar2.add(jLabel3);
+        jToolBar2.add(filler2);
+
+        boxWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0E-4f), Float.valueOf(1000.0f), Float.valueOf(0.01f)));
+        boxWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                boxWidthSpinnerStateChanged(evt);
+            }
+        });
+        jToolBar2.add(boxWidthSpinner);
+        jToolBar2.add(filler3);
+
+        jLabel4.setText(org.openide.util.NbBundle.getMessage(Chromatogram2DViewerPanel.class, "Chromatogram2DViewerPanel.jLabel4.text")); // NOI18N
+        jToolBar2.add(jLabel4);
+        jToolBar2.add(filler4);
+
+        boxHeightSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0E-4f), Float.valueOf(1000.0f), Float.valueOf(0.01f)));
+        boxHeightSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                boxHeightSpinnerStateChanged(evt);
+            }
+        });
+        jToolBar2.add(boxHeightSpinner);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
@@ -378,8 +413,8 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 858, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 858, Short.MAX_VALUE)
+            .addComponent(jToolBar2, javax.swing.GroupLayout.DEFAULT_SIZE, 1183, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1183, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -443,6 +478,22 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 		}
     }//GEN-LAST:event_modeSpinnerStateChanged
 
+    private void boxWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_boxWidthSpinnerStateChanged
+        XYItemRenderer renderer = this.cp.getChart().getXYPlot().getRenderer();
+		if(renderer instanceof XYBlockRenderer) {
+			XYBlockRenderer xyb = (XYBlockRenderer)renderer;
+			xyb.setBlockWidth((Float)boxWidthSpinner.getValue());
+		}
+    }//GEN-LAST:event_boxWidthSpinnerStateChanged
+
+    private void boxHeightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_boxHeightSpinnerStateChanged
+        XYItemRenderer renderer = this.cp.getChart().getXYPlot().getRenderer();
+		if(renderer instanceof XYBlockRenderer) {
+			XYBlockRenderer xyb = (XYBlockRenderer)renderer;
+			xyb.setBlockHeight((Float)boxHeightSpinner.getValue());
+		}
+    }//GEN-LAST:event_boxHeightSpinnerStateChanged
+
     private void handleSliderChange() {
         final int low = this.jSlider1.getValue();
         final int high = ((RangeSlider) jSlider1).getUpperValue();
@@ -483,26 +534,35 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
     private void updateChart() {
         if (xyb != null && xyb instanceof XYNoBlockRenderer) {
-            XYNoBlockRenderer xynb = (XYNoBlockRenderer) xyb;
-            if (ps instanceof GradientPaintScale) {
-                GradientPaintScale gps = (GradientPaintScale) ps;
-                xynb.setEntityThreshold(gps.getValueForIndex(this.jSlider1.getValue()));
-            }
+			throw new IllegalArgumentException();
+//            XYNoBlockRenderer xynb = (XYNoBlockRenderer) xyb;
+//            if (ps instanceof GradientPaintScale) {
+//                GradientPaintScale gps = (GradientPaintScale) ps;
+//                xynb.setEntityThreshold(gps.getValueForIndex(this.jSlider1.getValue()));
+//            }
         }
         XYPlot plot = ((XYPlot) this.cp.getChart().getPlot());
         ChartTools.changePaintScale(plot, this.ps);
         cp.repaint();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSpinner boxHeightSpinner;
+    private javax.swing.JSpinner boxWidthSpinner;
     private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
+    private javax.swing.Box.Filler filler4;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;

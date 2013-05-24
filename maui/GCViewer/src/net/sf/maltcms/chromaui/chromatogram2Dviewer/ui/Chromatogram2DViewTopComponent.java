@@ -31,6 +31,7 @@ import net.sf.maltcms.chromaui.chromatogram2Dviewer.api.Chromatogram2DViewViewpo
 import cross.datastructures.tools.EvalTools;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import maltcms.datastructures.ms.IChromatogram2D;
@@ -111,11 +112,10 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         if (dobj != null) {
             content.add(dobj);
             setToolTipText(dobj.getPrimaryFile().getPath());
-            setDisplayName(NbBundle.getMessage(Chromatogram2DViewTopComponent.class, "CTL_Chromatogram2DViewerTopComponent") + " " + dobj.getPrimaryFile().getName());
         } else {
             setToolTipText(descriptor.getResourceLocation());
-            setDisplayName(NbBundle.getMessage(Chromatogram2DViewTopComponent.class, "CTL_Chromatogram2DViewerTopComponent") + " " + descriptor.getName());
         }
+		setDisplayName("2D Chromatogram View of " + new File(descriptor.getResourceLocation()).getName());
         content.add(descriptor);
         content.add(descriptor.getChromatogram());
         content.add(new NavigatorLookupHint() {
@@ -139,13 +139,9 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
 //            progressHandle.progress("Creating plot");
         XYPlot p = createPlot(chromatogram, ds);
         final PaintScale ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
-        XYBlockRenderer xyb = ((XYBlockRenderer) p.getRenderer());
+//        XYBlockRenderer xyb = ((XYBlockRenderer) p.getRenderer());
         p.setDomainGridlinesVisible(false);
         p.setRangeGridlinesVisible(false);
-//            p.setRangeCrosshairVisible(true);
-//            p.setRangeCrosshairLockedOnData(true);
-//            p.setDomainCrosshairVisible(true);
-//            p.setDomainCrosshairLockedOnData(true);
         JFreeChart jfc = new JFreeChart(p);
         final ChartPanel cp = new ChartPanel(jfc, true);
         cp.setZoomFillPaint(new Color(192, 192, 192, 96));

@@ -170,6 +170,9 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
 
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
+		if(chartPanel.getChart().getAntiAlias()) {
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
         if (isVisible()) {
             for (XYSelection selection : mouseClickSelection) {
                 if (selection.isVisible()) {
@@ -218,7 +221,6 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
             Composite comp = g2.getComposite();
             g2.clip(dataArea);
             g2.setColor(fill);
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             AffineTransform originalTransform = g2.getTransform();
             Shape transformed = entity;
             if (scale) {

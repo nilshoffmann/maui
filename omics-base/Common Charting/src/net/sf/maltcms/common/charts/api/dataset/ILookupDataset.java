@@ -39,9 +39,6 @@ public interface ILookupDataset<SOURCE, TARGET> extends Lookup.Provider {
 
     String getDisplayName();
 
-    @Override
-    Lookup getLookup();
-
     int[][] getRanks();
 
     SOURCE getSource(int seriesIndex);
