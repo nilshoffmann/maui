@@ -27,13 +27,20 @@
  */
 package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser;
 
+import cross.datastructures.fragments.FileFragment;
+import cross.datastructures.fragments.IVariableFragment;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import junit.framework.Assert;
+import maltcms.datastructures.ms.IChromatogram;
+import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import ucar.ma2.Array;
 
 /**
  *
@@ -80,4 +87,5 @@ public class ChromaTOFParserTest {
         //String[] result = ChromaTOFParser.splitLine(line, fieldSeparator, quoteSymbol);
         assertArrayEquals(expResult, result);
     }
+
 }
