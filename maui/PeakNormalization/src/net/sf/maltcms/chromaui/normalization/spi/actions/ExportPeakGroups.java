@@ -44,12 +44,9 @@ import java.util.UUID;
 import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
-import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.netbeans.api.progress.ProgressHandle;
@@ -190,6 +187,8 @@ public final class ExportPeakGroups implements ActionListener {
                 }
             } finally {
                 ph.finish();
+				
+				
             }
         }
     }

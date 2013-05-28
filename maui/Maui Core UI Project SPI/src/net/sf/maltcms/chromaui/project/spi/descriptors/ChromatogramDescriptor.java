@@ -33,10 +33,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import cross.datastructures.fragments.FileFragment;
-import cross.exception.ResourceNotAvailableException;
 import java.io.File;
+import java.net.URI;
 import java.util.List;
-import maltcms.datastructures.ms.ChromatogramFactory;
 import maltcms.datastructures.ms.IChromatogram;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
@@ -104,21 +103,22 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 
     @Override
     public IChromatogram getChromatogram() {
-//        activate(ActivationPurpose.READ);
-//        if (this.chromatogram == null) {
-            if (getSeparationType().getFeatureDimensions() == 2) {
-//                try {
-//                    ChromatogramFactory cf = new ChromatogramFactory();
-//                    this.chromatogram = cf.createChromatogram2D(new FileFragment(new File(
-//                            getResourceLocation())));
-//                } catch (ResourceNotAvailableException rnae) {
-//                    System.err.println("Could not find second_column_scan_index, trying first and second column elution times!");
-                    this.chromatogram = new CachingChromatogram2D(new FileFragment(new File(getResourceLocation())));
-//                }
-            } else {
-                this.chromatogram = new CachingChromatogram1D(new FileFragment(new File(getResourceLocation())));
-            }
-//        }
+		URI uri = null;
+		try {
+			if(getResourceLocation().startsWith("file:") || getResourceLocation().startsWith("http:") || getResourceLocation().startsWith("https:")) {
+				uri = URI.create(getResourceLocation());
+			}else{
+				uri = new File(getResourceLocation()).toURI();
+			}
+		}catch(IllegalArgumentException iae) {
+			System.err.println("Resource location is not an URI!");
+			uri = new File(getResourceLocation()).toURI();
+		}
+		if (getSeparationType().getFeatureDimensions() == 2) {
+				this.chromatogram = new CachingChromatogram2D(new FileFragment(uri));
+		} else {
+			this.chromatogram = new CachingChromatogram1D(new FileFragment(uri));
+		}
         return this.chromatogram;
     }
 
