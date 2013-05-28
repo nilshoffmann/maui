@@ -29,7 +29,6 @@ package de.unibielefeld.bla.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
@@ -49,17 +48,11 @@ import org.openide.util.NbBundle.Messages;
 @Messages("CTL_SomeAction=Some Demo Action")
 public final class SomeAction implements ActionListener {
 
-	private final IChromAUIProject context;
-
-	public SomeAction(IChromAUIProject context) {
-		this.context = context;
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 		DialogDisplayer.getDefault().notify(
 			new NotifyDescriptor.Message(
-			"Hoorrayyy, Arrh, scurrvy pirratttess are all arrround!",
+			"No more pirates",
 			NotifyDescriptor.WARNING_MESSAGE));
 	}
 }
