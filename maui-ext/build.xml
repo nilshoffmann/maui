@@ -5,4 +5,11 @@
 <project name="maui-ext" basedir=".">
     <description>Builds the module suite hkuich.</description>
     <import file="nbproject/build-impl.xml"/>
+	<target name="-init-omics-base">
+		<ant target="build" antfile="${basedir}/../omics-base/build.xml" inheritrefs="false" inheritall="false"/>
+	</target>
+	<target name="-init-maui">
+		<ant target="build" antfile="${basedir}/../maui/build.xml" inheritrefs="false" inheritall="false"/>
+	</target>
+	<target name="build" depends="-init-omics-base,-init-maui,suite.build"></target>
 </project>

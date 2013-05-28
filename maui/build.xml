@@ -108,7 +108,11 @@
 		</exec>    
 	</target>
 	
-	<target name="-pre-build" depends="-init,branding,release,-hide-excluded-modules,build-dev" description="Build all modules in the suite while updating version and timestamp.">
+	<target name="-init-omics-base">
+		<ant target="build" antfile="${basedir}/../omics-base/build.xml" inheritrefs="false" inheritall="false"/>
+	</target>
+	
+	<target name="-pre-build" depends="-init-omics-base,-init,branding,release,-hide-excluded-modules,build-dev" description="Build all modules in the suite while updating version and timestamp.">
 		
 	</target>
 	
