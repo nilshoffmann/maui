@@ -44,6 +44,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.LookupUtils;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
@@ -147,7 +148,7 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
                 IChromatogram1D source = (IChromatogram1D) selection.getSource();
                 IScan target = (IScan) selection.getTarget();
                 ADataset1D ds = (ADataset1D) dataset;
-                IChromAUIProject activeProject = ds.getLookup().lookup(IChromAUIProject.class);
+                IChromAUIProject activeProject = LookupUtils.ensureSingle(ds.getLookup(), IChromAUIProject.class);
                 if (project == null) {
                     project = activeProject;
                 } else {

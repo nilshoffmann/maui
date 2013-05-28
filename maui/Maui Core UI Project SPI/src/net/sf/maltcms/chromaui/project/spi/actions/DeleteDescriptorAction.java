@@ -33,6 +33,7 @@ import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.LookupUtils;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -56,8 +57,7 @@ public final class DeleteDescriptorAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        IChromAUIProject icap = Utilities.actionsGlobalContext().lookup(
-                IChromAUIProject.class);
+        IChromAUIProject icap = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
         if (icap != null) {
             icap.removeDescriptor(context.toArray(new IBasicDescriptor[context.size()]));
         }

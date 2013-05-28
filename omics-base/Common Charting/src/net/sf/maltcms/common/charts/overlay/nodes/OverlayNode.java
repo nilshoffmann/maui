@@ -40,6 +40,7 @@ import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
+import org.openide.util.WeakListeners;
 
 /**
  *
@@ -96,6 +97,7 @@ public class OverlayNode<T extends ChartOverlay> extends BeanNode<T> implements 
     @Override
     public void setSelected(Boolean selected) {
         getBean().setVisible(selected);
+		fireIconChange();
     }
 
     @Override

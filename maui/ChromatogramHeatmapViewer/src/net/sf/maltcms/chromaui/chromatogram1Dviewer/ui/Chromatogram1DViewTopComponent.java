@@ -30,13 +30,13 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.ui;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks.ChromatogramViewLoaderWorker;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -53,6 +53,8 @@ import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.api.ChromatogramViewViewport;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.panel.Chromatogram1DViewPanel;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
+import net.sf.maltcms.chromaui.charts.overlay.ChartOverlayChildFactory;
+import net.sf.maltcms.chromaui.charts.overlay.ChromatogramDescriptorOverlay;
 import net.sf.maltcms.chromaui.charts.overlay.Peak1DOverlay;
 
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -61,6 +63,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
+import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.plot.XYPlot;
@@ -74,6 +77,8 @@ import org.openide.windows.TopComponent;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
@@ -112,7 +117,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 	private ADataset1D<IChromatogram1D, IScan> dataset;
 	private boolean syncViewport = false;
 	private AtomicBoolean initialized = new AtomicBoolean(false);
-
+	
 	public void initialize(final IChromAUIProject project,
 			final List<IChromatogramDescriptor> filename, final ADataset1D<IChromatogram1D, IScan> ds) {
 		boolean initializedSucccess = initialized.compareAndSet(false, true);
@@ -121,13 +126,12 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 			final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading chart");
 			final JComponent progressComponent = ProgressHandleFactory.createProgressComponent(handle);
 			final JPanel box = new JPanel();
-			box.setLayout(new BoxLayout(box, BoxLayout.X_AXIS ));
+			box.setLayout(new BoxLayout(box, BoxLayout.X_AXIS));
 			box.add(Box.createHorizontalGlue());
 			box.add(progressComponent);
 			box.add(Box.createHorizontalGlue());
 			add(box, BorderLayout.CENTER);
 			AProgressAwareRunnable runnable = new AProgressAwareRunnable() {
-
 				@Override
 				public void run() {
 					try {
@@ -138,22 +142,30 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 						}
 						dataset = ds;
 						annotations = new ArrayList<XYAnnotation>(0);
+						final DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 						for (IChromatogramDescriptor descr : filename) {
 							ic.add(descr);
+							List<ChartOverlay> overlays = new LinkedList<ChartOverlay>();
 							if (project != null) {
 								Collection<Peak1DContainer> peaks = project.getPeaks(descr);
 								for (Peak1DContainer container : peaks) {
-									Peak1DOverlay overlay = new Peak1DOverlay(descr,container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
+									Peak1DOverlay overlay = new Peak1DOverlay(descr, container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
 									ic.add(overlay);
-									ic.add(Charts.overlayNode(overlay));
+									overlays.add(overlay);
+//									ic.add(Charts.overlayNode(overlay));
 								}
-//								annotations.addAll(ChromatogramViewLoaderWorker.generatePeakShapes(descr, project, new Color(255, 0, 0, 32), new Color(255, 0, 0, 16), "TIC", new double[0]));
+							}
+							ChromatogramDescriptorOverlay cdo = new ChromatogramDescriptorOverlay(descr, descr.getName(), descr.getDisplayName(), descr.getShortDescription(), true, overlays);
+							ic.add(cdo);
+							Children children = Children.create(new ChartOverlayChildFactory(overlays), true);
+							ic.add(Charts.overlayNode(cdo, children));
+							for (int i = 0; i < ds.getSeriesCount(); i++) {
+								if(ds.getSeriesKey(i).toString().equals(descr.getDisplayName())) {
+									dcbm.addElement(new SeriesItem(cdo, ds.getSeriesKey(i), true));
+								}
 							}
 						}
-						final DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
-						for (int i = 0; i < ds.getSeriesCount(); i++) {
-							dcbm.addElement(ds.getSeriesKey(i));
-						}
+						
 						ic.add(ds);
 						handle.progress("Initializing Settings and Properties...");
 						ic.add(new Properties());
@@ -250,7 +262,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         jToolBar1.add(jSeparator1);
         jToolBar1.add(jSeparator2);
 
-        seriesComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        seriesComboBox.setRenderer(new VisibilityComboBoxRenderer());
         jToolBar1.add(seriesComboBox);
 
         org.openide.awt.Mnemonics.setLocalizedText(hideShowSeries, org.openide.util.NbBundle.getMessage(Chromatogram1DViewTopComponent.class, "Chromatogram1DViewTopComponent.hideShowSeries.text")); // NOI18N
@@ -311,17 +323,18 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void hideShowSeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideShowSeriesActionPerformed
-		String s = (String) seriesComboBox.getSelectedItem();
+		SeriesItem s = (SeriesItem) seriesComboBox.getSelectedItem();
 		Chromatogram1DDataset dataset = getLookup().lookup(Chromatogram1DDataset.class);
 		ChartPanel cp = jp.getLookup().lookup(ChartPanel.class);
 		for (int i = 0; i < dataset.getSeriesCount(); i++) {
-			if (dataset.getSeriesKey(i).equals(s)) {
+			if (dataset.getSeriesKey(i).equals(s.getSeriesKey())) {
 				XYPlot p = cp.getChart().getXYPlot();
 				if (p != null) {
 					XYItemRenderer renderer = p.getRenderer();
 					if (renderer != null) {
 						boolean isVisible = renderer.isSeriesVisible(i);
 						renderer.setSeriesVisible(i, !isVisible);
+						s.setVisible(!isVisible);
 					} else {
 						System.out.println("XYItemRenderer is null!");
 					}
@@ -363,6 +376,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 		TopComponent tc = WindowManager.getDefault().findTopComponent("navigatorTC");
 		if (tc != null) {
 			tc.open();
+			tc.requestAttention(true);
 		}
 	}
 
@@ -370,7 +384,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 	protected void componentActivated() {
 		super.componentActivated();
 		requestFocusInWindow();
-		if(jp!=null) {
+		if (jp != null) {
 			jp.requestFocusInWindow();
 		}
 	}
@@ -446,7 +460,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 				Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();
 				if (!viewports.isEmpty()) {
 					this.jp.setViewport(viewports.iterator().next().getViewPort());
-				}else{
+				} else {
 					System.err.println("No viewports received!");
 				}
 			}

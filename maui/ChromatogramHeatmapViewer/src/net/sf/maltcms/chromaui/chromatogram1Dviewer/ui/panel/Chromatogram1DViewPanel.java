@@ -70,14 +70,12 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 	private XYPlot ticplot;
 	private ChartPanel cdxpanel;
 	private DomainMarkerKeyListener dmkl;
-	private InstanceContent ic;// = new InstanceContent();
-	private Lookup lookup;// = new AbstractLookup(ic);
+	private InstanceContent ic;
+	private Lookup lookup;
 	private JFreeChart chart;
 	private ADataset1D<IChromatogram1D, IScan> ds;
 	private ChromatogramViewViewport viewport;
 	private SelectionOverlay sp;
-	private Crosshair domainCrosshair;
-	private Crosshair rangeCrosshair;
 	private InstanceContentSelectionHandler selectionHandler;
 	private XYMouseSelectionHandler<IScan> mouseSelectionHandler;
 
@@ -93,35 +91,14 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 		cdxpanel = new ChartPanel(chart, true, true, true, true, true);
 		Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 		cdxpanel.setCursor(crosshairCursor);
-//        chart.addProgressListener(cdxpanel);
 		cdxpanel.setInitialDelay(100);
 		cdxpanel.setDismissDelay(30000);
 		cdxpanel.setReshowDelay(0);
 		cdxpanel.setFocusable(true);
-
-//        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>();
-
-//        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
-//                compoundPainter);
-//        jxl = new JXLayer<ChartPanel>(cdxpanel, plui);
 		add(cdxpanel, BorderLayout.CENTER);
 		ic.add(cdxpanel);
 	}
 
-//    private void addCompoundPainter(InstanceContent ic, ChartPanel cp,
-//            ADataset1D<?, IScan> ds) {
-//        siep = new SelectedXYItemEntityPainter(ds, ic, cp);
-//        cp.addChartMouseListener(siep);
-//        cp.getChart().addChangeListener(siep);
-//        cp.getChart().getXYPlot().getDomainAxis().addChangeListener(siep);
-//        cp.getChart().getXYPlot().getRangeAxis().addChangeListener(siep);
-//        cp.getChart().addChangeListener(siep);
-//        CompoundPainter<ChartPanel> compoundPainter = new CompoundPainter<ChartPanel>(
-//                siep);
-//        PainterLayerUI<ChartPanel> plui = new PainterLayerUI<ChartPanel>(
-//                compoundPainter);
-//        jxl.setUI(plui);
-//    }
 	@Override
 	public void revalidate() {
 		super.revalidate();
@@ -159,7 +136,6 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 				selection.setDataset(plot.getDataset());
 			}
 		}
-//        this.ic.add(Charts.overlayNode(sp));
 		if (selectionHandler == null) {
 			selectionHandler = new InstanceContentSelectionHandler(this.ic, sp, InstanceContentSelectionHandler.Mode.ON_CLICK, this.ds, 1);
 		} else {
@@ -201,10 +177,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 				ticplot);
 		dmkl.setPlot(ticplot);
 		cdxpanel.addKeyListener(dmkl);
-//        addCompoundPainter(ic, cdxpanel, ds);
 		addAxisListener();
-//        ValueAxis domain = this.ticplot.getDomainAxis();
-//        ValueAxis range = this.ticplot.getRangeAxis();
 		//add available chart overlays
 		Collection<? extends Overlay> overlays = getLookup().lookupAll(Overlay.class);
 		for (Overlay overlay : overlays) {
@@ -223,10 +196,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 					ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
 					mouseSelectionHandler.addSelectionChangeListener(sp);
 					mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
-					//cdxpanel.addChartMouseListener(mouseSelectionHandler);
 					sp.addChangeListener(cdxpanel);
-//                ic.add(selectionHandler);
-//                ic.add(sl);
 				}
 				cdxpanel.addOverlay(overlay);
 				overlay.addChangeListener(cdxpanel);
