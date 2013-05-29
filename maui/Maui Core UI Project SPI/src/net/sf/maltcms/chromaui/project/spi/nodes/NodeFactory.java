@@ -50,49 +50,56 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = INodeFactory.class)
 public class NodeFactory implements INodeFactory {
 
-    @Override
-    public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
-        DescriptorNode an;
-        try {
-            if (key instanceof PeakGroupDescriptor) {
-                key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-                key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
-                key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-            }
+	@Override
+	public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
+		DescriptorNode an;
+		try {
+			if (key instanceof PeakGroupDescriptor) {
+				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
+				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
+				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
+			}
 			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
 			key.setProject(project);
-            an = new DescriptorNode(key, children, lookup);
-        } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
-            return Node.EMPTY;
-        }
-        return an;
-    }
+			an = new DescriptorNode(key, children, lookup);
+		} catch (IntrospectionException ex) {
+			Exceptions.printStackTrace(ex);
+			return Node.EMPTY;
+		}
+		return an;
+	}
 
-    @Override
-    public Node createContainerNode(IContainer key, Children children, Lookup lookup) {
-        ContainerNode cn;
-        Children c = children;
-        if(c == null) {
-            c = Children.LEAF;
-        }
-        try {
-            //merge factory lookup from parent nodes with this container node lookup
-            cn = new ContainerNode((IContainer<IBasicDescriptor>) key, c, 
-                    lookup);
+	@Override
+	public Node createContainerNode(IContainer key, Children children, Lookup lookup) {
+		ContainerNode cn;
+		Children c = children;
+		if (c == null) {
+			try {
+				cn = new ContainerNode((IContainer<IBasicDescriptor>) key, lookup);
+				IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+				key.setProject(project);
+				return cn;
+			} catch (IntrospectionException ex) {
+				Exceptions.printStackTrace(ex);
+			}
+		}
+		try {
+			//merge factory lookup from parent nodes with this container node lookup
+			cn = new ContainerNode((IContainer<IBasicDescriptor>) key, c,
+					lookup);
 			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
 			key.setProject(project);
-            return cn;
-        } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return Node.EMPTY;
-    }
-	
+			return cn;
+		} catch (IntrospectionException ex) {
+			Exceptions.printStackTrace(ex);
+		}
+		return Node.EMPTY;
+	}
+
 	@Override
 	public Action createMenuItem(String name, String path) {
 		Collection<? extends Action> actions = Utilities.
-                actionsForPath(path);
+				actionsForPath(path);
 		NodePopupAction pnia = new NodePopupAction(name);
 		pnia.setActions(actions.toArray(new Action[actions.size()]));
 		return pnia;

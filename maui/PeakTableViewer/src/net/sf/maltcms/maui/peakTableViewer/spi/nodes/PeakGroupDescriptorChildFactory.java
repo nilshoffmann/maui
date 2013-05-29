@@ -28,13 +28,17 @@
 package net.sf.maltcms.maui.peakTableViewer.spi.nodes;
 
 import java.util.List;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
+import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
@@ -42,26 +46,28 @@ import org.openide.util.Lookup;
  */
 public class PeakGroupDescriptorChildFactory extends ChildFactory<IPeakAnnotationDescriptor> {
 
-    private final IPeakGroupDescriptor container;
-    private final Lookup lookup;
-    private INodeFactory nodeFactory;
+	private final IPeakGroupDescriptor container;
+	private final Lookup lookup;
 
-    public PeakGroupDescriptorChildFactory(Lookup lookup, IPeakGroupDescriptor container) {
-        this.lookup = lookup;
-        this.container = container;
-        this.nodeFactory = Lookup.getDefault().lookup(INodeFactory.class);
-    }
-    
-    @Override
-    protected boolean createKeys(List<IPeakAnnotationDescriptor> list) {
-        for (IPeakAnnotationDescriptor ipad : container.getPeakAnnotationDescriptors()) {
-            list.add(ipad);
-        }
-        return true;
-    }
+	public PeakGroupDescriptorChildFactory(Lookup lookup, IPeakGroupDescriptor container) {
+		this.lookup = lookup;
+		this.container = container;
+	}
 
-    @Override
-    protected Node createNodeForKey(IPeakAnnotationDescriptor key) {
-        return nodeFactory.createDescriptorNode(key, Children.LEAF, lookup);
-    }
+	@Override
+	protected boolean createKeys(List<IPeakAnnotationDescriptor> list) {
+		for (IPeakAnnotationDescriptor ipad : container.getPeakAnnotationDescriptors()) {
+			list.add(ipad);
+		}
+		return true;
+	}
+
+	@Override
+	protected Node createNodeForKey(IPeakAnnotationDescriptor key) {
+		IChromatogramDescriptor chromDesc = key.getChromatogramDescriptor();
+		Children.Array ca = new Children.Array();
+		ca.add(new Node[]{Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lookup,Lookups.fixed(key.getChromatogramDescriptor())))});
+		Node chromDescrNode = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(chromDesc, ca, new ProxyLookup(lookup));
+		return chromDescrNode;
+	}
 }
