@@ -27,7 +27,7 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.runnables;
 
-import com.db4o.query.Predicate;
+import com.db4o.ObjectSet;
 import com.db4o.query.Query;
 import cross.datastructures.tools.EvalTools;
 import cross.datastructures.tuple.Tuple2D;
@@ -37,16 +37,14 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Vector;
 import lombok.Data;
 import maltcms.io.csv.CSVReader;
-import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
-import net.sf.maltcms.chromaui.db.api.query.IQuery;
+import net.sf.maltcms.chromaui.db.api.ICrudProvider;
+import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
@@ -56,6 +54,8 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import ucar.ma2.Array;
@@ -79,6 +79,9 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
 			try {
 				LinkedHashSet<IChromatogramDescriptor> chromatograms = new LinkedHashSet<IChromatogramDescriptor>(project.getChromatograms());
 				Tuple2D<Vector<Vector<String>>, Vector<String>> table = csvr.read(alignmentFile.toURI().toURL().openStream());
+				if (table.getFirst().isEmpty()) {
+					DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Could not import multiple alignment! File is empty! ", NotifyDescriptor.WARNING_MESSAGE));
+				}
 				//map chromatograms in output directory of alignmentFile to retrieve scan_acquisition_time for each peak
 				HashMap<String, IChromatogramDescriptor> nameToPeakFileFragments = new HashMap<String, IChromatogramDescriptor>();
 
@@ -121,10 +124,12 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
 				progressHandle.progress("Mapping peaks to groups");
 				PeakGroupContainer pgc = new PeakGroupContainer();
 				pgc.setDisplayName("PeakGroups");
+				progressHandle.switchToDeterminate(table.getFirst().size());
 				for (Vector<String> row : table.getFirst()) {
 					IPeakGroupDescriptor pgd = DescriptorFactory.newPeakGroupDescriptor("group-" + (rowIdx + 1));
 					pgd.setIndex(rowIdx);
 					pgd.setDisplayName("group-" + (rowIdx + 1));
+					progressHandle.progress("Adding group " + (rowIdx + 1), rowIdx + 1);
 					System.out.println("Adding group " + pgd.getDisplayName());
 					List<IPeakAnnotationDescriptor> descriptors = new ArrayList<IPeakAnnotationDescriptor>();
 					int colIdx = 0;
@@ -160,7 +165,11 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
 					}
 					rowIdx++;
 				}
-				project.addContainer(pgc);
+				if (pgc.getMembers().isEmpty()) {
+					DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Could not import multiple alignment, mapping failed!", NotifyDescriptor.WARNING_MESSAGE));
+				} else {
+					project.addContainer(pgc);
+				}
 			} catch (IOException ex) {
 				Exceptions.printStackTrace(ex);
 			}
@@ -180,18 +189,18 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
 		double alignedPeakRt = sat.getDouble(index);
 		for (Peak1DContainer p : c) {
 			for (IPeakAnnotationDescriptor ipad : p.getMembers()) {
-				double apexTime = ipad.getApexTime();
-				try {
-					int queryIndex = sourceChromatogram.getChromatogram().getIndexFor(apexTime);
-					double queryRt = sat.getDouble(queryIndex);
-					if (alignedPeakRt == queryRt) {
-						System.out.println("matched peak to index " + index);
-						return ipad;
+					double apexTime = ipad.getApexTime();
+					try {
+						int queryIndex = sourceChromatogram.getChromatogram().getIndexFor(apexTime);
+						double queryRt = sat.getDouble(queryIndex);
+						if (alignedPeakRt == queryRt) {
+							System.out.println("matched peak to index " + index);
+							return ipad;
+						}
+					} catch (ArrayIndexOutOfBoundsException aio) {
+						System.err.println("Match index for peak out of bounds!");
 					}
-				} catch (ArrayIndexOutOfBoundsException aio) {
-					System.err.println("Match index for peak out of bounds!");
 				}
-			}
 		}
 		System.out.println("No match found!");
 		return null;
