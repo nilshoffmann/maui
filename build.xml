@@ -3,9 +3,12 @@
 
 	<property environment="env" />
 	<property name="maui.dir" value="maui"/>
-	<property name="proteus.dir" value="proteus"/>
+	<property name="maui-ext.dir" value="maui-ext"/>
+	<property name="omics-base.dir" value="omics-base"/>
 	<property name="platform.parentdir" value="${basedir}"/>
 	<property file="nbproject/platform-defaults.properties"/>
+	
+	
 
 	<target name="help" description="Prints usage info using -projecthelp">
 		<java classname="org.apache.tools.ant.Main">
@@ -13,6 +16,52 @@
 			<arg value="${ant.file}" />
 			<arg value="-projecthelp" />
 		</java>
+	</target>
+	
+	<!-- build targets -->
+	<target name="bootstrap-build" description="Removes existing platform directory, then initializes the build system and fetches dependencies" depends="delete-platform,build-maui-ext">
+		
+	</target>
+	
+	<target name="build-maui" description="Build Maui" depends="build-omics-base">
+		<ant antfile="${maui.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
+	</target>
+	
+	<target name="build-omics-base" description="Build Omics Base">
+		<ant antfile="${omics-base.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
+	</target>
+	
+	<target name="build-maui-ext" description="Build Maui Ext" depends="build-maui">
+		<ant antfile="${maui-ext.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
+	</target>
+	
+	<!-- clean targets -->
+	<target name="clean-maui" description="Clean Maui">
+		<ant antfile="${maui.dir}/build.xml" target="clean"/>
+	</target>
+	
+	<target name="clean-omics-base" description="Clean Omics Base">
+		<ant antfile="${omics-base.dir}/build.xml" target="clean"/>
+	</target>
+	
+	<target name="clean-maui-ext" description="Clean Maui Ext">
+		<ant antfile="${maui-ext.dir}/build.xml" target="clean"/>
+	</target>
+	
+	<target name="clean-all" description="Clean all" depends="clean-omics-base,clean-maui,clean-maui-ext">
+		
+	</target>
+	
+	<target name="check-platform">
+		<echo>Checking for platform directory</echo>
+		<condition property="platform.exists">
+			<available file="platform-*/" type="dir"/>
+		</condition>
+	</target>
+	
+	<target name="delete-platform" description="Remove downloaded platform files" depends="check-platform" if="platform.exists">
+		<echo>Deleting platform directory</echo>
+		<delete dir="platform-*/" failonerror="false"/> 
 	</target>
 
 </project>
