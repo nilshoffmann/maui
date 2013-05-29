@@ -18,7 +18,20 @@
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>update-all</target>
+                    <target>build-all</target>
+                </action>
+                <action name="clean">
+                    <target>clean-all</target>
+                </action>
+                <action name="run">
+                    <target>run-maui</target>
+                </action>
+                <action name="rebuild">
+                    <target>clean-all</target>
+                    <target>build-all</target>
+                </action>
+                <action name="test">
+                    <target>test-all</target>
                 </action>
             </ide-actions>
             <view>
@@ -29,6 +42,14 @@
                 </items>
                 <context-menu>
                     <ide-action name="build"/>
+                    <ide-action name="rebuild"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="run"/>
+                    <ide-action name="test"/>
+                    <action>
+                        <label>Bootstrap</label>
+                        <target>bootstrap-build</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>
