@@ -103,21 +103,24 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 
     @Override
     public IChromatogram getChromatogram() {
-		URI uri = null;
-		try {
-			if(getResourceLocation().startsWith("file:") || getResourceLocation().startsWith("http:") || getResourceLocation().startsWith("https:")) {
-				uri = URI.create(getResourceLocation());
-			}else{
+		if(this.chromatogram==null) {
+			URI uri = null;
+			try {
+				if(getResourceLocation().startsWith("file:") || getResourceLocation().startsWith("http:") || getResourceLocation().startsWith("https:")) {
+					uri = URI.create(getResourceLocation());
+				}else{
+					uri = new File(getResourceLocation()).toURI();
+				}
+			}catch(IllegalArgumentException iae) {
+				System.err.println("Resource location is not an URI!");
 				uri = new File(getResourceLocation()).toURI();
 			}
-		}catch(IllegalArgumentException iae) {
-			System.err.println("Resource location is not an URI!");
-			uri = new File(getResourceLocation()).toURI();
-		}
-		if (getSeparationType().getFeatureDimensions() == 2) {
-				this.chromatogram = new CachingChromatogram2D(new FileFragment(uri));
-		} else {
-			this.chromatogram = new CachingChromatogram1D(new FileFragment(uri));
+
+			if (getSeparationType().getFeatureDimensions() == 2) {
+					this.chromatogram = new CachingChromatogram2D(new FileFragment(uri));
+			} else {
+				this.chromatogram = new CachingChromatogram1D(new FileFragment(uri));
+			}
 		}
         return this.chromatogram;
     }

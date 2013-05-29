@@ -27,7 +27,9 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.runnables;
 
-import cross.datastructures.fragments.FileFragment;
+import com.db4o.query.Predicate;
+import com.db4o.query.Query;
+import cross.datastructures.tools.EvalTools;
 import cross.datastructures.tuple.Tuple2D;
 import cross.tools.StringTools;
 import java.io.File;
@@ -35,14 +37,16 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Vector;
 import lombok.Data;
-import maltcms.datastructures.ms.Chromatogram1D;
-import maltcms.datastructures.ms.IChromatogram;
 import maltcms.io.csv.CSVReader;
+import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
+import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
@@ -54,6 +58,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import ucar.ma2.Array;
 
 /**
  *
@@ -127,14 +132,19 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
 						if (!element.trim().equals("-")) {
 							int peakIndex = Integer.parseInt(element.trim());
 							IChromatogramDescriptor chrom = indexToChrom.get(Integer.valueOf(colIdx));
+							IChromatogramDescriptor sourceChrom = nameToPeakFileFragments.get(StringTools.removeFileExt(new File(chrom.getResourceLocation()).getName()));
 							if (chrom != null) {
-								IPeakAnnotationDescriptor ipad = getDescriptor(
-										peakIndex, project,
-										chrom, nameToPeakFileFragments.get(StringTools.removeFileExt(new File(chrom.getResourceLocation()).getName())));
-								if (ipad != null) {
-									descriptors.add(ipad);
+								if (sourceChrom != null) {
+									IPeakAnnotationDescriptor ipad = getDescriptor(
+											peakIndex, project,
+											chrom, sourceChrom);
+									if (ipad != null) {
+										descriptors.add(ipad);
+									} else {
+										System.err.println("Warning: Peak at index " + peakIndex + " in file " + indexToChrom.get(Integer.valueOf(colIdx)).getDisplayName() + " could not be matched!");
+									}
 								} else {
-									System.err.println("Warning: Peak at index " + peakIndex + " in file " + indexToChrom.get(Integer.valueOf(colIdx)).getDisplayName() + " could not be matched!");
+									System.err.println("Warning: Source Chromatogram at column index " + colIdx + " was not found in project!");
 								}
 							} else {
 								System.err.println("Warning: Chromatogram at column index " + colIdx + " was not found in project!");
@@ -164,21 +174,20 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
 	protected IPeakAnnotationDescriptor getDescriptor(int index,
 			IChromAUIProject descr, IChromatogramDescriptor chrom, IChromatogramDescriptor sourceChromatogram) {
 		Collection<Peak1DContainer> c = descr.getPeaks(chrom);
+		Array sat = sourceChromatogram.getChromatogram().getScanAcquisitionTime();
+		EvalTools.notNull(sourceChromatogram, this);
+		EvalTools.notNull(sourceChromatogram.getChromatogram(), this);
+		double alignedPeakRt = sat.getDouble(index);
 		for (Peak1DContainer p : c) {
 			for (IPeakAnnotationDescriptor ipad : p.getMembers()) {
 				double apexTime = ipad.getApexTime();
 				try {
-					double alignedPeakRt = sourceChromatogram.getChromatogram().getScanAcquisitionTime().getDouble(index);
 					int queryIndex = sourceChromatogram.getChromatogram().getIndexFor(apexTime);
-					double queryRt = sourceChromatogram.getChromatogram().getScanAcquisitionTime().getDouble(queryIndex);
-					if(alignedPeakRt==queryRt) {
+					double queryRt = sat.getDouble(queryIndex);
+					if (alignedPeakRt == queryRt) {
 						System.out.println("matched peak to index " + index);
 						return ipad;
 					}
-//					if (ipad.getIndex() == index) {
-//						System.out.println("matched peak to index " + index);
-//						return ipad;
-//					}
 				} catch (ArrayIndexOutOfBoundsException aio) {
 					System.err.println("Match index for peak out of bounds!");
 				}

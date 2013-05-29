@@ -37,6 +37,8 @@ import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.ImmutableVariableFragment2;
 import cross.datastructures.fragments.VariableFragment;
+import cross.datastructures.tools.EvalTools;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -53,6 +55,7 @@ import maltcms.datastructures.ms.Scan1D;
 import maltcms.tools.MaltcmsTools;
 import org.apache.commons.configuration.Configuration;
 import ucar.ma2.Array;
+import ucar.ma2.MAMath;
 
 /**
  *
@@ -71,6 +74,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	private IVariableFragment intensityValuesVariable;
 	private IVariableFragment massValuesVariable;
 	private IVariableFragment indexVariable;
+	private IVariableFragment scanAcquisitionTimeVariable;
     private ICacheDelegate<Integer, Scan1D> whm;
     private int scans;
     private int prefetchSize = 10000;
@@ -78,11 +82,14 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     private AtomicBoolean loading = new AtomicBoolean(false);
     private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(2);
     private int[] lastPrefetchRange = new int[]{-1,-1};
+	private SoftReference<Array> satReference;
+	private SoftReference<double[]> satArrayReference;
 
     public CachingChromatogram1D(final IFileFragment e) {
         this.parent = e;
         whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(e.getUri().toString().getBytes()).toString(),this);
 //        fillCache(scans,mzV,iV);
+		init();
     }
 
     private void init() {
@@ -105,6 +112,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 			activateCache(intensityValuesVariable);
             intensityValues = intensityValuesVariable.getIndexedArray();
             setPrefetchSize(scans, intensityValues);
+			scanAcquisitionTimeVariable = this.parent.getChild(scan_acquisition_time_var);
             initialized = true;
         }
     }
@@ -261,7 +269,19 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
      */
     @Override
     public Array getScanAcquisitionTime() {
-        return this.parent.getChild(this.scan_acquisition_time_var).getArray();
+		Array sat = null;
+		if(satReference==null || satReference.get()==null) {
+			sat = scanAcquisitionTimeVariable.getArray();
+			satReference = new SoftReference<Array>(sat);
+		}else{
+			sat = satReference.get();
+			if(sat==null) {
+				sat = scanAcquisitionTimeVariable.getArray();
+				satReference = new SoftReference<Array>(sat);
+			}
+		}
+		EvalTools.notNull(sat,this);
+        return sat;
     }
 
     /*
@@ -274,31 +294,42 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
         return MaltcmsTools.getNumberOfScans(this.parent);
     }
 
-    @Override
-    public int getIndexFor(double scan_acquisition_time) {
-        double[] d = (double[]) getScanAcquisitionTime().get1DJavaArray(
-                double.class);
-        int idx = Arrays.binarySearch(d, scan_acquisition_time);
+    protected double[] getSatArray() {
+		double[] satArray = null;
+		if (satArrayReference == null || satArrayReference.get() == null) {
+			satArray = (double[]) getScanAcquisitionTime().get1DJavaArray(
+					double.class);
+			satArrayReference = new SoftReference<double[]>(satArray);
+		} else {
+			satArray = satArrayReference.get();
+		}
+		return satArray;
+	}
+
+	@Override
+	public int getIndexFor(double scan_acquisition_time) {
+		double[] satArray = getSatArray();
+		int idx = Arrays.binarySearch(satArray, scan_acquisition_time);
 		if (idx >= 0) {// exact hit
 			log.info("sat {}, scan_index {}",
-                    scan_acquisition_time, idx);
+					scan_acquisition_time, idx);
 			return idx;
 		} else {// imprecise hit, find closest element
-			int insertionPosition = (-idx)-1;
-			if(insertionPosition<0) {
-				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! "+insertionPosition+"<"+0);
+			int insertionPosition = (-idx) - 1;
+			if (insertionPosition < 0) {
+				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + "<" + 0);
 			}
-			if(insertionPosition>=d.length) {
-				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! "+insertionPosition+">="+d.length);
+			if (insertionPosition >= getSatArray().length) {
+				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + ">=" + satArray.length);
 			}
 //			System.out.println("Would insert before "+insertionPosition);
-			double current = d[Math.min(d.length - 1, insertionPosition)];
+			double current = satArray[Math.min(satArray.length - 1, insertionPosition)];
 //			System.out.println("Value at insertion position: "+current);
-			double previous = d[Math.max(0, insertionPosition-1)];
+			double previous = satArray[Math.max(0, insertionPosition - 1)];
 //			System.out.println("Value before insertion position: "+previous);
 			if (Math.abs(scan_acquisition_time - previous) <= Math.abs(
 					scan_acquisition_time - current)) {
-				int index = Math.max(0, insertionPosition-1);
+				int index = Math.max(0, insertionPosition - 1);
 //				System.out.println("Returning "+index);
 				return index;
 			} else {
@@ -306,7 +337,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 				return insertionPosition;
 			}
 		}
-    }
+	}
 
     /*
      * (non-Javadoc)
