@@ -85,6 +85,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         maltcmsOnlineVersion = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        maltcmsOptions = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel1.text")); // NOI18N
 
@@ -111,6 +113,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 
         commandLineOptions.setColumns(20);
         commandLineOptions.setText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.commandLineOptions.text")); // NOI18N
+        commandLineOptions.setToolTipText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.commandLineOptions.toolTipText")); // NOI18N
         commandLineOptions.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 commandLineOptionsActionPerformed(evt);
@@ -130,6 +133,16 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel4.text")); // NOI18N
 
+        maltcmsOptions.setText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.maltcmsOptions.text")); // NOI18N
+        maltcmsOptions.setToolTipText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.maltcmsOptions.toolTipText")); // NOI18N
+        maltcmsOptions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maltcmsOptionsActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel5.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -147,19 +160,21 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator1)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel1)
-                                    .addComponent(jLabel3))
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel5))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(maltcmsVersion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(maltcmsInstallationPath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(commandLineOptions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(maltcmsOptions)
+                                    .addComponent(maltcmsVersion)
+                                    .addComponent(maltcmsInstallationPath)
+                                    .addComponent(commandLineOptions))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(select, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jSeparator1))))
+                                .addComponent(select, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
 
@@ -190,7 +205,11 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(commandLineOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(maltcmsOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -246,7 +265,6 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_maltcmsInstallationPathPropertyChange
 
     private void commandLineOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandLineOptionsActionPerformed
-		// TODO add your handling code here:
 		controller.changed();
     }//GEN-LAST:event_commandLineOptionsActionPerformed
 
@@ -254,6 +272,10 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 		DownloadAndInstallTask dait = new DownloadAndInstallTask();
 		DownloadAndInstallTask.createAndRun("Maltcms download and installation", dait);
     }//GEN-LAST:event_downloadActionPerformed
+
+    private void maltcmsOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maltcmsOptionsActionPerformed
+		controller.changed();
+    }//GEN-LAST:event_maltcmsOptionsActionPerformed
 
 	private class DownloadAndInstallTask extends AProgressAwareRunnable {
 
@@ -281,13 +303,13 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 				if (version.equals("NIGHTLY-SNAPSHOT")) {
 					u = new URL("http://maltcms.de/maltcms/latest/maltcms-distribution-latest.zip");
 					Path p = Files.createTempDirectory("maltcms-download-tmp");
-					File downloadedFile = new File(p.toFile(),"maltcms-distribution-latest.zip");
+					File downloadedFile = new File(p.toFile(), "maltcms-distribution-latest.zip");
 					FileUtils.copyURLToFile(u, downloadedFile);
 					String topLevelArchiveName = getTopLevelArchiveDirectoryName(downloadedFile);
-					System.err.println("Top level archive directory name: "+topLevelArchiveName);
-					maltcmsBasename = topLevelArchiveName.substring(0, topLevelArchiveName.length()-1);
+					System.err.println("Top level archive directory name: " + topLevelArchiveName);
+					maltcmsBasename = topLevelArchiveName.substring(0, topLevelArchiveName.length() - 1);
 					targetFile = new File(targetDirectory, maltcmsBasename + "-bin.zip");
-					System.err.println("moving to target file "+targetFile);
+					System.err.println("moving to target file " + targetFile);
 					FileUtils.moveFile(downloadedFile, targetFile);
 				} else {
 					String[] majorMinorMicro = version.split("\\.");
@@ -320,13 +342,13 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 			}
 		}
 	}
-	
+
 	public String getTopLevelArchiveDirectoryName(File archive) {
 		try {
 			ZipFile zipfile = new ZipFile(archive);
 			for (Enumeration e = zipfile.entries(); e.hasMoreElements();) {
 				ZipEntry entry = (ZipEntry) e.nextElement();
-				if(entry.isDirectory()) {
+				if (entry.isDirectory()) {
 					return entry.getName();
 				}
 			}
@@ -387,6 +409,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 		maltcmsInstallationPath.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", ""));
 		checkVersion(maltcmsInstallationPath.getText());
 		commandLineOptions.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("commandLineOptions", ""));
+		maltcmsOptions.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsOptions", ""));
 		// or:
 		// someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
 	}
@@ -398,6 +421,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 		// or for org.openide.util with API spec. version >= 7.4:
 		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsInstallationPath", maltcmsInstallationPath.getText());
 		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("commandLineOptions", commandLineOptions.getText().trim());
+		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsOptions", maltcmsOptions.getText().trim());
 		NbPreferences.forModule(IMaltcmsClassPathProvider.class).put("extClassPathRoot", maltcmsInstallationPath.getText() + File.separator + "lib");
 		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsVersion", maltcmsVersion.getText());
 		// or:
@@ -434,9 +458,11 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField maltcmsInstallationPath;
     private javax.swing.JComboBox maltcmsOnlineVersion;
+    private javax.swing.JTextField maltcmsOptions;
     private javax.swing.JTextField maltcmsVersion;
     private javax.swing.JButton select;
     // End of variables declaration//GEN-END:variables

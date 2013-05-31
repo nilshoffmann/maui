@@ -113,7 +113,6 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
 
     @Override
     protected Node createNodeForKey(T key) {
-		System.out.println("Adding Node for "+key);
 		if (key instanceof SampleGroupContainer) {
 			//add treatment group nodes
 			Lookup lookup = new ProxyLookup(lkp,

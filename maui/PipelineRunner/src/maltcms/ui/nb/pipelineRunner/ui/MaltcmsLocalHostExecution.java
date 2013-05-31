@@ -156,6 +156,16 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         l.add(buildFileset());
         l.add("-c");
         l.add(configurationFile.getAbsolutePath());
+		String maltcmsOptions = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsOptions", "");
+        if (!maltcmsOptions.isEmpty()) {
+            String[] splits = maltcmsOptions.split(" ");
+            for (String option : splits) {
+                String op = option.trim();
+                if (op != null && !op.isEmpty()) {
+                    l.add(op);
+                }
+            }
+        }
         return l.toArray(new String[l.size()]);
     }
 
