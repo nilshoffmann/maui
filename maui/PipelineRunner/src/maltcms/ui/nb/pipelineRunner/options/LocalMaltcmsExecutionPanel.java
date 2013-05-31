@@ -422,7 +422,9 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsInstallationPath", maltcmsInstallationPath.getText());
 		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("commandLineOptions", commandLineOptions.getText().trim());
 		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsOptions", maltcmsOptions.getText().trim());
-		NbPreferences.forModule(IMaltcmsClassPathProvider.class).put("extClassPathRoot", maltcmsInstallationPath.getText() + File.separator + "lib");
+		if(!maltcmsInstallationPath.getText().isEmpty()) {
+			NbPreferences.forModule(IMaltcmsClassPathProvider.class).put("extClassPathRoot", maltcmsInstallationPath.getText() + File.separator + "lib");
+		}
 		NbPreferences.forModule(PipelineRunnerTopComponent.class).put("maltcmsVersion", maltcmsVersion.getText());
 		// or:
 		// SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());

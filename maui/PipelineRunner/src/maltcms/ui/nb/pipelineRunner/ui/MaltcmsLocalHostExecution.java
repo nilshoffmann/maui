@@ -46,7 +46,6 @@ import org.netbeans.api.project.ProjectManager;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 import org.openide.windows.*;
