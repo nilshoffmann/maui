@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="net-sf-maltcms-chromaui-msviewer-api-ui-MassSpectrumViewerTopComponent.shadow">
+                <!--net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent-->
+                <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-msviewer-api-ui-MassSpectrumViewerTopComponent.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="MassSpectrumViewerTopComponent.settings">
+                <!--net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE settings PUBLIC "-//NetBeans//DTD Session settings 1.0//EN" "http://www.netbeans.org/dtds/sessionsettings-1_0.dtd">
+<settings version="1.0">
+  <instance class="net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent"/>
+</settings>
+]]></file>
+        </folder>
+        <folder name="Modes">
+            <folder name="output">
+                <file name="MassSpectrumViewerTopComponent.wstcref">
+                    <!--net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tc-ref PUBLIC "-//NetBeans//DTD Top Component in Mode Properties 2.0//EN" "http://www.netbeans.org/dtds/tc-ref2_0.dtd">
+<tc-ref version="2.0">
+  <tc-id id="MassSpectrumViewerTopComponent"/>
+  <state opened="false"/>
+</tc-ref>
+]]></file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Actions">
+        <folder name="Window">
+            <file name="net-sf-maltcms-chromaui-msviewer-api-ui-MassSpectrumViewerTopComponent.instance">
+                <!--net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent-->
+                <attr
+                    methodvalue="org.openide.windows.TopComponent.openAction" name="instanceCreate"/>
+                <attr name="component" newvalue="net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent"/>
+                <attr name="preferredID" stringvalue="MassSpectrumViewerTopComponent"/>
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.msviewer.api.ui.Bundle#CTL_MassSpectrumViewerAction" name="displayName"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="xml">
+        <folder name="entities">
+            <folder name="net_sf_maltcms_chromaui_msviewer_api_ui">
+                <file name="MassSpectrumViewer" url="nbres:/org/netbeans/modules/settings/resources/properties-1_0.dtd">
+                    <!--net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent-->
+                    <attr name="hint.originalPublicID" stringvalue="-//net.sf.maltcms.chromaui.msviewer.api.ui//MassSpectrumViewer//EN"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="memory">
+            <folder name="net">
+                <folder name="sf">
+                    <folder name="maltcms">
+                        <folder name="chromaui">
+                            <folder name="msviewer">
+                                <folder name="api">
+                                    <folder name="ui">
+                                    <file name="MassSpectrumViewerTopComponent">
+                                    <!--net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent-->
+                                    <attr
+                                    name="settings.providerPath" stringvalue="xml/lookups//net_sf_maltcms_chromaui_msviewer_api_ui/MassSpectrumViewer.instance"/>
+                                    </file>
+                                    </folder>
+                                </folder>
+                            </folder>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+        <folder name="lookups">
+            <folder name="net_sf_maltcms_chromaui_msviewer_api_ui">
+                <file name="MassSpectrumViewer.instance">
+                    <!--net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent-->
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.create" name="instanceCreate"/>
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.properties" name="settings.convertor"/>
+                    <attr name="settings.instanceClass" stringvalue="net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent"/>
+                    <attr name="settings.instanceOf" stringvalue="net.sf.maltcms.chromaui.msviewer.api.ui.MassSpectrumViewerTopComponent"/>
+                    <attr boolvalue="true" name="xmlproperties.preventStoring"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

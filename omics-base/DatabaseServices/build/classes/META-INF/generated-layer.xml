@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="OptionsDialog">
+        <folder name="Maui Settings">
+            <file name="net-sf-maltcms-chromaui-db-options-MetaboliteDatabasesOptionsPanelController.instance">
+                <!--net.sf.maltcms.chromaui.db.options.MetaboliteDatabasesOptionsPanelController-->
+                <attr
+                    methodvalue="org.netbeans.spi.options.AdvancedOption.createSubCategory" name="instanceCreate"/>
+                <attr name="controller" newvalue="net.sf.maltcms.chromaui.db.options.MetaboliteDatabasesOptionsPanelController"/>
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.db.options.Bundle#AdvancedOption_DisplayName_MetaboliteDatabases" name="displayName"/>
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.db.options.Bundle#AdvancedOption_Keywords_MetaboliteDatabases" name="keywords"/>
+                <attr name="keywordsCategory" stringvalue="Maui Settings/MetaboliteDatabases"/>
+            </file>
+        </folder>
+        <file name="Database.instance">
+            <!--net.sf.maltcms.chromaui.db.options-->
+            <attr
+                methodvalue="org.netbeans.spi.options.OptionsCategory.createCategory" name="instanceCreate"/>
+            <attr name="advancedOptionsFolder" stringvalue="OptionsDialog/Database"/>
+            <attr
+                bundlevalue="net.sf.maltcms.chromaui.db.options.Bundle#OptionsCategory_Name_Database" name="categoryName"/>
+            <attr name="iconBase" stringvalue="net/sf/maltcms/chromaui/db/options/DBDescriptor32.png"/>
+            <attr
+                bundlevalue="net.sf.maltcms.chromaui.db.options.Bundle#OptionsCategory_Keywords_Database" name="keywords"/>
+            <attr name="keywordsCategory" stringvalue="Database"/>
+        </file>
+        <folder name="Database">
+            <!--net.sf.maltcms.chromaui.db.options-->
+            <attr intvalue="0" name="position"/>
+        </folder>
+    </folder>
+</filesystem>

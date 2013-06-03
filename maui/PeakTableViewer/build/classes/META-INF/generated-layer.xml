@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="Maui">
+            <file name="net-sf-maltcms-maui-peakTableViewer-OpenPeakGroupTopComponentAction.instance">
+                <!--net.sf.maltcms.maui.peakTableViewer.OpenPeakGroupTopComponentAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.maui.peakTableViewer.Bundle#CTL_OpenPeakGroupTopComponentAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.maui.peakTableViewer.OpenPeakGroupTopComponentAction"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+        </folder>
+        <folder name="DescriptorNodeActions">
+            <folder name="IPeakGroupDescriptor">
+                <file name="net-sf-maltcms-maui-peakTableViewer-OpenPeakGroupTopComponentAction.shadow">
+                    <!--net.sf.maltcms.maui.peakTableViewer.OpenPeakGroupTopComponentAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-maui-peakTableViewer-OpenPeakGroupTopComponentAction.instance"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="Window">
+            <file name="net-sf-maltcms-maui-peakTableViewer-PeakTableViewerTopComponent.instance">
+                <!--net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent-->
+                <attr
+                    methodvalue="org.openide.windows.TopComponent.openAction" name="instanceCreate"/>
+                <attr name="component" newvalue="net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent"/>
+                <attr name="preferredID" stringvalue="PeakTableViewerTopComponent"/>
+                <attr
+                    bundlevalue="net.sf.maltcms.maui.peakTableViewer.Bundle#CTL_PeakTableViewerAction" name="displayName"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="View">
+            <file name="net-sf-maltcms-maui-peakTableViewer-OpenPeakGroupTopComponentAction.shadow">
+                <!--net.sf.maltcms.maui.peakTableViewer.OpenPeakGroupTopComponentAction-->
+                <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-maui-peakTableViewer-OpenPeakGroupTopComponentAction.instance"/>
+                <attr intvalue="-1000" name="position"/>
+            </file>
+        </folder>
+        <folder name="Window">
+            <file name="net-sf-maltcms-maui-peakTableViewer-PeakTableViewerTopComponent.shadow">
+                <!--net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent-->
+                <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-maui-peakTableViewer-PeakTableViewerTopComponent.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="PeakTableViewerTopComponent.settings">
+                <!--net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE settings PUBLIC "-//NetBeans//DTD Session settings 1.0//EN" "http://www.netbeans.org/dtds/sessionsettings-1_0.dtd">
+<settings version="1.0">
+  <instance class="net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent"/>
+</settings>
+]]></file>
+        </folder>
+        <folder name="Modes">
+            <folder name="output">
+                <file name="PeakTableViewerTopComponent.wstcref">
+                    <!--net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tc-ref PUBLIC "-//NetBeans//DTD Top Component in Mode Properties 2.0//EN" "http://www.netbeans.org/dtds/tc-ref2_0.dtd">
+<tc-ref version="2.0">
+  <tc-id id="PeakTableViewerTopComponent"/>
+  <state opened="false"/>
+</tc-ref>
+]]></file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="xml">
+        <folder name="entities">
+            <folder name="net_sf_maltcms_maui_peakTableViewer">
+                <file name="PeakTableViewer" url="nbres:/org/netbeans/modules/settings/resources/properties-1_0.dtd">
+                    <!--net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent-->
+                    <attr name="hint.originalPublicID" stringvalue="-//net.sf.maltcms.maui.peakTableViewer//PeakTableViewer//EN"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="memory">
+            <folder name="net">
+                <folder name="sf">
+                    <folder name="maltcms">
+                        <folder name="maui">
+                            <folder name="peakTableViewer">
+                                <file name="PeakTableViewerTopComponent">
+                                    <!--net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent-->
+                                    <attr name="settings.providerPath" stringvalue="xml/lookups//net_sf_maltcms_maui_peakTableViewer/PeakTableViewer.instance"/>
+                                </file>
+                            </folder>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+        <folder name="lookups">
+            <folder name="net_sf_maltcms_maui_peakTableViewer">
+                <file name="PeakTableViewer.instance">
+                    <!--net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent-->
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.create" name="instanceCreate"/>
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.properties" name="settings.convertor"/>
+                    <attr name="settings.instanceClass" stringvalue="net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent"/>
+                    <attr name="settings.instanceOf" stringvalue="net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent"/>
+                    <attr boolvalue="true" name="xmlproperties.preventStoring"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

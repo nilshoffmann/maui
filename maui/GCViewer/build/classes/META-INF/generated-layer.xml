@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="ContainerNodeActions">
+            <folder name="ChromatogramNode">
+                <folder name="Open">
+                    <file name="net-sf-maltcms-chromaui-chromatogram2Dviewer-actions-Chromatogram2DOpenAction.instance">
+                        <!--net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Chromatogram2DOpenAction-->
+                        <attr
+                            bundlevalue="net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Bundle#CTL_Chromatogram2DOpenAction" name="displayName"/>
+                        <attr
+                            methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                        <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor"/>
+                        <attr
+                            methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                        <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Chromatogram2DOpenAction"/>
+                        <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                        <attr boolvalue="false" name="noIconInMenu"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="ChromatogramViewTopComponent.settings">
+                <!--net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.Chromatogram2DViewTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE settings PUBLIC "-//NetBeans//DTD Session settings 1.0//EN" "http://www.netbeans.org/dtds/sessionsettings-1_0.dtd">
+<settings version="1.0">
+  <instance class="net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.Chromatogram2DViewTopComponent"/>
+</settings>
+]]></file>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="ChromatogramViewTopComponent.wstcref">
+                    <!--net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.Chromatogram2DViewTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tc-ref PUBLIC "-//NetBeans//DTD Top Component in Mode Properties 2.0//EN" "http://www.netbeans.org/dtds/tc-ref2_0.dtd">
+<tc-ref version="2.0">
+  <tc-id id="ChromatogramViewTopComponent"/>
+  <state opened="false"/>
+</tc-ref>
+]]></file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>
