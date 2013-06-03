@@ -42,6 +42,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import maltcms.ui.nb.pipelineRunner.ui.PipelineRunnerTopComponent;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.ProjectSettings;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -109,15 +110,13 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
 				progressHandle.progress("Importing Maltcms Pipelines into Project");
 				String installationPath = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "");
 				if (!installationPath.isEmpty()) {
-					File f = new File(installationPath);
-//            String maltcmsVersion = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "");
 					File projectPipelinesPath = new File(FileUtil.toFile(context.getLocation()), "pipelines");
 					if (!projectPipelinesPath.exists()) {
 						projectPipelinesPath.mkdirs();
 					}
+					File f = new File(installationPath);
 					File projectMaltcmsPipelinesPath = new File(projectPipelinesPath, f.getName());
 					if (projectMaltcmsPipelinesPath.exists()) {
-						//TODO check for target dir existence and ask user for deletion, if it exists
 						NotifyDescriptor nd = new DialogDescriptor.Confirmation(
 								"Target directory " + projectMaltcmsPipelinesPath.getAbsolutePath() + " exists. Delete?",
 								"Delete existing directory?",

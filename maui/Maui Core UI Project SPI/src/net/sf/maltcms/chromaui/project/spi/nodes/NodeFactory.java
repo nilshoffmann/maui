@@ -100,8 +100,13 @@ public class NodeFactory implements INodeFactory {
 	public Action createMenuItem(String name, String path) {
 		Collection<? extends Action> actions = Utilities.
 				actionsForPath(path);
+		return createMenuItem(name, actions.toArray(new Action[actions.size()]));
+	}
+	
+	@Override
+	public Action createMenuItem(String name, Action[] actions) {
 		NodePopupAction pnia = new NodePopupAction(name);
-		pnia.setActions(actions.toArray(new Action[actions.size()]));
+		pnia.setActions(actions);
 		return pnia;
 	}
 }

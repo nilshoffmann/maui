@@ -131,7 +131,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
             }
         });
 
-        maltcmsOnlineVersion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1.2.1", "1.2.0", "1.1.0", "NIGHTLY-SNAPSHOT" }));
+        maltcmsOnlineVersion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1.2.1", "1.2.0", "1.1.0", "LATEST-SNAPSHOT" }));
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel4.text")); // NOI18N
 
@@ -300,7 +300,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 				URL u = null;
 				File targetFile = null;
 				String maltcmsBasename = null;
-				if (version.equals("NIGHTLY-SNAPSHOT")) {
+				if (version.equals("LATEST-SNAPSHOT")) {
 					u = new URL("http://maltcms.de/maltcms/latest/maltcms-distribution-latest.zip");
 					Path p = Files.createTempDirectory("maltcms-download-tmp");
 					File downloadedFile = new File(p.toFile(), "maltcms-distribution-latest.zip");

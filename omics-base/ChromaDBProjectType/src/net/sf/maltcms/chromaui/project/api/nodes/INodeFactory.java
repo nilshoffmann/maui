@@ -42,4 +42,5 @@ public interface INodeFactory {
     Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup);
     Node createContainerNode(IContainer key, Children children, Lookup lookup);
 	Action createMenuItem(String name, String path);
+	Action createMenuItem(String name, Action[] actions);
 }
