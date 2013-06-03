@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="DescriptorNodeActions">
+            <folder name="IDatabaseDescriptor">
+                <file name="net-sf-maltcms-chromaui-metabolitedb-spi-actions-MetaboliteDatabaseViewerOpenAction.instance">
+                    <!--net.sf.maltcms.chromaui.metabolitedb.spi.actions.MetaboliteDatabaseViewerOpenAction-->
+                    <attr
+                        bundlevalue="net.sf.maltcms.chromaui.metabolitedb.spi.actions.Bundle#CTL_MetaboliteDatabaseViewerOpenAction" name="displayName"/>
+                    <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                    <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor"/>
+                    <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                    <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.metabolitedb.spi.actions.MetaboliteDatabaseViewerOpenAction"/>
+                    <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                    <attr boolvalue="false" name="noIconInMenu"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="Window">
+            <file name="net-sf-maltcms-chromaui-metabolitedb-MetaboliteDatabaseViewerTopComponent.instance">
+                <!--net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent-->
+                <attr
+                    methodvalue="org.openide.windows.TopComponent.openAction" name="instanceCreate"/>
+                <attr name="component" newvalue="net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent"/>
+                <attr name="preferredID" stringvalue="MetaboliteDatabaseViewerTopComponent"/>
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.metabolitedb.Bundle#CTL_MetaboliteDatabaseViewerAction" name="displayName"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="net-sf-maltcms-chromaui-metabolitedb-MetaboliteDatabaseViewerTopComponent.shadow">
+                <!--net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent-->
+                <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-metabolitedb-MetaboliteDatabaseViewerTopComponent.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="MetaboliteDatabaseViewerTopComponent.settings">
+                <!--net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE settings PUBLIC "-//NetBeans//DTD Session settings 1.0//EN" "http://www.netbeans.org/dtds/sessionsettings-1_0.dtd">
+<settings version="1.0">
+  <instance class="net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent"/>
+</settings>
+]]></file>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="MetaboliteDatabaseViewerTopComponent.wstcref">
+                    <!--net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tc-ref PUBLIC "-//NetBeans//DTD Top Component in Mode Properties 2.0//EN" "http://www.netbeans.org/dtds/tc-ref2_0.dtd">
+<tc-ref version="2.0">
+  <tc-id id="MetaboliteDatabaseViewerTopComponent"/>
+  <state opened="false"/>
+</tc-ref>
+]]></file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="xml">
+        <folder name="entities">
+            <folder name="net_sf_maltcms_chromaui_metabolitedb">
+                <file name="MetaboliteDatabaseViewerTopComponent" url="nbres:/org/netbeans/modules/settings/resources/properties-1_0.dtd">
+                    <!--net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent-->
+                    <attr name="hint.originalPublicID" stringvalue="-//net.sf.maltcms.chromaui.metabolitedb//MetaboliteDatabaseViewerTopComponent//EN"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="memory">
+            <folder name="net">
+                <folder name="sf">
+                    <folder name="maltcms">
+                        <folder name="chromaui">
+                            <folder name="metabolitedb">
+                                <file name="MetaboliteDatabaseViewerTopComponent">
+                                    <!--net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent-->
+                                    <attr name="settings.providerPath" stringvalue="xml/lookups//net_sf_maltcms_chromaui_metabolitedb/MetaboliteDatabaseViewerTopComponent.instance"/>
+                                </file>
+                            </folder>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+        <folder name="lookups">
+            <folder name="net_sf_maltcms_chromaui_metabolitedb">
+                <file name="MetaboliteDatabaseViewerTopComponent.instance">
+                    <!--net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent-->
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.create" name="instanceCreate"/>
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.properties" name="settings.convertor"/>
+                    <attr name="settings.instanceClass" stringvalue="net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent"/>
+                    <attr name="settings.instanceOf" stringvalue="net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent"/>
+                    <attr boolvalue="true" name="xmlproperties.preventStoring"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <file name="FormDesignerPalette_hidden"/>
+    <folder name="Menu">
+        <file name="BuildProject_hidden"/>
+        <file name="GoTo_hidden"/>
+        <file name="Refactoring_hidden"/>
+        <file name="RunProject_hidden"/>
+        <file name="Source_hidden"/>
+        <folder name="Tools">
+            <file name="JavaPlatformsCustomizerAction.shadow_hidden"/>
+            <file name="LibrariesCustomizerAction.shadow_hidden"/>
+            <file name="VariablesCustomizerAction.shadow_hidden"/>
+        </folder>
+        <file name="Versioning_hidden"/>
+        <folder name="Window">
+            <file name="LookupMonitorAction.shadow_hidden"/>
+            <file name="net-sf-maltcms-chromaui-charts-ui-XYChartComponentOpenAction.shadow_hidden"/>
+            <file name="AnnotationManagerAction.shadow_hidden"/>
+            <file name="CSV2ListAction.shadow_hidden"/>
+            <file name="ChromatogramViewAction.shadow_hidden"/>
+            <file name="GCViewerAction.shadow_hidden"/>
+            <file name="Heatmap3DViewerAction.shadow_hidden"/>
+            <file name="Heatmap3DViewerTopComponentAction.shadow_hidden"/>
+            <file name="JFCAction.shadow_hidden"/>
+            <file name="MSViewAction.shadow_hidden"/>
+            <file name="MassSpectrumViewAction.shadow_hidden"/>
+            <file name="Other_hidden"/>
+            <file name="PipelineEditorAction.shadow_hidden"/>
+            <file name="PipelineRunnerAction.shadow_hidden"/>
+            <file name="Versioning_hidden"/>
+            <file name="net-sf-maltcms-chromaui-metabolitedb-MetaboliteDatabaseViewerTopComponent.shadow_hidden"/>
+            <file name="net-sf-maltcms-chromaui-normalization-spi-ui-PeakGroupBoxPlotTopComponent.shadow_hidden"/>
+            <file name="net-sf-maltcms-chromaui-statistics-pcaViewer-PCAViewerTopComponent.shadow_hidden"/>
+            <file name="net-sf-maltcms-maui-heatmapViewer-HeatmapViewerTopComponent.shadow_hidden"/>
+        </folder>
+    </folder>
+    <folder name="OptionsDialog">
+        <file name="ExecutionSupport.instance_hidden"/>
+    </folder>
+    <folder name="Shortcuts">
+        <!-- Welcome center -->
+        <file name="DS-1.shadow">
+           <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-branding-welcome-MauiWelcomeTopComponent.instance"/> 
+        </file>
+        <!-- ms view -->
+        <file name="DS-2.shadow">
+             <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-msviewer-api-ui-MassSpectrumViewerTopComponent.instance"/>
+        </file>
+        <!-- peak groups view -->
+        <file name="DS-3.shadow">
+             <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-maui-peakTableViewer-PeakTableViewerTopComponent.instance"/>
+        </file>
+        <!-- statistics view -->
+        <file name="DS-4.shadow">
+             <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-statistics-view-StatisticsViewerTopComponent.instance"/>
+        </file>
+        <!-- lookup monitor window -->
+        <file name="DS-L.shadow">
+            <attr name="originalFile" stringvalue="Actions/Window/de-unibielefeld-gi-kotte-laborprogramm-debug-LookupMonitorAction.instance"/>
+        </file>
+    </folder>
+    <folder name="Services">
+        <folder name="AutoupdateType">
+            <file name="net_sf_maltcms_chromaui_branding_update_center.instance">
+                <attr name="displayName" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#Services/AutoupdateType/net_sf_maltcms_chromaui_branding_update_center.instance"/>
+                <attr name="enabled" boolvalue="true"/>
+                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
+                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
+                <attr name="url" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#net_sf_maltcms_chromaui_branding_update_center"/>
+            </file>
+            <file name="net_sf_maltcms_chromaui_branding_update_center_1.instance">
+                <attr name="displayName" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#Services/AutoupdateType/net_sf_maltcms_chromaui_branding_update_center_1.instance"/>
+                <attr name="enabled" boolvalue="true"/>
+                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
+                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
+                <attr name="url" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#net_sf_maltcms_chromaui_branding_update_center_1"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Toolbars">
+        <folder name="Build">
+            <file name="org-netbeans-modules-debugger-ui-actions-DebugMainProjectAction.shadow_hidden"/>
+            <file name="org-netbeans-modules-project-ui-BuildMainProject.shadow_hidden"/>
+            <file name="org-netbeans-modules-project-ui-RebuildMainProject.shadow_hidden"/>
+            <file name="org-netbeans-modules-project-ui-RunMainProject.shadow_hidden"/>
+        </folder>
+        <file name="Debug_hidden"/>
+        <file name="Debugging.xml_hidden"/>
+        <folder name="File">
+            <file name="maltcms-io-xml-ws-meltdb-ui-MeltDBSynchronizeAction.shadow_hidden"/>
+        </folder>
+    </folder>
+</filesystem>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Maui, Maltcms User Interface. 
+Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
+
+Project website: http://maltcms.sf.net
+
+Maui may be used under the terms of either the
+
+GNU Lesser General Public License (LGPL)
+http://www.gnu.org/licenses/lgpl.html
+
+or the
+
+Eclipse Public License (EPL)
+http://www.eclipse.org/org/documents/epl-v10.php
+
+As a user/recipient of Maui, you may choose which license to receive the code 
+under. Certain files or entire directories may not be covered by this 
+dual license, but are subject to licenses compatible to both LGPL and EPL.
+License exceptions are explicitly declared in all relevant files or in a 
+LICENSE file in the relevant directories.
+
+Maui is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
+for details.
+-->
+
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+<!--    <folder name="Actions">
+        <folder name="Edit">
+            <file name="maltcms-ui-heatmap3Dviewer-Heatmap3DOpenAction.instance">
+                <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
+                <attr name="displayName" bundlevalue="maltcms.ui.heatmap3Dviewer.Bundle#CTL_Heatmap3DOpenAction"/>
+                <attr name="injectable" stringvalue="maltcms.ui.heatmap3Dviewer.Heatmap3DOpenAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="selectionType" stringvalue="ANY"/>
+                <attr name="type" stringvalue="org.openide.loaders.MultiDataObject"/>
+            </file>
+        </folder>
+        <folder name="Window">
+            <file name="maltcms-ui-heatmap3Dviewer-Heatmap3DViewerAction.instance">
+                <attr name="component" methodvalue="maltcms.ui.heatmap3Dviewer.Heatmap3DViewerTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="maltcms.ui.heatmap3Dviewer.Bundle#CTL_Heatmap3DViewerAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Loaders">
+        <folder name="image">
+            <folder name="png-gif-jpeg-bmp">
+                <folder name="Actions">
+                    <file name="maltcms-ui-heatmap3Dviewer-Heatmap3DOpenAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/maltcms-ui-heatmap3Dviewer-Heatmap3DOpenAction.instance"/>
+                        <attr name="position" intvalue="50"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="Heatmap3DViewerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-heatmap3Dviewer-Heatmap3DViewerAction.instance"/>
+            </file>
+            <file name="Heatmap3DViewerTopComponentAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/maltcms-ui-heatmap3Dviewer-Heatmap3DViewerTopComponentAction.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Services">
+        <folder name="MIMEResolver">
+            <file name="PNGHeatmapResolver.xml" url="PNGHeatmapResolver.xml">
+                <attr name="displayName" bundlevalue="maltcms.ui.heatmap3Dviewer.Bundle#Services/MIMEResolver/PNGHeatmapResolver.xml"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Templates">
+        <folder name="Other">
+            <file name="PNGHeatmapTemplate.png" url="PNGHeatmapTemplate.png">
+                <attr name="displayName" bundlevalue="maltcms.ui.heatmap3Dviewer.Bundle#Templates/Other/PNGHeatmapTemplate.png"/>
+                <attr name="template" boolvalue="true"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="Heatmap3DViewerTopComponent.settings" url="Heatmap3DViewerTopComponentSettings.xml"/>
+            <file name="Heatmap3DViewerTopComponentTopComponent.settings" url="Heatmap3DViewerTopComponentTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="Heatmap3DViewerTopComponent.wstcref" url="Heatmap3DViewerTopComponentWstcref.xml"/>
+            </folder>
+        </folder>
+    </folder>-->
+</filesystem>

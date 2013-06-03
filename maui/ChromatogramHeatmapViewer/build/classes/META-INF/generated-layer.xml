@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="OverlayNodeActions">
+            <folder name="SelectionOverlayNode">
+                <file name="net-sf-maltcms-chromaui-chromatogram1Dviewer-actions-AddSelectionAsPeakDescriptors.instance">
+                    <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.AddSelectionAsPeakDescriptors-->
+                    <attr
+                        bundlevalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Bundle#CTL_AddSelectionAsPeakDescriptors" name="displayName"/>
+                    <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                    <attr name="type" stringvalue="org.openide.nodes.Node"/>
+                    <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                    <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.AddSelectionAsPeakDescriptors"/>
+                    <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                    <attr boolvalue="false" name="noIconInMenu"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="ContainerNodeActions">
+            <folder name="ChromatogramNode">
+                <folder name="Open">
+                    <file name="maltcms-ui-Chromatogram1DViewMultiOpenAction.instance">
+                        <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Chromatogram1DViewMultiOpenAction-->
+                        <attr
+                            bundlevalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Bundle#CTL_Chromatogram1DViewMultiOpenAction" name="displayName"/>
+                        <attr
+                            methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                        <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor"/>
+                        <attr
+                            methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                        <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Chromatogram1DViewMultiOpenAction"/>
+                        <attr name="selectionType" stringvalue="ANY"/>
+                        <attr boolvalue="false" name="noIconInMenu"/>
+                    </file>
+                    <file name="maltcms-ui-Chromatogram1DViewOpenAction.instance">
+                        <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Chromatogram1DViewOpenAction-->
+                        <attr
+                            bundlevalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Bundle#CTL_Chromatogram1DViewOpenAction" name="displayName"/>
+                        <attr
+                            methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                        <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor"/>
+                        <attr
+                            methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                        <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Chromatogram1DViewOpenAction"/>
+                        <attr name="selectionType" stringvalue="ANY"/>
+                        <attr boolvalue="false" name="noIconInMenu"/>
+                    </file>
+                    <file name="maltcms-ui-RawChromatogram1DViewOpenAction.shadow">
+                        <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction-->
+                        <attr name="originalFile" stringvalue="Actions/View/maltcms-ui-RawChromatogram1DViewOpenAction.instance"/>
+                        <attr intvalue="0" name="position"/>
+                    </file>
+                </folder>
+            </folder>
+            <folder name="TreatmentGroupContainer">
+                <file name="maltcms-ui-TreatmentGroupChromatogram1DViewOpenAction.instance">
+                    <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.TreatmentGroupChromatogram1DViewOpenAction-->
+                    <attr
+                        bundlevalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Bundle#CTL_TreatmentGroupChromatogram1DViewOpenAction" name="displayName"/>
+                    <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                    <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer"/>
+                    <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                    <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.TreatmentGroupChromatogram1DViewOpenAction"/>
+                    <attr name="selectionType" stringvalue="ANY"/>
+                    <attr boolvalue="false" name="noIconInMenu"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="View">
+            <file name="maltcms-ui-RawChromatogram1DViewOpenAction.instance">
+                <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.Bundle#CTL_RawChromatogram1DViewOpenAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="maltcms.ui.fileHandles.cdf.CDFDataObject"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction"/>
+                <attr name="selectionType" stringvalue="ANY"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Loaders">
+        <folder name="application">
+            <folder name="x-cdf">
+                <folder name="Actions">
+                    <file name="maltcms-ui-RawChromatogram1DViewOpenAction.shadow">
+                        <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction-->
+                        <attr name="originalFile" stringvalue="Actions/View/maltcms-ui-RawChromatogram1DViewOpenAction.instance"/>
+                        <attr intvalue="0" name="position"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="Chromatogram1DViewTopComponent.settings">
+                <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE settings PUBLIC "-//NetBeans//DTD Session settings 1.0//EN" "http://www.netbeans.org/dtds/sessionsettings-1_0.dtd">
+<settings version="1.0">
+  <instance class="net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent"/>
+</settings>
+]]></file>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="Chromatogram1DViewTopComponent.wstcref">
+                    <!--net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tc-ref PUBLIC "-//NetBeans//DTD Top Component in Mode Properties 2.0//EN" "http://www.netbeans.org/dtds/tc-ref2_0.dtd">
+<tc-ref version="2.0">
+  <tc-id id="Chromatogram1DViewTopComponent"/>
+  <state opened="false"/>
+</tc-ref>
+]]></file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="File">
+            <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction.instance">
+                <!--maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction-->
+                <attr
+                    bundlevalue="maltcms.io.xml.ws.meltdb.ui.Bundle#CTL_SynchronizeWithMeltDBAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="File">
+            <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction.shadow">
+                <!--maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction-->
+                <attr name="originalFile" stringvalue="Actions/File/maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction.instance"/>
+                <attr intvalue="1423" name="position"/>
+            </file>
+            <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction-separatorAfter.instance">
+                <!--maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction-->
+                <attr name="instanceCreate" newvalue="javax.swing.JSeparator"/>
+                <attr intvalue="1424" name="position"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>

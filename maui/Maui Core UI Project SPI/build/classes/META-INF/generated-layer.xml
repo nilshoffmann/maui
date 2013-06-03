@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Loaders">
+        <folder name="application">
+            <folder name="db4o">
+                <folder name="Factories">
+                    <file name="net-sf-maltcms-chromaui-project-spi-MauiProjectDataObject.instance">
+                        <!--net.sf.maltcms.chromaui.project.spi.MauiProjectDataObject-->
+                        <attr name="displayName" stringvalue="Maui Project"/>
+                        <attr
+                            methodvalue="org.openide.loaders.DataLoaderPool.factory" name="instanceCreate"/>
+                        <attr name="dataObjectClass" stringvalue="net.sf.maltcms.chromaui.project.spi.MauiProjectDataObject"/>
+                        <attr name="mimeType" stringvalue="application/db4o"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Actions">
+        <folder name="Maui">
+            <file name="net-sf-maltcms-chromaui-project-spi-actions-DeleteContainerAction.instance">
+                <!--net.sf.maltcms.chromaui.project.spi.actions.DeleteContainerAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.project.spi.actions.Bundle#CTL_DeleteContainerAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.container.IContainer"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.project.spi.actions.DeleteContainerAction"/>
+                <attr name="selectionType" stringvalue="ANY"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+            <file name="net-sf-maltcms-chromaui-project-spi-actions-DeleteDescriptorAction.instance">
+                <!--net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.project.spi.actions.Bundle#CTL_DeleteDescriptorAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction"/>
+                <attr name="selectionType" stringvalue="ANY"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+            <file name="net-sf-maltcms-chromaui-project-spi-actions-DeleteMatchingPeakAnnotationsAction.instance">
+                <!--net.sf.maltcms.chromaui.project.spi.actions.DeleteMatchingPeakAnnotationsAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.project.spi.actions.Bundle#CTL_DeleteMatchingPeakAnnotationsAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.project.spi.actions.DeleteMatchingPeakAnnotationsAction"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+            <file name="net-sf-maltcms-chromaui-project-spi-actions-DeletePeakAnnotationsAction.instance">
+                <!--net.sf.maltcms.chromaui.project.spi.actions.DeletePeakAnnotationsAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.project.spi.actions.Bundle#CTL_DeletePeakAnnotationsAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.project.spi.actions.DeletePeakAnnotationsAction"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+            <file name="net-sf-maltcms-chromaui-project-spi-actions-RefreshNodesAction.instance">
+                <!--net.sf.maltcms.chromaui.project.spi.actions.RefreshNodesAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.project.spi.actions.Bundle#CTL_RefreshNodesAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.project.spi.actions.RefreshNodesAction"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+            <file name="net-sf-maltcms-chromaui-project-spi-actions-RenamePeakGroup.instance">
+                <!--net.sf.maltcms.chromaui.project.spi.actions.RenamePeakGroup-->
+                <attr
+                    bundlevalue="net.sf.maltcms.chromaui.project.spi.actions.Bundle#CTL_RenamePeakGroup" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.project.spi.actions.RenamePeakGroup"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+        </folder>
+        <folder name="ContainerNodeActions">
+            <folder name="DefaultActions">
+                <file name="net-sf-maltcms-chromaui-project-spi-actions-DeleteContainerAction.shadow">
+                    <!--net.sf.maltcms.chromaui.project.spi.actions.DeleteContainerAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-chromaui-project-spi-actions-DeleteContainerAction.instance"/>
+                </file>
+                <file name="net-sf-maltcms-chromaui-project-spi-actions-RefreshNodesAction.shadow">
+                    <!--net.sf.maltcms.chromaui.project.spi.actions.RefreshNodesAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-chromaui-project-spi-actions-RefreshNodesAction.instance"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="DescriptorNodeActions">
+            <folder name="DefaultActions">
+                <file name="net-sf-maltcms-chromaui-project-spi-actions-DeleteDescriptorAction.shadow">
+                    <!--net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-chromaui-project-spi-actions-DeleteDescriptorAction.instance"/>
+                </file>
+                <file name="net-sf-maltcms-chromaui-project-spi-actions-RefreshNodesAction.shadow">
+                    <!--net.sf.maltcms.chromaui.project.spi.actions.RefreshNodesAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-chromaui-project-spi-actions-RefreshNodesAction.instance"/>
+                </file>
+            </folder>
+            <folder name="IPeakGroupDescriptor">
+                <file name="net-sf-maltcms-chromaui-project-spi-actions-RenamePeakGroup.shadow">
+                    <!--net.sf.maltcms.chromaui.project.spi.actions.RenamePeakGroup-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-chromaui-project-spi-actions-RenamePeakGroup.instance"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="ChromAUIProjectLogicalView">
+            <folder name="Peaks">
+                <file name="net-sf-maltcms-chromaui-project-spi-actions-DeleteMatchingPeakAnnotationsAction.shadow">
+                    <!--net.sf.maltcms.chromaui.project.spi.actions.DeleteMatchingPeakAnnotationsAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-chromaui-project-spi-actions-DeleteMatchingPeakAnnotationsAction.instance"/>
+                </file>
+                <file name="net-sf-maltcms-chromaui-project-spi-actions-DeletePeakAnnotationsAction.shadow">
+                    <!--net.sf.maltcms.chromaui.project.spi.actions.DeletePeakAnnotationsAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-chromaui-project-spi-actions-DeletePeakAnnotationsAction.instance"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Projects">
+        <folder name="net-sf-maltcms-chromaui-project-api-ichromauiproject">
+            <folder name="Customizer">
+                <file name="net-sf-maltcms-chromaui-project-spi-project-panels-GeneralProperties-createGeneralProperties.instance">
+                    <!--net.sf.maltcms.chromaui.project.spi.project.panels.GeneralProperties.createGeneralProperties()-->
+                    <attr
+                        methodvalue="net.sf.maltcms.chromaui.project.spi.project.panels.GeneralProperties.createGeneralProperties" name="instanceCreate"/>
+                    <attr intvalue="10" name="position"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

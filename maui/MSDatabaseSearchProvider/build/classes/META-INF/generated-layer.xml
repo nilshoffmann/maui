@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="Maui">
+            <file name="net-sf-maltcms-db-search-spi-actions-AnnotatePeaks.instance">
+                <!--net.sf.maltcms.db.search.spi.actions.AnnotatePeaks-->
+                <attr
+                    bundlevalue="net.sf.maltcms.db.search.spi.actions.Bundle#CTL_AnnotatePeaks" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.container.Peak1DContainer"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.db.search.spi.actions.AnnotatePeaks"/>
+                <attr name="selectionType" stringvalue="ANY"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+            <file name="net-sf-maltcms-db-search-spi-actions-AnnotatePeaksOnProject.instance">
+                <!--net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject-->
+                <attr
+                    bundlevalue="net.sf.maltcms.db.search.spi.actions.Bundle#CTL_AnnotatePeaksOnProject" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+            <file name="net-sf-maltcms-db-search-spi-actions-ImportDatabaseAction.instance">
+                <!--net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction-->
+                <attr
+                    bundlevalue="net.sf.maltcms.db.search.spi.actions.Bundle#CTL_ImportDatabaseAction" name="displayName"/>
+                <attr methodvalue="org.openide.awt.Actions.context" name="instanceCreate"/>
+                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
+                <attr methodvalue="org.openide.awt.Actions.inject" name="delegate"/>
+                <attr name="injectable" stringvalue="net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr boolvalue="false" name="noIconInMenu"/>
+            </file>
+        </folder>
+        <folder name="ContainerNodeActions">
+            <folder name="Peak1DContainer">
+                <file name="net-sf-maltcms-db-search-spi-actions-AnnotatePeaks.shadow">
+                    <!--net.sf.maltcms.db.search.spi.actions.AnnotatePeaks-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-db-search-spi-actions-AnnotatePeaks.instance"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="ChromAUIProjectLogicalView">
+            <folder name="Database">
+                <file name="net-sf-maltcms-db-search-spi-actions-AnnotatePeaksOnProject.shadow">
+                    <!--net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-db-search-spi-actions-AnnotatePeaksOnProject.instance"/>
+                </file>
+                <file name="net-sf-maltcms-db-search-spi-actions-ImportDatabaseAction.shadow">
+                    <!--net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction-->
+                    <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-db-search-spi-actions-ImportDatabaseAction.instance"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="File">
+            <file name="net-sf-maltcms-db-search-spi-actions-ImportDatabaseAction.shadow">
+                <!--net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction-->
+                <attr name="originalFile" stringvalue="Actions/Maui/net-sf-maltcms-db-search-spi-actions-ImportDatabaseAction.instance"/>
+                <attr intvalue="1414" name="position"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>
