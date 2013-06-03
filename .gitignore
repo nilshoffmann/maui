@@ -20,3 +20,8 @@ platform-*
 /maui-ext/module8/build/
 /maui-ext/module8/nbproject/private/
 proteus*
+/maui/CDFFileHandle/nbproject/private/
+/maui-ext/testModule/nbproject/private/
+/maui-ext/pipelineFunctions/build/
+/maui-ext/pipelineFunctions/nbproject/private/
+/maui-ext/pipelineTestModule/target/
