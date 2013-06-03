@@ -684,37 +684,41 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 	}
 
 	protected void removeSampleGroup(String sampleGroup, int idx) {
-		getSampleGroupListModel().removeElementAt(idx);
-		Set<Entry<File, String>> es = fileToSampleGroup.entrySet();
-		List<File> toRemove = new LinkedList<File>();
-		for (Entry<File, String> e : es) {
-			if (e.getValue().equals(sampleGroup)) {
-				toRemove.add(e.getKey());
+		if (!getSampleGroupListModel().isEmpty() && idx>-1) {
+			getSampleGroupListModel().removeElementAt(idx);
+			Set<Entry<File, String>> es = fileToSampleGroup.entrySet();
+			List<File> toRemove = new LinkedList<File>();
+			for (Entry<File, String> e : es) {
+				if (e.getValue().equals(sampleGroup)) {
+					toRemove.add(e.getKey());
+				}
 			}
-		}
-		for (File file : toRemove) {
-			fileToSampleGroup.remove(file);
-		}
-		fileToGroupList.setCellRenderer(new FileListCellRenderer());
+			for (File file : toRemove) {
+				fileToSampleGroup.remove(file);
+			}
+			fileToGroupList.setCellRenderer(new FileListCellRenderer());
 //        fileToGroup.containsValue(s);
-		firePropertyChange("VALIDATE", null, this);
+			firePropertyChange("VALIDATE", null, this);
+		}
 	}
 
 	protected void removeGroup(String group, int idx) {
-		getGroupListModel().removeElementAt(idx);
-		Set<Entry<File, String>> es = fileToGroup.entrySet();
-		List<File> toRemove = new LinkedList<File>();
-		for (Entry<File, String> e : es) {
-			if (e.getValue().equals(group)) {
-				toRemove.add(e.getKey());
+		if (!getGroupListModel().isEmpty() && idx>-1) {
+			getGroupListModel().removeElementAt(idx);
+			Set<Entry<File, String>> es = fileToGroup.entrySet();
+			List<File> toRemove = new LinkedList<File>();
+			for (Entry<File, String> e : es) {
+				if (e.getValue().equals(group)) {
+					toRemove.add(e.getKey());
+				}
 			}
+			for (File file : toRemove) {
+				fileToGroup.remove(file);
+			}
+			fileToGroupList.setCellRenderer(new FileListCellRenderer());
+			//        fileToGroup.containsValue(s);
+			firePropertyChange("VALIDATE", null, this);
 		}
-		for (File file : toRemove) {
-			fileToGroup.remove(file);
-		}
-		fileToGroupList.setCellRenderer(new FileListCellRenderer());
-//        fileToGroup.containsValue(s);
-		firePropertyChange("VALIDATE", null, this);
 	}
 
 	@Override
