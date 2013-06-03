@@ -297,4 +297,9 @@
 		<zip destfile="${basedir}/build/site/javadoc.zip" basedir="${basedir}/build/site/javadoc"/>
 	</target>
 	
+	<target name="build-zip-site">
+		<mkdir dir="${basedir}/dist/"/>
+		<zip destfile="${basedir}/dist/maui-site.zip" basedir="${basedir}/site/public_html"/>
+	</target>
+	
 </project>
