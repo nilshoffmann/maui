@@ -105,6 +105,9 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 				return f.isDirectory();
 			}
 		});
+		if(maltcmsVersions==null) {
+			return new Action[0];
+		}
 		System.out.println("Found maltcms versions: " + Arrays.deepToString(maltcmsVersions));
 		for (File maltcmsVersion : maltcmsVersions) {
 			System.out.println("Checking pipelines below " + maltcmsVersion);
