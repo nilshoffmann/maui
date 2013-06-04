@@ -27,10 +27,13 @@
  */
 package maltcms.ui.fileHandles.properties.tools;
 
+import cross.commands.fragments.IFragmentCommand;
+import cross.datastructures.pipeline.ICommandSequence;
 import cross.tools.StringTools;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,6 +48,8 @@ import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
+import org.springframework.beans.BeanInfoFactory;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  *
@@ -235,90 +240,57 @@ public class SceneParser {
         System.out.println("Creating graph scene from file");
         File f = new File(filename);
         //Get pipeline from configuration
-        List<String> pipeline = StringTools.toStringList(cfg.getList("pipeline", Collections.emptyList()));
-        String[] pipes = pipeline.toArray(new String[]{});
-        System.out.println("Pipeline elements: "+Arrays.toString(pipes));
-        if (pipes.length == 0 || pipes[0] == null || pipes[0].isEmpty()) {
-            return;
-        }
-        System.out.println("Loading " + pipes.length + " pipeline elements!");
-        //pipeline properties
-        String[] pipesProps = new String[pipes.length];
-        if (f.exists()) {
-//            for (int i = 0; i < pipes.length; i++) {
-//                pipesProps[i] = getPropertyFileForClass(f, pipes[i], i);
-//            }
-//        } else {
-            List<String> pipelineProperty = StringTools.toStringList(cfg.getList("pipeline.properties", Collections.emptyList()));
-            pipesProps = pipelineProperty.toArray(new String[]{});
-        }
-
+		cfg.addProperty("config.basedir", f.getParentFile().getAbsoluteFile().toURI().getPath());
+		String pipelineXml = cfg.getString("pipeline.xml");
+		FileSystemXmlApplicationContext fsxmac = new FileSystemXmlApplicationContext(new String[]{pipelineXml}, true);
+		ICommandSequence commandSequence = fsxmac.getBean("commandPipeline", cross.datastructures.pipeline.CommandPipeline.class);
+//        String[] pipes = pipeline.toArray(new String[]{});
+        System.out.println("Pipeline elements: "+commandSequence.getCommands());
+		PipelineGeneralConfigWidget pgcw = (PipelineGeneralConfigWidget)scene.createGeneralWidget();
+		pgcw.setProperties(cfg);
         String lastNode = null;
         String edge;
         int edgeCounter = 0;
+		int nodeCounter = 0;
         Configuration pipeHash = new PropertiesConfiguration();
-        for (int i = 0; i < pipes.length; i++) {
-            File pipeCfg = new File(pipesProps[i]);
-            if (!pipeCfg.isAbsolute()) {
-                System.out.println("PipeCfg path is not absolute!");
-                pipeCfg = new File(f.getParentFile(), pipesProps[i]);
-            }
-            System.out.println("Loading element config from: "+pipeCfg.getAbsolutePath());
-            System.out.println("Adding element "+pipes[i]);
+        for (IFragmentCommand command:commandSequence.getCommands()) {
+            Collection<String> configKeys = cross.annotations.AnnotationInspector.getRequiredConfigKeys(command.getClass());
 //        for (String pipe : pipes) {
-            PipelineElementWidget node = (PipelineElementWidget) scene.addNode(pipes[i]);
-            node.setPropertyFile(pipeCfg.getAbsolutePath());
+			String nodeId = command.getClass().getCanonicalName()+""+nodeCounter;
+            PipelineElementWidget node = (PipelineElementWidget) scene.addNode(nodeId);
+//            node.setPropertyFile();
             scene.validate();
-//                scene.getSceneAnimator().animatePreferredLocation(node, new Point(x, y));
-//                scene.validate();
 
-            System.out.println("Parsing pipeline element " + pipeCfg.getAbsolutePath());
-            node.setClassName(pipes[i]);
+//            System.out.println("Parsing pipeline element " + pipeCfg.getAbsolutePath());
+            node.setClassName(command.getClass().getCanonicalName());
+			node.setLabel(command.getClass().getSimpleName());
             node.setCurrentClassProperties();
             Configuration prop = node.getProperties();
-            pipeHash = PropertyLoader.getHash(pipeCfg.getAbsolutePath());
-            node.setPropertyFile(pipeCfg.getAbsolutePath());
+//            pipeHash = PropertyLoader.getHash(pipeCfg.getAbsolutePath());
+//            node.setPropertyFile(pipeCfg.getAbsolutePath());
             Iterator iter = pipeHash.getKeys();
             while (iter.hasNext()) {
                 String key = (String) iter.next();
                 prop.setProperty(key, pipeHash.getProperty(key));
             }
-            //node.setProperties(prop);
+            node.setProperties(prop);
 
             if (lastNode != null) {
                 edge = "Ledge" + edgeCounter++;
                 scene.addEdge(edge);
+				System.out.println("Adding edge between lastNode "+lastNode+" and "+nodeId);
                 scene.setEdgeSource(edge, lastNode);
-                scene.setEdgeTarget(edge, pipes[i]);
+                scene.setEdgeTarget(edge, nodeId);
                 scene.validate();
             }
 //                x += dx;
 //                y += dy;
-            lastNode = pipes[i];
+            lastNode = nodeId;
+			nodeCounter++;
         }
 
-//        PipelineGeneralConfigWidget gnode = (PipelineGeneralConfigWidget) scene.getGeneral();
-//        Iterator pipeIter = cfg.getKeys();
-//        while (pipeIter.hasNext()) {
-//            String key = (String) pipeIter.next();
-//            if (!key.equalsIgnoreCase("pipeline") && !key.equalsIgnoreCase("pipeline.properties")) {
-//                gnode.setProperty(key, cfg.getProperty(key));
-//            }
-//        }
-
         scene.validate();
-        SceneLayouter.layoutDiagonal(scene);
+        SceneLayouter.layoutVertical(scene);
     }
-//    private static String getPropertyFileForClass(File baseConfig, String className, int count) {
-//        String[] b = filename.split("/");
-//        String s = "";
-//        for (int i = 0; i < b.length - 2; i++) {
-//            s += b[i] + "/";
-//
-//        }
-//        String[] c = className.split("\\.");
-//
-//        // FIXME
-//        return s + "0" + count + "_" + c[c.length - 1] + "/" + c[c.length - 1] + ".properties";
-//    }
+
 }

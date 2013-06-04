@@ -15,4 +15,5 @@ omics-base/*/build
 omics-base/*/nbproject/private
 proteus*
 platform-7.2.1/
+/maui/dist/
 

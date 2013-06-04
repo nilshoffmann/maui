@@ -373,19 +373,19 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     }//GEN-LAST:event_jToggleButton2ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        this.scene.clearScene();
-        WizardPage.WizardResultProducer rp = new PipelineWizardResultProducer();
-        Wizard w = WizardPage.createWizard(new Class[]{
-                    FileInputOutputPane.class, AnchorDefinitionPane.class,
-                    PreprocessingPane.class, AlignmentPane.class,
-                    VisualizationPane.class}, rp);
-
-        Map<String, Object> gatheredSettings = (Map<String, Object>) WizardDisplayer.showWizard(w);
-        PropertiesConfiguration pc = new PropertiesConfiguration();
-        for(String key:gatheredSettings.keySet()) {
-            pc.setProperty(key, gatheredSettings.get(key));
-        }
-        SceneParser.parseIntoScene(null, pc, this.scene);
+//        this.scene.clearScene();
+//        WizardPage.WizardResultProducer rp = new PipelineWizardResultProducer();
+//        Wizard w = WizardPage.createWizard(new Class[]{
+//                    FileInputOutputPane.class, AnchorDefinitionPane.class,
+//                    PreprocessingPane.class, AlignmentPane.class,
+//                    VisualizationPane.class}, rp);
+//
+//        Map<String, Object> gatheredSettings = (Map<String, Object>) WizardDisplayer.showWizard(w);
+//        PropertiesConfiguration pc = new PropertiesConfiguration();
+//        for(String key:gatheredSettings.keySet()) {
+//            pc.setProperty(key, gatheredSettings.get(key));
+//        }
+//        SceneParser.parseIntoScene(null, pc, this.scene);
     }//GEN-LAST:event_jButton9ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton GridsToggleButton;

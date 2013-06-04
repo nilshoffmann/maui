@@ -27,7 +27,6 @@
  */
 package maltcms.ui.fileHandles.properties.tools;
 
-import net.sf.maltcms.apps.Maltcms;
 import cross.Factory;
 import cross.commands.fragments.IFragmentCommand;
 import cross.datastructures.fragments.IFileFragment;
@@ -39,8 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -62,7 +59,7 @@ public class SceneValidator {
         if (other.size() > 1) {
             return "At least one element ist not connected to the pipeline.";
         }
-        if (pipeline.size() == 0) {
+        if (pipeline.isEmpty()) {
             return "A pipeline must have at least one element.";
         }
         if (pipeline.size() + other.size() != nodeCount) {
@@ -73,9 +70,9 @@ public class SceneValidator {
     }
 
     private String checkPipeline(List<PipelineElementWidget> pipeline) {
-        final Maltcms m = Maltcms.getInstance();
-        final PropertiesConfiguration cfg = m.getDefaultConfiguration();
-        Factory.getInstance().configure(cfg);
+//        final Maltcms m = Maltcms.getInstance();
+//        final PropertiesConfiguration cfg = m.getDefaultConfiguration();
+//        Factory.getInstance().
 
         ICommandSequence cs = new CommandPipeline();
         List<IFragmentCommand> p = new ArrayList<IFragmentCommand>();
@@ -97,10 +94,14 @@ public class SceneValidator {
                 return ex.getMessage();
             }
         }
+		if(cs.validate()) {
 
 //        Factory.getInstance().configure(cfg);
 //        ICommandSequence cs = Factory.getInstance().getObjectFactory().instantiate(CommandPipeline.class);
 //        cs.setInput(null);
-        return "Everything looks fine";
+			return "Everything looks fine";
+		}else{
+			return "Validation failed!";
+		}
     }
 }
