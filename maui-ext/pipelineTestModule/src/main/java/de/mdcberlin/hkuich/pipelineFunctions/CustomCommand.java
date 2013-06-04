@@ -10,11 +10,12 @@ import cross.commands.fragments.AFragmentCommand;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.tuple.TupleND;
 import cross.datastructures.workflow.WorkflowSlot;
+import java.util.List;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import maltcms.datastructures.ms.Chromatogram1D;
+import maltcms.datastructures.ms.ProfileChromatogram1D;
 import org.openide.util.lookup.ServiceProvider;
-import org.springframework.core.env.JOptCommandLinePropertySource;
+import ucar.ma2.Array;
 
 /**
  * Custom Command to show how to create a command that is available in cross/maltcms.
@@ -39,12 +40,22 @@ public class CustomCommand extends AFragmentCommand {
 
 	public TupleND<IFileFragment> apply(TupleND<IFileFragment> in) {
 		//print some info about the class
-                System.out.println("Hello Tuple");
+                System.out.println("Hello TupleSCSC");
+                
+                initProgress(in.size());
+                
 		log.info("{}",getDescription());
 		for (IFileFragment f : in) {
-			//wrap the FileFragment in a chromatogram
-			Chromatogram1D c = new Chromatogram1D(f);
-			log.info("Chromatogram {} has {} scans!",c.getParent().getName(),c.getNumberOfScans());
+                    getProgress().nextStep();
+                    //wrap the FileFragment in a chromatogram
+                    ProfileChromatogram1D c = new ProfileChromatogram1D(f);
+                    
+                    int index1 = 1; //c.getIndexFor(2.0);
+                    int index2 = 2; //c.getIndexFor(100.0);
+                    List<Array> intensities = c.getBinnedIntensities().subList(index1, index2);
+                    
+                    System.out.println("Here: " + index1 + " " + index2 + " " + intensities);
+                    log.info("Chromatogram {} has {} scans!",c.getParent().getName(),c.getNumberOfScans());
 		}
 		return in;
 	}
