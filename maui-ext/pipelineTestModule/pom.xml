@@ -33,7 +33,7 @@
       <version>0.10.6</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>net.sf.maltcms</groupId>
       <artifactId>maltcms-datastructures</artifactId>
       <version>1.3-SNAPSHOT</version>
     </dependency>

@@ -17,3 +17,4 @@ proteus*
 platform-7.2.1/
 /maui/dist/
 
+/maui-ext/pipelineTestModule/target/
