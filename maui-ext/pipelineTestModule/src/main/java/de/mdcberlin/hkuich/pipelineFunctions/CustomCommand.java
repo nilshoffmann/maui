@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.ProfileChromatogram1D;
 import org.openide.util.lookup.ServiceProvider;
 import ucar.ma2.Array;
+import ucar.ma2.MAMath;
+import ucar.ma2.MAMath.MinMax;
 
 /**
  * Custom Command to show how to create a command that is available in cross/maltcms.
@@ -50,9 +52,14 @@ public class CustomCommand extends AFragmentCommand {
                     //wrap the FileFragment in a chromatogram
                     ProfileChromatogram1D c = new ProfileChromatogram1D(f);
                     
-                    int index1 = 1; //c.getIndexFor(2.0);
-                    int index2 = 2; //c.getIndexFor(100.0);
-                    List<Array> intensities = c.getBinnedIntensities().subList(index1, index2);
+                    IFileFragment parent = c.getParent();
+                    MinMax mm = MAMath.getMinMax(parent.getChild("scan_acquisition_time").getArray());
+                    double startTime = mm.min;
+                    double stopTime = mm.max;
+                    
+                    int index1 = c.getIndexFor(startTime);
+                    int index2 = c.getIndexFor(stopTime);
+                    List<Array> intensities = c.getBinnedIntensities().subList(index1, index2/2);
                     
                     System.out.println("Numer of spectra extracted: " + intensities.size());
                     System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(0));
