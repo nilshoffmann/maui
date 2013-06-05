@@ -41,11 +41,33 @@ for details.
         <property name="checkCommandDependencies" value="true"/>
         <property name="commands">
             <list>
+        <ref bean="denseArrayProducer" />
                 <ref bean="customCommand" />
             </list>
         </property>    
     </bean>
     <!-- commands -->
     <!-- prints structure of data files -->
+
+<!-- DenseArrayProducer, creates a dense profile matrix -->
+    <bean id="denseArrayProducer" class="maltcms.commands.fragments.preprocessing.DenseArrayProducer">
+        <property name="maskedMasses">
+            <list>
+                <!-- <value>73</value> -->
+                <!-- <value>74</value> --> 
+                <!-- <value>75</value> --> 
+                <!-- <value>147</value> --> 
+                <!-- <value>148</value> --> 
+                <!-- <value>149</value> --> 
+            </list>
+        </property> 
+        <property name="invertMaskedMasses" value="false"/>  
+        <property name="normalizeScans" value="true"/> 
+        <property name="normalizeMeanVariance" value="false"/>
+        <property name="massBinResolution" value="1.0d"/>
+        <property name="ignoreMinMaxMassArrays" value="false"/>
+    </bean>
+
+
     <bean id="customCommand" class="de.mdcberlin.hkuich.pipelineFunctions.CustomCommand"/>
 </beans>

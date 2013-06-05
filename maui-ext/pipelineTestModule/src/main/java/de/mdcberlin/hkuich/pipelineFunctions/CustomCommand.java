@@ -57,11 +57,14 @@ public class CustomCommand extends AFragmentCommand {
                     double startTime = mm.min;
                     double stopTime = mm.max;
                     
+                    System.out.println("startTime: " + startTime);
+                    System.out.println("startTime: " + stopTime);
+                    
                     int index1 = c.getIndexFor(startTime);
                     int index2 = c.getIndexFor(stopTime);
                     List<Array> intensities = c.getBinnedIntensities().subList(index1, index2/2);
                     
-                    System.out.println("Numer of spectra extracted: " + intensities.size());
+                    System.out.println("Number of spectra extracted: " + intensities.size());
                     System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(0));
                     System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(1));
                     log.info("Chromatogram {} has {} scans!",c.getParent().getName(),c.getNumberOfScans());
