@@ -53,20 +53,29 @@ public class CustomCommand extends AFragmentCommand {
                     ProfileChromatogram1D c = new ProfileChromatogram1D(f);
                     
                     IFileFragment parent = c.getParent();
-                    MinMax mm = MAMath.getMinMax(parent.getChild("scan_acquisition_time").getArray());
-                    double startTime = mm.min;
-                    double stopTime = mm.max;
+                    MinMax mmTime = MAMath.getMinMax(parent.getChild("scan_acquisition_time").getArray());
+                    double startTime = mmTime.min;
+                    double stopTime = mmTime.max;
+                    
+                    MinMax mmMasses = MAMath.getMinMax(parent.getChild("masses").getArray());
+                    double minMass = mmMasses.min;
+                    double maxMass = mmMasses.max;
                     
                     System.out.println("startTime: " + startTime);
-                    System.out.println("startTime: " + stopTime);
+                    System.out.println("stopTime: " + stopTime);
+                    
+                    System.out.println("minMass: " + minMass);
+                    System.out.println("minMass: " + maxMass);
+                    
                     
                     int index1 = c.getIndexFor(startTime);
                     int index2 = c.getIndexFor(stopTime);
                     List<Array> intensities = c.getBinnedIntensities().subList(index1, index2/2);
                     
                     System.out.println("Number of spectra extracted: " + intensities.size());
-                    System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(0));
-                    System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(1));
+                    //System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(0));
+                    //System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(1));
+                    System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(0).getDouble(73));
                     log.info("Chromatogram {} has {} scans!",c.getParent().getName(),c.getNumberOfScans());
 		}
 		return in;
