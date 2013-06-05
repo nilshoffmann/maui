@@ -54,7 +54,9 @@ public class CustomCommand extends AFragmentCommand {
                     int index2 = 2; //c.getIndexFor(100.0);
                     List<Array> intensities = c.getBinnedIntensities().subList(index1, index2);
                     
-                    System.out.println("Here: " + index1 + " " + index2 + " " + intensities);
+                    System.out.println("Numer of spectra extracted: " + intensities.size());
+                    System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(0));
+                    System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(1));
                     log.info("Chromatogram {} has {} scans!",c.getParent().getName(),c.getNumberOfScans());
 		}
 		return in;
