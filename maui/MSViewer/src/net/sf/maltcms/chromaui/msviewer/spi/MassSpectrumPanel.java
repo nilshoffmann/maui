@@ -520,7 +520,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jToolBar1.add(jLabel1);
         jToolBar1.add(filler1);
 
-        barWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(0.5d, 0.009999999776482582d, 1.0d, 0.009999999776482582d));
+        barWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(0.5d, 1.0E-5d, 1.0d, 0.009999999776482582d));
         barWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 barWidthSpinnerStateChanged(evt);
