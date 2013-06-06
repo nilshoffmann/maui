@@ -64,7 +64,6 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
         projectLocationTextField.getDocument().addDocumentListener(this);
         setName(NbBundle.getMessage(DBProjectVisualPanel1.class,
                 "LBL_CreateProjectStep"));
-//        outputFolder.getDocument().addDocumentListener(this);
     }
 
     public String getProjectName() {
@@ -95,6 +94,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
         jLabel2 = new javax.swing.JLabel();
         copyFiles = new javax.swing.JCheckBox();
 
+        setMinimumSize(new java.awt.Dimension(640, 480));
         setPreferredSize(new java.awt.Dimension(640, 480));
 
         projectNameLabel.setLabelFor(projectNameTextField);
@@ -168,17 +168,17 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(outputFolderTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                    .addComponent(projectNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-                    .addComponent(projectLocationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-                    .addComponent(createdFolderTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
+                    .addComponent(outputFolderTextField)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                    .addComponent(projectNameTextField)
+                    .addComponent(projectLocationTextField)
+                    .addComponent(createdFolderTextField))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(browseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                    .addComponent(copyFiles, 0, 0, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(copyFiles, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -207,10 +207,10 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(copyFiles))
                     .addComponent(jLabel1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -287,9 +287,6 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         getListModel().clear();
-//        if (panel != null) {
-//            panel.fireChangeEvent();
-//        }
         firePropertyChange("VALIDATE", null, null);
     }//GEN-LAST:event_jButton2ActionPerformed
 
