@@ -31,7 +31,7 @@
 	<target name="build-installers" description="Build Installers" depends="build">
 		
 		<!-- TODO: replace potential backward slashes in generated-jdk-location-forward-slashes and generated-installers-location-forward-slashes-->
-		<propertyfile file="${basedir}/build/installer.properties">
+		<propertyfile file="${basedir}/nbproject/installer.properties">
 			<entry key="suite.location" value="${basedir}"/>
 			<entry key="nbi.cluster.location" value="${nbplatform.harness.dir}"/>
 			<entry key="nbi.stub.location" value="${nbi.cluster.location}/nbi/stub"/>
@@ -39,7 +39,7 @@
 			<entry key="nbi.ant.tasks.jar" value="${nbi.cluster.location}/modules/ext/nbi-ant-tasks.jar"/>
 			<entry key="nbi.registries.management.jar" value="${nbi.cluster.location}/modules/ext/nbi-registries-management.jar"/>
 			<entry key="nbi.engine.jar" value="${nbi.cluster.location}/modules/ext/nbi-engine.jar"/>
-			<entry key="nbi.license.file" value="${basedir}/${auxiliary.org-netbeans-modules-apisupport-installer.license-file}" default=""/>
+			<entry key="nbi.license.file" value="${auxiliary.org-netbeans-modules-apisupport-installer.license-file}" default=""/>
 			<entry key="generate.installer.for.platforms" value="linux macosx solaris windows"/>
 			<entry key="generator-jdk-location-forward-slashes" value="${java.home}"/>
 			<entry key="generated-installers-location-forward-slashes" value="${basedir}/build/dist"/>
@@ -48,7 +48,7 @@
 		</propertyfile>
 		
 		<ant antfile="${nbplatform.harness.dir}/nbi/stub/template.xml" taskname="build" dir="${nbplatform.harness.dir}/nbi/stub/" inheritall="false" inheritrefs="false">
-			<property file="${basedir}/build/installer.properties"/>
+			<property file="${basedir}/nbproject/installer.properties"/>
 		</ant>
 	</target>
 	
