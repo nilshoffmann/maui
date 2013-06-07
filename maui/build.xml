@@ -323,7 +323,7 @@
 	
 	<target name="build-zip-site">
 		<mkdir dir="${basedir}/dist/"/>
-		<zip destfile="${basedir}/dist/maui-site.zip" basedir="${basedir}/site/public_html"/>
+		<zip destfile="${basedir}/dist/maui-site.zip" basedir="${basedir}/build/site"/>
 	</target>
 	
 </project>
