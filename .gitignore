@@ -17,4 +17,16 @@ proteus*
 platform-7.2.1/
 /maui/dist/
 
+
 /maui-ext/pipelineTestModule/target/
+/maui-ext/dist/
+
+.DS_Store
+maui-ext/.DS_Store
+maui-ext/pipelineTestModule/.DS_Store
+maui-ext/pipelineTestModule/src/.DS_Store
+maui-ext/pipelineTestModule/src/main/.DS_Store
+maui-ext/pipelineTestModule/src/main/resources/.DS_Store
+maui-ext/pipelineTestModule/src/main/resources/cfg/.DS_Store
+maui-ext/pipelineTestModule/src/main/resources/cfg/pipelines/.DS_Store
+maui/.DS_Store
