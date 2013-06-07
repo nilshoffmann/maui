@@ -158,4 +158,9 @@
 	<target name="zip-javadoc" depends="javadoc">
 		<zip destfile="${basedir}/build/site/javadoc.zip" basedir="${basedir}/build/site/javadoc"/>
 	</target>
+	
+	<target name="build-zip-site">
+		<mkdir dir="${basedir}/dist/"/>
+		<zip destfile="${basedir}/dist/omics-base-site.zip" basedir="${basedir}/build/site"/>
+	</target>
 </project>
