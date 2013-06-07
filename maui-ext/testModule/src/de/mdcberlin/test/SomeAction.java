@@ -3,27 +3,53 @@ package de.mdcberlin.test;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.SwingUtilities;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.awt.ActionRegistration;
+import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(
-        category = "File",
-        id = "de.mdcberlin.test.SomeAction")
-@ActionRegistration(
-        displayName = "#CTL_SomeAction")
-@ActionReference(path = "Menu/File", position = 0, separatorBefore = -50, separatorAfter = 50)
-@Messages("CTL_SomeAction=HKTestAction")
+@ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
+id = "maltcms.ui.Chromatogram1DViewOpenAction")
+@ActionRegistration(displayName = "#CTL_Chromatogram1DViewOpenAction")
+@Messages("CTL_Chromatogram1DViewOpenAction=CrazyShit")
 public final class SomeAction implements ActionListener {
 
+    private final List<IChromatogramDescriptor> chromatograms;
+
+    public SomeAction(List<IChromatogramDescriptor> context) {
+        this.chromatograms = context;
+    }    
+    
     @Override
-	public void actionPerformed(ActionEvent ev) {
-		DialogDisplayer.getDefault().notify(
-			new NotifyDescriptor.Message(
-			"HK test action works!",
-			NotifyDescriptor.WARNING_MESSAGE));
-	}
+    public void actionPerformed(ActionEvent ev) {
+        RunnableAction ra = new RunnableAction(this.chromatograms);
+        RunnableAction.createAndRun("Loading 1D chromatogram view", ra);             
+    }   
+    
+    private class RunnableAction extends AProgressAwareRunnable {
+
+        private final List<IChromatogramDescriptor> chromatograms;
+
+        public RunnableAction(List<IChromatogramDescriptor> chromatograms) {
+            this.chromatograms = chromatograms;
+        }
+
+        public void onEdt(Runnable r) {
+            SwingUtilities.invokeLater(r);
+        }
+
+        @Override
+        public void run() {
+            DialogDisplayer.getDefault().notify(
+                new NotifyDescriptor.Message(
+                "HK test action works!",
+                NotifyDescriptor.WARNING_MESSAGE));
+        }
+    } 
+    
 }
