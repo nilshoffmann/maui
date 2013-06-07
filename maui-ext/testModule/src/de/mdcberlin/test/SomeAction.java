@@ -49,6 +49,12 @@ public final class SomeAction implements ActionListener {
                 new NotifyDescriptor.Message(
                 "HK test action works!",
                 NotifyDescriptor.WARNING_MESSAGE));
+            
+            System.out.println("chromatograms.size()= " + chromatograms.size());
+            System.out.println("displayName= " + chromatograms.get(0).getDisplayName());
+            System.out.println("Name= " + chromatograms.get(0).getName());
+            System.out.println("detectorType= " + chromatograms.get(0).getDetectorType());
+            System.out.println("project= " + chromatograms.get(0).getProject());
         }
     } 
     
