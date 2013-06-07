@@ -43,5 +43,11 @@
       <version>1.3-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>net.sf.maltcms</groupId>
+      <artifactId>maltcms-commands</artifactId>
+      <version>1.3-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
   </dependencies>
 </project>
