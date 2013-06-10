@@ -4,9 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+
+@ActionReferences({
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/DefaultActions")})
 @ActionID(
         category = "Maui",
         id = "de.mdcberlin.hkuich.retentionIndexCalculation.assistedRICalculation")
