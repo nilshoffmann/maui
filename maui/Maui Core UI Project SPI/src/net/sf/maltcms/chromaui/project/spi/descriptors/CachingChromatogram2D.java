@@ -36,6 +36,7 @@ import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.ImmutableVariableFragment2;
 import cross.datastructures.fragments.VariableFragment;
+import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
 import java.awt.Point;
 import java.lang.ref.SoftReference;
@@ -55,6 +56,7 @@ import maltcms.datastructures.ms.Scan2D;
 import maltcms.tools.MaltcmsTools;
 import org.apache.commons.configuration.Configuration;
 import ucar.ma2.Array;
+import ucar.ma2.MAMath;
 
 /**
  *
@@ -92,6 +94,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	private int[] lastPrefetchRange = new int[]{-1, -1};
 	private SoftReference<double[]> satArrayReference;
 	private SoftReference<Array> satReference;
+	private Tuple2D<Double,Double> massRange;
+	private Tuple2D<Double,Double> timeRange;
 
 	public CachingChromatogram2D(final IFileFragment e) {
 		this.parent = e;
@@ -233,6 +237,23 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 		this.second_column_elution_time_var = cfg.getString("var.second_column_elution_time");
 	}
 
+	@Override
+	public Tuple2D<Double,Double> getTimeRange() {
+		if(timeRange==null) {
+			MAMath.MinMax satMM = MAMath.getMinMax(getScanAcquisitionTime());
+			timeRange = new Tuple2D<Double,Double>(satMM.min,satMM.max);
+		}
+		return timeRange;
+	}
+	
+	@Override
+	public Tuple2D<Double,Double> getMassRange() {
+		if(massRange==null) {
+			massRange = MaltcmsTools.getMinMaxMassRange(parent);
+		}
+		return massRange;
+	}
+	
 	@Override
 	public List<Array> getIntensities() {
 		return intensityValues;
