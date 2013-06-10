@@ -64,6 +64,12 @@
 		<delete dir="platform-${platform.version}" failonerror="false"/> 
 	</target>
 	
+	<target name="delete-maltcms" description="Remove downloaded maltcms files" depends="check-platform" if="platform.exists">
+		<echo>Deleting maltcms directory</echo>
+		<delete dir="platform-${platform.version}/maltcms" failonerror="false"/> 
+		<delete file="platform-${platform.version}/platform.complete" failonerror="false"/>
+	</target>
+	
 	<!-- run targets -->
 	<target name="run-omics-base" description="Run Omics Base">
 		<ant antfile="${omics-base.dir}/build.xml" target="run" inheritall="false" inheritrefs="false"/>
