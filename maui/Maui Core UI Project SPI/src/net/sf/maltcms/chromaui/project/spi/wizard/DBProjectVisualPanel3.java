@@ -65,7 +65,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
     public static final String PROP_FILE_TO_NORMALIZATION = "fileToNormalization";
     private Set<FileToNormalizationDescriptor> fileToNormalization = new LinkedHashSet<FileToNormalizationDescriptor>();
     private ExplorerManager manager = new ExplorerManager();
-    private InstanceContent content = new InstanceContent();
+    private InstanceContent content = null;
     private Lookup lookup = null;
     private OutlineView view = null;
 
@@ -190,6 +190,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
         jToolBar1 = new javax.swing.JToolBar();
         checkDifferentNormalizationTypes = new javax.swing.JCheckBox();
 
+        setMinimumSize(new java.awt.Dimension(640, 480));
         setPreferredSize(new java.awt.Dimension(640, 480));
         setLayout(new java.awt.BorderLayout());
 
@@ -298,6 +299,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
         fileToNormalization = descriptors;
         FileRootNode frn = new FileRootNode(Children.create(new FileNormalizationChildFactory(
                 fileToNormalization), true));
+		content = new InstanceContent();
         lookup = new ProxyLookup(new AbstractLookup(content), ExplorerUtils.
                 createLookup(manager, getActionMap()));
         if (view != null) {

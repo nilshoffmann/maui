@@ -53,7 +53,7 @@ import org.openide.util.NbBundle;
 public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable {
 
 	public static final String PROP_PROJECT_NAME = "projectName";
-	private Map<File, String> fileToGroup = new LinkedHashMap<File, String>();
+	private Map<File, String> fileToTreatmentGroup = new LinkedHashMap<File, String>();
 	private Map<File, String> fileToSampleGroup = new LinkedHashMap<File, String>();
 
 	public DBProjectVisualPanel2() {
@@ -89,19 +89,23 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         detectorTypeComboBox = new javax.swing.JComboBox();
         scanRateTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         treatmentGroupPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         groupList = new javax.swing.JList();
         groupTextField = new javax.swing.JTextField();
-        addGroupButton = new javax.swing.JButton();
-        removeGroupButton = new javax.swing.JButton();
+        addTreatmentGroupButton = new javax.swing.JButton();
+        removeTreatmentGroupButton = new javax.swing.JButton();
         sampleGroupPanel = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        sampleGroupList = new javax.swing.JList();
         sampleGroupTextField = new javax.swing.JTextField();
         addSampleGroupButton = new javax.swing.JButton();
         removeSampleGroupButton = new javax.swing.JButton();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        sampleGroupList = new javax.swing.JList();
         jScrollPane2 = new javax.swing.JScrollPane();
         fileToGroupList = new javax.swing.JList();
 
@@ -155,24 +159,48 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.jLabel5.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.jCheckBox1.text")); // NOI18N
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.jLabel1.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.jLabel6.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(23, 23, 23)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(modulationTimeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(separationTypeComboBox, 0, 145, Short.MAX_VALUE)
-                    .addComponent(detectorTypeComboBox, 0, 145, Short.MAX_VALUE)
-                    .addComponent(modulationTimeTextField)
-                    .addComponent(scanRateTextField))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCheckBox1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(modulationTimeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                    .addComponent(scanRateTextField))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(detectorTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(separationTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSeparator1)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -185,20 +213,26 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(separationTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(modulationTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(modulationTimeLabel))
+                    .addComponent(modulationTimeLabel)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(scanRateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addContainerGap(43, Short.MAX_VALUE))
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox1)
+                .addContainerGap())
         );
 
         treatmentGroupPanel.setName("treatmentGroupPanel"); // NOI18N
 
-        groupList.setModel(getGroupListModel());
+        groupList.setModel(getTreatmentGroupListModel());
         groupList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         groupList.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.groupList.toolTipText")); // NOI18N
         jScrollPane1.setViewportView(groupList);
@@ -206,17 +240,23 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         groupTextField.setText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.groupTextField.text")); // NOI18N
         groupTextField.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.groupTextField.toolTipText")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(addGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.addGroupButton.text")); // NOI18N
-        addGroupButton.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(addTreatmentGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.addTreatmentGroupButton.text")); // NOI18N
+        addTreatmentGroupButton.setMaximumSize(new java.awt.Dimension(40, 29));
+        addTreatmentGroupButton.setMinimumSize(new java.awt.Dimension(40, 29));
+        addTreatmentGroupButton.setPreferredSize(new java.awt.Dimension(40, 29));
+        addTreatmentGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addGroupButtonActionPerformed(evt);
+                addTreatmentGroupButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(removeGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.removeGroupButton.text")); // NOI18N
-        removeGroupButton.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(removeTreatmentGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.removeTreatmentGroupButton.text")); // NOI18N
+        removeTreatmentGroupButton.setMaximumSize(new java.awt.Dimension(70, 29));
+        removeTreatmentGroupButton.setMinimumSize(new java.awt.Dimension(70, 29));
+        removeTreatmentGroupButton.setPreferredSize(new java.awt.Dimension(70, 29));
+        removeTreatmentGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeGroupButtonActionPerformed(evt);
+                removeTreatmentGroupButtonActionPerformed(evt);
             }
         });
 
@@ -227,29 +267,29 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
             .addGroup(treatmentGroupPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(treatmentGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                     .addGroup(treatmentGroupPanelLayout.createSequentialGroup()
-                        .addComponent(addGroupButton)
+                        .addComponent(addTreatmentGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(removeTreatmentGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(groupTextField))
                 .addContainerGap())
         );
 
-        treatmentGroupPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addGroupButton, removeGroupButton});
+        treatmentGroupPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addTreatmentGroupButton, removeTreatmentGroupButton});
 
         treatmentGroupPanelLayout.setVerticalGroup(
             treatmentGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(treatmentGroupPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(treatmentGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addGroupButton)
-                    .addComponent(removeGroupButton))
+                    .addComponent(addTreatmentGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(removeTreatmentGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -257,10 +297,18 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 
         sampleGroupPanel.setName("sampleGroupPanel"); // NOI18N
 
+        sampleGroupList.setModel(getSampleGroupListModel());
+        sampleGroupList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        sampleGroupList.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.sampleGroupList.toolTipText")); // NOI18N
+        jScrollPane4.setViewportView(sampleGroupList);
+
         sampleGroupTextField.setText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.sampleGroupTextField.text")); // NOI18N
         sampleGroupTextField.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.sampleGroupTextField.toolTipText")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(addSampleGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.addSampleGroupButton.text")); // NOI18N
+        addSampleGroupButton.setMaximumSize(new java.awt.Dimension(40, 29));
+        addSampleGroupButton.setMinimumSize(new java.awt.Dimension(40, 29));
+        addSampleGroupButton.setPreferredSize(new java.awt.Dimension(40, 29));
         addSampleGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addSampleGroupButtonActionPerformed(evt);
@@ -268,16 +316,14 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(removeSampleGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.removeSampleGroupButton.text")); // NOI18N
+        removeSampleGroupButton.setMaximumSize(new java.awt.Dimension(70, 29));
+        removeSampleGroupButton.setMinimumSize(new java.awt.Dimension(70, 29));
+        removeSampleGroupButton.setPreferredSize(new java.awt.Dimension(70, 29));
         removeSampleGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeSampleGroupButtonActionPerformed(evt);
             }
         });
-
-        sampleGroupList.setModel(getSampleGroupListModel());
-        sampleGroupList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        sampleGroupList.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.sampleGroupList.toolTipText")); // NOI18N
-        jScrollPane4.setViewportView(sampleGroupList);
 
         javax.swing.GroupLayout sampleGroupPanelLayout = new javax.swing.GroupLayout(sampleGroupPanel);
         sampleGroupPanel.setLayout(sampleGroupPanelLayout);
@@ -286,27 +332,27 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
             .addGroup(sampleGroupPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sampleGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sampleGroupTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                    .addComponent(sampleGroupTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                     .addGroup(sampleGroupPanelLayout.createSequentialGroup()
                         .addComponent(addSampleGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeSampleGroupButton)
+                        .addComponent(removeSampleGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane4))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sampleGroupPanelLayout.setVerticalGroup(
             sampleGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sampleGroupPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sampleGroupTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(sampleGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addSampleGroupButton)
-                    .addComponent(removeSampleGroupButton))
-                .addContainerGap(14, Short.MAX_VALUE))
+                    .addComponent(addSampleGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(removeSampleGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.sampleGroupPanel.TabConstraints.tabTitle"), sampleGroupPanel); // NOI18N
@@ -322,54 +368,53 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTabbedPane1))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(assignGroupToFile)
-                            .addComponent(jLabel2)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)))
+                            .addComponent(jLabel2))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(assignGroupToFile))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addGroupButtonActionPerformed
+    private void addTreatmentGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTreatmentGroupButtonActionPerformed
 		String txt = groupTextField.getText();
-		if (addGroup(txt)) {
+		if (addTreatmentGroup(txt)) {
 			return;
 		}
-    }//GEN-LAST:event_addGroupButtonActionPerformed
+    }//GEN-LAST:event_addTreatmentGroupButtonActionPerformed
 
-    private void removeGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeGroupButtonActionPerformed
+    private void removeTreatmentGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTreatmentGroupButtonActionPerformed
 		int idx = groupList.getSelectedIndex();
 		String s = (String) groupList.getSelectedValue();
 		System.out.println("Selected value: " + s);
-		removeGroup(s, idx);
+		removeTreatmentGroup(s, idx);
 		firePropertyChange("VALIDATE", null, this);
 //        removeGroup(s, idx);
-    }//GEN-LAST:event_removeGroupButtonActionPerformed
+    }//GEN-LAST:event_removeTreatmentGroupButtonActionPerformed
 
     private void assignGroupToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignGroupToFileActionPerformed
 		Object[] files = fileToGroupList.getSelectedValues();
@@ -391,12 +436,14 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
     private void separationTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_separationTypeComboBoxActionPerformed
 		ISeparationType ist = (ISeparationType) separationTypeComboBox.getSelectedItem();
 		if (ist instanceof GCGC || ist instanceof LCLC) {
-			modulationTimeTextField.setEnabled(true);
-			scanRateTextField.setEnabled(true);
+			jCheckBox1.setEnabled(true);
 		} else {
+			jCheckBox1.setEnabled(false);
+			jCheckBox1.setSelected(false);
 			modulationTimeTextField.setEnabled(false);
 			scanRateTextField.setEnabled(false);
 		}
+
     }//GEN-LAST:event_separationTypeComboBoxActionPerformed
 
     private void addSampleGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSampleGroupButtonActionPerformed
@@ -413,27 +460,50 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 		removeSampleGroup(s, idx);
 		firePropertyChange("VALIDATE", null, this);
     }//GEN-LAST:event_removeSampleGroupButtonActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+		if (jCheckBox1.isEnabled()) {
+			if (jCheckBox1.isSelected()) {
+				ISeparationType ist = (ISeparationType) separationTypeComboBox.getSelectedItem();
+				if (ist instanceof GCGC || ist instanceof LCLC) {
+					modulationTimeTextField.setEnabled(true);
+					scanRateTextField.setEnabled(true);
+				} else {
+					jCheckBox1.setEnabled(false);
+					modulationTimeTextField.setEnabled(false);
+					scanRateTextField.setEnabled(false);
+				}
+			} else {
+				modulationTimeTextField.setEnabled(false);
+				scanRateTextField.setEnabled(false);
+			}
+		}
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addGroupButton;
     private javax.swing.JButton addSampleGroupButton;
+    private javax.swing.JButton addTreatmentGroupButton;
     private javax.swing.JButton assignGroupToFile;
     private javax.swing.JComboBox detectorTypeComboBox;
     private javax.swing.JList fileToGroupList;
     private javax.swing.JList groupList;
     private javax.swing.JTextField groupTextField;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel modulationTimeLabel;
     private javax.swing.JTextField modulationTimeTextField;
-    private javax.swing.JButton removeGroupButton;
     private javax.swing.JButton removeSampleGroupButton;
+    private javax.swing.JButton removeTreatmentGroupButton;
     private javax.swing.JList sampleGroupList;
     private javax.swing.JPanel sampleGroupPanel;
     private javax.swing.JTextField sampleGroupTextField;
@@ -441,15 +511,15 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
     private javax.swing.JComboBox separationTypeComboBox;
     private javax.swing.JPanel treatmentGroupPanel;
     // End of variables declaration//GEN-END:variables
-	private DefaultListModel groupListModel = null;
+	private DefaultListModel treatmentGroupListModel = null;
 	private DefaultListModel fileToGroupListModel = null;
 	private DefaultListModel sampleGroupListModel = null;
 
-	private DefaultListModel getGroupListModel() {
-		if (groupListModel == null) {
-			groupListModel = new DefaultListModel();
+	private DefaultListModel getTreatmentGroupListModel() {
+		if (treatmentGroupListModel == null) {
+			treatmentGroupListModel = new DefaultListModel();
 		}
-		return groupListModel;
+		return treatmentGroupListModel;
 	}
 
 	private DefaultListModel getFileToGroupListModel() {
@@ -484,7 +554,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 	@Override
 	public boolean valid(WizardDescriptor wizardDescriptor) {
 
-		if (getGroupListModel().isEmpty()) {
+		if (getTreatmentGroupListModel().isEmpty()) {
 			wizardDescriptor.putProperty(WizardDescriptor.PROP_INFO_MESSAGE,
 					"Please define at least one chromatogram treatment group.");
 			return false; // no treatment group
@@ -514,8 +584,8 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 			Object o = e.nextElement();
 			if (o instanceof File) {
 				System.out.println("Checking file " + (File) o);
-				if (fileToGroup.containsKey((File) o)) {
-					if (fileToGroup.get((File) o) == null) {
+				if (fileToTreatmentGroup.containsKey((File) o)) {
+					if (fileToTreatmentGroup.get((File) o) == null) {
 						wizardDescriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE,
 								"Please assign chromatogram " + ((File) o).getName() + " to a treatment group.");
 						return false;
@@ -534,11 +604,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 
 	@Override
 	public void store(WizardDescriptor d) {
-//        String name = projectNameTextField.getText().trim();
-//        String folder = createdFolderTextField.getText().trim();
-//        d.putProperty("projdir", new File(folder));
-//        d.putProperty("name", name);
-		d.putProperty("groupMapping", fileToGroup);
+		d.putProperty("groupMapping", fileToTreatmentGroup);
 		d.putProperty("sampleGroupMapping", fileToSampleGroup);
 		d.putProperty("detectorType", (IDetectorType) detectorTypeComboBox.getSelectedItem());
 		d.putProperty("separationType", (ISeparationType) separationTypeComboBox.getSelectedItem());
@@ -548,45 +614,21 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 		if (scanRateTextField.isEnabled() && !(scanRateTextField.getText().isEmpty())) {
 			d.putProperty("scanRate", Double.valueOf(scanRateTextField.getText().trim()));
 		}
-//        StringBuilder sb = new StringBuilder();
-//        for (Object o : getListModel().toArray()) {
-//            File of = (File) o;
-//            sb.append(FileUtil.normalizeFile(of).getAbsolutePath() + ",");
-//        }
-//        if (sb.length() > 0) {
-//            d.putProperty("input.dataInfo", sb.substring(0, sb.length() - 1));
-//        }
-//        d.putProperty("output.basedir", FileUtil.normalizeFile(new File(outputFolder.getText())).getAbsolutePath());
 	}
 
 	@Override
 	public void read(WizardDescriptor settings) {
-//        File projectLocation = (File) settings.getProperty("projdir");
-//        if (projectLocation == null || projectLocation.getParentFile() == null || !projectLocation.getParentFile().isDirectory()) {
-//            try {
-//                projectLocation = ProjectChooser.getProjectsFolder();
-//            } catch (AssertionError ae) {
-//                projectLocation = new File(System.getProperty("user.home"));
-//            }
-//        } else {
-//            projectLocation = projectLocation.getParentFile();
-//        }
-//        this.projectLocationTextField.setText(projectLocation.getAbsolutePath());
-//        
-//        String projectName = (String) settings.getProperty("name");
-//        if (projectName == null) {
-//            projectName = "chromaUIProject";
-//        }
-//        this.projectNameTextField.setText(projectName);
-//        this.projectNameTextField.selectAll
 		addFiles(settings);
-		fileToGroup = (Map<File, String>) settings.getProperty("groupMapping");
-		getGroupListModel().clear();
-		if (fileToGroup == null) {
-			fileToGroup = new LinkedHashMap<File, String>();
+		fileToTreatmentGroup = (Map<File, String>) settings.getProperty("groupMapping");
+		getTreatmentGroupListModel().clear();
+		if (fileToTreatmentGroup == null) {
+			fileToTreatmentGroup = new LinkedHashMap<File, String>();
 		} else {
-			for (Entry<File, String> e : fileToGroup.entrySet()) {
-				addGroup(e.getValue());
+			for (Entry<File, String> e : fileToTreatmentGroup.entrySet()) {
+				System.out.println("Restoring treatment group " + e.getValue());
+				if(!getTreatmentGroupListModel().contains(e.getValue())) {
+					getTreatmentGroupListModel().addElement(e.getValue());
+				}
 			}
 		}
 		fileToSampleGroup = (Map<File, String>) settings.getProperty("sampleGroupMapping");
@@ -595,7 +637,10 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 			fileToSampleGroup = new LinkedHashMap<File, String>();
 		} else {
 			for (Entry<File, String> e : fileToSampleGroup.entrySet()) {
-				addGroup(e.getValue());
+				System.out.println("Restoring sample group " + e.getValue());
+				if(!getSampleGroupListModel().contains(e.getValue())) {
+					getSampleGroupListModel().addElement(e.getValue());
+				}
 			}
 		}
 		IDetectorType idt = (IDetectorType) settings.getProperty("detectorType");
@@ -609,19 +654,15 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 		}
 		separationTypeComboBoxActionPerformed(null);
 		if (settings.getProperty("modulationTime") != null) {
+			jCheckBox1.setEnabled(true);
+			modulationTimeTextField.setEnabled(true);
 			modulationTimeTextField.setText(((Double) settings.getProperty("modulationTime")).toString());
 		}
 		if (settings.getProperty("scanRate") != null) {
+			jCheckBox1.setEnabled(true);
+			scanRateTextField.setEnabled(true);
 			scanRateTextField.setText(((Double) settings.getProperty("scanRate")).toString());
 		}
-//        LinkedHashSet<String> groups = new LinkedHashSet<String>();
-
-
-
-//        
-
-
-//        this.outputFolder.setText((String) settings.getProperty("output.basedir"));
 	}
 
 	protected void addFiles(WizardDescriptor settings) {
@@ -632,7 +673,6 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 			for (String s : ifs) {
 				getFileToGroupListModel().addElement(new File(s));
 			}
-//            firePropertyChange("FILES", ui, ui);
 		}
 
 	}
@@ -640,7 +680,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 	protected void addFileToGroupMapping(Object[] files, String group) {
 		for (Object o : files) {
 			File f = (File) o;
-			fileToGroup.put(f, group);
+			fileToTreatmentGroup.put(f, group);
 		}
 		fileToGroupList.setCellRenderer(new FileListCellRenderer());
 		firePropertyChange("VALIDATE", null, this);
@@ -669,13 +709,13 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 		return false;
 	}
 
-	private boolean addGroup(String txt) {
+	private boolean addTreatmentGroup(String txt) {
 		if (txt == null || txt.equals("")) {
 			return false;
 		}
-		if (!getGroupListModel().contains(txt)) {
-			if (!fileToGroup.values().contains(txt)) {
-				getGroupListModel().addElement(txt);
+		if (!getTreatmentGroupListModel().contains(txt)) {
+			if (!fileToTreatmentGroup.values().contains(txt)) {
+				getTreatmentGroupListModel().addElement(txt);
 				firePropertyChange("VALIDATE", null, this);
 			}
 			return true;
@@ -684,7 +724,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 	}
 
 	protected void removeSampleGroup(String sampleGroup, int idx) {
-		if (!getSampleGroupListModel().isEmpty() && idx>-1) {
+		if (!getSampleGroupListModel().isEmpty() && idx > -1) {
 			getSampleGroupListModel().removeElementAt(idx);
 			Set<Entry<File, String>> es = fileToSampleGroup.entrySet();
 			List<File> toRemove = new LinkedList<File>();
@@ -697,15 +737,14 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 				fileToSampleGroup.remove(file);
 			}
 			fileToGroupList.setCellRenderer(new FileListCellRenderer());
-//        fileToGroup.containsValue(s);
 			firePropertyChange("VALIDATE", null, this);
 		}
 	}
 
-	protected void removeGroup(String group, int idx) {
-		if (!getGroupListModel().isEmpty() && idx>-1) {
-			getGroupListModel().removeElementAt(idx);
-			Set<Entry<File, String>> es = fileToGroup.entrySet();
+	protected void removeTreatmentGroup(String group, int idx) {
+		if (!getTreatmentGroupListModel().isEmpty() && idx > -1) {
+			getTreatmentGroupListModel().removeElementAt(idx);
+			Set<Entry<File, String>> es = fileToTreatmentGroup.entrySet();
 			List<File> toRemove = new LinkedList<File>();
 			for (Entry<File, String> e : es) {
 				if (e.getValue().equals(group)) {
@@ -713,10 +752,9 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 				}
 			}
 			for (File file : toRemove) {
-				fileToGroup.remove(file);
+				fileToTreatmentGroup.remove(file);
 			}
 			fileToGroupList.setCellRenderer(new FileListCellRenderer());
-			//        fileToGroup.containsValue(s);
 			firePropertyChange("VALIDATE", null, this);
 		}
 	}
@@ -750,8 +788,8 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
 				File f = (File) o;
 				String group = "";
 				String sampleGroup = "";
-				if (fileToGroup.containsKey(f)) {
-					group = fileToGroup.get(f);
+				if (fileToTreatmentGroup.containsKey(f)) {
+					group = fileToTreatmentGroup.get(f);
 					if (group == null) {
 						group = "";
 					}

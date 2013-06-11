@@ -117,7 +117,7 @@ public class SceneExporter {
             PropertiesConfiguration baseConfig = new PropertiesConfiguration();
 
             //create subdir "fragmentCommands"
-            File subDir = new File(f.getParent(),"fragmentCommands");
+            File subDir = new File(f.getParent(),"xml");
             FileUtil.createFolder(subDir);
 //            subDir.mkdirs();
 //            lock(subDir, fls);
