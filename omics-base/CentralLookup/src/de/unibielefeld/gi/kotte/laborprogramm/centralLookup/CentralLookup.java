@@ -30,6 +30,7 @@ package de.unibielefeld.gi.kotte.laborprogramm.centralLookup;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
@@ -111,4 +112,31 @@ public class CentralLookup extends AbstractLookup implements LookupListener {
             add(obj);
         }
     }
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + Objects.hashCode(this.content);
+		hash = 37 * hash + Objects.hashCode(this.results);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final CentralLookup other = (CentralLookup) obj;
+		if (!Objects.equals(this.content, other.content)) {
+			return false;
+		}
+		if (!Objects.equals(this.results, other.results)) {
+			return false;
+		}
+		return true;
+	}
+	
 }
