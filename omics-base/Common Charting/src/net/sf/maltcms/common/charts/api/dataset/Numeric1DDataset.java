@@ -116,7 +116,7 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
         this.maxX = maxX;
         this.maxY = maxY;
     }
-
+	
     @Override
     public double getMinX() {
         return minX;

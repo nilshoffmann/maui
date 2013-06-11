@@ -32,7 +32,6 @@ import java.util.List;
 import maltcms.datastructures.ms.Chromatogram1D;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
-import maltcms.datastructures.ms.IScan;
 import maltcms.datastructures.ms.IScan1D;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 
