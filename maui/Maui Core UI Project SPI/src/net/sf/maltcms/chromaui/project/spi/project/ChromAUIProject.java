@@ -363,7 +363,13 @@ public class ChromAUIProject implements IChromAUIProject {
 	@Override
 	public File getOutputLocation(Object importer) {
 		File outputDir = FileUtil.toFile(getOutputDir());
-		outputDir = new File(outputDir, importer.getClass().getSimpleName());
+		String name = "";
+		if(importer instanceof Class) {
+			name = ((Class)importer).getSimpleName();
+		}else{
+			name = importer.getClass().getSimpleName();
+		}
+		outputDir = new File(outputDir, name);
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"MM-dd-yyyy_HH-mm-ss", Locale.US);
 		outputDir = new File(outputDir, dateFormat.format(
