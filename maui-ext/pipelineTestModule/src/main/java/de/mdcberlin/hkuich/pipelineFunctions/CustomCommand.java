@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.ProfileChromatogram1D;
 import org.openide.util.lookup.ServiceProvider;
 import ucar.ma2.Array;
-
+import ucar.ma2.MAMath;
+import ucar.ma2.MAMath.MinMax;
+import ucar.ma2.MAVector;
 /**
  * Custom Command to show how to create a command that is available in cross/maltcms.
  * @author Nils Hoffmann
@@ -50,15 +52,61 @@ public class CustomCommand extends AFragmentCommand {
                     //wrap the FileFragment in a chromatogram
                     ProfileChromatogram1D c = new ProfileChromatogram1D(f);
                     
-                    int index1 = 1; //c.getIndexFor(2.0);
-                    int index2 = 2; //c.getIndexFor(100.0);
-                    List<Array> intensities = c.getBinnedIntensities().subList(index1, index2);
+                    IFileFragment parent = c.getParent();
+                    MinMax mmTime = MAMath.getMinMax(parent.getChild("scan_acquisition_time").getArray());
+                    double startTime = mmTime.min;
+                    double stopTime = mmTime.max;
                     
-                    System.out.println("Here: " + index1 + " " + index2 + " " + intensities);
+                    MinMax mmMasses = MAMath.getMinMax(parent.getChild("mass_values").getArray());
+                    double minMass = mmMasses.min;
+                    double maxMass = mmMasses.max;
+                    
+                    System.out.println("startTime: " + startTime);
+                    System.out.println("stopTime: " + stopTime);
+                    
+                    System.out.println("minMass: " + minMass);
+                    System.out.println("minMass: " + maxMass);
+                    
+                    
+                    int index1 = c.getIndexFor(startTime);
+                    int index2 = c.getIndexFor(stopTime);
+                    List<Array> intensities = c.getBinnedIntensities().subList(index1, index2/2);
+                    
+                    double cosineSimilarity; 
+                    double cosineSimilarity2; 
+                                        
+                    final Array t1 = intensities.get(0);
+                    final Array t2 = intensities.get(1);
+                    
+                    cosineSimilarity = cosineSimilarity(t1,t2); 
+                    cosineSimilarity2 = cosineSimilarity(t1,t1); 
+                    
+                    System.out.println("Similarity between diff spectra: " + cosineSimilarity);
+                    System.out.println("Similarity between same spectra: " + cosineSimilarity2);
+                    System.out.println("Number of spectra extracted: " + intensities.size());
+                    //System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(0));
+                    //System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(1));
+                    System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(0).getDouble(73));
                     log.info("Chromatogram {} has {} scans!",c.getParent().getName(),c.getNumberOfScans());
 		}
+                
+                
 		return in;
 	}
+        
+        
+        
+        private double cosineSimilarity(final Array t1, final Array t2) {
+            if ((t1.getRank() == 1) && (t2.getRank() == 1)) {
+                final MAVector ma1 = new MAVector(t1);
+                final MAVector ma2 = new MAVector(t2);
+                return ma1.cos(ma2);
+            }
+            throw new IllegalArgumentException("Arrays shapes are incompatible! " + t1.getShape()[0] + " != " + t2.getShape()[0]);
+        }
+        
+        
+        
 
 	protected String buildDescription() {
 		//build a concise description of the class

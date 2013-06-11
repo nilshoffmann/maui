@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.maltcmsui.samples
+OpenIDE-Module-Localizing-Bundle: net/sf/maltcmsui/samples/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
