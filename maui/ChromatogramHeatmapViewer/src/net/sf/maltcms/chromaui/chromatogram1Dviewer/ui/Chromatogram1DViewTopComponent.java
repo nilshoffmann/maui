@@ -152,7 +152,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 									Peak1DOverlay overlay = new Peak1DOverlay(descr, container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
 									ic.add(overlay);
 									overlays.add(overlay);
-//									ic.add(Charts.overlayNode(overlay));
 								}
 							}
 							ChromatogramDescriptorOverlay cdo = new ChromatogramDescriptorOverlay(descr, descr.getName(), descr.getDisplayName(), descr.getShortDescription(), true, overlays);

@@ -33,7 +33,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import java.util.List;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
@@ -47,12 +46,10 @@ import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.annotations.XYAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.panel.Overlay;
-import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -73,9 +70,9 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 	private InstanceContent ic;
 	private Lookup lookup;
 	private JFreeChart chart;
-	private ADataset1D<IChromatogram1D, IScan> ds;
+	private ADataset1D<IChromatogram1D, IScan> primaryDataset;
 	private ChromatogramViewViewport viewport;
-	private SelectionOverlay sp;
+	private SelectionOverlay selectionOverlay;
 	private InstanceContentSelectionHandler selectionHandler;
 	private XYMouseSelectionHandler<IScan> mouseSelectionHandler;
 
@@ -84,7 +81,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 	 */
 	public Chromatogram1DViewPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset1D<IChromatogram1D, IScan> ds) {
 		initComponents();
-		this.ds = ds;
+		this.primaryDataset = ds;
 		this.ic = topComponentInstanceContent;
 		this.lookup = tcLookup;
 		chart = new JFreeChart(new XYPlot());
@@ -117,40 +114,47 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 
 	public void setPlot(final XYPlot plot) {
 		removeAxisListener();
-		this.ticplot = plot;
-		if (this.sp != null) {
-			this.ic.remove(sp);
+		ADataset1D dataset = null;
+		if(plot.getDataset() instanceof ADataset1D) {
+			dataset = (ADataset1D)plot.getDataset();
+		}else{
+			throw new IllegalArgumentException("Requires a plot with ADataset1D!");
 		}
-		if (sp == null) {
-			sp = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
-			cdxpanel.addOverlay(sp);
-			sp.addChangeListener(cdxpanel);
-			this.ic.add(sp);
+		this.ticplot = plot;
+		if (selectionOverlay != null) {
+			ic.remove(selectionOverlay);
+			selectionOverlay = null;
+		}
+		if (selectionOverlay == null) {
+			selectionOverlay = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
+			cdxpanel.addOverlay(selectionOverlay);
+			selectionOverlay.addChangeListener(cdxpanel);
+			ic.add(selectionOverlay);
 		} else {
-			for (XYSelection selection : sp.getMouseClickSelection()) {
-				selection.setDataset(plot.getDataset());
+			for (XYSelection selection : selectionOverlay.getMouseClickSelection()) {
+				selection.setDataset(dataset);
 			}
 
-			XYSelection selection = sp.getMouseHoverSelection();
+			XYSelection selection = selectionOverlay.getMouseHoverSelection();
 			if (selection != null) {
-				selection.setDataset(plot.getDataset());
+				selection.setDataset(dataset);
 			}
 		}
 		if (selectionHandler == null) {
-			selectionHandler = new InstanceContentSelectionHandler(this.ic, sp, InstanceContentSelectionHandler.Mode.ON_CLICK, this.ds, 1);
+			selectionHandler = new InstanceContentSelectionHandler(this.ic, selectionOverlay, InstanceContentSelectionHandler.Mode.ON_CLICK, dataset, 1);
 		} else {
-			selectionHandler.setDataset(ds);
+			selectionHandler.setDataset(dataset);
 		}
 		if (mouseSelectionHandler == null) {
-			mouseSelectionHandler = new XYMouseSelectionHandler<IScan>(this.ds);
-			mouseSelectionHandler.addSelectionChangeListener(sp);
+			mouseSelectionHandler = new XYMouseSelectionHandler<IScan>(dataset);
+			mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
 			mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
 			cdxpanel.addChartMouseListener(mouseSelectionHandler);
 		} else {
-			mouseSelectionHandler.setDataset(ds);
+			mouseSelectionHandler.setDataset(dataset);
 		}
 
-		AxisChangeListener listener = sp;
+		AxisChangeListener listener = selectionOverlay;
 		ValueAxis domain = this.ticplot.getDomainAxis();
 		ValueAxis range = this.ticplot.getRangeAxis();
 		if (domain != null) {
@@ -194,9 +198,9 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 				}
 				if (overlay instanceof ISelectionChangeListener) {
 					ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
-					mouseSelectionHandler.addSelectionChangeListener(sp);
+					mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
 					mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
-					sp.addChangeListener(cdxpanel);
+					selectionOverlay.addChangeListener(cdxpanel);
 				}
 				cdxpanel.addOverlay(overlay);
 				overlay.addChangeListener(cdxpanel);

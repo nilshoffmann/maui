@@ -44,81 +44,90 @@ import org.openide.util.lookup.InstanceContent;
  */
 public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset implements ILookupDataset<SOURCE, TARGET>, IntervalXYDataset {
 
-    private final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
-    private final InstanceContent content = new InstanceContent();
-    private final Lookup lookup = new AbstractLookup(content);
-    private final IDisplayPropertiesProvider displayPropertiesProvider;
+	protected final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
+	private final InstanceContent content = new InstanceContent();
+	private final Lookup lookup = new AbstractLookup(content);
+	private final IDisplayPropertiesProvider displayPropertiesProvider;
 
-    public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
-        targetProvider = new ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>>(l);
-        for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
-            content.add(nep.getSource());
-        }
-        this.displayPropertiesProvider = provider;
-        content.add(this.displayPropertiesProvider);
-    }
-    
-    public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
-        this(l, new DefaultDisplayPropertiesProvider());
-    }
+	public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
+		targetProvider = new ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>>(l);
+		for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
+			content.add(nep.getSource());
+		}
+		this.displayPropertiesProvider = provider;
+		content.add(this.displayPropertiesProvider);
+	}
 
-    @Override
-    public DomainOrder getDomainOrder() {
-        return DomainOrder.ASCENDING;
-    }
-    
-    @Override
-    public Lookup getLookup() {
-        return lookup;
-    }
+	public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
+		this(l, new DefaultDisplayPropertiesProvider());
+	}
 
-    @Override
-    public TARGET getTarget(int seriesIndex, int itemIndex) {
+	public ADataset1D(ADataset1D<SOURCE, TARGET> delegate) {
+		this(delegate.getNamedElementProvider(), delegate.getLookup().lookup(IDisplayPropertiesProvider.class));
+	}
+
+	@Override
+	public List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider() {
+		return targetProvider;
+	}
+
+	@Override
+	public DomainOrder getDomainOrder() {
+		return DomainOrder.ASCENDING;
+	}
+
+	@Override
+	public Lookup getLookup() {
+		return lookup;
+	}
+
+	@Override
+	public TARGET getTarget(int seriesIndex, int itemIndex) {
 //        System.out.println("Retrieving target from series " + seriesIndex + ", item " + itemIndex);
-        return targetProvider.get(seriesIndex).get(getRanks()[seriesIndex][itemIndex]);
-    }
+		return targetProvider.get(seriesIndex).get(getRanks()[seriesIndex][itemIndex]);
+	}
 
-    @Override
-    public SOURCE getSource(int seriesIndex) {
+	@Override
+	public SOURCE getSource(int seriesIndex) {
 //        System.out.println("Retrieving source for index: " + seriesIndex);
-        return targetProvider.get(seriesIndex).getSource();
-    }
+		return targetProvider.get(seriesIndex).getSource();
+	}
 
-    @Override
-    public int getSeriesCount() {
-        return targetProvider.size();
-    }
+	@Override
+	public int getSeriesCount() {
+		return targetProvider.size();
+	}
 
-    @Override
-    public Comparable<?> getSeriesKey(int i) {
-        return targetProvider.get(i).getKey();
-    }
+	@Override
+	public Comparable<?> getSeriesKey(int i) {
+		return targetProvider.get(i).getKey();
+	}
 
-    @Override
-    public int getItemCount(int i) {
-        return targetProvider.get(i).size();
-    }
+	@Override
+	public int getItemCount(int i) {
+		return targetProvider.get(i).size();
+	}
 
-    @Override
-    public String getDescription() {
-        StringBuilder sb = new StringBuilder();
-        for (INamedElementProvider<? extends SOURCE, ? extends TARGET> np : targetProvider) {
-            sb.append(np.getKey());
-            sb.append(", ");
-        }
-        return sb.toString();
-    }
+	@Override
+	public String getDescription() {
+		StringBuilder sb = new StringBuilder();
+		for (INamedElementProvider<? extends SOURCE, ? extends TARGET> np : targetProvider) {
+			sb.append(np.getKey());
+			sb.append(", ");
+		}
+		return sb.toString();
+	}
 
-    @Override
-    public String getDisplayName() {
-        return targetProvider.size() + " datasets";
-    }
-    
-    public abstract double getMinX();
-    
-    public abstract double getMaxX();
-    
-    public abstract double getMinY();
-    
-    public abstract double getMaxY();
+	@Override
+	public String getDisplayName() {
+		return targetProvider.size() + " datasets";
+	}
+
+	public abstract double getMinX();
+
+	public abstract double getMaxX();
+
+	public abstract double getMinY();
+
+	public abstract double getMaxY();
 }

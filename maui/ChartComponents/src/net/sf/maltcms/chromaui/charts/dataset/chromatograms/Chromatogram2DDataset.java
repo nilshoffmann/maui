@@ -38,7 +38,6 @@ import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.jfree.data.DomainOrder;
-import org.jfree.data.xy.IntervalXYZDataset;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ProxyLookup;
 import ucar.ma2.Array;
