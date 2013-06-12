@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module: de.mdcberlin.hkuich.retentionIndexCalculation
-OpenIDE-Module-Localizing-Bundle: de/mdcberlin/hkuich/retentionIndexCalculation/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
-
