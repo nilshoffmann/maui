@@ -24,6 +24,7 @@
                 </dependency>
                 <dependency>
                     <code-name-base>net.sf.maltcms.chromaui.ui.support</code-name-base>
+                    <code-name-base>net.sf.maltcms.chromaui.project</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -65,6 +66,7 @@
                 </dependency>
                 <dependency>
                     <code-name-base>org.netbeans.modules.projectapi</code-name-base>
+                    <code-name-base>org.openide.awt</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -103,8 +105,7 @@
                     <run-dependency>
                         <specification-version>8.15.2</specification-version>
                     </run-dependency>
-                </dependency>
-            </module-dependencies>
+                </dependency></module-dependencies>
             <public-packages/>
         </data>
     </configuration>
