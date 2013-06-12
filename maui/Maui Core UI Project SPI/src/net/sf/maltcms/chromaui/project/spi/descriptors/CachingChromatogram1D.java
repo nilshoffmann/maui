@@ -243,6 +243,86 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
         }
         return al;
     }
+	
+	@Override
+	public Iterable<IScan1D> subsetByScanAcquisitionTime(double startSat, double stopSat) {
+		final int startIndex = getIndexFor(startSat);
+		if(startIndex<0) {
+			throw new ArrayIndexOutOfBoundsException(startIndex);
+		}
+		final int stopIndex = getIndexFor(stopSat);
+		if(stopIndex>getNumberOfScans()-1) {
+			throw new ArrayIndexOutOfBoundsException(stopIndex);
+		}
+		final Iterator<IScan1D> iter = new Iterator<IScan1D>() {
+			private int currentPos = startIndex;
+
+			@Override
+			public boolean hasNext() {
+				if (this.currentPos < stopIndex) {
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public IScan1D next() {
+				return getScan(this.currentPos++);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException(
+						"Can not remove scans with iterator!");
+			}
+		};
+		return new Iterable<IScan1D>() {
+
+			@Override
+			public Iterator<IScan1D> iterator() {
+				return iter;
+			}
+		};
+	}
+	
+	@Override
+	public Iterable<IScan1D> subsetByScanIndex(final int startIndex, final int stopIndex) {
+		if(startIndex<0) {
+			throw new ArrayIndexOutOfBoundsException(startIndex);
+		}
+		if(stopIndex>getNumberOfScans()-1) {
+			throw new ArrayIndexOutOfBoundsException(stopIndex);
+		}
+		final Iterator<IScan1D> iter = new Iterator<IScan1D>() {
+			private int currentPos = startIndex;
+
+			@Override
+			public boolean hasNext() {
+				if (this.currentPos < stopIndex) {
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public IScan1D next() {
+				return getScan(this.currentPos++);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException(
+						"Can not remove scans with iterator!");
+			}
+		};
+		return new Iterable<IScan1D>() {
+
+			@Override
+			public Iterator<IScan1D> iterator() {
+				return iter;
+			}
+		};
+	}
 
     /**
      * This iterator acts on the underlying collection of scans in

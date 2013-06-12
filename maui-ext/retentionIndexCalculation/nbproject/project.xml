@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.apisupport.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
-            <code-name-base>de.mdcberlin.test</code-name-base>
+            <code-name-base>de.mdcberlin.hkuich.retentionIndexCalculation</code-name-base>
             <suite-component/>
             <module-dependencies>
                 <dependency>
@@ -15,11 +15,11 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>net.sf.maltcms.chromaui.chromatogram1Dviewer</code-name-base>
+                    <code-name-base>net.sf.maltcms.chromaui.lombok</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>1.2</specification-version>
+                        <specification-version>1.0</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -31,11 +31,11 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>net.sf.maltcms.chromaui.ui.support</code-name-base>
+                    <code-name-base>net.sf.maltcms.cross.nbm</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>1.1</specification-version>
+                        <specification-version>1.2.12</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -47,11 +47,12 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>net.sf.mpaxs.mpaxs.nbm</code-name-base>
+                    <code-name-base>org.netbeans.modules.projectapi</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>1.2.12</specification-version>
+                        <release-version>1</release-version>
+                        <specification-version>1.46.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -63,19 +64,35 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.openide.dialogs</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>7.25.1</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>org.openide.util</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>8.25.2</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.util.lookup</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>8.15.2</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.slf4j.slf4j.nbm</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.2.12</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>ucar.netcdf.nbm</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.2.12</specification-version>
                     </run-dependency>
                 </dependency>
             </module-dependencies>
