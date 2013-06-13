@@ -32,16 +32,24 @@ import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.pipeline.CommandPipeline;
 import cross.datastructures.tuple.TupleND;
 import cross.datastructures.workflow.DefaultWorkflow;
+import cross.datastructures.workflow.IWorkflowResult;
+import cross.event.IEvent;
+import cross.event.IListener;
 import cross.tools.StringTools;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.commands.fragments.preprocessing.DenseArrayProducer;
+import maltcms.datastructures.ms.ProfileChromatogram1D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
@@ -51,7 +59,16 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
+import ucar.ma2.Array;
+import ucar.ma2.MAMath;
+import ucar.ma2.MAMath.MinMax;
+import ucar.ma2.MAVector;
+import lombok.extern.slf4j.Slf4j;
+import org.openide.filesystems.FileUtil;
 
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+
+@Slf4j
 @ActionID(
 		category = "Maui",
 		id = "net.sf.maltcms.samples.RunACustomEmbeddedPipeline")
@@ -87,27 +104,41 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 			try {
 				getProgressHandle().start();
 				getProgressHandle().progress("Creating pipeline");
-				/*
-				 * Dense Array Producer Command
+				
+                                /*
+				 * Create Dense Array Producer Command
 				 */
 				DenseArrayProducer dap = new DenseArrayProducer();
 				dap.setMassBinResolution(1.0);
 				dap.setNormalizeScans(true);
+                                
 				/*
-				 * List of commands for the pipeline
+				 * Create a List of commands for the pipeline and add commands
 				 */
 				List<IFragmentCommand> commands = new LinkedList<IFragmentCommand>();
 				commands.add(dap);
+                                
 				/*
-				 * List of input file fragments
+				 * Create a List of input file fragments, and add the FileFragments of the Project
 				 */
-				List<IFileFragment> fragments = new ArrayList<IFileFragment>();
-				CommandPipeline cp = new CommandPipeline();
+                                List<IFileFragment> fragments = new ArrayList<IFileFragment>();	
+                                File importDirectory = new File(FileUtil.toFile(project.getLocation()), "import");
 				for (IChromatogramDescriptor chromatogram : project.getChromatograms()) {
+                                        //List<Peak1DContainer> peaks = (List<Peak1DContainer>) project.getPeaks(chromatogram);                                     
 					fragments.add(chromatogram.getChromatogram().getParent());
 				}
+                                
+                                /*
+				 * Create the commandPipeline, set its commands and input
+				 */
+                                CommandPipeline cp = new CommandPipeline();
 				cp.setCommands(commands);
 				cp.setInput(new TupleND<IFileFragment>(fragments));
+                                
+                                /*
+				 * Create a workflow, set the date and name and add the commandpipeline to the workflow.
+                                 * Then set the output directory
+				 */
 				DefaultWorkflow dw = new DefaultWorkflow();
 				dw.setStartupDate(new Date());
 				dw.setName("henningsWorkflow");
@@ -115,23 +146,106 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 				//false does not work at the moment
 				dw.setExecuteLocal(true);
 				dw.setOutputDirectory(project.getOutputLocation(RunACustomEmbeddedPipeline.class));
+                                
+                                dw.addListener(new IListener<IEvent<IWorkflowResult>>() {
+
+					@Override
+					public void listen(IEvent<IWorkflowResult> v) {
+						Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received workflow result {0}", v.get());
+					}
+				});
+                                
+                                /*
+				 * Create a list of filefragments "results" that holds the results of the pipeline
+				 */
 				try {
 					TupleND<IFileFragment> results = dw.call();
 					//map output results to input, they may be in the same order as the original input
-					Map<IChromatogramDescriptor,IFileFragment> inputToOutputMap = new LinkedHashMap<IChromatogramDescriptor,IFileFragment>();
-					for (IChromatogramDescriptor chromatogram : project.getChromatograms()) {
-						String bareChromName = StringTools.removeFileExt(chromatogram.getName());
+					Map<IChromatogramDescriptor,IFileFragment> inputToOutputMap = new LinkedHashMap<IChromatogramDescriptor,IFileFragment>();                                        
+					Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received {0} result files!", results.size());
+                                        for (IChromatogramDescriptor chromatogram : project.getChromatograms()) {
+						String chromName = chromatogram.getName();
+						if("<NA>".equals(chromName)) {
+							chromName = StringTools.removeFileExt(chromatogram.getChromatogram().getParent().getName());
+						}  
+                                                Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Mapping chromatogram {0} to ", chromName);
 						for(IFileFragment fragment:results) {
 							String bareFragmentName = StringTools.removeFileExt(fragment.getName());
-							if(bareChromName.equals(bareFragmentName)) {
-								inputToOutputMap.put(chromatogram, fragment);
+                                                        Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "{0}", bareFragmentName);
+							if(chromName.equals(bareFragmentName)) {
+                                                            Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info("Match!");
+                                                            inputToOutputMap.put(chromatogram, fragment);
 							}
-						}
+						}                                                
 					}
+                                        TupleND<IFileFragment> resultFiles = new TupleND<IFileFragment>();
+                                                
 					for(IChromatogramDescriptor chromatogram: inputToOutputMap.keySet()) {
 						//retrieve result file
 						IFileFragment resultFile = inputToOutputMap.get(chromatogram);
+                                                Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(resultFile.toString());
+                                                resultFiles.add(resultFile);
+                                                
+                                                System.out.println("In For Loop: " + resultFile.getName());
 					}
+                                        
+                                        System.out.println("End For loop");
+                                        
+                                        //System.out.println("resultFiles.get(1) " + resultFiles.get(0).getName());
+                                        
+                                        /*
+                                         * PHJLK CODE
+                                         */
+                                        /*
+                                        int counter = 0;
+                                        for(IFileFragment fragment:results){
+                                            ProfileChromatogram1D c = new ProfileChromatogram1D(fragment);
+                                            IFileFragment parent = c.getParent();                                         
+                              
+                                            MinMax mmTime = MAMath.getMinMax(parent.getChild("scan_acquisition_time").getArray());
+                                            double startTime = mmTime.min;
+                                            double stopTime = mmTime.max;
+
+                                            MinMax mmMasses = MAMath.getMinMax(parent.getChild("mass_values").getArray());
+                                            double minMass = mmMasses.min;
+                                            double maxMass = mmMasses.max;
+
+                                            System.out.println("startTime: " + startTime);
+                                            System.out.println("stopTime: " + stopTime);
+
+                                            System.out.println("minMass: " + minMass);
+                                            System.out.println("minMass: " + maxMass);
+
+
+                                            int index1 = c.getIndexFor(startTime);
+                                            int index2 = c.getIndexFor(stopTime);
+                                            List<Array> intensities = c.getBinnedIntensities().subList(index1, index2/2);
+
+                                            double cosineSimilarity; 
+                                            double cosineSimilarity2; 
+
+                                            final Array t1 = intensities.get(0);
+                                            final Array t2 = intensities.get(1);
+
+                                            cosineSimilarity = cosineSimilarity(t1,t2); 
+                                            cosineSimilarity2 = cosineSimilarity(t1,t1); 
+
+                                            System.out.println("Similarity between diff spectra: " + cosineSimilarity);
+                                            System.out.println("Similarity between same spectra: " + cosineSimilarity2);
+                                            System.out.println("Number of spectra extracted: " + intensities.size());
+                                            System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(5));
+                                            System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(6));
+                                            System.out.println("Here: " + index1 + " " + index2 + " " + "whole array: " + intensities.get(4225));
+                                            //System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(0).getDouble(73));
+                                            log.info("Chromatogram {} has {} scans!",c.getParent().getName(),c.getNumberOfScans());
+                                            counter++;
+                                            System.out.println("Counter: " + counter);
+                                        } */
+                                        /*
+                                         * END PHJLK CODE
+                                         */
+                                        
+                                        
 				} catch (Exception ex) {
 					Exceptions.printStackTrace(ex);
 				}
@@ -141,4 +255,14 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 			}
 		}
 	}
+        
+        
+        private double cosineSimilarity(final Array t1, final Array t2) {
+            if ((t1.getRank() == 1) && (t2.getRank() == 1)) {
+                final MAVector ma1 = new MAVector(t1);
+                final MAVector ma2 = new MAVector(t2);
+                return ma1.cos(ma2);
+            }
+            throw new IllegalArgumentException("Arrays shapes are incompatible! " + t1.getShape()[0] + " != " + t2.getShape()[0]);
+        }
 }
