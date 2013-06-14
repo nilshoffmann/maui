@@ -35,7 +35,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.IMauiProject;
 import net.sf.maltcms.chromaui.project.api.container.*;
 import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.openide.filesystems.FileObject;
@@ -58,7 +60,8 @@ import org.openide.util.lookup.ProxyLookup;
 public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 		PropertyChangeListener {
 
-	final IChromAUIProject cp;
+	private final IChromAUIProject cp;
+	private boolean dbInitialized = false;
 
 	public ChromaUIProjectNodesFactory(IChromAUIProject cp) {
 //        System.out.println("Created ChromaUIProjectNodes Factory");
@@ -97,7 +100,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 			if (ic.getPrecedence() == 0) {
 				if (ic instanceof TreatmentGroupContainer) {
 					ic.setPrecedence(100000);
-				} else if(ic instanceof SampleGroupContainer) {
+				} else if (ic instanceof SampleGroupContainer) {
 					ic.setPrecedence(150000);
 				} else if (ic instanceof DatabaseContainer) {
 					ic.setPrecedence(200000);
@@ -143,12 +146,12 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 			} else {
 				if (ic != null) {
 					boolean add = true;
-					for(Class<? extends IContainer> contClass:toFilter) {
+					for (Class<? extends IContainer> contClass : toFilter) {
 						if (ic.getClass().getName().equals(contClass.getName())) {
 							add = false;
 						}
 					}
-					if(add) {
+					if (add) {
 						r.add(ic);
 					}
 				}
@@ -164,7 +167,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 				ContainerNode cn = new ContainerNode((IContainer) key, new ProxyLookup(cp.getLookup()));
 				cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
 				((IContainer) key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
-				((IContainer)key).setProject(cp);
+				((IContainer) key).setProject(cp);
 				return cn;
 			} catch (IntrospectionException ex) {
 				Exceptions.printStackTrace(ex);

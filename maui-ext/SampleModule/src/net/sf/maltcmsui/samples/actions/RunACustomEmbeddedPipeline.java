@@ -36,10 +36,12 @@ import cross.datastructures.workflow.DefaultWorkflow;
 import cross.datastructures.workflow.IWorkflowResult;
 import cross.event.IEvent;
 import cross.event.IListener;
+import cross.exception.ResourceNotAvailableException;
 import cross.tools.StringTools;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,6 +65,9 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
 import org.netbeans.api.project.ui.OpenProjects;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -70,7 +75,6 @@ import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
-import ucar.ma2.ArrayDouble;
 
 @ActionID(
 		category = "Maui",
@@ -78,7 +82,7 @@ import ucar.ma2.ArrayDouble;
 @ActionRegistration(
 		displayName = "#CTL_RunACustomEmbeddedPipeline")
 @ActionReferences({
-    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/DefaultActions")})
+	@ActionReference(path = "Actions/ChromAUIProjectLogicalView/DefaultActions")})
 @Messages("CTL_RunACustomEmbeddedPipeline=Run Embedded Pipeline")
 public final class RunACustomEmbeddedPipeline implements ActionListener {
 
@@ -123,104 +127,149 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 				 */
 				List<IFileFragment> fragments = new ArrayList<IFileFragment>();
 				File outputDir = project.getOutputLocation(RunACustomEmbeddedPipeline.class);
-				
-				/*
-				 * Write current peak lists as Peak1D output for Maltcms access
-				 */
-				File peakListTmpDirectory = new File(outputDir,"peakListTmpDir");
-				peakListTmpDirectory.mkdirs();
-				for (IChromatogramDescriptor chromatogramDescr : project.getChromatograms()) {
-					IChromatogram chrom = chromatogramDescr.getChromatogram();
-					List<Peak1D> peaksForChromatogram = new ArrayList<Peak1D>();
-					for(Peak1DContainer peakContainer:project.getPeaks(chromatogramDescr)){
-						for(IPeakAnnotationDescriptor pad:peakContainer.getMembers()) {
-							Peak1D p = new Peak1D(chrom.getIndexFor(pad.getStartTime()), chrom.getIndexFor(pad.getApexTime()), chrom.getIndexFor(pad.getStopTime()));
-							p.setStartTime(pad.getStartTime());
-							p.setApexTime(pad.getApexTime());
-							p.setStopTime(pad.getStopTime());
-							p.setFile(chrom.getParent().getName());
-							p.setMw(pad.getUniqueMass());
-							//could also be EIC_RAW, EIC_FILTERED, TIC_RAW, TIC_FILTERED
-							p.setPeakType(PeakType.UNDEFINED);
-							p.setSnr(pad.getSnr());
-							p.setArea(pad.getArea());
-							p.setNormalizationMethods(pad.getNormalizationMethods());
-							p.setNormalizedArea(pad.getNormalizedArea());
-							p.setBaselineStartTime(pad.getStartTime());
-							p.setBaselineStopTime(pad.getStopTime());
-							peaksForChromatogram.add(p);
-						}
-					}
-					//sort by apex retention time, ascending
-					Collections.sort(peaksForChromatogram,new Comparator<Peak1D>() {
 
+				/*
+				 * Create input data from database chromatograms and peak descriptors
+				 */
+//				createInputFragmentsFromDatabaseChromatograms(outputDir, fragments);
+
+				/*
+				 * Or create input data from input file fragments (without additional information layers)
+				 * 
+				 * This will only work, if you imported peak lists, e.g. from ChromaTOF when you created your project using the wizard
+				 * 
+				 * Be careful, if you have imported peak data later on, this will be below import directory in a tool specific subfolder.
+				 * So do not recurse through import directory or something terrible will happen!
+				 */
+				createInputFragmentsFromProjectWizardChromatograms(project.getImportDirectory(), fragments);
+
+				if (fragments.isEmpty()) {
+					/*
+					 * This is how you show a dialog to your users.
+					 */
+					NotifyDescriptor dd = new DialogDescriptor.Message("Could not find input data files!", DialogDescriptor.ERROR_MESSAGE);
+					DialogDisplayer.getDefault().notify(dd);
+				} else {
+					/*
+					 * Prepare the command pipeline
+					 */
+					CommandPipeline cp = new CommandPipeline();
+					cp.setCommands(commands);
+					cp.setInput(new TupleND<IFileFragment>(fragments));
+					DefaultWorkflow dw = new DefaultWorkflow();
+					dw.setStartupDate(new Date());
+					dw.setCommandSequence(cp);
+					//false does not work at the moment
+					dw.setExecuteLocal(true);
+					dw.setOutputDirectory(outputDir);
+					dw.addListener(new IListener<IEvent<IWorkflowResult>>() {
 						@Override
-						public int compare(Peak1D o1, Peak1D o2) {
-							return Double.compare(o1.getApexTime(), o2.getApexTime());
+						public void listen(IEvent<IWorkflowResult> v) {
+							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received workflow result {0}", v.get());
 						}
 					});
-					FileFragment peakFile = new FileFragment(new File(peakListTmpDirectory,chrom.getParent().getName()));
-					peakFile.addSourceFile(chrom.getParent());
-					Peak1D.append(peakFile, new LinkedList<IPeakNormalizer>(), peaksForChromatogram, chrom.getParent().getChild("total_intensity").getArray(), "tic_peaks", "tic_filtered");
-					peakFile.save();
-					//avoid memory leaks
-					fragments.add(new FileFragment(peakFile.getUri()));
-				}
-				/*
-				 * Prepare the command pipeline
-				 */
-				CommandPipeline cp = new CommandPipeline();
-				cp.setCommands(commands);
-				cp.setInput(new TupleND<IFileFragment>(fragments));
-				DefaultWorkflow dw = new DefaultWorkflow();
-				dw.setStartupDate(new Date());
-				dw.setCommandSequence(cp);
-				//false does not work at the moment
-				dw.setExecuteLocal(true);
-				dw.setOutputDirectory(outputDir);
-				dw.addListener(new IListener<IEvent<IWorkflowResult>>() {
-
-					@Override
-					public void listen(IEvent<IWorkflowResult> v) {
-						Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received workflow result {0}", v.get());
-					}
-				});
-				try {
-					TupleND<IFileFragment> results = dw.call();
-					//map output results to input, they may be in the same order as the original input
-					Map<IChromatogramDescriptor,IFileFragment> inputToOutputMap = new LinkedHashMap<IChromatogramDescriptor,IFileFragment>();
-					Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received {0} result files!", results.size());
-					for (IChromatogramDescriptor chromatogram : project.getChromatograms()) {
-						String chromName = chromatogram.getName();
-						if("<NA>".equals(chromName)) {
-							chromName = StringTools.removeFileExt(chromatogram.getChromatogram().getParent().getName());
-						}
-						Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Mapping chromatogram {0} to ", chromName);
-						for(IFileFragment fragment:results) {
-							String bareFragmentName = StringTools.removeFileExt(fragment.getName());
-							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "{0}", bareFragmentName);
-							if(chromName.equals(bareFragmentName)) {
-								Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info("Match!");
-								inputToOutputMap.put(chromatogram, fragment);
+					try {
+						TupleND<IFileFragment> results = dw.call();
+						//map output results to input, they may be in the same order as the original input
+						Map<IChromatogramDescriptor, IFileFragment> inputToOutputMap = new LinkedHashMap<IChromatogramDescriptor, IFileFragment>();
+						Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received {0} result files!", results.size());
+						for (IChromatogramDescriptor chromatogram : project.getChromatograms()) {
+							String chromName = chromatogram.getName();
+							if ("<NA>".equals(chromName)) {
+								chromName = StringTools.removeFileExt(chromatogram.getChromatogram().getParent().getName());
+							}
+							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Mapping chromatogram {0} to ", chromName);
+							for (IFileFragment fragment : results) {
+								String bareFragmentName = StringTools.removeFileExt(fragment.getName());
+								Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "{0}", bareFragmentName);
+								if (chromName.equals(bareFragmentName)) {
+									Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info("Match!");
+									inputToOutputMap.put(chromatogram, fragment);
+								}
 							}
 						}
+						for (IChromatogramDescriptor chromatogram : inputToOutputMap.keySet()) {
+							//retrieve result file
+							IFileFragment resultFile = inputToOutputMap.get(chromatogram);
+							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(resultFile.toString());
+						}
+						/*
+						 * Open the maltcms workflow as a project in the UI
+						 */
+						Project maltcmsWorkflowProject = ProjectManager.getDefault().findProject(FileUtil.toFileObject(dw.getOutputDirectory()));
+						OpenProjects.getDefault().open(new Project[]{maltcmsWorkflowProject}, false);
+					} catch (Exception ex) {
+						Exceptions.printStackTrace(ex);
 					}
-					for(IChromatogramDescriptor chromatogram: inputToOutputMap.keySet()) {
-						//retrieve result file
-						IFileFragment resultFile = inputToOutputMap.get(chromatogram);
-						Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(resultFile.toString());
-					}
-					/*
-					 * Open the maltcms workflow as a project in the UI
-					 */
-					Project maltcmsWorkflowProject = ProjectManager.getDefault().findProject(FileUtil.toFileObject(dw.getOutputDirectory()));
-					OpenProjects.getDefault().open(new Project[]{maltcmsWorkflowProject}, false);
-				} catch (Exception ex) {
-					Exceptions.printStackTrace(ex);
 				}
-				
+
 			} finally {
 				getProgressHandle().finish();
+			}
+		}
+
+		private void createInputFragmentsFromDatabaseChromatograms(File outputDir, List<IFileFragment> fragments) throws ResourceNotAvailableException {
+
+			/*
+			 * Write current peak lists as Peak1D output for Maltcms access
+			 */
+			File peakListTmpDirectory = new File(outputDir, "peakListTmpDir");
+			peakListTmpDirectory.mkdirs();
+
+			/**
+			 * Access chromatograms
+			 */
+			for (IChromatogramDescriptor chromatogramDescr : project.getChromatograms()) {
+				IChromatogram chrom = chromatogramDescr.getChromatogram();
+				List<Peak1D> peaksForChromatogram = new ArrayList<Peak1D>();
+				for (Peak1DContainer peakContainer : project.getPeaks(chromatogramDescr)) {
+					for (IPeakAnnotationDescriptor pad : peakContainer.getMembers()) {
+						Peak1D p = new Peak1D(chrom.getIndexFor(pad.getStartTime()), chrom.getIndexFor(pad.getApexTime()), chrom.getIndexFor(pad.getStopTime()));
+						p.setStartTime(pad.getStartTime());
+						p.setApexTime(pad.getApexTime());
+						p.setStopTime(pad.getStopTime());
+						p.setFile(chrom.getParent().getName());
+						p.setMw(pad.getUniqueMass());
+						//could also be EIC_RAW, EIC_FILTERED, TIC_RAW, TIC_FILTERED
+						p.setPeakType(PeakType.UNDEFINED);
+						p.setSnr(pad.getSnr());
+						p.setArea(pad.getArea());
+						p.setNormalizationMethods(pad.getNormalizationMethods());
+						p.setNormalizedArea(pad.getNormalizedArea());
+						p.setBaselineStartTime(pad.getStartTime());
+						p.setBaselineStopTime(pad.getStopTime());
+						peaksForChromatogram.add(p);
+					}
+				}
+				//sort by apex retention time, ascending
+				Collections.sort(peaksForChromatogram, new Comparator<Peak1D>() {
+					@Override
+					public int compare(Peak1D o1, Peak1D o2) {
+						return Double.compare(o1.getApexTime(), o2.getApexTime());
+					}
+				});
+				FileFragment peakFile = new FileFragment(new File(peakListTmpDirectory, chrom.getParent().getName()));
+				peakFile.addSourceFile(chrom.getParent());
+				Peak1D.append(peakFile, new LinkedList<IPeakNormalizer>(), peaksForChromatogram, chrom.getParent().getChild("total_intensity").getArray(), "tic_peaks", "tic_filtered");
+				peakFile.save();
+				//avoid memory leaks
+				fragments.add(new FileFragment(peakFile.getUri()));
+			}
+		}
+
+		private void createInputFragmentsFromProjectWizardChromatograms(File importDirectory, List<IFileFragment> fragments) {
+			/*
+			 * this is non-recursive, so only the direct child files below importDirector are listed
+			 */
+			File[] inputFragments = importDirectory.listFiles(new FileFilter() {
+				@Override
+				public boolean accept(File pathname) {
+					//only return files, no (sub)directories
+					return pathname.isFile();
+				}
+			});
+			for (File inputFragment : inputFragments) {
+				fragments.add(new FileFragment(inputFragment));
 			}
 		}
 	}

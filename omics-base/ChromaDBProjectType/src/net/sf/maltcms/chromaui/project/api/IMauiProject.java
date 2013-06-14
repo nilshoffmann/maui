@@ -27,9 +27,13 @@
  */
 package net.sf.maltcms.chromaui.project.api;
 
+import cross.datastructures.fragments.IFileFragment;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
@@ -76,5 +80,9 @@ public interface IMauiProject extends PropertyChangeListener {
     File getOutputLocation(Object exporter);
     
     File getImportLocation(Object importer);
+	
+	File getImportDirectory();
+	
+	File getOutputDirectory();
 	
 }

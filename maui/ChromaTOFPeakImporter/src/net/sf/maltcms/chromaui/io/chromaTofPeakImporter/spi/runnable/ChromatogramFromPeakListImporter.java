@@ -108,6 +108,8 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
         chromatogram.setSeparationType(separationType);
         chromatogram.setDetectorType(detectorType);
         chromatogram.setDisplayName(chromName);
+		chromatogram.setName(file.getName());
+		chromatogram.setShortDescription(chromName+": "+separationType+"-"+detectorType);
         ITreatmentGroupDescriptor treatmentGroup = DescriptorFactory.newTreatmentGroupDescriptor("DEFAULT");
         ISampleGroupDescriptor sampleGroup = DescriptorFactory.newSampleGroupDescriptor("DEFAULT");
         INormalizationDescriptor normalization = DescriptorFactory.newNormalizationDescriptor();
