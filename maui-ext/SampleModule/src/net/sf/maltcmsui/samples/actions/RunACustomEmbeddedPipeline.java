@@ -196,6 +196,7 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 						for (IChromatogramDescriptor chromatogram : inputToOutputMap.keySet()) {
 							//retrieve result file
 							IFileFragment resultFile = inputToOutputMap.get(chromatogram);
+                                                        testFunction(resultFile);
 							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(resultFile.toString());
 						}
 						/*
