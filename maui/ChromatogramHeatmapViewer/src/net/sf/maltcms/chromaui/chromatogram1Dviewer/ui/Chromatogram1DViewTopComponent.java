@@ -78,7 +78,6 @@ import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.nodes.Children;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
@@ -149,14 +148,24 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 							if (project != null) {
 								Collection<Peak1DContainer> peaks = project.getPeaks(descr);
 								for (Peak1DContainer container : peaks) {
+//									IChromatogram chrom = container.getChromatogram().getChromatogram();
+//									if(chrom instanceof IChromatogram1D) {
+//										Peak1DElementProvider provider = new Peak1DElementProvider(container.getDisplayName(), (IChromatogram1D)container.getChromatogram().getChromatogram(), container);
+//										Peak1DDataset pd = new Peak1DDataset(provider, lookup);
+//									}
 									Peak1DOverlay overlay = new Peak1DOverlay(descr, container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
 									ic.add(overlay);
 									overlays.add(overlay);
 								}
 							}
+							/*
+							 * Virtual overlay that groups all related overlays
+							 */
 							ChromatogramDescriptorOverlay cdo = new ChromatogramDescriptorOverlay(descr, descr.getName(), descr.getDisplayName(), descr.getShortDescription(), true, overlays);
 							ic.add(cdo);
+							// create node children for display in navigator view
 							Children children = Children.create(new ChartOverlayChildFactory(overlays), true);
+							// create the actual node for this chromatogram
 							ic.add(Charts.overlayNode(cdo, children));
 							for (int i = 0; i < ds.getSeriesCount(); i++) {
 								if(ds.getSeriesKey(i).toString().equals(descr.getDisplayName())) {

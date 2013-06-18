@@ -27,22 +27,27 @@
  */
 package net.sf.maltcmsui.samples.actions;
 
+import cross.Factory;
 import cross.commands.fragments.IFragmentCommand;
 import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IFileFragment;
+import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.pipeline.CommandPipeline;
 import cross.datastructures.tuple.TupleND;
 import cross.datastructures.workflow.DefaultWorkflow;
+import cross.datastructures.workflow.IWorkflow;
 import cross.datastructures.workflow.IWorkflowResult;
 import cross.event.IEvent;
 import cross.event.IListener;
 import cross.exception.ResourceNotAvailableException;
 import cross.tools.StringTools;
+import cross.vocabulary.ICvResolver;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -52,12 +57,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import maltcms.commands.fragments.io.VariableDataExporter;
 import maltcms.commands.fragments.preprocessing.DenseArrayProducer;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.peak.Peak1D;
 import maltcms.datastructures.peak.PeakType;
 import maltcms.datastructures.peak.normalization.IPeakNormalizer;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
@@ -71,7 +78,9 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import ucar.ma2.Array;
 import ucar.ma2.MAVector;
@@ -163,23 +172,9 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 					/*
 					 * Prepare the command pipeline
 					 */
-					CommandPipeline cp = new CommandPipeline();
-					cp.setCommands(commands);
-					cp.setInput(new TupleND<IFileFragment>(fragments));
-					DefaultWorkflow dw = new DefaultWorkflow();
-					dw.setStartupDate(new Date());
-					dw.setCommandSequence(cp);
-					//false does not work at the moment
-					dw.setExecuteLocal(true);
-					dw.setOutputDirectory(outputDir);
-					dw.addListener(new IListener<IEvent<IWorkflowResult>>() {
-						@Override
-						public void listen(IEvent<IWorkflowResult> v) {
-							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received workflow result {0}", v.get());
-						}
-					});
+					IWorkflow workflow = createWorkflow(commands, fragments, outputDir);
 					try {
-						TupleND<IFileFragment> results = dw.call();
+						TupleND<IFileFragment> results = workflow.call();
 						//map output results to input, they may be in the same order as the original input
 						Map<IChromatogramDescriptor, IFileFragment> inputToOutputMap = new LinkedHashMap<IChromatogramDescriptor, IFileFragment>();
 						Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received {0} result files!", results.size());
@@ -201,16 +196,43 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 						for (IChromatogramDescriptor chromatogram : inputToOutputMap.keySet()) {
 							//retrieve result file
 							IFileFragment resultFile = inputToOutputMap.get(chromatogram);
-                                                        
-                                                        testFunction(resultFile);
-                                                        
 							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(resultFile.toString());
 						}
 						/*
 						 * Open the maltcms workflow as a project in the UI
 						 */
-						Project maltcmsWorkflowProject = ProjectManager.getDefault().findProject(FileUtil.toFileObject(dw.getOutputDirectory()));
+						Project maltcmsWorkflowProject = ProjectManager.getDefault().findProject(FileUtil.toFileObject(workflow.getOutputDirectory()));
 						OpenProjects.getDefault().open(new Project[]{maltcmsWorkflowProject}, false);
+
+						//print variables of result fragments
+						for(IFileFragment f:results) {
+							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info("File: "+f.getUri());
+							for (IVariableFragment v : Factory.getInstance().getDataSourceFactory().getDataSourceFor(f).readStructure(f)) {
+								Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(""+v);
+							}
+						}
+
+						//let's start a second pipeline
+						VariableDataExporter vde = new VariableDataExporter();
+						ArrayList<String> variables = new ArrayList<String>();
+						variables.add(Lookup.getDefault().lookup(ICvResolver.class).translate("var.binned_intensity_values"));
+						Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info("Writing " + variables + " to csv files!");
+						vde.setVarNames(variables);
+						commands = new LinkedList<IFragmentCommand>();
+						commands.add(vde);
+						//retrieve a new output directory
+						outputDir = project.getOutputLocation(RunACustomEmbeddedPipeline.class);
+						try {
+							workflow = createWorkflow(commands, results, outputDir);
+							//set results to contain result files of this workflow
+							results = workflow.call();
+							//open the project
+							maltcmsWorkflowProject = ProjectManager.getDefault().findProject(FileUtil.toFileObject(workflow.getOutputDirectory()));
+							OpenProjects.getDefault().open(new Project[]{maltcmsWorkflowProject}, false);
+							//..
+						} catch (Exception ex) {
+							Exceptions.printStackTrace(ex);
+						}
 					} catch (Exception ex) {
 						Exceptions.printStackTrace(ex);
 					}
@@ -219,6 +241,25 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 			} finally {
 				getProgressHandle().finish();
 			}
+		}
+
+		private IWorkflow createWorkflow(List<IFragmentCommand> commands, Collection<IFileFragment> inputFileFragments, File outputDir) {
+			CommandPipeline cp = new CommandPipeline();
+			cp.setCommands(commands);
+			cp.setInput(new TupleND<IFileFragment>(inputFileFragments));
+			DefaultWorkflow dw = new DefaultWorkflow();
+			dw.setStartupDate(new Date());
+			dw.setCommandSequence(cp);
+			//false does not work at the moment
+			dw.setExecuteLocal(true);
+			dw.setOutputDirectory(outputDir);
+			dw.addListener(new IListener<IEvent<IWorkflowResult>>() {
+				@Override
+				public void listen(IEvent<IWorkflowResult> v) {
+					Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).log(Level.INFO, "Received workflow result {0}", v.get());
+				}
+			});
+			return dw;
 		}
 
 		private void createInputFragmentsFromDatabaseChromatograms(File outputDir, List<IFileFragment> fragments) throws ResourceNotAvailableException {

@@ -445,10 +445,11 @@ public class DBProjectFactory {
 				try {
 					//try chromatof csv parser
 					File importDir = new File(projdir, "import");
+					importDir = new File(importDir, "DBProjectFactory");
 					FileUtil.createFolder(importDir);
 					List<File> files = AProgressAwareCallable.createAndRun("Importing report " + f.getName(), ChromaTOFImporter.importAsVirtualChromatograms(importDir, f)).get();
 					System.out.println("Received files: " + files);
-					fragment = new FileFragment(dataDir, files.get(0).getName());
+					fragment = new FileFragment(dataDir,files.get(0).getName());
 					fragment.addSourceFile(new FileFragment(files.get(0)));
 				} catch (Exception ex) {
 					Exceptions.printStackTrace(ex);

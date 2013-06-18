@@ -417,10 +417,12 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 		} else {// imprecise hit, find closest element
 			int insertionPosition = (-idx) - 1;
 			if (insertionPosition < 0) {
-				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + "<" + 0);
+				log.warn("Insertion position was {}, setting to index 0",insertionPosition);
+//				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + "<" + 0);
 			}
-			if (insertionPosition >= getSatArray().length) {
-				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + ">=" + satArray.length);
+			if (insertionPosition >= satArray.length) {
+				log.warn("Insertion position was {}, setting to index {}",insertionPosition, satArray.length-1);
+//				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + ">=" + satArray.length);
 			}
 //			System.out.println("Would insert before "+insertionPosition);
 			double current = satArray[Math.min(satArray.length - 1, insertionPosition)];

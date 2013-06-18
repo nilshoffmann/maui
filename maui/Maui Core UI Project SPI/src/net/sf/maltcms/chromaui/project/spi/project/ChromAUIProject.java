@@ -27,7 +27,9 @@
  */
 package net.sf.maltcms.chromaui.project.spi.project;
 
+import com.db4o.ext.DatabaseClosedException;
 import com.db4o.ext.DatabaseFileLockedException;
+import cross.datastructures.fragments.IFileFragment;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
@@ -35,6 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -59,6 +62,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
+import org.apache.commons.io.FileUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ActionProvider;
@@ -226,8 +230,6 @@ public class ChromAUIProject implements IChromAUIProject {
 	public void refresh() {
 		pcs.firePropertyChange(new PropertyChangeEvent(
 				this, "container", false, true));
-//        getLookup().lookup(Info.class).firePropertyChange(new PropertyChangeEvent(
-//                this, "REFRESH_NODES", null, this));
 	}
 
 	@Override
@@ -339,10 +341,9 @@ public class ChromAUIProject implements IChromAUIProject {
 	public FileObject getOutputDir() {
 		try {
 			return getSetting("output.basedir", FileObject.class);
-		}catch(NullPointerException npe) {
-			
-		}catch(DatabaseFileLockedException dfle) {
-			
+		} catch (NullPointerException npe) {
+		} catch (DatabaseFileLockedException dfle) {
+		} catch (DatabaseClosedException dbce) {
 		}
 		try {
 			return FileUtil.createFolder(parentFile, "output");
@@ -364,9 +365,9 @@ public class ChromAUIProject implements IChromAUIProject {
 	public File getOutputLocation(Object importer) {
 		File outputDir = FileUtil.toFile(getOutputDir());
 		String name = "";
-		if(importer instanceof Class) {
-			name = ((Class)importer).getSimpleName();
-		}else{
+		if (importer instanceof Class) {
+			name = ((Class) importer).getSimpleName();
+		} else {
 			name = importer.getClass().getSimpleName();
 		}
 		outputDir = new File(outputDir, name);
@@ -476,15 +477,72 @@ public class ChromAUIProject implements IChromAUIProject {
 
 	@Override
 	public File getImportLocation(Object importer) {
-		File importDir = new File(FileUtil.toFile(getProjectDirectory()),
-				"import");
-		importDir = new File(importDir, importer.getClass().getSimpleName());
+		File importDir = getImportDirectory();
+		if (importer instanceof Class) {
+			importDir = new File(importDir, ((Class) importer).getSimpleName());
+		} else {
+			importDir = new File(importDir, importer.getClass().getSimpleName());
+		}
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"MM-dd-yyyy_HH-mm-ss", Locale.US);
 		importDir = new File(importDir, dateFormat.format(
 				new Date()));
 		importDir.mkdirs();
 		return importDir;
+	}
+	
+	public Map<String, Map<File, List<File>>> getImportDirectoryFiles() {
+		File importDir = getImportDirectory();
+		File[] toolFiles = importDir.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory();
+			}
+		});
+		Map<String, Map<File, List<File>>> importDirectoryFiles = new LinkedHashMap<String, Map<File, List<File>>>();
+		for (File tool : toolFiles) {
+			importDirectoryFiles.put(tool.getName(),getToolFiles(tool));
+		}
+		return importDirectoryFiles;
+	}
+
+	public Map<File, List<File>> getImportDirectoryFilesFor(String toolname) {
+		File importDir = getImportDirectory();
+		File tool = new File(importDir, toolname);
+		if(tool.isDirectory()) {
+			return getToolFiles(tool);
+		}
+		return Collections.emptyMap();
+	}
+
+	private Map<File, List<File>> getToolFiles(File tool) {
+		File[] dates = tool.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory();
+			}
+		});
+		Map<File, List<File>> instanceFiles = new LinkedHashMap<File,List<File>>();
+		for(File date:dates) {
+			instanceFiles.put(date, new ArrayList<File>(FileUtils.listFiles(date, null, true)));
+		}
+		return instanceFiles;
+	}
+
+	@Override
+	public File getImportDirectory() {
+		try {
+			return FileUtil.toFile(FileUtil.createFolder(getProjectDirectory(), "import"));
+		} catch (IOException ex) {
+			File outdir = new File(FileUtil.toFile(getProjectDirectory()), "import");
+			outdir.mkdirs();
+			return outdir;
+		}
+	}
+
+	@Override
+	public File getOutputDirectory() {
+		return FileUtil.toFile(getOutputDir());
 	}
 
 	private final class OpenCloseHook extends ProjectOpenedHook {

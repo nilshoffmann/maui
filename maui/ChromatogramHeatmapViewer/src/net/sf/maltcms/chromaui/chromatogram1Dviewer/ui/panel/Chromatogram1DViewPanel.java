@@ -198,6 +198,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 				}
 				if (overlay instanceof ISelectionChangeListener) {
 					ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
+					mouseSelectionHandler.addSelectionChangeListener(isl);
 					mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
 					mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
 					selectionOverlay.addChangeListener(cdxpanel);
