@@ -76,9 +76,11 @@ import org.openide.util.NbBundle.Messages;
 import ucar.ma2.Array;
 import ucar.ma2.MAVector;
 import lombok.extern.slf4j.Slf4j;
+import maltcms.datastructures.ms.ProfileChromatogram1D;
 import org.openide.filesystems.FileUtil;
 
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import ucar.ma2.MAMath;
 
 @Slf4j
 @ActionID(
@@ -199,6 +201,9 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 						for (IChromatogramDescriptor chromatogram : inputToOutputMap.keySet()) {
 							//retrieve result file
 							IFileFragment resultFile = inputToOutputMap.get(chromatogram);
+                                                        
+                                                        testFunction(resultFile);
+                                                        
 							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(resultFile.toString());
 						}
 						/*
@@ -281,6 +286,46 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 			}
 		}
 	}
+        
+        private void testFunction (IFileFragment ff){
+            
+            ProfileChromatogram1D c = new ProfileChromatogram1D(ff);
+            
+            IFileFragment parent = c.getParent();
+            MAMath.MinMax mmTime = MAMath.getMinMax(parent.getChild("scan_acquisition_time").getArray());
+            double startTime = mmTime.min;
+            double stopTime = mmTime.max;
+
+            MAMath.MinMax mmMasses = MAMath.getMinMax(parent.getChild("mass_values").getArray());
+            double minMass = mmMasses.min;
+            double maxMass = mmMasses.max;
+
+            System.out.println("startTime: " + startTime);
+            System.out.println("stopTime: " + stopTime);
+
+            System.out.println("minMass: " + minMass);
+            System.out.println("minMass: " + maxMass);
+            
+            int index1 = c.getIndexFor(startTime);
+            int index2 = c.getIndexFor(stopTime);
+            List<Array> intensities = c.getBinnedIntensities().subList(index1, index2/2);
+
+            double cosineSimilarity; 
+            double cosineSimilarity2; 
+
+            final Array t1 = intensities.get(0);
+            final Array t2 = intensities.get(1);
+
+            cosineSimilarity = cosineSimilarity(t1,t2); 
+            cosineSimilarity2 = cosineSimilarity(t1,t1); 
+
+            System.out.println("Similarity between diff spectra: " + cosineSimilarity);
+            System.out.println("Similarity between same spectra: " + cosineSimilarity2);
+            System.out.println("Number of spectra extracted: " + intensities.size());
+            //System.out.println("Here: " + index1 + " " + index2 + " " + "No1: " + intensities.get(0));
+            //System.out.println("Here: " + index1 + " " + index2 + " " + "No2: " + intensities.get(1));
+            System.out.println("intensities.get(15).getDouble(73): " + intensities.get(15).getDouble(73));            
+        }
         
         
         private double cosineSimilarity(final Array t1, final Array t2) {
