@@ -27,9 +27,11 @@
  */
 package net.sf.maltcmsui.samples.actions;
 
+import cross.Factory;
 import cross.commands.fragments.IFragmentCommand;
 import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IFileFragment;
+import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.pipeline.CommandPipeline;
 import cross.datastructures.tuple.TupleND;
 import cross.datastructures.workflow.DefaultWorkflow;
@@ -45,7 +47,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -190,6 +191,14 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 						 */
 						Project maltcmsWorkflowProject = ProjectManager.getDefault().findProject(FileUtil.toFileObject(workflow.getOutputDirectory()));
 						OpenProjects.getDefault().open(new Project[]{maltcmsWorkflowProject}, false);
+
+						//print variables of result fragments
+						for(IFileFragment f:results) {
+							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info("File: "+f.getUri());
+							for (IVariableFragment v : Factory.getInstance().getDataSourceFactory().getDataSourceFor(f).readStructure(f)) {
+								Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(""+v);
+							}
+						}
 
 						//let's start a second pipeline
 						VariableDataExporter vde = new VariableDataExporter();
