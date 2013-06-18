@@ -41,9 +41,10 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
@@ -57,12 +58,17 @@ import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import static net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay.toView;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
+import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
+import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.openide.util.Utilities;
 import org.openide.util.WeakListeners;
 
 /**
@@ -70,8 +76,7 @@ import org.openide.util.WeakListeners;
  * @author Nils Hoffmann
  */
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"drawShapes", "drawLines", "shapes"})
-public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
+public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener {
 
 //    private final List<Shape> shapes;
 	public final String PROP_DRAW_SHAPES = "drawShapes";
@@ -79,9 +84,12 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	private final Peak1DContainer peakAnnotations;
 	private final IChromatogramDescriptor descriptor;
 	private List<Shape> shapes;
+	private List<Shape> selectedPeaks;
 	private boolean drawShapes = true;
 	private boolean drawLines = true;
 	private ADataset1D<IChromatogram1D, IScan> dataset = null;
+	private XYSelection selection;
+	private Result<IPeakAnnotationDescriptor> padResult;
 
 	public Peak1DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
 		super(name, displayName, shortDescription, visibilityChangeable);
@@ -93,6 +101,9 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		this.descriptor = descriptor;
 		this.peakAnnotations = peakAnnotations;
 		WeakListeners.propertyChange(this, peakAnnotations);
+		padResult = Utilities.actionsGlobalContext().lookupResult(IPeakAnnotationDescriptor.class);
+		padResult.addLookupListener(this);
+		resultChanged(new LookupEvent(padResult));
 	}
 
 	@Override
@@ -128,7 +139,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 			Color c = g2.getColor();
 			Color fillColor = peakAnnotations.getColor();
 			if (fillColor == null || fillColor.equals(Color.WHITE) || fillColor.equals(new Color(255, 255, 255, 0))) {
-				System.out.println("Peak annotation color was null or white, using color from treatment group!");
+//				System.out.println("Peak annotation color was null or white, using color from treatment group!");
 				fillColor = peakAnnotations.getChromatogram().getTreatmentGroup().getColor();
 			}
 			for (int i = 0; i < shapes.size(); i++) {
@@ -142,6 +153,17 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 					drawEntity(x, g2, fillColor, Color.DARK_GRAY, chartPanel, false, 0.25f);
 				}
 			}
+			for (int i = 0; i < selectedPeaks.size(); i++) {
+				Shape x = selectedPeaks.get(i);
+				Rectangle2D bbox = x.getBounds2D();
+				if (x instanceof Rectangle2D) {
+					x = toView(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getCenterY()));
+					drawEntity(x, g2, fillColor, Color.BLACK, chartPanel, false, 1f);
+				} else {
+					x = toView(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getMaxY()));
+					drawEntity(x, g2, fillColor, Color.BLACK, chartPanel, false, 1f);
+				}
+			}
 			g2.setColor(c);
 			g2.setClip(savedClip);
 		}
@@ -152,34 +174,11 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		if (dataset == null) {
 			return l;
 		}
-		int seriesIndex = -1;
 		IChromatogramDescriptor chromatogram = container.getChromatogram();
-		for (int i = 0; i < dataset.getSeriesCount(); i++) {
-			IChromatogram1D chrom = dataset.getSource(i);
-			if (StringTools.removeFileExt(chrom.getParent().getName()).equals(StringTools.removeFileExt(chromatogram.getChromatogram().getParent().getName()))) {
-				seriesIndex = i;
-				break;
-			}
-		}
+		int seriesIndex = getSeriesIndex(dataset, chromatogram);
 		if (seriesIndex != -1) {
 			for (IPeakAnnotationDescriptor peakDescr : container.getMembers()) {
-				int scan = chromatogram.getChromatogram().getIndexFor(peakDescr.getApexTime());
-				double yValue = dataset.getYValue(seriesIndex, scan);
-				if (dataset instanceof TopViewDataset) {
-					if (drawShapes) {
-						Shape pointer = generate(peakDescr.getApexTime() - 5, yValue - 10, peakDescr.getApexTime(), yValue, peakDescr.getApexTime() + 5, yValue - 10);
-						l.add(pointer);
-					}
-				} else {
-					if (drawLines) {
-						Shape line2d = new Rectangle2D.Double(peakDescr.getApexTime() - 0.5, dataset.getMaxY(), 1, dataset.getMaxY() - dataset.getMinY());
-						l.add(line2d);
-					}
-					if (drawShapes) {
-						Shape pointer = generate(peakDescr.getApexTime() - 5, yValue - 10, peakDescr.getApexTime(), yValue, peakDescr.getApexTime() + 5, yValue - 10);
-						l.add(pointer);
-					}
-				}
+				generatePeakShape(chromatogram, peakDescr, dataset, seriesIndex, l);
 			}
 		} else {
 			System.err.println("Could not find match for chromatogram " + chromatogram.getName() + " in dataset!");
@@ -224,35 +223,15 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 
 	@Override
 	public void selectionStateChanged(SelectionChangeEvent ce) {
-		//TODO implement peak descriptor selection
-//        XYSelection selection = ce.getSelection();
-//
-//        if (selection == null) {
-//            if (mouseHoverSelection != null) {
-//                mouseHoverSelection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
-//                firePropertyChange(PROP_HOVER_SELECTION, mouseHoverSelection, null);
-//            }
-//            mouseHoverSelection = null;
-//        } else {
-//            if (ce.getSelection().getType() == XYSelection.Type.CLICK) {
-//                if (mouseClickSelection.contains(selection)) {
-//                    mouseClickSelection.remove(selection);
-//                    selection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
-//                } else {
-//                    mouseClickSelection.add(selection);
-//                    selection.addPropertyChangeListener(XYSelection.PROP_VISIBLE, WeakListeners.propertyChange(this, selection));
-//                }
-//                firePropertyChange(PROP_SELECTION, null, mouseClickSelection);
-//            } else if (ce.getSelection().getType() == XYSelection.Type.HOVER) {
-//                if (mouseHoverSelection != null) {
-//                    mouseHoverSelection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
-//                }
-//                mouseHoverSelection = selection;
-//                mouseHoverSelection.addPropertyChangeListener(XYSelection.PROP_VISIBLE, WeakListeners.propertyChange(this, mouseHoverSelection));
-//                firePropertyChange(PROP_HOVER_SELECTION, null, mouseHoverSelection);
-//            }
-//        }
-		fireOverlayChanged();
+		XYSelection selection = ce.getSelection();
+		if (selection != null && ce.getSelection().getType() == XYSelection.Type.HOVER) {
+			this.selection = selection;
+			fireOverlayChanged();
+		} else if (selection != null && ce.getSelection().getType() == XYSelection.Type.CLEAR) {
+			this.selection = null;
+			fireOverlayChanged();
+		}
+
 	}
 
 	@Override
@@ -274,5 +253,57 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		firePropertyChange(PROP_DRAW_LINES, old, b);
 		shapes = generatePeakShapes(peakAnnotations, dataset);
 		fireOverlayChanged();
+	}
+
+	@Override
+	public void resultChanged(LookupEvent le) {
+		Collection<? extends IPeakAnnotationDescriptor> pads = padResult.allInstances();
+		if(selectedPeaks == null) {
+			selectedPeaks = new ArrayList<Shape>();
+		}
+		if(!pads.isEmpty()) {
+			selectedPeaks.clear();
+		}
+		for (IPeakAnnotationDescriptor ipad : padResult.allInstances()) {
+			if (peakAnnotations.getMembers().contains(ipad)) {
+				System.err.println("Contained!");
+				generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
+			} else {
+				System.err.println("Not contained!");
+			}
+		}
+		fireOverlayChanged();
+	}
+
+	private void generatePeakShape(IChromatogramDescriptor chromatogram, IPeakAnnotationDescriptor peakDescr, ADataset1D<IChromatogram1D, IScan> dataset, int seriesIndex, List<Shape> l) {
+		int scan = chromatogram.getChromatogram().getIndexFor(peakDescr.getApexTime());
+		double yValue = dataset.getYValue(seriesIndex, scan);
+		if (dataset instanceof TopViewDataset) {
+			if (drawShapes) {
+				Shape pointer = generate(peakDescr.getApexTime() - 5, yValue - 10, peakDescr.getApexTime(), yValue, peakDescr.getApexTime() + 5, yValue - 10);
+				l.add(pointer);
+			}
+		} else {
+			if (drawLines) {
+				Shape line2d = new Rectangle2D.Double(peakDescr.getApexTime() - 0.5, dataset.getMaxY(), 1, dataset.getMaxY() - dataset.getMinY());
+				l.add(line2d);
+			}
+			if (drawShapes) {
+				Shape pointer = generate(peakDescr.getApexTime() - 5, yValue - 10, peakDescr.getApexTime(), yValue, peakDescr.getApexTime() + 5, yValue - 10);
+				l.add(pointer);
+			}
+		}
+	}
+
+	private int getSeriesIndex(ADataset1D<IChromatogram1D, IScan> dataset, IChromatogramDescriptor chromatogram) {
+		int seriesIndex = -1;
+		for (int i = 0; i < dataset.getSeriesCount(); i++) {
+			IChromatogram1D chrom = dataset.getSource(i);
+			if (StringTools.removeFileExt(chrom.getParent().getName()).equals(StringTools.removeFileExt(chromatogram.getChromatogram().getParent().getName()))) {
+				seriesIndex = i;
+				break;
+			}
+		}
+		return seriesIndex;
 	}
 }
