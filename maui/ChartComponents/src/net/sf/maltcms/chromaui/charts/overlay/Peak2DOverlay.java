@@ -33,8 +33,6 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -54,8 +52,6 @@ import org.openide.util.WeakListeners;
  *
  * @author Nils Hoffmann
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
 public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
 
 	private final Peak1DContainer peakAnnotations;
@@ -150,5 +146,13 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
 		fireOverlayChanged();
+	}
+
+	public Peak1DContainer getPeakAnnotations() {
+		return peakAnnotations;
+	}
+
+	public IChromatogramDescriptor getDescriptor() {
+		return descriptor;
 	}
 }

@@ -135,8 +135,9 @@ public class XYSelection implements ISelection {
         hash = 79 * hash + this.seriesIndex;
         hash = 79 * hash + this.itemIndex;
         hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
-        hash = 79 * hash + (this.target != null ? this.target.hashCode() : 0);
-        hash = 79 * hash + (this.source != null ? this.source.hashCode() : 0);
+		//target and source may or may not implement equals and hashcode correctly, so better leave them out
+//        hash = 79 * hash + (this.target != null ? this.target.hashCode() : 0);
+//        hash = 79 * hash + (this.source != null ? this.source.hashCode() : 0);
         return hash;
     }
 
@@ -161,12 +162,13 @@ public class XYSelection implements ISelection {
         if (this.type != other.type) {
             return false;
         }
-        if (this.target != other.target && (this.target == null || !this.target.equals(other.target))) {
-            return false;
-        }
-        if (this.source != other.source && (this.source == null || !this.source.equals(other.source))) {
-            return false;
-        }
+		//target and source may or may not implement equals and hashcode correctly, so better leave them out
+//        if (this.target != other.target && (this.target == null || !this.target.equals(other.target))) {
+//            return false;
+//        }
+//        if (this.source != other.source && (this.source == null || !this.source.equals(other.source))) {
+//            return false;
+//        }
         return true;
     }
 

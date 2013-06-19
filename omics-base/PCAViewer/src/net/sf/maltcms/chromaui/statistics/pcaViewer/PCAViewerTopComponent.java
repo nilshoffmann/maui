@@ -27,6 +27,7 @@
  */
 package net.sf.maltcms.chromaui.statistics.pcaViewer;
 
+import de.unibielefeld.cebitec.lstutz.pca.data.DataModel;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -34,6 +35,13 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import de.unibielefeld.cebitec.lstutz.pca.visual.StandardGUI;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.HashMap;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.api.project.Project;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 
 /**
  * Top component which displays something.
@@ -53,6 +61,9 @@ preferredID = "PCAViewerTopComponent")
 public final class PCAViewerTopComponent extends TopComponent {
 
     private StandardGUI scene = null;
+	private final InstanceContent content = new InstanceContent();
+	private final Lookup lookup = new AbstractLookup(content);
+	private Project project;
     
     public PCAViewerTopComponent() {
         initComponents();
@@ -60,10 +71,12 @@ public final class PCAViewerTopComponent extends TopComponent {
                 "CTL_PCAViewerTopComponent"));
         setToolTipText(NbBundle.getMessage(PCAViewerTopComponent.class,
                 "HINT_PCAViewerTopComponent"));
+		associateLookup(lookup);
     }
     
     public void setData(StandardGUI sg) {
         if(scene==null) {
+			sg.setInstanceContent(content);
             add(sg,BorderLayout.CENTER);
         }else{
             throw new IllegalStateException("StandardGUI may only be added once!");
@@ -105,4 +118,12 @@ public final class PCAViewerTopComponent extends TopComponent {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
+
+	public void setProject(Project project) {
+		if(this.project!=null) {
+			content.remove(this.project);
+		}
+		content.add(project);
+		this.project = project;
+	}
 }

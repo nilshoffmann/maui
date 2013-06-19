@@ -66,8 +66,9 @@ public final class PCAOpenAction implements ActionListener {
 //        XMLParser parser;
 //        try {
 //            parser = new XMLParser(url.openStream());
-            StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(context)));
+            StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(context,0,1,2)));
             PCAViewerTopComponent pvtc = new PCAViewerTopComponent();
+			pvtc.setProject(context.getProject());
             pvtc.setData(gui);
             pvtc.open();
             pvtc.requestActive();

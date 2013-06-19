@@ -75,7 +75,6 @@ import org.openide.util.WeakListeners;
  *
  * @author Nils Hoffmann
  */
-@Data
 public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener {
 
 //    private final List<Shape> shapes;
@@ -306,4 +305,9 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		}
 		return seriesIndex;
 	}
+
+	public ADataset1D<IChromatogram1D, IScan> getDataset() {
+		return dataset;
+	}
+	
 }

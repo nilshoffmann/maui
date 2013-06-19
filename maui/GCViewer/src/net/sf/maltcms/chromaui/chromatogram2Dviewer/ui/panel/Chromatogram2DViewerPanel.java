@@ -174,8 +174,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             double xmax = this.cp.getChart().getXYPlot().getDomainAxis().getUpperBound();
             double ymin = this.cp.getChart().getXYPlot().getRangeAxis().getLowerBound();
             double ymax = this.cp.getChart().getXYPlot().getRangeAxis().getUpperBound();
-            this.viewport = new Chromatogram2DViewViewport();
-            this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
+            this.viewport = new Chromatogram2DViewViewport(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
             this.content.add(viewport);
         } else {
             //received viewport change from somewhere else
@@ -203,8 +202,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             if (this.viewport != null) {
                 this.content.remove(this.viewport);
             }
-            this.viewport = new Chromatogram2DViewViewport();
-            this.viewport.setViewPort(rect);
+            this.viewport = new Chromatogram2DViewViewport(rect);
             System.out.println("Setting viewport!");
             removeAxisListener();
             this.cp.getChart().getXYPlot().getDomainAxis().setLowerBound(rect.getMinX());

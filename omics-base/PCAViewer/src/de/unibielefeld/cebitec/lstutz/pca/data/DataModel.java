@@ -40,6 +40,7 @@ public class DataModel{
 	private Heading heading;
 	private Double factor;
 	private String annotation, link;
+	private Object payload;
 
 	public DataModel(){
 		
@@ -116,5 +117,12 @@ public class DataModel{
 		this.link = link;
 	}
 	
+	public void setPayload(Object object) {
+		this.payload = object;
+	}
+	
+	public Object getPayload() {
+		return this.payload;
+	}
 	
 }

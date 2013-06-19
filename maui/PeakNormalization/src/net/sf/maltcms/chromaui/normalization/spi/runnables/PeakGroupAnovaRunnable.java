@@ -197,6 +197,10 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                         targetsvs));
                             }
                         }
+						
+						//cleanup
+						c.eval("rm(groups,peakAreas,peaks,anovaResult)");
+						
                         ad.setPeakGroupDescriptor(descr);
                         ad.setName("Anova " + descr.getName());
                         System.out.println("GroupDescriptor:" + ad.getPeakGroupDescriptor().getDisplayName());
