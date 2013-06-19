@@ -84,5 +84,4 @@ public interface IPcaDescriptor extends IStatisticsDescriptor {
     void setVariables(List<IPeakGroupDescriptor> peakGroup);
     List<IPeakGroupDescriptor> getVariables();
     
-    
 }

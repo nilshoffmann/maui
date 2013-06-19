@@ -238,8 +238,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 			double xmax = this.ticplot.getDomainAxis().getUpperBound();
 			double ymin = this.ticplot.getRangeAxis().getLowerBound();
 			double ymax = this.ticplot.getRangeAxis().getUpperBound();
-			this.viewport = new ChromatogramViewViewport();
-			this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
+			this.viewport = new ChromatogramViewViewport(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
 			this.ic.add(viewport);
 		} else {
 			//received viewport change from somewhere else
@@ -281,14 +280,13 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 			if (this.viewport != null) {
 				this.ic.remove(this.viewport);
 			}
-			this.viewport = new ChromatogramViewViewport();
-			this.viewport.setViewPort(viewport);
+			this.viewport = new ChromatogramViewViewport(viewport);
 			System.out.println("Setting viewport!");
 			removeAxisListener();
 			this.ticplot.getDomainAxis().setLowerBound(viewport.getMinX());
 			this.ticplot.getDomainAxis().setUpperBound(viewport.getMaxX());
-			this.ticplot.getRangeAxis().setLowerBound(viewport.getMinY());
-			this.ticplot.getRangeAxis().setUpperBound(viewport.getMaxY());
+//			this.ticplot.getRangeAxis().setLowerBound(viewport.getMinY());
+//			this.ticplot.getRangeAxis().setUpperBound(viewport.getMaxY());
 			addAxisListener();
 		}
 	}

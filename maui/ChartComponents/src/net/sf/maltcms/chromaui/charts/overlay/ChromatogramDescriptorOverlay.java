@@ -31,8 +31,6 @@ import java.awt.Graphics2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
@@ -44,8 +42,6 @@ import org.jfree.chart.ChartPanel;
  *
  * @author Nils Hoffmann
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
 public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
 
 	private final List<ChartOverlay> overlays;
@@ -111,4 +107,13 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
 	public void propertyChange(PropertyChangeEvent pce) {
 		fireOverlayChanged();
 	}
+
+	public List<ChartOverlay> getOverlays() {
+		return overlays;
+	}
+
+	public IChromatogramDescriptor getDescriptor() {
+		return descriptor;
+	}
+
 }
