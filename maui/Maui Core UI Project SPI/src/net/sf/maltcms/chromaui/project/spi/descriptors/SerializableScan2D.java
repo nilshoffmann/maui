@@ -35,6 +35,7 @@ import java.io.ObjectOutput;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import maltcms.datastructures.ms.IScan2D;
 import maltcms.datastructures.ms.Scan2D;
 import ucar.ma2.Array;
 
@@ -64,7 +65,7 @@ public class SerializableScan2D implements Externalizable {
             oo.writeDouble(scan.getFirstColumnScanAcquisitionTime());
             oo.writeDouble(scan.getSecondColumnScanAcquisitionTime());
             oo.writeDouble(scan.getScanAcquisitionTime());
-            oo.writeDouble(scan.getTotalIntensity());
+//            oo.writeDouble(scan.getTotalIntensity());
             oo.writeObject(new SerializableArray(scan.getMasses()));
             oo.writeObject(new SerializableArray(scan.getIntensities()));
         }
@@ -78,7 +79,7 @@ public class SerializableScan2D implements Externalizable {
         double rt1 = oi.readDouble();
         double rt2 = oi.readDouble();
         double sat = oi.readDouble();
-        double tic = oi.readDouble();
+//        double tic = oi.readDouble();
         SerializableArray ma = (SerializableArray)oi.readObject();
         Array masses = ma.getArray();
         SerializableArray ia = (SerializableArray)oi.readObject();

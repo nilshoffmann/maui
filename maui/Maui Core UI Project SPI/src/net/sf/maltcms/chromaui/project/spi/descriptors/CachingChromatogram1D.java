@@ -72,7 +72,7 @@ import ucar.ma2.MAMath;
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 @Slf4j
-public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProvider<Integer, Scan1D> {
+public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProvider<Integer, SerializableScan1D> {
 
 	private IFileFragment parent;
 	private final String scanAcquisitionTimeUnit = "seconds";
@@ -84,7 +84,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	private IVariableFragment massValuesVariable;
 	private IVariableFragment indexVariable;
 	private IVariableFragment scanAcquisitionTimeVariable;
-	private ICacheDelegate<Integer, Scan1D> whm;
+	private ICacheDelegate<Integer, SerializableScan1D> whm;
 	private int scans;
 	private int prefetchSize = 10000;
 	private boolean initialized = false;
@@ -174,7 +174,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 				prefetchLoader.submit(r);
 			}
 		}
-		return whm.get(Integer.valueOf(i));
+		return whm.get(Integer.valueOf(i)).getScan();
 	}
 
 	protected Scan1D buildScan(int i) {
@@ -442,19 +442,23 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	}
 
 	@Override
-	public Scan1D provide(Integer k) {
+	public SerializableScan1D provide(Integer k) {
 //		init();
 		final Array masses = massValues.get(k);
 		final Array intens = intensityValues.get(k);
+		short scanMsLevel = 1;
+		if (msLevel != null) {
+			scanMsLevel = msLevel.getByte(k);
+		}
 		Scan1D s = new Scan1D(masses, intens, k,
 				this.parent.getChild(scan_acquisition_time_var).getArray().
-				getDouble(k));
-		return s;
+				getDouble(k), scanMsLevel);
+		return new SerializableScan1D(s);
 	}
 
 	@Override
 	public int getNumberOfScansForMsLevel(short msLevelValue) {
-		if(msLevelValue==1 && msScanMap==null) {
+		if (msLevelValue == 1 && msScanMap == null) {
 			return getNumberOfScans();
 		}
 		return msScanMap.get(msLevelValue).size();
@@ -473,8 +477,8 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public Collection<Short> getMsLevels() {
-		if(msScanMap==null) {
-			return Arrays.asList(Short.valueOf((short)1));
+		if (msScanMap == null) {
+			return Arrays.asList(Short.valueOf((short) 1));
 		}
 		List<Short> l = new ArrayList<Short>(msScanMap.keySet());
 		Collections.sort(l);
@@ -491,18 +495,18 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 		}
 		return getScan(msScanMap.get(level).get(i));
 	}
-	
+
 	@Override
 	public List<Integer> getIndicesOfScansForMsLevel(short level) {
 		if (level == 1 && msScanMap == null) {
-			int scans = getNumberOfScansForMsLevel((short)1);
+			int scans = getNumberOfScansForMsLevel((short) 1);
 			ArrayList<Integer> indices = new ArrayList<Integer>(scans);
 			for (int i = 0; i < scans; i++) {
-				indices.set(i,i);
+				indices.set(i, i);
 			}
 			return indices;
 		}
-		if(msScanMap == null) {
+		if (msScanMap == null) {
 			throw new ResourceNotAvailableException("No ms fragmentation level available for chromatogram " + getParent().getName());
 		}
 		return Collections.unmodifiableList(msScanMap.get(Short.valueOf(level)));
