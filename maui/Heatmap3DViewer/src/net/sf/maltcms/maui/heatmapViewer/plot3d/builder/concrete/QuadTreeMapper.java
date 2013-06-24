@@ -30,9 +30,11 @@ package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 import cross.datastructures.tuple.Tuple2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import maltcms.datastructures.quadTree.QuadTree;
 
 /**
@@ -43,28 +45,45 @@ public class QuadTreeMapper<T extends Number> extends ViewportMapper {
 
 	private final QuadTree<T> qt;
 	private final Rectangle2D maxViewPort;
-	private final double radius;
+	private final double radiusx;
+	private final double radiusy;
 
-	public QuadTreeMapper(QuadTree<T> qt, Rectangle2D dataArea, double radius) {
+	public QuadTreeMapper(QuadTree<T> qt, Rectangle2D dataArea, double radiusx, double radiusy) {
 		this.qt = qt;
 		maxViewPort = dataArea;
-		this.radius = radius;
+		this.radiusx = radiusx;
+		this.radiusy = radiusy;
 	}
 
 	@Override
 	public double f(double d, double d1) {
 		Point2D.Double p = new Point2D.Double(d, d1);
-		List<Tuple2D<Point2D, T>> h = qt.getNeighborsInRadius(p, radius);
-		return weightedInterpolation(p, h, radius);
+		List<Tuple2D<Point2D, T>> h = qt.getHorizontalNeighborsInRadius(p, radiusx);
+		List<Tuple2D<Point2D, T>> v = qt.getVerticalNeighborsInRadius(p, radiusy);
+		Set<Point2D> points = new HashSet<Point2D>();
+		List<Tuple2D<Point2D, T>> results = new ArrayList<Tuple2D<Point2D, T>>();
+		for(Tuple2D<Point2D, T> t:h) {
+			if(!points.contains(t.getFirst())) {
+				points.add(t.getFirst());
+				results.add(t);
+			}
+		}
+		for(Tuple2D<Point2D, T> t:v) {
+			if(!points.contains(t.getFirst())) {
+				points.add(t.getFirst());
+				results.add(t);
+			}
+		}
+		return weightedInterpolation(p, results, radiusx, radiusy);
 	}
 
-	public double weightedInterpolation(Point2D p, Collection<Tuple2D<Point2D, T>> h, double radius) {
+	public double weightedInterpolation(Point2D p, Collection<Tuple2D<Point2D, T>> h, double radiusx, double radiusy) {
 		double sumOfWeights = 0.0d;
 		double value = 0.0d;
 		double[] weights = new double[h.size()];
 		int i = 0;
 		for (Tuple2D<Point2D, T> t : h) {
-			weights[i] = weight(p, t.getFirst(), radius);
+			weights[i] = weight(p, t.getFirst(), radiusx, radiusy);
 			sumOfWeights += weights[i];
 			i++;
 		}
@@ -76,9 +95,10 @@ public class QuadTreeMapper<T extends Number> extends ViewportMapper {
 		return value;
 	}
 
-	public double weight(Point2D p, Point2D q, double radius) {
+	public double weight(Point2D p, Point2D q, double radiusx, double radiusy) {
 		double d = p.distance(q);
-		return Math.pow(((radius - d) / (radius * d)), 2);
+		return (radiusx-d)/(radiusx*d) * (radiusy-d)/(radiusy*d);
+		//return Math.pow(((radius - d) / (radius * d)), 2) 
 	}
 
 	@Override

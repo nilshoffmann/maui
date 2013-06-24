@@ -126,13 +126,13 @@ public final class ViewAs3DHeatmap implements ActionListener {
 							for (int i = 0; i < length; i++) {
 								qt.put(new Point2D.Float(fcetArray.getFloat(i),scetArray.getFloat(i)), ticArray.getInt(i));
 							}
-							QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds, 10);
+							QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds, 10, 10);
 							fcetArray = null;
 							scetArray = null;
 							ticArray = null;
 							chrom2d.getParent().clearArrays();
 							SurfaceFactory sf = new SurfaceFactory();
-							AbstractDrawable ad = sf.createImplicitlyGriddedSurface(qtm,bounds,(int)(5*61),(int)(5*80));
+							AbstractDrawable ad = sf.createImplicitlyGriddedSurface(qtm,bounds,(int)(300),(int)(400));
 							System.err.println(ad.getBounds());
 							CompileableComposite cc = new CompileableComposite();
 							cc.add(ad);
