@@ -31,6 +31,7 @@ import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
@@ -41,6 +42,8 @@ import org.jfree.data.DomainOrder;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ProxyLookup;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayFloat;
+import ucar.ma2.ArrayInt;
 import ucar.ma2.MAMath;
 
 /**
@@ -123,20 +126,56 @@ public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D,IScan>{
         domainVariableValues = new Array[l.size()];
         rangeVariableValues = new Array[l.size()];
         domainVariableValueRanks = new int[l.size()][];
+		
         System.out.println("Building chromatogram 1d dataset with "+l.size()+" series");
         for (int i = 0; i < l.size(); i++) {
-            IFileFragment fragment = getSource(i).getParent();
-            IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
-            Array defaultRangeArr = defaultRangeVar.getArray();
-            MAMath.MinMax _value = MAMath.getMinMax(defaultRangeArr);
-            rangeMM = new MAMath.MinMax(Math.min(rangeMM.min, _value.min), Math.max(rangeMM.max, _value.max));
-            rangeVariableValues[i] = defaultRangeArr;
-            IVariableFragment defaultDomainVar = fragment.getChild(defaultDomainVariable);
-            Array defaultDomainArr = defaultDomainVar.getArray();
-            MAMath.MinMax _domain = MAMath.getMinMax(defaultDomainArr);
-            domainMM = new MAMath.MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
-            domainVariableValues[i] = defaultDomainArr;
-            domainVariableValueRanks[i] = DatasetUtils.ranks((double[])defaultDomainArr.get1DJavaArray(double.class), false);
+			IChromatogram1D chrom = getSource(i);
+			int scans = chrom.getNumberOfScansForMsLevel((short) 1);
+			System.out.println("Found " + scans + " MS1 scans");
+			ArrayFloat.D1 domain = new ArrayFloat.D1(scans);
+			ArrayInt.D1 range = new ArrayInt.D1(scans);
+			IFileFragment fragment = getSource(i).getParent();
+//            MinMax _value = MAMath.getMinMax(defaultValueArr);
+//            valueMM = new MinMax(Math.min(valueMM.min, _value.min), Math.max(valueMM.max, _value.max));
+//            valueVariableValues[i] = defaultValueArr;
+			IVariableFragment defaultDomainVar = fragment.getChild(defaultDomainVariable);
+			Array defaultDomainArr = defaultDomainVar.getArray();
+//            MinMax _domain = MAMath.getMinMax(defaultDomainArr);
+//            domainMM = new MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
+//            domainVariableValues[i] = defaultDomainArr;
+//            domainVariableValueRanks[i] = DatasetUtils.ranks((double[])defaultDomainArr.get1DJavaArray(double.class), false);
+			IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
+			Array defaultRangeArr = defaultRangeVar.getArray();
+//            MinMax _range = MAMath.getMinMax(defaultRangeArr);
+//            rangeMM = new MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
+//            rangeVariableValues[i] = defaultRangeArr;
+			List<Integer> scanIndices = chrom.getIndicesOfScansForMsLevel((short) 1);
+			int j = 0;
+			for (Integer scanIndex : scanIndices) {
+				System.out.println("Adding scan " + (j + 1) + "/" + scans);
+				domain.set(j, (float) defaultDomainArr.getFloat(scanIndex));
+				range.set(j, (int) defaultRangeArr.getInt(scanIndex));
+				j++;
+			}
+			MAMath.MinMax _domain = MAMath.getMinMax(domain);
+			domainMM = new MAMath.MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
+			domainVariableValues[i] = domain;
+			domainVariableValueRanks[i] = DatasetUtils.ranks((double[]) domain.get1DJavaArray(double.class), false);
+			MAMath.MinMax _range = MAMath.getMinMax(range);
+			rangeMM = new MAMath.MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
+			rangeVariableValues[i] = range;
+//            IFileFragment fragment = getSource(i).getParent();
+//            IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
+//            Array defaultRangeArr = defaultRangeVar.getArray();
+//            MAMath.MinMax _value = MAMath.getMinMax(defaultRangeArr);
+//            rangeMM = new MAMath.MinMax(Math.min(rangeMM.min, _value.min), Math.max(rangeMM.max, _value.max));
+//            rangeVariableValues[i] = defaultRangeArr;
+//            IVariableFragment defaultDomainVar = fragment.getChild(defaultDomainVariable);
+//            Array defaultDomainArr = defaultDomainVar.getArray();
+//            MAMath.MinMax _domain = MAMath.getMinMax(defaultDomainArr);
+//            domainMM = new MAMath.MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
+//            domainVariableValues[i] = defaultDomainArr;
+//            domainVariableValueRanks[i] = DatasetUtils.ranks((double[])defaultDomainArr.get1DJavaArray(double.class), false);
         }
         System.out.println("Done!");
         this.domain = domainMM;
