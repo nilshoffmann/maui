@@ -147,7 +147,6 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel1.class, "DBProjectVisualPanel1.jLabel2.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(copyFiles, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel1.class, "DBProjectVisualPanel1.copyFiles.text")); // NOI18N
-        copyFiles.setEnabled(false);
         copyFiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyFilesActionPerformed(evt);
