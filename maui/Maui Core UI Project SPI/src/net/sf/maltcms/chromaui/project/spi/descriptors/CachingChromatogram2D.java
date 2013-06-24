@@ -410,9 +410,13 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 		final Array masses = massValues.get(k);
 		final Array intens = intensityValues.get(k);
 		final double[] rts = rtProvider.getRts(k);
+		short scanMsLevel = 1;
+		if (msLevel != null) {
+			scanMsLevel = msLevel.getByte(k);
+		}
 		Scan2D s = new Scan2D(masses, intens, k,
 				this.parent.getChild(scan_acquisition_time_var).getArray().
-				getDouble(k), k, k, rts[0], rts[1]);
+				getDouble(k), k, k, rts[0], rts[1], scanMsLevel);
 		return new SerializableScan2D(s);
 	}
 
