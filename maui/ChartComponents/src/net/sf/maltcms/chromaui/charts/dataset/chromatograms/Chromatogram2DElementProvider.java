@@ -62,13 +62,13 @@ public class Chromatogram2DElementProvider implements INamedElementProvider<IChr
 
     @Override
     public int size() {
-        return chrom.getNumberOfScans();
+        return chrom.getNumberOfScansForMsLevel((short)1);
     }
 
     @Override
     public IScan2D get(int i) {
         System.out.println("Retrieving scan "+i+" from "+getClass().getName()+" "+getKey());
-        IScan2D scan = chrom.getScan(i);
+        IScan2D scan = chrom.getScanForMsLevel(i,(short)1);
         System.out.println("Retrieved scan "+i+" from "+getClass().getName());
         return scan;
     }
@@ -78,7 +78,7 @@ public class Chromatogram2DElementProvider implements INamedElementProvider<IChr
         int nscans = i1-i;
         ArrayList<IScan2D> al = new ArrayList<IScan2D>(nscans);
         for(int j = 0;j<i1;j++) {
-            al.add(chrom.getScan(i+j));
+            al.add(chrom.getScanForMsLevel(i+j,(short)1));
         }
         return al;
     }
@@ -92,15 +92,5 @@ public class Chromatogram2DElementProvider implements INamedElementProvider<IChr
     public IChromatogram2D getSource() {
         return chrom;
     }
-    
-//    @Override
-//    public IChromAUIProject getProject() {
-//        return project;
-//    }
-//
-//    @Override
-//    public void setProject(IChromAUIProject project) {
-//        this.project = project;
-//    }
     
 }
