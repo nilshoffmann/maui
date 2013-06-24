@@ -50,6 +50,10 @@
                         <label>Bootstrap</label>
                         <target>bootstrap-build</target>
                     </action>
+                    <action>
+                        <label>Delete Maltcms Snapshot</label>
+                        <target>delete-maltcms</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>

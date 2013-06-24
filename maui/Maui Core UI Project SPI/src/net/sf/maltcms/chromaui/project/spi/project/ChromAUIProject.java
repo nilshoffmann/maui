@@ -29,7 +29,6 @@ package net.sf.maltcms.chromaui.project.spi.project;
 
 import com.db4o.ext.DatabaseClosedException;
 import com.db4o.ext.DatabaseFileLockedException;
-import cross.datastructures.fragments.IFileFragment;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
@@ -89,6 +88,10 @@ import org.openide.util.lookup.InstanceContent;
  * be used as a starting point for other project type
  * implementations/extensions. See @link{http://platform.netbeans.org/tutorials/nbm-projectextension.html}
  * for details on writing a project type extension.
+ * 
+ * Supports the dynamic lookup of subproject provider implementations via  {@link IMauiSubprojectProviderFactory}.
+ * Add the {@code @ServiceProvider(service=IMauiSubprojectProviderFactory.class)} annotation to your custom 
+ * implementation to have it automatically registered in this project.
  *
  * @author Nils Hoffmann
  */

@@ -161,7 +161,7 @@ public class DBProjectFactory {
 			handle.progress("Populating database", 3);
 			initChromatograms(props, inputFiles, projdir,
 					separationType, detectorType, fileToDescriptor);
-			addNormalizationDescriptors(props, fileToDescriptor);
+			addNormalizationDescriptors(props, importFileMap ,fileToDescriptor);
 			//add treatment groups
 			LinkedHashSet<String> groups = new LinkedHashSet<String>();
 			LinkedHashMap<String, Set<File>> groupToFile = new LinkedHashMap<String, Set<File>>();
@@ -394,14 +394,6 @@ public class DBProjectFactory {
 				scanRateArr.set(scanRate);
 				sr.setArray(scanRateArr);
 			} else {
-//                IVariableFragment sdur = ff.getChild("scan_duration");
-//                final Array durationarray = sdur.getArray();
-//                final IndexIterator iter = durationarray.getIndexIterator();
-//                double scanDuration = iter.getDoubleNext();
-//                IVariableFragment sr = new VariableFragment(ff, "scan_rate");
-//                ArrayDouble.D0 scanRateArr = new ArrayDouble.D0();
-//                scanRateArr.set(1.0d/scanDuration);
-//                sr.setArray(scanRateArr);
 				if (separationType instanceof GCGC) {
 					try {
 						IVariableFragment scanRateVar = ff.getChild("scan_rate");
@@ -413,22 +405,17 @@ public class DBProjectFactory {
 			}
 
 			ff.save();
-			//                ITreatmentGroupDescriptor tgd = new TreatmentGroupDescriptor();
-			//                tgd.setName(fileToGroup.getMembers(f));
 			icds[i] = DBProjectFactory.getChromatogramDescriptor(new File(ff.getUri()), separationType, detectorType);
-			//                ISampleGroupDescriptor sgd = new SampleGroupDescriptor();
-			//                sgd.setName(icds[i].getDisplayName());
-			//                icds[i].setSampleGroup(sgd);
 			fileToDescriptor.put(f, icds[i]);
 			i++;
 		}
 	}
 
-	private static void addNormalizationDescriptors(Map<String, Object> props,
+	private static void addNormalizationDescriptors(Map<String, Object> props, Map<File, File> importFileMap,
 			LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor) {
 		HashMap<File, INormalizationDescriptor> normalizationDescriptors = (HashMap<File, INormalizationDescriptor>) props.get(DBProjectVisualPanel3.PROP_FILE_TO_NORMALIZATION);
 		for (File file : normalizationDescriptors.keySet()) {
-			fileToDescriptor.get(file).setNormalizationDescriptor(
+			fileToDescriptor.get(importFileMap.get(file)).setNormalizationDescriptor(
 					normalizationDescriptors.get(file));
 		}
 	}

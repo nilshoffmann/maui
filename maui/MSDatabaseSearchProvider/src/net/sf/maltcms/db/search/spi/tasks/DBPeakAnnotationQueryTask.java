@@ -103,10 +103,6 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
 				IScan scan = new Scan1D(Array.factory(descr.getMassValues()), Array.factory(descr.getIntensityValues()), descr.getIndex(), descr.getApexTime());
 				amp.setScan(scan);
 				amp.setMaskedMasses(maskedMasses);
-//                amp.setMaxHits(maxHits);
-//                amp.setScoreThreshold(matchThreshold);
-//                amp.setMaskedMasses(maskedMasses);
-//                amp.setScan(scan);
 				RetentionIndexCalculator ridb = metaboliteDatabaseQueryInput.getRetentionIndexCalculator();
 				AMetabolitePredicate queryPredicate = amp;
 				//System.out.println(queryPredicate.getClass().getName()+" "+queryPredicate);
@@ -114,22 +110,8 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
 				double ri = Double.NaN;
 				//use ri for query
 				if (ridb != null) {
-
-//                    RetentionIndexMatcher ripredicate = new RetentionIndexMatcher();
-//                    ripredicate.setDelegate(amp);
-//                    ripredicate.setMaxHits(maxHits);
-//                    ripredicate.setScoreThreshold(matchThreshold);
-//                    ripredicate.setScan(scan);
-//                    ripredicate.setWindow(riWindow);
 					ri = ridb.getTemperatureProgrammedKovatsIndex(scan.getScanAcquisitionTime());
 					System.out.println("RI database given! Searching in RI window from " + (ri - riWindow) + " to " + (ri + riWindow));
-//                    if (!Double.isNaN(ri)) {
-//                        System.out.println("Using ri predicate!");
-//                        queryPredicate = ripredicate;
-//                        //System.out.println("RI: " + ri + ", RT: " + scan.getScanAcquisitionTime());
-//                        ripredicate.setRetentionIndex(ri);
-//                    }
-
 				} else {
 					System.out.println("No RI database given!");
 				}
@@ -148,46 +130,33 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
 				if (!Double.isNaN(riValue)) {
 					Query query = session.getSODAQuery();
 					query.constrain(IMetabolite.class);
-//                    double allowedMaxValue = ri+riWindow;
-//                    double allowedMinValue = ri-riWindow;
 					query.descend("ri").constrain(ri + riWindow).smaller().and(query.descend("ri").constrain(ri - riWindow).greater());
-//                                    MetaboliteSimilarity ms = new MetaboliteSimilarity(scan,this.matchThreshold,maxHits,true);  
 					candidates = query.execute();
-//                    candidates = session.newQuery(IMetabolite.class).retrieve(new Predicate<IMetabolite>() {
-//
-//                        @Override
-//                        public boolean match(IMetabolite t) {
-//                            return Math.abs(t.getRetentionIndex() - riValue) <= riWindow;
-//                        }
-//                    }, new Comparator<IMetabolite>() {
-//
-//                        @Override
-//                        public int compare(IMetabolite t, IMetabolite t1) {
-//                            return Double.compare(Math.abs(t.getRetentionIndex() - riValue), Math.abs(t.getRetentionIndex() - riValue));
-//                        }
-//                    });
 				} else {
 					System.out.println("Using complete query!");
 					candidates = session.retrieve(IMetabolite.class);
 				}
-//                candidates = session.newQuery(IMetabolite.class).retrieve(queryPredicate);
 				System.out.println("Received " + candidates.size() + " for query!");
-//                queryPredicate.setScoreThreshold(matchThreshold);
 				for (IMetabolite met : candidates) {
 					if (isCancel()) {
 						return new QueryResultList<IPeakAnnotationDescriptor>();
 					}
 					queryPredicate.match(met);
 				}
-//                Collection<IMetabolite> results = session.newQuery(IMetabolite.class).retrieve(queryPredicate);
-				//
 				Map<IMetabolite, Double> resultMap = new LinkedHashMap<IMetabolite, Double>();
 				List<Tuple2D<Double, IMetabolite>> c = new LinkedList<Tuple2D<Double, IMetabolite>>(queryPredicate.getMetabolites());
-				if (Double.isNaN(riValue)) {
+				if (!Double.isNaN(riValue)) {
 					Collections.sort(c, new Comparator<Tuple2D<Double, IMetabolite>>() {
 						@Override
 						public int compare(Tuple2D<Double, IMetabolite> t, Tuple2D<Double, IMetabolite> t1) {
-							return Double.compare(Math.abs(t.getSecond().getRetentionIndex() - riValue), Math.abs(t1.getSecond().getRetentionIndex() - riValue));
+							//check for equality
+							int value = Double.compare(t.getFirst().doubleValue(),t1.getFirst().doubleValue());
+							if(value==0) {
+								//if equal, compare by absolute ri deviation, ascending order in this case is okay, since we want to sort by the smallest ri deviation
+								return Double.compare(Math.abs(t.getSecond().getRetentionIndex() - riValue), Math.abs(t1.getSecond().getRetentionIndex() - riValue));
+							}
+							//otherwise compare by similarites (invert with - to get descending order from highest to lowest)
+							return -value;
 						}
 					});
 				}
