@@ -70,6 +70,7 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         ArrayList<Integer[][]> globalMaximaList = findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
                         int alcanePeaks[] = extractMostFrequentPeaks(globalMaximaList, numberOfMaxima); 
                         annotateAlcanes(peaklist, alcanePeaks, numberOfMaxima);
+                        System.out.println("Done with Annotation of Wash!!");
                     }
                 }
                 else{
@@ -80,31 +81,28 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
             //NOW THAT THE WASH IS DONE, ANNOTATE THE OTHERS USING THE HELP FROM THE WASH
             for (IChromatogramDescriptor chrom : context.getChromatograms()) {
                     getProgressHandle().progress("Annotating peaks on " + chrom.getDisplayName(), cnt);
+                    System.out.println("Clearing Peaks on: " + chrom.getDisplayName());
                     int containerCounter=0;
                     for (Peak1DContainer container : context.getPeaks(chrom)) {
-                        System.out.println("counter of container: " + containerCounter++);
+                        System.out.println("counter of container: " + ++containerCounter);
                         if(isCancel()) {
                                 return;
                         }
                         getProgressHandle().progress("Annotating peaks on container " + container.getDisplayName());
 
-                        ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
+                        //ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
                         
-                        //for all unfound compounds, reset everything
+                        //for compounds, reset everything
                         for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
-                            if(!ipad.getFormula().startsWith("found"))
-                            {
-                                ipad.setSimilarity(Double.NaN);
-                                ipad.setNativeDatabaseId("NA");
-                                ipad.setName("Unknown Compound");
-                                ipad.setFormula("found");
-                                ipad.setDisplayName("Unknown Compound");
-                                ipad.setLibrary("custom");
-                                ipad.setRetentionIndex(Double.NaN);
-                            }
+                            ipad.setSimilarity(Double.NaN);
+                            ipad.setNativeDatabaseId("NA");
+                            ipad.setName("Unknown Compound");
+                            ipad.setFormula("Na");
+                            ipad.setDisplayName("Unknown Compound");
+                            ipad.setLibrary("custom");
+                            ipad.setRetentionIndex(Double.NaN);
                         }
-                        
-                        
+                     
                     }
                     cnt++;
             }
