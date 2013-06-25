@@ -27,6 +27,7 @@
  */
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
+import cross.datastructures.fragments.IFileFragment;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.*;
@@ -258,4 +261,14 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
     public IScanSelectionDescriptor newScanSelectionDescriptor() {
         return new ScanSelectionDescriptor();
     }
+
+	@Override
+	public IChromatogram1D newChromatogram1D(IFileFragment descr) {
+		return new CachingChromatogram1D(descr);
+	}
+
+	@Override
+	public IChromatogram2D newChromatogram2D(IFileFragment chromDescr) {
+		return new CachingChromatogram2D(chromDescr);
+	}
 }

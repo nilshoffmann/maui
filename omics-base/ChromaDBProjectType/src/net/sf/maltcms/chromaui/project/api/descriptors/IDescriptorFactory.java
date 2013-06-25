@@ -27,9 +27,12 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
+import cross.datastructures.fragments.IFileFragment;
 import java.awt.Image;
 import java.io.IOException;
 import java.util.List;
+import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
@@ -44,6 +47,9 @@ import org.openide.loaders.DataObjectNotFoundException;
 public interface IDescriptorFactory {
     public DataObject getDataObject(IResourceDescriptor id) throws DataObjectNotFoundException, IOException;
 
+	public IChromatogram1D newChromatogram1D(IFileFragment chromDescr);
+	public IChromatogram2D newChromatogram2D(IFileFragment chromDescr);
+	
     public IPeakGroupDescriptor newPeakGroupDescriptor(String name);
 
     public ISampleGroupDescriptor newSampleGroupDescriptor(String name);
