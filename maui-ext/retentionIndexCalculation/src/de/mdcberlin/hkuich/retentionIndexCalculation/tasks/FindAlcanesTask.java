@@ -42,58 +42,68 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
         getProgressHandle().start(context.getChromatograms().size());
 	int cnt = 1;
         try {
+            
+            //FIND A WASH FIRST TO ANNOTATE IT BEFORE ANNOTATING ALL THE OTHERS!
+            for (IChromatogramDescriptor chrom : context.getChromatograms()) {
+                if(chrom.getDisplayName().contains("wash") || chrom.getDisplayName().contains("Wash")){
+                    System.out.println("Finding Alcanes in container: " + chrom.getDisplayName());
+                    double[] alcaneMasses = {71.0,85.0,99.0};
+                    int numberOfMaxima = 9;                  
+
+                    for(Peak1DContainer container : context.getPeaks(chrom))
+                    {    
+                        //Completely clear previous annotation
+                        for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
+                            if(isCancel()) {
+                                    return;
+                            }
+                            ipad.setSimilarity(Double.NaN);
+                            ipad.setNativeDatabaseId("NA");
+                            ipad.setName("Unknown Compound");
+                            ipad.setFormula("NA");
+                            ipad.setDisplayName("Unknown Compound");
+                            ipad.setLibrary("custom");
+                            ipad.setRetentionIndex(Double.NaN);
+                        }
+                        
+                        ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
+                        ArrayList<Integer[][]> globalMaximaList = findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
+                        int alcanePeaks[] = extractMostFrequentPeaks(globalMaximaList, numberOfMaxima); 
+                        annotateAlcanes(peaklist, alcanePeaks, numberOfMaxima);
+                    }
+                }
+                else{
+                    System.out.println("This is not a wash: " + chrom.getDisplayName());
+                }
+            }
+            
+            //NOW THAT THE WASH IS DONE, ANNOTATE THE OTHERS USING THE HELP FROM THE WASH
             for (IChromatogramDescriptor chrom : context.getChromatograms()) {
                     getProgressHandle().progress("Annotating peaks on " + chrom.getDisplayName(), cnt);
-
+                    int containerCounter=0;
                     for (Peak1DContainer container : context.getPeaks(chrom)) {
+                        System.out.println("counter of container: " + containerCounter++);
                         if(isCancel()) {
                                 return;
                         }
                         getProgressHandle().progress("Annotating peaks on container " + container.getDisplayName());
 
-                        System.out.println("Resetting peak match information!");
+                        ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
+                        
+                        //for all unfound compounds, reset everything
                         for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
-                                if(isCancel()) {
-                                        return;
-                                }
+                            if(!ipad.getFormula().startsWith("found"))
+                            {
                                 ipad.setSimilarity(Double.NaN);
                                 ipad.setNativeDatabaseId("NA");
                                 ipad.setName("Unknown Compound");
-                                ipad.setFormula("NA");
+                                ipad.setFormula("found");
                                 ipad.setDisplayName("Unknown Compound");
                                 ipad.setLibrary("custom");
                                 ipad.setRetentionIndex(Double.NaN);
+                            }
                         }
-
-                        //container.getMembers() contains all the peaks. 
-                        ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
-                        System.out.println("Finding Alcanes in container: " + container.getDisplayName());
-                        int peakIndex = 0;
-
-                        for (IPeakAnnotationDescriptor peak : peaklist) { 
-                            IScan scan = new Scan1D(Array.factory(peak.getMassValues()), Array.factory(peak.getIntensityValues()), peak.getIndex(), peak.getApexTime());
-
-//                              AMetabolitePredicate amp = predicate.copy();
-//				amp.setMaxHits(5);
-//                              amp.setScoreThreshold(0.9);         
-//				amp.setScan(scan);
-//                              AMetabolitePredicate queryPredicate = amp;                                
-
-                            double similarity = cosineSimilarity(Array.factory(peak.getIntensityValues()),Array.factory(peak.getIntensityValues()));
-                            /*System.out.println("Array.factory(peak.getMassValues()): " + Array.factory(peak.getMassValues()));
-                            System.out.println("Array.factory(peak.getIntensityValues()): " + Array.factory(peak.getIntensityValues()));
-                            System.out.println("CosineSimilarity of identical peaks: " + similarity);
-                            System.out.println("peak.getIndex(): " + peak.getIndex()); 
-                            System.out.println("peakIndex: " + peakIndex); */
-                            peakIndex++;
-                        }
-                            
-                        double[] alcaneMasses = {71.0,85.0,99.0};
-                        int numberOfMaxima = 9;
-
-                        ArrayList<Integer[][]> globalMaximaList = findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
-                        int alcanePeaks[] = extractMostFrequentPeaks(globalMaximaList, numberOfMaxima); 
-                        annotateAlcanes(peaklist, alcanePeaks, numberOfMaxima);
+                        
                         
                     }
                     cnt++;
