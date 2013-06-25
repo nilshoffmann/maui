@@ -4,6 +4,7 @@ import cross.datastructures.tuple.Tuple2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
@@ -90,8 +91,9 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         double[] alcaneMasses = {71.0,85.0,99.0};
                         int numberOfMaxima = 9;
 
-                        findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
-                            
+                        ArrayList<Integer[][]> globalMaximaList = findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
+                        extractMostFrequentPeaks(globalMaximaList, numberOfMaxima);    
+                        
                     }
                     cnt++;
             }
@@ -100,12 +102,116 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
         }
     }
     
-    private ArrayList<Integer[][]> findNGlobalMaxima(final ArrayList<IPeakAnnotationDescriptor> peaklist, double[] NMasses, int numberOfMaxima) {
+    
+    private class Candidate implements Comparable<Candidate> {
+        int counter;
+        int peakNumber;
         
-        System.out.println("Entered Function");
-        for(int f = 0; f<NMasses.length;f++){
-            System.out.println("NMasses: " + NMasses[f]);
+        Candidate(int peakNumber){
+            this.peakNumber = peakNumber;
+            this.counter = 1;
         }
+        private int getCounter(){
+            return this.counter;
+        }
+        private void setCounter(int counter){
+            this.counter = counter;
+        }
+        private int getPeakNumber(){
+            return this.peakNumber;
+        }
+        private void setPeakNumber(int peakNumber){
+            this.peakNumber = peakNumber;
+        }
+        private void incrementCounter(){
+            counter = counter + 1;
+        }
+
+        @Override
+        public int compareTo(Candidate o) {
+            
+            int compareCounter = ((Candidate) o).getCounter();
+            //return this.counter - compareCounter; //ascending
+            return compareCounter - this.counter; //descending
+        }
+    }
+    
+    
+    private int[] extractMostFrequentPeaks(ArrayList<Integer[][]> maximaList, int numberOfMaxima) {
+        int[] mostFrequentPeaks = new int[numberOfMaxima];
+        
+        List<Candidate> candidates = new ArrayList<Candidate>(); 
+     
+        //Go through the maxima list, one massLane at a time
+        for(Integer[][] array : maximaList)
+        {            
+            //Go through the massLane, one peakNumber at a time
+            for(int i=0;i<array.length;i++) {
+                System.out.println(array[i][0]);
+                boolean found = false;
+                int newPeakNumber = 0;
+                //if the peakNumber is not yet present, add it to a list, if so, update the counter of the peakNumber in the list by one
+                if(!candidates.isEmpty())
+                {
+                    for(Candidate candidate : candidates){     
+                        if(!found){
+                            if(array[i][0] == candidate.getPeakNumber())
+                            {
+                                found = true;
+                                candidate.incrementCounter();
+                            }     
+                        }
+                    }
+                    if(!found){
+                        newPeakNumber = array[i][0];
+                        candidates.add(new Candidate(newPeakNumber));
+                    }
+                } else {
+                    newPeakNumber = array[i][0];
+                    candidates.add(new Candidate(newPeakNumber));
+                }
+            }       
+        }
+        
+        System.out.println();
+        System.out.println();
+        for(Candidate candidate : candidates) {
+            System.out.println(candidate.peakNumber + " " + candidate.counter);
+        }
+        System.out.println();
+        System.out.println();
+        
+        Collections.sort(candidates);
+        
+        System.out.println();
+        System.out.println();
+        for(Candidate candidate : candidates) {
+            System.out.println(candidate.peakNumber + " " + candidate.counter);
+        }
+        System.out.println();
+        System.out.println();
+        
+        for(int i=0; i<numberOfMaxima;i++){
+            mostFrequentPeaks[i] = candidates.get(i).getPeakNumber();
+        }
+        
+        System.out.println("mostFrequentPeaks unsorted:");
+        for(int i=0; i<numberOfMaxima;i++){
+            System.out.println(mostFrequentPeaks[i]);
+        } 
+        
+        java.util.Arrays.sort(mostFrequentPeaks);
+                
+        System.out.println("mostFrequentPeaks sorted:");
+        for(int i=0; i<numberOfMaxima;i++){
+            System.out.println(mostFrequentPeaks[i]);
+        } 
+        
+        return mostFrequentPeaks;
+        
+    }
+    
+    private ArrayList<Integer[][]> findNGlobalMaxima(final ArrayList<IPeakAnnotationDescriptor> peaklist, double[] NMasses, int numberOfMaxima) {
         
         //put the massLanes into an int array, each row being one mass lane, each column being one peak, the values being ints of intensity
         int[][] NMassMatrix = new int[NMasses.length][peaklist.size()];        
@@ -130,36 +236,15 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                 NMassMatrix[massLane][peakCounter] = currentMassLaneIntensity;
             }                        
             peakCounter++;
-        }
-        
-        //QualityControl
-        for(int i = 0; i < NMasses.length; i++)
-        {
-            for(int j = 0; j<peaklist.size();j++)
-            {
-                System.out.print(NMassMatrix[i][j] + "\t");
-            }
-            System.out.println();
-        }       
+        }     
         
         //now iterate over the three arrays an keep the indeces of the nine highest numbers, then sort them ascendingly, then print them
-        Integer maxima[][] = new Integer[numberOfMaxima][2];
+        
         ArrayList<Integer[][]> resultList = new ArrayList<Integer[][]>();
-        
-        
-        
-//        for(int x = 0; x < numberOfMaxima; x++)
-//        {
-//            for(int y = 0; y<2;y++)
-//            {
-//                System.out.print(maxima[x][y] + "\t");
-//            }
-//            System.out.println();
-//        }
-//        System.out.println("to here?");
         
         for(int i = 0; i < NMasses.length; i++)
         {
+            Integer maxima[][] = new Integer[numberOfMaxima][2];
             //set array to 0 in all cases
             for(int x = 0; x < numberOfMaxima; x++)
             {
@@ -178,16 +263,7 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                     maxima[numberOfMaxima-1][0] = j;
                     //save actual value
                     maxima[numberOfMaxima-1][1] = NMassMatrix[i][j];
-                    
-//                    for(int x = 0; x < numberOfMaxima; x++)
-//                    {
-//                        for(int y = 0; y<2;y++)
-//                        {
-//                            System.out.print(maxima[x][y] + "\t");
-//                        }
-//                        System.out.println();
-//                    }
-                    
+
                     Arrays.sort(maxima, new Comparator<Integer[]>()
                     {
                         @Override
@@ -198,15 +274,6 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             return numOfKeys2.compareTo(numOfKeys1);
                         }
                     });
-                    
-//                    for(int x = 0; x < numberOfMaxima; x++)
-//                    {
-//                        for(int y = 0; y<2;y++)
-//                        {
-//                            System.out.print(maxima[x][y] + "\t");
-//                        }
-//                        System.out.println();
-//                    }
                 }
             }
             Arrays.sort(maxima, new Comparator<Integer[]>()
@@ -218,22 +285,10 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                     Integer numOfKeys2 = int2[0];
                     return numOfKeys1.compareTo(numOfKeys2);
                 }
-            });                    
-
-            System.out.println("maximaArray for Number: " + i + " and massLame: " + NMasses[i]);
-            for(int x = 0; x < numberOfMaxima; x++)
-            {
-                for(int y = 0; y<2;y++)
-                {
-                    System.out.print(maxima[x][y] + "\t");
-                }
-                System.out.println();
-            }
-            System.out.println();
-            System.out.println();
+            });  
             resultList.add(maxima);
         }
-       
+        
         return resultList;
     }
     
