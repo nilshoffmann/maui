@@ -92,13 +92,115 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         int numberOfMaxima = 9;
 
                         ArrayList<Integer[][]> globalMaximaList = findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
-                        extractMostFrequentPeaks(globalMaximaList, numberOfMaxima);    
+                        int alcanePeaks[] = extractMostFrequentPeaks(globalMaximaList, numberOfMaxima); 
+                        annotateAlcanes(peaklist, alcanePeaks, numberOfMaxima);
                         
                     }
                     cnt++;
             }
         } finally {
                 getProgressHandle().finish();
+        }
+    }
+
+    
+    private void annotateAlcanes(final ArrayList<IPeakAnnotationDescriptor> peaklist, int[] peakNumbers, int numberOfMaxima)
+    {
+        int counterPeaklist = 0;
+        int counterPeaknumbers = 0;
+        
+        for(IPeakAnnotationDescriptor peak : peaklist) {
+            if(counterPeaknumbers<numberOfMaxima) {
+                if(peakNumbers[counterPeaknumbers] == counterPeaklist){
+                    System.out.println("counterPeakList: " + counterPeaklist);
+                    switch(counterPeaknumbers){
+                        case 0: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c10");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c10");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN); 
+                            break;
+                        case 1: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c12");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c12");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);
+                            break;
+                        case 2: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c15");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c15");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);
+                            break;
+                        case 3: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c17");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c17");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);
+                            break;
+                        case 4: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c19");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c19");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);
+                            break;
+                        case 5: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c22");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c22");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);
+                            break;
+                        case 6: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c28");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c28");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);
+                            break;
+                        case 7: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c32");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c32");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);
+                            break;
+                        case 8: 
+                            peak.setSimilarity(Double.NaN);
+                            peak.setNativeDatabaseId("NA");
+                            peak.setName("c36");
+                            peak.setFormula("found");
+                            peak.setDisplayName("c36");
+                            peak.setLibrary("custom");
+                            peak.setRetentionIndex(Double.NaN);  
+                            break;
+                        };
+                        
+                    counterPeaknumbers++;
+                }
+                counterPeaklist++;
+            }            
         }
     }
     
@@ -135,6 +237,8 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
             return compareCounter - this.counter; //descending
         }
     }
+    
+    
     
     
     private int[] extractMostFrequentPeaks(ArrayList<Integer[][]> maximaList, int numberOfMaxima) {
