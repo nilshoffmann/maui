@@ -25,7 +25,6 @@ public class RICalculationPanel extends javax.swing.JPanel {
     }
     
     public String getAlcaneMix(){
-        System.out.println("Print the alcane mix: " + (String) jComboBox1.getSelectedItem());
         return (String) jComboBox1.getSelectedItem(); 
     }
     

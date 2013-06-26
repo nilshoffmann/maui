@@ -38,6 +38,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -59,6 +60,7 @@ public final class RetentionIndexCalculationEmbeddedPipeline implements ActionLi
 	public RetentionIndexCalculationEmbeddedPipeline(IChromAUIProject context) {
 		this.context = context;
                 this.predicate = new net.sf.maltcms.db.search.spi.similarities.Cosine();
+                
 	}
 
 	@Override
@@ -83,12 +85,13 @@ public final class RetentionIndexCalculationEmbeddedPipeline implements ActionLi
             
             String alcaneMix;
             if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {                
-                  alcaneMix= riPanel.getAlcaneMix() + "soon to be filled";
+                  alcaneMix= riPanel.getAlcaneMix();
                  System.out.println(alcaneMix);
             } else {
                 return;
             }
             
+         
             findAlcanes(context, predicate, alcaneMix);
             
 	}

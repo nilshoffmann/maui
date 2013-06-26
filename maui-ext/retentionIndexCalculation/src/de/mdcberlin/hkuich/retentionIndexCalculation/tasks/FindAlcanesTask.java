@@ -20,6 +20,7 @@ import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -55,15 +56,25 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                 if(chrom.getDisplayName().contains("wash") || chrom.getDisplayName().contains("Wash")){
                     System.out.println("Finding Alcanes in container: " + chrom.getDisplayName());
                     double[] alcaneMasses = {71.0,85.0,99.0};
-                    int numberOfMaxima = 9;                  
-
+                    int numberOfMaxima = 9;  
+                    
                     for(Peak1DContainer container : context.getPeaks(chrom))
                     {    
-                        //Completely clear previous annotation
-                        for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
-                            if(isCancel()) {
-                                    return;
+                        ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
+                        
+                        Collections.sort(peaklist, new Comparator<IPeakAnnotationDescriptor>(){
+
+                            @Override
+                            public int compare(IPeakAnnotationDescriptor o1, IPeakAnnotationDescriptor o2) {
+                                if(o1.getApexTime()>o2.getApexTime()) return 1;
+                                if(o1.getApexTime()<o2.getApexTime()) return -1;
+                                return 0;
                             }
+                            
+                        });
+                        
+                        //Completely clear previous annotation
+                        for (IPeakAnnotationDescriptor ipad : peaklist) {
                             ipad.setSimilarity(Double.NaN);
                             ipad.setNativeDatabaseId("NA");
                             ipad.setName("Unknown Compound");
@@ -71,12 +82,10 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             ipad.setDisplayName("Unknown Compound");
                             ipad.setLibrary("custom");
                             ipad.setRetentionIndex(Double.NaN);
-                        }
+                        }                     
                         
-                        ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
                         ArrayList<Integer[][]> globalMaximaList = findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
                         int alcanePeaks[] = extractMostFrequentPeaks(globalMaximaList, numberOfMaxima); 
-                        
                         
                         alcaneSpectra = annotateAlcanesWash(peaklist, alcanePeaks, numberOfMaxima);                    
                         System.out.println("Done with Annotation of Wash!!");
@@ -88,7 +97,43 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         System.out.println("the name of the peak/first alcane is: " + peaklist.get(alcanePeaks[0]).getDisplayName());
                         System.out.println("the retentionTime of the peak/first alcane is: " + peaklist.get(alcanePeaks[0]).getApexTime());
                         System.out.println();
+                        
+                        System.out.println("start RI writing...");
+                        //populate alcaneAtoms
+                        
+                        int[] alcaneAtoms = {10,12,15,18,19,22,28,32,36};
+                        if(alcaneMix.startsWith("C17 Mix")){
+                            alcaneAtoms[3] = 17;
+                        } 
+                        
+                        double[] alcaneRTs = getAlcaneRTs(peaklist, alcanePeaks, numberOfMaxima);
+                        
+                        /*for(int b =0; b < alcaneAtoms.length; b++){
+                            System.out.println(alcaneAtoms[b]);
+                        }
+                        for(int b =0; b < alcaneRTs.length; b++){
+                            System.out.println(alcaneRTs[b]);
+                        }*/
+                        
+                        RetentionIndexCalculator riCalc = new RetentionIndexCalculator(alcaneAtoms, alcaneRTs);
+                        
+                        //Set RI
+                        int count = 0;
+                        for (IPeakAnnotationDescriptor peak : peaklist) {
+                            double currentRT = peak.getApexTime();
+                            double currentRI = riCalc.getTemperatureProgrammedKovatsIndex(currentRT);
+                            if(alcanePeaks[alcanePeaks.length-1] == count && Double.isNaN(currentRI)) {
+                                System.out.println("Caught! " +currentRT+ " "+currentRI + " "+ 3600 + " " + count);
+                                currentRI = 3600;
+                            }
+                            peak.setRetentionIndex(currentRI);
+                            System.out.println("current RT = " + currentRT + "   ---   current RI = " + currentRI);
+                            count++;
+                        }
+                        System.out.println("ended RI writing...");
                     }
+                    
+                    
                 }
                 else{
                     System.out.println("This is not a wash: " + chrom.getDisplayName());
@@ -158,6 +203,20 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
         } finally {
                 getProgressHandle().finish();
         }
+    }
+    
+    private double[] getAlcaneRTs(final ArrayList<IPeakAnnotationDescriptor> peaklist, int[] alcanePeaks, int numberOfMaxima) {
+        double[] alcaneRTs = new double[numberOfMaxima];
+        int counter = 0;
+        int i = 0;
+        for(IPeakAnnotationDescriptor peak : peaklist){            
+            if(i<numberOfMaxima && alcanePeaks[i] == counter){
+                alcaneRTs[i] = peak.getApexTime();
+                i++;
+            }
+            counter ++;
+        }        
+        return alcaneRTs;
     }
 
     private void annotateAlcanesSamples(final ArrayList<IPeakAnnotationDescriptor> peaklist, int rtWindow, double[] alcaneRTs, List<int[]> alcaneSpectra) {
