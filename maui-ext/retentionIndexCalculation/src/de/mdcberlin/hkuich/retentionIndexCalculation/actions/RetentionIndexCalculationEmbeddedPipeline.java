@@ -85,14 +85,16 @@ public final class RetentionIndexCalculationEmbeddedPipeline implements ActionLi
             if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {                
                   alcaneMix= riPanel.getAlcaneMix() + "soon to be filled";
                  System.out.println(alcaneMix);
+            } else {
+                return;
             }
             
-            findAlcanes(context, predicate);
+            findAlcanes(context, predicate, alcaneMix);
             
 	}
         
-        private void findAlcanes(IChromAUIProject context, AMetabolitePredicate predicate) {
-            FindAlcanesTask fat = new FindAlcanesTask(context, predicate);
+        private void findAlcanes(IChromAUIProject context, AMetabolitePredicate predicate, String alcaneMix) {
+            FindAlcanesTask fat = new FindAlcanesTask(context, predicate, alcaneMix);
             FindAlcanesTask.createAndRun("Find alcanes in "+context.getProjectDirectory().getName(), fat);
         }
         

@@ -37,6 +37,7 @@ import ucar.ma2.MAVector;
 public class FindAlcanesTask extends AProgressAwareRunnable implements Serializable {
     private final IChromAUIProject context;
     private final AMetabolitePredicate predicate;
+    private final String alcaneMix;
     
     @Override
     public void run() {
@@ -189,8 +190,14 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             peaklist.get(maxIndex).setDisplayName("c15"); 
                             break;
                         case 3: 
-                            peaklist.get(maxIndex).setName("c17");                            
-                            peaklist.get(maxIndex).setDisplayName("c17"); 
+                            if(alcaneMix.startsWith("C17 Mix")){
+                                peaklist.get(maxIndex).setName("c17");                            
+                                peaklist.get(maxIndex).setDisplayName("c17"); 
+                            }
+                            if(alcaneMix.startsWith("C18 Mix")){
+                                peaklist.get(maxIndex).setName("c18");                            
+                                peaklist.get(maxIndex).setDisplayName("c18"); 
+                            }
                             break;
                         case 4: 
                             peaklist.get(maxIndex).setName("c19");                            
@@ -307,8 +314,14 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 3: 
-                            peak.setName("c17");
-                            peak.setDisplayName("c17");
+                            if(alcaneMix.startsWith("C17 Mix")){
+                                peak.setName("c17");
+                                peak.setDisplayName("c17");
+                            }
+                            if(alcaneMix.startsWith("C18 Mix")){
+                                peak.setName("c18");
+                                peak.setDisplayName("c18");
+                            }
                             alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 4: 
