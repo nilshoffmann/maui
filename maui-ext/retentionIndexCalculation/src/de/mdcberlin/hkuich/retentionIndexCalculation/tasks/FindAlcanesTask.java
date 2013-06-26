@@ -1,5 +1,6 @@
 package de.mdcberlin.hkuich.retentionIndexCalculation.tasks;
 
+import com.db4o.foundation.ArrayFactory;
 import cross.datastructures.tuple.Tuple2D;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,6 +40,11 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
     
     @Override
     public void run() {
+        
+        double[] alcaneRetentionTimes = new double[9];
+        int alcaneRetentionTimeWindow = 13;
+        List<int[]> alcaneSpectra = new ArrayList<int[]>();
+        
         getProgressHandle().start(context.getChromatograms().size());
 	int cnt = 1;
         try {
@@ -69,8 +75,18 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
                         ArrayList<Integer[][]> globalMaximaList = findNGlobalMaxima(peaklist, alcaneMasses, numberOfMaxima);
                         int alcanePeaks[] = extractMostFrequentPeaks(globalMaximaList, numberOfMaxima); 
-                        annotateAlcanes(peaklist, alcanePeaks, numberOfMaxima);
+                        
+                        
+                        alcaneSpectra = annotateAlcanesWash(peaklist, alcanePeaks, numberOfMaxima);                    
                         System.out.println("Done with Annotation of Wash!!");
+                        
+                        for(int i = 0; i<alcanePeaks.length;i++) {
+                            alcaneRetentionTimes[i] = peaklist.get(alcanePeaks[i]).getApexTime();
+                        }
+
+                        System.out.println("the name of the peak/first alcane is: " + peaklist.get(alcanePeaks[0]).getDisplayName());
+                        System.out.println("the retentionTime of the peak/first alcane is: " + peaklist.get(alcanePeaks[0]).getApexTime());
+                        System.out.println();
                     }
                 }
                 else{
@@ -80,6 +96,7 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
             
             //NOW THAT THE WASH IS DONE, ANNOTATE THE OTHERS USING THE HELP FROM THE WASH
             for (IChromatogramDescriptor chrom : context.getChromatograms()) {
+                if(!chrom.getDisplayName().contains("wash") && !chrom.getDisplayName().contains("Wash")){
                     getProgressHandle().progress("Annotating peaks on " + chrom.getDisplayName(), cnt);
                     System.out.println("Clearing Peaks on: " + chrom.getDisplayName());
                     int containerCounter=0;
@@ -90,10 +107,21 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         }
                         getProgressHandle().progress("Annotating peaks on container " + container.getDisplayName());
 
-                        //ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
+                        ArrayList<IPeakAnnotationDescriptor> peaklist = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());                       
+                        
+                        Collections.sort(peaklist, new Comparator<IPeakAnnotationDescriptor>(){
+
+                            @Override
+                            public int compare(IPeakAnnotationDescriptor o1, IPeakAnnotationDescriptor o2) {
+                                if(o1.getApexTime()>o2.getApexTime()) return 1;
+                                if(o1.getApexTime()<o2.getApexTime()) return -1;
+                                return 0;
+                            }
+                            
+                        });
                         
                         //for compounds, reset everything
-                        for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
+                        for (IPeakAnnotationDescriptor ipad : peaklist) {
                             ipad.setSimilarity(Double.NaN);
                             ipad.setNativeDatabaseId("NA");
                             ipad.setName("Unknown Compound");
@@ -101,107 +129,212 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             ipad.setDisplayName("Unknown Compound");
                             ipad.setLibrary("custom");
                             ipad.setRetentionIndex(Double.NaN);
+             
+                            //System.out.println(ipad.getApexTime());
+                        }                        
+                        /*for(int[] spectra : alcaneSpectra){
+                            for(int g = 0; g<spectra.length;g++){
+                                System.out.print(spectra[g] + " ");
+                            }
+                            System.out.print(spectra.length);
+                            System.out.println("");
                         }
+                        
+                        System.out.println("AlcaneRetentionTimesArray");
+                        for(int g = 0; g<alcaneRetentionTimes.length;g++){
+                                System.out.print(alcaneRetentionTimes[g] + " ");
+                            }
+                        System.out.print(alcaneRetentionTimes.length);
+                            System.out.println("");*/
+                        
+                        
+                        annotateAlcanesSamples(peaklist, alcaneRetentionTimeWindow, alcaneRetentionTimes, alcaneSpectra);
                      
                     }
                     cnt++;
+                }
             }
         } finally {
                 getProgressHandle().finish();
         }
     }
 
+    private void annotateAlcanesSamples(final ArrayList<IPeakAnnotationDescriptor> peaklist, int rtWindow, double[] alcaneRTs, List<int[]> alcaneSpectra) {
+        
+        int maxIndex = 0; 
+        
+        for(int i = 0; i<alcaneRTs.length;i++){
+            System.out.println("alcane number: " + i);
+            maxIndex = cosineInWindow(i,findIndexByRetentionTime(peaklist, alcaneRTs[i]-rtWindow), findIndexByRetentionTime(peaklist, alcaneRTs[i] + rtWindow), peaklist, alcaneSpectra);
+            System.out.println("alcane number: " + i + "end");
+            System.out.println("\t\tcurrentMaxIndex would be: " + maxIndex);
+            
+            peaklist.get(maxIndex).setSimilarity(Double.NaN);
+            peaklist.get(maxIndex).setNativeDatabaseId("NA");
+            peaklist.get(maxIndex).setFormula("found");
+            peaklist.get(maxIndex).setLibrary("custom");
+            peaklist.get(maxIndex).setRetentionIndex(Double.NaN); 
+            //actually annotate the peaks
+            switch(i){
+                        case 0:                             
+                            peaklist.get(maxIndex).setName("c10");                            
+                            peaklist.get(maxIndex).setDisplayName("c10");                            
+                            break;
+                        case 1: 
+                            peaklist.get(maxIndex).setName("c12");                            
+                            peaklist.get(maxIndex).setDisplayName("c12"); 
+                            break;
+                        case 2: 
+                            peaklist.get(maxIndex).setName("c15");                            
+                            peaklist.get(maxIndex).setDisplayName("c15"); 
+                            break;
+                        case 3: 
+                            peaklist.get(maxIndex).setName("c17");                            
+                            peaklist.get(maxIndex).setDisplayName("c17"); 
+                            break;
+                        case 4: 
+                            peaklist.get(maxIndex).setName("c19");                            
+                            peaklist.get(maxIndex).setDisplayName("c19"); 
+                            break;
+                        case 5: 
+                            peaklist.get(maxIndex).setName("c22");                            
+                            peaklist.get(maxIndex).setDisplayName("c22"); 
+                            break;
+                        case 6: 
+                            peaklist.get(maxIndex).setName("c28");                            
+                            peaklist.get(maxIndex).setDisplayName("c28"); 
+                            break;
+                        case 7: 
+                            peaklist.get(maxIndex).setName("c32");                            
+                            peaklist.get(maxIndex).setDisplayName("c32"); 
+                            break;
+                        case 8: 
+                            peaklist.get(maxIndex).setName("c36");                            
+                            peaklist.get(maxIndex).setDisplayName("c36"); 
+                            break;
+                        };
+                    
+        }   
+
+
+    }
     
-    private void annotateAlcanes(final ArrayList<IPeakAnnotationDescriptor> peaklist, int[] peakNumbers, int numberOfMaxima)
+    private int cosineInWindow(int alcaneNumber, int windowStart, int windowEnd, final ArrayList<IPeakAnnotationDescriptor> peaklist, List<int[]> alcaneSpectra){
+        
+        if(windowStart < 0){
+            windowStart = 0;
+        }        
+        if(windowEnd > peaklist.size()){
+            windowEnd = peaklist.size();
+        }        
+        if(windowEnd < windowStart)
+        {
+            windowEnd = peaklist.size();
+        }
+
+        List<IPeakAnnotationDescriptor> peakSubList = new ArrayList<IPeakAnnotationDescriptor>(peaklist.subList(windowStart, windowEnd));
+        System.out.println("cosineSimilarity: start at " + windowStart);
+        double maxSim = 0.0d;
+        int maxIndex = 0;
+        for(IPeakAnnotationDescriptor peak : peakSubList){    
+            double currentSim = cosineSimilarity(Array.factory(alcaneSpectra.get(alcaneNumber)), Array.factory(peak.getIntensityValues())); 
+            currentSim = currentSim * peak.getArea();
+            if(currentSim > maxSim)
+            {
+                maxSim = currentSim;
+                maxIndex = findExactIndexByRetentionTime(peaklist,peak.getApexTime());
+            }
+        }
+        System.out.println("maxSim: " + maxSim);
+        System.out.println("cosineSimilarity: end at " + windowEnd);
+        return maxIndex;
+    }
+    
+    private int findExactIndexByRetentionTime(final ArrayList<IPeakAnnotationDescriptor> peaklist, double retentionTime){
+        int counter = 0;
+        for(IPeakAnnotationDescriptor peak : peaklist){
+            if(peak.getApexTime() == retentionTime)
+            {
+                return counter;
+            }
+            counter++;
+        }
+        return 0;
+    }
+    
+    private int findIndexByRetentionTime(final ArrayList<IPeakAnnotationDescriptor> peaklist, double retentionTime){
+        int counter = 0;
+        for(IPeakAnnotationDescriptor peak : peaklist){
+            if(peak.getApexTime() > retentionTime)
+            {
+                return counter;
+            }
+            counter++;
+        }
+        return 0;
+    }
+    
+    private List<int[]> annotateAlcanesWash(final ArrayList<IPeakAnnotationDescriptor> peaklist, int[] peakNumbers, int numberOfMaxima)
     {
         int counterPeaklist = 0;
         int counterPeaknumbers = 0;
+        
+        List<int[]> alcaneSpectra = new ArrayList<int[]>();
         
         for(IPeakAnnotationDescriptor peak : peaklist) {
             if(counterPeaknumbers<numberOfMaxima) {
                 if(peakNumbers[counterPeaknumbers] == counterPeaklist){
                     System.out.println("counterPeakList: " + counterPeaklist);
+                    peak.setLibrary("custom");
+                    peak.setRetentionIndex(Double.NaN);
+                    peak.setFormula("found");
+                    peak.setSimilarity(Double.NaN);
+                    peak.setNativeDatabaseId("NA");
                     switch(counterPeaknumbers){
-                        case 0: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
-                            peak.setName("c10");
-                            peak.setFormula("found");
-                            peak.setDisplayName("c10");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN); 
+                        case 0:                             
+                            peak.setName("c10");                            
+                            peak.setDisplayName("c10");                             
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 1: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c12");
-                            peak.setFormula("found");
                             peak.setDisplayName("c12");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 2: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c15");
-                            peak.setFormula("found");
                             peak.setDisplayName("c15");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 3: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c17");
-                            peak.setFormula("found");
                             peak.setDisplayName("c17");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 4: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c19");
-                            peak.setFormula("found");
                             peak.setDisplayName("c19");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 5: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c22");
-                            peak.setFormula("found");
                             peak.setDisplayName("c22");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 6: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c28");
-                            peak.setFormula("found");
                             peak.setDisplayName("c28");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 7: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c32");
-                            peak.setFormula("found");
                             peak.setDisplayName("c32");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         case 8: 
-                            peak.setSimilarity(Double.NaN);
-                            peak.setNativeDatabaseId("NA");
                             peak.setName("c36");
-                            peak.setFormula("found");
                             peak.setDisplayName("c36");
-                            peak.setLibrary("custom");
-                            peak.setRetentionIndex(Double.NaN);  
+                            alcaneSpectra.add(peak.getIntensityValues());
                             break;
                         };
                         
@@ -210,6 +343,8 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                 counterPeaklist++;
             }            
         }
+        
+        return alcaneSpectra;
     }
     
     
@@ -284,40 +419,40 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                 }
             }       
         }
-        
+        /*
         System.out.println();
         System.out.println();
         for(Candidate candidate : candidates) {
             System.out.println(candidate.peakNumber + " " + candidate.counter);
         }
         System.out.println();
-        System.out.println();
+        System.out.println();*/
         
         Collections.sort(candidates);
         
-        System.out.println();
+        /*System.out.println();
         System.out.println();
         for(Candidate candidate : candidates) {
             System.out.println(candidate.peakNumber + " " + candidate.counter);
         }
         System.out.println();
-        System.out.println();
+        System.out.println();*/
         
         for(int i=0; i<numberOfMaxima;i++){
             mostFrequentPeaks[i] = candidates.get(i).getPeakNumber();
         }
         
-        System.out.println("mostFrequentPeaks unsorted:");
+        /*System.out.println("mostFrequentPeaks unsorted:");
         for(int i=0; i<numberOfMaxima;i++){
             System.out.println(mostFrequentPeaks[i]);
-        } 
+        } */
         
         java.util.Arrays.sort(mostFrequentPeaks);
                 
-        System.out.println("mostFrequentPeaks sorted:");
+        /*System.out.println("mostFrequentPeaks sorted:");
         for(int i=0; i<numberOfMaxima;i++){
             System.out.println(mostFrequentPeaks[i]);
-        } 
+        } */
         
         return mostFrequentPeaks;
         
