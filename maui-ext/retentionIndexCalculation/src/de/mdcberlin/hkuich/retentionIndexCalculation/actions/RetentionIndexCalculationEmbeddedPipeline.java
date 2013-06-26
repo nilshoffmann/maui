@@ -28,6 +28,7 @@
 package de.mdcberlin.hkuich.retentionIndexCalculation.actions;
 
 import de.mdcberlin.hkuich.retentionIndexCalculation.tasks.FindAlcanesTask;
+import de.mdcberlin.hkuich.retentionIndexCalculation.ui.RICalculationPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -38,6 +39,8 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 
 @Slf4j
 @ActionID(
@@ -64,6 +67,24 @@ public final class RetentionIndexCalculationEmbeddedPipeline implements ActionLi
 //		Task.createAndRun("Run Embedded Pipeline", t);
             if(context.getChromatograms().isEmpty()) {
                 return;
+            }
+            
+            RICalculationPanel riPanel = new RICalculationPanel(context);
+            NotifyDescriptor nd = new NotifyDescriptor(
+                riPanel, // instance of your panel
+                "Select Alcane Mix", // title of the dialog
+                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+                null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+                // otherwise specify options as:
+                //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                NotifyDescriptor.OK_OPTION // default option is "Yes"
+                );
+            
+            String alcaneMix;
+            if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {                
+                  alcaneMix= riPanel.getAlcaneMix() + "soon to be filled";
+                 System.out.println(alcaneMix);
             }
             
             findAlcanes(context, predicate);
