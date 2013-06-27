@@ -2,6 +2,8 @@ package de.mdcberlin.hkuich.retentionIndexCalculation.tasks;
 
 import com.db4o.foundation.ArrayFactory;
 import cross.datastructures.tuple.Tuple2D;
+import cross.tools.MathTools;
+import de.mdcberlin.hkuich.retentionIndexCalculation.ri.RICalculator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,21 +117,41 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             System.out.println(alcaneRTs[b]);
                         }*/
                         
-                        RetentionIndexCalculator riCalc = new RetentionIndexCalculator(alcaneAtoms, alcaneRTs);
+                        RICalculator riCalc = new RICalculator(alcaneAtoms, alcaneRTs);
                         
                         //Set RI
-                        int count = 0;
+//                        int count = 0;
+
                         for (IPeakAnnotationDescriptor peak : peaklist) {
                             double currentRT = peak.getApexTime();
-                            double currentRI = riCalc.getTemperatureProgrammedKovatsIndex(currentRT);
-                            if(alcanePeaks[alcanePeaks.length-1] == count && Double.isNaN(currentRI)) {
-                                System.out.println("Caught! " +currentRT+ " "+currentRI + " "+ 3600 + " " + count);
-                                currentRI = 3600;
-                            }
-                            peak.setRetentionIndex(currentRI);
-                            System.out.println("current RT = " + currentRT + "   ---   current RI = " + currentRI);
-                            count++;
+                            
+                            double linear = riCalc.getLinearIndex(currentRT);
+//                            double isothermal = riCalc.getIsothermalKovatsIndex(currentRT);
+//                            double tempProgr = riCalc.getTemperatureProgrammedKovatsIndex(currentRT);
+                            
+//                            System.out.println("current RT = " + currentRT + "   ---   linear = " + linear + "   ---   isothermal = " + isothermal + "   ---   tempProg: " + tempProgr);
+
+//                            if(alcanePeaks[alcanePeaks.length-1] == count && Double.isNaN(currentRI)) {
+//                                System.out.println("Caught! " +currentRT+ " "+currentRI + " "+ 3600 + " " + count);
+//                                currentRI = 3600;
+//                            }
+                            peak.setRetentionIndex(linear);
+                            //System.out.println("current RT = " + currentRT + "   ---   current RI = " + currentRI + "   ---   old RI: " + oldRI);
+//                            count++;
+//                            currentPeak++;
                         }
+                        
+//                        for(int i = 0; i<4; i++){
+//                            for(int j =0; j<peaklist.size(); j++){
+//                                if(j != peaklist.size()-1) {
+//                                    System.out.print( riOutputs[i][j]+ ",");
+//                                } else {
+//                                    System.out.print( riOutputs[i][j]);
+//                                }
+//                            }
+//                            System.out.println();
+//                        }
+                        
                         System.out.println("ended RI writing...");
                     }
                     
