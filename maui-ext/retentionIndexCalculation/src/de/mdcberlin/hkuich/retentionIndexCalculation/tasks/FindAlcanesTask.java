@@ -52,13 +52,14 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
         getProgressHandle().start(context.getChromatograms().size());
 	int cnt = 1;
         try {
-            
+            double[] alcaneMasses = {71.0,85.0,99.0};
+            int numberOfMaxima = 9;
+                    
             //FIND A WASH FIRST TO ANNOTATE IT BEFORE ANNOTATING ALL THE OTHERS!
             for (IChromatogramDescriptor chrom : context.getChromatograms()) {
                 if(chrom.getDisplayName().contains("wash") || chrom.getDisplayName().contains("Wash")){
                     System.out.println("Finding Alcanes in container: " + chrom.getDisplayName());
-                    double[] alcaneMasses = {71.0,85.0,99.0};
-                    int numberOfMaxima = 9;  
+                      
                     
                     for(Peak1DContainer container : context.getPeaks(chrom))
                     {    
@@ -100,6 +101,8 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         System.out.println("the retentionTime of the peak/first alcane is: " + peaklist.get(alcanePeaks[0]).getApexTime());
                         System.out.println();
                         
+                        
+                        // ---------------------- RI WRITING PART Start ---------------------
                         System.out.println("start RI writing...");
                         //populate alcaneAtoms
                         
@@ -109,18 +112,7 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                         } 
                         
                         double[] alcaneRTs = getAlcaneRTs(peaklist, alcanePeaks, numberOfMaxima);
-                        
-                        /*for(int b =0; b < alcaneAtoms.length; b++){
-                            System.out.println(alcaneAtoms[b]);
-                        }
-                        for(int b =0; b < alcaneRTs.length; b++){
-                            System.out.println(alcaneRTs[b]);
-                        }*/
-                        
                         RICalculator riCalc = new RICalculator(alcaneAtoms, alcaneRTs);
-                        
-                        //Set RI
-//                        int count = 0;
 
                         for (IPeakAnnotationDescriptor peak : peaklist) {
                             double currentRT = peak.getApexTime();
@@ -128,34 +120,12 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             double linear = riCalc.getLinearIndex(currentRT);
 //                            double isothermal = riCalc.getIsothermalKovatsIndex(currentRT);
 //                            double tempProgr = riCalc.getTemperatureProgrammedKovatsIndex(currentRT);
-                            
-//                            System.out.println("current RT = " + currentRT + "   ---   linear = " + linear + "   ---   isothermal = " + isothermal + "   ---   tempProg: " + tempProgr);
 
-//                            if(alcanePeaks[alcanePeaks.length-1] == count && Double.isNaN(currentRI)) {
-//                                System.out.println("Caught! " +currentRT+ " "+currentRI + " "+ 3600 + " " + count);
-//                                currentRI = 3600;
-//                            }
                             peak.setRetentionIndex(linear);
-                            //System.out.println("current RT = " + currentRT + "   ---   current RI = " + currentRI + "   ---   old RI: " + oldRI);
-//                            count++;
-//                            currentPeak++;
                         }
-                        
-//                        for(int i = 0; i<4; i++){
-//                            for(int j =0; j<peaklist.size(); j++){
-//                                if(j != peaklist.size()-1) {
-//                                    System.out.print( riOutputs[i][j]+ ",");
-//                                } else {
-//                                    System.out.print( riOutputs[i][j]);
-//                                }
-//                            }
-//                            System.out.println();
-//                        }
-                        
                         System.out.println("ended RI writing...");
-                    }
-                    
-                    
+                        // ---------------------- RI WRITING PART END -----------------------
+                    }  
                 }
                 else{
                     System.out.println("This is not a wash: " + chrom.getDisplayName());
@@ -199,24 +169,37 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
                             ipad.setRetentionIndex(Double.NaN);
              
                             //System.out.println(ipad.getApexTime());
-                        }                        
-                        /*for(int[] spectra : alcaneSpectra){
-                            for(int g = 0; g<spectra.length;g++){
-                                System.out.print(spectra[g] + " ");
-                            }
-                            System.out.print(spectra.length);
-                            System.out.println("");
+                        }                                           
+                        
+                        int[] alcanePeaks = annotateAlcanesSamples(peaklist, alcaneRetentionTimeWindow, alcaneRetentionTimes, alcaneSpectra);
+                        
+                        // ---------------------- RI WRITING PART Start ---------------------
+                        System.out.println("start RI writing...");
+                        //populate alcaneAtoms
+                        for(int i=0;i<alcanePeaks.length;i++){
+                            System.out.print(alcanePeaks[i] + " ");
                         }
+                        System.out.println("");
                         
-                        System.out.println("AlcaneRetentionTimesArray");
-                        for(int g = 0; g<alcaneRetentionTimes.length;g++){
-                                System.out.print(alcaneRetentionTimes[g] + " ");
-                            }
-                        System.out.print(alcaneRetentionTimes.length);
-                            System.out.println("");*/
+                        int[] alcaneAtoms = {10,12,15,18,19,22,28,32,36};
+                        if(alcaneMix.startsWith("C17 Mix")){
+                            alcaneAtoms[3] = 17;
+                        } 
                         
-                        
-                        annotateAlcanesSamples(peaklist, alcaneRetentionTimeWindow, alcaneRetentionTimes, alcaneSpectra);
+                        double[] alcaneRTs = getAlcaneRTs(peaklist, alcanePeaks, numberOfMaxima);
+                        RICalculator riCalc = new RICalculator(alcaneAtoms, alcaneRTs);
+
+                        for (IPeakAnnotationDescriptor peak : peaklist) {
+                            double currentRT = peak.getApexTime();
+                            
+                            double linear = riCalc.getLinearIndex(currentRT);
+//                            double isothermal = riCalc.getIsothermalKovatsIndex(currentRT);
+//                            double tempProgr = riCalc.getTemperatureProgrammedKovatsIndex(currentRT);
+
+                            peak.setRetentionIndex(linear);
+                        }
+                        System.out.println("ended RI writing...");
+                        // ---------------------- RI WRITING PART END -----------------------
                      
                     }
                     cnt++;
@@ -241,15 +224,19 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
         return alcaneRTs;
     }
 
-    private void annotateAlcanesSamples(final ArrayList<IPeakAnnotationDescriptor> peaklist, int rtWindow, double[] alcaneRTs, List<int[]> alcaneSpectra) {
+    private int[] annotateAlcanesSamples(final ArrayList<IPeakAnnotationDescriptor> peaklist, int rtWindow, double[] alcaneRTs, List<int[]> alcaneSpectra) {
         
-        int maxIndex = 0; 
+        int maxIndex; 
+        int[] alcanePeaks = new int[alcaneRTs.length];
+        int count = 0;
         
         for(int i = 0; i<alcaneRTs.length;i++){
             System.out.println("alcane number: " + i);
             maxIndex = cosineInWindow(i,findIndexByRetentionTime(peaklist, alcaneRTs[i]-rtWindow), findIndexByRetentionTime(peaklist, alcaneRTs[i] + rtWindow), peaklist, alcaneSpectra);
             System.out.println("alcane number: " + i + "end");
             System.out.println("\t\tcurrentMaxIndex would be: " + maxIndex);
+            
+            alcanePeaks[count] = maxIndex;
             
             peaklist.get(maxIndex).setSimilarity(Double.NaN);
             peaklist.get(maxIndex).setNativeDatabaseId("NA");
@@ -258,52 +245,53 @@ public class FindAlcanesTask extends AProgressAwareRunnable implements Serializa
             peaklist.get(maxIndex).setRetentionIndex(Double.NaN); 
             //actually annotate the peaks
             switch(i){
-                        case 0:                             
-                            peaklist.get(maxIndex).setName("c10");                            
-                            peaklist.get(maxIndex).setDisplayName("c10");                            
-                            break;
-                        case 1: 
-                            peaklist.get(maxIndex).setName("c12");                            
-                            peaklist.get(maxIndex).setDisplayName("c12"); 
-                            break;
-                        case 2: 
-                            peaklist.get(maxIndex).setName("c15");                            
-                            peaklist.get(maxIndex).setDisplayName("c15"); 
-                            break;
-                        case 3: 
-                            if(alcaneMix.startsWith("C17 Mix")){
-                                peaklist.get(maxIndex).setName("c17");                            
-                                peaklist.get(maxIndex).setDisplayName("c17"); 
-                            }
-                            if(alcaneMix.startsWith("C18 Mix")){
-                                peaklist.get(maxIndex).setName("c18");                            
-                                peaklist.get(maxIndex).setDisplayName("c18"); 
-                            }
-                            break;
-                        case 4: 
-                            peaklist.get(maxIndex).setName("c19");                            
-                            peaklist.get(maxIndex).setDisplayName("c19"); 
-                            break;
-                        case 5: 
-                            peaklist.get(maxIndex).setName("c22");                            
-                            peaklist.get(maxIndex).setDisplayName("c22"); 
-                            break;
-                        case 6: 
-                            peaklist.get(maxIndex).setName("c28");                            
-                            peaklist.get(maxIndex).setDisplayName("c28"); 
-                            break;
-                        case 7: 
-                            peaklist.get(maxIndex).setName("c32");                            
-                            peaklist.get(maxIndex).setDisplayName("c32"); 
-                            break;
-                        case 8: 
-                            peaklist.get(maxIndex).setName("c36");                            
-                            peaklist.get(maxIndex).setDisplayName("c36"); 
-                            break;
-                        };
-                    
+                case 0:                             
+                    peaklist.get(maxIndex).setName("c10");                            
+                    peaklist.get(maxIndex).setDisplayName("c10");                            
+                    break;
+                case 1: 
+                    peaklist.get(maxIndex).setName("c12");                            
+                    peaklist.get(maxIndex).setDisplayName("c12"); 
+                    break;
+                case 2: 
+                    peaklist.get(maxIndex).setName("c15");                            
+                    peaklist.get(maxIndex).setDisplayName("c15"); 
+                    break;
+                case 3: 
+                    if(alcaneMix.startsWith("C17 Mix")){
+                        peaklist.get(maxIndex).setName("c17");                            
+                        peaklist.get(maxIndex).setDisplayName("c17"); 
+                    }
+                    if(alcaneMix.startsWith("C18 Mix")){
+                        peaklist.get(maxIndex).setName("c18");                            
+                        peaklist.get(maxIndex).setDisplayName("c18"); 
+                    }
+                    break;
+                case 4: 
+                    peaklist.get(maxIndex).setName("c19");                            
+                    peaklist.get(maxIndex).setDisplayName("c19"); 
+                    break;
+                case 5: 
+                    peaklist.get(maxIndex).setName("c22");                            
+                    peaklist.get(maxIndex).setDisplayName("c22"); 
+                    break;
+                case 6: 
+                    peaklist.get(maxIndex).setName("c28");                            
+                    peaklist.get(maxIndex).setDisplayName("c28"); 
+                    break;
+                case 7: 
+                    peaklist.get(maxIndex).setName("c32");                            
+                    peaklist.get(maxIndex).setDisplayName("c32"); 
+                    break;
+                case 8: 
+                    peaklist.get(maxIndex).setName("c36");                            
+                    peaklist.get(maxIndex).setDisplayName("c36"); 
+                    break;
+            };
+            count++;    
         }   
 
+        return alcanePeaks;
 
     }
     
