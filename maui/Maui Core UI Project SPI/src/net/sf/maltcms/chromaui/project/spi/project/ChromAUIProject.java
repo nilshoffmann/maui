@@ -29,6 +29,9 @@ package net.sf.maltcms.chromaui.project.spi.project;
 
 import com.db4o.ext.DatabaseClosedException;
 import com.db4o.ext.DatabaseFileLockedException;
+import com.db4o.query.Predicate;
+import cross.exception.ConstraintViolationException;
+import cross.exception.ResourceNotAvailableException;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
@@ -48,6 +51,7 @@ import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
+import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.IMauiSubprojectProviderFactory;
@@ -59,6 +63,7 @@ import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import org.apache.commons.io.FileUtils;
@@ -546,6 +551,80 @@ public class ChromAUIProject implements IChromAUIProject {
 	@Override
 	public File getOutputDirectory() {
 		return FileUtil.toFile(getOutputDir());
+	}
+
+	/**
+	 * 
+	 * @param <T> the IDescriptor type to query for
+	 * @param descriptorId the requested id of the container
+	 * @param descriptorClass the explicit class of the container
+	 * @throws ConstraintViolationException if more than one object with the requested id was found
+	 * @throws ResourceNotAvailableException if no object with the requested id was found
+	 * @throws IllegalStateException if the database was not yet initialized
+	 * @return 
+	 */
+	@Override
+	public <T extends IBasicDescriptor> T getDescriptorById(final UUID descriptorId, Class<? extends T> descriptorClass) {
+		if (icp != null) {
+			ICrudSession ics = icp.createSession();
+			try{
+				IQuery<? extends T> query = ics.newQuery(descriptorClass);
+				Collection<T> results = query.retrieve(new Predicate<T>() {
+
+					@Override
+					public boolean match(T et) {
+						return descriptorId.equals(et.getId());
+					}
+				});
+				if(results.isEmpty()) {
+					throw new ResourceNotAvailableException("Object with id="+descriptorId.toString()+" not found in database!");
+				}
+				if(results.size()>1) {
+					throw new ConstraintViolationException("Query by unique id="+descriptorId.toString()+" returned "+results.size()+" instances. Expected 1!");
+				}
+				return results.iterator().next();
+			}finally{
+				ics.close();
+			}
+		}
+		throw new IllegalStateException("Database not initialized!");
+	}
+
+	/**
+	 * 
+	 * @param <T> the IContainer type to query for
+	 * @param containerId the requested id of the container
+	 * @param containerClass the explicit class of the container
+	 * @throws ConstraintViolationException if more than one object with the requested id was found
+	 * @throws ResourceNotAvailableException if no object with the requested id was found
+	 * @throws IllegalStateException if the database was not yet initialized
+	 * @return 
+	 */
+	@Override
+	public <T extends IContainer> T getContainerById(final UUID containerId, Class<? extends T> containerClass) {
+		if (icp != null) {
+			ICrudSession ics = icp.createSession();
+			try{
+				IQuery<? extends T> query = ics.newQuery(containerClass);
+				Collection<T> results = query.retrieve(new Predicate<T>() {
+
+					@Override
+					public boolean match(T et) {
+						return containerId.equals(et.getId());
+					}
+				});
+				if(results.isEmpty()) {
+					throw new ResourceNotAvailableException("Object with id="+containerId.toString()+" not found in database!");
+				}
+				if(results.size()>1) {
+					throw new ConstraintViolationException("Query by unique id="+containerId.toString()+" returned "+results.size()+" instances. Expected 1!");
+				}
+				return results.iterator().next();
+			}finally{
+				ics.close();
+			}
+		}
+		throw new IllegalStateException("Database not initialized!");
 	}
 
 	private final class OpenCloseHook extends ProjectOpenedHook {

@@ -39,6 +39,7 @@ import cross.datastructures.workflow.IWorkflow;
 import cross.datastructures.workflow.IWorkflowResult;
 import cross.event.IEvent;
 import cross.event.IListener;
+import cross.exception.ConstraintViolationException;
 import cross.exception.ResourceNotAvailableException;
 import cross.tools.StringTools;
 import cross.vocabulary.ICvResolver;
@@ -185,6 +186,14 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 							//retrieve result file
 							IFileFragment resultFile = inputToOutputMap.get(chromatogram);
 							Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info(resultFile.toString());
+							
+							//let't try to retrieve the chromatograms from the database
+							IChromatogramDescriptor result = project.getDescriptorById(chromatogram.getId(), IChromatogramDescriptor.class);
+							if(!result.getId().equals(chromatogram.getId())) {
+								throw new ConstraintViolationException("Received a different descriptor for id "+chromatogram.getId());
+							}else{
+								Logger.getLogger(RunACustomEmbeddedPipeline.class.getName()).info("Id retrieveal for chromatogram with id "+chromatogram.getId()+" worked!");
+							}
 						}
 						/*
 						 * Open the maltcms workflow as a project in the UI

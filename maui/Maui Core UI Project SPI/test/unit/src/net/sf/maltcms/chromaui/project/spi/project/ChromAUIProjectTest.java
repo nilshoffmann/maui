@@ -30,6 +30,8 @@ package net.sf.maltcms.chromaui.project.spi.project;
 import java.io.File;
 import java.util.Collection;
 import java.util.UUID;
+import junit.framework.Assert;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
@@ -52,8 +54,16 @@ public class ChromAUIProjectTest extends NbTestCase {
 
     public static junit.framework.Test suite() {
         Configuration config = NbModuleSuite.createConfiguration(ChromAUIProjectTest.class);
-        return NbModuleSuite.create(config);//ChromAUIProjectTest.class);
+		config.enableClasspathModules(true);
+		config.enableModules("*");
+		config.gui(false);
+        return config.suite();//ChromAUIProjectTest.class);
    }
+//	
+//	protected void setUp() throws Exception {
+//        super.setUp();
+////        org.netbeans.junit.MockServices.setServices(MockIToDialog.class);
+//    } 
     
     /**
      * Test of addContainer method, of class ChromAUIProject.
@@ -61,7 +71,7 @@ public class ChromAUIProjectTest extends NbTestCase {
     @Test
     public void testAddContainer() throws Exception {
         System.out.println("addContainer");
-		ChromAUIProject cap = null;
+		IChromAUIProject cap = null;
         try {
             File f;
             
@@ -133,6 +143,11 @@ public class ChromAUIProjectTest extends NbTestCase {
 //                    System.out.println(sa.toString());
 //                }
             }
+			TreatmentGroupContainer retrievedTgc = cap.getContainerById(icg.getId(), TreatmentGroupContainer.class);
+			Assert.assertEquals(icg.getId(), retrievedTgc);
+			
+			IChromatogramDescriptor descr = cap.getDescriptorById(gcd1.getId(), IChromatogramDescriptor.class);
+			Assert.assertEquals(gcd1.getId(), descr.getId());
         } finally {
             if(cap!=null) {
 				cap.closeSession();

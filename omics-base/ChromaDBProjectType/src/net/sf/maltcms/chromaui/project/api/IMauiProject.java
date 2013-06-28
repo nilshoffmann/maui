@@ -34,12 +34,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 
@@ -70,6 +72,10 @@ public interface IMauiProject extends PropertyChangeListener {
 	Collection<ISampleGroupDescriptor> getSampleGroups();
 	
 	Collection<SampleGroupContainer> getSampleGroupsForTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup);
+	
+	<T extends IBasicDescriptor> T getDescriptorById(UUID descriptorId, Class<? extends T> descriptorClass);
+	
+	<T extends IContainer> T getContainerById(UUID containerId, Class<? extends T> containerClass);
 
     void removeContainer(IContainer... ic);
 
