@@ -1,10 +1,6 @@
 package de.mdcberlin.hkuich.retentionIndexCalculation.ui;
 
-import java.util.Collection;
-import javax.swing.DefaultListModel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 
 /**
  *

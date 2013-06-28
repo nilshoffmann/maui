@@ -1,8 +1,5 @@
 package de.mdcberlin.hkuich.retentionIndexCalculation.tasks;
 
-import com.db4o.foundation.ArrayFactory;
-import cross.datastructures.tuple.Tuple2D;
-import cross.tools.MathTools;
 import de.mdcberlin.hkuich.retentionIndexCalculation.ri.RICalculator;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,25 +7,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
 import lombok.Data;
-import maltcms.datastructures.ms.IMetabolite;
 import maltcms.datastructures.ms.IScan;
 import maltcms.datastructures.ms.Scan1D;
-import maltcms.tools.ArrayTools;
-import maltcms.tools.MaltcmsTools;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
-import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
-import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.MAMath;
 import ucar.ma2.MAVector;
 
 /**
