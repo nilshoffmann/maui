@@ -34,6 +34,8 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.LookupUtils;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -42,24 +44,45 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction")
+		id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction")
 @ActionRegistration(displayName = "#CTL_DeleteDescriptorAction")
 @ActionReferences({
-    @ActionReference(path = "Actions/DescriptorNodeActions/DefaultActions")})
+	@ActionReference(path = "Actions/DescriptorNodeActions/DefaultActions")})
 @Messages("CTL_DeleteDescriptorAction=Remove")
 public final class DeleteDescriptorAction implements ActionListener {
 
-    private final List<IBasicDescriptor> context;
+	private final List<IBasicDescriptor> context;
 
-    public DeleteDescriptorAction(List<IBasicDescriptor> context) {
-        this.context = context;
-    }
+	public DeleteDescriptorAction(List<IBasicDescriptor> context) {
+		this.context = context;
+	}
 
-    @Override
-    public void actionPerformed(ActionEvent ev) {
-        IChromAUIProject icap = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
-        if (icap != null) {
-            icap.removeDescriptor(context.toArray(new IBasicDescriptor[context.size()]));
-        }
-    }
+	@Override
+	public void actionPerformed(ActionEvent ev) {
+		IChromAUIProject icap = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
+		if (icap != null) {
+			//check that all descriptors have the same class
+			Class<? extends IBasicDescriptor> descrClazz = null;
+			boolean showDialog = false;
+			for (IBasicDescriptor descr : context) {
+				if (descrClazz == null) {
+					descrClazz = descr.getClass();
+				} else {
+					if (!descr.getClass().isAssignableFrom(descrClazz)) {
+						showDialog = true;
+					}
+				}
+			}
+			if (showDialog) {
+				DialogDisplayer dd = DialogDisplayer.getDefault();
+				Object result = dd.notify(new NotifyDescriptor.Confirmation(
+						"Selected descriptors have different types, continue deletion?",
+						"Confirm descriptor deletion", NotifyDescriptor.YES_NO_OPTION));
+				if (result.equals(NotifyDescriptor.NO_OPTION)) {
+					return;
+				}
+			}
+			icap.removeDescriptor(context.toArray(new IBasicDescriptor[context.size()]));
+		}
+	}
 }

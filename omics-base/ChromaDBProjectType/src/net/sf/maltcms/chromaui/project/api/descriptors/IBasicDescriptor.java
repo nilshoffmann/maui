@@ -69,5 +69,5 @@ public interface IBasicDescriptor extends Activatable, Comparable<IBasicDescript
     public String getShortDescription();
 
     public void setShortDescription(String shortDescription);
-    
+
 }
