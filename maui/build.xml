@@ -47,7 +47,7 @@
 			<entry key="suite.nbi.product.uid" value="${app.name}"/>
 		</propertyfile>
 		
-		<ant antfile="${nbplatform.harness.dir}/nbi/stub/template.xml" taskname="build" dir="${nbplatform.harness.dir}/nbi/stub/" inheritall="false" inheritrefs="false">
+		<ant antfile="${basedir}/../installer/stub/template.xml" taskname="build" dir="${nbplatform.harness.dir}/nbi/stub/" inheritall="false" inheritrefs="false">
 			<property file="${basedir}/nbproject/installer.properties"/>
 		</ant>
 	</target>
