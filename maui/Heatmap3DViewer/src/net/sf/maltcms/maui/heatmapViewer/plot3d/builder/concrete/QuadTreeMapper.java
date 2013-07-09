@@ -28,6 +28,7 @@
 package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
 import cross.datastructures.tuple.Tuple2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -56,10 +57,13 @@ public class QuadTreeMapper<T extends Number> extends ViewportMapper {
 	}
 
 	@Override
-	public double f(double d, double d1) {
-		Point2D.Double p = new Point2D.Double(d, d1);
-		List<Tuple2D<Point2D, T>> h = qt.getHorizontalNeighborsInRadius(p, radiusx);
-		List<Tuple2D<Point2D, T>> v = qt.getVerticalNeighborsInRadius(p, radiusy);
+	public double f(double x, double y) {
+		Point2D.Double p = new Point2D.Double(x, y);
+		Rectangle2D bounds = qt.getDataBounds();
+		Line2D hsearchLine = new Line2D.Double(bounds.getMinX()-1,y,bounds.getMaxX()+1,y);
+		Line2D vsearchLine = new Line2D.Double(x,bounds.getMinY()-1,x,bounds.getMaxY()+1);
+		List<Tuple2D<Point2D, T>> h = qt.getClosestPerpendicularToLine(hsearchLine, radiusx);
+		List<Tuple2D<Point2D, T>> v = qt.getClosestPerpendicularToLine(vsearchLine, radiusy);
 		Set<Point2D> points = new HashSet<Point2D>();
 		List<Tuple2D<Point2D, T>> results = new ArrayList<Tuple2D<Point2D, T>>();
 		for(Tuple2D<Point2D, T> t:h) {

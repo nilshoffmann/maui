@@ -41,62 +41,43 @@ import org.openide.util.NbPreferences;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Implementation of ICrudProviderFactory to create
- * new DB4oCrudProvider instances.
+ * Implementation of ICrudProviderFactory to create new DB4oCrudProvider
+ * instances.
+ *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=ICrudProviderFactory.class)
+@ServiceProvider(service = ICrudProviderFactory.class)
 public class DB4oCrudProviderFactory implements ICrudProviderFactory {
 
-//    private HashMap<URL, ICrudProvider> whm = new HashMap<URL, ICrudProvider>();
-    
-    @Override
-    public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
-        DB4oCrudProvider dbcp;
-        try {
-//            if(whm.containsKey(databaseLocation)) {
-//               dbcp = whm.get(databaseLocation); 
-//            }else{
-                dbcp = new DB4oCrudProvider(new File(databaseLocation.toURI()), ic, cl);
-                dbcp.setBackupDatabase(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
-                dbcp.setBackupTimeInterval(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10));
-                dbcp.setVerboseDiagnostics(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
-//                whm.put(databaseLocation,dbcp);
-//            }
-            return dbcp;
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(DB4oCrudProviderFactory.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    @Override
-    public ICrudProvider getInMemoryCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
-        DB4oInMemoryCrudProvider dbcp;
-        try {
-//            if(whm.containsKey(databaseLocation)) {
-//               dbcp = whm.get(databaseLocation); 
-//            }else{
-                dbcp = new DB4oInMemoryCrudProvider(new File(databaseLocation.toURI()), ic, cl);
-                dbcp.setBackupDatabase(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
-                dbcp.setBackupTimeInterval(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10));
-                dbcp.setVerboseDiagnostics(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
-//                whm.put(databaseLocation,dbcp);
-//            }
-            return dbcp;
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(DB4oCrudProviderFactory.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
+	@Override
+	public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
+		DB4oCrudProvider dbcp;
+		try {
+			dbcp = new DB4oCrudProvider(new File(databaseLocation.toURI()), ic, cl);
+			dbcp.setBackupDatabase(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
+			dbcp.setBackupTimeInterval(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10));
+			dbcp.setVerboseDiagnostics(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
+			return dbcp;
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(DB4oCrudProviderFactory.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
 
-//    @Override
-//    public void close(URL databaseLocation) {
-//        if(whm.containsKey(databaseLocation)) {
-//            whm.get(databaseLocation).close();
-//        }
-//    }
-    
+	@Override
+	public ICrudProvider getInMemoryCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
+		DB4oInMemoryCrudProvider dbcp;
+		try {
+			dbcp = new DB4oInMemoryCrudProvider(new File(databaseLocation.toURI()), ic, cl);
+			dbcp.setBackupDatabase(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
+			dbcp.setBackupTimeInterval(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10));
+			dbcp.setVerboseDiagnostics(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
+			return dbcp;
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(DB4oCrudProviderFactory.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
 }

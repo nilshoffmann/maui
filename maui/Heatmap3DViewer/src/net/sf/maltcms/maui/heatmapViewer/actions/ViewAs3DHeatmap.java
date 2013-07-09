@@ -113,14 +113,24 @@ public final class ViewAs3DHeatmap implements ActionListener {
 							MinMax smm = MAMath.getMinMax(scetArray);
 							IVariableFragment tic = chrom2d.getParent().getChild("total_intensity", true);
 							Array ticArray = tic.getArray();
+							Array modTimeArray = null;
+							try {
+								IVariableFragment modTime = chrom2d.getParent().getChild("modulation_time");
+								modTimeArray = modTime.getArray();
+							} catch (ResourceNotAvailableException rnae) {
+							}
 							MinMax tmm = MAMath.getMinMax(ticArray);
 							int length = fcet.getDimensions()[0].getLength();
 							final Rectangle2D bounds = new Rectangle2D.Double(fmm.min, smm.min, fmm.max - fmm.min, smm.max - smm.min);
 							QuadTree<Integer> qt = new QuadTree<Integer>(bounds);
 							for (int i = 0; i < length; i++) {
-								qt.put(new Point2D.Float(fcetArray.getFloat(i),scetArray.getFloat(i)), ticArray.getInt(i));
+								qt.put(new Point2D.Float(fcetArray.getFloat(i), scetArray.getFloat(i)), ticArray.getInt(i));
 							}
-							QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds, 10, 10);
+							double radiusx = 10;
+							if(modTimeArray!=null) {
+								radiusx = modTimeArray.getDouble(0)*3;
+							}
+							QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds, radiusx, 10);
 							fcetArray = null;
 							scetArray = null;
 							ticArray = null;
@@ -130,7 +140,7 @@ public final class ViewAs3DHeatmap implements ActionListener {
 							System.err.println(ad.getBounds());
 							CompileableComposite cc = new CompileableComposite();
 							cc.add(ad);
-							
+
 							sf.applyStyling(cc);
 
 							progressHandle.progress("Creating Top Component");

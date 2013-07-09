@@ -58,6 +58,7 @@ public class RangeSlider extends JSlider {
      */
     private void initSlider() {
         setOrientation(HORIZONTAL);
+		setOpaque(true);
     }
 
     /**

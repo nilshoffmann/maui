@@ -112,43 +112,9 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
         fileConfiguration.storage(memoryStorage);
         CommonConfiguration cc = configuration.common();
         cc.reflectWith(new JdkReflector(domainClassLoader));
-//        ShapeTranslator translator = new ShapeTranslator();
-//        cc.objectClass(Shape.class).translate(translator);
-//        cc.objectClass(Arc2D.class).translate(translator);
-//        cc.objectClass(Arc2D.Double.class).translate(translator);
-//        cc.objectClass(Arc2D.Float.class).translate(translator);
-//        cc.objectClass(Area.class).translate(translator);
-//        cc.objectClass(BasicTextUI.BasicCaret.class).translate(translator);
-//        cc.objectClass(CubicCurve2D.class).translate(translator);
-//        cc.objectClass(CubicCurve2D.Double.class).translate(translator);
-//        cc.objectClass(CubicCurve2D.Float.class).translate(translator);
-//        cc.objectClass(DefaultCaret.class).translate(translator);
-//        cc.objectClass(Ellipse2D.class).translate(translator);
-//        cc.objectClass(Ellipse2D.Double.class).translate(translator);
-//        cc.objectClass(Ellipse2D.Float.class).translate(translator);
-//        cc.objectClass(GeneralPath.class).translate(translator);
-//        cc.objectClass(Line2D.class).translate(translator);
-//        cc.objectClass(Line2D.Double.class).translate(translator);
-//        cc.objectClass(Line2D.Float.class).translate(translator);
-//        cc.objectClass(Path2D.class).translate(translator);
-//        cc.objectClass(Path2D.Double.class).translate(translator);
-//        cc.objectClass(Path2D.Float.class).translate(translator);
-//        cc.objectClass(Polygon.class).translate(translator);
-//        cc.objectClass(QuadCurve2D.class).translate(translator);
-//        cc.objectClass(QuadCurve2D.Double.class).translate(translator);
-//        cc.objectClass(QuadCurve2D.Float.class).translate(translator);
-//        cc.objectClass(Rectangle.class).translate(translator);
-//        cc.objectClass(Rectangle2D.class).translate(translator);
-//        cc.objectClass(Rectangle2D.Double.class).translate(translator);
-//        cc.objectClass(Rectangle2D.Float.class).translate(translator);
-//        cc.objectClass(RectangularShape.class).translate(translator);
-//        cc.objectClass(RoundRectangle2D.class).translate(translator);
-//        cc.objectClass(RoundRectangle2D.Double.class).translate(translator);
-//        cc.objectClass(RoundRectangle2D.Float.class).translate(translator);
         if (isVerboseDiagnostics()) {
             cc.diagnostic().addListener(new DiagnosticToConsole());
         }
-//        cc.objectClass(Shape.class).translate(new ShapeTranslator());
         return configuration;
     }
 }

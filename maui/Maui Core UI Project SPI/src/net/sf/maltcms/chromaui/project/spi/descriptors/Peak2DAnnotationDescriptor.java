@@ -28,7 +28,11 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import com.db4o.activation.ActivationPurpose;
+import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
+import static net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor.PROP_SECONDCOLUMNRT;
+import net.sf.maltcms.chromaui.project.api.persistence.PersistentShape;
 
 /**
  *
@@ -37,8 +41,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescript
 public class Peak2DAnnotationDescriptor extends PeakAnnotationDescriptor implements IPeak2DAnnotationDescriptor {
 
     private double firstColumnRt = Double.NaN;
-    public static final String PROP_FIRSTCOLUMNRT = "firstColumnRt";
-
+    
     @Override
     public double getFirstColumnRt() {
         activate(ActivationPurpose.READ);
@@ -54,7 +57,6 @@ public class Peak2DAnnotationDescriptor extends PeakAnnotationDescriptor impleme
     }
     
     private double secondColumnRt = Double.NaN;
-    public static final String PROP_SECONDCOLUMNRT = "secondColumnRt";
 
     @Override
     public double getSecondColumnRt() {
@@ -69,4 +71,23 @@ public class Peak2DAnnotationDescriptor extends PeakAnnotationDescriptor impleme
         this.secondColumnRt = secondColumnRt;
         firePropertyChange(PROP_SECONDCOLUMNRT, old, this.secondColumnRt);
     }
+	
+	private Shape bounds = null;
+	
+	@Override
+	public Shape getBounds() {
+		activate(ActivationPurpose.READ);
+		if(bounds==null) {
+			setBounds(new PersistentShape(new Rectangle2D.Double(getFirstColumnRt()-2,getSecondColumnRt()-2,5,5)));
+		}
+		return bounds;
+	}
+	
+	@Override
+	public void setBounds(Shape bounds) {
+		activate(ActivationPurpose.WRITE);
+        Shape old = this.bounds;
+        this.bounds = new PersistentShape(bounds);
+        firePropertyChange(PROP_BOUNDS, old, this.bounds);
+	}
 }

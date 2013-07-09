@@ -45,6 +45,7 @@ import java.util.Set;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.labels.CrosshairLabelGenerator;
 import org.jfree.chart.panel.CrosshairOverlay;
 import org.jfree.chart.plot.Crosshair;
 import org.jfree.data.xy.XYDataset;
@@ -91,7 +92,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         crosshairOverlay = new CrosshairOverlay();
         crosshairOverlay.addDomainCrosshair(domainCrosshair);
         crosshairOverlay.addRangeCrosshair(rangeCrosshair);
-        setLayerPosition(0);
+        setLayerPosition(LAYER_HIGHEST);
     }
 
     public void clear() {
@@ -197,7 +198,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         crosshairOverlay.paintOverlay(g2, chartPanel);
     }
 
-    private void updateCrosshairs(XYDataset ds, int seriesIndex, int itemIndex) {
+    private void updateCrosshairs(final XYDataset ds, final int seriesIndex, final int itemIndex) {
         double x = ds.getXValue(seriesIndex, itemIndex);
         double y = ds.getYValue(seriesIndex, itemIndex);
         domainCrosshair.setValue(x);

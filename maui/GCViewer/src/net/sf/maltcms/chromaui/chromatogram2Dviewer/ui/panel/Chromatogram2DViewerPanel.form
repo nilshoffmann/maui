@@ -206,7 +206,7 @@
             <Component class="javax.swing.JSpinner" name="boxWidthSpinner">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="1.0" maximum="1000.0" minimum="1.0E-4" numberType="java.lang.Float" stepSize="0.01" type="number"/>
+                  <SpinnerModel initial="1.0" maximum="1000.0" minimum="9.999999747378752E-5" numberType="java.lang.Double" stepSize="0.009999999776482582" type="number"/>
                 </Property>
               </Properties>
               <Events>
@@ -255,7 +255,7 @@
             <Component class="javax.swing.JSpinner" name="boxHeightSpinner">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="1.0" maximum="1000.0" minimum="1.0E-4" numberType="java.lang.Float" stepSize="0.01" type="number"/>
+                  <SpinnerModel initial="1.0" maximum="1000.0" minimum="9.999999747378752E-5" numberType="java.lang.Double" stepSize="0.009999999776482582" type="number"/>
                 </Property>
               </Properties>
               <Events>

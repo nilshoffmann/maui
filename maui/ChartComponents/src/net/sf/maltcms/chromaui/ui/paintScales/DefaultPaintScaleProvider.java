@@ -27,6 +27,7 @@
  */
 package net.sf.maltcms.chromaui.ui.paintScales;
 
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 import maltcms.io.csv.ColorRampReader;
@@ -44,10 +45,12 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
 
     private int numberOfSamples = 2048;
 
+	@Override
     public int getNumberOfSamples() {
         return numberOfSamples;
     }
 
+	@Override
     public void setNumberOfSamples(int numberOfSamples) {
         this.numberOfSamples = numberOfSamples;
     }
@@ -60,6 +63,7 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
             PaintScale ps = new GradientPaintScale(ImageTools.createSampleTable(this.numberOfSamples), min, max, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(str)));
             paintScales.add(ps);
         }
+//		paintScales.add(new GradientPaintScale(ImageTools.createSampleTable(this.numberOfSamples),min,max,new Color[]{Color.BLUE,Color.MAGENTA,Color.RED,Color.ORANGE,Color.YELLOW,Color.WHITE}));
         return paintScales;
     }
 

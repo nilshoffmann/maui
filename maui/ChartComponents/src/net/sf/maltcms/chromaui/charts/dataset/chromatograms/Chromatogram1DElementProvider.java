@@ -71,9 +71,9 @@ public class Chromatogram1DElementProvider implements INamedElementProvider<IChr
 
 	@Override
 	public IScan1D get(int i) {
-		System.out.println("Retrieving scan " + i + " from " + getClass().getName() + " " + getKey());
+//		System.out.println("Retrieving scan " + i + " from " + getClass().getName() + " " + getKey());
 		IScan1D scan = chrom.getScanForMsLevel(i, (short) 1);
-		System.out.println("Retrieved scan " + i + " from " + getClass().getName());
+//		System.out.println("Retrieved scan " + i + " from " + getClass().getName());
 		return scan;
 	}
 

@@ -103,6 +103,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		padResult = Utilities.actionsGlobalContext().lookupResult(IPeakAnnotationDescriptor.class);
 		padResult.addLookupListener(this);
 		resultChanged(new LookupEvent(padResult));
+		setLayerPosition(10);
 	}
 
 	@Override
@@ -244,6 +245,14 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		firePropertyChange(PROP_DRAW_SHAPES, old, b);
 		shapes = generatePeakShapes(peakAnnotations, dataset);
 		fireOverlayChanged();
+	}
+	
+	public boolean isDrawShapes() {
+		return this.drawShapes;
+	}
+	
+	public boolean isDrawLines() {
+		return this.drawLines;
 	}
 
 	public void setDrawLines(boolean b) {

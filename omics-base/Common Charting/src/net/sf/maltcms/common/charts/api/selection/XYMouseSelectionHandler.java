@@ -77,6 +77,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     @Override
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
+			System.out.println("Firing chartMouseClicked event!");
             XYItemEntity itemEntity = ((XYItemEntity) cme.getEntity());
             selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.CLICK, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),shapeFactory.createSelectionShape(itemEntity));
             selection.setName(provider.getName(selection));
@@ -90,6 +91,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     @Override
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
+			System.out.println("Firing chartMouseMoved event!");
             XYItemEntity itemEntity = ((XYItemEntity) cme.getEntity());
             selection = new XYSelection(dataset, itemEntity.getSeriesIndex(), itemEntity.getItem(), XYSelection.Type.HOVER, dataset.getSource(itemEntity.getSeriesIndex()), dataset.getTarget(itemEntity.getSeriesIndex(), itemEntity.getItem()),shapeFactory.createSelectionShape(itemEntity));
             selection.setName(provider.getName(selection));
@@ -98,6 +100,7 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
             mouseEvent = cme.getTrigger();
             fireSelectionChange();
         } else {
+			System.out.println("Firing clear event!");
             clear();
         }
     }

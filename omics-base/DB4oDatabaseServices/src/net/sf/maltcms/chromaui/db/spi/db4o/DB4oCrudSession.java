@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.db.api.ICredentials;

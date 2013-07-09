@@ -36,10 +36,8 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -57,7 +55,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
 
     private PaintScale gps;
     private String paintScaleLocation = "res/colorRamps/bcgyr.csv";
-    private List<String> elements = new ArrayList<String>();
+    private List<PaintScale> elements = new ArrayList<PaintScale>();
     private DefaultComboBoxModel dcbm = null;
     private double[] st;
     private double[] bp;
@@ -73,9 +71,11 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         initComponents();
         String[] s = new String[]{"res/colorRamps/bcgyr.csv", "res/colorRamps/bgr.csv", "res/colorRamps/bw.csv", "res/colorRamps/br.csv", "res/colorRamps/bgrw.csv", "res/colorRamps/rgbr.csv"};
         for (String str : s) {
-            elements.add(str);
+			GradientPaintScale gradientPaintScale = new GradientPaintScale(getSampleTable(samples), this.alpha, this.beta, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(str)));
+			gradientPaintScale.setLabel(str);
+            elements.add(gradientPaintScale);
         }
-        dcbm = new DefaultComboBoxModel(elements.toArray(new String[elements.size()]));
+        dcbm = new DefaultComboBoxModel(elements.toArray(new PaintScale[elements.size()]));
         jComboBox1.setModel(dcbm);
         jSlider1.addChangeListener(this);
         jSlider2.addChangeListener(this);
@@ -83,9 +83,9 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         bp = getBreakpointTable(samples);
         System.out.println("Sample table: " + Arrays.toString(st));
         if (activePaintScale == null) {
-            gps = new GradientPaintScale(getSampleTable(samples), this.alpha, this.beta, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp((String) jComboBox1.getSelectedItem())));
+            gps = (PaintScale)jComboBox1.getSelectedItem();
         } else {
-            elements.add(0, "Active paint scale");
+            elements.add(0, activePaintScale);
             gps = activePaintScale;
         }
 
@@ -257,10 +257,10 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        String s = (String) this.jComboBox1.getSelectedItem();
-        if (!s.equals("Active paint scale")) {
+        PaintScale ps = (PaintScale)this.jComboBox1.getSelectedItem();
+        if (ps != gps) {
             System.out.println("Sample table: " + Arrays.toString(st));
-            this.gps = new GradientPaintScale(getSampleTable(samples), 0, 1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(s)));
+            this.gps = ps;//new GradientPaintScale(getSampleTable(samples), 0, 1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(s)));
             System.out.println(this.gps == null ? "gps null" : "gps not null");
             modifyPaintScale((GradientPaintScale) this.gps);
         } else {
@@ -274,8 +274,10 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         int ret = jfc.showOpenDialog(getParent());
         if (ret == JFileChooser.APPROVE_OPTION) {
             File f = jfc.getSelectedFile();
-            dcbm.addElement(f.getAbsolutePath());
-            dcbm.setSelectedItem(f.getAbsolutePath());
+			GradientPaintScale gps = new GradientPaintScale(getSampleTable(samples), 0, 1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(f.getAbsolutePath())));
+			gps.setLabel(f.getName());
+            dcbm.addElement(gps);
+            dcbm.setSelectedItem(gps);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -370,8 +372,8 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
             }
         }
 
-        System.out.println("Alpha value: " + getAlpha());
-        System.out.println("Beta value: " + getBeta());
+//        System.out.println("Alpha value: " + getAlpha());
+//        System.out.println("Beta value: " + getBeta());
     }
 
     public double getBeta() {

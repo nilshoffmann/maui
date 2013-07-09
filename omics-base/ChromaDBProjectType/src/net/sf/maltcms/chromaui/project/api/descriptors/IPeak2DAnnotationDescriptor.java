@@ -27,15 +27,23 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
+import java.awt.Shape;
+
 /**
  *
  * @author Nils Hoffmann
  */
 public interface IPeak2DAnnotationDescriptor extends IPeakAnnotationDescriptor {
     
+	public static final String PROP_FIRSTCOLUMNRT = "firstColumnRt";
+	public static final String PROP_SECONDCOLUMNRT = "secondColumnRt";
+	public static final String PROP_BOUNDS = "bounds";
+	
     public double getFirstColumnRt();
     public void setFirstColumnRt(double rt);
     public double getSecondColumnRt();
     public void setSecondColumnRt(double rt);
+	public Shape getBounds();
+	public void setBounds(Shape gp);
     
 }

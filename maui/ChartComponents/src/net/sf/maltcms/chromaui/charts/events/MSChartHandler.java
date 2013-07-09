@@ -62,22 +62,22 @@ public class MSChartHandler<T extends IScan> implements
 
             @Override
             public void run() {
-                System.out.println("MSChartHandler received XYItemEntity!");
+//                System.out.println("MSChartHandler received XYItemEntity!");
                 XYItemEntity e = v.get();
                 if (scan != null) {
-                    System.out.println("Removing old scan");
+//                    System.out.println("Removing old scan");
                     ic.remove(scan);
                 }
                 if (lastChromatogram != null) {
-                    System.out.println("Removing old chromatogram");
+//                    System.out.println("Removing old chromatogram");
                     ic.remove(lastChromatogram);
                 }
-                System.out.println("Removed old entities!");
+//                System.out.println("Removed old entities!");
                 scan = ds.getTarget(e.getSeriesIndex(), e.getItem());
-                System.out.println("Retrieved scan");
+//                System.out.println("Retrieved scan");
                 lastChromatogram = ds.getSource(e.getSeriesIndex());
-                System.out.println("Retrieved chromatogram");
-                System.out.println("Adding scan and chromatogram to instance content");
+//                System.out.println("Retrieved chromatogram");
+//                System.out.println("Adding scan and chromatogram to instance content");
                 ic.add(scan);
                 ic.add(lastChromatogram);
             }

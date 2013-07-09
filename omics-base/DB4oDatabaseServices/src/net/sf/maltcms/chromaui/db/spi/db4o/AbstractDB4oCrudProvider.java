@@ -40,9 +40,7 @@ import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
-import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
-import org.openide.util.NbPreferences;
 
 /**
  *
@@ -156,7 +154,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
         this.verboseDiagnostics = verboseDiagnostics;
     }
 
-    protected boolean isFileTypeSupported(String dbfile) {
+    protected final boolean isFileTypeSupported(String dbfile) {
         for (String fe : extensions) {
             if (dbfile.toLowerCase().endsWith(fe)) {
                 return true;

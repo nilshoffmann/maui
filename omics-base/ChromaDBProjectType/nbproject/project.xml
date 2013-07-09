@@ -125,6 +125,7 @@
                 <package>net.sf.maltcms.chromaui.project.api.container</package>
                 <package>net.sf.maltcms.chromaui.project.api.descriptors</package>
                 <package>net.sf.maltcms.chromaui.project.api.nodes</package>
+                <package>net.sf.maltcms.chromaui.project.api.persistence</package>
                 <package>net.sf.maltcms.chromaui.project.api.types</package>
             </public-packages>
         </data>

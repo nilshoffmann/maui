@@ -150,9 +150,13 @@ public class XYSelection implements ISelection {
             return false;
         }
         final XYSelection other = (XYSelection) obj;
-        if (this.dataset.getSeriesKey(this.seriesIndex) != other.getDataset().getSeriesKey(this.seriesIndex) && (this.dataset.getSeriesKey(this.seriesIndex) == null || !this.dataset.getSeriesKey(this.seriesIndex).equals(other.getDataset().getSeriesKey(this.seriesIndex)))) {
-            return false;
-        }
+		try {
+			if (this.dataset.getSeriesKey(this.seriesIndex) != other.getDataset().getSeriesKey(this.seriesIndex) && (this.dataset.getSeriesKey(this.seriesIndex) == null || !this.dataset.getSeriesKey(this.seriesIndex).equals(other.getDataset().getSeriesKey(this.seriesIndex)))) {
+				return false;
+			}
+		}catch(ArrayIndexOutOfBoundsException aiex) {
+			return false;
+		}
         if (this.seriesIndex != other.seriesIndex) {
             return false;
         }

@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.charts.overlay;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -67,6 +68,7 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		this.descriptor = descriptor;
 		this.peakAnnotations = peakAnnotations;
 		WeakListeners.propertyChange(this, peakAnnotations);
+		setLayerPosition(10);
 	}
 //	
 //	public Peak2DOverlay(Peak1DContainer peakAnnotations) {
@@ -103,7 +105,9 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 				double xx = xAxis.valueToJava2D(x, dataArea, xAxisEdge);
 				double y = descr2D.getSecondColumnRt();
 				double yy = yAxis.valueToJava2D(y, dataArea, yAxisEdge);
-				g2.fill(new Rectangle2D.Double(xx - 2, yy - 2, 5, 5));
+				AffineTransform at = AffineTransform.getTranslateInstance(xx, yy);
+				at.concatenate(AffineTransform.getTranslateInstance(-x, -y));
+				g2.fill(at.createTransformedShape(descr2D.getBounds()));
 			}
 			g2.setColor(c);
 			g2.setClip(savedClip);
