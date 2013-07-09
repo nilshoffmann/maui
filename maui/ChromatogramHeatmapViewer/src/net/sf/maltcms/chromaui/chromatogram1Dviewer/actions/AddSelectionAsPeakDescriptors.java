@@ -96,7 +96,6 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
     }
 
     public IPeakAnnotationDescriptor createPeakAnnotationFor(IChromAUIProject project, IChromatogramDescriptor chromatogram, XYSelection selection, int index) {
-        IChromatogram1D source = (IChromatogram1D) selection.getSource();
         IScan target = (IScan) selection.getTarget();
         double rt = target.getScanAcquisitionTime();
         IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeakAnnotationDescriptor(

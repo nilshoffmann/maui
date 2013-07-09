@@ -106,7 +106,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	public CachingChromatogram2D(final IFileFragment e) {
 		this.parent = e;
-		whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(e.getUri().toString().getBytes()).toString(), this);
+		String id = e.getUri().toString()+"-2D";
+		whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this);
 		init();
 	}
 
