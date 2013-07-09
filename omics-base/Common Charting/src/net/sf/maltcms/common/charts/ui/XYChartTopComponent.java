@@ -30,6 +30,7 @@ package net.sf.maltcms.common.charts.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Shape;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -40,6 +41,8 @@ import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -172,6 +175,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
                 } else if (renderer.equals("Area w/ Shapes")) {
                     panel.getChart().getXYPlot().setRenderer(new XYAreaRenderer(XYAreaRenderer.AREA_AND_SHAPES));
                 }
+				panel.getChart().getXYPlot().getRenderer().setBaseToolTipGenerator(new StandardXYToolTipGenerator("%2.5f", NumberFormat.getNumberInstance(), NumberFormat.getNumberInstance()));
                 int shapeIndex = 0;
                 for (int i = 0; i < nrenderer; i++) {
                     for (int j = 0; j < plot.getDataset(i).getSeriesCount(); j++) {

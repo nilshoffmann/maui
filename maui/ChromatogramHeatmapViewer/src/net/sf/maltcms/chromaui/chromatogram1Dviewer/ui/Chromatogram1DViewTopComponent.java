@@ -148,11 +148,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 							if (project != null) {
 								Collection<Peak1DContainer> peaks = project.getPeaks(descr);
 								for (Peak1DContainer container : peaks) {
-//									IChromatogram chrom = container.getChromatogram().getChromatogram();
-//									if(chrom instanceof IChromatogram1D) {
-//										Peak1DElementProvider provider = new Peak1DElementProvider(container.getDisplayName(), (IChromatogram1D)container.getChromatogram().getChromatogram(), container);
-//										Peak1DDataset pd = new Peak1DDataset(provider, lookup);
-//									}
 									Peak1DOverlay overlay = new Peak1DOverlay(descr, container.getName(), container.getDisplayName(), container.getShortDescription(), true, container);
 									ic.add(overlay);
 									overlays.add(overlay);
