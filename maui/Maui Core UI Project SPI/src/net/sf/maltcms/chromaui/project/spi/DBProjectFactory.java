@@ -140,7 +140,7 @@ public class DBProjectFactory {
 		if (!projdir.exists()) {
 			projdir.mkdirs();
 		}
-		handle.start(5);
+		handle.start(11);
 		String projectFileName = DBProjectFactory.PROJECT_FILE;
 		IChromAUIProject icui = DBProjectFactory.getDefault();
 		ISeparationType separationType = (ISeparationType) props.get(
@@ -158,15 +158,18 @@ public class DBProjectFactory {
 			Map<File, File> importFileMap = new LinkedHashMap<File, File>();
 			fileToGroup = importChromatograms(props, projdir, inputFiles, fileToGroup, importFileMap);
 			LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor = new LinkedHashMap<File, IChromatogramDescriptor>();
-			handle.progress("Populating database", 3);
+			handle.progress("Initializing chromatograms", 3);
 			initChromatograms(props, inputFiles, projdir,
 					separationType, detectorType, fileToDescriptor);
+			handle.progress("Adding normalization info", 4);
 			addNormalizationDescriptors(props, importFileMap ,fileToDescriptor);
 			//add treatment groups
 			LinkedHashSet<String> groups = new LinkedHashSet<String>();
 			LinkedHashMap<String, Set<File>> groupToFile = new LinkedHashMap<String, Set<File>>();
+			handle.progress("Initializing treatment groups", 5);
 			initGroups(groups, fileToGroup, groupToFile);
 			System.out.println("Group to file: " + groupToFile);
+			handle.progress("Adding treatment groups", 6);
 			addTreatmentGroups(groupToFile, fileToDescriptor, icui);
 			//add sample groups
 			LinkedHashSet<String> sampleGroups = new LinkedHashSet<String>();
@@ -174,15 +177,18 @@ public class DBProjectFactory {
 			Map<File, String> fileToSampleGroup = (Map<File, String>) props.get(
 					"sampleGroupMapping");
 			System.out.println("File to sample group 1: " + fileToSampleGroup);
+			handle.progress("Mapping input files", 7);
 			fileToSampleGroup = remapInputFiles(fileToSampleGroup, importFileMap);
 			System.out.println("File to sample group 2: " + fileToSampleGroup);
+			handle.progress("Initializing sample groups", 8);
 			initSampleGroups(sampleGroups, fileToSampleGroup, sampleGroupToFile);
 			System.out.println("Sample group to file: " + sampleGroupToFile);
+			handle.progress("Adding sample groups", 9);
 			addSampleGroups(sampleGroupToFile, fileToDescriptor, icui);
-			handle.progress("Creating file layout", 4);
+			handle.progress("Creating file layout", 10);
 			createSubdirectories(props, icui, projdir, fileToGroup, fileToSampleGroup);
 			icui.closeSession();
-			handle.progress("Done.", 5);
+			handle.progress("Done.",11);
 		} catch (MalformedURLException ex) {
 			Exceptions.printStackTrace(ex);
 			throw ex;
@@ -379,7 +385,7 @@ public class DBProjectFactory {
 		int i = 0;
 		for (File f : inputFiles) {
 			IFileFragment ff = getProjectFileForResource(projdir, f);
-			System.out.println("Adding FileFragment: " + ff);
+			System.out.println("Adding FileFragment: " + ff.getName());
 			if (modulationTime != null) {
 				IVariableFragment ivf = new VariableFragment(ff,
 						"modulation_time");
@@ -442,7 +448,8 @@ public class DBProjectFactory {
 					Exceptions.printStackTrace(ex);
 				}
 			} else {
-				fragment = new FileFragment(dataDir, f.getName());
+				fragment = new FileFragment(dataDir, StringTools.removeFileExt(f.getName())+".cdf");
+				System.out.println("Adding data file "+fragment.getName());
 				fragment.addSourceFile(new FileFragment(f));
 			}
 			System.out.println("Returning fragment: " + fragment.getUri());

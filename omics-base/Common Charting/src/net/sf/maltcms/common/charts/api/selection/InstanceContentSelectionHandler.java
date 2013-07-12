@@ -35,11 +35,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.selection.ISelection.Type;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayNode;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionSourceChildFactory;
+import org.jfree.data.general.Dataset;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
 
 /**
@@ -57,18 +60,18 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
     private final SelectionOverlay overlay;
     private Mode mode;
     private final int capacity;
-    private ADataset1D<?,?> dataset;
+    private Lookup.Provider dataset;
     // private TARGET lastItem = null;
     private ExecutorService es = Executors.newSingleThreadExecutor();
     private AtomicBoolean updatePending = new AtomicBoolean(false);
     private Node selectionOverlayNode;
 
-    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D<?,?> dataset) {
+    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, Lookup.Provider dataset) {
         this(content, overlay, mode, dataset, Integer.MAX_VALUE);
         updateNode();
     }
 
-    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, ADataset1D<?,?> dataset, int capacity) {
+    public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, Lookup.Provider dataset, int capacity) {
         this.content = content;
         this.overlay = overlay;
         this.mode = mode;
@@ -129,7 +132,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
     @Override
     public void selectionStateChanged(SelectionChangeEvent ce) {
         if (ce.getSelection() != null) {
-            XYSelection.Type type = ce.getSelection().getType();
+            Type type = ce.getSelection().getType();
             switch (type) {
                 case CLEAR:
                     System.out.println("Clearing instance content!");

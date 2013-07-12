@@ -35,7 +35,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -55,10 +54,10 @@ import net.sf.maltcms.chromaui.ui.rangeSlider.RangeSlider;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
-import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYBoxAnnotation;
@@ -611,11 +610,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             selectionOverlay.addChangeListener(chartPanel);
             this.content.add(selectionOverlay);
         } else {
-            for (XYSelection selection : selectionOverlay.getMouseClickSelection()) {
+            for (ISelection selection : selectionOverlay.getMouseClickSelection()) {
                 selection.setDataset(dataset);
             }
 
-            XYSelection selection = selectionOverlay.getMouseHoverSelection();
+            ISelection selection = selectionOverlay.getMouseHoverSelection();
             if (selection != null) {
                 selection.setDataset(dataset);
             }

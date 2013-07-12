@@ -28,6 +28,7 @@
 package net.sf.maltcms.common.charts.api.selection;
 
 import java.awt.Shape;
+import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.XYItemEntity;
 
 /**
@@ -38,4 +39,5 @@ import org.jfree.chart.entity.XYItemEntity;
 
 public interface ISelectionShapeFactory {
 	public Shape createSelectionShape(XYItemEntity entity);
+	public Shape createSelectionShape(CategoryItemEntity entity);
 }

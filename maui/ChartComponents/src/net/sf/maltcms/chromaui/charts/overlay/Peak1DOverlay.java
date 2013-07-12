@@ -42,9 +42,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
@@ -57,6 +55,7 @@ import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import static net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay.toView;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
@@ -87,7 +86,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	private boolean drawShapes = true;
 	private boolean drawLines = true;
 	private ADataset1D<IChromatogram1D, IScan> dataset = null;
-	private XYSelection selection;
+	private ISelection selection;
 	private Result<IPeakAnnotationDescriptor> padResult;
 
 	public Peak1DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
@@ -146,10 +145,10 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 				Shape x = shapes.get(i);
 				Rectangle2D bbox = x.getBounds2D();
 				if (x instanceof Rectangle2D) {
-					x = toView(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getCenterY()));
+					x = toViewXY(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getCenterY()));
 					drawEntity(x, g2, fillColor, null, chartPanel, false, 0.1f);
 				} else {
-					x = toView(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getMaxY()));
+					x = toViewXY(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getMaxY()));
 					drawEntity(x, g2, fillColor, Color.DARK_GRAY, chartPanel, false, 0.25f);
 				}
 			}
@@ -157,10 +156,10 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 				Shape x = selectedPeaks.get(i);
 				Rectangle2D bbox = x.getBounds2D();
 				if (x instanceof Rectangle2D) {
-					x = toView(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getCenterY()));
+					x = toViewXY(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getCenterY()));
 					drawEntity(x, g2, fillColor, Color.BLACK, chartPanel, false, 1f);
 				} else {
-					x = toView(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getMaxY()));
+					x = toViewXY(x, chartPanel, new Point2D.Double(bbox.getCenterX(), bbox.getMaxY()));
 					drawEntity(x, g2, fillColor, Color.BLACK, chartPanel, false, 1f);
 				}
 			}
@@ -223,7 +222,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 
 	@Override
 	public void selectionStateChanged(SelectionChangeEvent ce) {
-		XYSelection selection = ce.getSelection();
+		ISelection selection = ce.getSelection();
 		if (selection != null && ce.getSelection().getType() == XYSelection.Type.HOVER) {
 			this.selection = selection;
 			fireOverlayChanged();

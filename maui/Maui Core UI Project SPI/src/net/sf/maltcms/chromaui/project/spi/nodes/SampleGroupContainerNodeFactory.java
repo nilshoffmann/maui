@@ -44,6 +44,7 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
+import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -110,7 +111,7 @@ public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends
             try {
                 dobj = DataObject.find(FileUtil.toFileObject(new File(cd.
                         getResourceLocation())));
-                Node n = dobj.getNodeDelegate();
+                Node n = dobj.getNodeDelegate().cloneNode();
                 //merge lookups of data object node and container node
                 Lookup lookup = new ProxyLookup(n.getLookup(), Lookups.fixed(cp,
                         cd), lkp);

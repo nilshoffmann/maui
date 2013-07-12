@@ -96,8 +96,10 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
 		private final Project p;
 		private final String name;
 		private Action[] actions = new Action[0];
+		private final Lookup context;
 
 		public ContextPopupMenuAction(String name, Icon icon, Lookup context) {
+			this.context = context;
 			p = context.lookup(Project.class);
 			this.name = name;
 //			String name = ProjectUtils.getInformation(p).getDisplayName();
@@ -135,7 +137,7 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
 
 		@Override
 		public JMenuItem getPopupPresenter() {
-			return actionsToMenu(name, actions, Utilities.actionsGlobalContext());
+			return actionsToMenu(name, actions, context);
 		}
 	}
 

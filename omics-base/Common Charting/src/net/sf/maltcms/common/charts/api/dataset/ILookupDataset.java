@@ -40,8 +40,6 @@ public interface ILookupDataset<SOURCE, TARGET> extends Lookup.Provider {
 
 	String getDisplayName();
 
-	int[][] getRanks();
-
 	SOURCE getSource(int seriesIndex);
 
 	TARGET getTarget(int seriesIndex, int itemIndex);

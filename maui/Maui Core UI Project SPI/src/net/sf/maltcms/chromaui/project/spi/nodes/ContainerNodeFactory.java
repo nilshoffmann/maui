@@ -138,7 +138,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
             try {
                 dobj = DataObject.find(FileUtil.toFileObject(new File(cd.
                         getResourceLocation())));
-                Node n = dobj.getNodeDelegate();
+                Node n = dobj.getNodeDelegate().cloneNode();
                 //merge lookups of data object node and container node
                 Lookup lookup = new ProxyLookup(n.getLookup(), Lookups.fixed(cp,
                         cd), lkp);

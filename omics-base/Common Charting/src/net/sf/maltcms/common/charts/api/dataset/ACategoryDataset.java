@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -31,9 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.maltcms.common.charts.api.selection.DefaultDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
-import org.jfree.data.DomainOrder;
-import org.jfree.data.xy.AbstractXYDataset;
-import org.jfree.data.xy.IntervalXYDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -42,14 +40,13 @@ import org.openide.util.lookup.InstanceContent;
  *
  * @author Nils Hoffmann
  */
-public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset implements ILookupDataset<SOURCE, TARGET>, IntervalXYDataset {
-
+public class ACategoryDataset<SOURCE, TARGET> extends DefaultCategoryDataset implements ILookupDataset<SOURCE, TARGET> {
 	protected final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
 	private final InstanceContent content = new InstanceContent();
 	private final Lookup lookup = new AbstractLookup(content);
 	private final IDisplayPropertiesProvider displayPropertiesProvider;
 
-	public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
+	public ACategoryDataset(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
 		targetProvider = new ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>>(l);
 		for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
 			content.add(nep.getSource());
@@ -58,22 +55,17 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
 		content.add(this.displayPropertiesProvider);
 	}
 
-	public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
+	public ACategoryDataset(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
 		this(l, new DefaultDisplayPropertiesProvider());
 	}
 
-	public ADataset1D(ADataset1D<SOURCE, TARGET> delegate) {
+	public ACategoryDataset(ADataset1D<SOURCE, TARGET> delegate) {
 		this(delegate.getNamedElementProvider(), delegate.getLookup().lookup(IDisplayPropertiesProvider.class));
 	}
 
 	@Override
 	public List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider() {
 		return targetProvider;
-	}
-
-	@Override
-	public DomainOrder getDomainOrder() {
-		return DomainOrder.ASCENDING;
 	}
 
 	@Override
@@ -84,7 +76,7 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
 	@Override
 	public TARGET getTarget(int seriesIndex, int itemIndex) {
 //        System.out.println("Retrieving target from series " + seriesIndex + ", item " + itemIndex);
-		return targetProvider.get(seriesIndex).get(getRanks()[seriesIndex][itemIndex]);
+		return targetProvider.get(seriesIndex).get(itemIndex);
 	}
 
 	@Override
@@ -94,21 +86,9 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
 	}
 
 	@Override
-	public int getSeriesCount() {
-		return targetProvider.size();
-	}
-
-	@Override
-	public Comparable<?> getSeriesKey(int i) {
+	public Comparable<?> getRowKey(int i) {
 		return targetProvider.get(i).getKey();
 	}
-
-	@Override
-	public int getItemCount(int i) {
-		return targetProvider.get(i).size();
-	}
-	
-	public abstract int[][] getRanks();
 
 	@Override
 	public String getDescription() {
@@ -124,12 +104,4 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
 	public String getDisplayName() {
 		return targetProvider.size() + " datasets";
 	}
-
-	public abstract double getMinX();
-
-	public abstract double getMaxX();
-
-	public abstract double getMinY();
-
-	public abstract double getMaxY();
 }

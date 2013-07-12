@@ -45,10 +45,10 @@ import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
-import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
@@ -134,11 +134,11 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 			selectionOverlay.addChangeListener(chartPanel);
 			content.add(selectionOverlay);
 		} else {
-			for (XYSelection selection : selectionOverlay.getMouseClickSelection()) {
+			for (ISelection selection : selectionOverlay.getMouseClickSelection()) {
 				selection.setDataset(dataset);
 			}
 
-			XYSelection selection = selectionOverlay.getMouseHoverSelection();
+			ISelection selection = selectionOverlay.getMouseHoverSelection();
 			if (selection != null) {
 				selection.setDataset(dataset);
 			}

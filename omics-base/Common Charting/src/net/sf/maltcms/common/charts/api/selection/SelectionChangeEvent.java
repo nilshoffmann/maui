@@ -35,18 +35,18 @@ import javax.swing.event.ChangeEvent;
  */
 public class SelectionChangeEvent extends ChangeEvent {
 
-    private XYSelection selection;
+    private ISelection selection;
     
     private SelectionChangeEvent(Object source) {
         super(source);
     }
     
-    public SelectionChangeEvent(Object source, XYSelection selection) {
+    public SelectionChangeEvent(Object source, ISelection selection) {
         this(source);
         this.selection = selection;
     }
 
-    public XYSelection getSelection() {
+    public ISelection getSelection() {
         return selection;
     }
     

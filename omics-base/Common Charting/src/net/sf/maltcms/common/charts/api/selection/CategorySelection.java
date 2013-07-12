@@ -1,23 +1,50 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Maui, Maltcms User Interface. 
+ * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
+ *
+ * Project website: http://maltcms.sf.net
+ *
+ * Maui may be used under the terms of either the
+ *
+ * GNU Lesser General Public License (LGPL)
+ * http://www.gnu.org/licenses/lgpl.html
+ *
+ * or the
+ *
+ * Eclipse Public License (EPL)
+ * http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * As a user/recipient of Maui, you may choose which license to receive the code 
+ * under. Certain files or entire directories may not be covered by this 
+ * dual license, but are subject to licenses compatible to both LGPL and EPL.
+ * License exceptions are explicitly declared in all relevant files or in a 
+ * LICENSE file in the relevant directories.
+ *
+ * Maui is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
+ * for details.
  */
 package net.sf.maltcms.common.charts.api.selection;
 
 import java.awt.Shape;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import static net.sf.maltcms.common.charts.api.selection.ISelection.PROP_DISPLAY_NAME;
+import static net.sf.maltcms.common.charts.api.selection.ISelection.PROP_NAME;
+import static net.sf.maltcms.common.charts.api.selection.ISelection.PROP_SHORT_DESCRIPTION;
+import static net.sf.maltcms.common.charts.api.selection.ISelection.PROP_VISIBLE;
+import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.Dataset;
-import org.jfree.data.xy.XYDataset;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class XYSelection implements ISelection {
+public class CategorySelection implements ISelection {
 
     public static final String PROP_DATASET = "dataset";
-    private XYDataset dataset;
+    private CategoryDataset dataset;
     private final int seriesIndex;
     private final int itemIndex;
     private final Type type;
@@ -28,11 +55,11 @@ public class XYSelection implements ISelection {
     private String name;
     private String displayName;
     private String shortDescription;
-    private static XYSelection clearSelection = null;
+    private static CategorySelection clearSelection = null;
 
-    public static XYSelection clearSelection() {
+    public static CategorySelection clearSelection() {
         if (clearSelection == null) {
-            clearSelection = new XYSelection(null, -1, -1, Type.CLEAR, null, null, null);
+            clearSelection = new CategorySelection(null, -1, -1, Type.CLEAR, null, null, null);
             clearSelection.setName("CLEAR");
             clearSelection.setDisplayName("CLEAR");
             clearSelection.setShortDescription("THE EMPTY SELECTION SIGNALING A CLEAR");
@@ -40,7 +67,7 @@ public class XYSelection implements ISelection {
         return clearSelection;
     }
 
-    public XYSelection(XYDataset dataset, int seriesIndex, int itemIndex, Type type, Object source, Object target, Shape selectionShape) {
+    public CategorySelection(CategoryDataset dataset, int seriesIndex, int itemIndex, Type type, Object source, Object target, Shape selectionShape) {
         this.dataset = dataset;
         this.seriesIndex = seriesIndex;
         this.itemIndex = itemIndex;
@@ -58,20 +85,20 @@ public class XYSelection implements ISelection {
     }
 
 	@Override
-    public XYDataset getDataset() {
+    public CategoryDataset getDataset() {
         return dataset;
     }
 
 	@Override
 	public void setDataset(Dataset dataset) {
-		if(!(dataset instanceof XYDataset)) {
-			throw new IllegalArgumentException("Only XYDatasets supported!");
+		if(!(dataset instanceof CategoryDataset)) {
+			throw new IllegalArgumentException("Only CategoryDatasets supported!");
 		}
-		setDataset((XYDataset)dataset);
+		setDataset((CategoryDataset)dataset);
 	}
 	
-    public void setDataset(XYDataset dataset) {
-        XYDataset old = dataset;
+    public void setDataset(CategoryDataset dataset) {
+        CategoryDataset old = dataset;
         this.dataset = dataset;
         pcs.firePropertyChange(PROP_DATASET, old, this.dataset);
     }
@@ -101,7 +128,6 @@ public class XYSelection implements ISelection {
         return target;
     }
 
-	@Override
     public Shape getSelectionShape() {
         return selectionShape;
     }
@@ -141,7 +167,7 @@ public class XYSelection implements ISelection {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (this.dataset != null ? this.dataset.getSeriesKey(this.seriesIndex).hashCode() : 0);
+        hash = 79 * hash + (this.dataset != null ? this.dataset.getRowKey(this.seriesIndex).hashCode() : 0);
         hash = 79 * hash + this.seriesIndex;
         hash = 79 * hash + this.itemIndex;
         hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
@@ -159,9 +185,9 @@ public class XYSelection implements ISelection {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final XYSelection other = (XYSelection) obj;
+        final CategorySelection other = (CategorySelection) obj;
 		try {
-			if (this.dataset.getSeriesKey(this.seriesIndex) != other.getDataset().getSeriesKey(this.seriesIndex) && (this.dataset.getSeriesKey(this.seriesIndex) == null || !this.dataset.getSeriesKey(this.seriesIndex).equals(other.getDataset().getSeriesKey(this.seriesIndex)))) {
+			if (this.dataset.getRowKey(this.seriesIndex) != other.getDataset().getRowKey(this.seriesIndex) && (this.dataset.getRowKey(this.seriesIndex) == null || !this.dataset.getRowKey(this.seriesIndex).equals(other.getDataset().getRowKey(this.seriesIndex)))) {
 				return false;
 			}
 		}catch(ArrayIndexOutOfBoundsException aiex) {
@@ -188,7 +214,7 @@ public class XYSelection implements ISelection {
 
     @Override
     public String toString() {
-        return "XYSelection{" + "dataset=" + dataset + ", seriesIndex=" + seriesIndex + ", itemIndex=" + itemIndex + ", type=" + type + ", target=" + target + ", source=" + source + ", selectionShape=" + selectionShape + '}';
+        return "CategorySelection{" + "dataset=" + dataset + ", seriesIndex=" + seriesIndex + ", itemIndex=" + itemIndex + ", type=" + type + ", target=" + target + ", source=" + source + ", selectionShape=" + selectionShape + '}';
     }
 
     @Override

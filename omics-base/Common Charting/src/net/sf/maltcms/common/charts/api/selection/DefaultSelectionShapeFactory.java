@@ -28,6 +28,7 @@
 package net.sf.maltcms.common.charts.api.selection;
 
 import java.awt.Shape;
+import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.XYItemEntity;
 
 /**
@@ -40,6 +41,11 @@ public class DefaultSelectionShapeFactory implements ISelectionShapeFactory {
 
 	@Override
 	public Shape createSelectionShape(XYItemEntity entity) {
+		return entity.getArea();
+	}
+	
+	@Override
+	public Shape createSelectionShape(CategoryItemEntity entity) {
 		return entity.getArea();
 	}
 	

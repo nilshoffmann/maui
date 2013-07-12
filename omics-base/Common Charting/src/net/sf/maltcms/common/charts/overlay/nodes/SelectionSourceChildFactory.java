@@ -35,11 +35,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
-import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -56,9 +54,9 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
 
     private final Map<Object, Set<ISelection>> sourceToSelection = new LinkedHashMap<Object, Set<ISelection>>();
     private final SelectionOverlay so;
-    private final ADataset1D<?,?> dataset;
+    private final Lookup.Provider dataset;
 
-    public SelectionSourceChildFactory(SelectionOverlay so, ADataset1D<?,?> dataset) {
+    public SelectionSourceChildFactory(SelectionOverlay so, Lookup.Provider dataset) {
         recreateSelection();
         so.addPropertyChangeListener(WeakListeners.propertyChange(this, so));
         this.so = so;
@@ -68,7 +66,7 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
     private void recreateSelection() {
         if (so != null && so.getMouseClickSelection() != null) {
             sourceToSelection.clear();
-            for (XYSelection sel : so.getMouseClickSelection()) {
+            for (ISelection sel : so.getMouseClickSelection()) {
                 if (sourceToSelection.containsKey(sel.getSource())) {
                     Set<ISelection> selection = sourceToSelection.get(sel.getSource());
                     selection.add(sel);

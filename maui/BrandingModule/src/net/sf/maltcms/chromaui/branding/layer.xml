@@ -17,6 +17,7 @@
         <folder name="Window">
             <file name="LookupMonitorAction.shadow_hidden"/>
             <file name="net-sf-maltcms-chromaui-charts-ui-XYChartComponentOpenAction.shadow_hidden"/>
+			<file name="net-sf-maltcms-chromaui-charts-ui-CategoryChartComponentOpenAction.shadow_hidden"/>
             <file name="AnnotationManagerAction.shadow_hidden"/>
             <file name="CSV2ListAction.shadow_hidden"/>
             <file name="ChromatogramViewAction.shadow_hidden"/>
@@ -63,6 +64,10 @@
 		<!-- xy chart window -->
         <file name="DS-X.shadow">
             <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-charts-ui-XYChartComponentOpenAction.instance"/>
+        </file>
+		<!-- category chart window -->
+		<file name="DS-C.shadow">
+            <attr name="originalFile" stringvalue="Actions/Window/net-sf-maltcms-chromaui-charts-ui-CategoryChartComponentOpenAction.instance"/>
         </file>
     </folder>
     <folder name="Services">

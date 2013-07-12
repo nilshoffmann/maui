@@ -106,9 +106,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	public CachingChromatogram2D(final IFileFragment e) {
 		this.parent = e;
-		String id = e.getUri().toString()+"-2D";
+		String id = e.getUri().toString() + "-2D";
 		whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this);
-		init();
 	}
 
 	private void init() {
@@ -132,15 +131,18 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 			this.satOffset = parent.getChild("scan_acquisition_time").getArray().
 					getDouble(0);
 			modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
-			scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
-			if (scanRate == 0) {
-				Array satA = this.parent.getChild("scan_acquisition_time").getArray();
-				double s0 = satA.getDouble(0);
-				double s1 = satA.getDouble(1);
-				scanRate = 1.0d / (s1 - s0);
+			try {
+				scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
+				if (scanRate == 0) {
+					Array satA = this.parent.getChild("scan_acquisition_time").getArray();
+					double s0 = satA.getDouble(0);
+					double s1 = satA.getDouble(1);
+					scanRate = 1.0d / (s1 - s0);
+				}
+				spm = (int) (Math.ceil(modulationTime * scanRate));
+				modulations = (int) (scans / spm);
+			} catch (ResourceNotAvailableException rnae) {
 			}
-			spm = (int) (Math.ceil(modulationTime * scanRate));
-			modulations = (int) (scans / spm);
 			scanAcquisitionTimeVariable = this.parent.getChild(scan_acquisition_time_var);
 			try {
 				this.parent.getChild("first_column_elution_time");
@@ -197,6 +199,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	}
 
 	protected Scan2D acquireFromCache(final int i) {
+		init();
 		if (whm.get(i) == null) {
 			whm.put(Integer.valueOf(i), provide(i));
 			if (!loading.get()) {
@@ -231,6 +234,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public Tuple2D<Double, Double> getTimeRange() {
+		init();
 		if (timeRange == null) {
 			MAMath.MinMax satMM = MAMath.getMinMax(getScanAcquisitionTime());
 			timeRange = new Tuple2D<Double, Double>(satMM.min, satMM.max);
@@ -240,6 +244,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public Tuple2D<Double, Double> getMassRange() {
+		init();
 		if (massRange == null) {
 			massRange = MaltcmsTools.getMinMaxMassRange(parent);
 		}
@@ -248,11 +253,13 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public List<Array> getIntensities() {
+		init();
 		return intensityValues;
 	}
 
 	@Override
 	public List<Array> getMasses() {
+		init();
 		return massValues;
 	}
 
@@ -261,7 +268,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	 */
 	@Override
 	public Scan2D getScan(final int scan) {
-//        init();
+		init();
 		return buildScan(scan);
 	}
 
@@ -271,7 +278,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	}
 
 	public List<Scan2D> getScans() {
-//        init();
+		init();
 		ArrayList<Scan2D> al = new ArrayList<Scan2D>();
 		for (int i = 0; i < getNumberOfScans(); i++) {
 			al.add(buildScan(i));
@@ -323,6 +330,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	 */
 	@Override
 	public Array getScanAcquisitionTime() {
+		init();
 		Array sat = null;
 		if (satReference == null || satReference.get() == null) {
 			sat = scanAcquisitionTimeVariable.getArray();
@@ -344,7 +352,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	 */
 	@Override
 	public int getNumberOfScans() {
-//        init();
+		init();
 		return scans;
 //		return MaltcmsTools.getNumberOfScans(this.parent);
 	}
@@ -363,6 +371,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public int getIndexFor(double scan_acquisition_time) {
+		init();
 		double[] satArray = getSatArray();
 		int idx = Arrays.binarySearch(satArray, scan_acquisition_time);
 		if (idx >= 0) {// exact hit
@@ -407,7 +416,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public SerializableScan2D provide(Integer k) {
-//        init();
+		init();
 		final Array masses = massValues.get(k);
 		final Array intens = intensityValues.get(k);
 		final double[] rts = rtProvider.getRts(k);
@@ -445,6 +454,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public double getModulationDuration() {
+		init();
 		return this.modulationTime;
 	}
 
@@ -464,6 +474,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	}
 
 	public RtProvider getRtProvider() {
+		init();
 		return this.rtProvider;
 	}
 
@@ -528,7 +539,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public int getNumberOfScansForMsLevel(short msLevelValue) {
-		if (msLevelValue == (short)1 && msScanMap == null) {
+		init();
+		if (msLevelValue == (short) 1 && msScanMap == null) {
 			return getNumberOfScans();
 		}
 		return msScanMap.get(msLevelValue).size();
@@ -547,6 +559,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public Collection<Short> getMsLevels() {
+		init();
 		if (msScanMap == null) {
 			return Arrays.asList(Short.valueOf((short) 1));
 		}
@@ -557,7 +570,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	@Override
 	public IScan2D getScanForMsLevel(int i, short level) {
-		if (level == (short)1 && msScanMap == null) {
+		init();
+		if (level == (short) 1 && msScanMap == null) {
 			return getScan(i);
 		}
 		if (msScanMap == null) {
@@ -565,18 +579,19 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 		}
 		return getScan(msScanMap.get(level).get(i));
 	}
-	
+
 	@Override
 	public List<Integer> getIndicesOfScansForMsLevel(short level) {
-		if (level == (short)1 && msScanMap == null) {
-			int scans = getNumberOfScansForMsLevel((short)1);
+		init();
+		if (level == (short) 1 && msScanMap == null) {
+			int scans = getNumberOfScansForMsLevel((short) 1);
 			ArrayList<Integer> indices = new ArrayList<Integer>(scans);
 			for (int i = 0; i < scans; i++) {
 				indices.add(i);
 			}
 			return indices;
 		}
-		if(msScanMap == null) {
+		if (msScanMap == null) {
 			throw new ResourceNotAvailableException("No ms fragmentation level available for chromatogram " + getParent().getName());
 		}
 		return Collections.unmodifiableList(msScanMap.get(Short.valueOf(level)));

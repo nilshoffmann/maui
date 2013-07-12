@@ -28,8 +28,12 @@
 package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
-import java.util.UUID;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -48,6 +52,32 @@ public class DetectorTypePropertyEditor extends PropertyEditorSupport {
 
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
-        throw new IllegalArgumentException("Editing of DetectorType is not supported!");
+		IDetectorType dt = getDetectorTypeForName(string);
+		setValue(dt);
     }
+	
+	private IDetectorType getDetectorTypeForName(String name) throws IllegalArgumentException {
+		String[] tags = getTags();
+        int idx = Arrays.binarySearch(tags, name);
+		if(idx<0) {
+			throw new IllegalArgumentException(name+" is not a valid value for detector type! Valid ones are: "+Arrays.deepToString(tags));
+		}
+		Collection<? extends IDetectorType> detectorTypes = Lookup.getDefault().lookupAll(IDetectorType.class);
+		for(IDetectorType dt:detectorTypes) {
+			if(name.equals(dt.getDetectorType())) {
+				return dt;
+			}
+		}
+		throw new IllegalArgumentException("Could not find a matching detector type for name "+name);
+	}
+	
+	@Override
+	public String[] getTags() {
+		Collection<? extends IDetectorType> detectorTypes = Lookup.getDefault().lookupAll(IDetectorType.class);
+		List<String> names = new LinkedList<String>();
+		for(IDetectorType dt:detectorTypes) {
+			names.add(dt.getDetectorType());
+		}
+		return names.toArray(new String[names.size()]);
+	}
 }

@@ -40,7 +40,12 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.panel.AbstractOverlay;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 
@@ -134,51 +139,96 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
 		fireOverlayChanged();
 	}
 
-	public static Point2D toView(Point2D entity, ChartPanel chartPanel) {
-		AffineTransform toPosition = getModelToViewTransform(chartPanel, entity.getX(), entity.getY());
+	public static Point2D toViewXY(Point2D entity, ChartPanel chartPanel) {	
+		AffineTransform toPosition = getModelToViewTransformXY(chartPanel, entity.getX(), entity.getY());
 		toPosition.concatenate(AffineTransform.getTranslateInstance(-entity.getX(), -entity.getY()));
-		return toPosition.transform(entity,null);
-	}
-	
-	public static Shape toView(Shape entity, ChartPanel chartPanel) {
-		return toView(entity, chartPanel, new Point2D.Double(entity.getBounds2D().getCenterX(), entity.getBounds2D().getCenterY()));
+		return toPosition.transform(entity, null);
 	}
 
-	public static Shape toView(Shape entity, ChartPanel chartPanel, Point2D center) {
-		AffineTransform toPosition = getModelToViewTransform(chartPanel, center.getX(), center.getY());
+	public static Shape toViewXY(Shape entity, ChartPanel chartPanel) {
+		return toViewXY(entity, chartPanel, new Point2D.Double(entity.getBounds2D().getCenterX(), entity.getBounds2D().getCenterY()));
+	}
+
+	public static Shape toViewXY(Shape entity, ChartPanel chartPanel, Point2D center) {
+		AffineTransform toPosition = getModelToViewTransformXY(chartPanel, center.getX(), center.getY());
 		toPosition.concatenate(AffineTransform.getTranslateInstance(-center.getX(), -center.getY()));
 		return toPosition.createTransformedShape(entity);
 	}
 
-	public static Shape toView(Shape entity, ChartPanel chartPanel, XYDataset dataset, int seriesIndex, int itemIndex) {
-		double x1 = dataset.getXValue(seriesIndex, itemIndex);
-		double y1 = dataset.getYValue(seriesIndex, itemIndex);
-		AffineTransform toPosition = getModelToViewTransform(chartPanel, x1, y1);
-		toPosition.concatenate(AffineTransform.getTranslateInstance(-entity.getBounds2D().getCenterX(), -entity.getBounds2D().getCenterY()));
-		return toPosition.createTransformedShape(entity);
+	public static Shape toView(Shape entity, ChartPanel chartPanel, Dataset dataset, int seriesIndex, int itemIndex) {
+		if (dataset instanceof XYDataset) {
+			XYDataset xyds = (XYDataset) dataset;
+			double x1 = xyds.getXValue(seriesIndex, itemIndex);
+			double y1 = xyds.getYValue(seriesIndex, itemIndex);
+			AffineTransform toPosition = getModelToViewTransformXY(chartPanel, x1, y1);
+			toPosition.concatenate(AffineTransform.getTranslateInstance(-entity.getBounds2D().getCenterX(), -entity.getBounds2D().getCenterY()));
+			return toPosition.createTransformedShape(entity);
+		} else if (dataset instanceof CategoryDataset) {
+			CategoryDataset cds = (CategoryDataset) dataset;
+			double y1 = cds.getValue(seriesIndex, itemIndex).doubleValue();
+			AffineTransform toPosition = getModelToViewTransformCategory(chartPanel, itemIndex, y1);
+			toPosition.concatenate(AffineTransform.getTranslateInstance(-entity.getBounds2D().getCenterX(), -entity.getBounds2D().getCenterY()));
+			return toPosition.createTransformedShape(entity);
+		}
+		throw new IllegalArgumentException("Unsupported dataset type: " + dataset.getClass());
 	}
 
-	public static AffineTransform getModelToViewTransform(ChartPanel chartPanel, double x1, double y1) {
+	public static AffineTransform getModelToViewTransformXY(ChartPanel chartPanel, double x1, double y1) {
 		double zoomX = chartPanel.getScaleX();
 		double zoomY = chartPanel.getScaleY();
 		Insets insets = chartPanel.getInsets();
 		AffineTransform at = AffineTransform.getTranslateInstance(insets.left,
 				insets.top);
 		at.concatenate(AffineTransform.getScaleInstance(zoomX, zoomY));
-		RectangleEdge xAxisLocation = chartPanel.getChart().getXYPlot().getDomainAxisEdge();
-		RectangleEdge yAxisLocation = chartPanel.getChart().getXYPlot().getRangeAxisEdge();
-		PlotOrientation orientation = chartPanel.getChart().getXYPlot().getOrientation();
-		Rectangle2D dataArea = chartPanel.getChartRenderingInfo().getPlotInfo().getDataArea();
-		double transX = chartPanel.getChart().getXYPlot().getDomainAxis().valueToJava2D(x1, dataArea, xAxisLocation);
-		double transY = chartPanel.getChart().getXYPlot().getRangeAxis().valueToJava2D(y1, dataArea, yAxisLocation);
-		if (orientation == PlotOrientation.HORIZONTAL) {
-			double tmp = transX;
-			transX = transY;
-			transY = tmp;
+		Plot plot = chartPanel.getChart().getPlot();
+		if (plot instanceof XYPlot) {
+			XYPlot xyp = (XYPlot) plot;
+			RectangleEdge xAxisLocation = xyp.getDomainAxisEdge();
+			RectangleEdge yAxisLocation = xyp.getRangeAxisEdge();
+			PlotOrientation orientation = xyp.getOrientation();
+			Rectangle2D dataArea = chartPanel.getChartRenderingInfo().getPlotInfo().getDataArea();
+			double transX = xyp.getDomainAxis().valueToJava2D(x1, dataArea, xAxisLocation);
+			double transY = xyp.getRangeAxis().valueToJava2D(y1, dataArea, yAxisLocation);
+			if (orientation == PlotOrientation.HORIZONTAL) {
+				double tmp = transX;
+				transX = transY;
+				transY = tmp;
+			}
+			at.concatenate(AffineTransform.getTranslateInstance(transX,
+					transY));
+			return at;
 		}
-		at.concatenate(AffineTransform.getTranslateInstance(transX,
-				transY));
-		return at;
+		throw new IllegalArgumentException("Unsupported plot type: " + plot.getClass());
+	}
+
+	public static AffineTransform getModelToViewTransformCategory(ChartPanel chartPanel, int category, double y) {
+		double zoomX = chartPanel.getScaleX();
+		double zoomY = chartPanel.getScaleY();
+		Insets insets = chartPanel.getInsets();
+		AffineTransform at = AffineTransform.getTranslateInstance(insets.left,
+				insets.top);
+		at.concatenate(AffineTransform.getScaleInstance(zoomX, zoomY));
+		Plot plot = chartPanel.getChart().getPlot();
+		if (plot instanceof CategoryPlot) {
+			CategoryPlot xyp = (CategoryPlot) plot;
+			CategoryDataset cds = xyp.getDataset();
+			RectangleEdge xAxisLocation = xyp.getDomainAxisEdge();
+			RectangleEdge yAxisLocation = xyp.getRangeAxisEdge();
+			PlotOrientation orientation = xyp.getOrientation();
+			Comparable categoryKey = cds.getColumnKey(category);
+			Rectangle2D dataArea = chartPanel.getChartRenderingInfo().getPlotInfo().getDataArea();
+			double transX = xyp.getDomainAxis().getCategoryMiddle(categoryKey, cds.getColumnKeys(), dataArea, xAxisLocation);
+			double transY = xyp.getRangeAxis().valueToJava2D(y, dataArea, yAxisLocation);
+			if (orientation == PlotOrientation.HORIZONTAL) {
+				double tmp = transX;
+				transX = transY;
+				transY = tmp;
+			}
+			at.concatenate(AffineTransform.getTranslateInstance(transX,
+					transY));
+			return at;
+		}
+		throw new IllegalArgumentException("Unsupported plot type: " + plot.getClass());
 	}
 
 	public static AffineTransform scaleAtOrigin(Shape s, double baseX, double baseY, float scalex, float scaley) {

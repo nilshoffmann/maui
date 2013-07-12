@@ -41,6 +41,89 @@ import java.util.Random;
  */
 public class DatasetUtils {
 
+	public static ACategoryDataset<List<Double>,Double> createCategoryDataset() {
+		INamedElementProvider<? extends List<Double>, ? extends Double> nep1 = new INamedElementProvider<List<Double>, Double>() {
+            private List<Double> points = createSampleDoubles(10);
+
+            @Override
+            public List<Double> getSource() {
+                return points;
+            }
+
+            @Override
+            public Comparable getKey() {
+                return "Sample dataset";
+            }
+
+            @Override
+            public void setKey(Comparable key) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public int size() {
+                return points.size();
+            }
+
+            @Override
+            public Double get(int i) {
+                return points.get(i);
+            }
+
+            @Override
+            public List<Double> get(int start, int stop) {
+                return points.subList(start, stop);
+            }
+
+            @Override
+            public void reset() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+		INamedElementProvider<? extends List<Double>, ? extends Double> nep2 = new INamedElementProvider<List<Double>, Double>() {
+            private List<Double> points = createSampleDoubles(14);
+
+            @Override
+            public List<Double> getSource() {
+                return points;
+            }
+
+            @Override
+            public Comparable getKey() {
+                return "Sample dataset 2";
+            }
+
+            @Override
+            public void setKey(Comparable key) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public int size() {
+                return points.size();
+            }
+
+            @Override
+            public Double get(int i) {
+                return points.get(i);
+            }
+
+            @Override
+            public List<Double> get(int start, int stop) {
+                return points.subList(start, stop);
+            }
+
+            @Override
+            public void reset() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+        List<INamedElementProvider<? extends List<Double>, ? extends Double>> l = new ArrayList<INamedElementProvider<? extends List<Double>, ? extends Double>>();
+        l.add(nep1);
+		l.add(nep2);
+        return new NumericCategoryDataset(l);
+	}
+	
     public static Numeric1DDataset<Point2D> createDataset() {
         INamedElementProvider<? extends List<Point2D>, ? extends Point2D> nep = new INamedElementProvider<List<Point2D>, Point2D>() {
             private List<Point2D> points = createSamplePoints(500);
@@ -95,6 +178,15 @@ public class DatasetUtils {
 //			}else{
 				points.add(new Point2D.Double(2 * i + (r.nextGaussian() - 0.5d), r.nextDouble() * 256.0d));
 //			}
+        }
+        return points;
+    }
+	
+	public static List<Double> createSampleDoubles(int n) {
+        Random r = new Random(System.nanoTime());
+        List<Double> points = new ArrayList<Double>();
+        for (int i = 0; i < n; i++) {
+			points.add(r.nextDouble() * 256.0d);
         }
         return points;
     }

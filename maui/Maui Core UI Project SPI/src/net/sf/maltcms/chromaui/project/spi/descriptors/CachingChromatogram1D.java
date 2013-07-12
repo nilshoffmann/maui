@@ -101,7 +101,6 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 		this.parent = e;
 		String id = e.getUri().toString()+"-1D";
 		whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this);
-		init();
 	}
 
 	private void init() {
@@ -179,6 +178,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	}
 
 	protected Scan1D buildScan(int i) {
+		init();
 		return acquireFromCache(i);
 	}
 
@@ -199,6 +199,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public Tuple2D<Double, Double> getMassRange() {
+		init();
 		if (massRange == null) {
 			massRange = MaltcmsTools.getMinMaxMassRange(parent);
 		}
@@ -207,11 +208,13 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public List<Array> getIntensities() {
+		init();
 		return intensityValues;
 	}
 
 	@Override
 	public List<Array> getMasses() {
+		init();
 		return massValues;
 	}
 
@@ -220,7 +223,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	 */
 	@Override
 	public Scan1D getScan(final int scan) {
-//		init();
+		init();
 		return buildScan(scan);
 	}
 
@@ -230,7 +233,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	}
 
 	public List<Scan1D> getScans() {
-//		init();
+		init();
 		ArrayList<Scan1D> al = new ArrayList<Scan1D>();
 		for (int i = 0; i < getNumberOfScans(); i++) {
 			al.add(buildScan(i));
@@ -360,6 +363,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	 */
 	@Override
 	public Array getScanAcquisitionTime() {
+		init();
 		Array sat = null;
 		if (satReference == null || satReference.get() == null) {
 			sat = scanAcquisitionTimeVariable.getArray();
@@ -382,7 +386,8 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	 */
 	@Override
 	public int getNumberOfScans() {
-		return MaltcmsTools.getNumberOfScans(this.parent);
+		init();
+		return this.scans;
 	}
 
 	protected double[] getSatArray() {
@@ -444,7 +449,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public SerializableScan1D provide(Integer k) {
-//		init();
+		init();
 		final Array masses = massValues.get(k);
 		final Array intens = intensityValues.get(k);
 		short scanMsLevel = 1;
@@ -459,6 +464,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public int getNumberOfScansForMsLevel(short msLevelValue) {
+		init();
 		if (msLevelValue == (short)1 && msScanMap == null) {
 			return getNumberOfScans();
 		}
@@ -478,6 +484,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public Collection<Short> getMsLevels() {
+		init();
 		if (msScanMap == null) {
 			return Arrays.asList(Short.valueOf((short) 1));
 		}
@@ -488,6 +495,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public IScan1D getScanForMsLevel(int i, short level) {
+		init();
 		if (level == (short)1 && msScanMap == null) {
 			return getScan(i);
 		}
@@ -499,6 +507,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 
 	@Override
 	public List<Integer> getIndicesOfScansForMsLevel(short level) {
+		init();
 		if (level == (short)1 && msScanMap == null) {
 			int scans = getNumberOfScansForMsLevel((short) 1);
 			ArrayList<Integer> indices = new ArrayList<Integer>(scans);

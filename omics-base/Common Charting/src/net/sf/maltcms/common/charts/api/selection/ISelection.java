@@ -27,7 +27,9 @@
  */
 package net.sf.maltcms.common.charts.api.selection;
 
+import java.awt.Shape;
 import java.beans.PropertyChangeListener;
+import org.jfree.data.general.Dataset;
 
 /**
  *
@@ -35,6 +37,11 @@ import java.beans.PropertyChangeListener;
  */
 public interface ISelection {
 
+	public enum Type {
+
+        CLEAR, KEYBOARD, HOVER, CLICK
+    };
+	
     public final String PROP_NAME = "name";
     public final String PROP_DISPLAY_NAME = "displayName";
     public final String PROP_SHORT_DESCRIPTION = "shortDescription";
@@ -44,21 +51,33 @@ public interface ISelection {
 
     Object getTarget();
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
+	
+	Type getType();
 
-    public String getDisplayName();
+    String getDisplayName();
 
-    public void setDisplayName(String name);
+    void setDisplayName(String name);
 
-    public String getShortDescription();
+    String getShortDescription();
 
-    public void setShortDescription(String name);
+    void setShortDescription(String name);
 
     boolean isVisible();
 
     void setVisible(boolean b);
+	
+	Shape getSelectionShape();
+	
+	Dataset getDataset();
+	
+	void setDataset(Dataset dataset);
+	
+	int getSeriesIndex();
+
+    int getItemIndex();
 
     void addPropertyChangeListener(PropertyChangeListener listener);
 

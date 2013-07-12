@@ -48,8 +48,9 @@ import net.sf.maltcms.chromaui.ui.support.api.LookupUtils;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.XYSelection;
-import org.jfree.data.xy.XYDataset;
+import org.jfree.data.general.Dataset;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.cookies.InstanceCookie;
@@ -139,8 +140,8 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
         Map<IChromatogram, IChromatogramDescriptor> chromToDescriptor = new LinkedHashMap<IChromatogram, IChromatogramDescriptor>();
 
         IChromAUIProject project = null;
-        for (XYSelection selection : so.getMouseClickSelection()) {
-            XYDataset dataset = selection.getDataset();
+        for (ISelection selection : so.getMouseClickSelection()) {
+            Dataset dataset = selection.getDataset();
             if (dataset instanceof ADataset2D) {
                 throw new NotImplementedException("Manual peak annotation import for 2D chromatograms is not available yet!");
             } else if (dataset instanceof ADataset1D && !(dataset instanceof ADataset2D)) {
@@ -159,10 +160,10 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
                     if (descr.getChromatogram().getParent().getName().equals(source.getParent().getName())) {
                         chromToDescriptor.put(source, descr);
                         if (sourceToSelection.containsKey(source)) {
-                            IPeakAnnotationDescriptor pad = createPeakAnnotationFor(project, descr, selection, sourceToSelection.get(source).size());
+                            IPeakAnnotationDescriptor pad = createPeakAnnotationFor(project, descr, (XYSelection)selection, sourceToSelection.get(source).size());
                             sourceToSelection.get(source).add(pad);
                         } else {
-                            IPeakAnnotationDescriptor pad = createPeakAnnotationFor(project, descr, selection, 0);
+                            IPeakAnnotationDescriptor pad = createPeakAnnotationFor(project, descr, (XYSelection)selection, 0);
                             LinkedHashSet<IPeakAnnotationDescriptor> lhs = new LinkedHashSet<IPeakAnnotationDescriptor>();
                             lhs.add(pad);
                             sourceToSelection.put(source, lhs);

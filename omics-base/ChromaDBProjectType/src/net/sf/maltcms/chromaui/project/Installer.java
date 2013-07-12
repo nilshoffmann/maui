@@ -38,12 +38,12 @@ import org.openide.modules.ModuleInstall;
 
 public class Installer extends ModuleInstall {
 
-    @Override
-    public void restored() {
-        PropertyEditorManager.registerEditor(UUID.class, UUIDPropertyEditor.class);
-        PropertyEditorManager.registerEditor(IDetectorType.class, DetectorTypePropertyEditor.class);
-        PropertyEditorManager.registerEditor(ISeparationType.class, SeparationTypePropertyEditor.class);
-        PropertyEditorManager.registerEditor(ITreatmentGroupDescriptor.class, TreatmentGroupDescriptorPropertyEditor.class);
-        PropertyEditorManager.registerEditor(ISampleGroupDescriptor.class, SampleGroupDescriptorPropertyEditor.class);
-    }
+	@Override
+	public void restored() {
+		PropertyEditorManager.registerEditor(UUID.class, UUIDPropertyEditor.class);
+		PropertyEditorManager.registerEditor(IDetectorType.class, DetectorTypePropertyEditor.class);
+		PropertyEditorManager.registerEditor(ISeparationType.class, SeparationTypePropertyEditor.class);
+		PropertyEditorManager.registerEditor(ITreatmentGroupDescriptor.class, TreatmentGroupDescriptorPropertyEditor.class);
+		PropertyEditorManager.registerEditor(ISampleGroupDescriptor.class, SampleGroupDescriptorPropertyEditor.class);
+	}
 }
