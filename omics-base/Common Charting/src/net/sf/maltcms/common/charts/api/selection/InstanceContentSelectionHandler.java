@@ -149,7 +149,6 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
                     break;
                 case HOVER:
                     if (mode == Mode.ON_HOVER) {
-//                        addToSelection(ce.getSelection());
 						if (activeSelection.contains(ce.getSelection())) {
                             removeFromSelection(ce.getSelection());
                         } else {

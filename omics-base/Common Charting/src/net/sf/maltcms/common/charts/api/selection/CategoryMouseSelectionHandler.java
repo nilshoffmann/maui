@@ -97,7 +97,7 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
     @Override
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof CategoryItemEntity) {
-			System.out.println("Firing chartMouseMoved event!");
+//			System.out.println("Firing chartMouseMoved event!");
             CategoryItemEntity itemEntity = ((CategoryItemEntity) cme.getEntity());
 			int seriesIndex = -1;
 			int itemIndex = -1;
@@ -113,7 +113,7 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
             mouseEvent = cme.getTrigger();
             fireSelectionChange();
         } else {
-			System.out.println("Firing clear event!");
+//			System.out.println("Firing clear event!");
             clear();
         }
     }

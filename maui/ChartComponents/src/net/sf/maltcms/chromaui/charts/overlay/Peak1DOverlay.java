@@ -53,11 +53,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
-import static net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay.toView;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
-import net.sf.maltcms.common.charts.api.selection.XYSelection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
@@ -88,6 +86,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	private ADataset1D<IChromatogram1D, IScan> dataset = null;
 	private ISelection selection;
 	private Result<IPeakAnnotationDescriptor> padResult;
+	private int seriesIndex = -1;
 
 	public Peak1DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
 		super(name, displayName, shortDescription, visibilityChangeable);
@@ -221,19 +220,6 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	}
 
 	@Override
-	public void selectionStateChanged(SelectionChangeEvent ce) {
-		ISelection selection = ce.getSelection();
-		if (selection != null && ce.getSelection().getType() == XYSelection.Type.HOVER) {
-			this.selection = selection;
-			fireOverlayChanged();
-		} else if (selection != null && ce.getSelection().getType() == XYSelection.Type.CLEAR) {
-			this.selection = null;
-			fireOverlayChanged();
-		}
-
-	}
-
-	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
 		fireOverlayChanged();
 	}
@@ -245,11 +231,11 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		shapes = generatePeakShapes(peakAnnotations, dataset);
 		fireOverlayChanged();
 	}
-	
+
 	public boolean isDrawShapes() {
 		return this.drawShapes;
 	}
-	
+
 	public boolean isDrawLines() {
 		return this.drawLines;
 	}
@@ -265,10 +251,10 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	@Override
 	public void resultChanged(LookupEvent le) {
 		Collection<? extends IPeakAnnotationDescriptor> pads = padResult.allInstances();
-		if(selectedPeaks == null) {
+		if (selectedPeaks == null) {
 			selectedPeaks = new ArrayList<Shape>();
 		}
-		if(!pads.isEmpty()) {
+		if (!pads.isEmpty()) {
 			selectedPeaks.clear();
 		}
 		for (IPeakAnnotationDescriptor ipad : padResult.allInstances()) {
@@ -317,5 +303,9 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	public ADataset1D<IChromatogram1D, IScan> getDataset() {
 		return dataset;
 	}
+
+	@Override
+	public void selectionStateChanged(SelectionChangeEvent ce) {
 	
+	}
 }

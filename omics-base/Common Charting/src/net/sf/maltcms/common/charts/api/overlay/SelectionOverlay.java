@@ -388,7 +388,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
 								Exceptions.printStackTrace(ex);
 							}
 						}
-//						setDrawFlashSelection(false);
+						setDrawFlashSelection(false);
 					}
 				});
 			}

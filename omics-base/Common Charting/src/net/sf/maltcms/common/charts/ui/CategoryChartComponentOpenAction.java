@@ -29,7 +29,6 @@ package net.sf.maltcms.common.charts.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.CategoryChartBuilder;
@@ -37,7 +36,7 @@ import net.sf.maltcms.common.charts.api.dataset.ACategoryDataset;
 import net.sf.maltcms.common.charts.api.dataset.DatasetUtils;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
-import org.jfree.chart.renderer.category.DefaultCategoryItemRenderer;
+import org.jfree.chart.renderer.category.MinMaxCategoryRenderer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -66,10 +65,12 @@ public final class CategoryChartComponentOpenAction implements ActionListener {
             public void run() {
                 final ACategoryDataset<List<Double>,Double> dataset = DatasetUtils.createCategoryDataset();
                 final CategoryChartBuilder builder = new CategoryChartBuilder();
-                DefaultCategoryItemRenderer renderer = new DefaultCategoryItemRenderer();
+				
+				MinMaxCategoryRenderer renderer = new MinMaxCategoryRenderer();
                 renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                 renderer.setBaseItemLabelsVisible(true);
-				CategoryAxis domain = new CategoryAxis("x-axis");
+				
+				CategoryAxis domain = new CategoryAxis("Categories");
                 builder.categories(dataset).renderer(renderer).domainAxis(domain).plot().chart("Sample plot").createLegend(true);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override

@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package maltcms.ui.fileHandles.cdf;
+package net.sf.maltcms.chromaui.charts;
 
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
@@ -33,6 +33,7 @@ import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
 import maltcms.io.csv.CSVReader;
 import cross.datastructures.tools.ArrayTools;
+import cross.datastructures.tools.FragmentTools;
 import cross.tools.MathTools;
 import cross.tools.StringTools;
 import java.awt.BasicStroke;
@@ -59,8 +60,9 @@ import maltcms.tools.ImageTools;
 import maltcms.tools.MaltcmsTools;
 import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.charts.XYChart;
-import net.sf.maltcms.chromaui.charts.ChartCustomizer;
+import net.sf.maltcms.chromaui.ui.TICEICChoiceDialog;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.EIC1DDataset;
+import net.sf.maltcms.chromaui.charts.tooltips.SelectionAwareXYTooltipGenerator;
 import net.sf.maltcms.chromaui.ui.VariableSelectionPanel;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jfree.chart.JFreeChart;
@@ -71,6 +73,7 @@ import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.labels.XYZToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
@@ -84,7 +87,6 @@ import org.jfree.ui.TextAnchor;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
@@ -104,7 +106,16 @@ public class Chromatogram1DChartProvider {
 		this.stopScan = stopScan;
 	}
 	private XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+	private XYToolTipGenerator toolTipGenerator = new StandardXYToolTipGenerator();
 
+	public void setToolTipGenerator(XYToolTipGenerator toolTipGenerator) {
+		this.toolTipGenerator = toolTipGenerator;
+	}
+	
+	public XYToolTipGenerator getToolTipGenerator() {
+		return this.toolTipGenerator;
+	}
+	
 	public void setRenderer(XYItemRenderer renderer) {
 		this.renderer = renderer;
 	}
@@ -113,7 +124,7 @@ public class Chromatogram1DChartProvider {
 		return this.renderer;
 	}
 
-	public XYPlot provide1DCoPlot(XYZDataset dataset, double minRange, double maxRange, boolean useRT) {
+	public XYPlot provide1DCoPlot(XYZDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator, double minRange, double maxRange, boolean useRT) {
 		XYBlockRenderer xyb = new XYBlockRenderer();
 		GradientPaintScale ps = new GradientPaintScale(
 				ImageTools.createSampleTable(256), minRange, maxRange,
@@ -139,7 +150,7 @@ public class Chromatogram1DChartProvider {
 				xyb);
 		//xyb.setBlockWidth(1);
 		xyp.setBackgroundPaint(ps.getPaint(ps.getLowerBound()));
-		xyb.setBaseToolTipGenerator(new XYZToolTipGenerator() {
+		tooltipGenerator.setXYToolTipGenerator(new XYZToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYZDataset xyzd, int i, int i1) {
 				return colnames[xyzd.getY(i, i1).intValue()] + " @" + xyzd.getXValue(i, i1) + " = "
@@ -155,6 +166,7 @@ public class Chromatogram1DChartProvider {
 						+ xyd.getXValue(i, i1);
 			}
 		});
+		xyb.setBaseToolTipGenerator(tooltipGenerator);
 		return xyp;
 	}
 
@@ -316,7 +328,7 @@ public class Chromatogram1DChartProvider {
 		return xyp;
 	}
 
-	public XYPlot provide1DPlot(ADataset1D<IChromatogram1D, IScan> dataset) {
+	public XYPlot provide1DPlot(ADataset1D<IChromatogram1D, IScan> dataset, SelectionAwareXYTooltipGenerator tooltipGenerator) {
 		String[] labels = new String[dataset.getSeriesCount()];
 		List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
 		for (int i = 0; i < labels.length; i++) {
@@ -325,7 +337,7 @@ public class Chromatogram1DChartProvider {
 		ValueAxis domainAxis = new NumberAxis("time [s]");
 		ValueAxis rangeAxis = new NumberAxis("value");
 		XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
-		plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+		tooltipGenerator.setXYToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset xyd, int i, int i1) {
 				Comparable comp = xyd.getSeriesKey(i);
@@ -341,11 +353,12 @@ public class Chromatogram1DChartProvider {
 				return sb.toString();
 			}
 		});
+		plot.getRenderer().setBaseToolTipGenerator(tooltipGenerator);
 		return plot;
 	}
 
 	//ADataset1D<IChromatogram1D, IScan> dataset
-	public XYPlot provide1DEICSUMPlot(EIC1DDataset dataset,
+	public XYPlot provide1DEICSUMPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator, 
 			double[] masses, double massResolution, boolean useRT) {
 		String[] labels = new String[dataset.getSeriesCount()];
 		for (int i = 0; i < labels.length; i++) {
@@ -354,7 +367,7 @@ public class Chromatogram1DChartProvider {
 		ValueAxis domainAxis = new NumberAxis("time [s]");
 		ValueAxis rangeAxis = new NumberAxis("value");
 		XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
-		plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+		tooltipGenerator.setXYToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset xyd, int i, int i1) {
 				Comparable comp = xyd.getSeriesKey(i);
@@ -370,10 +383,11 @@ public class Chromatogram1DChartProvider {
 				return sb.toString();
 			}
 		});
+		plot.getRenderer().setBaseToolTipGenerator(tooltipGenerator);
 		return plot;
 	}
 
-	public XYPlot provide1DEICCOPlot(EIC1DDataset dataset,
+	public XYPlot provide1DEICCOPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator, 
 			double[] masses, double massResolution, boolean useRT) {
 		String[] labels = new String[dataset.getSeriesCount()];
 		for (int i = 0; i < labels.length; i++) {
@@ -382,7 +396,7 @@ public class Chromatogram1DChartProvider {
 		ValueAxis domainAxis = new NumberAxis("time [s]");
 		ValueAxis rangeAxis = new NumberAxis("value");
 		XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
-		plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+		tooltipGenerator.setXYToolTipGenerator(new XYToolTipGenerator() {
 			@Override
 			public String generateToolTip(XYDataset xyd, int i, int i1) {
 				Comparable comp = xyd.getSeriesKey(i);
@@ -398,6 +412,7 @@ public class Chromatogram1DChartProvider {
 				return sb.toString();
 			}
 		});
+		plot.getRenderer().setBaseToolTipGenerator(tooltipGenerator);
 		return plot;
 	}
 

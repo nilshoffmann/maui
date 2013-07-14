@@ -29,9 +29,12 @@
 package net.sf.maltcms.common.charts.api.dataset;
 
 import java.awt.geom.Point2D;
+import java.text.NumberFormat;
 import java.util.List;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
+import net.sf.maltcms.common.charts.api.selection.XYSelection;
+import org.jfree.data.xy.XYZDataset;
 
 /**
  *
@@ -92,6 +95,7 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
             public String getTargetShortDescription(ISelection selection) {
                 return getShortDescription(selection);
             }
+			
         });
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;

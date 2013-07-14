@@ -27,6 +27,7 @@
  */
 package maltcms.ui.fileHandles.cdf;
 
+import net.sf.maltcms.chromaui.charts.Chromatogram1DChartProvider;
 import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IFileFragment;
 import java.io.File;

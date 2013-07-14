@@ -30,14 +30,17 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.ui;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks.ChromatogramViewLoaderWorker;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import java.awt.BorderLayout;
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,6 +63,7 @@ import net.sf.maltcms.chromaui.charts.overlay.Peak1DOverlay;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
@@ -142,8 +146,10 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 						dataset = ds;
 						annotations = new ArrayList<XYAnnotation>(0);
 						final DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
+						Map<Point,Collection<IPeakAnnotationDescriptor>> pointToPeaks = new HashMap<Point, Collection<IPeakAnnotationDescriptor>>();
 						for (IChromatogramDescriptor descr : filename) {
 							ic.add(descr);
+							
 							List<ChartOverlay> overlays = new LinkedList<ChartOverlay>();
 							if (project != null) {
 								Collection<Peak1DContainer> peaks = project.getPeaks(descr);
@@ -168,7 +174,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 								}
 							}
 						}
-						
 						ic.add(ds);
 						handle.progress("Initializing Settings and Properties...");
 						ic.add(new Properties());

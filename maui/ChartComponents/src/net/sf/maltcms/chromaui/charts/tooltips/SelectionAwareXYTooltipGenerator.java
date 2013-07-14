@@ -25,23 +25,37 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.api.selection;
+package net.sf.maltcms.chromaui.charts.tooltips;
+
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.labels.XYToolTipGenerator;
+import org.jfree.data.xy.XYDataset;
 
 /**
  *
- *  @author Nils Hoffmann
+ * @author Nils Hoffmann
  */
-public interface IDisplayPropertiesProvider {
-    public String getName(ISelection selection);
-    public String getDisplayName(ISelection selection);
-    public String getShortDescription(ISelection selection);
-    
-    public String getSourceName(ISelection selection);
-    public String getSourceDisplayName(ISelection selection);
-    public String getSourceShortDescription(ISelection selection);
-    
-    public String getTargetName(ISelection selection);
-    public String getTargetDisplayName(ISelection selection);
-    public String getTargetShortDescription(ISelection selection);
+public abstract class SelectionAwareXYTooltipGenerator implements XYToolTipGenerator {
+
+	private XYToolTipGenerator xytg = new StandardXYToolTipGenerator();
+
+	public SelectionAwareXYTooltipGenerator(XYToolTipGenerator tooltipGenerator) {
+		this.xytg = tooltipGenerator;
+	}
+	
+	public void setXYToolTipGenerator(XYToolTipGenerator generator) {
+		this.xytg = generator;
+	}
+
+	@Override
+	public String generateToolTip(XYDataset xyd, int i, int i1) {
+		String str = createSelectionAwareTooltip(xyd, i, i1);
+		if(str==null) {
+			return xytg.generateToolTip(xyd, i, i1);
+		}
+		return str;
+	}
+
+	public abstract String createSelectionAwareTooltip(XYDataset xyd, int i, int i1);
 
 }

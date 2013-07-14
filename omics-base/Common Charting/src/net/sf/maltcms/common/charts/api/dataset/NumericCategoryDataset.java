@@ -27,10 +27,11 @@
  */
 package net.sf.maltcms.common.charts.api.dataset;
 
-import java.awt.geom.Point2D;
 import java.util.List;
+import net.sf.maltcms.common.charts.api.selection.CategorySelection;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
+import org.jfree.data.category.CategoryDataset;
 
 /**
  *
@@ -85,6 +86,7 @@ public class NumericCategoryDataset extends ACategoryDataset<List<Double>,Double
             public String getTargetShortDescription(ISelection selection) {
                 return getShortDescription(selection);
             }
+
 		});
         for (INamedElementProvider<? extends List<Double>, ? extends Double> nep : l) {
             for (int i = 0; i < nep.size(); i++) {

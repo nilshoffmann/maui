@@ -38,11 +38,12 @@ import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent;
-import maltcms.ui.fileHandles.cdf.Chromatogram1DChartProvider;
+import net.sf.maltcms.chromaui.charts.Chromatogram1DChartProvider;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.EIC1DDataset;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.panel.Chromatogram1DViewPanel;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.TopViewDataset;
 import net.sf.maltcms.chromaui.charts.format.RTNumberFormatter;
+import net.sf.maltcms.chromaui.charts.tooltips.SelectionAwareXYTooltipGenerator;
 import net.sf.maltcms.chromaui.charts.units.RTUnit;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -52,8 +53,10 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
+import org.jfree.data.xy.XYDataset;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.util.LookupEvent;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
@@ -110,39 +113,48 @@ public class ChromatogramViewLoaderWorker implements Runnable {
 			handle.progress("Retrieving peaks", 2);
 			Chromatogram1DChartProvider c1p = new Chromatogram1DChartProvider();
 			c1p.setRenderer(settingsPanel.getRenderer());
+
 //            c1p.setPeakData(filePeakMap);
 //        c1p.setScanRange(file.getIndexFor(Math.max(mm.min, minRT)),file.getIndexFor(Math.min(mm.max, maxRT)));
 
 			XYPlot plot = null;
 			System.out.println("Plot mode is " + plotMode);
-
+			SelectionAwareXYTooltipGenerator tooltipGenerator = cvtc.getLookup().lookup(SelectionAwareXYTooltipGenerator.class);
+			if(tooltipGenerator == null) {
+				tooltipGenerator = new SelectionAwareXYTooltipGenerator(tooltipGenerator) {
+					@Override
+					public String createSelectionAwareTooltip(XYDataset xyd, int i, int i1) {
+						return null;
+					}
+				};
+			}
 			handle.progress("Building plot", 3);
 			if ("TIC".equals(plotMode)) {
 				System.out.println("Loading TIC");
 				if ("SIDE".equals(plotType)) {
-					plot = c1p.provide1DPlot(dataset);
+					plot = c1p.provide1DPlot(dataset, tooltipGenerator);
 				} else if ("TOP".equals(plotType)) {
-					plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(dataset), dataset.getMinY(), dataset.getMaxY(), true);
+					plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(dataset), tooltipGenerator, dataset.getMinY(), dataset.getMaxY(), true);
 				}
 			} else if ("EIC-SUM".equals(plotMode)) {
 				System.out.println("Loading EIC-SUM");
 				EIC1DDataset ds = new EIC1DDataset(dataset.getNamedElementProvider(), masses, massResolution, EIC1DDataset.TYPE.SUM, new ProxyLookup(dataset.getLookup()));
 				if ("SIDE".equals(plotType)) {
-					plot = c1p.provide1DEICSUMPlot(ds,
+					plot = c1p.provide1DEICSUMPlot(ds, tooltipGenerator,
 							masses,
 							massResolution, true);
 				} else if ("TOP".equals(plotType)) {
-					plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(ds), ds.getMinY(), ds.getMaxY(), true);
+					plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(ds), tooltipGenerator, ds.getMinY(), ds.getMaxY(), true);
 				}
 			} else if ("EIC-COPLOT".equals(plotMode)) {
 				System.out.println("Loading EIC-COPLOT");
 				EIC1DDataset ds = new EIC1DDataset(dataset.getNamedElementProvider(), masses, massResolution, EIC1DDataset.TYPE.CO, new ProxyLookup(dataset.getLookup()));
 				if ("SIDE".equals(plotType)) {
-					plot = c1p.provide1DEICCOPlot(ds,
+					plot = c1p.provide1DEICCOPlot(ds, tooltipGenerator,
 							masses,
 							massResolution, true);
 				} else if ("TOP".equals(plotType)) {
-					plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(ds), ds.getMinY(), ds.getMaxY(), true);
+					plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(ds), tooltipGenerator, ds.getMinY(), ds.getMaxY(), true);
 				}
 			}
 
