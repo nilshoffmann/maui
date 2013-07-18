@@ -31,12 +31,17 @@ import java.awt.Image;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import javax.swing.Action;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import net.sf.maltcms.chromaui.project.api.nodes.IProjectMenuProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
@@ -73,10 +78,17 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
     public Action[] getActions(boolean arg0) {
         Set<Action> nodeActions = new LinkedHashSet<Action>();
 		INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
-		nodeActions.add(f.createMenuItem("Pipelines","Actions/ChromAUIProjectLogicalView/Pipelines"));
-		nodeActions.add(f.createMenuItem("Peaks","Actions/ChromAUIProjectLogicalView/Peaks"));
-		nodeActions.add(f.createMenuItem("Database","Actions/ChromAUIProjectLogicalView/Database"));
-		nodeActions.add(f.createMenuItem("Scripts","Actions/ChromAUIProjectLogicalView/Scripts"));
+		List<IProjectMenuProvider> providers = new ArrayList<IProjectMenuProvider>(Lookup.getDefault().lookupAll(IProjectMenuProvider.class));
+		Collections.sort(providers,new Comparator<IProjectMenuProvider>() {
+
+			@Override
+			public int compare(IProjectMenuProvider o1, IProjectMenuProvider o2) {
+				return o1.getPosition()-o2.getPosition();
+			}
+		});
+		for(IProjectMenuProvider ipmp:providers) {
+			nodeActions.add(f.createMenuItem(ipmp.getName(), ipmp.getActionPath()));
+		}
 		nodeActions.add(null);
 		nodeActions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
 //		nodeActions.add(f.createMenuItem("Default","Actions/ChromAUIProjectLogicalView/DefaultActions"));

@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -27,10 +27,13 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
+import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+
 /**
+ * A custom database descriptor that can associate to peaks in the project.
  * @author Nils Hoffmann
  */
-public interface IStatisticsDescriptor extends IBasicDescriptor {
-    
-    
+public interface IPeakDatabaseDescriptor extends IDatabaseDescriptor, IContainer<Peak1DContainer> {
+	
 }

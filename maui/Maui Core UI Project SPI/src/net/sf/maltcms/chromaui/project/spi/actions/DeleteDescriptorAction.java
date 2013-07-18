@@ -83,6 +83,7 @@ public final class DeleteDescriptorAction implements ActionListener {
 				}
 			}
 			icap.removeDescriptor(context.toArray(new IBasicDescriptor[context.size()]));
+			icap.refresh();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,12 +25,31 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project.api.descriptors;
+package net.sf.maltcms.chromaui.project.spi.nodes.menus;
+
+import net.sf.maltcms.chromaui.project.api.nodes.IProjectMenuProvider;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
+ *
  * @author Nils Hoffmann
  */
-public interface IStatisticsDescriptor extends IBasicDescriptor {
-    
-    
+@ServiceProvider(service=IProjectMenuProvider.class)
+public class PeaksMenuProvider implements IProjectMenuProvider {
+
+	@Override
+	public String getName() {
+		return "Peaks";
+	}
+
+	@Override
+	public String getActionPath() {
+		return "Actions/ChromAUIProjectLogicalView/Peaks";
+	}
+	
+	@Override
+	public int getPosition() {
+		return -40;
+	}
+	
 }
