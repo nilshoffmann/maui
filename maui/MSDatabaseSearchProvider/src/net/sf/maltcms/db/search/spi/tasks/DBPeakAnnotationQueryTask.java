@@ -1,4 +1,4 @@
-/* 
+ /* 
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *

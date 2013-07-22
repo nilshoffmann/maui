@@ -463,7 +463,12 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
 
     @Override
     public String toString() {
-        return getChromatogramDescriptor().getDisplayName() + "@" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();
+		IChromatogramDescriptor descriptor = getChromatogramDescriptor();
+		if(descriptor==null) {
+			return "Peak @" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();	
+		}else{
+			return getChromatogramDescriptor().getDisplayName() + "@" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();
+		}
     }
 
     @Override

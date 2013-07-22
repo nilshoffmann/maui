@@ -50,13 +50,16 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 import ucar.ma2.Array;
 
 /**
  *
  * @author nilshoffmann
  */
-public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescriptor, PropertyChangeListener {
+public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescriptor, PropertyChangeListener, Lookup.Provider {
 
 	private int index = -1;
 	public static final String PROP_INDEX = "index";
@@ -374,7 +377,8 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 	public IPeakAnnotationDescriptor getPeakForSample(IChromatogramDescriptor chromatogramDescriptor) {
 		for (IPeakAnnotationDescriptor ipad : getPeakAnnotationDescriptors()) {
 			//FIXME this does not work and results in NPE
-			if (ipad.getChromatogramDescriptor().getId().equals(chromatogramDescriptor.getId())) {
+			IChromatogramDescriptor descr = ipad.getChromatogramDescriptor();
+			if (descr!=null && descr.getId().equals(chromatogramDescriptor.getId())) {
 				return ipad;
 			}
 		}
@@ -498,5 +502,14 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 			}
 		}
 		return mostFrequentName;
+	}
+	
+	@Override
+	public Lookup getLookup() {
+		InstanceContent ic = new InstanceContent();
+		for(IPeakAnnotationDescriptor descr:getPeakAnnotationDescriptors()) {
+			ic.add(descr);
+		}
+		return new AbstractLookup(ic);
 	}
 }

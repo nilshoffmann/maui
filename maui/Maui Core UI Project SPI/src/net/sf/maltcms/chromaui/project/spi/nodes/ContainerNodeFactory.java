@@ -158,8 +158,14 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 Exceptions.printStackTrace(ex);
             }
         } else {
-            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
-                    Lookups.fixed(cp)));
+			Node cn = null;
+			if(key instanceof Lookup.Provider) {
+				cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
+						Lookups.fixed(cp),((Lookup.Provider)key).getLookup()));
+			}else {
+				cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
+						Lookups.fixed(cp)));
+			}
             key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
             cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
             return cn;

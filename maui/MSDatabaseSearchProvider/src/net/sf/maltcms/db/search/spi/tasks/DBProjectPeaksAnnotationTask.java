@@ -111,7 +111,7 @@ public class DBProjectPeaksAnnotationTask extends AProgressAwareRunnable impleme
 								if(isCancel()) {
 									return;
 								}
-								IChromatogramDescriptor icd = result.getScan().getChromatogramDescriptor();
+//								IChromatogramDescriptor icd = result.getScan().getChromatogramDescriptor();
 								IPeakAnnotationDescriptor ipad = result.getScan();
 								if (result.getMetabolites().size() > 0) {
 									System.out.println("Found " + result.getMetabolites().size() + " matches above threshold!");
