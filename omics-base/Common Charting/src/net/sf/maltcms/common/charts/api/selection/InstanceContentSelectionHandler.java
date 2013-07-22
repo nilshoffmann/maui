@@ -84,7 +84,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
 		this.mode = mode;
 	}
 
-    public void setDataset(ADataset1D<?,?> dataset) {
+    public void setDataset(Lookup.Provider dataset) {
         this.dataset = dataset;
         updateNode();
     }
