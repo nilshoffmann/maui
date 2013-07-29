@@ -152,6 +152,7 @@ public class Registry implements IRegistry {
 					TopComponent tc = map.get(obj);
 					tc.close();
 					closedComponents.add(tc);
+					map.remove(obj);
 				}
 			};
 			SwingUtilities.invokeLater(r);
@@ -170,7 +171,22 @@ public class Registry implements IRegistry {
 					getProjectDirectory().getName());
 			map.put(object, topComponent);
 		} else {
-			System.err.println("TopComponent "+topComponent+" already registered for object: "+object);
+			System.err.println("TopComponent " + topComponent + " already registered for object: " + object);
 		}
+	}
+	
+	@Override
+	public void unregisterTopComponentFor(Object object, TopComponent topComponent) {
+		Project project = getSelectedProject();
+		unregisterTopComponentFor(project, object, topComponent);
+	}
+
+	@Override
+	public void unregisterTopComponentFor(Project project, Object object, TopComponent topComponent) {
+		Map<Object, TopComponent> map = getTopComponentsForProject(project);
+		System.out.println("Removing TopComponent instance for class: " + topComponent.getClass().
+				getName() + "; active project: " + project.
+				getProjectDirectory().getName());
+		map.remove(object);
 	}
 }

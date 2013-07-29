@@ -28,14 +28,12 @@
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
 import java.beans.IntrospectionException;
-import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
-import net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
@@ -54,11 +52,12 @@ public class NodeFactory implements INodeFactory {
 	public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
 		DescriptorNode an;
 		try {
-			if (key instanceof PeakGroupDescriptor) {
-				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
-				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-			}
+			//causes a stack overflow error
+//			if (key instanceof PeakGroupDescriptor) {
+//				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
+//				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
+//				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
+//			}
 			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
 			key.setProject(project);
 			an = new DescriptorNode(key, children, lookup);

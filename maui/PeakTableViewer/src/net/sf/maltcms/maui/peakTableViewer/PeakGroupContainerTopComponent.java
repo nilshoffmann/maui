@@ -33,14 +33,13 @@ import java.awt.BorderLayout;
 import java.util.Iterator;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
+import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupContainerChildFactory;
 import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupDescriptorChildFactory;
 import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
@@ -53,44 +52,35 @@ import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
-import org.openide.windows.WindowManager;
 
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//net.sf.maltcms.maui.peakTableViewer//PeakTableViewer//EN",
+@ConvertAsProperties(dtd = "-//net.sf.maltcms.maui.peakTableViewer//PeakGroupContainer//EN",
 		autostore = false)
-@TopComponent.Description(preferredID = "PeakTableViewerTopComponent",
+@TopComponent.Description(preferredID = "PeakGroupContainerTopComponent",
 		//iconBase="SET/PATH/TO/ICON/HERE", 
 		persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "output", openAtStartup = false)
-@ActionID(category = "Window",
-		id = "net.sf.maltcms.maui.peakTableViewer.PeakTableViewerTopComponent")
-@ActionReference(path = "Menu/Window" /*
-		 * , position = 333
-		 */)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_PeakTableViewerAction",
-		preferredID = "PeakTableViewerTopComponent")
-public final class PeakTableViewerTopComponent extends TopComponent implements
-		LookupListener, ExplorerManager.Provider, Lookup.Provider {
+public final class PeakGroupContainerTopComponent extends TopComponent implements
+		ExplorerManager.Provider, Lookup.Provider {
 
-	private Result<IPeakGroupDescriptor> result = null;
 	private ExplorerManager manager = new ExplorerManager();
 	private OutlineView view = null;
 	private IChromAUIProject activeProject = null;
-	private IPeakGroupDescriptor peakGroupDescriptor = null;
+	private PeakGroupContainer peakGroupContainer = null;
 
-	public PeakTableViewerTopComponent() {
+	public PeakGroupContainerTopComponent() {
 		initComponents();
-		view = new OutlineView("Peaks of Peak Group");
+		view = new OutlineView("Peaks of Peak Group Container");
 		view.setTreeSortable(true);
-        view.setPropertyColumns("shortDescription", "Short Description", "area", "Area");
+		view.setPropertyColumns("shortDescription", "Short Description", "area", "Raw Area", "cas", "CAS", "formula", "Formula", "meanApexTime", "Mean Retention Time");
 		view.getOutline().setRootVisible(false);
 		add(view, BorderLayout.CENTER);
-		setName(NbBundle.getMessage(PeakTableViewerTopComponent.class,
-				"CTL_PeakTableViewerTopComponent"));
-		setToolTipText(NbBundle.getMessage(PeakTableViewerTopComponent.class,
-				"HINT_PeakTableViewerTopComponent"));
+		setName(NbBundle.getMessage(PeakGroupContainerTopComponent.class,
+				"CTL_PeakGroupContainerTopComponent"));
+		setToolTipText(NbBundle.getMessage(PeakGroupContainerTopComponent.class,
+				"HINT_PeakGroupContainerTopComponent"));
 
 		ActionMap map = this.getActionMap();
 //        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(manager));
@@ -133,18 +123,13 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
 	@Override
 	public void componentOpened() {
-		result = Utilities.actionsGlobalContext().lookupResult(
-				IPeakGroupDescriptor.class);
-		result.addLookupListener(this);
-		resultChanged(new LookupEvent(result));
 	}
 
 	@Override
 	public void componentClosed() {
-		result.removeLookupListener(this);
-		if (peakGroupDescriptor != null) {
+		if (peakGroupContainer != null) {
 			IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
-			registry.unregisterTopComponentFor(activeProject, peakGroupDescriptor, this);
+			registry.unregisterTopComponentFor(activeProject, peakGroupContainer, this);
 		}
 	}
 
@@ -159,43 +144,19 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 	}
 
 	@Override
-	public void resultChanged(LookupEvent ev) {
-		if (result == null || result.allInstances().isEmpty()) {
-			return;
-		}
-		if (!isShowing()) {
-			return;
-		}
-		activeProject = Utilities.actionsGlobalContext().lookup(
-				IChromAUIProject.class);
-		if (activeProject == null) {
-			throw new NullPointerException(
-					"No instance of IChromAUI project in lookup!");
-		}
-		Iterator<? extends IPeakGroupDescriptor> iter = result.allInstances().
-				iterator();
-		if (ev.getSource() == this) {
-			throw new IllegalStateException();
-		}
-		if (iter.hasNext()) {
-			IPeakGroupDescriptor newPeakGroupDescriptor = (IPeakGroupDescriptor) iter.next();
-			if(newPeakGroupDescriptor!=peakGroupDescriptor) {
-				peakGroupDescriptor = newPeakGroupDescriptor;
-				setDisplayName("Peaks for " + activeProject.getLocation().getName() + " - " + peakGroupDescriptor.getName());
-				System.out.println("Setting node factory");
-				final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupDescriptor), activeProject.getLookup());
-				PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(lkp, peakGroupDescriptor);
-				Node rootNode = new AbstractNode(Children.create(childFactory, true), lkp);
-				System.out.println("Setting root context");
-				manager.setRootContext(rootNode);
-			}
-		}else{
-			manager.setRootContext(Node.EMPTY);
-		}
-	}
-
-	@Override
 	public ExplorerManager getExplorerManager() {
 		return manager;
+	}
+
+	void setContainer(PeakGroupContainer context) {
+		peakGroupContainer = context;
+		activeProject = context.getProject();
+		setDisplayName(peakGroupContainer.getDisplayName());
+		System.out.println("Setting node factory");
+		final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupContainer), activeProject.getLookup());
+		PeakGroupContainerChildFactory childFactory = new PeakGroupContainerChildFactory(lkp, peakGroupContainer);
+		Node rootNode = new AbstractNode(Children.create(childFactory, true), lkp);
+		System.out.println("Setting root context");
+		manager.setRootContext(rootNode);
 	}
 }
