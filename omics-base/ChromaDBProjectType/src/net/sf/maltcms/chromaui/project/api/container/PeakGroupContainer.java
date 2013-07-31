@@ -30,7 +30,10 @@ package net.sf.maltcms.chromaui.project.api.container;
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.collections.ActivatableArrayList;
 import java.awt.Image;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import static net.sf.maltcms.chromaui.project.api.container.IGenericContainer.PROP_MEMBERS;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import org.openide.util.ImageUtilities;
 
@@ -60,5 +63,37 @@ public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescr
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/PeakGroup.png");
+    }
+	
+	@Override
+    public void setMembers(Collection<IPeakGroupDescriptor> members) {
+		for(IPeakGroupDescriptor descr:members) {
+			descr.setPeakGroupContainer(this);
+		}
+        super.setMembers(members);
+    }
+
+    @Override
+    public void setMembers(IPeakGroupDescriptor... f) {
+        for(IPeakGroupDescriptor descr:f) {
+			descr.setPeakGroupContainer(this);
+		}
+        super.setMembers(f);
+    }
+
+    @Override
+    public void addMembers(IPeakGroupDescriptor... f) {
+        for(IPeakGroupDescriptor descr:f) {
+			descr.setPeakGroupContainer(this);
+		}
+        super.addMembers(f);
+    }
+
+    @Override
+    public void removeMembers(IPeakGroupDescriptor... f) {
+        for(IPeakGroupDescriptor descr:f) {
+			descr.setPeakGroupContainer(null);
+		}
+		super.removeMembers(f);
     }
 }
