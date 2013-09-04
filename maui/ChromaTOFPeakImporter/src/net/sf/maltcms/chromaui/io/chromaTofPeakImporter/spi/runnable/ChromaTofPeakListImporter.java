@@ -70,7 +70,7 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
                         NotifyDescriptor.WARNING_MESSAGE);
                 DialogDisplayer.getDefault().notify(message);
             }
-            int peaksReportsImported = 0;
+            int peakReportsImported = 0;
             progressHandle.progress("Importing " + reports.keySet().size() + " Peak Lists");
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
@@ -81,8 +81,8 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
             Utils.defaultLocale = locale;
             for (String chromName : reports.keySet()) {
                 progressHandle.progress(
-                        "Importing " + (peaksReportsImported + 1) + "/" + files.length,
-                        peaksReportsImported);
+                        "Importing " + (peakReportsImported + 1) + "/" + files.length,
+                        peakReportsImported);
                 System.out.println("Importing report " + chromName + ".");
                 IChromatogramDescriptor chromatogram = chromatograms.get(
                         chromName);
@@ -94,9 +94,9 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
                 DescriptorFactory.addPeakAnnotations(project,
                         chromatogram,
                         peaks, trd);
-                peaksReportsImported++;
-                progressHandle.progress(
-                        "Imported " + (peaksReportsImported + 1) + "/" + files.length);
+                peakReportsImported++;
+//                progressHandle.progress(
+//                        "Imported " + (peakReportsImported + 1) + "/" + files.length);
             }
             Utils.defaultLocale = Locale.getDefault();
             //progressHandle.finish();

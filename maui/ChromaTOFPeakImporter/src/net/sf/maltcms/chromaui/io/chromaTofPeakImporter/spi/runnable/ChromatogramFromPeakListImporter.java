@@ -74,7 +74,7 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
                 reports.put(chromName,file);
             }
 
-            int peaksReportsImported = 0;
+            int peakReportsImported = 0;
             progressHandle.progress("Importing " + files.length + " Peak Lists");
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
@@ -82,16 +82,15 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
             Utils.defaultLocale = locale;
             for (File file : files) {
                 progressHandle.progress(
-                        "Importing " + (peaksReportsImported + 1) + "/" + files.length,
-                        peaksReportsImported);
+                        "Importing " + (peakReportsImported + 1) + "/" + files.length,
+                        peakReportsImported);
                 System.out.println("Importing report " + file.getName() + ".");
                 String chromName = StringTools.removeFileExt(file.getName());
                 IChromatogramDescriptor chromatogram = createChromatogramDescriptor(file, new GC(), new TOFMS(), chromName);
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
                 File created = importPeaks(importDir, peaks, reports, chromName, chromatogram);
                 resultFiles.add(created);
-                progressHandle.progress(
-                        "Imported " + (++peaksReportsImported) + "/" + files.length);
+				peakReportsImported++;
             }
             Utils.defaultLocale = Locale.getDefault();
         } catch (Exception e) {

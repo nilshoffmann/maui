@@ -595,6 +595,15 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     @Override
     public String getDisplayName() {
         String displayName = super.getDisplayName();
+		if(displayName==null) {
+			String name = getName();
+			if(name==null) {
+				name = "<NA>";
+				setName(name);
+			}
+			setDisplayName(name);
+			displayName = super.getDisplayName();
+		}
         if (displayName.
                 matches("^M\\d{6}.*")) {
             return displayName.substring(displayName.lastIndexOf("_") + 1);
@@ -605,7 +614,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
 
     @Override
     public void setDisplayName(String displayName) {
-        if (displayName.
+        if (displayName!=null && displayName.
                 matches("^M\\d{6}.*")) {
             super.setDisplayName(displayName.substring(displayName.lastIndexOf("_") + 1));
         }else{

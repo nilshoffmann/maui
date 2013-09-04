@@ -60,7 +60,7 @@ public class ChromaTofPeakListConverter extends AProgressAwareRunnable {
         try {
             progressHandle.start(files.length);
             progressHandle.progress("Retrieving Reports");
-            int peaksReportsImported = 0;
+            int peakReportsImported = 0;
             progressHandle.progress("Converting " + files.length + " Peak Lists");
             Utils.defaultLocale = locale;
             LinkedHashMap<String, File> reports = new LinkedHashMap<String, File>();
@@ -71,17 +71,17 @@ public class ChromaTofPeakListConverter extends AProgressAwareRunnable {
             for (String chromName : reports.keySet()) {
                 File chrom = reports.get(chromName);
                 progressHandle.progress(
-                        "Converting " + (peaksReportsImported + 1) + "/" + files.length,
-                        peaksReportsImported);
+                        "Converting " + (peakReportsImported + 1) + "/" + files.length,
+                        peakReportsImported);
                 System.out.println("Converting report " + chromName + ".");
                 IChromatogramDescriptor chromatogram = DescriptorFactory.newChromatogramDescriptor();
                 chromatogram.setName(chromName);
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
                 File created = convertPeaks(importDir, peaks, reports, chromName, chromatogram);
                 //System.out.println("Adding peak annotations: " + peaks);
-                peaksReportsImported++;
-                progressHandle.progress(
-                        "Converted " + (peaksReportsImported + 1) + "/" + files.length);
+                peakReportsImported++;
+//                progressHandle.progress(
+//                        "Converted " + (peakReportsImported + 1) + "/" + files.length);
             }
             Utils.defaultLocale = Locale.getDefault();
             //progressHandle.finish();

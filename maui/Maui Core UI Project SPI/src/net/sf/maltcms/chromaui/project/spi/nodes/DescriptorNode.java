@@ -36,11 +36,13 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.LinkedHashSet;
+import java.util.List;
 import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
+import org.apache.commons.lang.ClassUtils;
 import org.openide.actions.PropertiesAction;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
@@ -83,9 +85,18 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
 
     @Override
     public Action[] getActions(boolean context) {
-        Class<?>[] interfaces = getBean().getClass().getInterfaces();
+		List<?> interfaces = ClassUtils.getAllInterfaces(getBean().getClass());
+		List<?> superClasses = ClassUtils.getAllSuperclasses(getBean().getClass());
         LinkedHashSet<Action> containerActions = new LinkedHashSet<Action>();
-        for (Class c : interfaces) {
+        for (Object o : interfaces) {
+			Class<?> c = (Class)o;
+            containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
+                    getName()));
+            containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
+                    getSimpleName()));
+        }
+		for (Object o : superClasses) {
+			Class<?> c = (Class)o;
             containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getName()));
             containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
