@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import net.sf.maltcms.chromaui.metabolitedb.MetaboliteDatabaseViewerTopComponent;
+import net.sf.maltcms.chromaui.metabolitedb.spi.runnables.MetaboliteDatabaseViewerOpenRunner;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReferences;
@@ -52,8 +53,7 @@ public final class MetaboliteDatabaseViewerOpenAction implements ActionListener 
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        MetaboliteDatabaseViewerTopComponent mdvtp = new MetaboliteDatabaseViewerTopComponent();
-        mdvtp.setDatabaseDescriptor(context);
-        mdvtp.open();
+        MetaboliteDatabaseViewerOpenRunner r = new MetaboliteDatabaseViewerOpenRunner(context);
+		MetaboliteDatabaseViewerOpenRunner.createAndRun("Opening Database", r);
     }
 }

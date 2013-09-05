@@ -58,7 +58,6 @@ import org.openide.util.lookup.Lookups;
 public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements PropertyChangeListener {
 
 	private ICrudSession session;
-	private Collection<IMetabolite> metabolites;
 	private BufferedImage image;
 	private URL databaseLocation;
 	public final static String ACTION_PATH = "Actions/Maui/Metabolite";
@@ -66,7 +65,6 @@ public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements 
 	public MetaboliteNodeFactory(URL databaseLocation, ICrudSession session) {
 		this.session = session;
 		this.databaseLocation = databaseLocation;
-		metabolites = this.session.retrieve(IMetabolite.class);
 		image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = image.createGraphics();
 		g2.setColor(new Color(255, 0, 0, 0));
@@ -76,7 +74,7 @@ public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements 
 
 	@Override
 	protected boolean createKeys(List<IMetabolite> toPopulate) {
-		for (IMetabolite metabolite : metabolites) {
+		for (IMetabolite metabolite : this.session.retrieve(IMetabolite.class)) {
 			if (Thread.interrupted()) {
 				return false;
 			} else {
