@@ -77,7 +77,7 @@ public class ChromaTofPeakListConverter extends AProgressAwareRunnable {
                 IChromatogramDescriptor chromatogram = DescriptorFactory.newChromatogramDescriptor();
                 chromatogram.setName(chromName);
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
-                File created = convertPeaks(importDir, peaks, reports, chromName, chromatogram);
+                File created = convertPeaks(importDir, peaks, reports, chromName, chromatogram, false);
                 //System.out.println("Adding peak annotations: " + peaks);
                 peakReportsImported++;
 //                progressHandle.progress(

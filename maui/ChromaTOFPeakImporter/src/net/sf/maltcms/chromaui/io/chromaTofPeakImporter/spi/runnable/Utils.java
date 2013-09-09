@@ -212,7 +212,7 @@ public class Utils {
 //        }
 //        return whitelist;
 //    }
-	public static File convertPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram) {
+	public static File convertPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram, boolean skipAmbiguousPeakNames) {
 		File file = reports.get(chromName);
 		if (file.getName().toLowerCase().endsWith("csv")) {
 			System.out.println("CSV Mode");
@@ -285,7 +285,7 @@ public class Utils {
 							sourceValue = "NaN";
 						}
 						if (headerColumn.equals("Name")) {
-							if (sourceValue.startsWith("Unknown") || sourceValue.contains("VAR5_ALK_NA")) {
+							if (skipAmbiguousPeakNames && (sourceValue.startsWith("Unknown") || sourceValue.contains("VAR5_ALK_NA"))) {
 								System.out.println("Skipping row with label " + sourceValue + ". Reason: ambiguous peak name!");
 								skip = true;
 							}
@@ -298,6 +298,9 @@ public class Utils {
 //                                    }
 //                                }
 //                            }
+						}else if(headerColumn.equals("Spectra") && sourceValue.equals("NaN")) {
+							System.out.println("Skipping row with empty mass spectrum!");
+							skip = true;
 						}
 						targetRow[targetIndex] = sourceValue;
 					} else {//did not find column name
