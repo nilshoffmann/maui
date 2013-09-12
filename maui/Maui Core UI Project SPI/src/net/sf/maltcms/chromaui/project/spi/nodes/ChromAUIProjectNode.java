@@ -40,8 +40,11 @@ import java.util.Set;
 import javax.swing.Action;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.api.nodes.IProjectMenuProvider;
+import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
@@ -119,6 +122,16 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 //    public String getDisplayName() {
 //        return this.displayName;
 //    }
+	
+	@Override
+	public String getDisplayName() {
+		return ProjectUtils.getInformation(getLookup().lookup(IChromAUIProject.class)).getDisplayName();
+	}
+	
+	@Override
+	public String getHtmlDisplayName() {
+		return ProjectUtils.getInformation(getLookup().lookup(IChromAUIProject.class)).getDisplayName();
+	}
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {

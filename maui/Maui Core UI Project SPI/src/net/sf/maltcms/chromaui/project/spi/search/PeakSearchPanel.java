@@ -58,14 +58,14 @@ public class PeakSearchPanel extends javax.swing.JPanel implements LookupListene
 	}
 	
 	public DefaultComboBoxModel getScopeModel() {
-		ProjectGroup activeProject = getActiveProject();
 		ProjectGroup selectedProjects = getProjectsInSelection();
+		ProjectGroup openProjects = getOpenProjects();
 		DefaultComboBoxModel<ProjectGroup> dcbm = new DefaultComboBoxModel<ProjectGroup>();
-		if(activeProject!=null) {
-			dcbm.addElement(activeProject);
-		}
 		if(selectedProjects!=null) {
 			dcbm.addElement(selectedProjects);
+		}
+		if(openProjects!=null) {
+			dcbm.addElement(openProjects);
 		}
 		comboBoxModel = dcbm;
 		return dcbm;
@@ -93,8 +93,23 @@ public class PeakSearchPanel extends javax.swing.JPanel implements LookupListene
 		}
 		ProjectGroup pg = new ProjectGroup();
 		pg.projects = projects;
-		pg.label = "Selection ("+projects.size()+" projects)";
+		if(projects.size() > 1) {
+			pg.label = "Selection ("+projects.size()+" projects)";
+		}else{
+			pg.label = "Selection ("+ProjectUtils.getInformation(projects.iterator().next()).getDisplayName()+")";
+		}
 		return pg;
+	}
+	
+	private ProjectGroup getOpenProjects() {
+		Project[] projects = OpenProjects.getDefault().getOpenProjects();
+		ProjectGroup pg = new ProjectGroup();
+		if(projects.length>0) {
+			pg.projects = Arrays.asList(projects);
+			pg.label = "Open Projects ("+pg.projects.size()+" projects)";
+			return pg;
+		}
+		return null;
 	}
 	
 	private MatchCriterion getRtCriterion() {
@@ -124,18 +139,6 @@ public class PeakSearchPanel extends javax.swing.JPanel implements LookupListene
 	public MatchCriterion getMatchCriterion() {
 		MatchCriterion.CompositeMatch m = new MatchCriterion.CompositeMatch(getRtCriterion(),getRiCriterion(),getNameCriterion());
 		return m;
-	}
-	
-	private ProjectGroup getActiveProject() {
-		ProjectGroup pg = new ProjectGroup();
-		Project[] projects = OpenProjects.getDefault().getOpenProjects();
-		if(projects.length>0) {
-			Project p = projects[0];
-			pg.projects = Arrays.asList(p);
-			pg.label = "Current Project ("+ProjectUtils.getInformation(p).getDisplayName()+")";
-			return pg;
-		}
-		return null;
 	}
 
 	/**

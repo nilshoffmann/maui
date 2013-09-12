@@ -95,6 +95,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 		chartPanel.setDismissDelay(30000);
 		chartPanel.setReshowDelay(0);
 		chartPanel.setFocusable(true);
+		chartPanel.setMouseWheelEnabled(true);
 		add(chartPanel, BorderLayout.CENTER);
 		content.add(chartPanel);
 	}
@@ -168,6 +169,8 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 		}
 
 		this.plot.setNoDataMessage("Loading Data...");
+		this.plot.setDomainPannable(true);
+		this.plot.setRangePannable(true);
 		chart = new JFreeChart(this.plot);
 		chartPanel.setChart(chart);
 		XYItemRenderer r = this.plot.getRenderer();

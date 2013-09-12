@@ -206,6 +206,8 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
 		rt2.setFixedAutoRange(ds.getMaxY() - ds.getMinY());
 		rt2.setRangeWithMargins(ds.getMinY(), ds.getMaxY());
 		XYPlot heatmapPlot = new XYPlot(ds, rt1, rt2, xybr);
+		heatmapPlot.setDomainPannable(true);
+		heatmapPlot.setRangePannable(true);
 		return heatmapPlot;
 	}
 

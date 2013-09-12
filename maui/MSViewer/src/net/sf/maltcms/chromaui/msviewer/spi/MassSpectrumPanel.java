@@ -177,12 +177,15 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				return sb.toString();
 			}
 		});
+		plot.setDomainPannable(true);
+		plot.setRangePannable(true);
 		JFreeChart msChart = new JFreeChart(this.plot);
 		msChart.addChangeListener(this.defaultNumberFormat);
 		System.out.println("Creating ms chart 3");
 		this.cp = new ChartPanel(msChart);
 		this.cp.setInitialDelay(1);
 		this.cp.getChart().getLegend().setVisible(true);
+		this.cp.setMouseWheelEnabled(true);
 		this.clearActionPerformed(null);
 		this.jPanel2.removeAll();
 		this.jPanel2.add(cp);

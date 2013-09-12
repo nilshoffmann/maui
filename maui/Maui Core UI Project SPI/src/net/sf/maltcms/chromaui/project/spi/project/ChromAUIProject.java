@@ -69,6 +69,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor
 import org.apache.commons.io.FileUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.CopyOperationImplementation;
 import org.netbeans.spi.project.DeleteOperationImplementation;
@@ -626,6 +627,11 @@ public class ChromAUIProject implements IChromAUIProject {
 		}
 		throw new IllegalStateException("Database not initialized!");
 	}
+	
+//	@Override
+//	public String toString() {
+//		return ProjectUtils.getInformation(this).getDisplayName();
+//	}
 
 	private final class OpenCloseHook extends ProjectOpenedHook {
 

@@ -125,10 +125,10 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
         return this.chromatogram;
     }
 
-    @Override
-    public String toString() {
-        return "ChromatogramDescriptor{" + "resourceLocation=" + getResourceLocation() + ", treatmentGroup=" + getTreatmentGroup() + ", separationType=" + getSeparationType() + ", detectorType=" + getDetectorType() + '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "ChromatogramDescriptor{" + "resourceLocation=" + getResourceLocation() + ", treatmentGroup=" + getTreatmentGroup() + ", separationType=" + getSeparationType() + ", detectorType=" + getDetectorType() + '}';
+//    }
 
     @Override
     public void setSeparationType(ISeparationType st) {

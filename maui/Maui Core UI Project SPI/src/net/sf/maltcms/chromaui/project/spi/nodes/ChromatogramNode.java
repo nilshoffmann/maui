@@ -172,6 +172,11 @@ public class ChromatogramNode extends FilterNode implements
 	public String getDisplayName() {
 		return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();
 	}
+	
+	@Override
+	public String getHtmlDisplayName() {
+		return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();
+	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {

@@ -128,6 +128,6 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
 //            sb.append(igd.getLocation()+"\n");
         //}
         return sb.toString();
-    }
+}
 
 }

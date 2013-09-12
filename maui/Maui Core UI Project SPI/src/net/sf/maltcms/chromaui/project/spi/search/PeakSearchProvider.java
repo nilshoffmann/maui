@@ -30,32 +30,29 @@ package net.sf.maltcms.chromaui.project.spi.search;
 import com.db4o.ObjectSet;
 import com.db4o.query.Query;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
-import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.search.SearchPattern;
-import org.netbeans.api.search.SearchRoot;
-import org.netbeans.api.search.SearchScopeOptions;
-import org.netbeans.api.search.provider.SearchInfo;
 import org.netbeans.api.search.provider.SearchListener;
+import org.netbeans.spi.search.provider.DefaultSearchResultsDisplayer;
 import org.netbeans.spi.search.provider.SearchComposition;
 import org.netbeans.spi.search.provider.SearchProvider;
 import org.netbeans.spi.search.provider.SearchProvider.Presenter;
 import org.netbeans.spi.search.provider.SearchResultsDisplayer;
 import org.openide.NotificationLineSupport;
-import org.openide.filesystems.FileObject;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
+import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ServiceProvider;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  *
@@ -67,148 +64,175 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = SearchProvider.class)
 public class PeakSearchProvider extends SearchProvider {
 
-    @Override
-    public Presenter createPresenter(boolean replaceMode) {
-        return new CustomPresenter(this);
-    }
-
-    @Override
-    public boolean isReplaceSupported() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Peaks";
-    }
-	
-	private class PeakSelectionCriteria {
-		
+	@Override
+	public Presenter createPresenter(boolean replaceMode) {
+		return new CustomPresenter(this);
 	}
-	
-    /**
-     * Presenter is an object that holds a UI component for setting search
-     * criteria.
-     */
-    private class CustomPresenter extends Presenter {
 
-        private PeakSearchPanel panel = null;
+	@Override
+	public boolean isReplaceSupported() {
+		return false;
+	}
 
-        public CustomPresenter(SearchProvider searchProvider) {
-            super(searchProvider, false);
-        }
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 
-        /**
-         * Get UI component that can be added to the search dialog.
-         */
-        @Override
-        public synchronized JComponent getForm() {
-            if (panel == null) {
-                panel = new PeakSearchPanel();
-            }
-            return panel;
-        }
+	@Override
+	public String getTitle() {
+		return "Peaks";
+	}
 
-        @Override
-        public HelpCtx getHelpCtx() {
-            return new HelpCtx("org.netbeans.modules.search.ui.prototype.about");  //NOI18N
-        }
+	private class PeakSelectionCriteria {
+	}
 
-        /**
-         * Create search composition for criteria specified in the form.
-         */
-        @Override
-        public SearchComposition<?> composeSearch() {
-            return new CustomComposition(panel.getSelectedProjects(), this, panel.getMatchCriterion());
-        }
+	/**
+	 * Presenter is an object that holds a UI component for setting search
+	 * criteria.
+	 */
+	private class CustomPresenter extends Presenter {
 
-        /**
-         * Here we return always true, but could return false e.g. if file name
-         * pattern is empty.
-         */
-        @Override
-        public boolean isUsable(NotificationLineSupport notifySupport) {
-            return true;
-        }
-    }
+		private PeakSearchPanel panel = null;
 
-    /**
-     * Custom algorithm that check date of last modification of searched files.
-     */
-    private class CustomComposition extends SearchComposition<IPeakAnnotationDescriptor> {
+		public CustomPresenter(SearchProvider searchProvider) {
+			super(searchProvider, false);
+		}
+
+		/**
+		 * Get UI component that can be added to the search dialog.
+		 */
+		@Override
+		public synchronized JComponent getForm() {
+			if (panel == null) {
+				panel = new PeakSearchPanel();
+			}
+			return panel;
+		}
+
+		@Override
+		public HelpCtx getHelpCtx() {
+			return new HelpCtx("org.netbeans.modules.search.ui.prototype.about");  //NOI18N
+		}
+
+		/**
+		 * Create search composition for criteria specified in the form.
+		 */
+		@Override
+		public SearchComposition<?> composeSearch() {
+			return new CustomComposition(panel.getSelectedProjects(), this, panel.getMatchCriterion());
+		}
+
+		/**
+		 * Here we return always true, but could return false e.g. if file name
+		 * pattern is empty.
+		 */
+		@Override
+		public boolean isUsable(NotificationLineSupport notifySupport) {
+			return !panel.getSelectedProjects().isEmpty();
+		}
+	}
+
+	/**
+	 * Custom algorithm that check date of last modification of searched files.
+	 */
+	private class CustomComposition extends SearchComposition<IPeakAnnotationDescriptor> {
 
 		MatchCriterion matchCriterion;
 		Collection<? extends Project> projectsToSearch;
-        SearchResultsDisplayer<IPeakAnnotationDescriptor> resultsDisplayer;
-        private final Presenter presenter;
-        AtomicBoolean terminated = new AtomicBoolean(false);
+		SearchResultsDisplayer<IPeakAnnotationDescriptor> resultsDisplayer;
+		private final Presenter presenter;
+		AtomicBoolean terminated = new AtomicBoolean(false);
 
-        public CustomComposition(Collection<? extends Project> projectsToSearch, Presenter presenter, MatchCriterion matchCriterion) {
-            this.projectsToSearch = projectsToSearch;
-            this.presenter = presenter;
+		public CustomComposition(Collection<? extends Project> projectsToSearch, Presenter presenter, MatchCriterion matchCriterion) {
+			this.projectsToSearch = projectsToSearch;
+			this.presenter = presenter;
 			this.matchCriterion = matchCriterion;
-        }
+		}
 
-        @Override
-        public void start(SearchListener listener) {
-			for(Project project:projectsToSearch) {
-				if(project instanceof IChromAUIProject) {
-					IChromAUIProject chromauiproject = (IChromAUIProject)project;
+		@Override
+		public void start(SearchListener listener) {
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					TopComponent tc = WindowManager.getDefault().findTopComponent("MassSpectrumViewerTopComponent");
+					if (tc.isOpened()) {
+						tc.requestAttention(true);
+					} else {
+						tc.open();
+					}
+				}
+			};
+			SwingUtilities.invokeLater(r);
+			for (Project project : projectsToSearch) {
+				if (project instanceof IChromAUIProject) {
+					IChromAUIProject chromauiproject = (IChromAUIProject) project;
 					Query q = chromauiproject.getCrudProvider().createSession().getSODAQuery();
 					q.constrain(IPeakAnnotationDescriptor.class);
 					q = matchCriterion.apply(q);
 					ObjectSet<IPeakAnnotationDescriptor> os = q.execute();
-					for(IPeakAnnotationDescriptor ipad:os) {
+					for (IPeakAnnotationDescriptor ipad : os) {
 						ipad.setProject(chromauiproject);
 						getSearchResultsDisplayer().addMatchingObject(ipad);
 					}
 				}
 			}
-        }
+		}
 
-        @Override
-        public void terminate() {
-            terminated.set(true);
-        }
+		@Override
+		public void terminate() {
+			terminated.set(true);
+		}
 
-        @Override
-        public boolean isTerminated() {
-            return terminated.get();
-        }
+		@Override
+		public boolean isTerminated() {
+			return terminated.get();
+		}
 
-        /**
-         * Use default displayer to show search results.
-         */
-        @Override
-        public synchronized SearchResultsDisplayer<IPeakAnnotationDescriptor> getSearchResultsDisplayer() {
-            if (resultsDisplayer == null) {
-                resultsDisplayer = createResultsDisplayer();
-            }
-            return resultsDisplayer;
-        }
+		/**
+		 * Use default displayer to show search results.
+		 */
+		@Override
+		public synchronized SearchResultsDisplayer<IPeakAnnotationDescriptor> getSearchResultsDisplayer() {
+			if (resultsDisplayer == null) {
+				resultsDisplayer = createResultsDisplayer();
+			}
+			return resultsDisplayer;
+		}
 
-        private SearchResultsDisplayer<IPeakAnnotationDescriptor> createResultsDisplayer() {
+		private SearchResultsDisplayer<IPeakAnnotationDescriptor> createResultsDisplayer() {
 
-            /**
-             * Object to transform matching objects to nodes.
-             */
-            SearchResultsDisplayer.NodeDisplayer<IPeakAnnotationDescriptor> nd =
-                    new SearchResultsDisplayer.NodeDisplayer<IPeakAnnotationDescriptor>() {
-						
-                        @Override
-                        public org.openide.nodes.Node matchToNode(
-                                final IPeakAnnotationDescriptor match) {
-							INodeFactory nodeFactory = Lookup.getDefault().lookup(INodeFactory.class);
-                            return new FilterNode(nodeFactory.createDescriptorNode(match, Children.LEAF, Lookups.fixed(match.getProject())));
-                        }
-                    };
-            return SearchResultsDisplayer.createDefault(nd, this,
-                    presenter, "Peaks matching");
-        }
-    }
+			/**
+			 * Object to transform matching objects to nodes.
+			 */
+			final SearchResultsDisplayer.NodeDisplayer<IPeakAnnotationDescriptor> nd =
+					new SearchResultsDisplayer.NodeDisplayer<IPeakAnnotationDescriptor>() {
+				@Override
+				public org.openide.nodes.Node matchToNode(
+						final IPeakAnnotationDescriptor match) {
+					INodeFactory nodeFactory = Lookup.getDefault().lookup(INodeFactory.class);
+					return new FilterNode(nodeFactory.createDescriptorNode(match, Children.LEAF, Lookups.fixed(match.getProject())));
+				}
+			};
+			final DefaultSearchResultsDisplayer<IPeakAnnotationDescriptor> drd = SearchResultsDisplayer.createDefault(nd, this,
+					presenter, "Peaks matching");
+			drd.getVisualComponent();
+			drd.setResultNodeShiftSupport(new DefaultSearchResultsDisplayer.ResultNodeShiftSupport() {
+				@Override
+				public boolean isRelevantNode(Node node) {
+					IPeakAnnotationDescriptor ipad = node.getLookup().lookup(IPeakAnnotationDescriptor.class);
+					if (ipad != null) {
+						return true;
+					}
+					return false;
+				}
+
+				@Override
+				public void relevantNodeSelected(Node node) {
+				}
+			});
+			drd.getOutlineView().setPropertyColumns("name", "Name", "chromatogramDescriptor", "Chromatogram", "project", "Project");
+			return drd;
+		}
+	}
 }

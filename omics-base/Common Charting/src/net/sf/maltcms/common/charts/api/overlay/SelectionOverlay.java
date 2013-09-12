@@ -40,13 +40,13 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import static net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay.toView;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
@@ -369,29 +369,50 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
 			flashSelection.retainAll(mouseClickSelection);
 			System.out.println("Flashing " + flashSelection.size() + " elements!");
 			if (!flashSelection.isEmpty()) {
-				ExecutorService ses = Executors.newSingleThreadExecutor();
-				ses.submit(new Runnable() {
+				ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+				setDrawFlashSelection(false);
+				Runnable flasher = new Runnable() {
 					@Override
 					public void run() {
-						
-						for (int i = 0; i < 6; i++) {
-							SwingUtilities.invokeLater(new Runnable() {
-
-								@Override
-								public void run() {
-									setDrawFlashSelection(!isDrawFlashSelection());
-								}
-							});
-							try {
-								Thread.sleep(500);
-							} catch (InterruptedException ex) {
-								Exceptions.printStackTrace(ex);
-							}
+						try {
+							setDrawFlashSelection(!isDrawFlashSelection());
+							Thread.sleep(500);
+						} catch (InterruptedException ex) {
+							Exceptions.printStackTrace(ex);
 						}
-						setDrawFlashSelection(false);
 					}
-				});
+				};
+				FlashRunnable fr = new FlashRunnable(flasher, 6);
+				fr.schedule(ses, 50, 500, TimeUnit.MILLISECONDS);
 			}
 		}
 	}
+	
+	private class FlashRunnable implements Runnable {
+		private final int repeats;
+		private final Runnable delegate;
+		private ScheduledFuture<?> f;
+		private AtomicInteger repeatCounter = new AtomicInteger(0);
+		
+		FlashRunnable(Runnable delegate, int repeats) {
+			this.delegate = delegate;
+			this.repeats = repeats;
+		}
+		
+		@Override
+		public void run() {
+			if(f==null) {
+				throw new IllegalStateException("Not scheduled!");
+			}
+			delegate.run();
+			if(repeatCounter.incrementAndGet()==repeats) {
+				f.cancel(true);
+			}
+		}
+		
+		public void schedule(ScheduledExecutorService ses, long delay, long period, TimeUnit timeUnit) {
+			f = ses.scheduleAtFixedRate(this, delay, period, timeUnit);
+		}
+		
+	};
 }

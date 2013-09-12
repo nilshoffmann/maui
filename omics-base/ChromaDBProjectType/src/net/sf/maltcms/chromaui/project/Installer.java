@@ -29,7 +29,9 @@ package net.sf.maltcms.chromaui.project;
 
 import java.beans.PropertyEditorManager;
 import java.util.UUID;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.beans.*;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
@@ -45,5 +47,7 @@ public class Installer extends ModuleInstall {
 		PropertyEditorManager.registerEditor(ISeparationType.class, SeparationTypePropertyEditor.class);
 		PropertyEditorManager.registerEditor(ITreatmentGroupDescriptor.class, TreatmentGroupDescriptorPropertyEditor.class);
 		PropertyEditorManager.registerEditor(ISampleGroupDescriptor.class, SampleGroupDescriptorPropertyEditor.class);
+		PropertyEditorManager.registerEditor(IChromAUIProject.class, ChromAUIProjectPropertyEditor.class);
+		PropertyEditorManager.registerEditor(IDescriptor.class, GenericDescriptorPropertyEditor.class);
 	}
 }
