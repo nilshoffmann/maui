@@ -72,7 +72,9 @@ public final class ProjectGroovyAction implements ActionListener {
                     Exceptions.printStackTrace(ex);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
-                }
+                } catch(ClassCastException ex) {
+					System.out.println("Ignoring groovy script with wrong class!");
+				}
             }
 
             GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();

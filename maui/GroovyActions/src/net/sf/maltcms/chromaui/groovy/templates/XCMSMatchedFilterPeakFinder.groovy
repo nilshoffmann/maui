@@ -1,5 +1,7 @@
-package net.sf.maltcms.chromaui.groovy.templates
+<#if package?? && package != "">
+package ${package};
 
+</#if>
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
@@ -37,12 +39,12 @@ import maltcms.datastructures.ms.*;
 import ucar.ma2.*;
 
 /**
- *
- * @author nilshoffmann
+ * 
+ * @author ${user}
  */
-class XCMSMatchedFilterPeakFinder implements RawDataGroovyScript {
+class ${name} implements RawDataGroovyScript {
 
-    final String name = "XCMSMatchedFilterPeakFinder"
+    final String name = "${name}"
     private IChromAUIProject project
     private Collection<CDFDataObject> dataObjects
     private ProgressHandle progressHandle
@@ -50,8 +52,46 @@ class XCMSMatchedFilterPeakFinder implements RawDataGroovyScript {
     double signalToNoise = 5.0
     double fullWidthAtHalfMaximum = 5.0
     int max = 10
-    boolean useQsub = false
-    String xcmsRScriptLocation = "/home/hoffmann/MauiProjects/extensions/R/xcmsMatchedFilterPeakFinder.R"
+    String xcmsRScriptLocation = "scripts/R/xcmsMatchedFilterPeakFinder.R"
+	String rscriptLocation = "/vol/r-2.13/bin/Rscript"
+	
+	String rscript = """
+suppressPackageStartupMessages(library("optparse"))
+
+option_list <- list(
+
+make_option("--filepath",default=getwd(),help="Path to chromatogram file [default %default]"),
+
+make_option("--out",default=getwd(),help="Path to output directory [default %default]"),
+
+make_option("--snr", default=10.0,
+help="Signal-to-noise threshold for peaks [default %default]"),
+
+make_option("--max", default=5,
+help="Maximum number of peaks per EIC [default %default]"),
+
+make_option("--fwhm", default=30.0,
+help="Full width at half maximum for peaks [default %default]"))
+
+opt <- parse_args(OptionParser(option_list=option_list))
+
+print(opt)
+
+SNR <- opt\$snr
+FWHM <- opt\$fwhm
+MAX <- opt\$max
+FILEPATH <- sub("%20"," ",opt\$filepath,fixed=TRUE)
+OUTDIR <- sub("%20"," ", opt\$out,fixed=TRUE)
+
+cat("Using ",FILEPATH," as input","\n")
+suppressPackageStartupMessages(library("xcms"))
+
+paramString <- paste("snr",SNR,"_","fwhm",FWHM,"_","max",MAX,sep="")
+cat("Processing file ",basename(FILEPATH),"\n")
+xraw <- xcmsRaw(filename=FILEPATH,profmethod="bin",profstep=1.0);
+peaks <- findPeaks(xraw,max=MAX,snthresh=SNR,fwhm=FWHM);
+write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.names=TRUE,sep="\t");
+"""
     
     private boolean cancel = false
 
@@ -73,63 +113,7 @@ class XCMSMatchedFilterPeakFinder implements RawDataGroovyScript {
         if(process!=null) {
             process.waitForOrKill(1000)
         }
-    }
-    
-    private int createQSubCall(File outdir, File rscriptLocation, Collection<CDFDataObject> dataObjects, OutputWriter writer) {
-        def qsubArrayJobFile = new File(outdir,"arrayJob.txt")
-        def arrayJobScript =
-"""#!/bin/bash
-ARGUMENTS=\$(sed -n -e "\${SGE_TASK_ID}p" ${qsubArrayJobFile.absolutePath})
-/vol/r-2.13/bin/Rscript ${rscriptLocation} \$ARGUMENTS
-"""
-        def arrayJobFile = new File(outdir,"arrayJob.sh")
-        arrayJobFile.setText(arrayJobScript)
-
-        def submissionScript =
-"""#!/bin/bash
-qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size()} -q "*@@qics,*@@fujitsu1,*@@supermicro1,*@@supermicro2" arrayJob.sh
-"""
-        def submissionScriptFile = new File(outdir,"submit.sh")
-        submissionScriptFile.setText(submissionScript)
-
-        writer.print "Creating job configuration at ${qsubArrayJobFile.absolutePath}\n"
-        writer.print "Creating job script at ${arrayJobFile.absolutePath}\n"
-
-        def chmodAJF = "chmod ug+x ${arrayJobFile.absolutePath}".execute()
-        chmodAJF.consumeProcessOutput(writer,writer)
-        chmodAJF.waitFor()
-        if(chmodAJF.exitValue()!=0) {
-            throw new RuntimeException("Could not set rights to executable for group and user on ${arrayJobFile.absolutePath}. Please check permissions in ${outdir.absolutePath}")
-        }
-
-        def chmodScript = "chmod ug+x ${submissionScriptFile.absolutePath}".execute()
-        chmodScript.consumeProcessOutput(writer,writer)
-        chmodScript.waitFor()
-        if(chmodScript.exitValue()!=0) {
-            throw new RuntimeException("Could not set rights to executable for group and user on ${submissionScriptFile.absolutePath}. Please check permissions in ${outdir.absolutePath}")
-        }
-
-        progressHandle.progress("Creating call script",2)
-        def dobjects = dataObjects as Set
-        for(CDFDataObject it:dobjects) {
-            if(cancel) {
-                progressHandle.finish()
-                return
-            }
-            IFileFragment rootFragment = cross.datastructures.tools.FragmentTools.getDeepestAncestor(it.getFragment())[0]
-            //
-            qsubArrayJobFile.append("--filepath ${rootFragment.absolutePath} --out ${outdir.absolutePath} --snr ${signalToNoise} --fwhm ${fullWidthAtHalfMaximum} --max ${max}\n")
-        }
-
-        writer.print "Processing ${dataObjects.size()} lines of parameters\n"
-		writer.print "Running XCMS\n"
-        progressHandle.progress("Running XCMS",3);
-		List<String> processCall = ["./submit.sh"]
-        process = new ProcessBuilder(processCall).directory(outdir).start()
-        process.consumeProcessOutput(writer,writer)
-        process.waitFor()
-        return process.exitValue()
-    }
+	}
     
     private int createCall(File outdir, File rscriptLocation, Collection<CDFDataObject> dataObjects, OutputWriter writer) {
         def dobjects = dataObjects as Set
@@ -154,7 +138,7 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
     @Override
     public void run() {
         InputOutput io = IOProvider.getDefault().getIO(
-            	"Running ${name} on ${dataObjects.size()} chromatograms", true);
+            	"Running ${r"${name}"} on ${r"${dataObjects.size()}"} chromatograms", true);
         io.select();
         final OutputWriter writer = io.getOut();
         try{
@@ -168,22 +152,22 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
             
             progressHandle.progress("Retrieving Chromatograms",1);
             LinkedHashMap<String, IChromatogramDescriptor> chromatograms = createChromatogramMap(project, writer);
-
             
             def jobLines = dataObjects.size()
-
             def rscriptLocation = new File(xcmsRScriptLocation)
+			if(!rscriptLocation.isAbsolute()) {
+				File rscriptFile = new File(FileUtil.toFile(project.getProjectDirectory()),xcmsRScriptLocation)
+				rscriptFile.getParentFile().mkdirs()
+				rscriptLocation = rscriptFile
+			}
+			if(!rscriptLocation.exists()) {
+				rscriptLocation.setText(rscript)
+			}
 
-            int exitValue = 1
+            int exitValue = createCall(outdir, rscriptLocation, dataObjects, writer)
             
-            if(useQsub) {
-                exitValue = createQSubCall(outdir, rscriptLocation, dataObjects, writer)
-            } else {
-                exitValue = createCall(outdir, rscriptLocation, dataObjects, writer)
-            }
-            
-            if(process.exitValue()!=0) {
-                throw new RuntimeException("Script finished execution with code ${process.exitValue()}. Please check output in ${outdir.absolutePath}")
+            if(exitValue!=0) {
+                throw new RuntimeException("Script finished execution with code ${r"${exitValue}"}. Please check output in ${r"${outdir.absolutePath}"}")
             }
 
             progressHandle.progress("Matching Chromatograms",4);
@@ -246,7 +230,7 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                     }else{
                         IPeakAnnotationDescriptor descriptor = null
                         String[] lineContent = line.split("\t")
-                        //writer.println "Parsing content for peak ${index}: ${lineContent}"
+                        writer.println "Parsing content for peak ${r"${index}"}: ${r"${lineContent}"}"
                         //lineContent[0] = lineNumber
                         double mz = Double.parseDouble(lineContent[1])
                         //double mzmin = Double.parseDouble(lineContent[2])
@@ -320,7 +304,7 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                 }
                 
                 for(Double d:peakSet.keySet()) {
-                    writer.println "Adding peak for rt ${d}"
+                    writer.println "Adding peak for rt ${r"${d}"}"
                     IPeakAnnotationDescriptor descriptor = peakSet.get(d)
                     double[] massValues = descriptor.getMassValues()
                     int[] intensityValues = descriptor.getIntensityValues()
@@ -331,29 +315,18 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
                     int cnt = 0
                     mvals.each{ 
                         key,value -> 
-                            massValues[cnt] = key
-                            intensityValues[cnt] = value
-                            cnt++
+						massValues[cnt] = key
+						intensityValues[cnt] = value
+						cnt++
                     }
                     descriptor.setMassValues(massValues)
                     descriptor.setIntensityValues(intensityValues)
-                    //IChromatogram chrom = chromatogram.getChromatogram()
-                    //Scan1D s = chrom.getScan(chrom.getIndexFor(descriptor.getApexTime()))
-                    //descriptor.setMassValues((double[])s.getMasses().get1DJavaArray(double.class));
-                    //descriptor.setIntensityValues((int[])s.getIntensities().get1DJavaArray(int.class));
                     peaks.add(descriptor)
                 }
 
                 DescriptorFactory.addPeakAnnotations(project,
                     chromatogram,
                     peaks, trd);
-
-
-                //createArtificialChromatogram(importDir, project,
-                //        new File(chromatogram.getResourceLocation()).getName(),
-                //        peaks);
-                createArtificialChromatogram(importDir, project,
-                    new File(chromatogram.getResourceLocation()).getName(), peaks)
             }catch(Exception e) {
                 writer.println(e.getLocalizedMessage())
             }
@@ -402,74 +375,4 @@ qsub -V -cwd -sync y -j y -o "submit.out" -N "MAUI-QSUB" -t 1-${dataObjects.size
         return chromatograms;
     }
 
-    private void createArtificialChromatogram(File importDir, IChromAUIProject project,
-        String peakListName, List<IPeakAnnotationDescriptor> peaks) {
-        try {
-            //        try {
-            PropertiesConfiguration pc = new PropertiesConfiguration(
-                    "/cfg/default.properties");
-            Factory.getInstance().configure(pc);
-        } catch (ConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-
-        File fragment = new File(importDir, StringTools.removeFileExt(
-                peakListName));
-        FileFragment f = new FileFragment(fragment);
-        List<Array> masses = new ArrayList<Array>();
-        List<Array> intensities = new ArrayList<Array>();
-        Array sat = new ArrayDouble.D1(peaks.size());
-        ArrayInt.D1 scanIndex = new ArrayInt.D1(peaks.size());
-        ArrayInt.D1 tic = new ArrayInt.D1(peaks.size());
-        ArrayDouble.D1 massMin = new ArrayDouble.D1(peaks.size());
-        ArrayDouble.D1 massMax = new ArrayDouble.D1(peaks.size());
-        int i = 0;
-        int scanOffset = 0;
-        double minMass = Double.POSITIVE_INFINITY;
-        double maxMass = Double.NEGATIVE_INFINITY;
-        for (IPeakAnnotationDescriptor descr : peaks) {
-            minMass = Math.min(minMass, MathTools.min(descr.getMassValues()));
-            maxMass = Math.max(maxMass, MathTools.max(descr.getMassValues()));
-            massMin.set(i, minMass);
-            massMax.set(i, maxMass);
-            masses.add(Array.factory(descr.getMassValues()));
-            Array intensA = Array.factory(descr.getIntensityValues());
-            intensities.add(intensA);
-            sat.setDouble(i, descr.getApexTime());
-            scanIndex.set(i, scanOffset);
-            tic.setDouble(i, MAMath.sumDouble(intensA));
-            scanOffset += descr.getMassValues().length;
-            i++;
-        }
-        IVariableFragment scanIndexVar = new VariableFragment(f,
-                "scan_index");
-        scanIndexVar.setArray(scanIndex);
-        IVariableFragment massValuesVar = new VariableFragment(f,
-                "mass_values");
-        massValuesVar.setArray(ArrayTools.glue(masses));
-        IVariableFragment intensityValuesVar = new VariableFragment(f,
-                "intensity_values");
-        intensityValuesVar.setArray(ArrayTools.glue(intensities));
-        IVariableFragment satVar = new VariableFragment(f,
-                "scan_acquisition_time");
-        satVar.setArray(sat);
-        IVariableFragment ticVar = new VariableFragment(f,
-                "total_intensity");
-        ticVar.setArray(tic);
-        IVariableFragment minMassVar = new VariableFragment(f, "mass_range_min");
-        minMassVar.setArray(massMin);
-        IVariableFragment maxMassVar = new VariableFragment(f, "mass_range_max");
-        maxMassVar.setArray(massMax);
-        f.save();
-        //            return f;
-        //        } catch (IOException ex) {
-        //            Exceptions.printStackTrace(ex);
-        //        }
-        //        return null;
-
-    }
-
 }
-
-
-

@@ -82,11 +82,22 @@ public class Utils {
         } else {
             groovyDir = icap.getLocation().getFileObject("groovy/");
         }
+		FileObject scriptsGroovyDir = null;
+		if (!new File(fo, "scripts/groovy").isDirectory()) {
+            try {
+                scriptsGroovyDir = icap.getLocation().createFolder("scripts/groovy");
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } else {
+            scriptsGroovyDir = icap.getLocation().getFileObject("scripts/groovy/");
+        }
         String[] scriptLocations = NbPreferences.forModule(
                 GroovyScriptLocationsPanel.class).get("scriptLocations", "").
                 split(",");
         List<FileObject> scriptDirectories = new LinkedList<FileObject>();
         scriptDirectories.add(groovyDir);
+		scriptDirectories.add(scriptsGroovyDir);
         for (String str : scriptLocations) {
             if (!str.isEmpty()) {
                 scriptDirectories.add(FileUtil.toFileObject(new File(str)));

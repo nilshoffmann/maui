@@ -104,7 +104,9 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
                     Exceptions.printStackTrace(ex);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
-                }
+                } catch(ClassCastException ex) {
+					System.out.println("Ignoring groovy script with wrong class!");
+				}
             }
 
             GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
