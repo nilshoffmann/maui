@@ -86,6 +86,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
 				ph.progress("Defragmenting database file");
 				DefragmentConfig config = new DefragmentConfig(projectDBLocation.getAbsolutePath());
 				config.objectCommitFrequency(10000);
+				config.forceBackupDelete(true);
 				EmbeddedConfiguration configuration = configure();
 				configuration.file().blockSize(blockSize);
 				config.db4oConfig(configuration);

@@ -211,7 +211,7 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
 		NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("createAutomaticBackups", createAutomaticBackups.isSelected());
 		NbPreferences.forModule(DB4oCrudProviderFactory.class).putInt("backupInterval", ((Long) backupInterval.getValue()).intValue());
 		NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", updateDatabaseSize.isSelected());
-		NbPreferences.forModule(DB4oCrudProviderFactory.class).putInt("databaseBlockSize", Math.min(254, Math.max(2, databaseBlockSize.getValue() * 2)));
+		NbPreferences.forModule(DB4oCrudProviderFactory.class).putInt("databaseBlockSize", Math.min(254, Math.max(2, databaseBlockSize.getValue())));
 	}
 
 	boolean valid() {
