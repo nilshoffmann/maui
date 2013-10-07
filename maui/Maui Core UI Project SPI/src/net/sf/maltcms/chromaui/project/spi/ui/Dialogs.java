@@ -36,6 +36,7 @@ import java.util.Set;
 import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.spi.nodes.DescriptorNode;
+import net.sf.maltcms.chromaui.ui.support.api.DialogPanel;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.nodes.AbstractNode;
