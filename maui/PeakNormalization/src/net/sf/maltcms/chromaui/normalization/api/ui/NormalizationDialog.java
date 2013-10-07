@@ -36,6 +36,7 @@ import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.util.NbPreferences;
 
 /**
  *
@@ -55,6 +56,10 @@ public class NormalizationDialog {
 
         if (result.equals(NotifyDescriptor.OK_OPTION)) {
             IPeakGroupDescriptor normalizationGroup = nsp.getInternalNormalizationGroup();
+			if(normalizationGroup!=null) {
+				System.out.println("Storing peak group with id as normalization reference for current project: "+normalizationGroup.getId());
+				NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getPath()).put("peakGroupIdForNormalization", normalizationGroup.getId().toString());
+			}
             System.out.println("Selected normalization group: "+normalizationGroup.getMajorityName());
             IPeakNormalizer externalNormalizer = null;
             if (nsp.isNormalizeToExternalQuantity()) {

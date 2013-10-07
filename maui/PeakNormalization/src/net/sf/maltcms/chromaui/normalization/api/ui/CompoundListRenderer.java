@@ -56,7 +56,7 @@ public class CompoundListRenderer extends DefaultListCellRenderer {
         if(((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().isEmpty()) {
             setText(((IPeakGroupDescriptor) value).getDisplayName());
         }else{
-            setText("@"+String.format("%.2f",((IPeakGroupDescriptor) value).getMedianApexTime())+": "+((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().get(0).getName());
+            setText("@"+String.format("%.2f",((IPeakGroupDescriptor) value).getMedianApexTime())+": "+((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().get(0).getDisplayName());
         }
         setFont(list.getFont());
         return this;

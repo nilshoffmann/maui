@@ -27,14 +27,10 @@
  */
 package net.sf.maltcms.chromaui.normalization.api.ui;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
-import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.openide.util.NbPreferences;
 
 /**
  * TODO a panel to select the peak used for normalization (by name)
@@ -43,9 +39,15 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
  */
 public class PvalueAdjustmentSettingsPanel extends javax.swing.JPanel {
 
+	private PvalueAdjustment previousAdjustmentMethod = PvalueAdjustment.BH;
+	private IChromAUIProject project;
+	
     /** Creates new form NormalizationSettingsPanel */
-    public PvalueAdjustmentSettingsPanel() {
+    public PvalueAdjustmentSettingsPanel(IChromAUIProject project) {
+		this.project = project;
         initComponents();
+		previousAdjustmentMethod = PvalueAdjustment.valueOf(NbPreferences.forModule(NormalizationSettingsPanel.class).node(project.getLocation().getPath()).get("pValueAdjustmentMethod", "BH"));
+		pvalueAdjustmentMethod.setSelectedItem(previousAdjustmentMethod);
     }
 
     /** This method is called from within the constructor to
@@ -103,7 +105,9 @@ public class PvalueAdjustmentSettingsPanel extends javax.swing.JPanel {
 
     public PvalueAdjustment getPvalueAdjustment() {
         if (pvalueAdjustmentMethod.getSelectedItem() != null) {
-            return (PvalueAdjustment) pvalueAdjustmentMethod.getSelectedItem();
+			PvalueAdjustment adjustment = (PvalueAdjustment) pvalueAdjustmentMethod.getSelectedItem();
+			NbPreferences.forModule(NormalizationSettingsPanel.class).node(project.getLocation().getPath()).put("pValueAdjustmentMethod", adjustment.toString());
+            return adjustment;
         }
         return PvalueAdjustment.none;
     }

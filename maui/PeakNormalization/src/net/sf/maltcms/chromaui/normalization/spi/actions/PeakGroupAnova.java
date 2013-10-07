@@ -68,7 +68,7 @@ public final class PeakGroupAnova implements ActionListener {
         if(normalizer==null) {
             return;
         }
-        PvalueAdjustment pvalueAdjustment = PvalueAdjustmentDialog.getPvalueAdjustment();
+        PvalueAdjustment pvalueAdjustment = PvalueAdjustmentDialog.getPvalueAdjustment(context.getProject());
         if(pvalueAdjustment==null) {
             return;
         }

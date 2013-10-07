@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.normalization.api.ui;
 
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 
@@ -37,8 +38,8 @@ import org.openide.NotifyDescriptor;
  */
 public class PvalueAdjustmentDialog {
 
-    public static PvalueAdjustment getPvalueAdjustment() {
-        PvalueAdjustmentSettingsPanel panel = new PvalueAdjustmentSettingsPanel();
+    public static PvalueAdjustment getPvalueAdjustment(IChromAUIProject context) {
+        PvalueAdjustmentSettingsPanel panel = new PvalueAdjustmentSettingsPanel(context);
         NotifyDescriptor nd = new NotifyDescriptor(
                 panel, "Set pvalue adjustment method", NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE, null, NotifyDescriptor.OK_OPTION);
 
