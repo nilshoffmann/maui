@@ -31,6 +31,8 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.config.ConfigScope;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.config.QueryEvaluationMode;
+import com.db4o.defragment.Defragment;
+import com.db4o.defragment.DefragmentConfig;
 import com.db4o.diagnostic.DiagnosticToConsole;
 import com.db4o.io.CachingStorage;
 import com.db4o.io.FileStorage;
@@ -40,10 +42,19 @@ import com.db4o.ta.DeactivatingRollbackStrategy;
 import com.db4o.ta.TransparentActivationSupport;
 import com.db4o.ta.TransparentPersistenceSupport;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
+import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
+import org.openide.util.NbPreferences;
 
 /**
  * ICrudProvider implementation for DB4o object database.
@@ -63,6 +74,43 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
             ClassLoader domainClassLoader) throws IllegalArgumentException {
         super(projectDBFile, ic, domainClassLoader);
     }
+	
+	@Override
+	public final void preOpen() {
+		boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
+		if(updateDatabaseSize) {
+			int blockSize = Math.min(1,Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2))/2);
+			ProgressHandle ph = ProgressHandleFactory.createHandle("Defragmentation of "+projectDBLocation);
+			ph.start();
+			try {
+				ph.progress("Defragmenting database file");
+				DefragmentConfig config = new DefragmentConfig(projectDBLocation.getAbsolutePath());
+				config.objectCommitFrequency(10000);
+				EmbeddedConfiguration configuration = configure();
+				configuration.file().blockSize(blockSize);
+				config.db4oConfig(configuration);
+				Defragment.defrag(config);
+			} catch (IOException ex) {
+				System.err.println("Defragmentation failed!");
+				Exceptions.printStackTrace(ex);
+				System.err.println("Restoring database from backup!");
+				//restore backup file
+				File backupFile = new File(projectDBLocation.getAbsolutePath(),".backup");
+				ph.progress("Restoring database from backup file");
+				try {
+					Files.copy(backupFile.toPath(), projectDBLocation.toPath());
+				} catch (IOException ex1) {
+					Exceptions.printStackTrace(ex1);
+				}
+			} finally {
+				ph.progress("Deleting backup file");
+				File backupFile = new File(projectDBLocation.getAbsolutePath(),".backup");
+				backupFile.delete();
+				ph.finish();
+				NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", false);
+			}
+		}
+	}
 
     @Override
     public final void open() {

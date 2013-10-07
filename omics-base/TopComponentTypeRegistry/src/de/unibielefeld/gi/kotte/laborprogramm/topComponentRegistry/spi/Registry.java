@@ -40,9 +40,7 @@ import org.openide.windows.TopComponent;
 import org.openide.util.Utilities;
 
 /**
- * A registry for open
- *
- * @see TopComponent objects, linked to arbitrary domain objects associated to
+ * A registry for open @link{TopComponent} objects, linked to arbitrary domain objects associated to
  * their originating project.
  * @author Nils Hoffmann
  */

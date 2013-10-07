@@ -30,16 +30,19 @@ package net.sf.maltcms.chromaui.db.spi.db4o.options;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
+import net.sf.maltcms.chromaui.ui.support.api.DialogPanel;
 import org.openide.util.NbPreferences;
 
 final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements ValidationMessageListener, DocumentListener {
 
 	private final Db4oGeneralSettingsOptionsPanelController controller;
+	private DialogPanel panel = null;
 
 	Db4oGeneralSettingsPanel(Db4oGeneralSettingsOptionsPanelController controller) {
 		this.controller = controller;
 		initComponents();
 		validationMessage.setText(" ");
+
 		// TODO listen to changes in form fields and call controller.changed()
 	}
 
@@ -60,6 +63,8 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
         jTextField2 = new javax.swing.JTextField();
         backupInterval = new javax.swing.JFormattedTextField();
         validationMessage = new javax.swing.JLabel();
+        databaseBlockSize = new javax.swing.JSlider();
+        updateDatabaseSize = new javax.swing.JCheckBox();
 
         setMinimumSize(new java.awt.Dimension(349, 28));
 
@@ -100,6 +105,25 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
 
         org.openide.awt.Mnemonics.setLocalizedText(validationMessage, org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.validationMessage.text")); // NOI18N
 
+        databaseBlockSize.setMajorTickSpacing(50);
+        databaseBlockSize.setMaximum(32);
+        databaseBlockSize.setMinimum(2);
+        databaseBlockSize.setMinorTickSpacing(2);
+        databaseBlockSize.setPaintTicks(true);
+        databaseBlockSize.setSnapToTicks(true);
+        databaseBlockSize.setToolTipText(org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.databaseBlockSize.toolTipText")); // NOI18N
+        databaseBlockSize.setValue(2);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, updateDatabaseSize, org.jdesktop.beansbinding.ELProperty.create("${selected}"), databaseBlockSize, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        org.openide.awt.Mnemonics.setLocalizedText(updateDatabaseSize, org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.updateDatabaseSize.text")); // NOI18N
+        updateDatabaseSize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateDatabaseSizeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -108,23 +132,31 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(verboseDiagnostics, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(validationMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel1))
+                                .addComponent(backupInterval, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(backupInterval, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))
-                                    .addComponent(jTextField2)))
-                            .addComponent(createAutomaticBackups))
-                        .addGap(10, 10, 10))
-                    .addComponent(validationMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField2)
+                                .addContainerGap())))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(createAutomaticBackups)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(updateDatabaseSize, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
+                        .addGap(18, 18, 18))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(databaseBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,8 +175,12 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(verboseDiagnostics)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(updateDatabaseSize)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(databaseBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
                 .addComponent(validationMessage)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         bindingGroup.bind();
@@ -158,16 +194,24 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
 		controller.changed();
     }//GEN-LAST:event_verboseDiagnosticsActionPerformed
 
+    private void updateDatabaseSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateDatabaseSizeActionPerformed
+		controller.changed();
+    }//GEN-LAST:event_updateDatabaseSizeActionPerformed
+
 	void load() {
 		verboseDiagnostics.setSelected(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
 		createAutomaticBackups.setSelected(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
 		backupInterval.setValue(Long.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10)));
+		updateDatabaseSize.setSelected(false);
+		databaseBlockSize.setValue(Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)));
 	}
 
 	void store() {
 		NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("verboseDiagnostics", verboseDiagnostics.isSelected());
 		NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("createAutomaticBackups", createAutomaticBackups.isSelected());
 		NbPreferences.forModule(DB4oCrudProviderFactory.class).putInt("backupInterval", ((Long) backupInterval.getValue()).intValue());
+		NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", updateDatabaseSize.isSelected());
+		NbPreferences.forModule(DB4oCrudProviderFactory.class).putInt("databaseBlockSize", Math.min(254, Math.max(2, databaseBlockSize.getValue() * 2)));
 	}
 
 	boolean valid() {
@@ -178,10 +222,13 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
 				validationMessage(new ValidationMessage(backupInterval, ValidationMessage.Type.ERROR, "Backup Interval must not be <1!"));
 				return false;
 			}
-			validationMessage(new ValidationMessage(createAutomaticBackups, ValidationMessage.Type.INFO, "Projects will be automtically saved and reopened!"));
+			validationMessage(new ValidationMessage(createAutomaticBackups, ValidationMessage.Type.INFO, "Projects will be automatically saved and reopened!"));
 			clearIfValid = false;
 		} else if (verboseDiagnostics.isSelected()) {
-			validationMessage(new ValidationMessage(createAutomaticBackups, ValidationMessage.Type.INFO, "Projects will be automtically saved and reopened!"));
+			validationMessage(new ValidationMessage(verboseDiagnostics, ValidationMessage.Type.INFO, "Projects will be automatically saved and reopened!"));
+			clearIfValid = false;
+		} else if (updateDatabaseSize.isSelected()) {
+			validationMessage(new ValidationMessage(updateDatabaseSize, ValidationMessage.Type.INFO, "Projects will be automatically saved and reopened!"));
 			clearIfValid = false;
 		}
 
@@ -193,10 +240,12 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField backupInterval;
     private javax.swing.JCheckBox createAutomaticBackups;
+    private javax.swing.JSlider databaseBlockSize;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JCheckBox updateDatabaseSize;
     private javax.swing.JLabel validationMessage;
     private javax.swing.JCheckBox verboseDiagnostics;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;

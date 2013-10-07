@@ -29,8 +29,13 @@ package net.sf.maltcms.chromaui.db.spi.db4o.options;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JComponent;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
+import net.sf.maltcms.chromaui.ui.support.api.Projects;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.spi.options.OptionsPanelController;
@@ -62,11 +67,27 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
         changed = false;
         boolean automaticBackups = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false);
         boolean verboseDiagnostics = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false);
+		boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
         if(automaticBackups || verboseDiagnostics) {
             Project[] projects = OpenProjects.getDefault().getOpenProjects();
-            OpenProjects.getDefault().close(projects);
+			//close all projects
+			OpenProjects.getDefault().close(projects);
+			//restore projects that were initially open
             OpenProjects.getDefault().open(projects, false, true);
-        }
+        } else if(updateDatabaseSize) {
+			Project[] projects = OpenProjects.getDefault().getOpenProjects();
+			Collection<Project> selectedProjects = Projects.getSelectedOpenProjects(Project.class, "Update Database Size", "Select Projects for Update");
+			//close all projects
+			OpenProjects.getDefault().close(projects);
+			//open selected projects
+            OpenProjects.getDefault().open(selectedProjects.toArray(new Project[selectedProjects.size()]), false, true);
+			//close updated projects
+			OpenProjects.getDefault().close(selectedProjects.toArray(new Project[selectedProjects.size()]));
+			//store that we updated the database size
+			NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", false);
+			//restore projects that were initially open
+            OpenProjects.getDefault().open(projects, false, true);
+		}
     }
 
 	@Override
