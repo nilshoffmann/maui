@@ -38,7 +38,9 @@ import java.net.URL;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -51,79 +53,94 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays something.
  */
 @ConvertAsProperties(
-    dtd = "-//net.sf.maltcms.chromaui.branding.welcome//MauiWelcome//EN",
-autostore = false)
+		dtd = "-//net.sf.maltcms.chromaui.branding.welcome//MauiWelcome//EN",
+		autostore = false)
 @TopComponent.Description(
-    preferredID = "MauiWelcomeTopComponent",
-//iconBase="SET/PATH/TO/ICON/HERE", 
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+		preferredID = "MauiWelcomeTopComponent",
+		//iconBase="SET/PATH/TO/ICON/HERE", 
+		persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
 @ActionID(category = "Window", id = "net.sf.maltcms.chromaui.branding.welcome.MauiWelcomeTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
-    displayName = "#CTL_MauiWelcomeAction",
-preferredID = "MauiWelcomeTopComponent")
+		displayName = "#CTL_MauiWelcomeAction",
+		preferredID = "MauiWelcomeTopComponent")
 @Messages({
-    "CTL_MauiWelcomeAction=Welcome Center",
-    "CTL_MauiWelcomeTopComponent=Welcome Center",
-    "HINT_MauiWelcomeTopComponent=The Maui Welcome Center"
+	"CTL_MauiWelcomeAction=Welcome Center",
+	"CTL_MauiWelcomeTopComponent=Welcome Center",
+	"HINT_MauiWelcomeTopComponent=The Maui Welcome Center"
 })
 public final class MauiWelcomeTopComponent extends TopComponent implements HyperlinkListener {
 
-    public MauiWelcomeTopComponent() {
-        initComponents();
-        setName(Bundle.CTL_MauiWelcomeTopComponent());
-        setToolTipText(Bundle.HINT_MauiWelcomeTopComponent());
-    }
+	public MauiWelcomeTopComponent() {
+		initComponents();
+		setName(Bundle.CTL_MauiWelcomeTopComponent());
+		setToolTipText(Bundle.HINT_MauiWelcomeTopComponent());
+	}
 
-    private String readText(URL u) {
-        BufferedReader bis = null;
-        try {
-            bis = new BufferedReader(new InputStreamReader(u.openStream()));
-            StringBuilder sb = new StringBuilder();
-            String buffer;
-            while ((buffer = bis.readLine()) != null) {
-                sb.append(buffer).append("\n");
-            }
-            System.out.println(sb.toString());
-            return sb.toString();
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            }
-        }
-        return "";
-    }
+	private String readText(URL u) {
+		BufferedReader bis = null;
+		try {
+			bis = new BufferedReader(new InputStreamReader(u.openStream()));
+			StringBuilder sb = new StringBuilder();
+			String buffer;
+			while ((buffer = bis.readLine()) != null) {
+				sb.append(buffer).append("\n");
+			}
+			System.out.println(sb.toString());
+			return sb.toString();
+		} catch (IOException ex) {
+			Exceptions.printStackTrace(ex);
+		} finally {
+			if (bis != null) {
+				try {
+					bis.close();
+				} catch (IOException ex) {
+					Exceptions.printStackTrace(ex);
+				}
+			}
+		}
+		return "";
+	}
 
-    private void setContent(URL u) {
-        editorPane.setContentType("text/html");
-//		Font font = UIManager.getFont("Label.font");
-		Font font = new Font("Arial", 12, Font.PLAIN);
-        String bodyRule = "body { font-family: " + font.getFamily() + "; " +
-                "font-size: " + font.getSize() + "pt; }";
-        try {
-            editorPane.setPage(u);
-            editorPane.removeHyperlinkListener(this);
-            editorPane.addHyperlinkListener(this);
-			((HTMLDocument)editorPane.getDocument()).getStyleSheet().addRule(bodyRule);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        invalidate();
-        validate();
-    }
+	private void setContent(URL u) {
+		URL editorUrl = editorPane.getPage();
+		if (editorUrl==null || !editorUrl.equals(u)) {
+			editorPane.setContentType("text/html");
+			HTMLEditorKit kit = new HTMLEditorKit();
+			editorPane.setEditorKit(kit);
+			Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+			String bodyRule = "body { font-family: " + font.getFamily() + "; "
+					+ "font-size: " + font.getSize() + "pt; }";
+			String h1Rule = "h1 { font-size: "+(font.getSize()+6)+"pt; font-weight: bold;}";
+			String h2Rule = "h2 { font-size: "+(font.getSize()+4)+"pt; font-weight: bold;}";
+			String h3Rule = "h3 { font-size: "+(font.getSize()+2)+"pt; font-weight: bold;}";
+			try {
+				editorPane.removeHyperlinkListener(this);
+				editorPane.addHyperlinkListener(this);
+				StyleSheet style = kit.getStyleSheet();
+				style.addRule(bodyRule);
+				style.addRule(h1Rule);
+				style.addRule(h2Rule);
+				style.addRule(h3Rule);
+				Document doc = kit.createDefaultDocument();
+				editorPane.setDocument(doc);
+				editorPane.setPage(u);
+				editorPane.invalidate();
+				editorPane.revalidate();
+			} catch (IOException ex) {
+				Exceptions.printStackTrace(ex);
+			}
+			invalidate();
+			validate();
+		}
+	}
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+	/**
+	 * This method is called from within the constructor to initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is always
+	 * regenerated by the Form Editor.
+	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -161,7 +178,6 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(visualize, org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.visualize.text")); // NOI18N
-        visualize.setEnabled(false);
         visualize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 visualizeActionPerformed(evt);
@@ -204,14 +220,14 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(newProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(firstSteps, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchAndIdentify, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(visualize, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(quantify, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(importPeaks, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                    .addComponent(firstSteps, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(newProject, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(importPeaks, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(visualize, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchAndIdentify, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(quantify, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {firstSteps, importPeaks, jButton6, newProject, quantify, searchAndIdentify, visualize});
@@ -233,7 +249,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
                 .addComponent(quantify)
                 .addGap(18, 18, 18)
                 .addComponent(jButton6)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(MauiWelcomeTopComponent.class, "MauiWelcomeTopComponent.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
@@ -265,11 +281,11 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(customPipelines, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(groovyActions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(maltcmsIntegration, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
+                    .addComponent(maltcmsIntegration, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -317,43 +333,43 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
     }// </editor-fold>//GEN-END:initComponents
 
     private void firstStepsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstStepsActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/firstSteps.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/firstSteps.html"));
     }//GEN-LAST:event_firstStepsActionPerformed
 
     private void newProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/newProject.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/newProject.html"));
     }//GEN-LAST:event_newProjectActionPerformed
 
     private void importPeaksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importPeaksActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/importPeaks.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/importPeaks.html"));
     }//GEN-LAST:event_importPeaksActionPerformed
 
     private void visualizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visualizeActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/visualize.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/visualize.html"));
     }//GEN-LAST:event_visualizeActionPerformed
 
     private void searchAndIdentifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchAndIdentifyActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/searchAndIdentify.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/searchAndIdentify.html"));
     }//GEN-LAST:event_searchAndIdentifyActionPerformed
 
     private void quantifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/quantify.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/quantify.html"));
     }//GEN-LAST:event_quantifyActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/statistics.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/statistics.html"));
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void customPipelinesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customPipelinesActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/customPipelines.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/customPipelines.html"));
     }//GEN-LAST:event_customPipelinesActionPerformed
 
     private void groovyActionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groovyActionsActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/groovyActions.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/groovyActions.html"));
     }//GEN-LAST:event_groovyActionsActionPerformed
 
     private void maltcmsIntegrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maltcmsIntegrationActionPerformed
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/maltcmsIntegration.html"));
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/maltcmsIntegration.html"));
     }//GEN-LAST:event_maltcmsIntegrationActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -375,60 +391,60 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
     private javax.swing.JButton visualize;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void componentOpened() {
-        setContent(MauiWelcomeTopComponent.class.getResource("resources/firstSteps.html"));
-    }
+	@Override
+	public void componentOpened() {
+		setContent(MauiWelcomeTopComponent.class.getResource("resources/firstSteps.html"));
+	}
 
-    @Override
-    public void componentClosed() {
-        // TODO add custom code on component closing
-    }
+	@Override
+	public void componentClosed() {
+		// TODO add custom code on component closing
+	}
 
-    void writeProperties(java.util.Properties p) {
+	void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
+		// http://wiki.apidesign.org/wiki/PropertyFiles
+		p.setProperty("version", "1.0");
+		// TODO store your settings
+	}
 
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
-    }
+	void readProperties(java.util.Properties p) {
+		String version = p.getProperty("version");
+		// TODO read your settings according to their version
+	}
 
-    @Override
-    public void hyperlinkUpdate(HyperlinkEvent he) {
-        URL u = he.getURL();
-        if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            if (u.getProtocol().equals("http") || u.getProtocol().equals("https")) {
-                System.out.println(u.getPath());
-                if (u.getPath().startsWith("/maui/")) {
-                    String path = u.getPath().substring("/maui".length());
-                    System.out.println("Path: " + path);
-                    if (path.startsWith("/OptionsDialog")) {
-                        String optionsPanelRegistration = path.substring("/OptionsDialog/".length());
-                        System.out.println("Opening options panel: " + optionsPanelRegistration);
-                        OptionsDisplayer.getDefault().open(optionsPanelRegistration);
-                    } else {
-                        Actions.execFileSystemAction(path, new ActionEvent(this, 1, u.getPath()));
+	@Override
+	public void hyperlinkUpdate(HyperlinkEvent he) {
+		URL u = he.getURL();
+		if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+			if (u.getProtocol().equals("http") || u.getProtocol().equals("https")) {
+				System.out.println(u.getPath());
+				if (u.getPath().startsWith("/maui/")) {
+					String path = u.getPath().substring("/maui".length());
+					System.out.println("Path: " + path);
+					if (path.startsWith("/OptionsDialog")) {
+						String optionsPanelRegistration = path.substring("/OptionsDialog/".length());
+						System.out.println("Opening options panel: " + optionsPanelRegistration);
+						OptionsDisplayer.getDefault().open(optionsPanelRegistration);
+					} else {
+						Actions.execFileSystemAction(path, new ActionEvent(this, 1, u.getPath()));
 //                        Collection<? extends Action> l = Utilities.actionsForPath(path);
 //                        if (l.size() > 1) {
 //                            throw new NotImplementedException("Support for multiple actions not yet implemented!");
 //                        } else if (l.size() == 1) {
 //                            l.iterator().next().actionPerformed(new ActionEvent(this, 1, u.getPath()));
 //                        }
-                    }
-                } else {
-                    try {
-                        Desktop.getDesktop().browse(u.toURI());
-                    } catch (URISyntaxException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (IOException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
-                }
-            }
-        }
-    }
+					}
+				} else {
+					try {
+						Desktop.getDesktop().browse(u.toURI());
+					} catch (URISyntaxException ex) {
+						Exceptions.printStackTrace(ex);
+					} catch (IOException ex) {
+						Exceptions.printStackTrace(ex);
+					}
+				}
+			}
+		}
+	}
 }

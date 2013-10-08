@@ -33,6 +33,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.JComponent;
+import maltcms.io.xml.ws.meltdb.MeltDBSession;
+import maltcms.io.xml.ws.meltdb.WebServiceClient;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;

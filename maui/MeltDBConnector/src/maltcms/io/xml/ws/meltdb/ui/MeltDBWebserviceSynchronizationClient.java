@@ -89,34 +89,34 @@ public class MeltDBWebserviceSynchronizationClient {
         return this.controlpanel;
     }
 
-//    public JPanel getPanel() {
-//        if (this.panel == null) {
-//            this.panel = new JPanel();
-//            this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.Y_AXIS));
-//            this.panel.add(getControlPanel());
-//            JScrollPane plsp = new JScrollPane(getProjectsList());
-//            plsp.setBorder(BorderFactory.createTitledBorder("Projects"));
-//            this.panel.add(plsp);
-//
-//            JScrollPane elsp = new JScrollPane(getExperimentsList());
-//            elsp.setBorder(BorderFactory.createTitledBorder("Experiments"));
-//            this.panel.add(elsp);
-//            JScrollPane clsp = new JScrollPane(getChromatogramsList());
-//            clsp.setBorder(BorderFactory.createTitledBorder("Chromatograms"));
-//            this.panel.add(clsp);
-////			JScrollPane lcsp = new JScrollPane(getLabeledCompoundsList());
-////			lcsp.setBorder(BorderFactory.createTitledBorder("Labeled Compounds"));
-////			this.panel.add(lcsp);
-//            JScrollPane lcsp = new JScrollPane(getPeaksList());
-//            lcsp.setBorder(BorderFactory.createTitledBorder("Peaks"));
-//            this.panel.add(lcsp);
-//            JFrame jf = new JFrame();
-//            jf.add(addPeakPanel());
-//            jf.setVisible(true);
-//            jf.pack();
-//        }
-//        return this.panel;
-//    }
+    public JPanel getPanel() {
+        if (this.panel == null) {
+            this.panel = new JPanel();
+            this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.Y_AXIS));
+            this.panel.add(getControlPanel());
+            JScrollPane plsp = new JScrollPane(getProjectsList());
+            plsp.setBorder(BorderFactory.createTitledBorder("Projects"));
+            this.panel.add(plsp);
+
+            JScrollPane elsp = new JScrollPane(getExperimentsList());
+            elsp.setBorder(BorderFactory.createTitledBorder("Experiments"));
+            this.panel.add(elsp);
+            JScrollPane clsp = new JScrollPane(getChromatogramsList());
+            clsp.setBorder(BorderFactory.createTitledBorder("Chromatograms"));
+            this.panel.add(clsp);
+//			JScrollPane lcsp = new JScrollPane(getLabeledCompoundsList());
+//			lcsp.setBorder(BorderFactory.createTitledBorder("Labeled Compounds"));
+//			this.panel.add(lcsp);
+            JScrollPane lcsp = new JScrollPane(getPeaksList());
+            lcsp.setBorder(BorderFactory.createTitledBorder("Peaks"));
+            this.panel.add(lcsp);
+            JFrame jf = new JFrame();
+            jf.add(addPeakPanel());
+            jf.setVisible(true);
+            jf.pack();
+        }
+        return this.panel;
+    }
 
     public JPanel addPeakPanel() {
         JPanel jp = new JPanel();

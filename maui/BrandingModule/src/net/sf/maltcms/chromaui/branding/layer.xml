@@ -87,6 +87,16 @@
                 <attr name="url" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#net_sf_maltcms_chromaui_branding_update_center_1"/>
             </file>
         </folder>
+        <folder name="JavaHelp">
+            <file name="git-helpset.xml_hidden"/>
+            <file name="mercurial-helpset.xml_hidden"/>
+            <file name="org-netbeans-modules-db-docs.xml_hidden"/>
+            <file name="org-netbeans-modules-dbschema-docs.xml_hidden"/>
+            <file name="org-netbeans-modules-java-helpset.xml_hidden"/>
+            <file name="org-netbeans-modules-maven-docs.xml_hidden"/>
+            <file name="org-netbeans-modules-subversion-resources-helpset.xml_hidden"/>
+            <file name="org-netbeans-modules-usersguide-helpset.xml_hidden"/>
+        </folder>
     </folder>
     <folder name="Toolbars">
         <folder name="Build">

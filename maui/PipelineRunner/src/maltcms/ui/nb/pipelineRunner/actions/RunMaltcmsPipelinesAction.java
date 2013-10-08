@@ -222,7 +222,7 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 			if (action != null && counted.add(action)) {
 				// switch to replacement action if there is some
 				if (action instanceof ContextAwareAction) {
-					System.out.println("Context aware action");
+//					System.out.println("Context aware action");
 					Action contextAwareAction = ((ContextAwareAction) action).createContextAwareInstance(context);
 					if (contextAwareAction == null) {
 						Logger.getLogger(Utilities.class.getName()).log(Level.WARNING, "ContextAwareAction.createContextAwareInstance(context) returns null. That is illegal!" + " action={0}, context={1}", new Object[]{action, context});
@@ -235,14 +235,14 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 				if (action instanceof JMenuItem || action instanceof JMenu) {
 					item = (JMenuItem) action;
 				} else if (action instanceof Presenter.Popup) {
-					System.out.println("Popup menu");
+//					System.out.println("Popup menu");
 					item = ((Presenter.Popup) action).getPopupPresenter();
 					if (item == null) {
 						Logger.getLogger(Utilities.class.getName()).log(Level.WARNING, "findContextMenuImpl, getPopupPresenter returning null for {0}", action);
 						continue;
 					}
 				} else if (action instanceof DynamicMenuContent) {
-					System.out.println("Dynamic content menu");
+//					System.out.println("Dynamic content menu");
 					DynamicMenuContent dmc = (DynamicMenuContent) action;
 					JComponent[] presenters = dmc.getMenuPresenters();
 					String name = action.getValue("name").toString();
@@ -251,7 +251,7 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 						item.add(jc);
 					}
 				} else {
-					System.out.println("Plain menu action");
+//					System.out.println("Plain menu action");
 					// We need to correctly handle mnemonics with '&' etc.
 					item = ActionPresenterProvider.getDefault().createPopupPresenter(action);
 				}

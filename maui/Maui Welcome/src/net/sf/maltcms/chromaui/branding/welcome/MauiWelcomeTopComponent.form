@@ -60,15 +60,15 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="newProject" linkSize="1" max="32767" attributes="0"/>
-                          <Component id="firstSteps" linkSize="1" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="searchAndIdentify" linkSize="1" max="32767" attributes="0"/>
-                          <Component id="visualize" linkSize="1" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="quantify" linkSize="1" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="jButton6" linkSize="1" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="importPeaks" linkSize="1" alignment="0" min="-2" pref="169" max="-2" attributes="0"/>
+                          <Component id="firstSteps" linkSize="2" min="-2" pref="176" max="-2" attributes="0"/>
+                          <Component id="newProject" linkSize="2" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
+                          <Component id="importPeaks" linkSize="2" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
+                          <Component id="visualize" linkSize="2" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
+                          <Component id="searchAndIdentify" linkSize="2" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
+                          <Component id="quantify" linkSize="2" min="-2" pref="176" max="-2" attributes="0"/>
+                          <Component id="jButton6" linkSize="2" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="18" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -89,7 +89,7 @@
                       <Component id="quantify" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jButton6" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="16" max="32767" attributes="0"/>
+                      <EmptySpace pref="36" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -122,7 +122,6 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="net/sf/maltcms/chromaui/branding/welcome/Bundle.properties" key="MauiWelcomeTopComponent.visualize.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="visualizeActionPerformed"/>
@@ -186,11 +185,11 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="customPipelines" max="32767" attributes="0"/>
-                          <Component id="groovyActions" max="32767" attributes="0"/>
-                          <Component id="maltcmsIntegration" pref="175" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="customPipelines" alignment="0" max="32767" attributes="0"/>
+                          <Component id="groovyActions" alignment="0" max="32767" attributes="0"/>
+                          <Component id="maltcmsIntegration" alignment="1" pref="176" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>

@@ -28,16 +28,4 @@ for details.
 -->
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
-    <folder name="Actions">
-        <folder name="Build">
-            <file name="net-sf-maltcms-chromaui-io-chromaTofPeakImporter-spi-actions-ChromaTofPeakListImporter.instance_hidden"/>
-            <file name="net-sf-maltcms-chromaui-io-chromaTofPeakImporter-spi-actions-ChromaTofPeakListImporterAction.instance">
-                <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
-                <attr name="injectable" stringvalue="net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListImporter"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
-                <attr name="type" stringvalue="net.sf.maltcms.chromaui.project.api.IChromAUIProject"/>
-            </file>
-        </folder>
-    </folder>
 </filesystem>
