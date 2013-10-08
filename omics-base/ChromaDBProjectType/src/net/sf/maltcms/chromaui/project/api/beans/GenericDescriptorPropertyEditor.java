@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 
 /**
@@ -41,8 +42,15 @@ public class GenericDescriptorPropertyEditor extends PropertyEditorSupport {
 
     @Override
     public String getAsText() {
-        IDescriptor id = (IDescriptor)getValue();
-        return id.getDisplayName();
+		Object value = getValue();
+		if(value instanceof IDescriptor) {
+			IDescriptor id = (IDescriptor)value;
+			return id.getDisplayName();
+		}else if(value instanceof IBasicDescriptor) {
+			IBasicDescriptor id = (IBasicDescriptor)value;
+			return id.getDisplayName();
+		}
+		return "<NA>";
     }
 
     @Override

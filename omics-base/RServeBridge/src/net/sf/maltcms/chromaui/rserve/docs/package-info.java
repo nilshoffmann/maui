@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,20 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project;
+@HelpSetRegistration(helpSet = "rserve-hs.xml", position = 3114)
+package net.sf.maltcms.chromaui.rserve.docs;
 
-import org.openide.modules.ModuleInstall;
-
-public class Installer extends ModuleInstall {
-
-	@Override
-	public void restored() {
-//		PropertyEditorManager.registerEditor(UUID.class, UUIDPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IDetectorType.class, DetectorTypePropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ISeparationType.class, SeparationTypePropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ITreatmentGroupDescriptor.class, TreatmentGroupDescriptorPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ISampleGroupDescriptor.class, SampleGroupDescriptorPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IChromAUIProject.class, ChromAUIProjectPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IDescriptor.class, GenericDescriptorPropertyEditor.class);
-	}
-}
+import org.netbeans.api.javahelp.HelpSetRegistration;

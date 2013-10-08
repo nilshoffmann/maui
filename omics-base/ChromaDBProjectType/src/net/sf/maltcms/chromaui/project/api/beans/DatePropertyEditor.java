@@ -25,20 +25,30 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project;
+package net.sf.maltcms.chromaui.project.api.beans;
 
-import org.openide.modules.ModuleInstall;
+import java.beans.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class Installer extends ModuleInstall {
+/**
+ *
+ * @author Nils Hoffmann
+ */
+public class DatePropertyEditor extends PropertyEditorSupport {
+    
+    public DatePropertyEditor() {
+    }
 
-	@Override
-	public void restored() {
-//		PropertyEditorManager.registerEditor(UUID.class, UUIDPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IDetectorType.class, DetectorTypePropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ISeparationType.class, SeparationTypePropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ITreatmentGroupDescriptor.class, TreatmentGroupDescriptorPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ISampleGroupDescriptor.class, SampleGroupDescriptorPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IChromAUIProject.class, ChromAUIProjectPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IDescriptor.class, GenericDescriptorPropertyEditor.class);
-	}
+    @Override
+    public String getAsText() {
+        Date id = (Date)getValue();
+        return SimpleDateFormat.getDateTimeInstance().format(id);
+    }
+
+    @Override
+    public void setAsText(String string) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Editing of Dates is not supported!");
+//        setValue(UUID.fromString(string));
+    }
 }
