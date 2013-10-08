@@ -69,6 +69,7 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
         setMinimumSize(new java.awt.Dimension(349, 28));
 
         org.openide.awt.Mnemonics.setLocalizedText(verboseDiagnostics, org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.verboseDiagnostics.text")); // NOI18N
+        verboseDiagnostics.setToolTipText(org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.verboseDiagnostics.toolTipText")); // NOI18N
         verboseDiagnostics.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 verboseDiagnosticsActionPerformed(evt);
@@ -76,6 +77,7 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(createAutomaticBackups, org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.createAutomaticBackups.text")); // NOI18N
+        createAutomaticBackups.setToolTipText(org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.createAutomaticBackups.toolTipText")); // NOI18N
         createAutomaticBackups.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createAutomaticBackupsActionPerformed(evt);
@@ -105,10 +107,11 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
 
         org.openide.awt.Mnemonics.setLocalizedText(validationMessage, org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.validationMessage.text")); // NOI18N
 
-        databaseBlockSize.setMajorTickSpacing(50);
+        databaseBlockSize.setMajorTickSpacing(6);
         databaseBlockSize.setMaximum(32);
         databaseBlockSize.setMinimum(2);
-        databaseBlockSize.setMinorTickSpacing(2);
+        databaseBlockSize.setMinorTickSpacing(1);
+        databaseBlockSize.setPaintLabels(true);
         databaseBlockSize.setPaintTicks(true);
         databaseBlockSize.setSnapToTicks(true);
         databaseBlockSize.setToolTipText(org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.databaseBlockSize.toolTipText")); // NOI18N
@@ -118,6 +121,7 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
         bindingGroup.addBinding(binding);
 
         org.openide.awt.Mnemonics.setLocalizedText(updateDatabaseSize, org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.updateDatabaseSize.text")); // NOI18N
+        updateDatabaseSize.setToolTipText(org.openide.util.NbBundle.getMessage(Db4oGeneralSettingsPanel.class, "Db4oGeneralSettingsPanel.updateDatabaseSize.toolTipText")); // NOI18N
         updateDatabaseSize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateDatabaseSizeActionPerformed(evt);
@@ -131,8 +135,10 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(validationMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addComponent(verboseDiagnostics, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(validationMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3)
@@ -178,9 +184,9 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
                 .addComponent(updateDatabaseSize)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(databaseBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(validationMessage)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
@@ -259,13 +265,13 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
 				validationMessage.setText("");
 				break;
 			case INFO:
-				validationMessage.setText(message.getMessage());
+				validationMessage.setText("<html><font color=blue>" + message.getMessage() + "</font></html>");
 				break;
 			case WARNING:
 				validationMessage.setText("<html><font color=red>" + message.getMessage() + "</font></html>");
 				break;
 			case ERROR:
-				validationMessage.setText("<html><font color=red>" + message.getMessage() + "<font color=red></html>");
+				validationMessage.setText("<html><font color=red>" + message.getMessage() + "</font></html>");
 				break;
 		}
 	}

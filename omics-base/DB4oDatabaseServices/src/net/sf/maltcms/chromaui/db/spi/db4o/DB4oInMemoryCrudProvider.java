@@ -32,6 +32,7 @@ import com.db4o.config.CommonConfiguration;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.config.FileConfiguration;
 import com.db4o.diagnostic.DiagnosticToConsole;
+import com.db4o.ext.DatabaseFileLockedException;
 import com.db4o.io.Bin;
 import com.db4o.io.BinConfiguration;
 import com.db4o.io.FileStorage;
@@ -58,15 +59,19 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
     public final void open() {
         authenticate();
         if (eoc == null) {
-            preOpen();
-            System.out.println("Opening ObjectContainer at " + projectDBLocation.getAbsolutePath());
-            eoc = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath() + "-inMemory");
-            postOpen();
+			try {
+				preOpen();
+				System.out.println("Opening ObjectContainer at " + projectDBLocation.getAbsolutePath());
+				eoc = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath() + "-inMemory");
+				postOpen();
+			}catch(DatabaseFileLockedException ex) {
+				//database file already opened 
+			}
         }
     }
 
     @Override
-    public void postOpen() {
+    public final void postOpen() {
         if (backupDatabase) {
             backupService = Executors.newSingleThreadScheduledExecutor();
             backupService.scheduleAtFixedRate(new Runnable() {

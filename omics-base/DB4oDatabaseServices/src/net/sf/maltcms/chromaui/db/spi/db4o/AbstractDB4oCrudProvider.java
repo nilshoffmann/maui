@@ -128,7 +128,9 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
 
     @Override
     public final ICrudSession createSession() {
-        open();
+		if(eoc==null) {
+			open();
+		}
         DB4oCrudSession session = new DB4oCrudSession(ic, eoc);
         openSessions.add(session);
         return session;
