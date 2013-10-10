@@ -35,6 +35,8 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.ref.WeakReference;
+import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.event.AxisChangeEvent;
@@ -48,6 +50,11 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 
 /**
  *
@@ -62,12 +69,17 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
 	private String name = AbstractChartOverlay.class.getSimpleName();
 	private String shortDescription = "Displays the currently active chart dataset entity selection.";
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected final InstanceContent content;
+	private final Lookup lookup;
+	protected WeakReference<Node> nodeReference;
 
 	public AbstractChartOverlay(String name, String displayName, String shortDescription, boolean visibilityChangeable) {
 		this.name = name;
 		this.displayName = displayName;
 		this.shortDescription = shortDescription;
 		this.visibilityChangeable = visibilityChangeable;
+		this.content = new InstanceContent();
+		this.lookup = new AbstractLookup(content);
 	}
 
 	@Override
@@ -273,5 +285,26 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
 
 	public void firePropertyChange(PropertyChangeEvent evt) {
 		pcs.firePropertyChange(evt);
+	}
+
+	@Override
+	public Lookup getLookup() {
+		return lookup;
+	}
+	
+	@Override
+	public Node createNodeDelegate() {
+		Node node = null;
+		if(nodeReference == null) {
+			node = Charts.overlayNode(this, Children.LEAF, lookup);
+			nodeReference = new WeakReference<Node>(node);
+		}else{
+			node = nodeReference.get();
+			if(node==null) {
+				node = Charts.overlayNode(this, Children.LEAF, lookup);
+				nodeReference = new WeakReference<Node>(node);
+			}
+		}
+		return node;
 	}
 }

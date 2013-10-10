@@ -7,6 +7,14 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>net.sf.maltcms.chromaui.batik</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.7</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>net.sf.maltcms.chromaui.lookupResultListener</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -111,6 +119,7 @@
                 <package>net.sf.maltcms.common.charts.api.dataset</package>
                 <package>net.sf.maltcms.common.charts.api.overlay</package>
                 <package>net.sf.maltcms.common.charts.api.selection</package>
+                <package>org.jfree.chart</package>
             </public-packages>
         </data>
     </configuration>

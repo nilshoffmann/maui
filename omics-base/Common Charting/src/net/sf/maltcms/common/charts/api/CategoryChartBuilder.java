@@ -50,138 +50,145 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author Nils Hoffmann
  */
 public class CategoryChartBuilder {
-    
-    private CategoryDataset dataset = new DefaultCategoryDataset();
-    
-    private CategoryAxis domainAxis = new CategoryAxis();
-    
-    private ValueAxis rangeAxis = new NumberAxis();
-    
-    private CategoryItemRenderer renderer = new DefaultCategoryItemRenderer();
-    
-    private CategoryToolTipGenerator tooltipGenerator = new StandardCategoryToolTipGenerator();
-    
-    private Map<Comparable<?>,Color> datasetSeriesColorMap = null;
-    
-    private Plot plot;
-    
-    private JFreeChart chart;
-    
-    private String chartTitle = "";
-    
-    private boolean chartPanelBuffer = true;
-    
-    private boolean chartPanelProperties = true;
-    
-    private boolean chartPanelSave = true;
-    
-    private boolean chartPanelPrint = true;
-    
-    private boolean chartPanelZoom = true;
-    
-    private boolean chartPanelToolTips = true;
-    
-    private Font chartTitleFont = JFreeChart.DEFAULT_TITLE_FONT;
-    
-    private boolean chartCreateLegend = true;
-    
-    public CategoryChartBuilder() {
-        plot = new CategoryPlot(dataset, domainAxis, rangeAxis, renderer);
-        chart = new JFreeChart(plot);
-    }
-    
-    private void notNull(Object o) {
-        if(o==null) {
-            throw new NullPointerException("Argument must not be null!");
-        }
-    }
-    
-    public CategoryChartBuilder categories(CategoryDataset dataset) {
-        notNull(dataset);
-        this.dataset = dataset;
-        return this;
-    }
-    
-    public CategoryChartBuilder tooltips(CategoryToolTipGenerator tooltipGenerator) {
-        notNull(tooltipGenerator);
-        this.tooltipGenerator = tooltipGenerator;
-        return this;
-    }
-    
-    public CategoryChartBuilder colors(Map<Comparable<?>,Color> datasetSeriesColorMap) {
-        notNull(datasetSeriesColorMap);
-        this.datasetSeriesColorMap = datasetSeriesColorMap;
-        return this;
-    }
-    
-    public CategoryChartBuilder renderer(CategoryItemRenderer renderer) {
-        notNull(renderer);
-        this.renderer = renderer;
-        return this;
-    }
-    
-    public CategoryChartBuilder tooltips(boolean b) {
-        this.chartPanelToolTips = b;
-        return this;
-    }
-    
-    public CategoryChartBuilder titleFont(Font font) {
-        notNull(font);
-        this.chartTitleFont = font;
-        return this;
-    }
-    
-    public CategoryChartBuilder createLegend(boolean b) {
-        this.chartCreateLegend = b;
-        return this;
-    }
-    
-    public CategoryChartBuilder chart(String title) {
-        notNull(title);
-        this.chart = new JFreeChart(title, chartTitleFont, plot, chartCreateLegend);
-        return this;
-    }
-	
+
+	private CategoryDataset dataset = new DefaultCategoryDataset();
+	private CategoryAxis domainAxis = new CategoryAxis();
+	private ValueAxis rangeAxis = new NumberAxis();
+	private CategoryItemRenderer renderer = new DefaultCategoryItemRenderer();
+	private CategoryToolTipGenerator tooltipGenerator = new StandardCategoryToolTipGenerator();
+	private Map<Comparable<?>, Color> datasetSeriesColorMap = null;
+	private Plot plot;
+	private JFreeChart chart;
+	private String chartTitle = "";
+	private boolean chartPanelBuffer = true;
+	private boolean chartPanelProperties = true;
+	private boolean chartPanelSave = true;
+	private boolean chartPanelPrint = true;
+	private boolean chartPanelZoom = true;
+	private boolean chartPanelToolTips = true;
+	private Font chartTitleFont = JFreeChart.DEFAULT_TITLE_FONT;
+	private boolean chartCreateLegend = true;
+	private int preferredWidth = 640;
+	private int preferredHeight = 480;
+	private int minimumWidth = 640;
+	private int minimumHeight = 480;
+	private int maximumWidth = 640;
+	private int maximumHeight = 480;
+
+	public CategoryChartBuilder() {
+		plot = new CategoryPlot(dataset, domainAxis, rangeAxis, renderer);
+		chart = new JFreeChart(plot);
+	}
+
+	private void notNull(Object o) {
+		if (o == null) {
+			throw new NullPointerException("Argument must not be null!");
+		}
+	}
+
+	public CategoryChartBuilder minimumDrawSize(int width, int height) {
+		minimumWidth = width;
+		minimumHeight = height;
+		return this;
+	}
+
+	public CategoryChartBuilder preferredDrawSize(int width, int height) {
+		preferredWidth = width;
+		preferredHeight = height;
+		return this;
+	}
+
+	public CategoryChartBuilder maximumDrawSize(int width, int height) {
+		maximumWidth = width;
+		maximumHeight = height;
+		return this;
+	}
+
+	public CategoryChartBuilder categories(CategoryDataset dataset) {
+		notNull(dataset);
+		this.dataset = dataset;
+		return this;
+	}
+
+	public CategoryChartBuilder tooltips(CategoryToolTipGenerator tooltipGenerator) {
+		notNull(tooltipGenerator);
+		this.tooltipGenerator = tooltipGenerator;
+		return this;
+	}
+
+	public CategoryChartBuilder colors(Map<Comparable<?>, Color> datasetSeriesColorMap) {
+		notNull(datasetSeriesColorMap);
+		this.datasetSeriesColorMap = datasetSeriesColorMap;
+		return this;
+	}
+
+	public CategoryChartBuilder renderer(CategoryItemRenderer renderer) {
+		notNull(renderer);
+		this.renderer = renderer;
+		return this;
+	}
+
+	public CategoryChartBuilder tooltips(boolean b) {
+		this.chartPanelToolTips = b;
+		return this;
+	}
+
+	public CategoryChartBuilder titleFont(Font font) {
+		notNull(font);
+		this.chartTitleFont = font;
+		return this;
+	}
+
+	public CategoryChartBuilder createLegend(boolean b) {
+		this.chartCreateLegend = b;
+		return this;
+	}
+
+	public CategoryChartBuilder chart(String title) {
+		notNull(title);
+		this.chart = new JFreeChart(title, chartTitleFont, plot, chartCreateLegend);
+		return this;
+	}
+
 	public CategoryChartBuilder domainAxis(CategoryAxis axis) {
 		notNull(axis);
 		this.domainAxis = axis;
 		return this;
 	}
-	
+
 	public CategoryChartBuilder rangeAxis(ValueAxis axis) {
 		notNull(axis);
 		this.rangeAxis = axis;
 		return this;
 	}
-    
-    public CategoryChartBuilder plot() {
-        this.plot = new CategoryPlot(dataset, domainAxis, rangeAxis, renderer);
-        renderer.setBaseToolTipGenerator(tooltipGenerator);
-        setDatasetSeriesColorMap(renderer, datasetSeriesColorMap);
-        return this;
-    }
-    
-    protected void setDatasetSeriesColorMap(CategoryItemRenderer renderer, Map<Comparable<?>,Color> datasetSeriesColorMap) {
-        if(datasetSeriesColorMap!=null) {
-            if(datasetSeriesColorMap.keySet().size()!=dataset.getRowCount()) {
-                throw new IllegalArgumentException("Mismatch in series colors and series count! Series are expected to be in rows!");
-            }
-            for (int i = 0; i < dataset.getRowCount(); i++) {
-                Comparable<?> key = dataset.getRowKey(i);
-                renderer.setSeriesPaint(i, datasetSeriesColorMap.get(key));
-            }
-        }
-    }
-    
-    public ChartFrame buildFrame(boolean scrollPane) {
-        ChartFrame chartFrame = new ChartFrame(chartTitle, chart, scrollPane);
-        return chartFrame;
-    }
-    
-    public ChartPanel buildPanel() {
-        ChartPanel chartPanel = new ChartPanel(chart, chartPanelProperties, chartPanelSave, chartPanelPrint, chartPanelZoom, chartPanelToolTips);
-        chartPanel.setMouseWheelEnabled(true);
-        return chartPanel;
-    }
-    
+
+	public CategoryChartBuilder plot() {
+		this.plot = new CategoryPlot(dataset, domainAxis, rangeAxis, renderer);
+		renderer.setBaseToolTipGenerator(tooltipGenerator);
+		setDatasetSeriesColorMap(renderer, datasetSeriesColorMap);
+		return this;
+	}
+
+	protected void setDatasetSeriesColorMap(CategoryItemRenderer renderer, Map<Comparable<?>, Color> datasetSeriesColorMap) {
+		if (datasetSeriesColorMap != null) {
+			if (datasetSeriesColorMap.keySet().size() != dataset.getRowCount()) {
+				throw new IllegalArgumentException("Mismatch in series colors and series count! Series are expected to be in rows!");
+			}
+			for (int i = 0; i < dataset.getRowCount(); i++) {
+				Comparable<?> key = dataset.getRowKey(i);
+				renderer.setSeriesPaint(i, datasetSeriesColorMap.get(key));
+			}
+		}
+	}
+
+	public ChartFrame buildFrame(boolean scrollPane) {
+		ChartFrame chartFrame = new ChartFrame(chartTitle, chart, scrollPane);
+		return chartFrame;
+	}
+
+	public ChartPanel buildPanel() {
+		ChartPanel chartPanel = new ChartPanel(chart, preferredWidth, preferredHeight, minimumWidth, minimumHeight, maximumWidth, maximumHeight, chartPanelBuffer, chartPanelProperties, chartPanelSave, chartPanelPrint, chartPanelZoom, chartPanelToolTips);
+		chartPanel.setMouseWheelEnabled(true);
+		return chartPanel;
+	}
 }

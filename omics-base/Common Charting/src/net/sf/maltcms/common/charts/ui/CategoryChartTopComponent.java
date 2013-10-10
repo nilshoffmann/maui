@@ -29,6 +29,7 @@ package net.sf.maltcms.common.charts.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.CategoryChartBuilder;
 import net.sf.maltcms.common.charts.api.ChartCustomizer;
@@ -152,7 +153,8 @@ public final class CategoryChartTopComponent<TARGET> extends TopComponent implem
             @Override
             public void run() {
                 panel = getLookup().lookup(ChartPanel.class);
-                add(panel, BorderLayout.CENTER);
+				JScrollPane pane = new JScrollPane(panel);
+                add(pane, BorderLayout.CENTER);
                 selectionHandler = getLookup().lookup(InstanceContentSelectionHandler.class);
                 setEnabled(true);
                 invalidate();

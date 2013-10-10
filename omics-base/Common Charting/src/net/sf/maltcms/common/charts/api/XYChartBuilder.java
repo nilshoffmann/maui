@@ -32,6 +32,7 @@ import java.awt.Font;
 import java.util.Map;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -84,6 +85,18 @@ public class XYChartBuilder {
     private Font chartTitleFont = JFreeChart.DEFAULT_TITLE_FONT;
     
     private boolean chartCreateLegend = true;
+	
+	private int preferredWidth = 640;
+	
+	private int preferredHeight = 480;
+	
+	private int minimumWidth = 640;
+	
+	private int minimumHeight = 480;
+	
+	private int maximumWidth = 640;
+	
+	private int maximumHeight = 480;
     
     public XYChartBuilder() {
         plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
@@ -95,7 +108,25 @@ public class XYChartBuilder {
             throw new NullPointerException("Argument must not be null!");
         }
     }
+	
+	public XYChartBuilder minimumDrawSize(int width, int height) {
+		minimumWidth = width;
+		minimumHeight = height;
+		return this;
+	}
+	
+	public XYChartBuilder preferredDrawSize(int width, int height) {
+		preferredWidth = width;
+		preferredHeight = height;
+		return this;
+	}
     
+	public XYChartBuilder maximumDrawSize(int width, int height) {
+		maximumWidth = width;
+		maximumHeight = height;
+		return this;
+	}
+	
     public XYChartBuilder xy(XYDataset dataset) {
         notNull(dataset);
         this.dataset = dataset;
@@ -144,6 +175,7 @@ public class XYChartBuilder {
     
     public XYChartBuilder chart(String title) {
         notNull(title);
+		notNull(plot);
         this.chart = new JFreeChart(title, chartTitleFont, plot, chartCreateLegend);
         return this;
     }
@@ -185,7 +217,7 @@ public class XYChartBuilder {
     }
     
     public ChartPanel buildPanel() {
-        ChartPanel chartPanel = new ChartPanel(chart, chartPanelProperties, chartPanelSave, chartPanelPrint, chartPanelZoom, chartPanelToolTips);
+        ChartPanel chartPanel = new ContextAwareChartPanel(chart, preferredWidth, preferredHeight, minimumWidth, minimumHeight, maximumWidth, maximumHeight, chartPanelBuffer, chartPanelProperties, chartPanelSave, chartPanelPrint, chartPanelZoom, chartPanelToolTips);
         chartPanel.setMouseWheelEnabled(true);
         return chartPanel;
     }

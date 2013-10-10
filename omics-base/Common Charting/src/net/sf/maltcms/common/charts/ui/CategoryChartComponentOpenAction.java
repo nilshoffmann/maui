@@ -71,7 +71,7 @@ public final class CategoryChartComponentOpenAction implements ActionListener {
                 renderer.setBaseItemLabelsVisible(true);
 				
 				CategoryAxis domain = new CategoryAxis("Categories");
-                builder.categories(dataset).renderer(renderer).domainAxis(domain).plot().chart("Sample plot").createLegend(true);
+                builder.categories(dataset).renderer(renderer).domainAxis(domain).minimumDrawSize(400, 300).preferredDrawSize(800,600).maximumDrawSize(1280, 1024).plot().chart("Sample plot").createLegend(true);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {

@@ -27,14 +27,11 @@
  */
 package net.sf.maltcms.chromaui.statistics.pcaViewer.actions;
 
-import de.unibielefeld.cebitec.lstutz.pca.data.ParserUtilities;
-import de.unibielefeld.cebitec.lstutz.pca.data.PcaDescriptorAdapter;
-import de.unibielefeld.cebitec.lstutz.pca.visual.StandardGUI;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
-import net.sf.maltcms.chromaui.statistics.pcaViewer.PCAViewerTopComponent;
+import net.sf.maltcms.chromaui.statistics.pcaViewer.tasks.PCAOpenActionRunnable;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
@@ -55,30 +52,7 @@ public final class PCAOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-//        PeakGroupPcaRunnable pgpr = new PeakGroupPcaRunnable(context);
-//        PeakGroupPcaRunnable.createAndRun("Peak group pca", pgpr);
-        
-        String name = "MeltDB 3D Viewer";
-//        URL url = getClass().getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/meltdb.xml");
-////        URL url = getClass().getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/end_test.xml");
-////        if (args[0].equals("xml")) {
-//        //ImportUtilities.get_url_input_stream(url)
-//        XMLParser parser;
-//        try {
-//            parser = new XMLParser(url.openStream());
-            StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(context,0,1,2)));
-            PCAViewerTopComponent pvtc = new PCAViewerTopComponent();
-			pvtc.setProject(context.getProject());
-            pvtc.setData(gui);
-            pvtc.open();
-            pvtc.requestActive();
-//        } catch (IOException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-
-//        } else if (args[0].equals("csv")) {
-//            CSVParser parser = new CSVParser(ImportUtilities.get_url_input_stream(url));
-//            StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(parser.parse_data()));
-//        }
+		PCAOpenActionRunnable r = new PCAOpenActionRunnable(context);
+		PCAOpenActionRunnable.createAndRun("Loading pca plot", r);
     }
 }
