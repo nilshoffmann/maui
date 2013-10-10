@@ -54,7 +54,7 @@
                     <xs:element ref="Error"/>
                 </xs:choice>
             </xs:sequence>
-            <xs:attribute name="ptools-version" use="required" type="xs:decimal"/>
+            <xs:attribute name="ptools-version" use="required" type="xs:NCName"/>
             <xs:attribute ref="xml:base" use="required"/>
         </xs:complexType>
     </xs:element>
@@ -88,7 +88,7 @@
                 </xs:sequence>
             </xs:sequence>
             <xs:attribute name="orgid" use="required" type="xs:NCName"/>
-            <xs:attribute name="version" use="required" type="xs:decimal"/>
+            <xs:attribute name="version" use="required" type="xs:NCName"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="strain">
