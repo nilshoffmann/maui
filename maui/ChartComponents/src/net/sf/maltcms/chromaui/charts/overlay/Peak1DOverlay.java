@@ -40,9 +40,13 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
@@ -51,6 +55,8 @@ import net.sf.maltcms.chromaui.charts.dataset.chromatograms.TopViewDataset;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
@@ -62,6 +68,9 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -78,6 +87,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	public final String PROP_DRAW_SHAPES = "drawShapes";
 	public final String PROP_DRAW_LINES = "drawLines";
 	private final Peak1DContainer peakAnnotations;
+	private final Set<UUID> peakIds = new HashSet<UUID>();
 	private final IChromatogramDescriptor descriptor;
 	private List<Shape> shapes;
 	private List<Shape> selectedPeaks;
@@ -94,6 +104,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 			if (!(descr instanceof IPeakAnnotationDescriptor)) {
 				throw new IllegalArgumentException("Must supply a peak container with 1d peaks!");
 			}
+			peakIds.add(descr.getId());
 		}
 		this.descriptor = descriptor;
 		this.peakAnnotations = peakAnnotations;
@@ -102,6 +113,8 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		padResult.addLookupListener(this);
 		resultChanged(new LookupEvent(padResult));
 		setLayerPosition(10);
+//		super.content.add(descriptor);
+//		super.content.add(peakAnnotations);
 	}
 
 	@Override
@@ -249,23 +262,27 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	}
 
 	@Override
-	public void resultChanged(LookupEvent le) {
-		Collection<? extends IPeakAnnotationDescriptor> pads = padResult.allInstances();
-		if (selectedPeaks == null) {
-			selectedPeaks = new ArrayList<Shape>();
-		}
-		if (!pads.isEmpty()) {
-			selectedPeaks.clear();
-		}
-		for (IPeakAnnotationDescriptor ipad : padResult.allInstances()) {
-			if (peakAnnotations.getMembers().contains(ipad)) {
-				System.err.println("Contained!");
-				generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
-			} else {
-				System.err.println("Not contained!");
+	public final void resultChanged(LookupEvent le) {
+		if(le.getSource()==this) {
+			System.err.println("Skipping lookup event originating from myself");
+		}else{
+			Collection<? extends IPeakAnnotationDescriptor> pads = padResult.allInstances();
+			if (selectedPeaks == null) {
+				selectedPeaks = new ArrayList<Shape>();
 			}
+			if (!pads.isEmpty()) {
+				selectedPeaks.clear();
+			}
+			for (IPeakAnnotationDescriptor ipad : padResult.allInstances()) {
+				if (peakIds.contains(ipad.getId())) {
+					System.err.println("Contained!");
+					generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
+				} else {
+					System.err.println("Not contained!");
+				}
+			}
+			fireOverlayChanged();
 		}
-		fireOverlayChanged();
 	}
 
 	private void generatePeakShape(IChromatogramDescriptor chromatogram, IPeakAnnotationDescriptor peakDescr, ADataset1D<IChromatogram1D, IScan> dataset, int seriesIndex, List<Shape> l) {
@@ -306,6 +323,22 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 
 	@Override
 	public void selectionStateChanged(SelectionChangeEvent ce) {
-	
+	}
+
+	@Override
+	public Node createNodeDelegate() {
+		System.err.println("Creating node delegate");
+		Node node = null;
+		if(nodeReference == null) {
+			node = Charts.overlayNode(this);
+			nodeReference = new WeakReference<Node>(node);
+		}else{
+			node = nodeReference.get();
+			if(node==null) {
+				node = Charts.overlayNode(this);
+				nodeReference = new WeakReference<Node>(node);
+			}
+		}
+		return node;
 	}
 }

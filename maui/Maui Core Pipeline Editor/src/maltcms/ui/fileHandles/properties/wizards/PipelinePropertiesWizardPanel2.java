@@ -123,6 +123,7 @@ public class PipelinePropertiesWizardPanel2 implements WizardDescriptor.Panel {
     public void storeSettings(Object settings) {
 //        System.out.println("MUH");
 //        System.out.println(settings.getClass().getName());
+		
     }
 }
 

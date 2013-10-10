@@ -29,11 +29,13 @@ package net.sf.maltcms.chromaui.project.spi.nodes;
 
 import java.beans.IntrospectionException;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
@@ -47,7 +49,7 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service = INodeFactory.class)
 public class NodeFactory implements INodeFactory {
-
+	
 	@Override
 	public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
 		DescriptorNode an;
@@ -61,6 +63,26 @@ public class NodeFactory implements INodeFactory {
 			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
 			key.setProject(project);
 			an = new DescriptorNode(key, children, lookup);
+		} catch (IntrospectionException ex) {
+			Exceptions.printStackTrace(ex);
+			return Node.EMPTY;
+		}
+		return an;
+	}
+
+	@Override
+	public Node createDescriptorNode(IBasicDescriptor key, Lookup lookup) {
+		DescriptorNode an;
+		try {
+			//causes a stack overflow error
+//			if (key instanceof PeakGroupDescriptor) {
+//				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
+//				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
+//				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
+//			}
+			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+			key.setProject(project);
+			an = new DescriptorNode(key, Children.LEAF, lookup);
 		} catch (IntrospectionException ex) {
 			Exceptions.printStackTrace(ex);
 			return Node.EMPTY;
@@ -96,16 +118,61 @@ public class NodeFactory implements INodeFactory {
 	}
 
 	@Override
+	public Node createContainerNode(IContainer key, Lookup lookup) {
+		ContainerNode cn;
+		try {
+			cn = new ContainerNode((IContainer<IBasicDescriptor>) key, lookup);
+			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+			key.setProject(project);
+			return cn;
+		} catch (IntrospectionException ex) {
+			Exceptions.printStackTrace(ex);
+		}
+
+		return Node.EMPTY;
+	}
+
+	@Override
 	public Action createMenuItem(String name, String path) {
 		Collection<? extends Action> actions = Utilities.
 				actionsForPath(path);
 		return createMenuItem(name, actions.toArray(new Action[actions.size()]));
 	}
-	
+
 	@Override
 	public Action createMenuItem(String name, Action[] actions) {
 		NodePopupAction pnia = new NodePopupAction(name);
 		pnia.setActions(actions);
 		return pnia;
+	}
+
+	@Override
+	public <T extends IBasicDescriptor> Children createContainerChildren(final IContainer<T> key, final Lookup lookup) {
+		return Children.create(new ChildFactory<T>() {
+
+			@Override
+			protected boolean createKeys(List<T> list) {
+				for(T t:key.getMembers()) {
+					if (Thread.interrupted()) {
+						return false;
+					} else {
+						list.add(t);
+					}
+				}
+				return true;
+			}
+
+			@Override
+			protected Node createNodeForKey(T key) {
+				try {
+					DescriptorNode dn = new DescriptorNode(key,Children.LEAF, lookup);
+					return dn;
+				} catch (IntrospectionException ex) {
+					Exceptions.printStackTrace(ex);
+				}
+				return Node.EMPTY;
+			}
+			
+		}, true);
 	}
 }

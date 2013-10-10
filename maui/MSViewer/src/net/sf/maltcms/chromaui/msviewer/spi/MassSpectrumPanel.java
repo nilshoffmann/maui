@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.msviewer.spi;
 import net.sf.maltcms.db.search.api.ui.DatabaseSearchPanel;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,8 +39,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.Box;
@@ -61,12 +60,14 @@ import net.sf.maltcms.chromaui.charts.format.ScaledNumberFormatter;
 import net.sf.maltcms.chromaui.charts.labels.TopKItemsLabelGenerator;
 import net.sf.maltcms.chromaui.charts.tools.ChromatogramVisualizerTools;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.db.search.api.IQuery;
 import net.sf.maltcms.db.search.api.IQueryFactory;
 import net.sf.maltcms.db.search.api.IQueryResult;
 import net.sf.maltcms.db.search.api.QueryResultList;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.event.AxisChangeEvent;
@@ -75,7 +76,6 @@ import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -112,6 +112,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 	private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
 	private ChartPanel cp;
 	private Result<ISelection> lookupResult;
+	private Result<IPeakGroupDescriptor> peakGroupResult;
 //    private Result<IScan2D> scan2DSelection;
 	private Result<IMetabolite> metaboliteSelection;
 	private Result<IPeakAnnotationDescriptor> peakAnnotationDescriptorResult;
@@ -182,7 +183,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		JFreeChart msChart = new JFreeChart(this.plot);
 		msChart.addChangeListener(this.defaultNumberFormat);
 		System.out.println("Creating ms chart 3");
-		this.cp = new ChartPanel(msChart);
+		this.cp = new ContextAwareChartPanel(msChart, true, true, true, true, true);
 		this.cp.setInitialDelay(1);
 		this.cp.getChart().getLegend().setVisible(true);
 		this.cp.setMouseWheelEnabled(true);
@@ -386,7 +387,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
 	private void addTopKLabels(int topk, int series) {
 		System.out.println("addTopKLabels: " + topk + " " + series);
-		if (series >= 0 && sc.getSeriesCount()>series) {
+		if (series >= 0 && sc.getSeriesCount() > series) {
 			List<Point> seriesItemList = new ArrayList<Point>();
 			Comparator<Point> c = new Comparator<Point>() {
 				@Override
@@ -673,7 +674,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
 		int key = activeMassSpectrum.getSelectedIndex();
 		if (!seriesToScan.isEmpty()) {
-			seriesToScan.remove((MSSeries)this.sc.getSeries(key));
+			seriesToScan.remove((MSSeries) this.sc.getSeries(key));
 			this.sc.removeSeries(key);
 			updateActiveMassSpectrum();
 		}
@@ -711,7 +712,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				DialogDisplayer dd = DialogDisplayer.getDefault();
 				dd.notify(new NotifyDescriptor.Message("Difference view only works for two spectra!", NotifyDescriptor.INFORMATION_MESSAGE));
 				diffToggle.setSelected(false);
-			}else{
+			} else {
 				MSSeries[] series = seriesToScan.keySet().toArray(new MSSeries[2]);
 				MSSeries diff = series[0].differenceTo(series[1]);
 				addSeries(diff, diff.asScan(), true);
@@ -723,14 +724,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_diffToggleActionPerformed
 
     private void barWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_barWidthSpinnerStateChanged
-        System.out.println("Received spinner state changed!");
-		if(this.barDataset!=null) {
-			barWidth = ((Double)barWidthSpinner.getValue()).doubleValue();
+		System.out.println("Received spinner state changed!");
+		if (this.barDataset != null) {
+			barWidth = ((Double) barWidthSpinner.getValue()).doubleValue();
 			barDataset = new XYBarDataset(sc, barWidth);
 			this.plot.setDataset(barDataset);
 		}
     }//GEN-LAST:event_barWidthSpinnerStateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton absoluteRelativeToggle;
     private javax.swing.JComboBox activeMassSpectrum;
@@ -763,6 +763,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //            System.out.println("Found " + contentProviderLookup.lookupAll(IChromatogram.class).size() + " chromatograms in lookup!");
 //            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
 			boolean add = addMs.isSelected();
+			if(!add) {
+				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+			}
 			if (coll.size() > 1) {
 				add = true;
 			}
@@ -775,7 +778,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				}
 				IChromatogram source = null;
 				if (scan.getSource() instanceof IChromatogram) {
-					System.out.println("Source if IChromatogram");
+					System.out.println("Source is IChromatogram");
 					source = (IChromatogram) scan.getSource();
 				}
 				if (source != null && target != null) {
@@ -785,10 +788,12 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				}
 			}
 //            }
-		}
-		if (!metaboliteSelection.allInstances().isEmpty()) {
-			System.out.println("Received MetaboliteProxy from lookup");
+		} else if (!metaboliteSelection.allInstances().isEmpty()) {
+			System.out.println("Received metabolite selection with " + metaboliteSelection.allInstances().size() + " elements from lookup");
 			boolean add = addMs.isSelected();
+			if(!add) {
+				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+			}
 			if (metaboliteSelection.allInstances().size() > 1) {
 				add = true;
 			}
@@ -796,16 +801,31 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				final IScan scan = new Scan1D(metabolite.getMassSpectrum().getFirst(), metabolite.getMassSpectrum().getSecond(), metabolite.getScanIndex(), metabolite.getRetentionTime());
 				setData(scan, metabolite.getID(), add);
 			}
-		}
-		if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
-			System.out.println("Received peak annotations from lookup");
+		} else if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
+			System.out.println("Received peak annotations with " + peakAnnotationDescriptorResult.allInstances().size() + " elements from lookup");
 			boolean add = addMs.isSelected();
+			if(!add) {
+				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+			}
 			if (peakAnnotationDescriptorResult.allInstances().size() > 1) {
 				add = true;
 			}
 			for (IPeakAnnotationDescriptor ipad : peakAnnotationDescriptorResult.allInstances()) {
 				final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
 				setData(scan, ipad.getDisplayName(), add);
+			}
+		} else if (!peakGroupResult.allInstances().isEmpty()) {
+			System.out.println("Received peak group results");
+			boolean add = addMs.isSelected();
+			if(!add) {
+				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+			}
+			add = true;
+			for (IPeakGroupDescriptor ipgd : peakGroupResult.allInstances()) {
+				for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
+					final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
+					setData(scan, ipad.getDisplayName(), add);
+				}
 			}
 		}
 //        if (!scan2DSelection.allInstances().isEmpty()) {
@@ -931,6 +951,8 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		metaboliteSelection.addLookupListener(this);
 		peakAnnotationDescriptorResult = contentProviderLookup.lookupResult(IPeakAnnotationDescriptor.class);
 		peakAnnotationDescriptorResult.addLookupListener(this);
+		peakGroupResult = contentProviderLookup.lookupResult(IPeakGroupDescriptor.class);
+		peakGroupResult.addLookupListener(this);
 	}
 
 	public void componentClosed() {
@@ -942,6 +964,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		}
 		if (peakAnnotationDescriptorResult != null) {
 			peakAnnotationDescriptorResult.removeLookupListener(this);
+		}
+		if (peakGroupResult != null) {
+			peakGroupResult.removeLookupListener(this);
 		}
 	}
 }

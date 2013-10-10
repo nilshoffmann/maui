@@ -146,7 +146,6 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
 						dataset = ds;
 						annotations = new ArrayList<XYAnnotation>(0);
 						final DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
-						Map<Point,Collection<IPeakAnnotationDescriptor>> pointToPeaks = new HashMap<Point, Collection<IPeakAnnotationDescriptor>>();
 						for (IChromatogramDescriptor descr : filename) {
 							ic.add(descr);
 							

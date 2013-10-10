@@ -59,6 +59,7 @@ import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYBoxAnnotation;
 import org.jfree.chart.axis.ValueAxis;
@@ -115,7 +116,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         this.content = topComponentInstanceContent;
         this.lookup = tcLookup;
         chart = new JFreeChart(new XYPlot());
-        chartPanel = new ChartPanel(chart, true, true, true, true, true);
+        chartPanel = new ContextAwareChartPanel(chart, true, true, true, true, true);
         Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
         chartPanel.setCursor(crosshairCursor);
 //        chart.addProgressListener(cdxpanel);

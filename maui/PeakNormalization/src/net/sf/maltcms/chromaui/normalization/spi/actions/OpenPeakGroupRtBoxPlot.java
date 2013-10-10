@@ -42,6 +42,7 @@ import net.sf.maltcms.chromaui.normalization.spi.ui.PeakGroupBoxPlotTopComponent
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
@@ -78,7 +79,7 @@ public final class OpenPeakGroupRtBoxPlot implements ActionListener {
             BoxLayout bl = new BoxLayout(bg, BoxLayout.Y_AXIS);
             bg.setLayout(bl);
             for (JFreeChart chart : pgbp.createChart()) {
-                ChartPanel cp = new ChartPanel(chart);
+                ChartPanel cp = new ContextAwareChartPanel(chart);
                 bg.add(cp);
             }
 

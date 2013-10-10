@@ -528,7 +528,7 @@ public class Utils {
 		}
 		if (s.contains(",")) {
 			String[] tokens = s.split(",");
-			return parseDouble(tokens[0]);
+			return parseDouble(tokens[0])+parseDouble(tokens[1]);
 		}
 		return parseDouble(s);
 	}

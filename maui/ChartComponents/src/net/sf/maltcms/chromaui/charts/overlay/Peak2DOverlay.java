@@ -34,11 +34,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.ref.WeakReference;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
@@ -47,6 +50,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.ui.RectangleEdge;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 
 /**
@@ -69,6 +75,8 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		this.peakAnnotations = peakAnnotations;
 		WeakListeners.propertyChange(this, peakAnnotations);
 		setLayerPosition(10);
+//		content.add(descriptor);
+//		content.add(peakAnnotations);
 	}
 //	
 //	public Peak2DOverlay(Peak1DContainer peakAnnotations) {
@@ -82,7 +90,7 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 
 	@Override
 	public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
-		if(isVisible()) {
+		if (isVisible()) {
 			Shape savedClip = g2.getClip();
 			Rectangle2D dataArea = chartPanel.getScreenDataArea();
 			g2.clip(dataArea);
@@ -113,7 +121,7 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 			g2.setClip(savedClip);
 		}
 	}
-	
+
 	@Override
 	public void selectionStateChanged(SelectionChangeEvent ce) {
 		//TODO implement peak descriptor selection
@@ -146,7 +154,7 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 //        }
 		fireOverlayChanged();
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
 		fireOverlayChanged();
@@ -158,5 +166,22 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 
 	public IChromatogramDescriptor getDescriptor() {
 		return descriptor;
+	}
+
+	@Override
+	public Node createNodeDelegate() {
+		System.err.println("Creating node delegate");
+		Node node = null;
+		if(nodeReference == null) {
+			node = Charts.overlayNode(this);
+			nodeReference = new WeakReference<Node>(node);
+		}else{
+			node = nodeReference.get();
+			if(node==null) {
+				node = Charts.overlayNode(this);
+				nodeReference = new WeakReference<Node>(node);
+			}
+		}
+		return node;
 	}
 }

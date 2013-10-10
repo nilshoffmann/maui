@@ -63,7 +63,7 @@ public class ChartOverlayChildFactory extends ChildFactory<ChartOverlay> impleme
 
 	@Override
 	protected Node createNodeForKey(ChartOverlay key) {
-		Node n = Charts.overlayNode(key);
+		Node n = key.createNodeDelegate();
 		n.addPropertyChangeListener(WeakListeners.propertyChange(this, n));
 		return n;
 	}

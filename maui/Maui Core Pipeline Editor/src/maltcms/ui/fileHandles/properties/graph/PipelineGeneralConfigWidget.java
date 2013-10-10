@@ -60,10 +60,13 @@ public class PipelineGeneralConfigWidget extends IconNodeWidget {
         }
     }
 
-    public boolean setProperty(String key, Object value) {
+    public void setProperty(String key, Object value) {
         this.properties.setProperty(key, value);
-        return true;
     }
+	
+	public void removeProperty(String key) {
+		this.properties.clearProperty(key);
+	}
 
     public Object getProperty(final String key) {
         if (this.properties.containsKey(key)) {

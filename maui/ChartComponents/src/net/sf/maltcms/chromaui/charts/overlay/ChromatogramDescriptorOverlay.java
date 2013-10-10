@@ -37,9 +37,12 @@ import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import static net.sf.maltcms.common.charts.api.overlay.ChartOverlay.PROP_VISIBLE;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import org.jfree.chart.ChartPanel;
+import org.openide.nodes.Node;
 
 /**
- *
+ * Virtual overlay to controll the visibility of all overlays associated to one 
+ * chromatotogram.
+ * 
  * @author Nils Hoffmann
  */
 public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
@@ -51,6 +54,7 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
 		super(name, displayName, shortDescription, visibilityChangeable);
 		this.descriptor = descriptor;
 		this.overlays = children;
+		super.content.add(descriptor);
 	}
 
 	@Override
