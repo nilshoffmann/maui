@@ -46,7 +46,7 @@ public class PvalueAdjustmentSettingsPanel extends javax.swing.JPanel {
     public PvalueAdjustmentSettingsPanel(IChromAUIProject project) {
 		this.project = project;
         initComponents();
-		previousAdjustmentMethod = PvalueAdjustment.valueOf(NbPreferences.forModule(NormalizationSettingsPanel.class).node(project.getLocation().getPath()).get("pValueAdjustmentMethod", "BH"));
+		previousAdjustmentMethod = PvalueAdjustment.valueOf(NbPreferences.forModule(NormalizationSettingsPanel.class).node(project.getLocation().getName()).get("pValueAdjustmentMethod", "BH"));
 		pvalueAdjustmentMethod.setSelectedItem(previousAdjustmentMethod);
     }
 
@@ -106,7 +106,7 @@ public class PvalueAdjustmentSettingsPanel extends javax.swing.JPanel {
     public PvalueAdjustment getPvalueAdjustment() {
         if (pvalueAdjustmentMethod.getSelectedItem() != null) {
 			PvalueAdjustment adjustment = (PvalueAdjustment) pvalueAdjustmentMethod.getSelectedItem();
-			NbPreferences.forModule(NormalizationSettingsPanel.class).node(project.getLocation().getPath()).put("pValueAdjustmentMethod", adjustment.toString());
+			NbPreferences.forModule(NormalizationSettingsPanel.class).node(project.getLocation().getName()).put("pValueAdjustmentMethod", adjustment.toString());
             return adjustment;
         }
         return PvalueAdjustment.none;
