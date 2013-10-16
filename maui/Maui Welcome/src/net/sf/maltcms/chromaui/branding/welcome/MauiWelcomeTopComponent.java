@@ -45,6 +45,7 @@ import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -61,7 +62,10 @@ import org.openide.util.NbBundle.Messages;
 		persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
 @ActionID(category = "Window", id = "net.sf.maltcms.chromaui.branding.welcome.MauiWelcomeTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+@ActionReferences({
+@ActionReference(path = "Menu/Window" /*, position = 333 */),
+@ActionReference(path = "Menu/Help" /*, position = 333 */)
+})
 @TopComponent.OpenActionRegistration(
 		displayName = "#CTL_MauiWelcomeAction",
 		preferredID = "MauiWelcomeTopComponent")
