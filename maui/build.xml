@@ -40,7 +40,7 @@
 			<entry key="nbi.registries.management.jar" value="${nbi.cluster.location}/modules/ext/nbi-registries-management.jar"/>
 			<entry key="nbi.engine.jar" value="${nbi.cluster.location}/modules/ext/nbi-engine.jar"/>
 			<entry key="nbi.license.file" value="${auxiliary.org-netbeans-modules-apisupport-installer.license-file}" default=""/>
-			<entry key="nbi.dock.icon.file" value="${basedir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui.icns"/>
+<!--			<entry key="nbi.dock.icon.file" value="${basedir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui.icns"/>-->
 			<entry key="nbi.icon.file" value="${suite.dir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui128.png"/>
 			<entry key="generate.installer.for.platforms" value="linux macosx solaris windows"/>
 			<entry key="generator-jdk-location-forward-slashes" value="${java.home}"/>
