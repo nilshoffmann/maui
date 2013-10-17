@@ -30,9 +30,9 @@
 		<subant target="fix-test-dependencies" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
 	</target>
 	
-	<target name="build-installers" description="Build Installers" depends="build">
+<!--	<target name="build-installers" description="Build Installers" depends="build">
 		
-		<!-- TODO: replace potential backward slashes in generated-jdk-location-forward-slashes and generated-installers-location-forward-slashes-->
+		 TODO: replace potential backward slashes in generated-jdk-location-forward-slashes and generated-installers-location-forward-slashes
 		<propertyfile file="${basedir}/nbproject/installer.properties">
 			<entry key="suite.location" value="${basedir}"/>
 			<entry key="nbi.cluster.location" value="${nbplatform.harness.dir}"/>
@@ -42,10 +42,10 @@
 			<entry key="nbi.registries.management.jar" value="${nbi.cluster.location}/modules/ext/nbi-registries-management.jar"/>
 			<entry key="nbi.engine.jar" value="${nbi.cluster.location}/modules/ext/nbi-engine.jar"/>
 			<entry key="nbi.license.file" value="${basedir}/../license/maui-license.txt"/>
-			<!-- breaks the installer on macosx -->
-<!--			<entry key="nbi.dock.icon.file" value="${basedir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui.icns"/>-->
+			 breaks the installer on macosx 
+			<entry key="nbi.dock.icon.file" value="${basedir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui.icns"/>
 			<entry key="nbi.icon.file" value="${suite.dir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui128.png"/>
-			<entry key="generate.installer.for.platforms" value="macosx"/><!-- value="linux macosx solaris windows"/>-->
+			<entry key="generate.installer.for.platforms" value="macosx"/> value="linux macosx solaris windows"/>
 			<entry key="generator-jdk-location-forward-slashes" value="${java.home}"/>
 			<entry key="generated-installers-location-forward-slashes" value="${basedir}/build/dist"/>
 			<entry key="pack200.enabled" value="${auxiliary.org-netbeans-modules-apisupport-installer.pack200-enabled}" default="false"/>
@@ -55,7 +55,7 @@
 		<ant antfile="${basedir}/../installer/stub/template.xml" taskname="build" dir="${nbplatform.harness.dir}/nbi/stub/" inheritall="false" inheritrefs="false">
 			<property file="${basedir}/nbproject/installer.properties"/>
 		</ant>
-	</target>
+	</target>-->
 	
 	<target name="check-installers" description="Check that installers are ready">
 		<fail message="Installers have not been created! Please create them manually!">
