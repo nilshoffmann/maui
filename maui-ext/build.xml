@@ -13,10 +13,11 @@
     
 	<!-- Modify NetBeans app.conf file to use my local one-->
 	<target name="build-launchers" depends="suite.build-launchers">
-		<echo message="Branding conf file : Copy file ${basedir}/BrandingModule/harness/etc/maui.conf to ${build.launcher.dir}/etc/${app.name}.conf"/>
+		<echo message="Branding conf file : Copy file ${basedir}/../maui/BrandingModule/harness/etc/maui.conf to ${build.launcher.dir}/etc/${app.name}.conf"/>
 		<delete file="${build.launcher.dir}/etc/${app.name}.conf"/>
-		<copy file="${basedir}/BrandingModule/harness/etc/${app.name}.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf"/>
-		<copy file="${basedir}/BrandingModule/harness/bin/${app.name}-sge.sh" tofile="${build.launcher.dir}/bin"/>
+		<delete file="${build.launcher.dir}/bin/${app.name}"/>
+		<copy file="${basedir}/../BrandingModule/harness/etc/${app.name}.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf"/>
+		<copy file="${basedir}/../maui/BrandingModule/harness/bin/app.sh" tofile="${build.launcher.dir}/bin/${app.name}"/>
 	</target>   
    
 	<!-- additional task to fix dependencies for all modules at once -->
@@ -39,7 +40,8 @@
 			<entry key="nbi.ant.tasks.jar" value="${nbi.cluster.location}/modules/ext/nbi-ant-tasks.jar"/>
 			<entry key="nbi.registries.management.jar" value="${nbi.cluster.location}/modules/ext/nbi-registries-management.jar"/>
 			<entry key="nbi.engine.jar" value="${nbi.cluster.location}/modules/ext/nbi-engine.jar"/>
-			<entry key="nbi.license.file" value="${suite.dir}/license/maui-installer-license.txt"/>
+			<entry key="nbi.license.file" value="${basedir}/../license/maui-license.txt"/>
+			<!-- breaks the installer on macosx -->
 <!--			<entry key="nbi.dock.icon.file" value="${basedir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui.icns"/>-->
 			<entry key="nbi.icon.file" value="${suite.dir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui128.png"/>
 			<entry key="generate.installer.for.platforms" value="linux macosx solaris windows"/>
