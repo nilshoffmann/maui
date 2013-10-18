@@ -61,11 +61,11 @@
 			<entry key="nbi.license.file" value="${suite.dir}/../license/maui-license.txt"/> 
 			<entry key="nbi.dock.icon.file" value="${suite.dir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui.icns"/>
 			<entry key="nbi.icon.file" value="${suite.dir}/BrandingModule/src/net/sf/maltcms/chromaui/branding/maui128.png"/>
-			<entry key="generate.installer.for.platforms" value="macosx" /> <!--value="linux macosx solaris windows"/>-->
+			<entry key="generate.installer.for.platforms" value="macosx linux solaris windows"/>
 			<entry key="generator-jdk-location-forward-slashes" value="${java.home}"/>
 			<entry key="generated-installers-location-forward-slashes" value="${suite.dir}/build/dist"/>
 			<!--<entry key="pack200.enabled" value="${auxiliary.org-netbeans-modules-apisupport-installer.pack200-enabled}" default="false"/>-->
-                        <entry key="pack200.enabled" value="false" default="false"/>
+            <entry key="pack200.enabled" value="true" default="false"/>
 			<entry key="suite.nbi.product.uid" value="${app.name}"/>
 		</propertyfile>
 		<!-- ${nbplatform.harness.dir}/nbi/stub/ -->
