@@ -228,8 +228,8 @@
 			<pathelement path="${modules.sorted}"/>
 		</path>
 		<subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
-		<mkdir dir="${basedir}/build/site/javadoc"/>
-		<copy todir="${basedir}/build/site/javadoc" flatten="false">
+		<mkdir dir="${basedir}/build/site/javadoc/${app.name}/${app.version.major}.${app.version.minor}.${app.version.micro}"/>
+		<copy todir="${basedir}/build/site/javadoc/${app.name}/${app.version.major}.${app.version.minor}.${app.version.micro}" flatten="false">
 			<fileset dir="${basedir}">
 				<include name="**/build/javadoc/**"/>
 				<exclude name="build/javadoc/**"/>
@@ -242,7 +242,7 @@
 			</fileset>
 		</copy>
 		<echo>Modules sorted: ${modules.sorted}</echo>
-		<echo file="${basedir}/build/site/javadoc/index.html"><![CDATA[
+		<echo file="${basedir}/build/site/javadoc/${app.name}/${app.version.major}.${app.version.minor}.${app.version.micro}/index.html"><![CDATA[
 <!DOCTYPE html>
 <html>
 	<head>
@@ -297,15 +297,15 @@
 				<echo level="info">Localizing Bundle location: ${localizing-bundle.location}</echo>
 				<echo level="info">Module javadoc relative location: ${module-javadoc-hyphenated.location}</echo>
 				<if>
-					<available file="${basedir}/build/site/javadoc/${module-javadoc-hyphenated.location}/index.html"/>
+					<available file="${basedir}/build/site/javadoc/${app.name}/${app.version.major}.${app.version.minor}.${app.version.micro}/${module-javadoc-hyphenated.location}/index.html"/>
 					<then>
 						<!-- append link to index.html-->
-						<echo file="${basedir}/build/site/javadoc/index.html" append="true"><![CDATA[
+						<echo file="${basedir}/build/site/javadoc/${app.name}/${app.version.major}.${app.version.minor}.${app.version.micro}/index.html" append="true"><![CDATA[
 <li><a href="${module-javadoc-hyphenated.location}/index.html">${relative-path}</a></li>
 ]]></echo>
 					</then>
 					<else>
-						<echo level="warn">Skipping due to missing javadoc at ${basedir}/build/site/javadoc/${module-javadoc-hyphenated.location}</echo>
+						<echo level="warn">Skipping due to missing javadoc at ${basedir}/build/site/javadoc/${app.name}/${app.version.major}.${app.version.minor}.${app.version.micro}/${module-javadoc-hyphenated.location}</echo>
 					</else>
 				</if>
 				<!-- reset properties for next module -->
@@ -315,7 +315,7 @@
 				<var name="module-javadoc-hyphenated.location" unset="true"/>
 			</sequential>
 		</for>
-		<echo file="${basedir}/build/site/javadoc/index.html" append="true"><![CDATA[
+		<echo file="${basedir}/build/site/javadoc/${app.name}/${app.version.major}.${app.version.minor}.${app.version.micro}/index.html" append="true"><![CDATA[
 </ul>
 	</body>
 </html>

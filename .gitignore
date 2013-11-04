@@ -34,3 +34,7 @@ maui/.DS_Store
 /tools/pToolsBinding/dist/
 /tools/pToolsBindingTest/build/
 /tools/pToolsBindingTest/dist/
+/installer/stub/ext/engine/nbproject/private/
+/installer/stub/ext/engine/build/
+/installer/stub/ext/engine/dist/
+/installer/stub/ext/components/products/helloworld/nbproject/private/
