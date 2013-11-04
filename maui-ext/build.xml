@@ -16,8 +16,14 @@
         <echo message="Branding conf file : Copy file ${basedir}/../maui/BrandingModule/harness/etc/maui.conf to ${build.launcher.dir}/etc/${app.name}.conf"/>
         <delete file="${build.launcher.dir}/etc/${app.name}.conf"/>
         <delete file="${build.launcher.dir}/bin/${app.name}"/>
-        <copy file="${basedir}/../maui/BrandingModule/harness/etc/maui.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf"/>
+		<delete file="${build.launcher.dir}/bin/*.exe"/>
+        <copy file="${basedir}/../maui/BrandingModule/harness/etc/${app.name}.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf"/>
+        <copy file="${basedir}/../maui/BrandingModule/harness/bin/app-sge.sh" tofile="${build.launcher.dir}/bin/${app.name}-sge"/>
         <copy file="${basedir}/../maui/BrandingModule/harness/bin/app.sh" tofile="${build.launcher.dir}/bin/${app.name}"/>
+		<copy file="${basedir}/../maui/BrandingModule/harness/bin/app.exe" tofile="${build.launcher.dir}/bin/${app.name}.exe"/>
+		<copy file="${basedir}/../maui/BrandingModule/harness/bin/app64.exe" tofile="${build.launcher.dir}/bin/${app.name}64.exe"/>
+		<copy file="${basedir}/../maui/BrandingModule/harness/bin/pre7_app.exe" tofile="${build.launcher.dir}/bin/pre7_${app.name}.exe"/>
+		<copy file="${basedir}/../maui/BrandingModule/harness/bin/pre7_app_w.exe" tofile="${build.launcher.dir}/bin/pre7_${app.name}_w.exe"/>
     </target>   
    
     <!-- additional task to fix dependencies for all modules at once -->
@@ -63,8 +69,8 @@
             <entry key="generate.installer.for.platforms" value="macosx linux windows solaris"/>
             <entry key="generator-jdk-location-forward-slashes" value="${java.home}"/>
             <entry key="generated-installers-location-forward-slashes" value="${suite.dir}/build/dist"/>
-            <!--<entry key="pack200.enabled" value="${auxiliary.org-netbeans-modules-apisupport-installer.pack200-enabled}" default="false"/>-->
-            <entry key="pack200.enabled" value="true" default="false"/>
+            <entry key="pack200.enabled" value="${auxiliary.org-netbeans-modules-apisupport-installer.pack200-enabled}" default="false"/>
+            <!--<entry key="pack200.enabled" value="true" default="false"/>-->
             <entry key="suite.nbi.product.uid" value="${app.name}"/>
         </propertyfile>
         <!-- ${nbplatform.harness.dir}/nbi/stub/ -->
