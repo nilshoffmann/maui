@@ -309,8 +309,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 					System.err.println("Top level archive directory name: " + topLevelArchiveName);
 					maltcmsBasename = topLevelArchiveName.substring(0, topLevelArchiveName.length() - 1);
 					targetFile = new File(targetDirectory, maltcmsBasename + "-bin.zip");
-					System.err.println("moving to target file " + targetFile);
-					FileUtils.moveFile(downloadedFile, targetFile);
+					System.err.println("copying to target file " + targetFile);
+					FileUtils.copyFile(downloadedFile, targetFile);
 				} else {
 					String[] majorMinorMicro = version.split("\\.");
 					maltcmsBasename = "maltcms-" + majorMinorMicro[0] + "." + majorMinorMicro[1] + "." + majorMinorMicro[2];
@@ -328,16 +328,13 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 				checkVersion(maltcmsInstallationDir.getAbsolutePath());
 				controller.changed();
 				store();
-//                }else{
-//                    System.out.println("Download location dialog cancelled by user!");
-//                }
-				for (Component c : getComponents()) {
-					c.setEnabled(true);
-				}
 			} catch (IOException ex) {
 				Exceptions.printStackTrace(ex);
 			} finally {
 				setEnabled(true);
+				for (Component c : getComponents()) {
+					c.setEnabled(true);
+				}
 				progressHandle.finish();
 			}
 		}
