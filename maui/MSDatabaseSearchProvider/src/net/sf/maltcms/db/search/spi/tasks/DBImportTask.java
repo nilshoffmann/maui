@@ -34,7 +34,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -50,7 +49,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.chromaui.ui.support.api.FileTools;
-import net.sf.maltcms.db.search.spi.parser.MSPFormatMetaboliteParser2;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
@@ -64,148 +62,162 @@ import org.openide.util.Exceptions;
 @Data
 public class DBImportTask extends AProgressAwareRunnable {
 
-    private File[] selectedDatabases;
-    private String databaseContainerName;
-    private DatabaseType databaseType;
-    private Locale locale;
-    private List<Double> maskedMasses;
-    private IChromAUIProject project;
-    private boolean cancelled = false;
+	private File[] selectedDatabases;
+	private String databaseContainerName;
+	private DatabaseType databaseType;
+	private Locale locale;
+	private List<Double> maskedMasses;
+	private IChromAUIProject project;
+	private boolean cancelled = false;
 
-    private boolean overwriteFile(File fo) {
-        if (fo.exists()) {
-            DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
-                    "Can not import database! File with the same name already exists at: " + fo.getPath(),
-                    NotifyDescriptor.WARNING_MESSAGE));
-            return false;
-        }
-        return true;
-    }
+	private boolean overwriteFile(File fo) {
+		if (fo.exists()) {
+			NotifyDescriptor.Confirmation ndc = new NotifyDescriptor.Confirmation(
+					"Can not import database! File with the same name already exists at: " + fo.getPath() + " Delete?", "Database exists", NotifyDescriptor.YES_NO_OPTION,
+					NotifyDescriptor.WARNING_MESSAGE);
+			Object o = DialogDisplayer.getDefault().notify(ndc);
+			if (o.equals(NotifyDescriptor.OK_OPTION)) {
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public void run() {
-        getProgressHandle().setDisplayName("Importing "+databaseType+" database");
-        getProgressHandle().start(selectedDatabases.length);
-        DatabaseContainer dbContainer = new DatabaseContainer();
-        dbContainer.setName(getDatabaseContainerName());
-        dbContainer.setDisplayName(getDatabaseContainerName());
-        try {
-            FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
-                    "databases");
-            int unit = 0;
-            List<FileObject> createdFiles = new LinkedList<FileObject>();
-            for (File file : selectedDatabases) {
-                if (cancelled) {
-                    return;
-                }
-                getProgressHandle().progress("Importing database " + file.getName(), unit);
-                String name = StringTools.removeFileExt(file.getName());
+	@Override
+	public void run() {
+		getProgressHandle().setDisplayName("Importing " + databaseType + " database");
+		getProgressHandle().start(selectedDatabases.length);
+		DatabaseContainer dbContainer = new DatabaseContainer();
+		dbContainer.setName(getDatabaseContainerName());
+		dbContainer.setDisplayName(getDatabaseContainerName());
+		List<FileObject> createdFiles = new LinkedList<FileObject>();
+		try {
+			FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
+					"databases");
+			int unit = 0;
+			for (File file : selectedDatabases) {
+				if (cancelled) {
+					return;
+				}
+				getProgressHandle().progress("Importing database " + file.getName(), unit);
+				String name = StringTools.removeFileExt(file.getName());
 
-                if (file.getName().toLowerCase().endsWith("msp")) {
-                    File dbFile1 = new File(FileUtil.toFile(baseDir),
-                            name + ".db4o");
-                    if (overwriteFile(dbFile1)) {
-                        FileObject dbFile = FileUtil.createData(dbFile1);
-                        createdFiles.add(dbFile);
-                        getProgressHandle().progress("Parsing msp", unit);
-                        MSPFormatMetaboliteParser2 mfmp = new MSPFormatMetaboliteParser2();
-                        mfmp.setLocale(locale);
-                        BufferedReader br = null;
-                        List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
-                        try {
-                            br = new BufferedReader(new FileReader(file));
-                            String line = "";
-                            while ((line = br.readLine()) != null) {
-                                IMetabolite met = mfmp.handleLine(line);
-                                if(met!=null) {
-                                    metabolites.add(met);
-                                }
-                            }
-                            // System.out.println("Found "+nnpeaks+" mass spectra!");
-                            // System.exit(-1);
-                            // handleLine("\r");
-                        } catch (FileNotFoundException e) {
-                            System.err.println(e.getLocalizedMessage());
-                            Exceptions.printStackTrace(e);
-                        } catch (IOException e) {
-                            System.err.println(e.getLocalizedMessage());
-                            Exceptions.printStackTrace(e);
-                        } finally {
-                            if (br != null) {
-                                try {
-                                    br.close();
-                                } catch (IOException ex) {
-                                    Exceptions.printStackTrace(ex);
-                                }
-                            }
-                        }
+				if (file.getName().toLowerCase().endsWith("msp")) {
+					File dbFile1 = new File(FileUtil.toFile(baseDir),
+							name + ".db4o");
+					if (overwriteFile(dbFile1)) {
+						FileObject dbFile = FileUtil.createData(dbFile1);
+						createdFiles.add(dbFile);
+						getProgressHandle().progress("Parsing msp", unit);
+						MSPFormatMetaboliteParser3 mfmp = new MSPFormatMetaboliteParser3();
+						mfmp.setLocale(locale);
+						BufferedReader br = null;
+						List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
+						try {
+							br = new BufferedReader(new FileReader(file));
+							String line = "";
+							while ((line = br.readLine()) != null) {
+								IMetabolite met = mfmp.handleLine(line);
+								if (met != null) {
+									metabolites.add(met);
+								}
+							}
+							// System.out.println("Found "+nnpeaks+" mass spectra!");
+							// System.exit(-1);
+							// handleLine("\r");
+						} catch (FileNotFoundException e) {
+							System.err.println(e.getLocalizedMessage());
+							Exceptions.printStackTrace(e);
+						} catch (IOException e) {
+							System.err.println(e.getLocalizedMessage());
+							Exceptions.printStackTrace(e);
+						} finally {
+							if (br != null) {
+								try {
+									br.close();
+								} catch (IOException ex) {
+									Exceptions.printStackTrace(ex);
+								}
+							}
+						}
 //                        Collection<IMetabolite> metabolites = mfmp.parse(file);
-                        if (metabolites.isEmpty()) {
-                            DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
-                                    "Database import failed, please check output for details!",
-                                    NotifyDescriptor.WARNING_MESSAGE));
+						if (metabolites.isEmpty()) {
+							DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
+									"Database import failed, please check output for details!",
+									NotifyDescriptor.WARNING_MESSAGE));
 //                            eoc.close();
-                            cancelled = true;
-                        } else {
-                            ICrudProvider provider = CrudProvider.getProviderFor(
-                                    FileUtil.toFile(dbFile).toURI().toURL());
-                            try {
-                                provider.open();
-                                ICrudSession session = provider.createSession();
-                                System.out.println("Adding metabolites to database!");
-                                for (IMetabolite im : metabolites) {
-                                    System.out.println("Adding metabolite "+im);
-                                    session.create(im);
-                                }
-                                
-                                IDatabaseDescriptor descriptor = DescriptorFactory.newDatabaseDescriptor(
-                                        FileUtil.toFile(dbFile).getAbsolutePath(),
-                                        databaseType);
-                                descriptor.setMaskedMasses(maskedMasses);
-                                dbContainer.addMembers(descriptor);
-                                project.addContainer(dbContainer);
-                            } catch (Exception e) {
-                                Exceptions.printStackTrace(e);
-                            } finally {
-                                provider.close();
-                            }
-                        }
-                    }
-                } else {
+							cancelled = true;
+						} else {
+							ICrudProvider provider = CrudProvider.getProviderFor(
+									FileUtil.toFile(dbFile).toURI().toURL());
+							try {
+								provider.open();
+								ICrudSession session = provider.createSession();
+								System.out.println("Adding metabolites to database!");
+								for (IMetabolite im : metabolites) {
+									System.out.println("Adding metabolite " + im);
+									session.create(im);
+								}
 
-                    File dbFile = new File(FileUtil.toFile(baseDir),
-                            name + ".db4o");
-                    if (overwriteFile(dbFile)) {
-                        getProgressHandle().progress("Copying db4o file");
-                        createdFiles.add(FileUtil.createData(dbFile));
-                        FileTools.copyFile(file, dbFile);
-                        IDatabaseDescriptor descriptor = DescriptorFactory.newDatabaseDescriptor(
-                                dbFile.getAbsolutePath(),
-                                databaseType);
-                        descriptor.setMaskedMasses(maskedMasses);
-                        dbContainer.addMembers(descriptor);
-                        project.addContainer(dbContainer);
-                    }
+								IDatabaseDescriptor descriptor = DescriptorFactory.newDatabaseDescriptor(
+										FileUtil.toFile(dbFile).getAbsolutePath(),
+										databaseType);
+								descriptor.setMaskedMasses(maskedMasses);
+								dbContainer.addMembers(descriptor);
+								project.addContainer(dbContainer);
+							} catch (Exception e) {
+								Exceptions.printStackTrace(e);
+							} finally {
+								provider.close();
+							}
+						}
+					}
+				} else if (file.getName().toLowerCase().endsWith("db4o")) {
 
-                }
-                unit++;
-            }
-            if (cancelled) {
-                for (FileObject file : createdFiles) {
-                    file.delete();
-                }
-                return;
-            }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } finally {
+					File dbFile = new File(FileUtil.toFile(baseDir),
+							name + ".db4o");
+					if (overwriteFile(dbFile)) {
+						getProgressHandle().progress("Copying db4o file");
+						createdFiles.add(FileUtil.createData(dbFile));
+						FileTools.copyFile(file, dbFile);
+						IDatabaseDescriptor descriptor = DescriptorFactory.newDatabaseDescriptor(
+								dbFile.getAbsolutePath(),
+								databaseType);
+						descriptor.setMaskedMasses(maskedMasses);
+						dbContainer.addMembers(descriptor);
+						project.addContainer(dbContainer);
+					}
+
+				}
+				unit++;
+			}
+			if (cancelled) {
+				for (FileObject file : createdFiles) {
+					file.delete();
+				}
+				return;
+			}
+		} catch (IOException ex) {
+			Exceptions.printStackTrace(ex);
+			
+			//undo actions
+			project.removeContainer(dbContainer);
+			for (FileObject file : createdFiles) {
+				try {
+					file.delete();
+				} catch (IOException ex1) {
+					Exceptions.printStackTrace(ex1);
+				}
+			}
+		} finally {
 			getProgressHandle().finish();
 		}
-    }
+	}
 
-    @Override
-    public boolean cancel() {
-        this.cancelled = true;
-        return this.cancelled;
-    }
+	@Override
+	public boolean cancel() {
+		this.cancelled = true;
+		return this.cancelled;
+	}
 }
