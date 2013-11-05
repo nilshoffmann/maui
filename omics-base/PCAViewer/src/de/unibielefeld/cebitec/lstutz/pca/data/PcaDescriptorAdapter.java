@@ -27,15 +27,12 @@
  */
 package de.unibielefeld.cebitec.lstutz.pca.data;
 
-import cross.exception.ConstraintViolationException;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.vecmath.Color3f;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
-import org.openide.DialogDisplayer;
-import org.openide.NotifyDescriptor;
 import ucar.ma2.ArrayDouble;
 
 /**

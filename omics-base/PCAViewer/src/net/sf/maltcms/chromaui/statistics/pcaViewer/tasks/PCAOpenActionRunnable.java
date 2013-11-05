@@ -55,7 +55,6 @@ public class PCAOpenActionRunnable extends AProgressAwareRunnable {
 			handle.setDisplayName("Loading pca data");//+new File(this.files.getResourceLocation()).getName());
 			handle.progress("Initializing...");
 			String name = "MeltDB 3D Viewer";
-
 			final StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(pcaDescriptor, 0, 1, 2)));
 			handle.progress("Creating view...");
 			Runnable r = new Runnable() {

@@ -14,16 +14,11 @@
     <!-- Modify NetBeans app.conf file to use my local one-->
     <target name="build-launchers" depends="suite.build-launchers">
         <echo message="Branding conf file : Copy file ${basedir}/BrandingModule/harness/etc/maui.conf to ${build.launcher.dir}/etc/${app.name}.conf"/>
-        <delete file="${build.launcher.dir}/etc/${app.name}.conf"/>
-        <delete file="${build.launcher.dir}/bin/${app.name}"/>
-		<delete file="${build.launcher.dir}/bin/*.exe"/>
-        <copy file="${basedir}/BrandingModule/harness/etc/${app.name}.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf"/>
-        <copy file="${basedir}/BrandingModule/harness/bin/app-sge.sh" tofile="${build.launcher.dir}/bin/${app.name}-sge"/>
-        <copy file="${basedir}/BrandingModule/harness/bin/app.sh" tofile="${build.launcher.dir}/bin/${app.name}"/>
-		<copy file="${basedir}/BrandingModule/harness/bin/app.exe" tofile="${build.launcher.dir}/bin/${app.name}.exe"/>
-		<copy file="${basedir}/BrandingModule/harness/bin/app64.exe" tofile="${build.launcher.dir}/bin/${app.name}64.exe"/>
-		<copy file="${basedir}/BrandingModule/harness/bin/pre7_app.exe" tofile="${build.launcher.dir}/bin/pre7_${app.name}.exe"/>
-		<copy file="${basedir}/BrandingModule/harness/bin/pre7_app_w.exe" tofile="${build.launcher.dir}/bin/pre7_${app.name}_w.exe"/>
+        <copy file="${basedir}/BrandingModule/harness/etc/${app.name}.conf" tofile="${build.launcher.dir}/etc/${app.name}.conf" overwrite="true" failonerror="true"/>
+        <copy file="${basedir}/BrandingModule/harness/bin/app-sge.sh" tofile="${build.launcher.dir}/bin/${app.name}-sge" overwrite="true" failonerror="true"/>
+        <copy file="${basedir}/BrandingModule/harness/bin/app.sh" tofile="${build.launcher.dir}/bin/${app.name}" overwrite="true" failonerror="true"/>
+		<copy file="${basedir}/BrandingModule/harness/bin/app.exe" tofile="${build.launcher.dir}/bin/${app.name}.exe" overwrite="true" failonerror="true"/>
+		<copy file="${basedir}/BrandingModule/harness/bin/app64.exe" tofile="${build.launcher.dir}/bin/${app.name}64.exe" overwrite="true" failonerror="true"/>
     </target>   
    
     <!-- additional task to fix dependencies for all modules at once -->
