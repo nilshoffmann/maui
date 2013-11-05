@@ -50,6 +50,7 @@ import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IMetabolite;
 import maltcms.datastructures.ms.Metabolite;
+import org.openide.util.Exceptions;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 
@@ -287,10 +288,13 @@ public class MSPFormatMetaboliteParser3 {
 		try {
 			this.link = new URL(link);
 		} catch (MalformedURLException ex) {
+			Exceptions.printStackTrace(ex);
 			log.error("Exception while parsing: ", ex);
 		}
-		this.id = link.substring(link.lastIndexOf("/")+1,link.length());
-		this.id = this.id.substring(this.id.lastIndexOf("."));
+		String uuidPrefix = link.replace("http://gmd.mpimp-golm.mpg.de/Analytes/", "");
+		uuidPrefix = uuidPrefix.substring(0, uuidPrefix.indexOf(".")-1);
+		this.id = uuidPrefix;//.substring(link.lastIndexOf("/")+1,link.length());
+//		this.id = this.id.substring(this.id.lastIndexOf("."));
 	}
 
     public void handleSynonMATCH(String match) {

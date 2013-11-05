@@ -30,8 +30,9 @@ package net.sf.maltcms.db.search.spi.actions;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.db.search.api.ui.DatabaseDefinitionPanel;
+import net.sf.maltcms.db.search.spi.tasks.DBImportIntoContainerTask;
 import net.sf.maltcms.db.search.spi.tasks.DBImportTask;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -43,24 +44,26 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction")
-@ActionRegistration(displayName = "#CTL_ImportDatabaseAction")
+id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseIntoContainerAction")
+@ActionRegistration(displayName = "#CTL_ImportDatabaseIntoContainerAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 1414),
-    @ActionReference(path="Actions/ChromAUIProjectLogicalView/Database")
+    @ActionReference(path="Actions/ContainerNodeActions/DatabaseContainer")
 })
-@Messages("CTL_ImportDatabaseAction=Import Database")
-public final class ImportDatabaseAction implements ActionListener {
+@Messages("CTL_ImportDatabaseIntoContainerAction=Import Database")
+public final class ImportDatabaseIntoContainerAction implements ActionListener {
 
-    private final IChromAUIProject context;
+    private final DatabaseContainer context;
 
-    public ImportDatabaseAction(IChromAUIProject context) {
+    public ImportDatabaseIntoContainerAction(DatabaseContainer context) {
         this.context = context;
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
         DatabaseDefinitionPanel ddp = new DatabaseDefinitionPanel();
+		ddp.getDatabaseContainerName().setText(context.getDisplayName());
+		ddp.getDatabaseContainerName().setEditable(false);
+		
         // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
         NotifyDescriptor nd = new NotifyDescriptor(
                 ddp, // instance of your panel
@@ -75,14 +78,14 @@ public final class ImportDatabaseAction implements ActionListener {
 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            DBImportTask dit = new DBImportTask();
-            dit.setProject(context);
+            DBImportIntoContainerTask dit = new DBImportIntoContainerTask();
+            dit.setProject(context.getProject());
             dit.setSelectedDatabases(ddp.getDatabases().toArray(new File[]{}));
-            dit.setDatabaseContainerName(ddp.getDatabaseContainerNameValue());
+            dit.setDatabaseContainer(context);
             dit.setDatabaseType(ddp.getDatabaseType());
             dit.setLocale(ddp.getSelectedLocale());
             dit.setMaskedMasses(ddp.getMaskedMasses());
-            DBImportTask.createAndRun("Importing database", dit);
+            DBImportIntoContainerTask.createAndRun("Importing database", dit);
         }
     }
 }

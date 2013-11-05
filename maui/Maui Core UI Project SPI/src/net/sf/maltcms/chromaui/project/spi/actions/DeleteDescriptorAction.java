@@ -29,8 +29,10 @@ package net.sf.maltcms.chromaui.project.spi.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.IContainer;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.LookupUtils;
@@ -62,26 +64,28 @@ public final class DeleteDescriptorAction implements ActionListener {
 		IChromAUIProject icap = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
 		if (icap != null) {
 			//check that all descriptors have the same class
-			Class<? extends IBasicDescriptor> descrClazz = null;
-			boolean showDialog = false;
-			for (IBasicDescriptor descr : context) {
-				if (descrClazz == null) {
-					descrClazz = descr.getClass();
-				} else {
-					if (!descr.getClass().isAssignableFrom(descrClazz)) {
-						showDialog = true;
-					}
-				}
-			}
-			if (showDialog) {
-				DialogDisplayer dd = DialogDisplayer.getDefault();
-				Object result = dd.notify(new NotifyDescriptor.Confirmation(
-						"Selected descriptors have different types, continue deletion?",
-						"Confirm descriptor deletion", NotifyDescriptor.YES_NO_OPTION));
-				if (result.equals(NotifyDescriptor.NO_OPTION)) {
-					return;
-				}
-			}
+//			Class<? extends IBasicDescriptor> descrClazz = null;
+//			List<IBasicDescriptor> basicDescriptors = new ArrayList<IBasicDescriptor>();
+//			boolean showDialog = false;
+//			for (IBasicDescriptor descr : context) {
+//				if (descrClazz == null) {
+//					descrClazz = descr.getClass();
+//				} else {
+//					if (!descr.getClass().isAssignableFrom(descrClazz)) {
+//						showDialog = true;
+//						basicDescriptors.add(descr);
+//					}
+//				}
+//			}
+//			if (showDialog) {
+//				DialogDisplayer dd = DialogDisplayer.getDefault();
+//				Object result = dd.notify(new NotifyDescriptor.Confirmation(
+//						"Selected descriptors have different types, continue deletion?",
+//						"Confirm descriptor deletion", NotifyDescriptor.YES_NO_OPTION));
+//				if (result.equals(NotifyDescriptor.NO_OPTION)) {
+//					return;
+//				}
+//			}
 			icap.removeDescriptor(context.toArray(new IBasicDescriptor[context.size()]));
 			icap.refresh();
 		}

@@ -204,7 +204,7 @@ public class ChromAUIProject implements IChromAUIProject {
 		boolean deleteAll = true;
 		if (descriptor.length > 1) {
 			Object result = dd.notify(new NotifyDescriptor.Confirmation(
-					"Delete " + descriptor.length + " descriptor" + (descriptor.length > 1 ? "s" : "") + "?",
+					"Delete all " + descriptor.length + " descriptor" + (descriptor.length > 1 ? "s" : "") + "?\nYes will delete all selected Descriptors, No to select each Descriptor individually.",
 					"Confirm descriptor deletion", NotifyDescriptor.YES_NO_CANCEL_OPTION));
 			if (result.equals(NotifyDescriptor.CANCEL_OPTION)) {
 				return;
@@ -217,7 +217,7 @@ public class ChromAUIProject implements IChromAUIProject {
 		} else {
 			for (IBasicDescriptor descr : descriptor) {
 				if (!(descr instanceof IContainer)) {
-					Object result = dd.notify(new NotifyDescriptor.Confirmation(
+					Object result = DialogDisplayer.getDefault().notify(new NotifyDescriptor.Confirmation(
 							"Really delete descriptor: " + descr.getDisplayName() + "?",
 							"Confirm descriptor deletion", NotifyDescriptor.YES_NO_OPTION));
 					if (result.equals(NotifyDescriptor.YES_OPTION)) {

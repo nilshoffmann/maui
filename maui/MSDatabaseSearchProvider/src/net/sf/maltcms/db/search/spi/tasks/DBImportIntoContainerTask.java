@@ -51,7 +51,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.chromaui.ui.support.api.FileTools;
-import org.apache.log4j.spi.LoggingEvent;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
@@ -63,10 +62,10 @@ import org.openide.util.Exceptions;
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 @Data
-public class DBImportTask extends AProgressAwareRunnable {
+public class DBImportIntoContainerTask extends AProgressAwareRunnable {
 
 	private File[] selectedDatabases;
-	private String databaseContainerName;
+	private DatabaseContainer databaseContainer;
 	private DatabaseType databaseType;
 	private Locale locale;
 	private List<Double> maskedMasses;
@@ -91,10 +90,8 @@ public class DBImportTask extends AProgressAwareRunnable {
 	public void run() {
 		getProgressHandle().setDisplayName("Importing " + databaseType + " database");
 		getProgressHandle().start(selectedDatabases.length);
-		DatabaseContainer dbContainer = new DatabaseContainer();
-		dbContainer.setName(getDatabaseContainerName());
-		dbContainer.setDisplayName(getDatabaseContainerName());
 		List<FileObject> createdFiles = new LinkedList<FileObject>();
+		IDatabaseDescriptor descriptor = null;
 		try {
 			FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
 					"databases");
@@ -107,13 +104,13 @@ public class DBImportTask extends AProgressAwareRunnable {
 				getProgressHandle().progress("Importing database " + file.getName());
 				String name = StringTools.removeFileExt(file.getName());
 
-				if (file.getName().toLowerCase().endsWith("msp") || file.getName().toLowerCase().endsWith("txt")) {
+				if (file.getName().toLowerCase().endsWith("msp")||file.getName().toLowerCase().endsWith("txt")) {
 					File dbFile1 = new File(FileUtil.toFile(baseDir),
 							name + ".db4o");
 					if (overwriteFile(dbFile1)) {
 						FileObject dbFile = FileUtil.createData(dbFile1);
 						createdFiles.add(dbFile);
-						getProgressHandle().progress("Parsing msp");
+//						getProgressHandle().progress("Parsing msp");
 						MSPFormatMetaboliteParser3 mfmp = new MSPFormatMetaboliteParser3();
 						mfmp.setLocale(locale);
 						BufferedReader br = null;
@@ -158,7 +155,6 @@ public class DBImportTask extends AProgressAwareRunnable {
 							try {
 								provider.open();
 								ICrudSession session = provider.createSession();
-//								System.out.println("Adding metabolites to database!");
 								if (Logger.getLogger(DBImportTask.class.getName()).isLoggable(Level.FINE)) {
 									for (IMetabolite im : metabolites) {
 //									System.out.println("Adding metabolite " + im);
@@ -167,12 +163,12 @@ public class DBImportTask extends AProgressAwareRunnable {
 								}
 								session.create(metabolites);
 
-								IDatabaseDescriptor descriptor = DescriptorFactory.newDatabaseDescriptor(
+								descriptor = DescriptorFactory.newDatabaseDescriptor(
 										FileUtil.toFile(dbFile).getAbsolutePath(),
 										databaseType);
 								descriptor.setMaskedMasses(maskedMasses);
-								dbContainer.addMembers(descriptor);
-								project.addContainer(dbContainer);
+								databaseContainer.addMembers(descriptor);
+//								project.addContainer(dbContainer);
 							} catch (Exception e) {
 								Exceptions.printStackTrace(e);
 							} finally {
@@ -188,12 +184,12 @@ public class DBImportTask extends AProgressAwareRunnable {
 						getProgressHandle().progress("Copying db4o file");
 						createdFiles.add(FileUtil.createData(dbFile));
 						FileTools.copyFile(file, dbFile);
-						IDatabaseDescriptor descriptor = DescriptorFactory.newDatabaseDescriptor(
+						descriptor = DescriptorFactory.newDatabaseDescriptor(
 								dbFile.getAbsolutePath(),
 								databaseType);
 						descriptor.setMaskedMasses(maskedMasses);
-						dbContainer.addMembers(descriptor);
-						project.addContainer(dbContainer);
+						databaseContainer.addMembers(descriptor);
+//						project.addContainer(dbContainer);
 					}
 
 				}
@@ -207,9 +203,11 @@ public class DBImportTask extends AProgressAwareRunnable {
 			}
 		} catch (IOException ex) {
 			Exceptions.printStackTrace(ex);
-
+			
 			//undo actions
-			project.removeContainer(dbContainer);
+			if(descriptor!=null) {
+				databaseContainer.removeMembers(descriptor);
+			}
 			for (FileObject file : createdFiles) {
 				try {
 					file.delete();
