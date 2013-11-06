@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
@@ -22,7 +22,7 @@
                   <Component id="jSeparator1" alignment="0" pref="570" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="102" alignment="1" max="-2" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -42,16 +42,11 @@
                                   </Group>
                               </Group>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="minimumMatchScore" alignment="0" pref="238" max="32767" attributes="1"/>
-                                  <Component id="maximumMatches" alignment="0" pref="238" max="32767" attributes="1"/>
+                                  <Component id="minimumMatchScore" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="maximumMatches" alignment="0" max="32767" attributes="1"/>
                                   <Component id="jComboBox1" linkSize="2" alignment="1" pref="238" max="32767" attributes="1"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jComboBox2" alignment="1" pref="238" max="32767" attributes="1"/>
-                                          <Component id="jTextField1" alignment="0" pref="238" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
+                                  <Component id="jComboBox2" alignment="1" max="32767" attributes="1"/>
+                                  <Component id="jTextField1" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">

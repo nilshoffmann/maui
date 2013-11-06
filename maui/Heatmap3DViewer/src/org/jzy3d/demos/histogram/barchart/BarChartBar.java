@@ -120,7 +120,7 @@ public class BarChartBar<ITEM> extends HistogramBar {
     }
 
     @Override
-    public void draw(GL2 gl, GLU glu, Camera camera) {
+    public void draw(GL gl, GLU glu, Camera camera) {
         super.draw(gl, glu, camera);
     }
 
@@ -193,7 +193,7 @@ public class BarChartBar<ITEM> extends HistogramBar {
         Quad q = new Quad() {
 
             @Override
-            public void draw(GL2 gl, GLU glu, Camera cam) {
+            public void draw(GL gl, GLU glu, Camera cam) {
                 super.draw(gl, glu, cam);
                 gluObj = glu;
             }
@@ -254,7 +254,7 @@ public class BarChartBar<ITEM> extends HistogramBar {
     public void setSelected(boolean selected) {
         if (tr == null) {
             tr = new ToggleTextTooltipRenderer(info, this);
-            chart.getView().addTooltip(tr);
+//            chart.getView().addTooltip(tr);
         }
         if (selected) {
             setWireframeWidth(3);

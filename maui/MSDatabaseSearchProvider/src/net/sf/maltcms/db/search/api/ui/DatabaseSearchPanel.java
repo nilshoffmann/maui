@@ -51,7 +51,7 @@ import org.openide.util.Lookup;
  * TODO link with project so that dbs are stored and retrieved.
  * @author nilshoffmann
  */
-public class DatabaseSearchPanel extends javax.swing.JPanel {
+public final class DatabaseSearchPanel extends javax.swing.JPanel {
 
 //    private HashSet<IDatabaseDescriptor> databaseFiles = new LinkedHashSet<IDatabaseDescriptor>();
     private final IChromAUIProject project;

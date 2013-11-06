@@ -49,7 +49,7 @@ import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
  *
  * @author nilshoffmann
  */
-public class DatabaseDefinitionPanel extends javax.swing.JPanel {
+public final class DatabaseDefinitionPanel extends javax.swing.JPanel {
 
 //    private HashSet<IDatabaseDescriptor> databaseFiles = new LinkedHashSet<IDatabaseDescriptor>();
 	private DefaultListModel listModel;

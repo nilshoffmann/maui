@@ -38,7 +38,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
 import net.sf.maltcms.db.search.api.ui.DatabaseSearchPanel;
-import net.sf.maltcms.db.search.spi.tasks.DBProjectPeaksAnnotationTask;
+import net.sf.maltcms.db.search.spi.tasks.DBPeakContainerAnnotationTask;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionRegistration;
@@ -52,7 +52,7 @@ import org.openide.util.Utilities;
 id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaks")
 @ActionRegistration(displayName = "#CTL_AnnotatePeaks")
 @ActionReferences({@ActionReference(path="Actions/ContainerNodeActions/Peak1DContainer")})
-@Messages("CTL_AnnotatePeaks=Search DB")
+@Messages("CTL_AnnotatePeaks=Search Peaks in DB")
 public final class AnnotatePeaks implements ActionListener {
 
     private final List<Peak1DContainer> context;
@@ -103,10 +103,10 @@ public final class AnnotatePeaks implements ActionListener {
         } else {
             return;
         }
-        doSearch(project, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
+        doSearch(context, project, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
     }
-    private void doSearch(IChromAUIProject project, List<IDatabaseDescriptor> databases, RetentionIndexCalculator ricalc, AMetabolitePredicate predicate, double matchThreshold, int maxNumberOfHits, double riWindow, boolean clearExistingMatches) {
-        DBProjectPeaksAnnotationTask dbppat = new DBProjectPeaksAnnotationTask(project, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
-        DBProjectPeaksAnnotationTask.createAndRun("Peak Annotation on "+project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
+    private void doSearch(List<Peak1DContainer> context, IChromAUIProject project, List<IDatabaseDescriptor> databases, RetentionIndexCalculator ricalc, AMetabolitePredicate predicate, double matchThreshold, int maxNumberOfHits, double riWindow, boolean clearExistingMatches) {
+        DBPeakContainerAnnotationTask dbppat = new DBPeakContainerAnnotationTask(context, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
+        DBPeakContainerAnnotationTask.createAndRun("Peak Annotation on "+project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
     }
 }

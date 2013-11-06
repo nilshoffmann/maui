@@ -38,7 +38,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.controllers.mouse.selection.AbstractMouseSelector;
+import org.jzy3d.chart.controllers.mouse.selection.AWTAbstractMouseSelector;
 import org.jzy3d.maths.BoundingBox2d;
 import org.jzy3d.maths.Coord2d;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
@@ -49,7 +49,7 @@ import org.jzy3d.plot3d.rendering.view.View;
  *
  * @author ao
  */
-public class LabeledMouseSelector extends AbstractMouseSelector implements KeyListener {
+public class LabeledMouseSelector extends AWTAbstractMouseSelector implements KeyListener {
     private final Chart target;
 
     public LabeledMouseSelector(Chart target) {

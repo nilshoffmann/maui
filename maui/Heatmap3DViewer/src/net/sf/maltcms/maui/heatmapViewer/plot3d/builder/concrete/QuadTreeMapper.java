@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import maltcms.datastructures.quadTree.QuadTree;
+import org.jzy3d.maths.Rectangle;
 
 /**
  *
@@ -106,12 +107,12 @@ public class QuadTreeMapper<T extends Number> extends ViewportMapper {
 	}
 
 	@Override
-	public Rectangle2D getViewport() {
-		return this.maxViewPort;
+	public Rectangle getViewport() {
+		return toRectangle(this.maxViewPort);
 	}
 
 	@Override
-	public Rectangle2D getClippedViewport(Rectangle2D roi) {
-		return this.maxViewPort.createIntersection(roi);
+	public Rectangle getClippedViewport(Rectangle roi) {
+		return toRectangle(this.maxViewPort.createIntersection(toRectangle2D(roi)));
 	}
 }

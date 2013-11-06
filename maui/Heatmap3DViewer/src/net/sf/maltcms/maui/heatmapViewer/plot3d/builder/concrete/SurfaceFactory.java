@@ -27,10 +27,7 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
@@ -38,6 +35,7 @@ import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.colors.colormaps.IColorMap;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Range;
+import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.builder.Mapper;
 import org.jzy3d.plot3d.builder.Tessellator;
 import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid;
@@ -84,11 +82,11 @@ public class SurfaceFactory {
 		this.wireframeDisplayed = wireframeDisplayed;
 	}
 
-	public CompileableComposite createSurface(final Rectangle2D r, final Mapper m, boolean fast, int stepsx, int stepsy) {
-		final int columns = (int) (r.getWidth() - 1);
-		final int rows = (int) (r.getHeight() - 1);
-		Range rangex = new Range(r.getX(), r.getX() + columns);
-		Range rangey = new Range(r.getY(), r.getY() + rows);
+	public CompileableComposite createSurface(final Rectangle r, final Mapper m, boolean fast, int stepsx, int stepsy) {
+		final int columns = (int) (r.width - 1);
+		final int rows = (int) (r.height- 1);
+		Range rangex = new Range(r.x, r.x+ columns);
+		Range rangey = new Range(r.y, r.y + rows);
 		System.out.println("Building surface for rect: " + r.toString());
 		final int sx = stepsx == -1 ? columns : stepsx;
 		final int sy = stepsy == -1 ? rows : stepsy;
@@ -98,11 +96,11 @@ public class SurfaceFactory {
 		return sls;
 	}
 
-	public CompileableComposite createSurface(final Rectangle2D r, final Mapper m) {
+	public CompileableComposite createSurface(final Rectangle r, final Mapper m) {
 		return createSurface(r, m, true, -1, -1);
 	}
 
-	public CompileableComposite createSurface(final Rectangle2D r, final Mapper m, int stepsx, int stepsy) {
+	public CompileableComposite createSurface(final Rectangle r, final Mapper m, int stepsx, int stepsy) {
 		return createSurface(r, m, true, stepsx, stepsy);
 	}
 
@@ -142,7 +140,7 @@ public class SurfaceFactory {
 		return buildComposite(applyStyling(s1));
 	}
 
-	public CompileableComposite createImplicitlyGriddedSurface(Mapper m, Rectangle2D roi, int stepsx, int stepsy) {
+	public CompileableComposite createImplicitlyGriddedSurface(Mapper m, Rectangle roi, int stepsx, int stepsy) {
 //		Collections.sort(l, new Comparator<Coord3d>() {
 //			@Override
 //			public int compare(Coord3d o1, Coord3d o2) {
@@ -157,7 +155,7 @@ public class SurfaceFactory {
 
 		long start = System.nanoTime();
 		Tessellator tesselator = new FastOrthonormalTessellator();
-		OrthonormalGrid grid = new OrthonormalGrid(new Range(roi.getMinX(), roi.getMaxX()), stepsx, new Range(roi.getMinY(), roi.getMaxY()), stepsy);
+		OrthonormalGrid grid = new OrthonormalGrid(new Range(roi.x, roi.x+roi.width), stepsx, new Range(roi.y, roi.y+roi.height), stepsy);
 		List<Coord3d> l = grid.apply(m);
 		Shape s1 = (Shape) tesselator.build(l);
 		System.out.println("Fast tesselation completed in " + ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f) + " s");

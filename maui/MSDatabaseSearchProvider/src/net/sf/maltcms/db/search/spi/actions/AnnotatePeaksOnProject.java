@@ -50,7 +50,7 @@ id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject")
 @ActionRegistration(displayName = "#CTL_AnnotatePeaksOnProject")
 @ActionReferences({
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Database")})
-@Messages("CTL_AnnotatePeaksOnProject=Search DB")
+@Messages("CTL_AnnotatePeaksOnProject=Search all Peaks in DB")
 public final class AnnotatePeaksOnProject implements ActionListener {
 
     private final IChromAUIProject context;

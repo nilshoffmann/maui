@@ -27,14 +27,11 @@
  */
 package net.sf.maltcms.maui.heatmapViewer;
 
-import java.awt.BasicStroke;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
@@ -44,17 +41,15 @@ import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.controllers.ControllerType;
-import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
+import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
+import org.jzy3d.chart.factories.AWTChartComponentFactory;
 import org.jzy3d.demos.histogram.barchart.BarChartBar;
 import org.jzy3d.events.ControllerEvent;
 import org.jzy3d.events.ControllerEventListener;
-import org.jzy3d.maths.Coord3d;
-import org.jzy3d.maths.IntegerCoord2d;
-import org.jzy3d.plot3d.builder.Mapper;
+import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.scene.Graph;
-import org.jzy3d.plot3d.rendering.tooltips.ITooltipRenderer;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -81,8 +76,9 @@ public final class HeatmapViewerTopComponent extends TopComponent {
     private AbstractDrawable cc;
     private List<BarChartBar<String>> barChartBars = new ArrayList<BarChartBar<String>>();
     private ViewportMapper mapper = null;
-	private Rectangle2D roi = null;
+	private Rectangle roi = null;
     private int sampling = 5;
+	private AtomicBoolean updatingScene = new AtomicBoolean(false);
 
     public HeatmapViewerTopComponent() {
         initComponents();
@@ -149,7 +145,10 @@ public final class HeatmapViewerTopComponent extends TopComponent {
         if (sampling != old) {
             jButton1.setEnabled(false);
             jTextField1.setText(sampling + "");
-            buildScene();
+			if(updatingScene.compareAndSet(false, true)) {
+				SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
+				SceneUpdater.createAndRun("Updating Scene", su);
+			}
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -159,7 +158,10 @@ public final class HeatmapViewerTopComponent extends TopComponent {
         if (sampling != old) {
             jButton2.setEnabled(false);
             jTextField1.setText(sampling + "");
-            buildScene();
+			if(updatingScene.compareAndSet(false, true)) {
+				SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
+				SceneUpdater.createAndRun("Updating Scene", su);
+			}
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -212,7 +214,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
                     boolean fastTesselation = true;
 //                    if(coords==null) {
                         cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
-                            fastTesselation, (int) (roi.getWidth() / sampling), (int) (roi.getHeight() / sampling));
+                            fastTesselation, (int) (roi.width / sampling), (int) (roi.height / sampling));
 //                    }else{
 //                        //use delaunay builder
 //                        cc = sf.createDelaunaySurface(coords);
@@ -260,32 +262,33 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 
     private Chart getChart() {
         if (chart == null) {
-            chart = new Chart(Quality.Intermediate, "awt");
+			chart = AWTChartComponentFactory.chart(Quality.Intermediate, "awt");
+//            chart = new Chart(Quality.Intermediate, "awt");
             LabeledMouseSelector lms = new LabeledMouseSelector(chart);
-            chart.getCanvas().addKeyListener(lms);
+            chart.getCanvas().addKeyController(lms);
 
-            chart.getAxeLayout().setXAxeLabel("Retention Time 1");
-            chart.getAxeLayout().setYAxeLabel("Retention Time 2");
-            chart.getAxeLayout().setZAxeLabel("Total Intensity");
+//            chart.getAxeLayout().setXAxeLabel("Retention Time 1");
+//            chart.getAxeLayout().setYAxeLabel("Retention Time 2");
+//            chart.getAxeLayout().setZAxeLabel("Total Intensity");
             //cc.setLegend(new ColorbarLegend(cc, chart.getView().getAxe().getLayout()));
             //cc.setLegendDisplayed(true);
-            chart.getView().addTooltip(new ITooltipRenderer() {
-                private IntegerCoord2d currentPosition = null;
-
-                public void render(Graphics2D g2d) {
-//                    Graphics2D g2d = (Graphics2D) g;
-                    if (currentPosition != null) {
-                        g2d.setStroke(new BasicStroke(4.0f));
-                        g2d.setColor(java.awt.Color.BLACK);
-                        g2d.drawRect(currentPosition.x, currentPosition.y, 100,
-                                100);
-                    }
-                }
-
-                public void updateScreenPosition(IntegerCoord2d position) {
-                    this.currentPosition = position;
-                }
-            });
+//            chart.getView().add(new ITooltipRenderer() {
+//                private IntegerCoord2d currentPosition = null;
+//
+//                public void render(Graphics2D g2d) {
+////                    Graphics2D g2d = (Graphics2D) g;
+//                    if (currentPosition != null) {
+//                        g2d.setStroke(new BasicStroke(4.0f));
+//                        g2d.setColor(java.awt.Color.BLACK);
+//                        g2d.drawRect(currentPosition.x, currentPosition.y, 100,
+//                                100);
+//                    }
+//                }
+//
+//                public void updateScreenPosition(IntegerCoord2d position) {
+//                    this.currentPosition = position;
+//                }
+//            });
 //            chart.getView().getTooltips();
 //            chart.getView().setViewPositionMode(ViewPositionMode.TOP);
 //            chart.getView().setAxeBoxDisplayed(false);
@@ -302,7 +305,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 //
 //                }
 //            });
-            CameraMouseController mouse = new CameraMouseController();
+            AWTCameraMouseController mouse = new AWTCameraMouseController();
             chart.addController(mouse);
             mouse.addControllerEventListener(new ControllerEventListener() {
                 public void controllerEventFired(ControllerEvent e) {

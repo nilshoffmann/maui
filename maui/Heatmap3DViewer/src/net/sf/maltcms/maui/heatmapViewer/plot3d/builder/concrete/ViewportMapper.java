@@ -28,6 +28,7 @@
 package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
 import java.awt.geom.Rectangle2D;
+import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.builder.Mapper;
 
 /**
@@ -36,8 +37,17 @@ import org.jzy3d.plot3d.builder.Mapper;
  */
 public abstract class ViewportMapper extends Mapper{
 
-    public abstract Rectangle2D getClippedViewport(Rectangle2D roi);
+    public abstract Rectangle getClippedViewport(Rectangle roi);
 	
-	public abstract Rectangle2D getViewport();
+	public abstract Rectangle getViewport();
+	
+	
+	protected Rectangle2D toRectangle2D(Rectangle roi) {
+		return new Rectangle2D.Double(roi.x, roi.y, roi.width, roi.height);
+	}
+
+	protected Rectangle toRectangle(Rectangle2D r) {
+		return new Rectangle((int) r.getX(), (int) r.getY(), (int) r.getWidth(), (int) r.getHeight());
+	}
     
 }

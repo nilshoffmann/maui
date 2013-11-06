@@ -30,12 +30,12 @@ package org.jzy3d.demos.histogram.barchart;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import org.jzy3d.bridge.awt.FrameAWT;
 import org.jzy3d.bridge.swing.FrameSwing;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.colors.Color;
 import org.jzy3d.demos.AbstractDemo;
+import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.primitives.axes.layout.renderers.ITickRenderer;
 import org.jzy3d.plot3d.rendering.canvas.CanvasSwing;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
@@ -104,7 +104,7 @@ public class BarChartDemo extends AbstractDemo {
 
     private void setupMouseSelection() {
         mouseSelection = new LabeledMouseSelector(chart);
-        chart.getCanvas().addKeyListener(mouseSelection);
+        chart.getCanvas().addKeyController(mouseSelection);
     }
 
     private void setupTitle() {
@@ -118,7 +118,7 @@ public class BarChartDemo extends AbstractDemo {
                         (int) (15 + 0.05d * chart.getCanvas().getRendererHeight()));
             }
         };
-        chart.addRenderer(messageRenderer);
+//        chart.addRenderer(messageRenderer);
     }
 
     private void setupMouseNavigation() {
@@ -180,14 +180,14 @@ public class BarChartDemo extends AbstractDemo {
     private Chart chart;
 
     private void setupLegend() {
-        chart.addRenderer(new CustomLegendRenderer(chart.getCanvas()));
+//        chart.addRenderer(new CustomLegendRenderer(chart.getCanvas()));
     }
 
     private void setupKeyboardNavigation() {
-        chart.getCanvas().addKeyListener(new CustomKeyboardControl(chart));
+        chart.getCanvas().addKeyController(new CustomKeyboardControl(chart));
     }
 
     private void setupKeyboardSave() {
-        chart.getCanvas().addKeyListener(new SVGKeyboardSaver(chart));
+        chart.getCanvas().addKeyController(new SVGKeyboardSaver(chart));
     }
 }

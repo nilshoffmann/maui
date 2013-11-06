@@ -28,12 +28,10 @@
 package org.jzy3d.demos;
 
 
-
-import java.awt.Rectangle;
-
 import org.jzy3d.chart.Chart;
-import org.jzy3d.global.Settings;
+import org.jzy3d.chart.Settings;
 import org.jzy3d.chart.ChartLauncher;
+import org.jzy3d.maths.Rectangle;
 
 
 public class Launcher {

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 OpenIDE-Module: net.sf.maltcms.maui.jogl
 OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/maui/jogl/Bundle.properties
-OpenIDE-Module-Specification-Version: 2.0
+OpenIDE-Module-Specification-Version: 2.1.2
 OpenIDE-Module-Requires: org.openide.modules.ModuleFormat2
 OpenIDE-Module-Hide-Classpath-Packages: javax.media.opengl.**, com.sun.opengl.**, com.sun.gluegen.runtime.**
 

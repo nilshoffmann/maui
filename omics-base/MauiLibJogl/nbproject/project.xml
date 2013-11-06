@@ -15,6 +15,7 @@
                 <package>com.jogamp.common.os</package>
                 <package>com.jogamp.common.type</package>
                 <package>com.jogamp.common.util</package>
+                <package>com.jogamp.common.util.awt</package>
                 <package>com.jogamp.common.util.cache</package>
                 <package>com.jogamp.common.util.locks</package>
                 <package>com.jogamp.gluegen.runtime</package>
@@ -25,7 +26,6 @@
                 <package>com.jogamp.graph.font</package>
                 <package>com.jogamp.graph.geom</package>
                 <package>com.jogamp.graph.geom.opengl</package>
-                <package>com.jogamp.graph.math</package>
                 <package>com.jogamp.nativewindow</package>
                 <package>com.jogamp.nativewindow.awt</package>
                 <package>com.jogamp.nativewindow.egl</package>
@@ -42,6 +42,8 @@
                 <package>com.jogamp.newt.swt</package>
                 <package>com.jogamp.newt.util</package>
                 <package>com.jogamp.opengl</package>
+                <package>com.jogamp.opengl.math</package>
+                <package>com.jogamp.opengl.math.geom</package>
                 <package>com.jogamp.opengl.swt</package>
                 <package>com.jogamp.opengl.util</package>
                 <package>com.jogamp.opengl.util.av</package>
@@ -55,43 +57,6 @@
                 <package>com.jogamp.opengl.util.texture.awt</package>
                 <package>com.jogamp.opengl.util.texture.spi</package>
                 <package>com.jogamp.opengl.util.texture.spi.awt</package>
-                <package>com.sun.j3d.audioengines</package>
-                <package>com.sun.j3d.audioengines.javasound</package>
-                <package>com.sun.j3d.exp.swing</package>
-                <package>com.sun.j3d.exp.swing.impl</package>
-                <package>com.sun.j3d.internal</package>
-                <package>com.sun.j3d.loaders</package>
-                <package>com.sun.j3d.loaders.lw3d</package>
-                <package>com.sun.j3d.loaders.objectfile</package>
-                <package>com.sun.j3d.utils.applet</package>
-                <package>com.sun.j3d.utils.audio</package>
-                <package>com.sun.j3d.utils.behaviors.interpolators</package>
-                <package>com.sun.j3d.utils.behaviors.keyboard</package>
-                <package>com.sun.j3d.utils.behaviors.mouse</package>
-                <package>com.sun.j3d.utils.behaviors.picking</package>
-                <package>com.sun.j3d.utils.behaviors.sensor</package>
-                <package>com.sun.j3d.utils.behaviors.vp</package>
-                <package>com.sun.j3d.utils.compression</package>
-                <package>com.sun.j3d.utils.geometry</package>
-                <package>com.sun.j3d.utils.geometry.compression</package>
-                <package>com.sun.j3d.utils.image</package>
-                <package>com.sun.j3d.utils.pickfast</package>
-                <package>com.sun.j3d.utils.pickfast.behaviors</package>
-                <package>com.sun.j3d.utils.picking</package>
-                <package>com.sun.j3d.utils.picking.behaviors</package>
-                <package>com.sun.j3d.utils.scenegraph.io</package>
-                <package>com.sun.j3d.utils.scenegraph.io.retained</package>
-                <package>com.sun.j3d.utils.scenegraph.io.state.com.sun.j3d.utils.behaviors.interpolators</package>
-                <package>com.sun.j3d.utils.scenegraph.io.state.com.sun.j3d.utils.behaviors.mouse</package>
-                <package>com.sun.j3d.utils.scenegraph.io.state.com.sun.j3d.utils.geometry</package>
-                <package>com.sun.j3d.utils.scenegraph.io.state.com.sun.j3d.utils.image</package>
-                <package>com.sun.j3d.utils.scenegraph.io.state.com.sun.j3d.utils.universe</package>
-                <package>com.sun.j3d.utils.scenegraph.io.state.javax.media.j3d</package>
-                <package>com.sun.j3d.utils.scenegraph.transparency</package>
-                <package>com.sun.j3d.utils.shader</package>
-                <package>com.sun.j3d.utils.timer</package>
-                <package>com.sun.j3d.utils.universe</package>
-                <package>javax.media.j3d</package>
                 <package>javax.media.nativewindow</package>
                 <package>javax.media.nativewindow.util</package>
                 <package>javax.media.opengl</package>
@@ -100,11 +65,10 @@
                 <package>javax.media.opengl.glu</package>
                 <package>javax.media.opengl.glu.gl2</package>
                 <package>javax.media.opengl.glu.gl2es1</package>
-                <package>javax.vecmath</package>
                 <package>jogamp.common</package>
-                <package>jogamp.common.awt</package>
                 <package>jogamp.common.jvm</package>
                 <package>jogamp.common.os</package>
+                <package>jogamp.common.os.elf</package>
                 <package>jogamp.common.util.locks</package>
                 <package>jogamp.graph.curve.opengl</package>
                 <package>jogamp.graph.curve.opengl.shader</package>
@@ -118,8 +82,6 @@
                 <package>jogamp.graph.font.typecast.t2</package>
                 <package>jogamp.graph.font.typecast.tt.engine</package>
                 <package>jogamp.graph.geom.plane</package>
-                <package>jogamp.graph.math</package>
-                <package>jogamp.graph.math.plane</package>
                 <package>jogamp.nativewindow</package>
                 <package>jogamp.nativewindow.awt</package>
                 <package>jogamp.nativewindow.jawt</package>
@@ -135,20 +97,23 @@
                 <package>jogamp.newt.awt.event</package>
                 <package>jogamp.newt.driver</package>
                 <package>jogamp.newt.driver.awt</package>
+                <package>jogamp.newt.driver.bcm.vc.iv</package>
+                <package>jogamp.newt.driver.linux</package>
                 <package>jogamp.newt.driver.macosx</package>
                 <package>jogamp.newt.driver.windows</package>
                 <package>jogamp.newt.driver.x11</package>
                 <package>jogamp.newt.event</package>
+                <package>jogamp.newt.swt</package>
+                <package>jogamp.newt.swt.event</package>
                 <package>jogamp.opengl</package>
                 <package>jogamp.opengl.awt</package>
                 <package>jogamp.opengl.egl</package>
                 <package>jogamp.opengl.es1</package>
-                <package>jogamp.opengl.es2</package>
+                <package>jogamp.opengl.es3</package>
                 <package>jogamp.opengl.gl2</package>
                 <package>jogamp.opengl.gl4</package>
                 <package>jogamp.opengl.glu</package>
                 <package>jogamp.opengl.glu.error</package>
-                <package>jogamp.opengl.glu.gl2</package>
                 <package>jogamp.opengl.glu.gl2.nurbs</package>
                 <package>jogamp.opengl.glu.mipmap</package>
                 <package>jogamp.opengl.glu.nurbs</package>
@@ -156,11 +121,13 @@
                 <package>jogamp.opengl.glu.tessellator</package>
                 <package>jogamp.opengl.macosx.cgl</package>
                 <package>jogamp.opengl.macosx.cgl.awt</package>
+                <package>jogamp.opengl.openal.av</package>
                 <package>jogamp.opengl.util</package>
                 <package>jogamp.opengl.util.av</package>
                 <package>jogamp.opengl.util.av.impl</package>
                 <package>jogamp.opengl.util.glsl</package>
                 <package>jogamp.opengl.util.glsl.fixedfunc</package>
+                <package>jogamp.opengl.util.jpeg</package>
                 <package>jogamp.opengl.util.pngj</package>
                 <package>jogamp.opengl.util.pngj.chunks</package>
                 <package>jogamp.opengl.windows.wgl</package>
@@ -168,24 +135,24 @@
                 <package>jogamp.opengl.x11.glx</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/jogl-all-natives-linux-armv7.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jogl-all-natives-linux-armv7.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/gluegen-rt.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/gluegen-rt.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jogl-all-natives-linux-armv6hf.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jogl-all-natives-linux-armv6hf.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/gluegen-rt-natives-solaris-amd64.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/gluegen-rt-natives-solaris-amd64.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/gluegen-rt-natives-macosx-universal.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/gluegen-rt-natives-macosx-universal.jar</binary-origin>
+                <runtime-relative-path>ext/gluegen-rt-natives-linux-armv6hf.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/gluegen-rt-natives-linux-armv6hf.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jogl-all-natives-linux-armv7hf.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jogl-all-natives-linux-armv7hf.jar</binary-origin>
+                <runtime-relative-path>ext/gluegen-rt-natives-macosx-universal.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/gluegen-rt-natives-macosx-universal.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jogl-all-natives-linux-amd64.jar</runtime-relative-path>
@@ -200,32 +167,24 @@
                 <binary-origin>release/modules/ext/jogl-all-natives-windows-i586.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/gluegen-rt-natives-linux-armv7hf.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/gluegen-rt-natives-linux-armv7hf.jar</binary-origin>
+                <runtime-relative-path>ext/jogl-all-natives-linux-armv6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jogl-all-natives-linux-armv6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jogl-all-natives-solaris-i586.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jogl-all-natives-solaris-i586.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jogl-all.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jogl-all.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/gluegen-rt-natives-linux-i586.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/gluegen-rt-natives-linux-i586.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/j3dutils.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/j3dutils.jar</binary-origin>
+                <runtime-relative-path>ext/jogl-all.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jogl-all.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jogl-all-natives-solaris-amd64.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jogl-all-natives-solaris-amd64.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/gluegen-rt-natives-linux-armv7.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/gluegen-rt-natives-linux-armv7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/gluegen-rt-natives-linux-amd64.jar</runtime-relative-path>
@@ -240,8 +199,8 @@
                 <binary-origin>release/modules/ext/gluegen-rt-natives-solaris-i586.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/j3dcore-pre5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/j3dcore-pre5.jar</binary-origin>
+                <runtime-relative-path>ext/gluegen-rt-natives-linux-armv6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/gluegen-rt-natives-linux-armv6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jogl-all-natives-windows-amd64.jar</runtime-relative-path>
@@ -256,8 +215,8 @@
                 <binary-origin>release/modules/ext/gluegen-rt-natives-windows-i586.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/vecmath.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/vecmath.jar</binary-origin>
+                <runtime-relative-path>ext/jogl-all-mobile.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jogl-all-mobile.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

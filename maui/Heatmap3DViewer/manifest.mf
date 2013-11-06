@@ -3,5 +3,5 @@ OpenIDE-Module: maltcms.ui.heatmap3Dviewer
 OpenIDE-Module-Layer: maltcms/ui/heatmap3Dviewer/layer.xml
 OpenIDE-Module-Localizing-Bundle: maltcms/ui/heatmap3Dviewer/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager
-OpenIDE-Module-Specification-Version: 1.1
+OpenIDE-Module-Specification-Version: 1.2
 

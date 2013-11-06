@@ -27,11 +27,11 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.chart.controllers;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
+
+import com.jogamp.newt.event.MouseEvent;
 import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
-import org.jzy3d.chart.controllers.mouse.MouseUtilities;
+import org.jzy3d.chart.controllers.mouse.camera.NewtCameraMouseController;
+import org.jzy3d.chart.controllers.mouse.NewtMouseUtilities;
 import org.jzy3d.chart.controllers.thread.camera.CameraThreadController;
 import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord2d;
@@ -41,7 +41,7 @@ import org.jzy3d.maths.Scale;
  *
  * @author ao
  */
-public class CustomMouseControl extends CameraMouseController {
+public class CustomMouseControl extends NewtCameraMouseController {
 
     private final Chart chart;
 
@@ -49,25 +49,16 @@ public class CustomMouseControl extends CameraMouseController {
         this.chart = chart;
     }
 
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        if (threadController != null) {
-            threadController.stop();
-        }
-
-        float factor = 1 + (e.getWheelRotation() / 20.0f);
-        zoomAll(factor);
-    }
-
-    public void mouseDragged(MouseEvent e) {
-        Coord2d mouse = new Coord2d(e.getX(), e.getY());
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		Coord2d mouse = new Coord2d(e.getX(), e.getY());
 
         // Rotate
-        if (MouseUtilities.isLeftDown(e)) {
+        if (NewtMouseUtilities.isLeftDown(e)) {
             Coord2d move = mouse.sub(prevMouse).div(150);
             rotate(move);
         } // Shift
-        else if (MouseUtilities.isRightDown(e)) {
+        else if (NewtMouseUtilities.isRightDown(e)) {
             Coord2d move = mouse.sub(prevMouse);
             if (move.y != 0) {
                 Scale s = chart.getScale();
@@ -77,7 +68,17 @@ public class CustomMouseControl extends CameraMouseController {
             }
         }
         prevMouse = mouse;
-    }
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseEvent e) {
+		if (threadController != null) {
+            threadController.stop();
+        }
+
+        float factor = 1 + (e.getRotation()[0] / 20.0f);
+        zoomAll(factor);
+	}
 
     protected void zoomAll(final float factor) {
         for (Chart c : targets) {

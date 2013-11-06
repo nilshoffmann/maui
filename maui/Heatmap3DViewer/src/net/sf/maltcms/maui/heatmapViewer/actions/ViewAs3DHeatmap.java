@@ -27,9 +27,9 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.actions;
 
+import com.jogamp.newt.Screen;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.exception.ResourceNotAvailableException;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -48,10 +48,12 @@ import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.ChartLauncher;
+import org.jzy3d.chart.Settings;
 import org.jzy3d.chart.controllers.ControllerType;
-import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
+import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.events.ControllerEvent;
 import org.jzy3d.events.ControllerEventListener;
+import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
@@ -121,61 +123,74 @@ public final class ViewAs3DHeatmap implements ActionListener {
 							}
 							MinMax tmm = MAMath.getMinMax(ticArray);
 							int length = fcet.getDimensions()[0].getLength();
-							final Rectangle2D bounds = new Rectangle2D.Double(fmm.min, smm.min, fmm.max - fmm.min, smm.max - smm.min);
-							QuadTree<Integer> qt = new QuadTree<Integer>(bounds);
+							final Rectangle bounds = new Rectangle((int) fmm.min, (int) smm.min, (int) (fmm.max - fmm.min), (int) (smm.max - smm.min));
+							final Rectangle2D bounds2d = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
+							QuadTree<Integer> qt = new QuadTree<Integer>(bounds2d);
 							for (int i = 0; i < length; i++) {
 								qt.put(new Point2D.Float(fcetArray.getFloat(i), scetArray.getFloat(i)), ticArray.getInt(i));
 							}
 							double radiusx = 10;
-							if(modTimeArray!=null) {
-								radiusx = modTimeArray.getDouble(0)*3;
+							if (modTimeArray != null) {
+								radiusx = modTimeArray.getDouble(0) * 3;
 							}
-							QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds, radiusx, 10);
-							fcetArray = null;
-							scetArray = null;
-							ticArray = null;
-							chrom2d.getParent().clearArrays();
-							SurfaceFactory sf = new SurfaceFactory();
-							AbstractDrawable ad = sf.createImplicitlyGriddedSurface(qtm,bounds,(int)(300),(int)(400));
-							System.err.println(ad.getBounds());
-							CompileableComposite cc = new CompileableComposite();
-							cc.add(ad);
-
-							sf.applyStyling(cc);
-
-							progressHandle.progress("Creating Top Component");
-
-							Chart chart = new Chart(Quality.Intermediate, "newt");
-							chart.getScene().getGraph().add(cc);
-//							chart.getScene().getGraph().add(new Sphere());
-							LabeledMouseSelector lms = new LabeledMouseSelector(chart);
-							chart.getCanvas().addKeyListener(lms);
-
-							chart.getAxeLayout().setXAxeLabel("Retention Time 1");
-							chart.getAxeLayout().setYAxeLabel("Retention Time 2");
-							chart.getAxeLayout().setZAxeLabel("Relative Intensity");
-
-							chart.getView().setMaximized(true);
-							chart.getView().getCamera().setScreenGridDisplayed(false);
-							CameraMouseController mouse = new CameraMouseController();
-							chart.addController(mouse);
-							mouse.addControllerEventListener(new ControllerEventListener() {
-								public void controllerEventFired(ControllerEvent e) {
-									if (e.getType() == ControllerType.PAN) {
-										System.out.println("Mouse[PAN]: " + e.getValue());
-
-									} else if (e.getType() == ControllerType.SHIFT) {
-										System.out.println("Mouse[SHIFT]: " + e.getValue());
-									} else if (e.getType() == ControllerType.ZOOM) {
-										System.out.println("Mouse[ZOOM]: " + e.getValue());
-									} else if (e.getType() == ControllerType.ROTATE) {
-										System.out.println("Mouse[ROTATE]:" + e.getValue());
-									}
+							final QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds2d, radiusx, 10);
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
+									hvtc.open();
+									hvtc.requestActive();
+									hvtc.setMapper(qtm);
 								}
 							});
+//							fcetArray = null;
+//							scetArray = null;
+//							ticArray = null;
+//							chrom2d.getParent().clearArrays();
+//							SurfaceFactory sf = new SurfaceFactory();
+//							AbstractDrawable ad = sf.createImplicitlyGriddedSurface(qtm, bounds, (int) (300), (int) (400));
+//							System.err.println(ad.getBounds());
+//							CompileableComposite cc = new CompileableComposite();
+//							cc.add(ad);
+//
+//							sf.applyStyling(cc);
+//
+//							progressHandle.progress("Creating Top Component");
+//
+//							Chart chart = new Chart(Quality.Advanced, "awt");
+//							chart.getScene().getGraph().add(cc);
+////							chart.getScene().getGraph().add(new Sphere());
+//							LabeledMouseSelector lms = new LabeledMouseSelector(chart);
+//							chart.getCanvas().addKeyController(lms);
+//
+////							chart.getAxeLayout().setXAxeLabel("Retention Time 1");
+////							chart.getAxeLayout().setYAxeLabel("Retention Time 2");
+////							chart.getAxeLayout().setZAxeLabel("Relative Intensity");
+//
+//							chart.getView().setMaximized(true);
+//							chart.getView().getCamera().setScreenGridDisplayed(false);
+//							AWTCameraMouseController mouse = new AWTCameraMouseController();
+//							chart.addController(mouse);
+//							mouse.addControllerEventListener(new ControllerEventListener() {
+//								public void controllerEventFired(ControllerEvent e) {
+//									if (e.getType() == ControllerType.PAN) {
+//										System.out.println("Mouse[PAN]: " + e.getValue());
+//
+//									} else if (e.getType() == ControllerType.SHIFT) {
+//										System.out.println("Mouse[SHIFT]: " + e.getValue());
+//									} else if (e.getType() == ControllerType.ZOOM) {
+//										System.out.println("Mouse[ZOOM]: " + e.getValue());
+//									} else if (e.getType() == ControllerType.ROTATE) {
+//										System.out.println("Mouse[ROTATE]:" + e.getValue());
+//									}
+//								}
+//							});
+//							ChartLauncher.instructions();
+//							Settings.getInstance().setHardwareAccelerated(true);
+//							Screen screen = Settings.getInstance().getScreen();
+//							chart.getFactory().newFrame(chart, new Rectangle(0, 0, 800, 600), "HeatmapViewer");
 							//SurfaceViewerPanel svp1 = new SurfaceViewerPanel(chart);
-							ChartLauncher.openChart(chart, new Rectangle(800, 600),
-									"HeatmapViewer");
+
 //							} catch (IOException ex) {
 //								Logger.getLogger(HeatmapViewer.class.getName()).log(Level.SEVERE,
 //										null, ex);
