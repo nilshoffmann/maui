@@ -110,8 +110,15 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
     }
 
     protected DefaultComboBoxModel getScoreFunctions() {
-        DefaultComboBoxModel dcbm = new DefaultComboBoxModel(Lookup.getDefault().
-                lookupAll(AMetabolitePredicate.class).toArray());
+		List<AMetabolitePredicate> predicates = new ArrayList<AMetabolitePredicate>(Lookup.getDefault().
+                lookupAll(AMetabolitePredicate.class));
+		List<AMetabolitePredicate> whiteListed = new ArrayList<AMetabolitePredicate>();
+		for(AMetabolitePredicate p:predicates) {
+			if(p.getClass().getName().equals("net.sf.maltcms.db.search.spi.similarities.Cosine")) {
+				whiteListed.add(p);
+			}
+		}
+        DefaultComboBoxModel dcbm = new DefaultComboBoxModel(whiteListed.toArray());
         return dcbm;
     }
 
