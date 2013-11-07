@@ -163,11 +163,15 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
 				DialogDisplayer.getDefault().notify(nd);
 			} catch( Exception e) {
 				System.out.println("Caught unhandled exception, closing database "+projectDBLocation.getAbsolutePath());
-				eoc.close();
+				if(eoc!=null) {
+					eoc.close();
+				}
 				throw e;
 			} catch(Error e) {
 				System.out.println("Caught unhandled error, closing database "+projectDBLocation.getAbsolutePath());
-				eoc.close();
+				if(eoc!=null) {
+					eoc.close();
+				}
 				throw e;
 			}
 		}

@@ -68,11 +68,15 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
 				//database file already opened 
 			}catch(Exception e) {
 				System.out.println("Caught unhandled exception, closing database "+projectDBLocation.getAbsolutePath());
-				eoc.close();
+				if(eoc!=null) {
+					eoc.close();
+				}
 				throw e;
 			}catch(Error e) {
 				System.out.println("Caught unhandled error, closing database "+projectDBLocation.getAbsolutePath());
-				eoc.close();
+				if(eoc!=null) {
+					eoc.close();
+				}
 				throw e;
 			}
         }
