@@ -161,6 +161,14 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
 				//database file already opened 
 				NotifyDescriptor nd = new NotifyDescriptor.Message("Database file "+projectDBLocation.getAbsolutePath()+" is locked by another process! Please close other programs acessing the database file before retrying!",NotifyDescriptor.ERROR_MESSAGE);
 				DialogDisplayer.getDefault().notify(nd);
+			} catch( Exception e) {
+				System.out.println("Caught unhandled exception, closing database "+projectDBLocation.getAbsolutePath());
+				eoc.close();
+				throw e;
+			} catch(Error e) {
+				System.out.println("Caught unhandled error, closing database "+projectDBLocation.getAbsolutePath());
+				eoc.close();
+				throw e;
 			}
 		}
 	}
