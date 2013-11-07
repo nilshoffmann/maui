@@ -47,15 +47,20 @@ public class PeakGroupContainerChildFactory extends ChildFactory<IPeakGroupDescr
 
 	private final PeakGroupContainer container;
 	private final Lookup lookup;
+	private boolean hideChromatogramDescriptors = false;
 
-	public PeakGroupContainerChildFactory(Lookup lookup, PeakGroupContainer container) {
+	public PeakGroupContainerChildFactory(Lookup lookup, PeakGroupContainer container, boolean hideChromatogramDescriptors) {
 		this.lookup = lookup;
 		this.container = container;
+		this.hideChromatogramDescriptors = hideChromatogramDescriptors;
 	}
 
 	@Override
 	protected boolean createKeys(List<IPeakGroupDescriptor> list) {
 		for (IPeakGroupDescriptor ipad : container.getMembers()) {
+			if(Thread.interrupted()) {
+				return true;
+			}
 			list.add(ipad);
 		}
 		return true;
@@ -63,7 +68,12 @@ public class PeakGroupContainerChildFactory extends ChildFactory<IPeakGroupDescr
 
 	@Override
 	protected Node createNodeForKey(IPeakGroupDescriptor key) {
-		PeakGroupDescriptorChildFactory pgdcf = new PeakGroupDescriptorChildFactory(lookup, key);
-		return Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.create(pgdcf,true), new ProxyLookup(lookup,Lookups.fixed(key)));
+		PeakGroupDescriptorChildFactory pgdcf = new PeakGroupDescriptorChildFactory(lookup, key, hideChromatogramDescriptors);
+		return Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.create(pgdcf,true), new ProxyLookup(lookup));
+	}
+	
+	public void setHideChromatogramDescriptors(boolean hideChromatogramDescriptors) {
+		this.hideChromatogramDescriptors = hideChromatogramDescriptors;
+		refresh(true);
 	}
 }

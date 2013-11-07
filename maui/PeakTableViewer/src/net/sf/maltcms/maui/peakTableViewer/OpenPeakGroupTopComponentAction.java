@@ -38,7 +38,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.TopComponent;
+import org.openide.util.NbPreferences;
 
 @ActionID(
     category = "Maui",
@@ -62,6 +62,6 @@ public final class OpenPeakGroupTopComponentAction implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
         PeakTableViewerTopComponent tc = (PeakTableViewerTopComponent)registry.openTopComponentFor(IPeakGroupDescriptor.class, PeakTableViewerTopComponent.class);
-        tc.componentOpened();
+		tc.setPeakGroupDescriptor(context, NbPreferences.forModule(PeakTableViewerTopComponent.class).getBoolean("hideSamples",false));
     }
 }

@@ -33,6 +33,7 @@ import java.awt.BorderLayout;
 import java.util.Iterator;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupDescriptorChildFactory;
 import org.openide.util.LookupEvent;
@@ -50,10 +51,10 @@ import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupListener;
+import org.openide.util.NbPreferences;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
-import org.openide.windows.WindowManager;
 
 /**
  * Top component which displays something.
@@ -77,14 +78,13 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 	private Result<IPeakGroupDescriptor> result = null;
 	private ExplorerManager manager = new ExplorerManager();
 	private OutlineView view = null;
-	private IChromAUIProject activeProject = null;
 	private IPeakGroupDescriptor peakGroupDescriptor = null;
 
 	public PeakTableViewerTopComponent() {
 		initComponents();
 		view = new OutlineView("Peaks of Peak Group");
 		view.setTreeSortable(true);
-        view.setPropertyColumns("shortDescription", "Short Description", "area", "Area");
+		view.setPropertyColumns("shortDescription", "Short Description", "area", "Area");
 		view.getOutline().setRootVisible(false);
 		add(view, BorderLayout.CENTER);
 		setName(NbBundle.getMessage(PeakTableViewerTopComponent.class,
@@ -113,13 +113,38 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jToolBar1 = new javax.swing.JToolBar();
+        hideSamples = new javax.swing.JCheckBox();
+
         setLayout(new java.awt.BorderLayout());
+
+        jToolBar1.setRollover(true);
+
+        org.openide.awt.Mnemonics.setLocalizedText(hideSamples, org.openide.util.NbBundle.getMessage(PeakTableViewerTopComponent.class, "PeakTableViewerTopComponent.hideSamples.text")); // NOI18N
+        hideSamples.setFocusable(false);
+        hideSamples.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        hideSamples.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hideSamplesActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(hideSamples);
+
+        add(jToolBar1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void hideSamplesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideSamplesActionPerformed
+		if (peakGroupDescriptor != null) {
+			setPeakGroupDescriptor(peakGroupDescriptor, hideSamples.isSelected());
+		}
+    }//GEN-LAST:event_hideSamplesActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox hideSamples;
+    private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 	// It is good idea to switch all listeners on and off when the
 	// component is shown or hidden. In the case of TopComponent use:
+
 	@Override
 	protected void componentActivated() {
 		ExplorerUtils.activateActions(manager, true);
@@ -137,15 +162,15 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 				IPeakGroupDescriptor.class);
 		result.addLookupListener(this);
 		resultChanged(new LookupEvent(result));
+		hideSamples.setSelected(NbPreferences.forModule(PeakTableViewerTopComponent.class).getBoolean("hideSamples", false));
 	}
 
 	@Override
 	public void componentClosed() {
 		result.removeLookupListener(this);
-		if (peakGroupDescriptor != null) {
-			IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
-			registry.unregisterTopComponentFor(activeProject, peakGroupDescriptor, this);
-		}
+		IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
+		registry.unregisterTopComponentFor(IPeakGroupDescriptor.class, this);
+		NbPreferences.forModule(PeakTableViewerTopComponent.class).putBoolean("hideSamples", hideSamples.isSelected());
 	}
 
 	void writeProperties(java.util.Properties p) {
@@ -166,12 +191,6 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 		if (!isShowing()) {
 			return;
 		}
-		activeProject = Utilities.actionsGlobalContext().lookup(
-				IChromAUIProject.class);
-		if (activeProject == null) {
-			throw new NullPointerException(
-					"No instance of IChromAUI project in lookup!");
-		}
 		Iterator<? extends IPeakGroupDescriptor> iter = result.allInstances().
 				iterator();
 		if (ev.getSource() == this) {
@@ -179,19 +198,23 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 		}
 		if (iter.hasNext()) {
 			IPeakGroupDescriptor newPeakGroupDescriptor = (IPeakGroupDescriptor) iter.next();
-			if(newPeakGroupDescriptor!=peakGroupDescriptor) {
-				peakGroupDescriptor = newPeakGroupDescriptor;
-				setDisplayName("Peaks for " + activeProject.getLocation().getName() + " - " + peakGroupDescriptor.getName());
-				System.out.println("Setting node factory");
-				final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupDescriptor), activeProject.getLookup());
-				PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(lkp, peakGroupDescriptor);
-				Node rootNode = new AbstractNode(Children.create(childFactory, true), lkp);
-				System.out.println("Setting root context");
-				manager.setRootContext(rootNode);
+			if (newPeakGroupDescriptor != peakGroupDescriptor) {
+				setPeakGroupDescriptor(newPeakGroupDescriptor, hideSamples.isSelected());
 			}
-		}else{
+		} else {
 			manager.setRootContext(Node.EMPTY);
 		}
+	}
+
+	protected void setPeakGroupDescriptor(IPeakGroupDescriptor newPeakGroupDescriptor, boolean hideChromatogramDescriptor) {
+		peakGroupDescriptor = newPeakGroupDescriptor;
+		setDisplayName("Peaks for " + newPeakGroupDescriptor.getProject().getLocation().getName() + " - " + peakGroupDescriptor.getName());
+		System.out.println("Setting node factory");
+		final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupDescriptor), newPeakGroupDescriptor.getProject().getLookup());
+		PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(lkp, peakGroupDescriptor, hideChromatogramDescriptor);
+		Node rootNode = new AbstractNode(Children.create(childFactory, true), lkp);
+		System.out.println("Setting root context");
+		manager.setRootContext(rootNode);
 	}
 
 	@Override

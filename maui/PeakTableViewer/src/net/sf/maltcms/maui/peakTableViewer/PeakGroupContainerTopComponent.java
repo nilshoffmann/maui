@@ -30,13 +30,10 @@ package net.sf.maltcms.maui.peakTableViewer;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import java.awt.BorderLayout;
-import java.util.Iterator;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupContainerChildFactory;
-import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupDescriptorChildFactory;
-import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -47,9 +44,7 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
-import org.openide.util.Lookup.Result;
-import org.openide.util.LookupListener;
-import org.openide.util.Utilities;
+import org.openide.util.NbPreferences;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
@@ -103,13 +98,38 @@ public final class PeakGroupContainerTopComponent extends TopComponent implement
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jToolBar1 = new javax.swing.JToolBar();
+        hideSamples = new javax.swing.JCheckBox();
+
         setLayout(new java.awt.BorderLayout());
+
+        jToolBar1.setRollover(true);
+
+        org.openide.awt.Mnemonics.setLocalizedText(hideSamples, org.openide.util.NbBundle.getMessage(PeakGroupContainerTopComponent.class, "PeakGroupContainerTopComponent.hideSamples.text")); // NOI18N
+        hideSamples.setFocusable(false);
+        hideSamples.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        hideSamples.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hideSamplesActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(hideSamples);
+
+        add(jToolBar1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void hideSamplesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideSamplesActionPerformed
+		if (peakGroupContainer != null) {
+			setContainer(peakGroupContainer, hideSamples.isSelected());
+		}
+    }//GEN-LAST:event_hideSamplesActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox hideSamples;
+    private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 	// It is good idea to switch all listeners on and off when the
 	// component is shown or hidden. In the case of TopComponent use:
+
 	@Override
 	protected void componentActivated() {
 		ExplorerUtils.activateActions(manager, true);
@@ -123,14 +143,14 @@ public final class PeakGroupContainerTopComponent extends TopComponent implement
 
 	@Override
 	public void componentOpened() {
+		hideSamples.setSelected(NbPreferences.forModule(PeakGroupContainerTopComponent.class).getBoolean("hideSamples", false));
 	}
 
 	@Override
 	public void componentClosed() {
-		if (peakGroupContainer != null) {
-			IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
-			registry.unregisterTopComponentFor(activeProject, peakGroupContainer, this);
-		}
+		IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
+		registry.unregisterTopComponentFor(PeakGroupContainer.class, this);
+		NbPreferences.forModule(PeakGroupContainerTopComponent.class).putBoolean("hideSamples", hideSamples.isSelected());
 	}
 
 	void writeProperties(java.util.Properties p) {
@@ -148,13 +168,13 @@ public final class PeakGroupContainerTopComponent extends TopComponent implement
 		return manager;
 	}
 
-	void setContainer(PeakGroupContainer context) {
+	void setContainer(PeakGroupContainer context, boolean hideSamples) {
 		peakGroupContainer = context;
 		activeProject = context.getProject();
 		setDisplayName(peakGroupContainer.getDisplayName());
 		System.out.println("Setting node factory");
 		final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupContainer), activeProject.getLookup());
-		PeakGroupContainerChildFactory childFactory = new PeakGroupContainerChildFactory(lkp, peakGroupContainer);
+		PeakGroupContainerChildFactory childFactory = new PeakGroupContainerChildFactory(lkp, peakGroupContainer, hideSamples);
 		Node rootNode = new AbstractNode(Children.create(childFactory, true), lkp);
 		System.out.println("Setting root context");
 		manager.setRootContext(rootNode);

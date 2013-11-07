@@ -172,11 +172,18 @@ public class Registry implements IRegistry {
 			System.err.println("TopComponent " + topComponent + " already registered for object: " + object);
 		}
 	}
-	
+
 	@Override
 	public void unregisterTopComponentFor(Object object, TopComponent topComponent) {
-		Project project = getSelectedProject();
-		unregisterTopComponentFor(project, object, topComponent);
+		try {
+			Project project = getSelectedProject();
+			unregisterTopComponentFor(project, object, topComponent);
+		} catch (IllegalStateException ise) {
+			//no project in lookup
+			for (final Map<Object, TopComponent> map : typeToTopComponent.values()) {
+				map.remove(object);
+			}
+		}
 	}
 
 	@Override

@@ -38,6 +38,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbPreferences;
 
 @ActionID(
     category = "Maui",
@@ -61,7 +62,7 @@ public final class OpenPeakGroupContainerTopComponentAction implements ActionLis
     public void actionPerformed(ActionEvent ev) {
         IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
         PeakGroupContainerTopComponent tc = (PeakGroupContainerTopComponent)registry.openTopComponentFor(context, PeakGroupContainerTopComponent.class);
-		tc.setContainer(context);
         tc.componentOpened();
+		tc.setContainer(context, NbPreferences.forModule(PeakGroupContainerTopComponent.class).getBoolean("hideSamples",false));
     }
 }
