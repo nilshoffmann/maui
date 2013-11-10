@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.chromatogram2Dviewer.events;
+package net.sf.maltcms.chromaui.ui.paintScales;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;

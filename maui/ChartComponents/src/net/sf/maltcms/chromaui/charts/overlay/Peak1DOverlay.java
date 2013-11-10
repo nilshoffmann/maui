@@ -43,10 +43,14 @@ import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListMap;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
@@ -55,12 +59,14 @@ import net.sf.maltcms.chromaui.charts.dataset.chromatograms.TopViewDataset;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
-import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
+import net.sf.maltcms.common.charts.api.selection.IClearable;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
+import static net.sf.maltcms.common.charts.api.selection.ISelection.Type.CLICK;
+import static net.sf.maltcms.common.charts.api.selection.ISelection.Type.HOVER;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -70,7 +76,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -81,40 +86,39 @@ import org.openide.util.WeakListeners;
  *
  * @author Nils Hoffmann
  */
-public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener {
+public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener, IClearable {
 
-//    private final List<Shape> shapes;
 	public final String PROP_DRAW_SHAPES = "drawShapes";
 	public final String PROP_DRAW_LINES = "drawLines";
 	private final Peak1DContainer peakAnnotations;
 	private final Set<UUID> peakIds = new HashSet<UUID>();
-	private final IChromatogramDescriptor descriptor;
-	private List<Shape> shapes;
-	private List<Shape> selectedPeaks;
+	private final Set<IPeakAnnotationDescriptor> activeSelection = Collections.newSetFromMap(new ConcurrentSkipListMap<IPeakAnnotationDescriptor, Boolean>());//new LinkedHashSet<IPeakAnnotationDescriptor>();
+	private List<Shape> shapes = new ArrayList<Shape>();
+	private List<Shape> selectedPeaks = new ArrayList<Shape>();
 	private boolean drawShapes = true;
 	private boolean drawLines = true;
 	private ADataset1D<IChromatogram1D, IScan> dataset = null;
-	private ISelection selection;
 	private Result<IPeakAnnotationDescriptor> padResult;
-	private int seriesIndex = -1;
 
 	public Peak1DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
 		super(name, displayName, shortDescription, visibilityChangeable);
 		for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
-			if (!(descr instanceof IPeakAnnotationDescriptor)) {
-				throw new IllegalArgumentException("Must supply a peak container with 1d peaks!");
+			if (descr != null) {
+				if (!(descr instanceof IPeakAnnotationDescriptor)) {
+					throw new IllegalArgumentException("Must supply a peak container with 1d peaks!");
+				}
+				peakIds.add(descr.getId());
 			}
-			peakIds.add(descr.getId());
 		}
-		this.descriptor = descriptor;
 		this.peakAnnotations = peakAnnotations;
 		WeakListeners.propertyChange(this, peakAnnotations);
 		padResult = Utilities.actionsGlobalContext().lookupResult(IPeakAnnotationDescriptor.class);
 		padResult.addLookupListener(this);
 		resultChanged(new LookupEvent(padResult));
 		setLayerPosition(10);
+		super.content.add(descriptor.getProject());
 //		super.content.add(descriptor);
-//		super.content.add(peakAnnotations);
+		super.content.add(peakAnnotations);
 	}
 
 	@Override
@@ -263,25 +267,37 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 
 	@Override
 	public final void resultChanged(LookupEvent le) {
-		if(le.getSource()==this) {
+		if (le.getSource() == this) {
 			System.err.println("Skipping lookup event originating from myself");
-		}else{
-			Collection<? extends IPeakAnnotationDescriptor> pads = padResult.allInstances();
-			if (selectedPeaks == null) {
-				selectedPeaks = new ArrayList<Shape>();
-			}
-			if (!pads.isEmpty()) {
-				selectedPeaks.clear();
-			}
-			for (IPeakAnnotationDescriptor ipad : padResult.allInstances()) {
-				if (peakIds.contains(ipad.getId())) {
-					System.err.println("Contained!");
-					generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
+		} else {
+			if (isVisible()) {
+				Collection<? extends IPeakAnnotationDescriptor> pads = padResult.allInstances();
+				if (!pads.isEmpty()) {
+					Set<IPeakAnnotationDescriptor> unselected = new LinkedHashSet<>();
+					for (IPeakAnnotationDescriptor pad : pads) {
+						if (!activeSelection.contains(pad)) {
+							unselected.add(pad);
+						}
+					}
+					for (IPeakAnnotationDescriptor ipad : unselected) {
+						if (peakIds.contains(ipad.getId())) {
+							System.err.println("Contained!");
+							generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
+//						content.add(ipad);
+							activeSelection.add(ipad);
+						} else {
+							System.err.println("Not contained!");
+						}
+					}
+					if (!unselected.isEmpty()) {
+						fireOverlayChanged();
+					}
 				} else {
-					System.err.println("Not contained!");
+//					selectedPeaks.clear();
+//					activeSelection.clear();
+//					fireOverlayChanged();
 				}
 			}
-			fireOverlayChanged();
 		}
 	}
 
@@ -323,22 +339,73 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 
 	@Override
 	public void selectionStateChanged(SelectionChangeEvent ce) {
+		if (isVisible() && ce.getSource() != this && ce.getSelection() != null) {
+			if (ce.getSelection().getType().equals(ISelection.Type.CLEAR)) {
+				System.err.println("Received clear selection type");
+				clear();
+				return;
+			}
+			if (dataset != null) {
+				IScan target = dataset.getTarget(ce.getSelection().getSeriesIndex(), ce.getSelection().getItemIndex());
+				TreeMap<Double, IPeakAnnotationDescriptor> distanceMap = new TreeMap<Double, IPeakAnnotationDescriptor>();
+				for (IPeakAnnotationDescriptor ipad : peakAnnotations.getMembers()) {
+					double absDiff = Math.abs(ipad.getApexTime() - target.getScanAcquisitionTime());
+					if (absDiff < 10.0d) {
+						distanceMap.put(absDiff, ipad);
+					}
+				}
+				if (!distanceMap.isEmpty()) {
+					IPeakAnnotationDescriptor ipad = distanceMap.firstEntry().getValue();
+					if (!activeSelection.contains(ipad)) {
+//						selectedPeaks.clear();
+//						activeSelection.clear();
+						switch (ce.getSelection().getType()) {
+							case CLICK:
+								System.out.println("Click selection received");
+								//							content.add(ipad);
+								generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
+								activeSelection.add(ipad);
+								break;
+							case HOVER:
+//								System.out.println("Hover selection received");
+//								//							content.add(ipad);
+//								activeSelection.add(ipad);
+							default:
+								break;
+						}
+						fireOverlayChanged();
+					}
+				}
+			}
+		}
+	}
+
+	public Set<IPeakAnnotationDescriptor> getActiveSelection() {
+		return activeSelection;
 	}
 
 	@Override
 	public Node createNodeDelegate() {
 		System.err.println("Creating node delegate");
 		Node node = null;
-		if(nodeReference == null) {
-			node = Charts.overlayNode(this);
+		if (nodeReference == null) {
+			node = Charts.overlayNode(this, Children.create(new Peak1DOverlayChildFactory(this), true), getLookup());
 			nodeReference = new WeakReference<Node>(node);
-		}else{
+		} else {
 			node = nodeReference.get();
-			if(node==null) {
-				node = Charts.overlayNode(this);
+			if (node == null) {
+				node = Charts.overlayNode(this, Children.create(new Peak1DOverlayChildFactory(this), true), getLookup());
 				nodeReference = new WeakReference<Node>(node);
 			}
 		}
 		return node;
+	}
+
+	@Override
+	public void clear() {
+		System.err.println("Clear called on Peak1DOverlay");
+		selectedPeaks.clear();
+		activeSelection.clear();
+		fireOverlayChanged();
 	}
 }

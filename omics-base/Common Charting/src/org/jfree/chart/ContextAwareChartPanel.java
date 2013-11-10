@@ -40,6 +40,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -59,6 +60,7 @@ import org.w3c.dom.Document;
 public class ContextAwareChartPanel extends ChartPanel {
 
 	private List<Overlay> overlays = new ArrayList<Overlay>();
+	private IActionProvider popupMenuActionProvider = null;
 
 	public ContextAwareChartPanel(JFreeChart chart) {
 		super(chart);
@@ -78,6 +80,10 @@ public class ContextAwareChartPanel extends ChartPanel {
 
 	public ContextAwareChartPanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean copy, boolean save, boolean print, boolean zoom, boolean tooltips) {
 		super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer, properties, copy, save, print, zoom, tooltips);
+	}
+
+	public void setPopupMenuActionProvider(IActionProvider actionProvider) {
+		this.popupMenuActionProvider = actionProvider;
 	}
 
 	@Override
@@ -128,8 +134,8 @@ public class ContextAwareChartPanel extends ChartPanel {
 	}
 
 	public void paintChart(Graphics2D g2) {
-		getChart().draw(g2, new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
-		for(Overlay overlay:overlays) {
+		getChart().draw(g2, new Rectangle2D.Double(0, 0, getWidth(), getHeight()), getChartRenderingInfo());
+		for (Overlay overlay : overlays) {
 			overlay.paintOverlay(g2, this);
 		}
 		repaint();
@@ -140,6 +146,15 @@ public class ContextAwareChartPanel extends ChartPanel {
 			boolean copy, boolean save, boolean print, boolean zoom) {
 		JPopupMenu result = new JPopupMenu(localizationResources.getString("Chart") + ":");
 		boolean separator = false;
+		if (popupMenuActionProvider != null) {
+			for (Action a : popupMenuActionProvider.getActions()) {
+				JMenuItem jmi = new JMenuItem(a);
+				result.add(jmi);
+			}
+			if (popupMenuActionProvider.getActions().length > 0) {
+				result.addSeparator();
+			}
+		}
 
 		if (properties) {
 			JMenuItem propertiesItem = new JMenuItem(
@@ -355,7 +370,9 @@ public class ContextAwareChartPanel extends ChartPanel {
 				ex.printStackTrace();
 			} finally {
 				try {
-					out.close();
+					if (out != null) {
+						out.close();
+					}
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}

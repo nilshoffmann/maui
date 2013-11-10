@@ -87,29 +87,29 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
     public Action[] getActions(boolean context) {
 		List<?> interfaces = ClassUtils.getAllInterfaces(getBean().getClass());
 		List<?> superClasses = ClassUtils.getAllSuperclasses(getBean().getClass());
-        LinkedHashSet<Action> containerActions = new LinkedHashSet<Action>();
+        LinkedHashSet<Action> descriptorActions = new LinkedHashSet<Action>();
         for (Object o : interfaces) {
 			Class<?> c = (Class)o;
-            containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
+            descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getName()));
-            containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
+            descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getSimpleName()));
         }
 		for (Object o : superClasses) {
 			Class<?> c = (Class)o;
-            containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
+            descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getName()));
-            containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
+            descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getSimpleName()));
         }
-        containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + getBean().
+        descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + getBean().
                 getClass().getName()));
-        containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + getBean().
+        descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + getBean().
                 getClass().getSimpleName()));
-        containerActions.add(null);
-        containerActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/DefaultActions"));
-        containerActions.add(SystemAction.get(PropertiesAction.class));
-        return containerActions.toArray(new Action[containerActions.size()]);
+        descriptorActions.add(null);
+        descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/DefaultActions"));
+        descriptorActions.add(SystemAction.get(PropertiesAction.class));
+        return descriptorActions.toArray(new Action[descriptorActions.size()]);
     }
 
     @Override

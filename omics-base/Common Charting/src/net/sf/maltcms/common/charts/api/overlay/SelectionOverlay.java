@@ -39,6 +39,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -49,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.sf.maltcms.common.charts.api.Charts;
 import static net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay.toView;
+import net.sf.maltcms.common.charts.api.selection.IClearable;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import net.sf.maltcms.common.charts.api.selection.XYSelection;
@@ -68,13 +70,12 @@ import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 import org.openide.util.WeakListeners;
-import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class SelectionOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener {
+public class SelectionOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener, IClearable {
 
 	private ISelection mouseHoverSelection;
 	private final Set<ISelection> mouseClickSelection = new LinkedHashSet<ISelection>();
@@ -88,6 +89,8 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
 	private final Crosshair domainCrosshair;
 	private final Crosshair rangeCrosshair;
 	private final CrosshairOverlay crosshairOverlay;
+	private final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+	private FlashRunnable flashRunner = null;
 	public static final String PROP_SELECTION_FILL_COLOR = "selectionFillColor";
 	public static final String PROP_HOVER_FILL_COLOR = "hoverFillColor";
 	public static final String PROP_HOVER_SCALE_X = "hoverScaleX";
@@ -120,6 +123,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
 		selectionLookupResult.addLookupListener(this);
 	}
 
+	@Override
 	public void clear() {
 		ISelection oldHover = mouseHoverSelection;
 		mouseHoverSelection = null;
@@ -373,50 +377,69 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
 			flashSelection.retainAll(mouseClickSelection);
 			System.out.println("Flashing " + flashSelection.size() + " elements!");
 			if (!flashSelection.isEmpty()) {
-				ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
-				setDrawFlashSelection(false);
+				if(flashRunner!=null) {
+					flashRunner.cancel();
+				}
 				Runnable flasher = new Runnable() {
 					@Override
 					public void run() {
-						try {
-							setDrawFlashSelection(!isDrawFlashSelection());
-							Thread.sleep(500);
-						} catch (InterruptedException ex) {
-							Exceptions.printStackTrace(ex);
-						}
+						setDrawFlashSelection(!isDrawFlashSelection());
 					}
 				};
-				FlashRunnable fr = new FlashRunnable(flasher, 6);
-				fr.schedule(ses, 50, 500, TimeUnit.MILLISECONDS);
+				flashRunner = new FlashRunnable(flasher, 6);
+				flashRunner.schedule(ses, 100, 500, TimeUnit.MILLISECONDS);
 			}
 		}
 	}
-	
+
 	private class FlashRunnable implements Runnable {
+
 		private final int repeats;
 		private final Runnable delegate;
 		private ScheduledFuture<?> f;
 		private AtomicInteger repeatCounter = new AtomicInteger(0);
-		
+
 		FlashRunnable(Runnable delegate, int repeats) {
 			this.delegate = delegate;
 			this.repeats = repeats;
+			setDrawFlashSelection(false);
 		}
-		
-		@Override
-		public void run() {
-			if(f==null) {
-				throw new IllegalStateException("Not scheduled!");
-			}
-			delegate.run();
-			if(repeatCounter.incrementAndGet()==repeats) {
+
+		public void cancel() {
+			if (f != null) {
 				f.cancel(true);
 			}
 		}
-		
+
+		@Override
+		public void run() {
+			if (f == null) {
+				throw new IllegalStateException("Not scheduled!");
+			}
+			delegate.run();
+			if (repeatCounter.incrementAndGet() == repeats) {
+				f.cancel(true);
+			}
+		}
+
 		public void schedule(ScheduledExecutorService ses, long delay, long period, TimeUnit timeUnit) {
 			f = ses.scheduleAtFixedRate(this, delay, period, timeUnit);
 		}
-		
 	};
+
+	@Override
+	public Node createNodeDelegate() {
+		Node node = null;
+		if (nodeReference == null) {
+			node = Charts.overlayNode(this, Children.LEAF, getLookup());
+			nodeReference = new WeakReference<Node>(node);
+		} else {
+			node = nodeReference.get();
+			if (node == null) {
+				node = Charts.overlayNode(this, Children.LEAF, getLookup());
+				nodeReference = new WeakReference<Node>(node);
+			}
+		}
+		return node;
+	}
 }

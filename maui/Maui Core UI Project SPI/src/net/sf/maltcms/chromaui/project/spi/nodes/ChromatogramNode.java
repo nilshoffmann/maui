@@ -125,21 +125,24 @@ public class ChromatogramNode extends FilterNode implements
 				"Actions/ContainerNodeActions/ChromatogramNode"));
 		allActions.removeAll(Utilities.actionsForPath(
 				"Actions/ContainerNodeActions/ChromatogramNode/Open"));
+		Set<Action> openActions = new LinkedHashSet<Action>();
+		//avoid double entries in main menu and Open submenu
+		openActions.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open"));
 		allActions.add(f.createMenuItem("Open", "Actions/ContainerNodeActions/ChromatogramNode/Open"));
-
 
 		Action[] originalActions = super.getActions(context);
 		allActions.addAll(Arrays.asList(originalActions));
-		List<String> exclusions = Arrays.asList("maltcms.ui.RawChromatogram1DViewOpenAction");
-		Set<Action> actionsToRemove = new HashSet<Action>();
-		for (String s : exclusions) {
-			for (Action a : allActions) {
-				if (a != null && a.getClass().getName().equals(s)) {
-					actionsToRemove.add(a);
-				}
-			}
-		}
-		allActions.removeAll(actionsToRemove);
+		allActions.removeAll(openActions);
+//		List<String> exclusions = Arrays.asList("net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction");
+//		Set<Action> actionsToRemove = new HashSet<Action>();
+//		for (String s : exclusions) {
+//			for (Action a : allActions) {
+//				if (a != null && a.getClass().getName().equals(s)) {
+//					actionsToRemove.add(a);
+//				}
+//			}
+//		}
+//		allActions.removeAll(actionsToRemove);
 //        containerActions.addAll(getLookup().lookupAll(Action.class));
 		return allActions.toArray(new Action[allActions.size()]);
 	}

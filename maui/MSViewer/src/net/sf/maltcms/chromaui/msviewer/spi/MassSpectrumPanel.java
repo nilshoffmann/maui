@@ -124,7 +124,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 	private XYBarDataset barDataset = null;
 
 	public MassSpectrumPanel(Lookup contentProviderLookup) {
-		System.out.println("Opening MassSpectrumPanel");
+//		System.out.println("Opening MassSpectrumPanel");
 		this.contentProviderLookup = contentProviderLookup;
 		initComponents();
 		initChartComponents();
@@ -182,7 +182,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		plot.setRangePannable(true);
 		JFreeChart msChart = new JFreeChart(this.plot);
 		msChart.addChangeListener(this.defaultNumberFormat);
-		System.out.println("Creating ms chart 3");
+//		System.out.println("Creating ms chart 3");
 		this.cp = new ContextAwareChartPanel(msChart, true, true, true, true, true);
 		this.cp.setInitialDelay(1);
 		this.cp.getChart().getLegend().setVisible(true);
@@ -283,100 +283,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		}
 	}
 
-//        System.out.println("Adding id!");
-//        Runnable s = new Runnable() {
-//
-//            @Override
-//            public void run() {
-//
-////                Point l = selectedPoints.get(selectedPoints.size() - 1);
-////                System.out.println("Identification for " + l);
-//                XYSeries xys = sc.getSeries(sc.getSeriesCount() - 1);
-//                List<Double> massFilter = new ArrayList<Double>(Arrays.asList(new Double[]{
-//                            73d, 74d, 75d, 147d, 148d, 149d}));
-//                Array masses = new ArrayDouble.D1(xys.getItemCount());
-//                Array intensities = new ArrayDouble.D1(xys.getItemCount());
-//                double minMassT = 70;
-//                intensities = filterQuerySpectrum(xys, masses, minMassT,
-//                        intensities, massFilter);
-//                MinMax mm = MAMath.getMinMax(intensities);
-////                Tuple2D<Array,Array> mss = ChromatogramVisualizerTools.getMS(l, ic.getFilename());
-////                Array ms = mss.getFirst();
-////                Array inten = mss.getSecond();
-//                PeakIdentification pi = PeakIdentification.getInstance();
-//                System.out.println("Start");
-////                Tuple2D<Array, Tuple2D<Double, IMetabolite>> bestHit = pi.getBest(ms);
-//                Tuple2D<Array, Tuple2D<Double, IMetabolite>> bestHit = pi.
-//                        getBest(masses, intensities);
-//                System.out.println("Done");
-//
-//                XYSeries s = null;//ChromatogramVisualizerTools.convertToSeries(ms, bestHit.getSecond(), ic.getFilename());
-//                String hitName = bestHit.getSecond().getSecond().getName();
-//                hitName = hitName.substring(hitName.lastIndexOf("_") + 1);
-//                s = new XYSeries(hitName + " (" + (int) (1000d * bestHit.
-//                        getSecond().getFirst()) + ")");
-//                Array bhmass = bestHit.getSecond().getSecond().getMassSpectrum().
-//                        getFirst();
-//                Array bhint = bestHit.getSecond().getSecond().getMassSpectrum().
-//                        getSecond();
-//                System.out.println(bestHit.getSecond().getSecond().getID());
-//                MinMax bhmm = MAMath.getMinMax(bhint);
-//                System.out.println(
-//                        "MM max: " + mm.max + " bhmm max: " + bhmm.max);
-//                for (int i = 0; i < bhmass.getShape()[0]; i++) {
-//                    double mz = bhmass.getDouble(i);
-//                    double intens = bhint.getDouble(i);
-//                    double normIntens = (intens / (bhmm.max)) * mm.max;
-//                    System.out.println(
-//                            "MZ: " + mz + " intens: " + intens + " normIntens: " + normIntens);
-//                    s.add(mz, normIntens);
-//                }
-//                //sc = new XYSeriesCollection();
-////                sc.addSeries(ChromatogramVisualizerTools.convertToSeries(bestHit.getFirst(), l.x + ", " + l.y));
-//                sc.removeAllSeries();
-//                sc.addSeries(xys);
-//                sc.addSeries(s);
-////                try {
-////                    sc.getSeries(s.getKey());
-////                } catch (Exception e) {
-////                    sc.addSeries(s);
-////                }
-//                ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
-//                updateActiveMassSpectrum();
-//                addTopKLabels(topK, activeMS);
-////                } else {
-////                    sc = new XYSeriesCollection();
-////                    sc.addSeries(s);
-////                    //cp.repaint();
-////                    ((XYPlot) cp.getChart().getPlot()).setDataset(sc);
-////                }
-//            }
-//
-//    private Array filterQuerySpectrum(XYSeries xys, Array masses,
-//            double minMassT, Array intensities, List<Double> massFilter) {
-//        for (int i = 0; i < xys.getItemCount(); i++) {
-//            double mass = xys.getX(i).doubleValue();
-//            masses.setDouble(i, mass);
-//            if (mass >= minMassT) {
-//                intensities.setDouble(i, xys.getY(i).doubleValue());
-//            }
-//        }
-//        List<Integer> maskedIndices = MaltcmsTools.findMaskedMasses(
-//                masses, massFilter, 0);
-//        intensities = ArrayTools.filterIndices(intensities,
-//                maskedIndices, 0);
-//        return intensities;
-//    }
-//        };
-//        ExecutorService e = Executors.newSingleThreadExecutor();
-//        e.execute(s);
-//        e.shutdown();
-//        try {
-//            e.awaitTermination(1, TimeUnit.MINUTES);
-//        } catch (InterruptedException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-//}
 	private void updateActiveMassSpectrum() {
 		Object[] obj = new Object[sc.getSeriesCount()];
 		for (int i = 0; i < sc.getSeriesCount(); i++) {
@@ -386,7 +292,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 	}
 
 	private void addTopKLabels(int topk, int series) {
-		System.out.println("addTopKLabels: " + topk + " " + series);
+//		System.out.println("addTopKLabels: " + topk + " " + series);
 		if (series >= 0 && sc.getSeriesCount() > series) {
 			List<Point> seriesItemList = new ArrayList<Point>();
 			Comparator<Point> c = new Comparator<Point>() {
@@ -397,17 +303,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 					return Double.compare(Math.abs(v1), Math.abs(v2));
 				}
 			};
-//			SortedMap<Double, Double> tm = null;
-////			if (addSeriesToTopPlot) {
-////				tm = new TreeMap<Double, Double>();
-////			} else {
-//			tm = new TreeMap<Double, Double>(new Comparator<Double>() {
-//				@Override
-//				public int compare(Double t, Double t1) {
-//					return -Double.compare(t, t1);
-//				}
-//			});
-//			}
 			for (int i = 0; i < sc.getItemCount(series); i++) {
 				double mass = sc.getXValue(series, i);
 				double intens = sc.getYValue(series, i);
@@ -416,11 +311,11 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //					tm.put(intens, mass);
 				}
 			}
-			System.out.println(seriesItemList);
+//			System.out.println(seriesItemList);
 			Collections.sort(seriesItemList, c);
-			System.out.println(seriesItemList);
+//			System.out.println(seriesItemList);
 			if (activeMS >= 0) {
-				System.out.println("Updating plot");
+//				System.out.println("Updating plot");
 				plot.getRenderer().setBaseItemLabelsVisible(true);
 				plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
 						new TopKItemsLabelGenerator(seriesItemList, topk));
@@ -724,7 +619,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_diffToggleActionPerformed
 
     private void barWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_barWidthSpinnerStateChanged
-		System.out.println("Received spinner state changed!");
+//		System.out.println("Received spinner state changed!");
 		if (this.barDataset != null) {
 			barWidth = ((Double) barWidthSpinner.getValue()).doubleValue();
 			barDataset = new XYBarDataset(sc, barWidth);
@@ -756,10 +651,10 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
 	@Override
 	public void resultChanged(LookupEvent ev) {
-		System.out.println("MassSpectrumPanel received LookupEvent");
+//		System.out.println("MassSpectrumPanel received LookupEvent");
 		Collection<? extends ISelection> coll = lookupResult.allInstances();
 		if (coll.size() > 0) {
-			System.out.println("Received " + coll.size() + " ISelection objects from lookup");
+//			System.out.println("Received " + coll.size() + " ISelection objects from lookup");
 //            System.out.println("Found " + contentProviderLookup.lookupAll(IChromatogram.class).size() + " chromatograms in lookup!");
 //            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
 			boolean add = addMs.isSelected();
@@ -773,23 +668,23 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 			for (ISelection scan : coll) {
 				IScan target = null;
 				if (scan.getTarget() instanceof IScan) {
-					System.out.println("Target is IScan");
+//					System.out.println("Target is IScan");
 					target = (IScan) scan.getTarget();
 				}
 				IChromatogram source = null;
 				if (scan.getSource() instanceof IChromatogram) {
-					System.out.println("Source is IChromatogram");
+//					System.out.println("Source is IChromatogram");
 					source = (IChromatogram) scan.getSource();
 				}
 				if (source != null && target != null) {
-					System.out.println("Source and target are not null!");
+//					System.out.println("Source and target are not null!");
 					String name = source.getParent().getName();
 					setData(target, name, add);
 				}
 			}
 //            }
 		} else if (!metaboliteSelection.allInstances().isEmpty()) {
-			System.out.println("Received metabolite selection with " + metaboliteSelection.allInstances().size() + " elements from lookup");
+//			System.out.println("Received metabolite selection with " + metaboliteSelection.allInstances().size() + " elements from lookup");
 			boolean add = addMs.isSelected();
 			if(!add) {
 				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
@@ -802,7 +697,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				setData(scan, metabolite.getID(), add);
 			}
 		} else if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
-			System.out.println("Received peak annotations with " + peakAnnotationDescriptorResult.allInstances().size() + " elements from lookup");
+//			System.out.println("Received peak annotations with " + peakAnnotationDescriptorResult.allInstances().size() + " elements from lookup");
 			boolean add = addMs.isSelected();
 			if(!add) {
 				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
@@ -815,7 +710,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				setData(scan, ipad.getDisplayName(), add);
 			}
 		} else if (!peakGroupResult.allInstances().isEmpty()) {
-			System.out.println("Received peak group results");
+//			System.out.println("Received peak group results");
 			boolean add = addMs.isSelected();
 			if(!add) {
 				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
@@ -848,64 +743,14 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		Runnable s = new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("Change ms called in MassSpectrumPanel");
+//				System.out.println("Change ms called in MassSpectrumPanel");
 				MSSeries s = null;
 				if (scan instanceof IScan2D) {
 					s = ChromatogramVisualizerTools.getMSSeries2D(
 							(IScan2D) scan, name, addSeriesToTopPlot);
-//					s.setNormalize(absoluteRelativeToggle.isSelected());
-//					if (add) {
-//						try {
-//							sc.getSeries(s.getKey());
-//						} catch (Exception e) {
-//							sc.addSeries(s);
-//							seriesToScan.put(s, scan);
-//						}
-//
-//					} else {
-//						seriesToScan.clear();
-//						sc = new XYSeriesCollection();
-//						sc.addSeries(s);
-//						seriesToScan.put(s, scan);
-//						//cp.repaint();
-////                            XYPlot plot = (XYPlot) cp.getChart().getPlot();
-//						plot.setDataset(sc);
-//					}
-//					updateActiveMassSpectrum();
-//					activeMS = seriesToScan.size() - 1;
-//					addTopKLabels(topK, activeMS);
-//					ChartCustomizer.setSeriesColors(plot, 0.95f);
-//					ChartCustomizer.setSeriesStrokes(plot, 2.0f);
-
 				} else if (scan instanceof IScan1D) {
 					s = ChromatogramVisualizerTools.getMSSeries1D(
 							(IScan1D) scan, name, addSeriesToTopPlot);
-//					//s.setKey(s.getKey());
-//					s.setNormalize(absoluteRelativeToggle.isSelected());
-//					if (add) {
-//						try {
-//							sc.getSeries(s.getKey());
-//						} catch (Exception e) {
-//							sc.addSeries(s);
-//							seriesToScan.put(s, scan);
-//						}
-//
-//					} else {
-//						seriesToScan.clear();
-//						sc = new XYSeriesCollection();
-//						sc.addSeries(s);
-//						seriesToScan.put(s, scan);
-//						//cp.repaint();
-////                            XYPlot plot = (XYPlot) cp.getChart().getPlot();
-//						plot.setDataset(sc);
-//						sc.addChangeListener(plot);
-//					}
-//					updateActiveMassSpectrum();
-//					activeMS = seriesToScan.size() - 1;
-//					addTopKLabels(topK, activeMS);
-//					ChartCustomizer.setSeriesColors(plot, 0.95f);
-//					ChartCustomizer.setSeriesStrokes(plot, 2.0f);
-//					addSeries(s, scan, add);
 				}
 				if (s != null) {
 					addSeries(s, scan, add);

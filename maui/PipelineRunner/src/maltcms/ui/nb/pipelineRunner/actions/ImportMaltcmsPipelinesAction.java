@@ -92,8 +92,8 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
-		PipelineImporter pi = new PipelineImporter();
-		PipelineImporter.createAndRun("Maltcms Pipeline Importer", pi);
+//		PipelineImporter pi = new PipelineImporter();
+//		PipelineImporter.createAndRun("Maltcms Pipeline Importer", pi);
 	}
 
 	private void importPipelines() {

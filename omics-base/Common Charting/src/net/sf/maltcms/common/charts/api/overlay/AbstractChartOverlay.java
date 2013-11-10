@@ -80,6 +80,7 @@ public abstract class AbstractChartOverlay extends AbstractOverlay implements Ch
 		this.visibilityChangeable = visibilityChangeable;
 		this.content = new InstanceContent();
 		this.lookup = new AbstractLookup(content);
+		content.add(this);
 	}
 
 	@Override

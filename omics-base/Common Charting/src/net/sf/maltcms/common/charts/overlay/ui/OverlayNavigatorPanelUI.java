@@ -36,6 +36,7 @@ import java.util.List;
 import javax.swing.ActionMap;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import org.netbeans.swing.outline.Outline;
+import org.openide.cookies.InstanceCookie;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
@@ -45,6 +46,7 @@ import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
@@ -132,7 +134,7 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
 
                 @Override
                 protected Node createNodeForKey(Node key) {
-                    return new FilterNode(key);
+                    return new FilterNode(key,new FilterNode.Children(key),new ProxyLookup(key.getLookup()));
                 }
                 
             }, true));

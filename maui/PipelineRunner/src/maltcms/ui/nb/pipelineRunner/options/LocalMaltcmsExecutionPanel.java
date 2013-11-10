@@ -131,7 +131,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
             }
         });
 
-        maltcmsOnlineVersion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1.2.1", "1.2.0", "1.1.0", "LATEST-SNAPSHOT" }));
+        maltcmsOnlineVersion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1.3.0", "1.2.1", "1.2.0", "1.1.0", "LATEST-SNAPSHOT" }));
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel4.text")); // NOI18N
 

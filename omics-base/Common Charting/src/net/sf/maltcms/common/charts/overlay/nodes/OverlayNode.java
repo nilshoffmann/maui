@@ -31,15 +31,19 @@ import java.awt.Image;
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import javax.swing.Action;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
+import org.apache.commons.lang.ClassUtils;
+import org.openide.actions.PropertiesAction;
 import org.openide.explorer.view.CheckableNode;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
+import org.openide.util.actions.SystemAction;
 
 /**
  *
@@ -101,12 +105,31 @@ public class OverlayNode<T extends ChartOverlay> extends BeanNode<T> implements 
 
     @Override
     public Action[] getActions(boolean context) {
-        Action[] actions = super.getActions(context);
-        List<? extends Action> selectionActions = Utilities.actionsForPath("Actions/OverlayNodeActions");
-        List<Action> nodeActions = new ArrayList<Action>(selectionActions);
-        nodeActions.add(null);
-        nodeActions.addAll(Arrays.asList(actions));
-        return nodeActions.toArray(new Action[nodeActions.size()]);
+		List<?> interfaces = ClassUtils.getAllInterfaces(getBean().getClass());
+		List<?> superClasses = ClassUtils.getAllSuperclasses(getBean().getClass());
+        LinkedHashSet<Action> containerActions = new LinkedHashSet<Action>();
+        for (Object o : interfaces) {
+			Class<?> c = (Class)o;
+            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+                    getName()));
+            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+                    getSimpleName()));
+        }
+		for (Object o : superClasses) {
+			Class<?> c = (Class)o;
+            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+                    getName()));
+            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+                    getSimpleName()));
+        }
+        containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + getBean().
+                getClass().getName()));
+        containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + getBean().
+                getClass().getSimpleName()));
+        containerActions.add(null);
+        containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/DefaultActions"));
+        containerActions.add(SystemAction.get(PropertiesAction.class));
+        return containerActions.toArray(new Action[containerActions.size()]);
     }
     
     @Override

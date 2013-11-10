@@ -119,9 +119,9 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 
 	public void setPlot(final XYPlot plot) {
 		removeAxisListener();
-		ADataset1D dataset = null;
+		ADataset1D<?,IScan> dataset = null;
 		if(plot.getDataset() instanceof ADataset1D) {
-			dataset = (ADataset1D)plot.getDataset();
+			dataset = (ADataset1D<?,IScan>)plot.getDataset();
 		}else{
 			throw new IllegalArgumentException("Requires a plot with ADataset1D!");
 		}

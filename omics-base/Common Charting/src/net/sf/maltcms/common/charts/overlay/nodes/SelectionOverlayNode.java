@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.Action;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
+import net.sf.maltcms.common.charts.overlay.nodes.actions.ClearSelection;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
@@ -58,10 +59,17 @@ public class SelectionOverlayNode extends OverlayNode<SelectionOverlay> {
     @Override
     public Action[] getActions(boolean context) {
         Action[] actions = super.getActions(context);
-        List<? extends Action> selectionActions = Utilities.actionsForPath("Actions/OverlayNodeActions/SelectionOverlayNode");
+        List<? extends Action> selectionActions = Utilities.actionsForPath("Actions/OverlayNodeActions/SelectionOverlay");
         List<Action> nodeActions = new ArrayList<Action>(selectionActions);
         nodeActions.add(null);
-        nodeActions.addAll(Arrays.asList(actions));
+		for(Action a:actions) {
+			if(a!=null && a.isEnabled()) {
+				nodeActions.add(a);
+			} else if(a==null) {
+				nodeActions.add(a);
+			}
+		}
+//        nodeActions.addAll(Arrays.asList(actions));
         return nodeActions.toArray(new Action[nodeActions.size()]);
     }
 }

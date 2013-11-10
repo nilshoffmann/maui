@@ -380,7 +380,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
 //        System.out.println("Value of slider 2:"+this.jSlider2.getValue());
         double min2 = this.jSlider2.getMinimum();
         double max2 = this.jSlider2.getMaximum();
-        double val = 1 + (((this.jSlider2.getValue() - min2) / (max2 - min2)) * 9.0);
+        double val = 1 + (((this.jSlider2.getValue() - min2) / (max2 - min2)) * 72.0);
         return val;
     }
 
@@ -403,7 +403,8 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
 
     public int convertBetaToSlider(double value) {
         value -= 1.0d;
-        value /= 9.0d;
+//        value /= 9.0d;
+		value /= 72.0d;
         value += this.jSlider2.getMinimum();
         value *= (this.jSlider2.getMaximum() - this.jSlider2.getMinimum());
         return (int) value;

@@ -27,13 +27,17 @@
  */
 package net.sf.maltcms.chromaui.charts;
 
+import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.ResourceNotAvailableException;
 import maltcms.io.csv.CSVReader;
 import cross.datastructures.tools.ArrayTools;
+import cross.datastructures.tools.FileTools;
 import cross.datastructures.tools.FragmentTools;
+import static cross.datastructures.tools.FragmentTools.getVariablesFor;
+import cross.exception.ConstraintViolationException;
 import cross.tools.MathTools;
 import cross.tools.StringTools;
 import java.awt.BasicStroke;
@@ -45,12 +49,15 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import maltcms.datastructures.ms.IChromatogram1D;
@@ -111,11 +118,11 @@ public class Chromatogram1DChartProvider {
 	public void setToolTipGenerator(XYToolTipGenerator toolTipGenerator) {
 		this.toolTipGenerator = toolTipGenerator;
 	}
-	
+
 	public XYToolTipGenerator getToolTipGenerator() {
 		return this.toolTipGenerator;
 	}
-	
+
 	public void setRenderer(XYItemRenderer renderer) {
 		this.renderer = renderer;
 	}
@@ -358,7 +365,7 @@ public class Chromatogram1DChartProvider {
 	}
 
 	//ADataset1D<IChromatogram1D, IScan> dataset
-	public XYPlot provide1DEICSUMPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator, 
+	public XYPlot provide1DEICSUMPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator,
 			double[] masses, double massResolution, boolean useRT) {
 		String[] labels = new String[dataset.getSeriesCount()];
 		for (int i = 0; i < labels.length; i++) {
@@ -387,7 +394,7 @@ public class Chromatogram1DChartProvider {
 		return plot;
 	}
 
-	public XYPlot provide1DEICCOPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator, 
+	public XYPlot provide1DEICCOPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator,
 			double[] masses, double massResolution, boolean useRT) {
 		String[] labels = new String[dataset.getSeriesCount()];
 		for (int i = 0; i < labels.length; i++) {
@@ -572,6 +579,77 @@ public class Chromatogram1DChartProvider {
 		return xyp;
 	}
 
+	/**
+	 * Retrieve all accessible {@link IVariableFragment} instances starting from
+	 * the given {@link IFileFragment} and traversing the ancestor tree in
+	 * breadth-first order, adding all immediate {@link IVariableFragment}
+	 * instances to the list first, before exploring the next ancestor as given
+	 * by <em>source_files</em>.
+	 *
+	 * @param fragment
+	 * @return
+	 */
+	public static List<IVariableFragment> getAggregatedVariables(
+			IFileFragment fragment) {
+		HashMap<String, IVariableFragment> names = new HashMap<String, IVariableFragment>();
+		List<IVariableFragment> allVars = new ArrayList<IVariableFragment>();
+		List<IFileFragment> parentsToExplore = new LinkedList<IFileFragment>();
+		// System.out.println("Parent files " + parentsToExplore);
+		parentsToExplore.add(fragment);
+		while (!parentsToExplore.isEmpty()) {
+			IFileFragment parent = parentsToExplore.remove(0);
+			try {
+				IVariableFragment sf = parent.getChild("source_files", true);
+				try {
+					Collection<String> c = ArrayTools.getStringsFromArray(sf.getArray());
+					for (String s : c) {
+//					log.debug("Processing file {}", s);
+						URI path = URI.create(FileTools.escapeUri(s));
+						if (path.getScheme() == null || !path.getPath().startsWith("/")) {
+							URI resolved = FileTools.resolveRelativeUri(fragment.getUri(), path);
+//						log.debug("Adding resolved relative path: {} to {}", path, resolved);
+							parentsToExplore.add(new FileFragment(resolved));
+						} else {
+//						log.debug("Adding absolute path: {}", path);
+							parentsToExplore.add(new FileFragment(path));
+						}
+
+//                    File file = new File(s);
+//                    if (file.isAbsolute()) {
+//                        parentsToExplore.add(new FileFragment(file));
+//                    } else {
+//                        try {
+//                            file = new File(
+//                                    cross.datastructures.tools.FileTools.resolveRelativeFile(new File(
+//                                    fragment.getAbsolutePath()).getParentFile(), new File(
+//                                    s)));
+//                            parentsToExplore.add(new FileFragment(file.getCanonicalFile()));
+//                        } catch (IOException ex) {
+//                            log.error("{}", ex);
+//                        }
+//                    }
+					}
+				} catch (ConstraintViolationException cve) {
+				}
+			} catch (ResourceNotAvailableException rnae) {
+			}
+			// System.out.println("Parent files " + parentsToExplore);
+			try {
+				for (IVariableFragment ivf : getVariablesFor(parent)) {
+					if (!ivf.getName().equals("source_files")) {
+						if (!names.containsKey(ivf.getName())) {
+							names.put(ivf.getName(), ivf);
+							allVars.add(ivf);
+						}
+					}
+				}
+			} catch (IOException ex) {
+//				log.warn("{}", ex);
+			}
+		}
+		return allVars;
+	}
+
 	public JFreeChart provideChart(List<IFileFragment> fragments) {
 		String[] labels = new String[fragments.size()];
 		Array[] arrays = new Array[fragments.size()];
@@ -581,7 +659,7 @@ public class Chromatogram1DChartProvider {
 		VariableSelectionPanel vsp = new VariableSelectionPanel();
 		IFileFragment fragment = fragments.get(0);
 		ArrayList<String> vars = new ArrayList<String>();
-		List<IVariableFragment> variables = FragmentTools.getAggregatedVariables(
+		List<IVariableFragment> variables = getAggregatedVariables(
 				fragment);
 
 		boolean showEICChoice = false;

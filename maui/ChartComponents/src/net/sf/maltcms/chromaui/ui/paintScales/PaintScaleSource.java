@@ -1,4 +1,4 @@
-/*
+/* 
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,31 +25,16 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.overlay.nodes.actions;
+package net.sf.maltcms.chromaui.ui.paintScales;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import net.sf.maltcms.common.charts.api.selection.IClearable;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionRegistration;
-import org.openide.util.NbBundle.Messages;
+import org.jfree.chart.renderer.PaintScale;
 
-@ActionID(
-		category = "OverlayNodeActions/DefaultActions",
-		id = "net.sf.maltcms.common.charts.overlay.nodes.actions.ClearSelection")
-@ActionRegistration(
-		displayName = "#CTL_ClearSelection")
-@Messages("CTL_ClearSelection=Clear")
-public final class ClearSelection implements ActionListener {
+/**
+ *
+ * @author nilshoffmann
+ */
+public interface PaintScaleSource {
 
-	private final IClearable context;
+    public abstract PaintScale getPaintScale();
 
-	public ClearSelection(IClearable context) {
-		this.context = context;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		context.clear();
-	}
 }

@@ -28,23 +28,16 @@
 package maltcms.ui.fileHandles.cdf.nodes;
 
 import cross.datastructures.fragments.IVariableFragment;
-import java.awt.Event;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import org.openide.ErrorManager;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.Lookup;
-import ucar.ma2.DataType;
-import ucar.ma2.Range;
 import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
 
 /**
  *

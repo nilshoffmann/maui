@@ -104,13 +104,13 @@ public class MSSeries extends XYSeries{
         this.normalize = normalize;
         if(this.normalize) {
             this.norm = getNormalizationValue();
-            System.out.println("Normalizing series "+getKey()+": "+normalize);
+//            System.out.println("Normalizing series "+getKey()+": "+normalize);
             //normalize
             for(int i = 0;i<getItemCount();i++) {
                 updateByIndex(i, Double.valueOf(getY(i).doubleValue()/this.norm));
             }
         }else{
-            System.out.println("Normalizing series "+getKey()+": "+normalize);
+//            System.out.println("Normalizing series "+getKey()+": "+normalize);
             //denormalize
             for(int i = 0;i<getItemCount();i++) {
                 updateByIndex(i, Double.valueOf(getY(i).doubleValue()*this.norm));

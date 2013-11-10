@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
@@ -25,16 +25,12 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.chromatogram2Dviewer.events;
-
-import org.jfree.chart.renderer.PaintScale;
+package net.sf.maltcms.common.charts.api.selection;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
-public interface PaintScaleTarget {
-
-    public void setPaintScale(PaintScale ps);
-
+public interface IClearable {
+	void clear();
 }

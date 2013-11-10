@@ -201,7 +201,7 @@ public class ChromAUIProject implements IChromAUIProject {
 	@Override
 	public void removeDescriptor(IBasicDescriptor... descriptor) {
 		DialogDisplayer dd = DialogDisplayer.getDefault();
-		boolean deleteAll = true;
+		boolean deleteAll = false;
 		if (descriptor.length > 1) {
 			Object result = dd.notify(new NotifyDescriptor.Confirmation(
 					"Delete all " + descriptor.length + " descriptor" + (descriptor.length > 1 ? "s" : "") + "?\nYes will delete all selected Descriptors, No to select each Descriptor individually.",

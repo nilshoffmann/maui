@@ -2,6 +2,14 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Actions">
+        <folder name="ContainerNodeActions">
+            <folder name="ChromatogramNode">
+                <folder name="Open">
+                    <file name="net-sf-maltcms-chromaui-chromatogram2Dviewer-actions-Chromatogram1DHeatmapOpenAction.instance_hidden"/>
+                    <file name="net-sf-maltcms-maui-heatmapViewer-actions-ViewAs3DHeatmap.instance_hidden"/>
+                </folder>
+            </folder>
+        </folder>
         <folder name="File">
             <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction.instance_hidden"/>
         </folder>

@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.chromatogram2Dviewer.events;
+package net.sf.maltcms.chromaui.ui.paintScales;
 
 import org.jfree.chart.renderer.PaintScale;
 
@@ -33,8 +33,8 @@ import org.jfree.chart.renderer.PaintScale;
  *
  * @author nilshoffmann
  */
-public interface PaintScaleSource {
+public interface PaintScaleTarget {
 
-    public abstract PaintScale getPaintScale();
+    public void setPaintScale(PaintScale ps);
 
 }
