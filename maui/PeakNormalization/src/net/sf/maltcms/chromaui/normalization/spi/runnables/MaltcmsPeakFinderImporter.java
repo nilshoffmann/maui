@@ -195,6 +195,13 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
 			if(Double.isNaN(peak.getStopTime())) {
 				peak.setStopTime(peak.getApexTime());
 			}
+			descriptor.setBaselineStartIntensity(peak.getBaselineStartValue());
+			descriptor.setBaselineStopIntensity(peak.getBaselineStopValue());
+			descriptor.setBaselineStartTime(peak.getBaselineStartTime());
+			descriptor.setBaselineStopTime(peak.getBaselineStopTime());
+			descriptor.setStartIntensity(totalIntensity.getDouble(peak.getStartIndex()));
+			descriptor.setStopIntensity(totalIntensity.getDouble(peak.getStartIndex()));
+			descriptor.setStartTime(peak.getStartTime());
 			descriptor.setStopTime(peak.getStopTime());
 			descriptor.setNormalizedArea(peak.getNormalizedArea());
 			descriptor.setNormalizationMethods(peak.getNormalizationMethods());

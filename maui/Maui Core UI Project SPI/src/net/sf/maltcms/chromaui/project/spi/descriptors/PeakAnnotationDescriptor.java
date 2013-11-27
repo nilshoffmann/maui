@@ -672,4 +672,106 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
 		this.nativeDatabaseId = id;
 		firePropertyChange(PROP_NATIVEDATABASEID, old, this.nativeDatabaseId);
 	}
+
+	private double baselineStartTime = Double.NaN;
+	public static final String PROP_BASELINE_START_TIME= "baselineStartTime";
+	
+	@Override
+	public void setBaselineStartTime(double baselineStartTime) {
+		activate(ActivationPurpose.WRITE);
+		double old = this.baselineStartTime;
+		this.baselineStartTime = baselineStartTime;
+		firePropertyChange(PROP_BASELINE_START_TIME, old, this.baselineStartTime);
+	}
+
+	@Override
+	public double getBaselineStartTime() {
+		activate(ActivationPurpose.READ);
+		return this.baselineStartTime;
+	}
+
+	private double baselineStopTime = Double.NaN;
+	public static final String PROP_BASELINE_STOP_TIME= "baselineStopTime";
+	
+	@Override
+	public void setBaselineStopTime(double baselineStopTime) {
+		activate(ActivationPurpose.WRITE);
+		double old = this.baselineStopTime;
+		this.baselineStopTime = baselineStopTime;
+		firePropertyChange(PROP_BASELINE_STOP_TIME, old, this.baselineStopTime);
+	}
+
+	@Override
+	public double getBaselineStopTime() {
+		activate(ActivationPurpose.READ);
+		return this.baselineStopTime;
+	}
+
+	private double baselineStartIntensity = Double.NaN;
+	public static final String PROP_BASELINE_START_INTENSITY = "baselineStartIntensity";
+	
+	@Override
+	public void setBaselineStartIntensity(double baselineStartIntensity) {
+		activate(ActivationPurpose.WRITE);
+		double old = this.baselineStartIntensity;
+		this.baselineStartIntensity = baselineStartIntensity;
+		firePropertyChange(PROP_BASELINE_START_INTENSITY, old, this.baselineStartIntensity);
+	}
+
+	@Override
+	public double getBaselineStartIntensity() {
+		activate(ActivationPurpose.READ);
+		return this.baselineStartIntensity;
+	}
+
+	private double baselineStopIntensity = Double.NaN;
+	public static final String PROP_BASELINE_STOP_INTENSITY = "baselineStopIntensity";
+	
+	@Override
+	public void setBaselineStopIntensity(double baselineStopIntensity) {
+		activate(ActivationPurpose.WRITE);
+		double old = this.baselineStopIntensity;
+		this.baselineStopIntensity = baselineStopIntensity;
+		firePropertyChange(PROP_BASELINE_STOP_INTENSITY, old, this.baselineStopIntensity);
+	}
+
+	@Override
+	public double getBaselineStopIntensity() {
+		activate(ActivationPurpose.READ);
+		return this.baselineStopIntensity;
+	}
+
+	private double startIntensity = Double.NaN;
+	public static final String PROP_START_INTENSITY = "startIntensity";
+	
+	@Override
+	public void setStartIntensity(double startIntensity) {
+		activate(ActivationPurpose.WRITE);
+		double old = this.startIntensity;
+		this.startIntensity = startIntensity;
+		firePropertyChange(PROP_START_INTENSITY, old, this.startIntensity);
+	}
+
+	@Override
+	public double getStartIntensity() {
+		activate(ActivationPurpose.READ);
+		return this.startIntensity;
+	}
+
+	private double stopIntensity = Double.NaN;
+	public static final String PROP_STOP_INTENSITY = "stopIntensity";
+	
+	@Override
+	public void setStopIntensity(double stopIntensity) {
+		activate(ActivationPurpose.WRITE);
+		double old = this.stopIntensity;
+		this.stopIntensity = stopIntensity;
+		firePropertyChange(PROP_STOP_INTENSITY, old, this.stopIntensity);
+	}
+
+	@Override
+	public double getStopIntensity() {
+		activate(ActivationPurpose.READ);
+		return this.stopIntensity;
+	}
 }

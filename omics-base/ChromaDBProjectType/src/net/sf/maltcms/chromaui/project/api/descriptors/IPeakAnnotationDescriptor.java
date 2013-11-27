@@ -124,6 +124,30 @@ public interface IPeakAnnotationDescriptor extends IBasicDescriptor {
     public void setBaselineArea(double baselineArea);
     
     public double getBaselineArea();
+	
+	public void setBaselineStartTime(double baselineStartTime);
+    
+    public double getBaselineStartTime();
+	
+	public void setBaselineStopTime(double baselineStopTime);
+    
+    public double getBaselineStopTime();
+	
+	public void setBaselineStartIntensity(double baselineStartIntensity);
+    
+    public double getBaselineStartIntensity();
+	
+	public void setBaselineStopIntensity(double baselineStopIntensity);
+    
+    public double getBaselineStopIntensity();
+	
+	public void setStartIntensity(double startIntensity);
+	
+	public double getStartIntensity();
+	
+	public void setStopIntensity(double stopIntensity);
+	
+	public double getStopIntensity();
     
     public double getApexIntensity();
     

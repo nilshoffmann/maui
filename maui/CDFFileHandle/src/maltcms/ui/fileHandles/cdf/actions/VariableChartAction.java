@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package maltcms.ui.fileHandles.cdf;
+package maltcms.ui.fileHandles.cdf.actions;
 
 import cross.datastructures.fragments.IVariableFragment;
 import java.awt.event.ActionListener;

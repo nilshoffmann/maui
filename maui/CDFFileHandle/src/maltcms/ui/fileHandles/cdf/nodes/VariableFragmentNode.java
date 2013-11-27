@@ -31,12 +31,17 @@ import cross.datastructures.fragments.IVariableFragment;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import javax.swing.Action;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.Lookup;
+import org.openide.util.Utilities;
+import org.openide.util.lookup.Lookups;
 import ucar.nc2.Attribute;
 
 /**
@@ -44,24 +49,24 @@ import ucar.nc2.Attribute;
  * @author Nils Hoffmann
  */
 public class VariableFragmentNode extends BeanNode<IVariableFragment> {
-
+	
 	public VariableFragmentNode(IVariableFragment bean) throws IntrospectionException {
-		super(bean);
+		super(bean, Children.LEAF, Lookups.fixed(bean));
 	}
-
+	
 	public VariableFragmentNode(IVariableFragment bean, Children children) throws IntrospectionException {
 		super(bean, children);
 	}
-
+	
 	public VariableFragmentNode(IVariableFragment bean, Children children, Lookup lkp) throws IntrospectionException {
 		super(bean, children, lkp);
 	}
-
+	
 	@Override
 	protected void createProperties(IVariableFragment bean, BeanInfo info) {
 		//super.createProperties(bean, info); //To change body of generated methods, choose Tools | Templates.
 	}
-
+	
 	@Override
 	protected Sheet createSheet() {
 		Sheet sheet = Sheet.createDefault();
@@ -101,9 +106,20 @@ public class VariableFragmentNode extends BeanNode<IVariableFragment> {
 			}
 		};
 		set.put(attributesProp);
-
+		
 		sheet.put(set);
 		return sheet;
-
+		
+	}
+	
+	@Override	
+	public Action[] getActions(boolean context) {
+		Action[] superActions = super.getActions(context);
+		ArrayList<Action> finalActions = new ArrayList<Action>();
+		List<? extends Action> actions = Utilities.actionsForPath("Actions/VariableFragmentActions");
+		finalActions.addAll(actions);
+		finalActions.add(null);
+		finalActions.addAll(Arrays.asList(superActions));
+		return finalActions.toArray(new Action[finalActions.size()]);
 	}
 }
