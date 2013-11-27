@@ -64,7 +64,6 @@ import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.XYDataset;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;

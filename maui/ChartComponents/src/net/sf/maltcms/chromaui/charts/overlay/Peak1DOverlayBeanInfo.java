@@ -45,16 +45,17 @@ public class Peak1DOverlayBeanInfo extends SimpleBeanInfo {
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_displayName = 0;
     private static final int PROPERTY_drawLines = 1;
-    private static final int PROPERTY_drawShapes = 2;
-    private static final int PROPERTY_layerPosition = 3;
-    private static final int PROPERTY_shortDescription = 4;
-    private static final int PROPERTY_visibilityChangeable = 5;
-    private static final int PROPERTY_visible = 6;
+    private static final int PROPERTY_drawOutlines = 2;
+    private static final int PROPERTY_drawShapes = 3;
+    private static final int PROPERTY_layerPosition = 4;
+    private static final int PROPERTY_shortDescription = 5;
+    private static final int PROPERTY_visibilityChangeable = 6;
+    private static final int PROPERTY_visible = 7;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[7];
+        PropertyDescriptor[] properties = new PropertyDescriptor[8];
     
         try {
             properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.charts.overlay.Peak1DOverlay.class, "getDisplayName", "setDisplayName" ); // NOI18N
@@ -63,6 +64,9 @@ public class Peak1DOverlayBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_drawLines] = new PropertyDescriptor ( "drawLines", net.sf.maltcms.chromaui.charts.overlay.Peak1DOverlay.class, "isDrawLines", "setDrawLines" ); // NOI18N
             properties[PROPERTY_drawLines].setDisplayName ( "Draw Lines" );
             properties[PROPERTY_drawLines].setShortDescription ( "Toggle Drawing of Lines" );
+            properties[PROPERTY_drawOutlines] = new PropertyDescriptor ( "drawOutlines", net.sf.maltcms.chromaui.charts.overlay.Peak1DOverlay.class, "isDrawOutlines", "setDrawOutlines" ); // NOI18N
+            properties[PROPERTY_drawOutlines].setDisplayName ( "Draw Outlines" );
+            properties[PROPERTY_drawOutlines].setShortDescription ( "Toggle Drawing of Peak Outline" );
             properties[PROPERTY_drawShapes] = new PropertyDescriptor ( "drawShapes", net.sf.maltcms.chromaui.charts.overlay.Peak1DOverlay.class, "isDrawShapes", "setDrawShapes" ); // NOI18N
             properties[PROPERTY_drawShapes].setDisplayName ( "Draw Shapes" );
             properties[PROPERTY_drawShapes].setShortDescription ( "Toggle Drawing of Shapes" );

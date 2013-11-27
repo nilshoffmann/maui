@@ -29,11 +29,9 @@ package net.sf.maltcms.common.charts.overlay.nodes;
 
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.Action;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
-import net.sf.maltcms.common.charts.overlay.nodes.actions.ClearSelection;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;

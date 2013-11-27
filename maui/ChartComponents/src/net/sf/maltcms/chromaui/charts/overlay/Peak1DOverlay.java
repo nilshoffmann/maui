@@ -104,7 +104,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 	private List<VisualPeakAnnotation> selectedPeaks = new ArrayList<VisualPeakAnnotation>();
 	private boolean drawShapes = true;
 	private boolean drawLines = true;
-	private boolean drawOutlines = true;
+	private boolean drawOutlines = false;
 	private ADataset1D<IChromatogram1D, IScan> dataset = null;
 	private Result<IPeakAnnotationDescriptor> padResult;
 
