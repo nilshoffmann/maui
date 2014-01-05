@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +53,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
-import maltcms.datastructures.ms.Chromatogram2D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IExperiment2D;
 import maltcms.datastructures.ms.IScan2D;
@@ -113,11 +111,11 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	private void init() {
 		if (!initialized) {
 			final String mz = Factory.getInstance().getConfiguration().getString(
-					"var.mass_values", "mass_values");
+				"var.mass_values", "mass_values");
 			final String intens = Factory.getInstance().getConfiguration().getString(
-					"var.intensity_values", "intensity_values");
+				"var.intensity_values", "intensity_values");
 			final String scan_index = Factory.getInstance().getConfiguration().
-					getString("var.scan_index", "scan_index");
+				getString("var.scan_index", "scan_index");
 			final IVariableFragment index = this.parent.getChild(scan_index);
 			this.scans = MaltcmsTools.getNumberOfScans(this.parent);
 			final IVariableFragment mzV = this.parent.getChild(mz);
@@ -129,7 +127,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 			activateCache(iV);
 			intensityValues = iV.getIndexedArray();
 			this.satOffset = parent.getChild("scan_acquisition_time").getArray().
-					getDouble(0);
+				getDouble(0);
 			modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
 			try {
 				scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
@@ -199,25 +197,30 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	}
 
 	protected Scan2D acquireFromCache(final int i) {
-		init();
-		if (whm.get(i) == null) {
-			whm.put(Integer.valueOf(i), provide(i));
-			if (!loading.get()) {
-				Runnable r = new Runnable() {
-					@Override
-					public void run() {
-						int minBound = Math.max(0, i - prefetchSize);
-						int maxBound = Math.min(getNumberOfScans(), i + prefetchSize);
-						for (int j = minBound; j <= maxBound; j++) {
-							whm.put(Integer.valueOf(j), provide(j));
+		try {
+			init();
+			if (whm.get(i) == null) {
+				whm.put(Integer.valueOf(i), provide(i));
+				if (!loading.get()) {
+					Runnable r = new Runnable() {
+						@Override
+						public void run() {
+							int minBound = Math.max(0, i - prefetchSize);
+							int maxBound = Math.min(getNumberOfScans(), i + prefetchSize);
+							for (int j = minBound; j <= maxBound; j++) {
+								whm.put(Integer.valueOf(j), provide(j));
+							}
+							loading.compareAndSet(true, false);
 						}
-						loading.compareAndSet(true, false);
-					}
-				};
-				prefetchLoader.submit(r);
+					};
+					prefetchLoader.submit(r);
+				}
 			}
+			return whm.get(Integer.valueOf(i)).getScan();
+		} catch (java.lang.IndexOutOfBoundsException ex) {
+			System.err.println("Warning: Could not access scan at index " + i);
+			return null;
 		}
-		return whm.get(Integer.valueOf(i)).getScan();
 	}
 
 	protected Scan2D buildScan(int i) {
@@ -227,7 +230,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 	@Override
 	public void configure(final Configuration cfg) {
 		this.scan_acquisition_time_var = cfg.getString(
-				"var.scan_acquisition_time", "scan_acquisition_time");
+			"var.scan_acquisition_time", "scan_acquisition_time");
 		this.first_column_elution_time_var = cfg.getString("var.first_column_elution_time");
 		this.second_column_elution_time_var = cfg.getString("var.second_column_elution_time");
 	}
@@ -313,7 +316,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 			@Override
 			public void remove() {
 				throw new UnsupportedOperationException(
-						"Can not remove scans with iterator!");
+					"Can not remove scans with iterator!");
 			}
 		};
 		return iter;
@@ -325,7 +328,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see maltcms.datastructures.ms.IChromatogram#getScanAcquisitionTime()
 	 */
 	@Override
@@ -347,7 +350,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see maltcms.datastructures.ms.IChromatogram#getNumberOfScans()
 	 */
 	@Override
@@ -361,7 +364,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 		double[] satArray = null;
 		if (satArrayReference == null || satArrayReference.get() == null) {
 			satArray = (double[]) getScanAcquisitionTime().get1DJavaArray(
-					double.class);
+				double.class);
 			satArrayReference = new SoftReference<double[]>(satArray);
 		} else {
 			satArray = satArrayReference.get();
@@ -376,7 +379,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 		int idx = Arrays.binarySearch(satArray, scan_acquisition_time);
 		if (idx >= 0) {// exact hit
 			log.info("sat {}, scan_index {}",
-					scan_acquisition_time, idx);
+				scan_acquisition_time, idx);
 			return idx;
 		} else {// imprecise hit, find closest element
 			int insertionPosition = (-idx) - 1;
@@ -392,7 +395,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 			double previous = satArray[Math.max(0, insertionPosition - 1)];
 //			System.out.println("Value before insertion position: "+previous);
 			if (Math.abs(scan_acquisition_time - previous) <= Math.abs(
-					scan_acquisition_time - current)) {
+				scan_acquisition_time - current)) {
 				int index = Math.max(0, insertionPosition - 1);
 //				System.out.println("Returning "+index);
 				return index;
@@ -405,7 +408,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see maltcms.datastructures.ms.IChromatogram#getParent()
 	 */
 	@Override
@@ -425,8 +428,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 			scanMsLevel = msLevel.getByte(k);
 		}
 		Scan2D s = new Scan2D(masses, intens, k,
-				this.parent.getChild(scan_acquisition_time_var).getArray().
-				getDouble(k), k, k, rts[0], rts[1], scanMsLevel);
+			this.parent.getChild(scan_acquisition_time_var).getArray().
+			getDouble(k), k, k, rts[0], rts[1], scanMsLevel);
 		return new SerializableScan2D(s);
 	}
 
@@ -498,7 +501,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 			this.rtVariable = rtVariable;
 			this.resource = resource;
 			this.satOffset = resource.getChild(rtVariable).getArray().
-					getDouble(0);
+				getDouble(0);
 			modulationTime = resource.getChild("modulation_time").getArray().getDouble(0);
 			this.scanRate = resource.getChild("scan_rate").getArray().getDouble(0);
 			spm = modulationTime * scanRate;
