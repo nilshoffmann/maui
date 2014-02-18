@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -36,11 +36,16 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import javax.swing.Action;
-import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.BeanNode.Descriptor;
 import org.openide.nodes.FilterNode;
@@ -53,19 +58,20 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.WeakListeners;
+import org.openide.util.actions.Presenter;
 
 /**
  *
  * @author nilshoffmann
  */
 public class ChromatogramNode extends FilterNode implements
-		PropertyChangeListener {
+	PropertyChangeListener {
 
 	public ChromatogramNode(Node original, org.openide.nodes.Children children,
-			Lookup lookup) {
+		Lookup lookup) {
 		super(original, children, lookup);
 		lookup.lookup(IChromatogramDescriptor.class).addPropertyChangeListener(WeakListeners.propertyChange(this,
-				lookup.lookup(IChromatogramDescriptor.class)));
+			lookup.lookup(IChromatogramDescriptor.class)));
 	}
 
 	public ChromatogramNode(Node original, org.openide.nodes.Children children) {
@@ -75,12 +81,12 @@ public class ChromatogramNode extends FilterNode implements
 	public ChromatogramNode(Node original) {
 		super(original);
 	}
-	
+
 	@Override
 	public PropertySet[] getPropertySets() {
 		PropertySet[] propSets = super.getPropertySets();
 		final IChromatogramDescriptor icd = getLookup().lookup(
-				IChromatogramDescriptor.class);
+			IChromatogramDescriptor.class);
 		if (icd == null) {
 			return propSets;
 		}
@@ -94,7 +100,7 @@ public class ChromatogramNode extends FilterNode implements
 			pset.setDisplayName("Chromatogram Properties");
 			pset.put(d.property);
 			BeanDescriptor bd = beanInfo.getBeanDescriptor();
-			if ((bd != null) && (bd.getValue("propertiesHelpID") != null)) { // NOI18N      
+			if ((bd != null) && (bd.getValue("propertiesHelpID") != null)) { // NOI18N
 				pset.setValue("helpID", bd.getValue("propertiesHelpID")); // NOI18N
 			}
 
@@ -105,7 +111,7 @@ public class ChromatogramNode extends FilterNode implements
 				eset.setName("chromatogramExpert");
 				eset.setDisplayName("Chromatogram Expert Properties");
 				eset.put(d.expert);
-				if ((bd != null) && (bd.getValue("expertHelpID") != null)) { // NOI18N      
+				if ((bd != null) && (bd.getValue("expertHelpID") != null)) { // NOI18N
 					eset.setValue("helpID", bd.getValue("expertHelpID")); // NOI18N
 				}
 
@@ -119,52 +125,106 @@ public class ChromatogramNode extends FilterNode implements
 
 	@Override
 	public Action[] getActions(boolean context) {
-		Set<Action> allActions = new LinkedHashSet<Action>();
-		INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
-		allActions.addAll(Utilities.actionsForPath(
-				"Actions/ContainerNodeActions/ChromatogramNode"));
-		allActions.removeAll(Utilities.actionsForPath(
-				"Actions/ContainerNodeActions/ChromatogramNode/Open"));
-		Set<Action> openActions = new LinkedHashSet<Action>();
-		//avoid double entries in main menu and Open submenu
-		openActions.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open"));
-		allActions.add(f.createMenuItem("Open", "Actions/ContainerNodeActions/ChromatogramNode/Open"));
+		return createActions(context, "Actions/ContainerNodeActions/ChromatogramNode");//, "Actions/ContainerNodeActions/ChromatogramNode/Open");
+//		Set<Action> allActions = new LinkedHashSet<Action>();
+//		INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
+//		allActions.addAll(Utilities.actionsForPath(
+//			"Actions/ContainerNodeActions/ChromatogramNode"));
+//		allActions.removeAll(Utilities.actionsForPath(
+//			"Actions/ContainerNodeActions/ChromatogramNode/Open"));
+//		Set<Action> openActions = new LinkedHashSet<Action>();
+//		//avoid double entries in main menu and Open submenu
+//		openActions.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open"));
+//		allActions.add(f.createMenuItem("Open", "Actions/ContainerNodeActions/ChromatogramNode/Open"));
+//
+//		Action[] originalActions = super.getActions(context);
+//		allActions.addAll(Arrays.asList(originalActions));
+//		allActions.removeAll(openActions);
+////		List<String> exclusions = Arrays.asList("net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction");
+////		Set<Action> actionsToRemove = new HashSet<Action>();
+////		for (String s : exclusions) {
+////			for (Action a : allActions) {
+////				if (a != null && a.getClass().getName().equals(s)) {
+////					actionsToRemove.add(a);
+////				}
+////			}
+////		}
+////		allActions.removeAll(actionsToRemove);
+////        containerActions.addAll(getLookup().lookupAll(Action.class));
+//		return allActions.toArray(new Action[allActions.size()]);
+	}
 
-		Action[] originalActions = super.getActions(context);
-		allActions.addAll(Arrays.asList(originalActions));
-		allActions.removeAll(openActions);
-//		List<String> exclusions = Arrays.asList("net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction");
-//		Set<Action> actionsToRemove = new HashSet<Action>();
-//		for (String s : exclusions) {
-//			for (Action a : allActions) {
-//				if (a != null && a.getClass().getName().equals(s)) {
-//					actionsToRemove.add(a);
-//				}
-//			}
-//		}
-//		allActions.removeAll(actionsToRemove);
-//        containerActions.addAll(getLookup().lookupAll(Action.class));
-		return allActions.toArray(new Action[allActions.size()]);
+	/**
+	 * Retrieves actions from the given paths.
+	 *
+	 * @param context Action context sensitivity
+	 * @param paths   Action paths
+	 * @return All found actions from the given paths
+	 */
+	protected Action[] createActions(boolean context, String... paths) {
+		ArrayList<Action> subActions = new ArrayList<Action>();
+		Set<Action> actions = new LinkedHashSet<Action>();
+		for (String path : paths) {
+			List<? extends Action> actionsForPath = Utilities.actionsForPath(path);
+			for (Action a : actionsForPath) {
+				if (a instanceof Presenter.Popup) {
+					List<Action> presenterActions = this.findSubActions((Presenter.Popup) a);
+					if (!presenterActions.isEmpty()) {
+						subActions.addAll(presenterActions);
+					} else {
+						continue;
+					}
+				}
+				actions.add(a);
+			}
+		}
+
+		List<Action> parent = Arrays.asList(super.getActions(context));
+		actions.addAll(parent);
+
+		// remove all actions that are already in a submenu
+		actions.removeAll(subActions);
+
+		return actions.toArray(new Action[actions.size()]);
+	}
+
+	private List<Action> findSubActions(Presenter.Popup subMenu) {
+		List<Action> actions = new ArrayList<Action>();
+
+		JMenuItem item = subMenu.getPopupPresenter();
+		if (item instanceof JMenu) {
+			JMenu menu = (JMenu) item;
+			for (int i = 0; i < menu.getItemCount(); i++) {
+				Action a = menu.getItem(i).getAction();
+				actions.add(a);
+
+				if (a instanceof Presenter.Popup) {
+					actions.addAll(this.findSubActions((Presenter.Popup) a));
+				}
+			}
+		}
+
+		return actions;
 	}
 
 	@Override
 	public Image getIcon(int type) {
 		Image descrImage = ImageUtilities.loadImage(
-				"net/sf/maltcms/chromaui/project/resources/cdflogo.png");
+			"net/sf/maltcms/chromaui/project/resources/cdflogo.png");
 		int w = descrImage.getWidth(null);
 		int h = descrImage.getHeight(null);
 		IChromatogramDescriptor descr = getLookup().lookup(
-				IChromatogramDescriptor.class);
+			IChromatogramDescriptor.class);
 		if (descr != null) {
 			Color c = descr.getTreatmentGroup().getColor();
 			if (c != null) {
 				BufferedImage bi = new BufferedImage(w / 10, h / 10,
-						BufferedImage.TYPE_INT_ARGB);
+					BufferedImage.TYPE_INT_ARGB);
 				Graphics2D g2 = bi.createGraphics();
 				g2.setColor(c);
 				g2.fillRect(0, 0, bi.getWidth(), bi.getHeight());
 				descrImage = ImageUtilities.mergeImages(descrImage, bi,
-						w - bi.getWidth(), h - bi.getHeight());
+					w - bi.getWidth(), h - bi.getHeight());
 			}
 
 		}
@@ -175,7 +235,7 @@ public class ChromatogramNode extends FilterNode implements
 	public String getDisplayName() {
 		return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();
 	}
-	
+
 	@Override
 	public String getHtmlDisplayName() {
 		return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();

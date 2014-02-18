@@ -1,5 +1,5 @@
 /*
- * Maui, Maltcms User Interface. 
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -27,6 +27,7 @@
  */
 package org.jfree.chart;
 
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -50,6 +51,7 @@ import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.jfree.chart.panel.Overlay;
+import org.openide.filesystems.FileChooserBuilder;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -133,6 +135,14 @@ public class ContextAwareChartPanel extends ChartPanel {
 		super.mouseMoved(e); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Override
+	public void print(Graphics g) {
+		boolean refreshBuffer = getRefreshBuffer();
+		setRefreshBuffer(true);
+		super.print(g);
+		setRefreshBuffer(refreshBuffer);
+	}
+
 	public void paintChart(Graphics2D g2) {
 		getChart().draw(g2, new Rectangle2D.Double(0, 0, getWidth(), getHeight()), getChartRenderingInfo());
 		for (Overlay overlay : overlays) {
@@ -143,7 +153,7 @@ public class ContextAwareChartPanel extends ChartPanel {
 
 	@Override
 	protected JPopupMenu createPopupMenu(boolean properties,
-			boolean copy, boolean save, boolean print, boolean zoom) {
+		boolean copy, boolean save, boolean print, boolean zoom) {
 		JPopupMenu result = new JPopupMenu(localizationResources.getString("Chart") + ":");
 		boolean separator = false;
 		if (popupMenuActionProvider != null) {
@@ -158,7 +168,7 @@ public class ContextAwareChartPanel extends ChartPanel {
 
 		if (properties) {
 			JMenuItem propertiesItem = new JMenuItem(
-					localizationResources.getString("Properties..."));
+				localizationResources.getString("Properties..."));
 			propertiesItem.setActionCommand(PROPERTIES_COMMAND);
 			propertiesItem.addActionListener(this);
 			result.add(propertiesItem);
@@ -170,7 +180,7 @@ public class ContextAwareChartPanel extends ChartPanel {
 				result.addSeparator();
 			}
 			JMenuItem copyItem = new JMenuItem(
-					localizationResources.getString("Copy"));
+				localizationResources.getString("Copy"));
 			copyItem.setActionCommand(COPY_COMMAND);
 			copyItem.addActionListener(this);
 			result.add(copyItem);
@@ -194,7 +204,7 @@ public class ContextAwareChartPanel extends ChartPanel {
 			svgItem.addActionListener(this);
 			saveSubMenu.add(svgItem);
 //            }
-//            
+//
 //            if (isOrsonPDFAvailable()) {
 //                JMenuItem pdfItem = new JMenuItem("PDF...");
 //                pdfItem.setActionCommand("SAVE_AS_PDF");
@@ -210,7 +220,7 @@ public class ContextAwareChartPanel extends ChartPanel {
 				result.addSeparator();
 			}
 			JMenuItem printItem = new JMenuItem(
-					localizationResources.getString("Print..."));
+				localizationResources.getString("Print..."));
 			printItem.setActionCommand(PRINT_COMMAND);
 			printItem.addActionListener(this);
 			result.add(printItem);
@@ -223,10 +233,10 @@ public class ContextAwareChartPanel extends ChartPanel {
 			}
 
 			JMenu zoomInMenu = new JMenu(
-					localizationResources.getString("Zoom_In"));
+				localizationResources.getString("Zoom_In"));
 
 			JMenuItem zoomInBothMenuItem = new JMenuItem(
-					localizationResources.getString("All_Axes"));
+				localizationResources.getString("All_Axes"));
 			zoomInBothMenuItem.setActionCommand(ZOOM_IN_BOTH_COMMAND);
 			zoomInBothMenuItem.addActionListener(this);
 			zoomInMenu.add(zoomInBothMenuItem);
@@ -234,13 +244,13 @@ public class ContextAwareChartPanel extends ChartPanel {
 			zoomInMenu.addSeparator();
 
 			JMenuItem zoomInDomainMenuItem = new JMenuItem(
-					localizationResources.getString("Domain_Axis"));
+				localizationResources.getString("Domain_Axis"));
 			zoomInDomainMenuItem.setActionCommand(ZOOM_IN_DOMAIN_COMMAND);
 			zoomInDomainMenuItem.addActionListener(this);
 			zoomInMenu.add(zoomInDomainMenuItem);
 
 			JMenuItem zoomInRangeMenuItem = new JMenuItem(
-					localizationResources.getString("Range_Axis"));
+				localizationResources.getString("Range_Axis"));
 			zoomInRangeMenuItem.setActionCommand(ZOOM_IN_RANGE_COMMAND);
 			zoomInRangeMenuItem.addActionListener(this);
 			zoomInMenu.add(zoomInRangeMenuItem);
@@ -248,10 +258,10 @@ public class ContextAwareChartPanel extends ChartPanel {
 			result.add(zoomInMenu);
 
 			JMenu zoomOutMenu = new JMenu(
-					localizationResources.getString("Zoom_Out"));
+				localizationResources.getString("Zoom_Out"));
 
 			JMenuItem zoomOutBothMenuItem = new JMenuItem(
-					localizationResources.getString("All_Axes"));
+				localizationResources.getString("All_Axes"));
 			zoomOutBothMenuItem.setActionCommand(ZOOM_OUT_BOTH_COMMAND);
 			zoomOutBothMenuItem.addActionListener(this);
 			zoomOutMenu.add(zoomOutBothMenuItem);
@@ -259,14 +269,14 @@ public class ContextAwareChartPanel extends ChartPanel {
 			zoomOutMenu.addSeparator();
 
 			JMenuItem zoomOutDomainMenuItem = new JMenuItem(
-					localizationResources.getString("Domain_Axis"));
+				localizationResources.getString("Domain_Axis"));
 			zoomOutDomainMenuItem.setActionCommand(
-					ZOOM_OUT_DOMAIN_COMMAND);
+				ZOOM_OUT_DOMAIN_COMMAND);
 			zoomOutDomainMenuItem.addActionListener(this);
 			zoomOutMenu.add(zoomOutDomainMenuItem);
 
 			JMenuItem zoomOutRangeMenuItem = new JMenuItem(
-					localizationResources.getString("Range_Axis"));
+				localizationResources.getString("Range_Axis"));
 			zoomOutRangeMenuItem.setActionCommand(ZOOM_OUT_RANGE_COMMAND);
 			zoomOutRangeMenuItem.addActionListener(this);
 			zoomOutMenu.add(zoomOutRangeMenuItem);
@@ -274,27 +284,27 @@ public class ContextAwareChartPanel extends ChartPanel {
 			result.add(zoomOutMenu);
 
 			JMenu autoRangeMenu = new JMenu(
-					localizationResources.getString("Auto_Range"));
+				localizationResources.getString("Auto_Range"));
 
 			JMenuItem zoomResetBothMenuItem = new JMenuItem(
-					localizationResources.getString("All_Axes"));
+				localizationResources.getString("All_Axes"));
 			zoomResetBothMenuItem.setActionCommand(
-					ZOOM_RESET_BOTH_COMMAND);
+				ZOOM_RESET_BOTH_COMMAND);
 			zoomResetBothMenuItem.addActionListener(this);
 			autoRangeMenu.add(zoomResetBothMenuItem);
 
 			autoRangeMenu.addSeparator();
 			JMenuItem zoomResetDomainMenuItem = new JMenuItem(
-					localizationResources.getString("Domain_Axis"));
+				localizationResources.getString("Domain_Axis"));
 			zoomResetDomainMenuItem.setActionCommand(
-					ZOOM_RESET_DOMAIN_COMMAND);
+				ZOOM_RESET_DOMAIN_COMMAND);
 			zoomResetDomainMenuItem.addActionListener(this);
 			autoRangeMenu.add(zoomResetDomainMenuItem);
 
 			JMenuItem zoomResetRangeMenuItem = new JMenuItem(
-					localizationResources.getString("Range_Axis"));
+				localizationResources.getString("Range_Axis"));
 			zoomResetRangeMenuItem.setActionCommand(
-					ZOOM_RESET_RANGE_COMMAND);
+				ZOOM_RESET_RANGE_COMMAND);
 			zoomResetRangeMenuItem.addActionListener(this);
 			autoRangeMenu.add(zoomResetRangeMenuItem);
 
@@ -316,10 +326,12 @@ public class ContextAwareChartPanel extends ChartPanel {
 	 */
 	@Override
 	public void doSaveAs() throws IOException {
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(getDefaultDirectoryForSaveAs());
+		FileChooserBuilder fcb = new FileChooserBuilder(ContextAwareChartPanel.class);
+		JFileChooser fileChooser = fcb.createFileChooser();
+//		JFileChooser fileChooser = new JFileChooser();
+//		fileChooser.setCurrentDirectory(getDefaultDirectoryForSaveAs());
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				localizationResources.getString("PNG_Image_Files"), "png");
+			localizationResources.getString("PNG_Image_Files"), "png");
 		fileChooser.addChoosableFileFilter(filter);
 		fileChooser.setFileFilter(filter);
 
@@ -339,8 +351,10 @@ public class ContextAwareChartPanel extends ChartPanel {
 	}
 
 	public void saveAsSvg() {
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(getDefaultDirectoryForSaveAs());
+		FileChooserBuilder fcb = new FileChooserBuilder(ContextAwareChartPanel.class);
+		JFileChooser fileChooser = fcb.createFileChooser();
+//		JFileChooser fileChooser = new JFileChooser();
+//		fileChooser.setCurrentDirectory(getDefaultDirectoryForSaveAs());
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("SVG Files", "svg");
 		fileChooser.addChoosableFileFilter(filter);
 		fileChooser.setFileFilter(filter);
@@ -353,8 +367,8 @@ public class ContextAwareChartPanel extends ChartPanel {
 					filename = filename + ".svg";
 				}
 			}
-			DOMImplementation impl =
-					GenericDOMImplementation.getDOMImplementation();
+			DOMImplementation impl
+				= GenericDOMImplementation.getDOMImplementation();
 			String svgNS = "http://www.w3.org/2000/svg";
 			Document myFactory = impl.createDocument(svgNS, "svg", null);
 			SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(myFactory);
@@ -378,7 +392,6 @@ public class ContextAwareChartPanel extends ChartPanel {
 				}
 			}
 		}
-
 
 	}
 

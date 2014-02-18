@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -136,24 +136,14 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
 			IFileFragment fragment = getSource(i).getParent();
 			IVariableFragment defaultValueVar = fragment.getChild(defaultValueVariable);
 			Array defaultValueArr = defaultValueVar.getArray();
-//            MinMax _value = MAMath.getMinMax(defaultValueArr);
-//            valueMM = new MinMax(Math.min(valueMM.min, _value.min), Math.max(valueMM.max, _value.max));
-//            valueVariableValues[i] = defaultValueArr;
 			IVariableFragment defaultDomainVar = fragment.getChild(defaultDomainVariable);
 			Array defaultDomainArr = defaultDomainVar.getArray();
-//            MinMax _domain = MAMath.getMinMax(defaultDomainArr);
-//            domainMM = new MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
-//            domainVariableValues[i] = defaultDomainArr;
-//            domainVariableValueRanks[i] = DatasetUtils.ranks((double[])defaultDomainArr.get1DJavaArray(double.class), false);
 			IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
 			Array defaultRangeArr = defaultRangeVar.getArray();
-//            MinMax _range = MAMath.getMinMax(defaultRangeArr);
-//            rangeMM = new MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
-//            rangeVariableValues[i] = defaultRangeArr;
 			List<Integer> scanIndices = chrom.getIndicesOfScansForMsLevel((short) 1);
 			int j = 0;
 			for (Integer scanIndex : scanIndices) {
-				System.out.println("Adding scan " + (j + 1) + "/" + scans);
+//				System.out.println("Adding scan " + (j + 1) + "/" + scans);
 				value.set(j, (int) defaultValueArr.getInt(scanIndex));
 				domain.set(j, (float) defaultDomainArr.getFloat(scanIndex));
 				range.set(j, (float) defaultRangeArr.getFloat(scanIndex));
@@ -169,26 +159,8 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
 			MinMax _range = MAMath.getMinMax(range);
 			rangeMM = new MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
 			rangeVariableValues[i] = range;
-//            IFileFragment fragment = getSource(i).getParent();
-//            IVariableFragment defaultValueVar = fragment.getChild(defaultValueVariable);
-//            Array defaultValueArr = defaultValueVar.getArray();
-//            MinMax _value = MAMath.getMinMax(defaultValueArr);
-//            valueMM = new MinMax(Math.min(valueMM.min, _value.min), Math.max(valueMM.max, _value.max));
-//            valueVariableValues[i] = defaultValueArr;
-//            IVariableFragment defaultDomainVar = fragment.getChild(defaultDomainVariable);
-//            Array defaultDomainArr = defaultDomainVar.getArray();
-//            MinMax _domain = MAMath.getMinMax(defaultDomainArr);
-//            domainMM = new MinMax(Math.min(domainMM.min, _domain.min), Math.max(domainMM.max, _domain.max));
-//            domainVariableValues[i] = defaultDomainArr;
-//            domainVariableValueRanks[i] = DatasetUtils.ranks((double[])defaultDomainArr.get1DJavaArray(double.class), false);
-//            IVariableFragment defaultRangeVar = fragment.getChild(defaultRangeVariable);
-//            Array defaultRangeArr = defaultRangeVar.getArray();
-//            MinMax _range = MAMath.getMinMax(defaultRangeArr);
-//            rangeMM = new MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
-//            rangeVariableValues[i] = defaultRangeArr;
-
 		}
-		System.out.println("Done!");
+//		System.out.println("Done!");
 		this.domain = domainMM;
 		this.range = rangeMM;
 		this.value = valueMM;

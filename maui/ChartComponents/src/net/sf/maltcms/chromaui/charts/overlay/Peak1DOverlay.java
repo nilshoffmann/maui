@@ -1,5 +1,5 @@
 /*
- * Maui, Maltcms User Interface. 
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -36,9 +36,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -146,6 +147,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		}
 		if (shapes == null) {
 			shapes = generatePeakShapes(peakAnnotations, newDataset);
+			plot.clearAnnotations();
 			Color annotationFillColor = new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 64);
 			for (int i = 0; i < shapes.size(); i++) {
 				VisualPeakAnnotation x = shapes.get(i);
@@ -159,9 +161,10 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 			this.dataset = newDataset;
 		} else {
 			XYDataset xyds = plot.getDataset();
-			if (xyds != dataset) {
+			if (xyds != dataset || drawOutlines) {
 				plot.clearAnnotations();
 				shapes = generatePeakShapes(peakAnnotations, newDataset);
+				plot.clearAnnotations();
 				for (int i = 0; i < shapes.size(); i++) {
 					VisualPeakAnnotation x = shapes.get(i);
 					switch (x.getPeakAnnotationType()) {
@@ -317,7 +320,9 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		int seriesIndex = getSeriesIndex(dataset, chromatogram);
 		if (seriesIndex != -1) {
 			for (IPeakAnnotationDescriptor peakDescr : container.getMembers()) {
-				generatePeakShape(chromatogram, peakDescr, dataset, seriesIndex, l);
+				if (peakDescr != null) {
+					generatePeakShape(chromatogram, peakDescr, dataset, seriesIndex, l);
+				}
 			}
 		} else {
 			System.err.println("Could not find match for chromatogram " + chromatogram.getName() + " in dataset!");
@@ -347,11 +352,14 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			AffineTransform originalTransform = g2.getTransform();
 			Shape transformed = entity;
+			FlatteningPathIterator iter = new FlatteningPathIterator(transformed.getPathIterator(new AffineTransform()), 1);
+			Path2D.Float path = new Path2D.Float();
+			path.append(iter, false);
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-			g2.fill(transformed);
+			g2.fill(path);
 			if (stroke != null) {
 				g2.setColor(stroke);
-				g2.draw(transformed);
+				g2.draw(path);
 			}
 			g2.setComposite(comp);
 			g2.setColor(c);
@@ -449,7 +457,9 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		} else {
 			if (drawOutlines) {
 				VisualPeakAnnotation outline = generateOutline(chromatogram, peakDescr, dataset, seriesIndex);
-				l.add(outline);
+				if (outline != null) {
+					l.add(outline);
+				}
 			}
 			if (drawLines) {
 				Shape line2d = new Rectangle2D.Double(peakDescr.getApexTime() - 0.5, dataset.getMaxY(), 1, dataset.getMaxY() - dataset.getMinY());
@@ -472,6 +482,9 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		double sat = peakDescr.getApexTime();
 		double peakStartTime = peakDescr.getStartTime();
 		double peakStopTime = peakDescr.getStopTime();
+		if (Double.isNaN(peakStartTime) || Double.isNaN(peakStopTime)) {
+			return null;
+		}
 		int scan = chromatogram.getChromatogram().getIndexFor(sat);
 		int startIdx = chromatogram.getChromatogram().getIndexFor(peakStartTime);
 		int stopIdx = chromatogram.getChromatogram().getIndexFor(peakStopTime);
@@ -500,46 +513,17 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 		double peakApexValue = dataset.getYValue(seriesIndex, scan);
 
 		GeneralPath gp = new GeneralPath();
-		gp.moveTo(blStartTime, dataset.getYValue(seriesIndex, startIdx) + blStartVal);//values.getDouble(startIdx));
+		gp.moveTo(blStartTime, dataset.getYValue(seriesIndex, startIdx) + blStartVal);
 		gp.lineTo(peakStartTime, peakStartValue);
-//		gp.lineTo(peakDescr.getApexTime(), dataset.getYValue(seriesIndex, scan));
-//		gp.lineTo(peakStopTime, peakStopValue);
-
 		for (int j = startIdx + 1; j
-				<= stopIdx; j++) {
+			<= stopIdx; j++) {
 			gp.lineTo(dataset.getXValue(seriesIndex, j), dataset.getYValue(seriesIndex, j));
 		}
 		gp.lineTo(blStopTime, dataset.getYValue(seriesIndex, stopIdx) + blStopVal);
-//		gp.lineTo(Math.max(blStopTime, peakStopTime), blStopVal);
-//		gp.lineTo(Math.min(blStartTime, peakStartTime), blStartVal);
 		gp.closePath();
-//		Rectangle2D.Double bbox = new Rectangle2D.Double(
-//				peakStartTime, 0, peakStopTime - peakStartTime,
-//				values.getDouble(scan));
-//		Area a = new Area(bbox);
-//		a.intersect(new Area(gp));
-//		gp.moveTo(peakStartTime, peakStartValue);//values.getDouble(startIdx));
-////		gp.lineTo(peakDescr.getApexTime(), dataset.getYValue(seriesIndex, scan));
-////		gp.lineTo(peakStopTime, peakStopValue);
-//
-//		for (int j = startIdx + 1; j
-//				<= stopIdx + 1; j++) {
-//			gp.lineTo(dataset.getXValue(seriesIndex, j), dataset.getYValue(seriesIndex, j));
-//		}
-////		gp.lineTo(Math.max(blStopTime, peakStopTime), blStopVal);
-////		gp.lineTo(Math.min(blStartTime, peakStartTime), blStartVal);
-//		gp.closePath();
 		System.err.println("Generating peak outline: (" + peakStartTime + ";" + peakStartValue + ")(" + sat + ";" + peakApexValue + ")" + "(" + peakStopTime + ";" + peakStopValue + ")");
 		VisualPeakAnnotation vpa = new VisualPeakAnnotation(gp, new Point2D.Double(sat, Math.min(peakStartValue, Math.min(peakApexValue, peakStopValue))), PeakAnnotationType.OUTLINE);//generate(peakStartTime, peakStartValue, sat, peakApexValue, peakStopTime, peakStopValue);
 		return vpa;
-		//gp.closePath();
-//		Rectangle2D.Double bbox = new Rectangle2D.Double(
-//				peakStartTime, 0, peakStopTime - peakStartTime,
-//				values.getDouble(scan));
-//		Area a = new Area(bbox);
-//		a.intersect(new Area(gp));
-//		return a;
-//		return gp;
 	}
 
 	private int getSeriesIndex(ADataset1D<IChromatogram1D, IScan> dataset, IChromatogramDescriptor chromatogram) {

@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.msviewer.spi;
 
-import net.sf.maltcms.db.search.api.ui.DatabaseSearchPanel;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -37,7 +36,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,6 +64,7 @@ import net.sf.maltcms.db.search.api.IQuery;
 import net.sf.maltcms.db.search.api.IQueryFactory;
 import net.sf.maltcms.db.search.api.IQueryResult;
 import net.sf.maltcms.db.search.api.QueryResultList;
+import net.sf.maltcms.db.search.api.ui.DatabaseSearchPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -101,13 +100,11 @@ import ucar.ma2.Array;
  */
 public class MassSpectrumPanel extends JPanel implements LookupListener {
 
-	private XYSeriesCollection sc, tmp;
+	private XYSeriesCollection sc;
 	private XYPlot plot;
 	private HashMap<Comparable, Double> scales = new HashMap<Comparable, Double>();
 	private ExecutorService es = Executors.newFixedThreadPool(1);
-	private List<?> annotations = Collections.emptyList();
-	private List<Point> selectedPoints = new LinkedList<Point>();
-	private int topK = 10;
+	private int topK = 15;
 	private int activeMS = -1;
 	private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
 	private ChartPanel cp;
@@ -160,7 +157,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		((XYBarRenderer) plot.getRenderer()).setDrawBarOutline(false);
 		((XYBarRenderer) plot.getRenderer()).setBaseFillPaint(Color.RED);
 		((XYBarRenderer) plot.getRenderer()).setBarPainter(
-				new StandardXYBarPainter());
+			new StandardXYBarPainter());
 		plot.getRenderer().setBaseItemLabelsVisible(true);
 		plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
 			@Override
@@ -191,20 +188,21 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		this.jPanel2.removeAll();
 		this.jPanel2.add(cp);
 		this.jPanel2.repaint();
+		this.jSpinner1.setValue(topK);
 	}
 
 	public void addIdentification() {
 		// Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
 		NotifyDescriptor nd = new NotifyDescriptor(
-				ddp, // instance of your panel
-				"Select Databases and Settings", // title of the dialog
-				NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
-				NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
-				null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
-				// otherwise specify options as:
-				//     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
-				NotifyDescriptor.OK_OPTION // default option is "Yes"
-				);
+			ddp, // instance of your panel
+			"Select Databases and Settings", // title of the dialog
+			NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+			NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+			null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+			// otherwise specify options as:
+			//     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+			NotifyDescriptor.OK_OPTION // default option is "Yes"
+		);
 		ddp.updateView();
 		// let's display the dialog now...
 		if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
@@ -215,7 +213,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				@Override
 				public void run() {
 					IQuery<IScan> query = Lookup.getDefault().lookup(
-							IQueryFactory.class).createQuery(
+						IQueryFactory.class).createQuery(
 							ddp.getSelectedDatabases(), ddp.getRetentionIndexCalculator(), ddp.getSelectedMetabolitePredicate(), ddp.getMatchThreshold(),
 							ddp.getMaxNumberOfHits(), ddp.getRIWindow(), seriesToScan.values().
 							toArray(new IScan[seriesToScan.size()]));
@@ -227,7 +225,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 								Box vbox = Box.createVerticalBox();
 								JLabel label = new JLabel("Results for scan " + result.getScan().getScanIndex() + " at " + result.getScan().getScanAcquisitionTime() + " with ri: " + result.getRetentionIndex());
 								JLabel dbLabel = new JLabel("DB: " + result.getDatabaseDescriptor().
-										getResourceLocation());
+									getResourceLocation());
 								vbox.add(label);
 								vbox.add(dbLabel);
 								JLabel parameterLabel = new JLabel("Minimum Score: " + ddp.getMatchThreshold() + "; Maximum #Hits Returned: " + ddp.getMaxNumberOfHits());
@@ -240,7 +238,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 									String name = metabolite.getName();
 									if (name.lastIndexOf("_") != -1) {
 										name = name.substring(
-												name.lastIndexOf(
+											name.lastIndexOf(
 												"_") + 1);
 									}
 									dlm.addRow(new Object[]{result.getScoreFor(
@@ -251,7 +249,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 								}
 								JTable jl = new JTable(dlm);
 								JScrollPane resultScrollPane = new JScrollPane(
-										jl);
+									jl);
 								jl.setAutoCreateRowSorter(true);
 								jl.setUpdateSelectionOnSort(true);
 								vbox.add(resultScrollPane);
@@ -261,15 +259,15 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 						}
 						JScrollPane jsp = new JScrollPane(outerBox);
 						NotifyDescriptor nd = new NotifyDescriptor(
-								jsp, // instance of your panel
-								"Database Search Results", // title of the dialog
-								NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
-								NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
-								null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
-								// otherwise specify options as:
-								//     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
-								NotifyDescriptor.OK_OPTION // default option is "Yes"
-								);
+							jsp, // instance of your panel
+							"Database Search Results", // title of the dialog
+							NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+							NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+							null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+							// otherwise specify options as:
+							//     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+							NotifyDescriptor.OK_OPTION // default option is "Yes"
+						);
 						if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
 						}
 						//DBConnectionManager.close();
@@ -294,37 +292,40 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 	private void addTopKLabels(int topk, int series) {
 //		System.out.println("addTopKLabels: " + topk + " " + series);
 		if (series >= 0 && sc.getSeriesCount() > series) {
-			List<Point> seriesItemList = new ArrayList<Point>();
-			Comparator<Point> c = new Comparator<Point>() {
-				@Override
-				public int compare(Point o1, Point o2) {
-					double v1 = sc.getYValue(o1.x, o1.y);
-					double v2 = sc.getYValue(o2.x, o2.y);
-					return Double.compare(Math.abs(v1), Math.abs(v2));
-				}
-			};
-			for (int i = 0; i < sc.getItemCount(series); i++) {
-				double mass = sc.getXValue(series, i);
-				double intens = sc.getYValue(series, i);
-				if (Math.abs(intens) > 0) {
-					seriesItemList.add(new Point(series, i));
-//					tm.put(intens, mass);
-				}
-			}
-//			System.out.println(seriesItemList);
-			Collections.sort(seriesItemList, c);
+			TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topk, series);
 //			System.out.println(seriesItemList);
 			if (activeMS >= 0) {
 //				System.out.println("Updating plot");
 				plot.getRenderer().setBaseItemLabelsVisible(true);
 				plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
-						new TopKItemsLabelGenerator(seriesItemList, topk));
+					labelGenerator);
 				plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
+				plot.getRenderer().setSeriesItemLabelFont(activeMS, plot.getRenderer().getBaseItemLabelFont().deriveFont(12.0f));
 				plot.notifyListeners(new PlotChangeEvent(plot));
 				ChartCustomizer.setSeriesColors(plot, 0.95f);
 				ChartCustomizer.setSeriesStrokes(plot, 2.0f);
 			}
 		}
+	}
+
+	private TopKItemsLabelGenerator createTopKItemsLabelGenerator(int topK, int series) {
+		List<Point> seriesItemList = new ArrayList<Point>();
+		Comparator<Point> c = new Comparator<Point>() {
+			@Override
+			public int compare(Point o1, Point o2) {
+				double v1 = sc.getYValue(o1.x, o1.y);
+				double v2 = sc.getYValue(o2.x, o2.y);
+				return Double.compare(Math.abs(v1), Math.abs(v2));
+			}
+		};
+		for (int i = 0; i < sc.getItemCount(series); i++) {
+			double intens = sc.getYValue(series, i);
+			if (Math.abs(intens) > 0) {
+				seriesItemList.add(new Point(series, i));
+			}
+		}
+		Collections.sort(seriesItemList, c);
+		return new TopKItemsLabelGenerator(seriesItemList, topK);
 	}
 
 	/**
@@ -356,6 +357,8 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jSeparator3 = new javax.swing.JToolBar.Separator();
         absoluteRelativeToggle = new javax.swing.JToggleButton();
         diffToggle = new javax.swing.JToggleButton();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
+        jSpinner1 = new javax.swing.JSpinner();
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -495,6 +498,16 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             }
         });
         jToolBar2.add(diffToggle);
+        jToolBar2.add(jSeparator4);
+
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, 500, 1));
+        jSpinner1.setToolTipText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jSpinner1.toolTipText")); // NOI18N
+        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSpinner1StateChanged(evt);
+            }
+        });
+        jToolBar2.add(jSpinner1);
 
         jPanel1.add(jToolBar2, java.awt.BorderLayout.WEST);
 
@@ -520,7 +533,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		this.seriesToScan.clear();
 		this.cp.repaint();
 		this.activeMassSpectrum.setModel(
-				new DefaultComboBoxModel(new Object[]{}));
+			new DefaultComboBoxModel(new Object[]{}));
 		this.plot.setDataset(sc);
     }//GEN-LAST:event_clearActionPerformed
 
@@ -551,9 +564,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		if (activeMS >= idx) {
 //            this.plot.getRenderer().setBaseItemLabelsVisible(!hideAnnotations.isSelected());
 			this.plot.getRenderer().setSeriesItemLabelsVisible(idx,
-					!hideAnnotations.isSelected());
+				!hideAnnotations.isSelected());
 			hideAnnotations.setSelected(!this.plot.getRenderer().
-					isSeriesItemLabelsVisible(idx));
+				isSeriesItemLabelsVisible(idx));
 		}
     }//GEN-LAST:event_hideAnnotationsActionPerformed
 
@@ -563,7 +576,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		//addTopKLabels(topK, key);
 		activeMassSpectrum.setSelectedIndex(key);
 		hideAnnotations.setSelected(!this.plot.getRenderer().
-				isSeriesItemLabelsVisible(key));
+			isSeriesItemLabelsVisible(key));
     }//GEN-LAST:event_activeMassSpectrumActionPerformed
 
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
@@ -626,6 +639,21 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 			this.plot.setDataset(barDataset);
 		}
     }//GEN-LAST:event_barWidthSpinnerStateChanged
+
+    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
+		int series = plot.getSeriesCount();
+		topK = (Integer) jSpinner1.getValue();
+		for (int i = 0; i < series; i++) {
+			activeMS = i;
+			TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topK, series);
+			plot.getRenderer().setBaseItemLabelsVisible(true);
+			plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
+				labelGenerator);
+			plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
+			plot.notifyListeners(new PlotChangeEvent(plot));
+		}
+    }//GEN-LAST:event_jSpinner1StateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton absoluteRelativeToggle;
     private javax.swing.JComboBox activeMassSpectrum;
@@ -644,6 +672,8 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JToolBar.Separator jSeparator4;
+    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JButton remove;
@@ -658,7 +688,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //            System.out.println("Found " + contentProviderLookup.lookupAll(IChromatogram.class).size() + " chromatograms in lookup!");
 //            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
 			boolean add = addMs.isSelected();
-			if(!add) {
+			if (!add) {
 				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
 			}
 			if (coll.size() > 1) {
@@ -686,7 +716,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		} else if (!metaboliteSelection.allInstances().isEmpty()) {
 //			System.out.println("Received metabolite selection with " + metaboliteSelection.allInstances().size() + " elements from lookup");
 			boolean add = addMs.isSelected();
-			if(!add) {
+			if (!add) {
 				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
 			}
 			if (metaboliteSelection.allInstances().size() > 1) {
@@ -699,7 +729,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		} else if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
 //			System.out.println("Received peak annotations with " + peakAnnotationDescriptorResult.allInstances().size() + " elements from lookup");
 			boolean add = addMs.isSelected();
-			if(!add) {
+			if (!add) {
 				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
 			}
 			if (peakAnnotationDescriptorResult.allInstances().size() > 1) {
@@ -712,7 +742,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 		} else if (!peakGroupResult.allInstances().isEmpty()) {
 //			System.out.println("Received peak group results");
 			boolean add = addMs.isSelected();
-			if(!add) {
+			if (!add) {
 				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
 			}
 			add = true;
@@ -747,10 +777,10 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 				MSSeries s = null;
 				if (scan instanceof IScan2D) {
 					s = ChromatogramVisualizerTools.getMSSeries2D(
-							(IScan2D) scan, name, addSeriesToTopPlot);
+						(IScan2D) scan, name, addSeriesToTopPlot);
 				} else if (scan instanceof IScan1D) {
 					s = ChromatogramVisualizerTools.getMSSeries1D(
-							(IScan1D) scan, name, addSeriesToTopPlot);
+						(IScan1D) scan, name, addSeriesToTopPlot);
 				}
 				if (s != null) {
 					addSeries(s, scan, add);

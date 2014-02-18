@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -75,7 +75,7 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
 		this.name = name;
 		this.icon = icon;
 	}
-	
+
 	public void setActions(Action[] actions) {
 		this.actions = actions;
 	}
@@ -106,9 +106,9 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
 //			// TODO state for which projects action should be enabled
 //			char c = name.charAt(0);
 //			setEnabled(c >= 'A' && c <= 'M');
-//			putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, true);
+			putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, false);
 			// TODO menu item label with optional mnemonics
-			if(icon!=null) {
+			if (icon != null) {
 				putValue(SMALL_ICON, icon);
 			}
 			putValue(NAME, name);
@@ -130,10 +130,10 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
 			this.actions = actions;
 		}
 
-//		@Override
-//		public boolean isEnabled() {
-//			return null != context.lookup(Project.class);
-//		}
+		@Override
+		public boolean isEnabled() {
+			return true;//null != context.lookup(Project.class);
+		}
 
 		@Override
 		public JMenuItem getPopupPresenter() {
@@ -141,13 +141,12 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
 		}
 	}
 
-	protected static JMenu actionsToMenu(String menuName, Action[] actions, Lookup context) {
+	public static JMenu actionsToMenu(String menuName, Action[] actions, Lookup context) {
 		//code from Utilities.actionsToPopup
 		// keeps actions for which was menu item created already (do not add them twice)
 		Set<Action> counted = new HashSet<Action>();
 		// components to be added (separators are null)
 		List<Component> components = new ArrayList<Component>();
-
 		for (Action action : actions) {
 			if (action != null && counted.add(action)) {
 				// switch to replacement action if there is some
@@ -163,21 +162,21 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
 
 				JMenuItem item;
 				if (action instanceof JMenuItem || action instanceof JMenu) {
-					item = (JMenuItem)action;
-				}else if (action instanceof Presenter.Popup) {
+					item = (JMenuItem) action;
+				} else if (action instanceof Presenter.Popup) {
 //					System.out.println("Popup menu");
 					item = ((Presenter.Popup) action).getPopupPresenter();
 					if (item == null) {
 						Logger.getLogger(Utilities.class.getName()).log(Level.WARNING, "findContextMenuImpl, getPopupPresenter returning null for {0}", action);
 						continue;
 					}
-				} else if(action instanceof DynamicMenuContent) {
+				} else if (action instanceof DynamicMenuContent) {
 //					System.out.println("Dynamic content menu");
-					DynamicMenuContent dmc = (DynamicMenuContent)action;
+					DynamicMenuContent dmc = (DynamicMenuContent) action;
 					JComponent[] presenters = dmc.getMenuPresenters();
 					String name = action.getValue("name").toString();
 					item = new JMenuItem(name);
-					for(JComponent jc:presenters){
+					for (JComponent jc : presenters) {
 						item.add(jc);
 					}
 				} else {

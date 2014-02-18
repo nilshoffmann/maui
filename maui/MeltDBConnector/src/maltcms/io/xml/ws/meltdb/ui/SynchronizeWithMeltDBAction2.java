@@ -25,49 +25,36 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.chromatogram1Dviewer.actions;
+package maltcms.io.xml.ws.meltdb.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import net.sf.maltcms.common.charts.api.selection.IClearable;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
-import org.openide.cookies.InstanceCookie;
-import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
-import org.openide.util.NbBundle;
+import org.openide.util.NbBundle.Messages;
 
-/**
- *
- * @author Nils Hoffmann
- */
 @ActionID(
-	category = "OverlayNodeActions/SelectionOverlay",
-	id = "net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.ClearSelection")
+    category = "File",
+    id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction2")
 @ActionRegistration(
-	displayName = "#CTL_ClearSelection")
-@NbBundle.Messages("CTL_ClearSelection=Clear")
-public final class ClearSelection implements ActionListener {
+    displayName = "#CTL_SynchronizeWithMeltDBAction2")
+@ActionReference(path = "Menu/File", position = 1423, separatorAfter = 1424)
+@Messages("CTL_SynchronizeWithMeltDBAction2=Synchronize With MeltDB 2")
+public final class SynchronizeWithMeltDBAction2 implements ActionListener {
 
-	private final Node context;
+    private final IChromAUIProject context;
 
-	public ClearSelection(Node context) {
-		this.context = context;
-	}
+    public SynchronizeWithMeltDBAction2(IChromAUIProject context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		Object obj;
-		try {
-			obj = context.getLookup().lookup(InstanceCookie.class).instanceCreate();
-			if (obj instanceof IClearable) {
-				((IClearable) obj).clear();
-			}
-		} catch (IOException ex) {
-			Exceptions.printStackTrace(ex);
-		} catch (ClassNotFoundException ex) {
-			Exceptions.printStackTrace(ex);
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+//        MeltDBWebserviceSynchronizationClient mw = new MeltDBWebserviceSynchronizationClient(session);
+//        Dialog d = DialogDisplayer.getDefault().createDialog(new DialogDescriptor(mw.getPanel(), "MeltDB Synchronization", true, null));
+//        d.setVisible(true);
+    }
+
 }

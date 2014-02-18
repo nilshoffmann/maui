@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -123,11 +123,11 @@ public class Chromatogram1DHeatmapDataset extends ADataset2D<IChromatogram1D, IS
 		domainVariableValueRanks = new int[l.size()][];
 		rangeVariableValues = new Array[l.size()];
 		valueVariableValues = new Array[l.size()];
-		System.out.println("Building chromatogram 2d dataset with " + l.size() + " series");
+//		System.out.println("Building chromatogram 2d dataset with " + l.size() + " series");
 		for (int i = 0; i < l.size(); i++) {
 			IChromatogram1D chrom = getSource(i);
 			int scans = chrom.getNumberOfScansForMsLevel((short) 1);
-			System.out.println("Found " + scans + " MS1 scans");
+//			System.out.println("Found " + scans + " MS1 scans");
 			List<Integer> scanIndices = chrom.getIndicesOfScansForMsLevel((short) 1);
 			int j = 0;
 			int points = 0;
@@ -135,7 +135,7 @@ public class Chromatogram1DHeatmapDataset extends ADataset2D<IChromatogram1D, IS
 				IScan1D scan = chrom.getScanForMsLevel(scanIndex, (short) 1);
 				points += scan.getIntensities().getShape()[0];
 			}
-			System.out.println("Creating target arrays with " + points + " points!");
+//			System.out.println("Creating target arrays with " + points + " points!");
 			ArrayFloat.D1 valueArray = new ArrayFloat.D1(points);
 			ArrayDouble.D1 domainArray = new ArrayDouble.D1(points);
 			ArrayFloat.D1 rangeArray = new ArrayFloat.D1(points);
@@ -144,7 +144,7 @@ public class Chromatogram1DHeatmapDataset extends ADataset2D<IChromatogram1D, IS
 				double sat = scan.getScanAcquisitionTime();
 				Array masses = scan.getMasses();
 				Array intensities = scan.getIntensities();
-				System.out.println("Adding scan " + (scanIndex) + "/" + scans + " at " + sat + " s");
+//				System.out.println("Adding scan " + (scanIndex) + "/" + scans + " at " + sat + " s");
 				for (int k = 0; k < masses.getShape()[0]; k++) {
 					valueArray.set(j, (float) intensities.getFloat(k));
 					domainArray.set(j, sat);
@@ -163,9 +163,9 @@ public class Chromatogram1DHeatmapDataset extends ADataset2D<IChromatogram1D, IS
 			MinMax _range = MAMath.getMinMax(rangeArray);
 			rangeMM = new MinMax(Math.min(rangeMM.min, _range.min), Math.max(rangeMM.max, _range.max));
 			rangeVariableValues[i] = rangeArray;
-			System.out.println("Range for domain: " + _domain + " Range for range: " + _range + " Range for values: " + _value);
+//			System.out.println("Range for domain: " + _domain + " Range for range: " + _range + " Range for values: " + _value);
 		}
-		System.out.println("Done!");
+//		System.out.println("Done!");
 		this.domain = domainMM;
 		this.range = rangeMM;
 		this.value = valueMM;

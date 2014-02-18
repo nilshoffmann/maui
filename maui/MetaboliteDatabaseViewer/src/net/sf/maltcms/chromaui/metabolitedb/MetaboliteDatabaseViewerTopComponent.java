@@ -30,13 +30,19 @@ package net.sf.maltcms.chromaui.metabolitedb;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.ActionMap;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableCellRenderer;
 import lombok.Data;
 import net.sf.maltcms.chromaui.db.api.CrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
@@ -52,6 +58,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
+import org.openide.explorer.propertysheet.PropertyPanel;
 import org.openide.explorer.view.OutlineView;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -103,8 +110,10 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
 	private void initView() {
 		view = new OutlineView("Metabolites");
 		view.setTreeSortable(true);
-		view.setPropertyColumns("formula", "Formula", "retentionIndex", "Retention Index", "retentionTime", "Retention Time", "mw", "MW", "id", "ID");
+		view.setPropertyColumns("formula", "Formula", "retentionIndex", "Retention Index", "retentionTime", "Retention Time", "mw", "MW", "id", "ID", "link", "Link");
 		view.getOutline().setRootVisible(false);
+		view.getOutline().setAutoscrolls(true);
+		view.getOutline().setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
 		add(view, BorderLayout.CENTER);
 	}
 
@@ -145,9 +154,12 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
 	public void componentClosed() {
 		if (activeSession != null) {
 			activeSession.close();
+
+
 		}
 		IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
-		registry.closeTopComponentsFor(this.database);
+		registry.closeTopComponentsFor(
+				this.database);
 	}
 
 	void writeProperties(java.util.Properties p) {
@@ -169,6 +181,8 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
 			NodeFactory.createAndRun("Loading Database", nf);
 		} else {
 			System.err.println("Can not set database descriptor while loading is still in progress!");
+
+
 		}
 	}
 
@@ -192,15 +206,10 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
 					System.out.println("Setting node factory");
 					activeSession = activeProvider.createSession();
 					activeSession.open();
-					final Node root = new AbstractNode(Children.createLazy(new Callable<Children>() {
-						@Override
-						public Children call() throws Exception {
-							return Children.create(new MetaboliteNodeFactory(location,
-									activeSession), true);
-						}
-					}));
-					manager.setRootContext(root);
+					final Node root = new AbstractNode(Children.create(new MetaboliteNodeFactory(location,
+							activeSession), true));
 					System.out.println("Setting root context");
+					manager.setRootContext(root);
 					Runnable r = new Runnable() {
 						@Override
 						public void run() {
@@ -223,8 +232,8 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
 			}
 		}
 	}
+// This is optional:
 
-	// This is optional:
 	@Override
 	public boolean requestFocusInWindow() {
 		super.requestFocusInWindow(false);

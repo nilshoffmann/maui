@@ -107,8 +107,13 @@ public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements 
 			proxy.setOrigin(databaseLocation.toString());
 			if (proxy.getName().
 					matches("^M\\d{6}.*")) {
-				node.setDisplayName(proxy.getName().substring(proxy.getName().lastIndexOf("_") + 1));
-				proxy.setShortName(node.getDisplayName());
+				if (proxy.getName().contains("_ALK_")) {
+					node.setDisplayName(proxy.getName().substring(proxy.getName().lastIndexOf("ALK_") + "ALK_".length()));
+					proxy.setShortName(node.getDisplayName());
+				} else if(proxy.getName().contains("_FAME_")) {
+					node.setDisplayName(proxy.getName().substring(proxy.getName().lastIndexOf("FAME_") + "FAME_".length()));
+					proxy.setShortName(node.getDisplayName());
+				}
 			} else {
 				node.setDisplayName(proxy.getName());
 			}
