@@ -25,13 +25,28 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project.api.descriptors;
+package net.sf.maltcms.chromaui.project.spi.nodes;
+
+import java.awt.event.ActionListener;
+import javax.swing.Action;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 
 /**
- * Base interface for metadata descriptors.
  *
  * @author Nils Hoffmann
  */
-public interface IMetaDataDescriptor extends IBasicDescriptor {
+@ActionID(category = "ContainerNodeActions/ChromatogramNode",
+	id = "net.sf.maltcms.chromaui.project.spi.nodes.ChromatogramNodePopupAction")
+@ActionRegistration(displayName = "#CTL_ChromatogramNodePopupAction")
+@NbBundle.Messages("CTL_ChromatogramNodePopupAction=Open")
+public final class ChromatogramNodePopupAction extends NodePopupAction implements ActionListener {
+
+	public ChromatogramNodePopupAction() {
+		super("Open");
+		setActions(new Action[0]);
+//		setActions(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open").toArray(new Action[0]));
+	}
 
 }
