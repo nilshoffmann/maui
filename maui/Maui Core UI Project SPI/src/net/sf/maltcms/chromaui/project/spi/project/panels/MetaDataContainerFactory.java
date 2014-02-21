@@ -29,6 +29,7 @@ package net.sf.maltcms.chromaui.project.spi.project.panels;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -38,6 +39,7 @@ import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.openide.util.WeakListeners;
 
 /**
  *
@@ -51,42 +53,29 @@ class MetaDataContainerFactory extends ChildFactory<IMetaDataDescriptor> impleme
     public MetaDataContainerFactory(Lookup lookup) {
         this.lookup = lookup;
         IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
-        project.addPropertyChangeListener(this);
+        project.addPropertyChangeListener(WeakListeners.propertyChange(this, project));
     }
 
     @Override
     protected boolean createKeys(List<IMetaDataDescriptor> list) {
         IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
-        MetaDataContainer metaData = project.getContainer(MetaDataContainer.class);
+        Collection<MetaDataContainer> metaData = project.getContainer(MetaDataContainer.class);
         if (metaData.isEmpty()) {
             return true;
         } else {
-            list.addAll(metaData.getMembers());
+            list.addAll(metaData.iterator().next().getMembers());
             Collections.sort(list);
             return true;
         }
+    }
 
-        @Override
-        protected Node createNodeForKey
-        (IMetaDataDescriptor key
+    @Override
+    protected Node createNodeForKey(IMetaDataDescriptor key) {
+        return lookup.lookup(INodeFactory.class).createDescriptorNode(key, lookup);
+    }
 
-
-
-
-            ) {
-			     IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
-            return lookup.lookup(INodeFactory.class).createDescriptorNode(key, lookup);
-        }
-
-        @Override
-        public void propertyChange
-        (PropertyChangeEvent evt
-
-
-
-
-            ) {
-		refresh(false);
-        }
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        refresh(false);
     }
 }
