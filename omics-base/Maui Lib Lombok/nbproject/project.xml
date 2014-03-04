@@ -21,6 +21,7 @@
                 <package>lombok.eclipse</package>
                 <package>lombok.eclipse.agent</package>
                 <package>lombok.eclipse.handlers</package>
+                <package>lombok.experimental</package>
                 <package>lombok.extern.apachecommons</package>
                 <package>lombok.extern.java</package>
                 <package>lombok.extern.log4j</package>
@@ -32,19 +33,21 @@
                 <package>lombok.javac.handlers</package>
                 <package>lombok.javac.java6</package>
                 <package>lombok.javac.java7</package>
+                <package>lombok.javac.java8</package>
                 <package>lombok.libs.com.zwitserloot.cmdreader</package>
                 <package>lombok.libs.org.objectweb.asm</package>
                 <package>lombok.libs.org.objectweb.asm.commons</package>
                 <package>lombok.libs.org.objectweb.asm.signature</package>
                 <package>lombok.libs.org.objectweb.asm.tree</package>
+                <package>lombok.libs.org.objectweb.asm.util</package>
                 <package>lombok.patcher</package>
                 <package>lombok.patcher.equinox</package>
                 <package>lombok.patcher.inject</package>
                 <package>lombok.patcher.scripts</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/lombok-0.10.6.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/lombok-0.10.6.jar</binary-origin>
+                <runtime-relative-path>ext/lombok-1.12.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/lombok-1.12.4.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>
