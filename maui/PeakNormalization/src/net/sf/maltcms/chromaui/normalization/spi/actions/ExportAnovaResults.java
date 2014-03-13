@@ -27,9 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.actions;
 
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
+import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -52,17 +51,17 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.netbeans.api.progress.ProgressHandle;
-import org.openide.awt.ActionRegistration;
+import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.awt.ActionID;
+import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.project.spi.actions.ExportAnovaResults")
+        id = "net.sf.maltcms.chromaui.project.spi.actions.ExportAnovaResults")
 @ActionRegistration(displayName = "#CTL_ExportAnovaResults")
 @ActionReferences({
     @ActionReference(path = "Actions/ContainerNodeActions/StatisticsContainer/anova")
@@ -94,8 +93,8 @@ public final class ExportAnovaResults implements ActionListener {
             }
             ExportRunnable er = new ExportRunnable(project, anovas, exportFile);
             ExportRunnable.createAndRun("Anova Peak Group Export", er);
-        }else{
-            System.out.println("Not applicable for method "+context.getMethod());
+        } else {
+            System.out.println("Not applicable for method " + context.getMethod());
         }
     }
 
@@ -131,9 +130,9 @@ public final class ExportAnovaResults implements ActionListener {
                     StringBuilder header = new StringBuilder();
                     List<String> headerStrings = new ArrayList<String>();
                     headerStrings.add("PutativeIdentification");
-					headerStrings.add("DatabaseId");
-					headerStrings.add("RetentionTimeAvg");
-					headerStrings.add("RetentionTimeStdev");
+                    headerStrings.add("DatabaseId");
+                    headerStrings.add("RetentionTimeAvg");
+                    headerStrings.add("RetentionTimeStdev");
                     headerStrings.addAll(chromatogramNames);
                     headerStrings.addAll(Arrays.asList(new String[]{"Name", "PeakGroupId", "Factors", "DegreesOfFreedom", "Fvalues", "PvalueAdjustment", "Pvalues"}));
                     for (String head : headerStrings) {
@@ -156,9 +155,9 @@ public final class ExportAnovaResults implements ActionListener {
                             }
                         }
                         sb.append(group.getPeakGroupDescriptor().getMajorityDisplayName()).append("\t");
-						sb.append(group.getPeakGroupDescriptor().getMajorityName()).append("\t");
-						sb.append(group.getPeakGroupDescriptor().getMeanApexTime()).append("\t");
-						sb.append(group.getPeakGroupDescriptor().getApexTimeStdDev()).append("\t");
+                        sb.append(group.getPeakGroupDescriptor().getMajorityName()).append("\t");
+                        sb.append(group.getPeakGroupDescriptor().getMeanApexTime()).append("\t");
+                        sb.append(group.getPeakGroupDescriptor().getApexTimeStdDev()).append("\t");
                         String[] peaks = new String[chromatogramNames.size()];
                         for (IPeakAnnotationDescriptor peak : peakGroup.getPeakAnnotationDescriptors()) {
                             IChromatogramDescriptor peakChrom = peak.getChromatogramDescriptor();

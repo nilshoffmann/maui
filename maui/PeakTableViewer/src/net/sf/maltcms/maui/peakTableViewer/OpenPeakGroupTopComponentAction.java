@@ -41,10 +41,10 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 
 @ActionID(
-    category = "Maui",
-id = "net.sf.maltcms.maui.peakTableViewer.OpenPeakGroupTopComponentAction")
+        category = "Maui",
+        id = "net.sf.maltcms.maui.peakTableViewer.OpenPeakGroupTopComponentAction")
 @ActionRegistration(
-    displayName = "#CTL_OpenPeakGroupTopComponentAction")
+        displayName = "#CTL_OpenPeakGroupTopComponentAction")
 @ActionReferences({
     @ActionReference(path = "Menu/View", position = -1000),
     @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")
@@ -61,7 +61,7 @@ public final class OpenPeakGroupTopComponentAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
-        PeakTableViewerTopComponent tc = (PeakTableViewerTopComponent)registry.openTopComponentFor(IPeakGroupDescriptor.class, PeakTableViewerTopComponent.class);
-		tc.setPeakGroupDescriptor(context, NbPreferences.forModule(PeakTableViewerTopComponent.class).getBoolean("hideSamples",false));
+        PeakTableViewerTopComponent tc = (PeakTableViewerTopComponent) registry.openTopComponentFor(IPeakGroupDescriptor.class, PeakTableViewerTopComponent.class);
+        tc.setPeakGroupDescriptor(context, NbPreferences.forModule(PeakTableViewerTopComponent.class).getBoolean("hideSamples", false));
     }
 }
