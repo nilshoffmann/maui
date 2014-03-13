@@ -35,32 +35,32 @@ import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
  */
 public class SeriesItem {
 
-	private final Comparable comp;
-	private boolean visible = true;
-	private ChartOverlay overlay;
+    private final Comparable comp;
+    private boolean visible = true;
+    private ChartOverlay overlay;
 
-	public SeriesItem(ChartOverlay overlay, Comparable comp, boolean visible) {
-		this.comp = comp;
-		this.visible = visible;
-		this.overlay = overlay;
-	}
+    public SeriesItem(ChartOverlay overlay, Comparable comp, boolean visible) {
+        this.comp = comp;
+        this.visible = visible;
+        this.overlay = overlay;
+    }
 
-	public boolean isVisible() {
-		return visible;
-	}
+    public boolean isVisible() {
+        return visible;
+    }
 
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-		overlay.setVisible(visible);
-	}
-	
-	public Comparable getSeriesKey() {
-		return comp;
-	}
-	
-	@Override
-	public String toString() {
-		return comp.toString();
-	}
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+        overlay.setVisible(visible);
+    }
+
+    public Comparable getSeriesKey() {
+        return comp;
+    }
+
+    @Override
+    public String toString() {
+        return comp.toString();
+    }
 
 }
