@@ -76,369 +76,369 @@ import org.openide.util.WeakListeners;
  */
 public class SelectionOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener, IClearable {
 
-	private ISelection mouseHoverSelection;
-	private final Set<ISelection> mouseClickSelection = new LinkedHashSet<ISelection>();
-	private final Set<ISelection> flashSelection = new LinkedHashSet<ISelection>();
-	private Color selectionFillColor = new Color(255, 64, 64);
-	private Color hoverFillColor = new Color(64, 64, 255);
-	private Lookup.Result<ISelection> selectionLookupResult;
-	private float hoverScaleX = 2.5f;
-	private float hoverScaleY = 2.5f;
-	private float fillAlpha = 0.5f;
-	private final Crosshair domainCrosshair;
-	private final Crosshair rangeCrosshair;
-	private final CrosshairOverlay crosshairOverlay;
-	private final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
-	private FlashRunnable flashRunner = null;
-	public static final String PROP_SELECTION_FILL_COLOR = "selectionFillColor";
-	public static final String PROP_HOVER_FILL_COLOR = "hoverFillColor";
-	public static final String PROP_HOVER_SCALE_X = "hoverScaleX";
-	public static final String PROP_HOVER_SCALE_Y = "hoverScaleY";
-	public static final String PROP_FILL_ALPHA = "fillAlpha";
-	public static final String PROP_SELECTION = "selection";
-	public static final String PROP_HOVER_SELECTION = "hoverSelection";
-	private boolean drawFlashSelection = false;
-	private boolean disableFlash = false;
+    private ISelection mouseHoverSelection;
+    private final Set<ISelection> mouseClickSelection = new LinkedHashSet<ISelection>();
+    private final Set<ISelection> flashSelection = new LinkedHashSet<ISelection>();
+    private Color selectionFillColor = new Color(255, 64, 64);
+    private Color hoverFillColor = new Color(64, 64, 255);
+    private Lookup.Result<ISelection> selectionLookupResult;
+    private float hoverScaleX = 2.5f;
+    private float hoverScaleY = 2.5f;
+    private float fillAlpha = 0.5f;
+    private final Crosshair domainCrosshair;
+    private final Crosshair rangeCrosshair;
+    private final CrosshairOverlay crosshairOverlay;
+    private final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+    private FlashRunnable flashRunner = null;
+    public static final String PROP_SELECTION_FILL_COLOR = "selectionFillColor";
+    public static final String PROP_HOVER_FILL_COLOR = "hoverFillColor";
+    public static final String PROP_HOVER_SCALE_X = "hoverScaleX";
+    public static final String PROP_HOVER_SCALE_Y = "hoverScaleY";
+    public static final String PROP_FILL_ALPHA = "fillAlpha";
+    public static final String PROP_SELECTION = "selection";
+    public static final String PROP_HOVER_SELECTION = "hoverSelection";
+    private boolean drawFlashSelection = false;
+    private boolean disableFlash = false;
 
-	public SelectionOverlay(Color selectionFillColor, Color hoverFillColor, float hoverScaleX, float hoverScaleY, float fillAlpha) {
-		super("Selection", "Selection", "Overlay for chart item entity selection", true);
-		this.selectionFillColor = selectionFillColor;
-		this.hoverFillColor = hoverFillColor;
-		this.hoverScaleX = hoverScaleX;
-		this.hoverScaleY = hoverScaleY;
-		this.fillAlpha = fillAlpha;
-		BasicStroke dashed = new BasicStroke(
-				2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-				1.0f, new float[]{6.0f, 6.0f}, 0.0f);
-		domainCrosshair = new Crosshair(1.5d, new Color(0, 0, 0, 128), dashed);
-		domainCrosshair.setVisible(true);
-		rangeCrosshair = new Crosshair(1.5d, new Color(0, 0, 0, 128), dashed);
-		rangeCrosshair.setVisible(true);
-		crosshairOverlay = new CrosshairOverlay();
-		crosshairOverlay.addDomainCrosshair(domainCrosshair);
-		crosshairOverlay.addRangeCrosshair(rangeCrosshair);
-		setLayerPosition(LAYER_HIGHEST);
-		selectionLookupResult = Utilities.actionsGlobalContext().lookupResult(ISelection.class);
-		selectionLookupResult.addLookupListener(this);
-	}
+    public SelectionOverlay(Color selectionFillColor, Color hoverFillColor, float hoverScaleX, float hoverScaleY, float fillAlpha) {
+        super("Selection", "Selection", "Overlay for chart item entity selection", true);
+        this.selectionFillColor = selectionFillColor;
+        this.hoverFillColor = hoverFillColor;
+        this.hoverScaleX = hoverScaleX;
+        this.hoverScaleY = hoverScaleY;
+        this.fillAlpha = fillAlpha;
+        BasicStroke dashed = new BasicStroke(
+                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                1.0f, new float[]{6.0f, 6.0f}, 0.0f);
+        domainCrosshair = new Crosshair(1.5d, new Color(0, 0, 0, 128), dashed);
+        domainCrosshair.setVisible(true);
+        rangeCrosshair = new Crosshair(1.5d, new Color(0, 0, 0, 128), dashed);
+        rangeCrosshair.setVisible(true);
+        crosshairOverlay = new CrosshairOverlay();
+        crosshairOverlay.addDomainCrosshair(domainCrosshair);
+        crosshairOverlay.addRangeCrosshair(rangeCrosshair);
+        setLayerPosition(LAYER_HIGHEST);
+        selectionLookupResult = Utilities.actionsGlobalContext().lookupResult(ISelection.class);
+        selectionLookupResult.addLookupListener(this);
+    }
 
-	@Override
-	public void clear() {
-		ISelection oldHover = mouseHoverSelection;
-		mouseHoverSelection = null;
-		firePropertyChange(PROP_HOVER_SELECTION, oldHover, mouseHoverSelection);
-		mouseClickSelection.clear();
-		firePropertyChange(PROP_SELECTION, null, mouseClickSelection);
-		fireOverlayChanged();
-	}
+    @Override
+    public void clear() {
+        ISelection oldHover = mouseHoverSelection;
+        mouseHoverSelection = null;
+        firePropertyChange(PROP_HOVER_SELECTION, oldHover, mouseHoverSelection);
+        mouseClickSelection.clear();
+        firePropertyChange(PROP_SELECTION, null, mouseClickSelection);
+        fireOverlayChanged();
+    }
 
-	public ISelection getMouseHoverSelection() {
-		return mouseHoverSelection;
-	}
+    public ISelection getMouseHoverSelection() {
+        return mouseHoverSelection;
+    }
 
-	public Set<ISelection> getMouseClickSelection() {
-		synchronized (this.mouseClickSelection) {
-			return Collections.unmodifiableSet(new LinkedHashSet<ISelection>(this.mouseClickSelection));
-		}
-	}
+    public Set<ISelection> getMouseClickSelection() {
+        synchronized (this.mouseClickSelection) {
+            return Collections.unmodifiableSet(new LinkedHashSet<ISelection>(this.mouseClickSelection));
+        }
+    }
 
-	public Color getSelectionFillColor() {
-		return selectionFillColor;
-	}
+    public Color getSelectionFillColor() {
+        return selectionFillColor;
+    }
 
-	public void setSelectionFillColor(Color selectionFillColor) {
-		Color old = this.selectionFillColor;
-		this.selectionFillColor = selectionFillColor;
-		firePropertyChange(PROP_SELECTION_FILL_COLOR, old, this.selectionFillColor);
-		fireOverlayChanged();
-	}
+    public void setSelectionFillColor(Color selectionFillColor) {
+        Color old = this.selectionFillColor;
+        this.selectionFillColor = selectionFillColor;
+        firePropertyChange(PROP_SELECTION_FILL_COLOR, old, this.selectionFillColor);
+        fireOverlayChanged();
+    }
 
-	public Color getHoverFillColor() {
-		return hoverFillColor;
-	}
+    public Color getHoverFillColor() {
+        return hoverFillColor;
+    }
 
-	public void setHoverFillColor(Color hoverFillColor) {
-		Color old = this.hoverFillColor;
-		this.hoverFillColor = hoverFillColor;
-		firePropertyChange(PROP_HOVER_FILL_COLOR, old, this.hoverFillColor);
-		fireOverlayChanged();
-	}
+    public void setHoverFillColor(Color hoverFillColor) {
+        Color old = this.hoverFillColor;
+        this.hoverFillColor = hoverFillColor;
+        firePropertyChange(PROP_HOVER_FILL_COLOR, old, this.hoverFillColor);
+        fireOverlayChanged();
+    }
 
-	public float getHoverScaleX() {
-		return hoverScaleX;
-	}
+    public float getHoverScaleX() {
+        return hoverScaleX;
+    }
 
-	public void setHoverScaleX(float hoverScaleX) {
-		float old = this.hoverScaleX;
-		this.hoverScaleX = hoverScaleX;
-		firePropertyChange(PROP_HOVER_SCALE_X, old, this.hoverScaleX);
-		fireOverlayChanged();
-	}
+    public void setHoverScaleX(float hoverScaleX) {
+        float old = this.hoverScaleX;
+        this.hoverScaleX = hoverScaleX;
+        firePropertyChange(PROP_HOVER_SCALE_X, old, this.hoverScaleX);
+        fireOverlayChanged();
+    }
 
-	public float getHoverScaleY() {
-		return hoverScaleY;
-	}
+    public float getHoverScaleY() {
+        return hoverScaleY;
+    }
 
-	public void setHoverScaleY(float hoverScaleY) {
-		float old = this.hoverScaleY;
-		this.hoverScaleY = hoverScaleY;
-		firePropertyChange(PROP_HOVER_SCALE_Y, old, this.hoverScaleY);
-		fireOverlayChanged();
-	}
+    public void setHoverScaleY(float hoverScaleY) {
+        float old = this.hoverScaleY;
+        this.hoverScaleY = hoverScaleY;
+        firePropertyChange(PROP_HOVER_SCALE_Y, old, this.hoverScaleY);
+        fireOverlayChanged();
+    }
 
-	public float getFillAlpha() {
-		return fillAlpha;
-	}
+    public float getFillAlpha() {
+        return fillAlpha;
+    }
 
-	public void setFillAlpha(float fillAlpha) {
-		float old = this.fillAlpha;
-		this.fillAlpha = fillAlpha;
-		firePropertyChange(PROP_FILL_ALPHA, old, this.fillAlpha);
-		fireOverlayChanged();
-	}
+    public void setFillAlpha(float fillAlpha) {
+        float old = this.fillAlpha;
+        this.fillAlpha = fillAlpha;
+        firePropertyChange(PROP_FILL_ALPHA, old, this.fillAlpha);
+        fireOverlayChanged();
+    }
 
-	@Override
-	public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
-		if (chartPanel.getChart().getAntiAlias()) {
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		}
-		boolean isXYPlot = true;
-		if (chartPanel.getChart().getPlot() instanceof XYPlot) {
-			isXYPlot = true;
-		} else if (chartPanel.getChart().getPlot() instanceof CategoryPlot) {
-			isXYPlot = false;
-		} else {
-			throw new IllegalArgumentException("Can only handle XYPlot and CategoryPlot!");
-		}
-		if (isVisible()) {
-			for (ISelection selection : mouseClickSelection) {
-				if (selection.isVisible()) {
-					Shape selectedEntity = null;
-					if (isXYPlot) {
-						selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
-					} else {
-						selectedEntity = chartPanel.getChart().getCategoryPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
-					}
-					if (selectedEntity == null) {
-						selectedEntity = generate(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
-					}
-					updateCrosshairs(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
-					Shape transformed = toView(selectedEntity, chartPanel, selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
-					drawEntity(transformed, g2, selectionFillColor, chartPanel, false);
-				}
-			}
-			if (this.drawFlashSelection) {
-				for (ISelection selection : flashSelection) {
-					Shape selectedEntity = null;
-					if (isXYPlot) {
-						selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
-					} else {
-						selectedEntity = chartPanel.getChart().getCategoryPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
-					}
-					if (selectedEntity == null) {
-						selectedEntity = generate(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
-					}
-					Shape transformed = toView(selectedEntity, chartPanel, selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
-					drawEntity(transformed, g2, selectionFillColor.darker(), chartPanel, true);
-				}
-			}
-			if (this.mouseHoverSelection != null && this.mouseHoverSelection.isVisible()) {
-				Shape entity = null;
-				if (isXYPlot) {
-					entity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
-				} else {
-					entity = chartPanel.getChart().getCategoryPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
-				}
-				if (entity == null) {
-					entity = generate(mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
-				}
-				Shape transformed = toView(entity, chartPanel, mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
-				drawEntity(transformed, g2, hoverFillColor, chartPanel, true);
-			}
-		}
-		if (isXYPlot) {
-			crosshairOverlay.paintOverlay(g2, chartPanel);
-		}
-	}
+    @Override
+    public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
+        if (chartPanel.getChart().getAntiAlias()) {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+        boolean isXYPlot = true;
+        if (chartPanel.getChart().getPlot() instanceof XYPlot) {
+            isXYPlot = true;
+        } else if (chartPanel.getChart().getPlot() instanceof CategoryPlot) {
+            isXYPlot = false;
+        } else {
+            throw new IllegalArgumentException("Can only handle XYPlot and CategoryPlot!");
+        }
+        if (isVisible()) {
+            for (ISelection selection : mouseClickSelection) {
+                if (selection.isVisible()) {
+                    Shape selectedEntity = null;
+                    if (isXYPlot) {
+                        selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
+                    } else {
+                        selectedEntity = chartPanel.getChart().getCategoryPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
+                    }
+                    if (selectedEntity == null) {
+                        selectedEntity = generate(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    }
+                    updateCrosshairs(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    Shape transformed = toView(selectedEntity, chartPanel, selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    drawEntity(transformed, g2, selectionFillColor, chartPanel, false);
+                }
+            }
+            if (this.drawFlashSelection) {
+                for (ISelection selection : flashSelection) {
+                    Shape selectedEntity = null;
+                    if (isXYPlot) {
+                        selectedEntity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
+                    } else {
+                        selectedEntity = chartPanel.getChart().getCategoryPlot().getRenderer().getItemShape(selection.getSeriesIndex(), selection.getItemIndex());
+                    }
+                    if (selectedEntity == null) {
+                        selectedEntity = generate(selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    }
+                    Shape transformed = toView(selectedEntity, chartPanel, selection.getDataset(), selection.getSeriesIndex(), selection.getItemIndex());
+                    drawEntity(transformed, g2, selectionFillColor.darker(), chartPanel, true);
+                }
+            }
+            if (this.mouseHoverSelection != null && this.mouseHoverSelection.isVisible()) {
+                Shape entity = null;
+                if (isXYPlot) {
+                    entity = chartPanel.getChart().getXYPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+                } else {
+                    entity = chartPanel.getChart().getCategoryPlot().getRenderer().getItemShape(mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+                }
+                if (entity == null) {
+                    entity = generate(mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+                }
+                Shape transformed = toView(entity, chartPanel, mouseHoverSelection.getDataset(), mouseHoverSelection.getSeriesIndex(), mouseHoverSelection.getItemIndex());
+                drawEntity(transformed, g2, hoverFillColor, chartPanel, true);
+            }
+        }
+        if (isXYPlot) {
+            crosshairOverlay.paintOverlay(g2, chartPanel);
+        }
+    }
 
-	private void updateCrosshairs(final Dataset ds, final int seriesIndex, final int itemIndex) {
-		if (ds instanceof XYDataset) {
-			XYDataset xyds = (XYDataset) ds;
-			double x = xyds.getXValue(seriesIndex, itemIndex);
-			double y = xyds.getYValue(seriesIndex, itemIndex);
-			domainCrosshair.setValue(x);
-			rangeCrosshair.setValue(y);
-		} else if (ds instanceof CategoryDataset) {
-			CategoryDataset cds = (CategoryDataset) ds;
-			double y = cds.getValue(seriesIndex, itemIndex).doubleValue();
-			domainCrosshair.setValue(itemIndex);
-			rangeCrosshair.setValue(y);
-		}
-	}
+    private void updateCrosshairs(final Dataset ds, final int seriesIndex, final int itemIndex) {
+        if (ds instanceof XYDataset) {
+            XYDataset xyds = (XYDataset) ds;
+            double x = xyds.getXValue(seriesIndex, itemIndex);
+            double y = xyds.getYValue(seriesIndex, itemIndex);
+            domainCrosshair.setValue(x);
+            rangeCrosshair.setValue(y);
+        } else if (ds instanceof CategoryDataset) {
+            CategoryDataset cds = (CategoryDataset) ds;
+            double y = cds.getValue(seriesIndex, itemIndex).doubleValue();
+            domainCrosshair.setValue(itemIndex);
+            rangeCrosshair.setValue(y);
+        }
+    }
 
-	private Shape generate(Dataset ds, int seriesIndex, int itemIndex) {
-		if (ds instanceof XYDataset) {
-			XYDataset xyds = (XYDataset) ds;
-			double width = 10.0d;
-			double height = 10.0d;
-			double x = xyds.getXValue(seriesIndex, itemIndex) - (width / 2.0d);
-			double y = xyds.getYValue(seriesIndex, itemIndex);
-			Ellipse2D.Double e = new Ellipse2D.Double(x, y, width, height);
-			return e;
-		} else if (ds instanceof CategoryDataset) {
-			CategoryDataset cds = (CategoryDataset) ds;
-			double width = 10.0d;
-			double height = 10.0d;
-			double y = cds.getValue(seriesIndex, itemIndex).doubleValue();
-			Ellipse2D.Double e = new Ellipse2D.Double(itemIndex, y, width, height);
-			return e;
-		}
-		throw new IllegalArgumentException("Unsupported dataset type: " + ds.getClass());
-	}
+    private Shape generate(Dataset ds, int seriesIndex, int itemIndex) {
+        if (ds instanceof XYDataset) {
+            XYDataset xyds = (XYDataset) ds;
+            double width = 10.0d;
+            double height = 10.0d;
+            double x = xyds.getXValue(seriesIndex, itemIndex) - (width / 2.0d);
+            double y = xyds.getYValue(seriesIndex, itemIndex);
+            Ellipse2D.Double e = new Ellipse2D.Double(x, y, width, height);
+            return e;
+        } else if (ds instanceof CategoryDataset) {
+            CategoryDataset cds = (CategoryDataset) ds;
+            double width = 10.0d;
+            double height = 10.0d;
+            double y = cds.getValue(seriesIndex, itemIndex).doubleValue();
+            Ellipse2D.Double e = new Ellipse2D.Double(itemIndex, y, width, height);
+            return e;
+        }
+        throw new IllegalArgumentException("Unsupported dataset type: " + ds.getClass());
+    }
 
-	private void drawEntity(Shape entity, Graphics2D g2, Color fill, ChartPanel chartPanel, boolean scale) {
-		if (entity != null) {
-			Shape savedClip = g2.getClip();
-			Rectangle2D dataArea = chartPanel.getScreenDataArea();
-			Color c = g2.getColor();
-			Composite comp = g2.getComposite();
-			g2.clip(dataArea);
-			g2.setColor(fill);
-			AffineTransform originalTransform = g2.getTransform();
-			Shape transformed = entity;
-			if (scale) {
-				transformed = scaleAtOrigin(entity, hoverScaleX, hoverScaleY).createTransformedShape(entity);
-			}
-			transformed = AffineTransform.getTranslateInstance(entity.getBounds2D().getCenterX() - transformed.getBounds2D().getCenterX(), entity.getBounds2D().getCenterY() - transformed.getBounds2D().getCenterY()).createTransformedShape(transformed);
-			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillAlpha));
-			g2.fill(transformed);
-			g2.setColor(Color.DARK_GRAY);
-			g2.draw(transformed);
-			g2.setComposite(comp);
-			g2.setColor(c);
-			g2.setClip(savedClip);
-		}
-	}
+    private void drawEntity(Shape entity, Graphics2D g2, Color fill, ChartPanel chartPanel, boolean scale) {
+        if (entity != null) {
+            Shape savedClip = g2.getClip();
+            Rectangle2D dataArea = chartPanel.getScreenDataArea();
+            Color c = g2.getColor();
+            Composite comp = g2.getComposite();
+            g2.clip(dataArea);
+            g2.setColor(fill);
+            AffineTransform originalTransform = g2.getTransform();
+            Shape transformed = entity;
+            if (scale) {
+                transformed = scaleAtOrigin(entity, hoverScaleX, hoverScaleY).createTransformedShape(entity);
+            }
+            transformed = AffineTransform.getTranslateInstance(entity.getBounds2D().getCenterX() - transformed.getBounds2D().getCenterX(), entity.getBounds2D().getCenterY() - transformed.getBounds2D().getCenterY()).createTransformedShape(transformed);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillAlpha));
+            g2.fill(transformed);
+            g2.setColor(Color.DARK_GRAY);
+            g2.draw(transformed);
+            g2.setComposite(comp);
+            g2.setColor(c);
+            g2.setClip(savedClip);
+        }
+    }
 
-	@Override
-	public void selectionStateChanged(SelectionChangeEvent ce) {
-		ISelection selection = ce.getSelection();
+    @Override
+    public void selectionStateChanged(SelectionChangeEvent ce) {
+        ISelection selection = ce.getSelection();
 
-		if (selection == null) {
-			if (mouseHoverSelection != null) {
-				mouseHoverSelection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
-				firePropertyChange(PROP_HOVER_SELECTION, mouseHoverSelection, null);
-			}
-			mouseHoverSelection = null;
-			disableFlash = false;
-		} else {
-			disableFlash = true;
-			if (ce.getSelection().getType() == ISelection.Type.CLICK) {
-				if (mouseClickSelection.contains(selection)) {
-					mouseClickSelection.remove(selection);
-					selection.removePropertyChangeListener(ISelection.PROP_VISIBLE, this);
-				} else {
-					mouseClickSelection.add(selection);
-					selection.addPropertyChangeListener(ISelection.PROP_VISIBLE, WeakListeners.propertyChange(this, selection));
-				}
-				firePropertyChange(PROP_SELECTION, null, mouseClickSelection);
-			} else if (ce.getSelection().getType() == ISelection.Type.HOVER) {
-				if (mouseHoverSelection != null) {
-					mouseHoverSelection.removePropertyChangeListener(ISelection.PROP_VISIBLE, this);
-				}
-				mouseHoverSelection = selection;
-				mouseHoverSelection.addPropertyChangeListener(ISelection.PROP_VISIBLE, WeakListeners.propertyChange(this, mouseHoverSelection));
-				firePropertyChange(PROP_HOVER_SELECTION, null, mouseHoverSelection);
-			}
-		}
-		fireOverlayChanged();
-	}
+        if (selection == null) {
+            if (mouseHoverSelection != null) {
+                mouseHoverSelection.removePropertyChangeListener(XYSelection.PROP_VISIBLE, this);
+                firePropertyChange(PROP_HOVER_SELECTION, mouseHoverSelection, null);
+            }
+            mouseHoverSelection = null;
+            disableFlash = false;
+        } else {
+            disableFlash = true;
+            if (ce.getSelection().getType() == ISelection.Type.CLICK) {
+                if (mouseClickSelection.contains(selection)) {
+                    mouseClickSelection.remove(selection);
+                    selection.removePropertyChangeListener(ISelection.PROP_VISIBLE, this);
+                } else {
+                    mouseClickSelection.add(selection);
+                    selection.addPropertyChangeListener(ISelection.PROP_VISIBLE, WeakListeners.propertyChange(this, selection));
+                }
+                firePropertyChange(PROP_SELECTION, null, mouseClickSelection);
+            } else if (ce.getSelection().getType() == ISelection.Type.HOVER) {
+                if (mouseHoverSelection != null) {
+                    mouseHoverSelection.removePropertyChangeListener(ISelection.PROP_VISIBLE, this);
+                }
+                mouseHoverSelection = selection;
+                mouseHoverSelection.addPropertyChangeListener(ISelection.PROP_VISIBLE, WeakListeners.propertyChange(this, mouseHoverSelection));
+                firePropertyChange(PROP_HOVER_SELECTION, null, mouseHoverSelection);
+            }
+        }
+        fireOverlayChanged();
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent pce) {
-		fireOverlayChanged();
-	}
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        fireOverlayChanged();
+    }
 
-	public void setDrawFlashSelection(boolean b) {
-		this.drawFlashSelection = b;
-		fireOverlayChanged();
-	}
+    public void setDrawFlashSelection(boolean b) {
+        this.drawFlashSelection = b;
+        fireOverlayChanged();
+    }
 
-	public boolean isDrawFlashSelection() {
-		return drawFlashSelection;
-	}
+    public boolean isDrawFlashSelection() {
+        return drawFlashSelection;
+    }
 
-	@Override
-	public void resultChanged(LookupEvent le) {
-		flashSelection.clear();
-		if (!disableFlash) {
-			flashSelection.addAll(selectionLookupResult.allInstances());
-			flashSelection.retainAll(mouseClickSelection);
-			System.out.println("Flashing " + flashSelection.size() + " elements!");
-			if (!flashSelection.isEmpty()) {
-				if(flashRunner!=null) {
-					flashRunner.cancel();
-				}
-				Runnable flasher = new Runnable() {
-					@Override
-					public void run() {
-						setDrawFlashSelection(!isDrawFlashSelection());
-					}
-				};
-				flashRunner = new FlashRunnable(flasher, 6);
-				flashRunner.schedule(ses, 100, 500, TimeUnit.MILLISECONDS);
-			}
-		}
-	}
+    @Override
+    public void resultChanged(LookupEvent le) {
+        flashSelection.clear();
+        if (!disableFlash) {
+            flashSelection.addAll(selectionLookupResult.allInstances());
+            flashSelection.retainAll(mouseClickSelection);
+//			System.out.println("Flashing " + flashSelection.size() + " elements!");
+            if (!flashSelection.isEmpty()) {
+                if (flashRunner != null) {
+                    flashRunner.cancel();
+                }
+                Runnable flasher = new Runnable() {
+                    @Override
+                    public void run() {
+                        setDrawFlashSelection(!isDrawFlashSelection());
+                    }
+                };
+                flashRunner = new FlashRunnable(flasher, 6);
+                flashRunner.schedule(ses, 100, 500, TimeUnit.MILLISECONDS);
+            }
+        }
+    }
 
-	private class FlashRunnable implements Runnable {
+    private class FlashRunnable implements Runnable {
 
-		private final int repeats;
-		private final Runnable delegate;
-		private ScheduledFuture<?> f;
-		private AtomicInteger repeatCounter = new AtomicInteger(0);
+        private final int repeats;
+        private final Runnable delegate;
+        private ScheduledFuture<?> f;
+        private AtomicInteger repeatCounter = new AtomicInteger(0);
 
-		FlashRunnable(Runnable delegate, int repeats) {
-			this.delegate = delegate;
-			this.repeats = repeats;
-			setDrawFlashSelection(false);
-		}
+        FlashRunnable(Runnable delegate, int repeats) {
+            this.delegate = delegate;
+            this.repeats = repeats;
+            setDrawFlashSelection(false);
+        }
 
-		public void cancel() {
-			if (f != null) {
-				f.cancel(true);
-			}
-		}
+        public void cancel() {
+            if (f != null) {
+                f.cancel(true);
+            }
+        }
 
-		@Override
-		public void run() {
-			if (f == null) {
-				throw new IllegalStateException("Not scheduled!");
-			}
-			delegate.run();
-			if (repeatCounter.incrementAndGet() == repeats) {
-				f.cancel(true);
-			}
-		}
+        @Override
+        public void run() {
+            if (f == null) {
+                throw new IllegalStateException("Not scheduled!");
+            }
+            delegate.run();
+            if (repeatCounter.incrementAndGet() == repeats) {
+                f.cancel(true);
+            }
+        }
 
-		public void schedule(ScheduledExecutorService ses, long delay, long period, TimeUnit timeUnit) {
-			f = ses.scheduleAtFixedRate(this, delay, period, timeUnit);
-		}
-	};
+        public void schedule(ScheduledExecutorService ses, long delay, long period, TimeUnit timeUnit) {
+            f = ses.scheduleAtFixedRate(this, delay, period, timeUnit);
+        }
+    };
 
-	@Override
-	public Node createNodeDelegate() {
-		Node node = null;
-		if (nodeReference == null) {
-			node = Charts.overlayNode(this, Children.LEAF, getLookup());
-			nodeReference = new WeakReference<Node>(node);
-		} else {
-			node = nodeReference.get();
-			if (node == null) {
-				node = Charts.overlayNode(this, Children.LEAF, getLookup());
-				nodeReference = new WeakReference<Node>(node);
-			}
-		}
-		return node;
-	}
+    @Override
+    public Node createNodeDelegate() {
+        Node node = null;
+        if (nodeReference == null) {
+            node = Charts.overlayNode(this, Children.LEAF, getLookup());
+            nodeReference = new WeakReference<Node>(node);
+        } else {
+            node = nodeReference.get();
+            if (node == null) {
+                node = Charts.overlayNode(this, Children.LEAF, getLookup());
+                nodeReference = new WeakReference<Node>(node);
+            }
+        }
+        return node;
+    }
 }

@@ -41,8 +41,8 @@ import java.util.Random;
  */
 public class DatasetUtils {
 
-	public static ACategoryDataset<List<Double>,Double> createCategoryDataset() {
-		INamedElementProvider<? extends List<Double>, ? extends Double> nep1 = new INamedElementProvider<List<Double>, Double>() {
+    public static ACategoryDataset<List<Double>, Double> createCategoryDataset() {
+        INamedElementProvider<? extends List<Double>, ? extends Double> nep1 = new INamedElementProvider<List<Double>, Double>() {
             private List<Double> points = createSampleDoubles(10);
 
             @Override
@@ -80,7 +80,7 @@ public class DatasetUtils {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
-		INamedElementProvider<? extends List<Double>, ? extends Double> nep2 = new INamedElementProvider<List<Double>, Double>() {
+        INamedElementProvider<? extends List<Double>, ? extends Double> nep2 = new INamedElementProvider<List<Double>, Double>() {
             private List<Double> points = createSampleDoubles(14);
 
             @Override
@@ -120,10 +120,10 @@ public class DatasetUtils {
         };
         List<INamedElementProvider<? extends List<Double>, ? extends Double>> l = new ArrayList<INamedElementProvider<? extends List<Double>, ? extends Double>>();
         l.add(nep1);
-		l.add(nep2);
+        l.add(nep2);
         return new NumericCategoryDataset(l);
-	}
-	
+    }
+
     public static Numeric1DDataset<Point2D> createDataset() {
         INamedElementProvider<? extends List<Point2D>, ? extends Point2D> nep = new INamedElementProvider<List<Point2D>, Point2D>() {
             private List<Point2D> points = createSamplePoints(500);
@@ -172,52 +172,52 @@ public class DatasetUtils {
         Random r = new Random(System.nanoTime());
         List<Point2D> points = new ArrayList<Point2D>();
         for (int i = 0; i < n; i++) {
-			double random = Math.random();
+            double random = Math.random();
 //			if(random>0.95) {
 //				points.add(new Point2D.Double(Double.POSITIVE_INFINITY,r.nextDouble() * 256.0d));
 //			}else{
-				points.add(new Point2D.Double(2 * i + (r.nextGaussian() - 0.5d), r.nextDouble() * 256.0d));
+            points.add(new Point2D.Double(2 * i + (r.nextGaussian() - 0.5d), r.nextDouble() * 256.0d));
 //			}
         }
         return points;
     }
-	
-	public static List<Double> createSampleDoubles(int n) {
+
+    public static List<Double> createSampleDoubles(int n) {
         Random r = new Random(System.nanoTime());
         List<Double> points = new ArrayList<Double>();
         for (int i = 0; i < n; i++) {
-			points.add(r.nextDouble() * 256.0d);
+            points.add(r.nextDouble() * 256.0d);
         }
         return points;
     }
-    
+
     private static class SortablePair {
 
         private final int index;
         private final double value;
-        
+
         public SortablePair(int index, double value) {
             this.index = index;
             this.value = value;
         }
-        
+
         public int getIndex() {
             return this.index;
         }
-        
+
         public double getValue() {
             return this.value;
         }
-        
+
     }
-    
+
     private static class SortablePairComparator implements Comparator<SortablePair> {
 
         @Override
         public int compare(SortablePair t, SortablePair t1) {
             return Double.compare(t.getValue(), t1.getValue());
         }
-        
+
     }
 
     public static int[] ranks(double[] domainValues, boolean descending) {
@@ -227,9 +227,9 @@ public class DatasetUtils {
             sp[i] = sortablePair;
         }
         Comparator<SortablePair> comp = new SortablePairComparator();
-        if(descending) {
+        if (descending) {
             Arrays.sort(sp, Collections.reverseOrder(comp));
-        }else{
+        } else {
             Arrays.sort(sp, comp);
         }
         final int[] ranks = new int[domainValues.length];

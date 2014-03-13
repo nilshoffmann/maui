@@ -38,21 +38,22 @@ import org.jfree.chart.entity.CategoryItemEntity;
  * @author Nils Hoffmann
  */
 public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
-	private MouseEvent mouseEvent = null;
+
+    private MouseEvent mouseEvent = null;
     private CategorySelection selection = null;
     private ACategoryDataset<?, TARGET> dataset;
     private final EventListenerList listenerList = new EventListenerList();
     private final IDisplayPropertiesProvider provider;
-	private final ISelectionShapeFactory shapeFactory;
+    private final ISelectionShapeFactory shapeFactory;
 
-	public CategoryMouseSelectionHandler(ACategoryDataset<?, TARGET> dataset) {
+    public CategoryMouseSelectionHandler(ACategoryDataset<?, TARGET> dataset) {
         this(dataset, new DefaultSelectionShapeFactory());
     }
-	
+
     public CategoryMouseSelectionHandler(ACategoryDataset<?, TARGET> dataset, ISelectionShapeFactory shapeFactory) {
         this.dataset = dataset;
         this.provider = dataset.getLookup().lookup(IDisplayPropertiesProvider.class);
-		this.shapeFactory = shapeFactory;
+        this.shapeFactory = shapeFactory;
     }
 
     @Override
@@ -76,16 +77,15 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
     @Override
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof CategoryItemEntity) {
-			System.out.println("Firing chartMouseClicked event!");
             CategoryItemEntity itemEntity = ((CategoryItemEntity) cme.getEntity());
-			int seriesIndex = -1;
-			int itemIndex = -1;
-			seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
-			itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
-			if(seriesIndex==-1 || itemIndex==-1) {
-				throw new ArrayIndexOutOfBoundsException("Could not locate series and item index for entity!");
-			}
-            selection = new CategorySelection(dataset, seriesIndex, itemIndex, XYSelection.Type.CLICK, dataset.getSource(seriesIndex), dataset.getTarget(seriesIndex, itemIndex),shapeFactory.createSelectionShape(itemEntity));
+            int seriesIndex = -1;
+            int itemIndex = -1;
+            seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
+            itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
+            if (seriesIndex == -1 || itemIndex == -1) {
+                throw new ArrayIndexOutOfBoundsException("Could not locate series and item index for entity!");
+            }
+            selection = new CategorySelection(dataset, seriesIndex, itemIndex, XYSelection.Type.CLICK, dataset.getSource(seriesIndex), dataset.getTarget(seriesIndex, itemIndex), shapeFactory.createSelectionShape(itemEntity));
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
@@ -99,14 +99,14 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
         if (cme.getEntity() instanceof CategoryItemEntity) {
 //			System.out.println("Firing chartMouseMoved event!");
             CategoryItemEntity itemEntity = ((CategoryItemEntity) cme.getEntity());
-			int seriesIndex = -1;
-			int itemIndex = -1;
-			seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
-			itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
-			if(seriesIndex==-1 || itemIndex==-1) {
-				throw new ArrayIndexOutOfBoundsException("Could not locate series and item index for entity!");
-			}
-            selection = new CategorySelection(dataset, seriesIndex, itemIndex, XYSelection.Type.HOVER, dataset.getSource(seriesIndex), dataset.getTarget(seriesIndex, itemIndex),shapeFactory.createSelectionShape(itemEntity));
+            int seriesIndex = -1;
+            int itemIndex = -1;
+            seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
+            itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
+            if (seriesIndex == -1 || itemIndex == -1) {
+                throw new ArrayIndexOutOfBoundsException("Could not locate series and item index for entity!");
+            }
+            selection = new CategorySelection(dataset, seriesIndex, itemIndex, XYSelection.Type.HOVER, dataset.getSource(seriesIndex), dataset.getTarget(seriesIndex, itemIndex), shapeFactory.createSelectionShape(itemEntity));
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));

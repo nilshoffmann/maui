@@ -89,8 +89,6 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
     protected Node createNodeForKey(Object key) {
         try {
             ISelection selection = sourceToSelection.get(key).iterator().next();
-            System.out.println("Selection: " + selection);
-            System.out.println("DisplayPropertiesProvider: " + dataset.getLookup().lookup(IDisplayPropertiesProvider.class));
             Lookup lookup = Lookups.fixed(selection, dataset.getLookup().lookup(IDisplayPropertiesProvider.class));
             SourceNode sn = new SourceNode(key, Children.create(new SelectionOverlayChildFactory(key, sourceToSelection.get(key), so), true), lookup);
             return sn;

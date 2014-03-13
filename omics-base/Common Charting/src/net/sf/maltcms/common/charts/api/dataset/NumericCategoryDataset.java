@@ -28,51 +28,49 @@
 package net.sf.maltcms.common.charts.api.dataset;
 
 import java.util.List;
-import net.sf.maltcms.common.charts.api.selection.CategorySelection;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
-import org.jfree.data.category.CategoryDataset;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class NumericCategoryDataset extends ACategoryDataset<List<Double>,Double> {
+public class NumericCategoryDataset extends ACategoryDataset<List<Double>, Double> {
 
-	public NumericCategoryDataset(List<INamedElementProvider<? extends List<Double>, ? extends Double>> l) {
-		super(l,new IDisplayPropertiesProvider() {
+    public NumericCategoryDataset(List<INamedElementProvider<? extends List<Double>, ? extends Double>> l) {
+        super(l, new IDisplayPropertiesProvider() {
 
-			@Override
-			public String getName(ISelection selection) {
-				return selection.getName();
-			}
+            @Override
+            public String getName(ISelection selection) {
+                return selection.getName();
+            }
 
-			@Override
-			public String getDisplayName(ISelection selection) {
-				return selection.getDisplayName();
-			}
+            @Override
+            public String getDisplayName(ISelection selection) {
+                return selection.getDisplayName();
+            }
 
-			@Override
-			public String getShortDescription(ISelection selection) {
-				return selection.getShortDescription();
-			}
+            @Override
+            public String getShortDescription(ISelection selection) {
+                return selection.getShortDescription();
+            }
 
-			@Override
-			public String getSourceName(ISelection selection) {
-				return selection.getSource().getClass().getSimpleName();
-			}
+            @Override
+            public String getSourceName(ISelection selection) {
+                return selection.getSource().getClass().getSimpleName();
+            }
 
-			@Override
-			public String getSourceDisplayName(ISelection selection) {
-				return selection.getSource().getClass().getSimpleName();
-			}
+            @Override
+            public String getSourceDisplayName(ISelection selection) {
+                return selection.getSource().getClass().getSimpleName();
+            }
 
-			@Override
-			public String getSourceShortDescription(ISelection selection) {
-				return selection.getSource().getClass().getSimpleName();
-			}
+            @Override
+            public String getSourceShortDescription(ISelection selection) {
+                return selection.getSource().getClass().getSimpleName();
+            }
 
-			@Override
+            @Override
             public String getTargetName(ISelection selection) {
                 return getName(selection);
             }
@@ -87,13 +85,13 @@ public class NumericCategoryDataset extends ACategoryDataset<List<Double>,Double
                 return getShortDescription(selection);
             }
 
-		});
+        });
         for (INamedElementProvider<? extends List<Double>, ? extends Double> nep : l) {
             for (int i = 0; i < nep.size(); i++) {
-				Number n = nep.getSource().get(i);
-				addValue(n, nep.getKey(), i);
+                Number n = nep.getSource().get(i);
+                addValue(n, nep.getKey(), i);
             }
         }
-	}
-	
+    }
+
 }

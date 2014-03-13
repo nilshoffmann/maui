@@ -33,12 +33,10 @@ import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection.Type;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayNode;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionSourceChildFactory;
-import org.jfree.data.general.Dataset;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
@@ -78,11 +76,11 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         this.dataset = dataset;
         this.capacity = capacity;
     }
-	
-	public void setMode(Mode mode) {
-		clear();
-		this.mode = mode;
-	}
+
+    public void setMode(Mode mode) {
+        clear();
+        this.mode = mode;
+    }
 
     public void setDataset(Lookup.Provider dataset) {
         this.dataset = dataset;
@@ -149,7 +147,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
                     break;
                 case HOVER:
                     if (mode == Mode.ON_HOVER) {
-						if (activeSelection.contains(ce.getSelection())) {
+                        if (activeSelection.contains(ce.getSelection())) {
                             removeFromSelection(ce.getSelection());
                         } else {
                             addToSelection(ce.getSelection());

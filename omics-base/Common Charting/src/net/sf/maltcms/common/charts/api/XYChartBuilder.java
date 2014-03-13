@@ -51,157 +51,157 @@ import org.jfree.data.xy.XYZDataset;
  * @author Nils Hoffmann
  */
 public class XYChartBuilder {
-    
+
     private XYDataset dataset = new DefaultXYDataset();
-    
+
     private ValueAxis domainAxis = new NumberAxis();
-    
+
     private ValueAxis rangeAxis = new NumberAxis();
-    
+
     private XYItemRenderer renderer = new XYLineAndShapeRenderer(true, true);
-    
+
     private XYToolTipGenerator tooltipGenerator = new StandardXYToolTipGenerator();
-    
-    private Map<Comparable<?>,Color> datasetSeriesColorMap = null;
-    
+
+    private Map<Comparable<?>, Color> datasetSeriesColorMap = null;
+
     private Plot plot;
-    
+
     private JFreeChart chart;
-    
+
     private String chartTitle = "";
-    
+
     private boolean chartPanelBuffer = true;
-    
+
     private boolean chartPanelProperties = true;
-    
+
     private boolean chartPanelSave = true;
-    
+
     private boolean chartPanelPrint = true;
-    
+
     private boolean chartPanelZoom = true;
-    
+
     private boolean chartPanelToolTips = true;
-    
+
     private Font chartTitleFont = JFreeChart.DEFAULT_TITLE_FONT;
-    
+
     private boolean chartCreateLegend = true;
-	
-	private int preferredWidth = 640;
-	
-	private int preferredHeight = 480;
-	
-	private int minimumWidth = 640;
-	
-	private int minimumHeight = 480;
-	
-	private int maximumWidth = 640;
-	
-	private int maximumHeight = 480;
-    
+
+    private int preferredWidth = 640;
+
+    private int preferredHeight = 480;
+
+    private int minimumWidth = 640;
+
+    private int minimumHeight = 480;
+
+    private int maximumWidth = 640;
+
+    private int maximumHeight = 480;
+
     public XYChartBuilder() {
         plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
         chart = new JFreeChart(plot);
     }
-    
+
     private void notNull(Object o) {
-        if(o==null) {
+        if (o == null) {
             throw new NullPointerException("Argument must not be null!");
         }
     }
-	
-	public XYChartBuilder minimumDrawSize(int width, int height) {
-		minimumWidth = width;
-		minimumHeight = height;
-		return this;
-	}
-	
-	public XYChartBuilder preferredDrawSize(int width, int height) {
-		preferredWidth = width;
-		preferredHeight = height;
-		return this;
-	}
-    
-	public XYChartBuilder maximumDrawSize(int width, int height) {
-		maximumWidth = width;
-		maximumHeight = height;
-		return this;
-	}
-	
+
+    public XYChartBuilder minimumDrawSize(int width, int height) {
+        minimumWidth = width;
+        minimumHeight = height;
+        return this;
+    }
+
+    public XYChartBuilder preferredDrawSize(int width, int height) {
+        preferredWidth = width;
+        preferredHeight = height;
+        return this;
+    }
+
+    public XYChartBuilder maximumDrawSize(int width, int height) {
+        maximumWidth = width;
+        maximumHeight = height;
+        return this;
+    }
+
     public XYChartBuilder xy(XYDataset dataset) {
         notNull(dataset);
         this.dataset = dataset;
         return this;
     }
-    
+
     public XYChartBuilder tooltips(XYToolTipGenerator tooltipGenerator) {
         notNull(tooltipGenerator);
         this.tooltipGenerator = tooltipGenerator;
         return this;
     }
-    
+
     public XYChartBuilder xyz(XYZDataset dataset) {
         notNull(dataset);
         this.dataset = dataset;
         return this;
     }
-    
-    public XYChartBuilder colors(Map<Comparable<?>,Color> datasetSeriesColorMap) {
+
+    public XYChartBuilder colors(Map<Comparable<?>, Color> datasetSeriesColorMap) {
         notNull(datasetSeriesColorMap);
         this.datasetSeriesColorMap = datasetSeriesColorMap;
         return this;
     }
-    
+
     public XYChartBuilder renderer(XYItemRenderer renderer) {
         notNull(renderer);
         this.renderer = renderer;
         return this;
     }
-    
+
     public XYChartBuilder tooltips(boolean b) {
         this.chartPanelToolTips = b;
         return this;
     }
-    
+
     public XYChartBuilder titleFont(Font font) {
         notNull(font);
         this.chartTitleFont = font;
         return this;
     }
-    
+
     public XYChartBuilder createLegend(boolean b) {
         this.chartCreateLegend = b;
         return this;
     }
-    
+
     public XYChartBuilder chart(String title) {
         notNull(title);
-		notNull(plot);
+        notNull(plot);
         this.chart = new JFreeChart(title, chartTitleFont, plot, chartCreateLegend);
         return this;
     }
-	
-	public XYChartBuilder domainAxis(ValueAxis axis) {
-		notNull(axis);
-		this.domainAxis = axis;
-		return this;
-	}
-	
-	public XYChartBuilder rangeAxis(ValueAxis axis) {
-		notNull(axis);
-		this.rangeAxis = axis;
-		return this;
-	}
-    
+
+    public XYChartBuilder domainAxis(ValueAxis axis) {
+        notNull(axis);
+        this.domainAxis = axis;
+        return this;
+    }
+
+    public XYChartBuilder rangeAxis(ValueAxis axis) {
+        notNull(axis);
+        this.rangeAxis = axis;
+        return this;
+    }
+
     public XYChartBuilder plot() {
         this.plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
         renderer.setBaseToolTipGenerator(tooltipGenerator);
         setDatasetSeriesColorMap(renderer, datasetSeriesColorMap);
         return this;
     }
-    
-    protected void setDatasetSeriesColorMap(XYItemRenderer renderer, Map<Comparable<?>,Color> datasetSeriesColorMap) {
-        if(datasetSeriesColorMap!=null) {
-            if(datasetSeriesColorMap.keySet().size()!=dataset.getSeriesCount()) {
+
+    protected void setDatasetSeriesColorMap(XYItemRenderer renderer, Map<Comparable<?>, Color> datasetSeriesColorMap) {
+        if (datasetSeriesColorMap != null) {
+            if (datasetSeriesColorMap.keySet().size() != dataset.getSeriesCount()) {
                 throw new IllegalArgumentException("Mismatch in series colors and series count!");
             }
             for (int i = 0; i < dataset.getSeriesCount(); i++) {
@@ -210,16 +210,16 @@ public class XYChartBuilder {
             }
         }
     }
-    
+
     public ChartFrame buildFrame(boolean scrollPane) {
         ChartFrame chartFrame = new ChartFrame(chartTitle, chart, scrollPane);
         return chartFrame;
     }
-    
+
     public ChartPanel buildPanel() {
         ChartPanel chartPanel = new ContextAwareChartPanel(chart, preferredWidth, preferredHeight, minimumWidth, minimumHeight, maximumWidth, maximumHeight, chartPanelBuffer, chartPanelProperties, chartPanelSave, chartPanelPrint, chartPanelZoom, chartPanelToolTips);
         chartPanel.setMouseWheelEnabled(true);
         return chartPanel;
     }
-    
+
 }

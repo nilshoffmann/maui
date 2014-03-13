@@ -53,54 +53,54 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 @ActionID(
-	category = "Window",
-	id = "net.sf.maltcms.common.charts.actions.SvgScreenshot"
+        category = "Window",
+        id = "net.sf.maltcms.common.charts.actions.SvgScreenshot"
 )
 @ActionRegistration(
-	displayName = "#CTL_SvgScreenshot"
+        displayName = "#CTL_SvgScreenshot"
 )
 @ActionReferences({
-	//@ActionReference(path = "Menu/Window", position = 300),
-	@ActionReference(path = "Shortcuts", name = "DS-F10")
+    //@ActionReference(path = "Menu/Window", position = 300),
+    @ActionReference(path = "Shortcuts", name = "DS-F10")
 })
 @Messages("CTL_SvgScreenshot=Svg Screenshot")
 public final class SvgScreenshot implements ActionListener {
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Frame f = WindowManager.getDefault().getMainWindow();
-		DOMImplementation impl
-			= GenericDOMImplementation.getDOMImplementation();
-		String svgNS = "http://www.w3.org/2000/svg";
-		Document myFactory = impl.createDocument(svgNS, "svg", null);
-		SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(myFactory);
-		ctx.setEmbeddedFontsOn(true);
-		GenericImageHandler ihandler = new CachedImageHandlerBase64Encoder();
-		ctx.setGenericImageHandler(ihandler);
-		SVGGraphics2D g2d = new SVGGraphics2D(ctx, true);
-		g2d.setTransform(AffineTransform.getTranslateInstance(0, -f.getHeight()));
-		f.invalidate();
-		f.revalidate();
-		f.print(g2d);
-		Writer out = null;
-		try {
-			File outputDir = new File(System.getProperty("user.home"), "maui-screenshots");
-			outputDir.mkdirs();
-			Date d = new Date();
-			File file = new File(outputDir, new SimpleDateFormat().format(d) + ".svg");
-			out = new OutputStreamWriter(new FileOutputStream(file));
-			g2d.stream(out, true);
-			g2d.dispose();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Frame f = WindowManager.getDefault().getMainWindow();
+        DOMImplementation impl
+                = GenericDOMImplementation.getDOMImplementation();
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document myFactory = impl.createDocument(svgNS, "svg", null);
+        SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(myFactory);
+        ctx.setEmbeddedFontsOn(true);
+        GenericImageHandler ihandler = new CachedImageHandlerBase64Encoder();
+        ctx.setGenericImageHandler(ihandler);
+        SVGGraphics2D g2d = new SVGGraphics2D(ctx, true);
+        g2d.setTransform(AffineTransform.getTranslateInstance(0, -f.getHeight()));
+        f.invalidate();
+        f.revalidate();
+        f.print(g2d);
+        Writer out = null;
+        try {
+            File outputDir = new File(System.getProperty("user.home"), "maui-screenshots");
+            outputDir.mkdirs();
+            Date d = new Date();
+            File file = new File(outputDir, new SimpleDateFormat().format(d) + ".svg");
+            out = new OutputStreamWriter(new FileOutputStream(file));
+            g2d.stream(out, true);
+            g2d.dispose();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }

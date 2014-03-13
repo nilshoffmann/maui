@@ -33,14 +33,14 @@ import java.util.List;
  *
  * @author Nils Hoffmann
  */
-public interface INamedElementProvider<SOURCE,TARGET> {
-    
+public interface INamedElementProvider<SOURCE, TARGET> {
+
     public SOURCE getSource();
-    
+
     public Comparable<?> getKey();
-    
+
     public void setKey(Comparable<?> key);
-    
+
     int size();
 
     TARGET get(int i);
@@ -48,5 +48,5 @@ public interface INamedElementProvider<SOURCE,TARGET> {
     List<TARGET> get(int start, int stop);
 
     void reset();
-    
+
 }

@@ -37,16 +37,16 @@ import org.jfree.data.general.Dataset;
  */
 public interface ISelection {
 
-	public enum Type {
+    public enum Type {
 
         CLEAR, KEYBOARD, HOVER, CLICK
     };
-	
+
     public final String PROP_NAME = "name";
     public final String PROP_DISPLAY_NAME = "displayName";
     public final String PROP_SHORT_DESCRIPTION = "shortDescription";
     public final String PROP_VISIBLE = "visible";
-    
+
     Object getSource();
 
     Object getTarget();
@@ -54,8 +54,8 @@ public interface ISelection {
     String getName();
 
     void setName(String name);
-	
-	Type getType();
+
+    Type getType();
 
     String getDisplayName();
 
@@ -68,14 +68,14 @@ public interface ISelection {
     boolean isVisible();
 
     void setVisible(boolean b);
-	
-	Shape getSelectionShape();
-	
-	Dataset getDataset();
-	
-	void setDataset(Dataset dataset);
-	
-	int getSeriesIndex();
+
+    Shape getSelectionShape();
+
+    Dataset getDataset();
+
+    void setDataset(Dataset dataset);
+
+    int getSeriesIndex();
 
     int getItemIndex();
 

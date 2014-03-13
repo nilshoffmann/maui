@@ -25,16 +25,12 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.common.charts.api.dataset;
 
 import java.awt.geom.Point2D;
-import java.text.NumberFormat;
 import java.util.List;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
-import net.sf.maltcms.common.charts.api.selection.XYSelection;
-import org.jfree.data.xy.XYZDataset;
 
 /**
  *
@@ -50,20 +46,20 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
 
             @Override
             public String getName(ISelection selection) {
-                Point2D target = (Point2D)selection.getTarget();
-                return "The point at position: "+target.getX()+" "+target.getY();
+                Point2D target = (Point2D) selection.getTarget();
+                return "The point at position: " + target.getX() + " " + target.getY();
             }
 
             @Override
             public String getDisplayName(ISelection selection) {
-                Point2D target = (Point2D)selection.getTarget();
-                return "The point at position: "+target.getX()+" "+target.getY();
+                Point2D target = (Point2D) selection.getTarget();
+                return "The point at position: " + target.getX() + " " + target.getY();
             }
 
             @Override
             public String getShortDescription(ISelection selection) {
-                Point2D target = (Point2D)selection.getTarget();
-                return "The point at position: "+target.getX()+" "+target.getY()+" of source "+selection.getSource().toString();
+                Point2D target = (Point2D) selection.getTarget();
+                return "The point at position: " + target.getX() + " " + target.getY() + " of source " + selection.getSource().toString();
             }
 
             @Override
@@ -95,7 +91,7 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
             public String getTargetShortDescription(ISelection selection) {
                 return getShortDescription(selection);
             }
-			
+
         });
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
@@ -120,7 +116,7 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
         this.maxX = maxX;
         this.maxY = maxY;
     }
-	
+
     @Override
     public double getMinX() {
         return minX;
@@ -140,7 +136,7 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
     public double getMaxY() {
         return maxY;
     }
-    
+
     @Override
     public Number getX(int i, int i1) {
         return getSource(i).get(i1).getX();
@@ -156,44 +152,44 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
         return ranks;
     }
 
-	@Override
-	public Number getStartX(int i, int i1) {
-		return getX(i, i1);
-	}
+    @Override
+    public Number getStartX(int i, int i1) {
+        return getX(i, i1);
+    }
 
-	@Override
-	public double getStartXValue(int i, int i1) {
-		return getXValue(i, i1);
-	}
+    @Override
+    public double getStartXValue(int i, int i1) {
+        return getXValue(i, i1);
+    }
 
-	@Override
-	public Number getEndX(int i, int i1) {
-		return getXValue(i, i1);
-	}
+    @Override
+    public Number getEndX(int i, int i1) {
+        return getXValue(i, i1);
+    }
 
-	@Override
-	public double getEndXValue(int i, int i1) {
-		return getXValue(i, i1);
-	}
+    @Override
+    public double getEndXValue(int i, int i1) {
+        return getXValue(i, i1);
+    }
 
-	@Override
-	public Number getStartY(int i, int i1) {
-		return getY(i, i1);
-	}
+    @Override
+    public Number getStartY(int i, int i1) {
+        return getY(i, i1);
+    }
 
-	@Override
-	public double getStartYValue(int i, int i1) {
-		return getYValue(i, i1);
-	}
+    @Override
+    public double getStartYValue(int i, int i1) {
+        return getYValue(i, i1);
+    }
 
-	@Override
-	public Number getEndY(int i, int i1) {
-		return getY(i, i1);
-	}
+    @Override
+    public Number getEndY(int i, int i1) {
+        return getY(i, i1);
+    }
 
-	@Override
-	public double getEndYValue(int i, int i1) {
-		return getYValue(i, i1);
-	}
-	
+    @Override
+    public double getEndYValue(int i, int i1) {
+        return getYValue(i, i1);
+    }
+
 }

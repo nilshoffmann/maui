@@ -53,20 +53,20 @@ public class SelectionOverlayNode extends OverlayNode<SelectionOverlay> {
     public SelectionOverlayNode(SelectionOverlay bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children, lkp);
     }
-    
+
     @Override
     public Action[] getActions(boolean context) {
         Action[] actions = super.getActions(context);
         List<? extends Action> selectionActions = Utilities.actionsForPath("Actions/OverlayNodeActions/SelectionOverlay");
         List<Action> nodeActions = new ArrayList<Action>(selectionActions);
         nodeActions.add(null);
-		for(Action a:actions) {
-			if(a!=null && a.isEnabled()) {
-				nodeActions.add(a);
-			} else if(a==null) {
-				nodeActions.add(a);
-			}
-		}
+        for (Action a : actions) {
+            if (a != null && a.isEnabled()) {
+                nodeActions.add(a);
+            } else if (a == null) {
+                nodeActions.add(a);
+            }
+        }
 //        nodeActions.addAll(Arrays.asList(actions));
         return nodeActions.toArray(new Action[nodeActions.size()]);
     }

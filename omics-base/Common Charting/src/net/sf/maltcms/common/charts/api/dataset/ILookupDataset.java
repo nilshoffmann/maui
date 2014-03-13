@@ -36,13 +36,13 @@ import org.openide.util.Lookup;
  */
 public interface ILookupDataset<SOURCE, TARGET> extends Lookup.Provider {
 
-	String getDescription();
+    String getDescription();
 
-	String getDisplayName();
+    String getDisplayName();
 
-	SOURCE getSource(int seriesIndex);
+    SOURCE getSource(int seriesIndex);
 
-	TARGET getTarget(int seriesIndex, int itemIndex);
+    TARGET getTarget(int seriesIndex, int itemIndex);
 
-	List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider();
+    List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider();
 }

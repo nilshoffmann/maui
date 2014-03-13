@@ -33,11 +33,11 @@ import org.jfree.chart.entity.XYItemEntity;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
-
-
 public interface ISelectionShapeFactory {
-	public Shape createSelectionShape(XYItemEntity entity);
-	public Shape createSelectionShape(CategoryItemEntity entity);
+
+    public Shape createSelectionShape(XYItemEntity entity);
+
+    public Shape createSelectionShape(CategoryItemEntity entity);
 }

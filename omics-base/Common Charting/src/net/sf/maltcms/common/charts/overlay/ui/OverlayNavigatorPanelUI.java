@@ -28,6 +28,8 @@
 package net.sf.maltcms.common.charts.overlay.ui;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,16 +37,15 @@ import java.util.Comparator;
 import java.util.List;
 import javax.swing.ActionMap;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
-import org.netbeans.swing.outline.Outline;
-import org.openide.cookies.InstanceCookie;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
-import org.openide.explorer.view.OutlineView;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
+import org.openide.nodes.NodeNotFoundException;
+import org.openide.nodes.NodeOp;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ProxyLookup;
 
@@ -55,7 +56,7 @@ import org.openide.util.lookup.ProxyLookup;
 public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements ExplorerManager.Provider, Lookup.Provider {
 
     private ExplorerManager manager = new ExplorerManager();
-    private OutlineView outline = null;
+    private OverlayTreeView outline = null;
     private boolean expand = true;
     private Lookup lookup;
 
@@ -65,9 +66,11 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
     public OverlayNavigatorPanelUI() {
         ActionMap map = getActionMap();
         initComponents();
-        outline = new OutlineView("Overlays");
-        Outline o = outline.getOutline();
-        o.setRootVisible(false);
+        outline = new OverlayTreeView();
+        outline.setName("Overlays");
+//        Outline o = outline.getOutline();
+//        o.setRootVisible(false);
+        outline.setRootVisible(false);
         add(outline, BorderLayout.CENTER);
         lookup = ExplorerUtils.createLookup(manager, map);
     }
@@ -109,9 +112,12 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
     }
 
     public void setContent(Collection<? extends Node> overlays) {
-        if (overlays.isEmpty() || overlays == null) {
+        if (overlays == null || overlays.isEmpty()) {
             manager.setRootContext(Node.EMPTY);
         } else {
+            Node oldRoot = manager.getRootContext();
+            List<String[]> paths = outline.getExpandedPaths(oldRoot);
+            List<String[]> selectedPaths = getSelectedPaths();
             final List<Node> l = new ArrayList<Node>(overlays);
             Collections.sort(l, new Comparator<Node>() {
                 @Override
@@ -124,7 +130,7 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
                     return lhs.getLayerPosition() - rhs.getLayerPosition();
                 }
             });
-            Node root = new AbstractNode(Children.create(new ChildFactory<Node>() {
+            Node newRoot = new AbstractNode(Children.create(new ChildFactory<Node>() {
 
                 @Override
                 protected boolean createKeys(List<Node> list) {
@@ -133,12 +139,56 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
                 }
 
                 @Override
-                protected Node createNodeForKey(Node key) {
-                    return new FilterNode(key,new FilterNode.Children(key),new ProxyLookup(key.getLookup()));
+                protected Node createNodeForKey(final Node key) {
+                    return new FilterNode(key, new FilterNode.Children(key), new ProxyLookup(key.getLookup()));
                 }
-                
+
             }, true));
-            manager.setRootContext(root);
+            manager.setRootContext(newRoot);
+            outline.expandNodes(newRoot, paths);
+            setSelectedPaths(selectedPaths);
         }
+    }
+    
+    private void setSelectedPaths(List<String[]> selectedPaths) {
+        final List<Node> selectedNodes = new ArrayList<Node>();
+            Node root = manager.getRootContext();
+            for (String[] sp : selectedPaths) {
+//                LOG.log(Level.FINE, "{0}: selecting {1}", new Object[] {id, Arrays.asList(sp)});
+                try {
+                    Node n = NodeOp.findPath(root, sp);
+                    if (n != null) {
+                        selectedNodes.add(n);
+                    }
+                } catch (NodeNotFoundException x) {
+//                    LOG.log(Level.FINE, null, x);
+                }
+            }
+            if (!selectedNodes.isEmpty()) {
+//                LOG.log(Level.FINE, "{0}: Switching to AWT", id);
+                EventQueue.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        try {
+                            manager.setSelectedNodes(selectedNodes.toArray(new Node[selectedNodes.size()]));
+                        } catch (PropertyVetoException x) {
+//                            LOG.log(Level.FINE, null, x);
+                        }
+//                        LOG.log(Level.FINE, "{0}: done.", id);
+                    }
+                });
+            }
+    }
+    
+    private List<String[]> getSelectedPaths() {
+        List<String[]> result = new ArrayList<String[]>();
+        Node root = manager.getRootContext();
+        for (Node n : manager.getSelectedNodes()) {
+            String[] path = NodeOp.createPath(n, root);
+//            LOG.log(Level.FINE, "path from {0} to {1}: {2}", new Object[] {root, n, Arrays.asList(path)});
+            if (path != null) {
+                result.add(path);
+            }
+        }
+        return result;
     }
 }

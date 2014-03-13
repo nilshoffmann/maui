@@ -91,7 +91,6 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
 
     @Override
     public void panelActivated(Lookup context) {
-        System.out.println("Received lookup: " + context);
         // lookup context and listen to result to get notified about context changes
         curContext = context.lookup(MY_DATA);
         curContext.addLookupListener(getContextListener());
@@ -123,7 +122,7 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
         // Note - be sure to compute the content OUTSIDE event dispatch thread,
         // just final repainting of UI should be done in event dispatch thread.
         // Please use RequestProcessor and Swing.invokeLater to achieve this.
-        System.out.println("Received " + newData.size() + " overlays!");
+//        System.out.println("Received " + newData.size() + " overlays!");
         if (!newData.isEmpty()) {
             ((OverlayNavigatorPanelUI) getComponent()).setContent(newData);
         }
@@ -146,7 +145,6 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
 
         @Override
         public void resultChanged(LookupEvent ev) {
-            System.out.println("Received result changed for ChartOverlay from " + ev.getSource());
             Collection<? extends Node> data = curContext.allInstances();
             if (curContext != null && !curContext.allInstances().isEmpty()) {
                 setNewContent(data);

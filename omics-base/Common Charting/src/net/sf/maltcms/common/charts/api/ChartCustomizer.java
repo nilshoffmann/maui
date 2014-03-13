@@ -114,8 +114,7 @@ public class ChartCustomizer {
         for (int i = 0; i < datasets; i++) {
             CategoryDataset ds = plot.getDataset(i);
             CategoryItemRenderer renderer = plot.getRenderer(i);
-            System.out.println("Dataset has " + ds.getRowCount() + " rows");
-            System.out.println("Dataset has " + ds.getColumnCount() + " columns");
+//            System.out.println("Dataset has " + ds.getRowCount() + " rows");
             for (int j = 0; j < ds.getRowCount(); j++) {
                 renderer.setSeriesPaint(j,
                         withAlpha(plotColors[j % plotColors.length], alpha));
@@ -128,8 +127,7 @@ public class ChartCustomizer {
         for (int i = 0; i < datasets; i++) {
             CategoryDataset ds = plot.getDataset(i);
             CategoryItemRenderer renderer = plot.getRenderer(i);
-            System.out.println("Dataset has " + ds.getRowCount() + " rows");
-            System.out.println("Dataset has " + ds.getColumnCount() + " columns");
+//            System.out.println("Dataset has " + ds.getRowCount() + " rows");
             for (int j = 0; j < ds.getRowCount(); j++) {
                 renderer.setSeriesPaint(j,
                         withAlpha(colors.get(j), alpha));

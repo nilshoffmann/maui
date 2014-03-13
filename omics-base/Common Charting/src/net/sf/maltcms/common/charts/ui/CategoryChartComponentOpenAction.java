@@ -48,13 +48,13 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 @ActionID(
-    category = "Window",
-id = "net.sf.maltcms.chromaui.charts.ui.CategoryChartComponentOpenAction")
+        category = "Window",
+        id = "net.sf.maltcms.chromaui.charts.ui.CategoryChartComponentOpenAction")
 @ActionRegistration(
-    displayName = "#CTL_CategoryChartComponentOpenAction")
+        displayName = "#CTL_CategoryChartComponentOpenAction")
 @ActionReferences({
     @ActionReference(path = "Menu/Window",
-    position = 0)})
+            position = 0)})
 @Messages("CTL_CategoryChartComponentOpenAction=Open CategoryChart")
 public final class CategoryChartComponentOpenAction implements ActionListener {
 
@@ -63,15 +63,15 @@ public final class CategoryChartComponentOpenAction implements ActionListener {
         Task t = RequestProcessor.getDefault().create(new Runnable() {
             @Override
             public void run() {
-                final ACategoryDataset<List<Double>,Double> dataset = DatasetUtils.createCategoryDataset();
+                final ACategoryDataset<List<Double>, Double> dataset = DatasetUtils.createCategoryDataset();
                 final CategoryChartBuilder builder = new CategoryChartBuilder();
-				
-				MinMaxCategoryRenderer renderer = new MinMaxCategoryRenderer();
+
+                MinMaxCategoryRenderer renderer = new MinMaxCategoryRenderer();
                 renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                 renderer.setBaseItemLabelsVisible(true);
-				
-				CategoryAxis domain = new CategoryAxis("Categories");
-                builder.categories(dataset).renderer(renderer).domainAxis(domain).minimumDrawSize(400, 300).preferredDrawSize(800,600).maximumDrawSize(1280, 1024).plot().chart("Sample plot").createLegend(true);
+
+                CategoryAxis domain = new CategoryAxis("Categories");
+                builder.categories(dataset).renderer(renderer).domainAxis(domain).minimumDrawSize(400, 300).preferredDrawSize(800, 600).maximumDrawSize(1280, 1024).plot().chart("Sample plot").createLegend(true);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
