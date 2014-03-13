@@ -29,8 +29,8 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import com.db4o.activation.ActivationPurpose;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 
 /**
@@ -463,12 +463,12 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
 
     @Override
     public String toString() {
-		IChromatogramDescriptor descriptor = getChromatogramDescriptor();
-		if(descriptor==null) {
-			return "Peak @" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();	
-		}else{
-			return getChromatogramDescriptor().getDisplayName() + "@" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();
-		}
+        IChromatogramDescriptor descriptor = getChromatogramDescriptor();
+        if (descriptor == null) {
+            return "Peak @" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();
+        } else {
+            return getChromatogramDescriptor().getDisplayName() + "@" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();
+        }
     }
 
     @Override
@@ -595,33 +595,33 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     @Override
     public String getDisplayName() {
         String displayName = super.getDisplayName();
-		if(displayName==null) {
-			String name = getName();
-			if(name==null) {
-				name = "<NA>";
-				setName(name);
-			}
-			setDisplayName(name);
-			displayName = super.getDisplayName();
-		}
+        if (displayName == null) {
+            String name = getName();
+            if (name == null) {
+                name = "<NA>";
+                setName(name);
+            }
+            setDisplayName(name);
+            displayName = super.getDisplayName();
+        }
         if (displayName.
                 matches("^M\\d{6}.*")) {
             return displayName.substring(displayName.lastIndexOf("_") + 1);
-        }else{
+        } else {
             return displayName;
         }
     }
 
     @Override
     public void setDisplayName(String displayName) {
-        if (displayName!=null && displayName.
+        if (displayName != null && displayName.
                 matches("^M\\d{6}.*")) {
             super.setDisplayName(displayName.substring(displayName.lastIndexOf("_") + 1));
-        }else{
+        } else {
             super.setDisplayName(displayName);
         }
     }
-    
+
     private double normalizedArea = Double.NaN;
     public static final String PROP_NORMALIZEDAREA = "normalizedArea";
 
@@ -638,7 +638,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.normalizedArea = normalizedArea;
         firePropertyChange(PROP_NORMALIZEDAREA, old, this.normalizedArea);
     }
-    
+
     private String[] normalizationMethods = new String[0];
     public static final String PROP_NORMALIZATIONMETHODS = "normalizationMethods";
 
@@ -649,129 +649,183 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
 
     @Override
-    public void setNormalizationMethods(String ... normalizationMethods) {
+    public void setNormalizationMethods(String... normalizationMethods) {
         activate(ActivationPurpose.WRITE);
         String[] old = this.normalizationMethods;
         this.normalizationMethods = normalizationMethods;
         firePropertyChange(PROP_NORMALIZATIONMETHODS, old, this.normalizationMethods);
     }
-	
-	private String nativeDatabaseId = "NA";
-	public static final String PROP_NATIVEDATABASEID = "nativeDatbaseId";
 
-	@Override
-	public String getNativeDatabaseId() {
-		activate(ActivationPurpose.READ);
-		return nativeDatabaseId;
-	}
+    private String nativeDatabaseId = "NA";
+    public static final String PROP_NATIVEDATABASEID = "nativeDatbaseId";
 
-	@Override
-	public void setNativeDatabaseId(String id) {
-		activate(ActivationPurpose.WRITE);
-		String old = this.nativeDatabaseId;
-		this.nativeDatabaseId = id;
-		firePropertyChange(PROP_NATIVEDATABASEID, old, this.nativeDatabaseId);
-	}
+    @Override
+    public String getNativeDatabaseId() {
+        activate(ActivationPurpose.READ);
+        return nativeDatabaseId;
+    }
 
-	private double baselineStartTime = Double.NaN;
-	public static final String PROP_BASELINE_START_TIME= "baselineStartTime";
-	
-	@Override
-	public void setBaselineStartTime(double baselineStartTime) {
-		activate(ActivationPurpose.WRITE);
-		double old = this.baselineStartTime;
-		this.baselineStartTime = baselineStartTime;
-		firePropertyChange(PROP_BASELINE_START_TIME, old, this.baselineStartTime);
-	}
+    @Override
+    public void setNativeDatabaseId(String id) {
+        activate(ActivationPurpose.WRITE);
+        String old = this.nativeDatabaseId;
+        this.nativeDatabaseId = id;
+        firePropertyChange(PROP_NATIVEDATABASEID, old, this.nativeDatabaseId);
+    }
 
-	@Override
-	public double getBaselineStartTime() {
-		activate(ActivationPurpose.READ);
-		return this.baselineStartTime;
-	}
+    private double baselineStartTime = Double.NaN;
+    public static final String PROP_BASELINE_START_TIME = "baselineStartTime";
 
-	private double baselineStopTime = Double.NaN;
-	public static final String PROP_BASELINE_STOP_TIME= "baselineStopTime";
-	
-	@Override
-	public void setBaselineStopTime(double baselineStopTime) {
-		activate(ActivationPurpose.WRITE);
-		double old = this.baselineStopTime;
-		this.baselineStopTime = baselineStopTime;
-		firePropertyChange(PROP_BASELINE_STOP_TIME, old, this.baselineStopTime);
-	}
+    @Override
+    public void setBaselineStartTime(double baselineStartTime) {
+        activate(ActivationPurpose.WRITE);
+        double old = this.baselineStartTime;
+        this.baselineStartTime = baselineStartTime;
+        firePropertyChange(PROP_BASELINE_START_TIME, old, this.baselineStartTime);
+    }
 
-	@Override
-	public double getBaselineStopTime() {
-		activate(ActivationPurpose.READ);
-		return this.baselineStopTime;
-	}
+    @Override
+    public double getBaselineStartTime() {
+        activate(ActivationPurpose.READ);
+        return this.baselineStartTime;
+    }
 
-	private double baselineStartIntensity = Double.NaN;
-	public static final String PROP_BASELINE_START_INTENSITY = "baselineStartIntensity";
-	
-	@Override
-	public void setBaselineStartIntensity(double baselineStartIntensity) {
-		activate(ActivationPurpose.WRITE);
-		double old = this.baselineStartIntensity;
-		this.baselineStartIntensity = baselineStartIntensity;
-		firePropertyChange(PROP_BASELINE_START_INTENSITY, old, this.baselineStartIntensity);
-	}
+    private double baselineStopTime = Double.NaN;
+    public static final String PROP_BASELINE_STOP_TIME = "baselineStopTime";
 
-	@Override
-	public double getBaselineStartIntensity() {
-		activate(ActivationPurpose.READ);
-		return this.baselineStartIntensity;
-	}
+    @Override
+    public void setBaselineStopTime(double baselineStopTime) {
+        activate(ActivationPurpose.WRITE);
+        double old = this.baselineStopTime;
+        this.baselineStopTime = baselineStopTime;
+        firePropertyChange(PROP_BASELINE_STOP_TIME, old, this.baselineStopTime);
+    }
 
-	private double baselineStopIntensity = Double.NaN;
-	public static final String PROP_BASELINE_STOP_INTENSITY = "baselineStopIntensity";
-	
-	@Override
-	public void setBaselineStopIntensity(double baselineStopIntensity) {
-		activate(ActivationPurpose.WRITE);
-		double old = this.baselineStopIntensity;
-		this.baselineStopIntensity = baselineStopIntensity;
-		firePropertyChange(PROP_BASELINE_STOP_INTENSITY, old, this.baselineStopIntensity);
-	}
+    @Override
+    public double getBaselineStopTime() {
+        activate(ActivationPurpose.READ);
+        return this.baselineStopTime;
+    }
 
-	@Override
-	public double getBaselineStopIntensity() {
-		activate(ActivationPurpose.READ);
-		return this.baselineStopIntensity;
-	}
+    private double baselineStartIntensity = Double.NaN;
+    public static final String PROP_BASELINE_START_INTENSITY = "baselineStartIntensity";
 
-	private double startIntensity = Double.NaN;
-	public static final String PROP_START_INTENSITY = "startIntensity";
-	
-	@Override
-	public void setStartIntensity(double startIntensity) {
-		activate(ActivationPurpose.WRITE);
-		double old = this.startIntensity;
-		this.startIntensity = startIntensity;
-		firePropertyChange(PROP_START_INTENSITY, old, this.startIntensity);
-	}
+    @Override
+    public void setBaselineStartIntensity(double baselineStartIntensity) {
+        activate(ActivationPurpose.WRITE);
+        double old = this.baselineStartIntensity;
+        this.baselineStartIntensity = baselineStartIntensity;
+        firePropertyChange(PROP_BASELINE_START_INTENSITY, old, this.baselineStartIntensity);
+    }
 
-	@Override
-	public double getStartIntensity() {
-		activate(ActivationPurpose.READ);
-		return this.startIntensity;
-	}
+    @Override
+    public double getBaselineStartIntensity() {
+        activate(ActivationPurpose.READ);
+        return this.baselineStartIntensity;
+    }
 
-	private double stopIntensity = Double.NaN;
-	public static final String PROP_STOP_INTENSITY = "stopIntensity";
-	
-	@Override
-	public void setStopIntensity(double stopIntensity) {
-		activate(ActivationPurpose.WRITE);
-		double old = this.stopIntensity;
-		this.stopIntensity = stopIntensity;
-		firePropertyChange(PROP_STOP_INTENSITY, old, this.stopIntensity);
-	}
+    private double baselineStopIntensity = Double.NaN;
+    public static final String PROP_BASELINE_STOP_INTENSITY = "baselineStopIntensity";
 
-	@Override
-	public double getStopIntensity() {
-		activate(ActivationPurpose.READ);
-		return this.stopIntensity;
-	}
+    @Override
+    public void setBaselineStopIntensity(double baselineStopIntensity) {
+        activate(ActivationPurpose.WRITE);
+        double old = this.baselineStopIntensity;
+        this.baselineStopIntensity = baselineStopIntensity;
+        firePropertyChange(PROP_BASELINE_STOP_INTENSITY, old, this.baselineStopIntensity);
+    }
+
+    @Override
+    public double getBaselineStopIntensity() {
+        activate(ActivationPurpose.READ);
+        return this.baselineStopIntensity;
+    }
+
+    private double startIntensity = Double.NaN;
+    public static final String PROP_START_INTENSITY = "startIntensity";
+
+    @Override
+    public void setStartIntensity(double startIntensity) {
+        activate(ActivationPurpose.WRITE);
+        double old = this.startIntensity;
+        this.startIntensity = startIntensity;
+        firePropertyChange(PROP_START_INTENSITY, old, this.startIntensity);
+    }
+
+    @Override
+    public double getStartIntensity() {
+        activate(ActivationPurpose.READ);
+        return this.startIntensity;
+    }
+
+    private double stopIntensity = Double.NaN;
+    public static final String PROP_STOP_INTENSITY = "stopIntensity";
+
+    @Override
+    public void setStopIntensity(double stopIntensity) {
+        activate(ActivationPurpose.WRITE);
+        double old = this.stopIntensity;
+        this.stopIntensity = stopIntensity;
+        firePropertyChange(PROP_STOP_INTENSITY, old, this.stopIntensity);
+    }
+
+    @Override
+    public double getStopIntensity() {
+        activate(ActivationPurpose.READ);
+        return this.stopIntensity;
+    }
+    
+    private String inchi = "<NA>";
+    public static final String PROP_INCHI = "inchi";
+
+    /**
+     * Get the value of inchi
+     *
+     * @return the value of inchi
+     */
+    @Override
+    public String getInchi() {
+        activate(ActivationPurpose.READ);
+        return inchi;
+    }
+
+    /**
+     * Set the value of inchi
+     *
+     * @param formula new value of formula
+     */
+    @Override
+    public void setInchi(String inchi) {
+        activate(ActivationPurpose.WRITE);
+        String oldInchi = this.inchi;
+        this.inchi = inchi;
+        firePropertyChange(PROP_INCHI, oldInchi, inchi);
+    }
+    
+    private String smiles = "<NA>";
+    public static final String PROP_SMILES = "smiles";
+
+    /**
+     * Get the value of smiles
+     *
+     * @return the value of smiles
+     */
+    @Override
+    public String getSmiles() {
+        activate(ActivationPurpose.READ);
+        return inchi;
+    }
+
+    /**
+     * Set the value of smiles
+     *
+     * @param formula new value of smiles
+     */
+    @Override
+    public void setSmiles(String smiles) {
+        activate(ActivationPurpose.WRITE);
+        String oldSmiles = this.smiles;
+        this.smiles = smiles;
+        firePropertyChange(PROP_SMILES, oldSmiles, smiles);
+    }
 }

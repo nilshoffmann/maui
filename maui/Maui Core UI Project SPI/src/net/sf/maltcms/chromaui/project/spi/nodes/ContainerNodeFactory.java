@@ -74,14 +74,14 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
     protected boolean createKeys(List<T> list) {
         try {
 			//if the parent is a TreatmentGroupContainer, insert
-			//appropriate SampleGroupContainers, if there are any
-			if(cp instanceof TreatmentGroupContainer) {
-				Collection c = lkp.lookup(IChromAUIProject.class).getSampleGroupsForTreatmentGroup((TreatmentGroupContainer)cp);
-				if(!c.isEmpty()) {
-					list.addAll(c);
-					return true;
-				}
-			}
+            //appropriate SampleGroupContainers, if there are any
+            if (cp instanceof TreatmentGroupContainer) {
+                Collection c = lkp.lookup(IChromAUIProject.class).getSampleGroupsForTreatmentGroup((TreatmentGroupContainer) cp);
+                if (!c.isEmpty()) {
+                    list.addAll(c);
+                    return true;
+                }
+            }
             Collection<T> container = this.cp.getMembers();
             if (container == null || container.isEmpty()) {
                 return true;
@@ -113,24 +113,24 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
 
     @Override
     protected Node createNodeForKey(T key) {
-		if (key instanceof SampleGroupContainer) {
-			//add treatment group nodes
-			Lookup lookup = new ProxyLookup(lkp,
+        if (key instanceof SampleGroupContainer) {
+            //add treatment group nodes
+            Lookup lookup = new ProxyLookup(lkp,
                     Lookups.fixed(cp));
-            Children c = Children.create(new SampleGroupContainerNodeFactory((SampleGroupContainer)key, lookup), true);
-            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createContainerNode((IContainer<?>)key, c, lookup);
+            Children c = Children.create(new SampleGroupContainerNodeFactory((SampleGroupContainer) key, lookup), true);
+            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createContainerNode((IContainer<?>) key, c, lookup);
             key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
             cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
             return cn;
-		} else if (key instanceof IContainer<?>) {
+        } else if (key instanceof IContainer<?>) {
             Lookup lookup = new ProxyLookup(lkp,
                     Lookups.fixed(cp));
-            Children c = Children.create(new ContainerNodeFactory((IContainer<?>)key, lookup), true);
-            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createContainerNode((IContainer<?>)key, c, lookup);
+            Children c = Children.create(new ContainerNodeFactory((IContainer<?>) key, lookup), true);
+            Node cn = Lookup.getDefault().lookup(INodeFactory.class).createContainerNode((IContainer<?>) key, c, lookup);
             key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
             cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-            return cn; 
-		} else if (key instanceof IChromatogramDescriptor) {
+            return cn;
+        } else if (key instanceof IChromatogramDescriptor) {
             IChromatogramDescriptor cd = (IChromatogramDescriptor) key;
 //            System.out.println(cd.getResourceLocation());
 
@@ -144,11 +144,11 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                         cd), lkp);
                 ChromatogramNode cn = new ChromatogramNode(n,
                         Children.create(new ChromatogramChildNodeFactory(
-                        cd, lkp), true), lookup);
+                                        cd, lkp), true), lookup);
                 dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
                 key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
                 cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-				key.setProject(lkp.lookup(IChromAUIProject.class));
+                key.setProject(lkp.lookup(IChromAUIProject.class));
                 return cn;
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
@@ -158,14 +158,14 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 Exceptions.printStackTrace(ex);
             }
         } else {
-			Node cn = null;
-			if(key instanceof Lookup.Provider) {
-				cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
-						Lookups.fixed(cp),((Lookup.Provider)key).getLookup()));
-			}else {
-				cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
-						Lookups.fixed(cp)));
-			}
+            Node cn = null;
+            if (key instanceof Lookup.Provider) {
+                cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
+                        Lookups.fixed(cp), ((Lookup.Provider) key).getLookup()));
+            } else {
+                cn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lkp,
+                        Lookups.fixed(cp)));
+            }
             key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
             cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
             return cn;

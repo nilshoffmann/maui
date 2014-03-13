@@ -40,16 +40,19 @@ import java.util.Set;
 import javax.swing.Action;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.api.nodes.IProjectMenuProvider;
-import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
-import org.openide.util.*;
+import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.openide.util.Utilities;
+import org.openide.util.WeakListeners;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
@@ -69,36 +72,36 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
     }
 
     public ChromAUIProjectNode(IChromAUIProject bean) throws IntrospectionException {
-        super(bean,Children.create(new ChromaUIProjectNodesFactory(bean), true),
+        super(bean, Children.create(new ChromaUIProjectNodesFactory(bean), true),
                 new ProxyLookup(bean.getLookup()));
         setName(bean.getProjectDirectory().getName());
         setShortDescription(bean.getLocation().getPath());
         bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
         metaboliteSelection = Utilities.actionsGlobalContext().lookupResult(IMetabolite.class);
     }
-	
+
     @Override
     public Action[] getActions(boolean arg0) {
         Set<Action> nodeActions = new LinkedHashSet<Action>();
-		INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
-		List<IProjectMenuProvider> providers = new ArrayList<IProjectMenuProvider>(Lookup.getDefault().lookupAll(IProjectMenuProvider.class));
-		Collections.sort(providers,new Comparator<IProjectMenuProvider>() {
+        INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
+        List<IProjectMenuProvider> providers = new ArrayList<IProjectMenuProvider>(Lookup.getDefault().lookupAll(IProjectMenuProvider.class));
+        Collections.sort(providers, new Comparator<IProjectMenuProvider>() {
 
-			@Override
-			public int compare(IProjectMenuProvider o1, IProjectMenuProvider o2) {
-				return o1.getPosition()-o2.getPosition();
-			}
-		});
-		for(IProjectMenuProvider ipmp:providers) {
-			nodeActions.add(f.createMenuItem(ipmp.getName(), ipmp.getActionPath()));
-		}
-		nodeActions.add(null);
-		nodeActions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
+            @Override
+            public int compare(IProjectMenuProvider o1, IProjectMenuProvider o2) {
+                return o1.getPosition() - o2.getPosition();
+            }
+        });
+        for (IProjectMenuProvider ipmp : providers) {
+            nodeActions.add(f.createMenuItem(ipmp.getName(), ipmp.getActionPath()));
+        }
+        nodeActions.add(null);
+        nodeActions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
 //		nodeActions.add(f.createMenuItem("Default","Actions/ChromAUIProjectLogicalView/DefaultActions"));
         nodeActions.add(null);
-		nodeActions.add(CommonProjectActions.copyProjectAction());
+        nodeActions.add(CommonProjectActions.copyProjectAction());
         nodeActions.add(CommonProjectActions.deleteProjectAction());
-		nodeActions.add(null);
+        nodeActions.add(null);
         nodeActions.add(CommonProjectActions.closeProjectAction());
 //                null,
         nodeActions.add(CommonProjectActions.customizeProjectAction());
@@ -122,27 +125,27 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 //    public String getDisplayName() {
 //        return this.displayName;
 //    }
-	
-	@Override
-	public String getDisplayName() {
-		return ProjectUtils.getInformation(getLookup().lookup(IChromAUIProject.class)).getDisplayName();
-	}
-	
-	@Override
-	public String getHtmlDisplayName() {
-		return ProjectUtils.getInformation(getLookup().lookup(IChromAUIProject.class)).getDisplayName();
-	}
+
+    @Override
+    public String getDisplayName() {
+        return ProjectUtils.getInformation(getLookup().lookup(IChromAUIProject.class)).getDisplayName();
+    }
+
+    @Override
+    public String getHtmlDisplayName() {
+        return ProjectUtils.getInformation(getLookup().lookup(IChromAUIProject.class)).getDisplayName();
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        if(pce.getPropertyName().equals(PROP_NAME)) {
-            fireNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_NAME)) {
+            fireNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME)) {
-            fireDisplayNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_DISPLAY_NAME)) {
+            fireDisplayNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
-            fireShortDescriptionChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
+            fireShortDescriptionChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
 //        try{
 //            firePropertyChange(pce.getPropertyName(), pce.getOldValue(), pce.getNewValue());
@@ -154,6 +157,6 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 
     @Override
     public void resultChanged(LookupEvent le) {
-        System.out.println("Received IMetabolite in global selection: "+metaboliteSelection.allInstances().toString());
+        System.out.println("Received IMetabolite in global selection: " + metaboliteSelection.allInstances().toString());
     }
 }

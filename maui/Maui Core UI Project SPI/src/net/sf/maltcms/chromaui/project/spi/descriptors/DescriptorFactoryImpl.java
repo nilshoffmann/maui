@@ -32,15 +32,36 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.*;
-import net.sf.maltcms.chromaui.project.api.types.*;
+import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptorFactory;
+import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IResourceDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IScanSelectionDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
+import net.sf.maltcms.chromaui.project.api.types.GC;
+import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
+import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
+import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
+import net.sf.maltcms.chromaui.project.api.types.QUADMS;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -112,9 +133,9 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
 
     @Override
     public IPeakGroupDescriptor newPeakGroupDescriptor(
-            List<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool) {
+            Collection<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool) {
         PeakGroupDescriptor pgd = new PeakGroupDescriptor();
-        pgd.setPeakAnnotationDescriptors(peaks);
+        pgd.setPeakAnnotationDescriptors(new ArrayList<IPeakAnnotationDescriptor>(peaks));
         pgd.setTool(tool);
         return pgd;
     }

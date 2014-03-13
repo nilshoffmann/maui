@@ -35,12 +35,13 @@ import java.awt.image.BufferedImage;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import org.openide.actions.PropertiesAction;
 import org.openide.nodes.BeanNode;
@@ -62,12 +63,12 @@ import org.openide.util.lookup.ProxyLookup;
 public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescriptor>> implements PropertyChangeListener {
 
     public ContainerNode(IContainer<? extends IBasicDescriptor> bean, Lookup lkp) throws IntrospectionException {
-        super(bean, Children.create(new ContainerNodeFactory((IContainer<?>)bean, lkp), true),
+        super(bean, Children.create(new ContainerNodeFactory((IContainer<?>) bean, lkp), true),
                 new ProxyLookup(lkp, Lookups.singleton(bean)));
 //        System.out.println("Creating container node for " + bean.getClass());
         bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
     }
-    
+
     public ContainerNode(IContainer<? extends IBasicDescriptor> bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children,
                 new ProxyLookup(lkp, Lookups.singleton(bean)));
@@ -77,29 +78,32 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
 
     @Override
     public Action[] getActions(boolean context) {
-        Class<?>[] interfaces = getBean().getClass().getInterfaces();
         LinkedHashSet<Action> list = new LinkedHashSet<Action>();
-        for (Class c : interfaces) {
-            list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + c.
-                    getName()));
-            list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + c.
-                    getSimpleName()));
-        }
-        if(getBean() instanceof StatisticsContainer) {
-            StatisticsContainer sc = (StatisticsContainer)getBean();
+        ArrayList<Action> actions = new ArrayList<Action>();
+        if (getBean() instanceof StatisticsContainer) {
+            StatisticsContainer sc = (StatisticsContainer) getBean();
             String method = sc.getMethod();
             list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().
-                getClass().getSimpleName()+"/"+method));
+                    getClass().getSimpleName() + "/" + method.toLowerCase()));
+        } else {
+            Class<?>[] interfaces = getBean().getClass().getInterfaces();
+            for (Class c : interfaces) {
+                list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + c.
+                        getName()));
+                list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + c.
+                        getSimpleName()));
+            }
+            list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().
+                    getClass().getSimpleName()));
+            list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().
+                    getClass().getName()));
         }
-        list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().
-                getClass().getSimpleName()));
-        list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/" + getBean().
-                getClass().getName()));
-        list.add(null);
-        list.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/DefaultActions"));
-        list.add(SystemAction.get(PropertiesAction.class));
+        actions.addAll(list);
+        actions.add(null);
+        actions.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/DefaultActions"));
+        actions.add(SystemAction.get(PropertiesAction.class));
 
-        return list.toArray(new Action[list.size()]);
+        return actions.toArray(new Action[actions.size()]);
     }
 
     @Override
@@ -117,7 +121,7 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
 
                 g2.setColor(colorDescr.getColor());
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
-                g2.fillRoundRect(0, 0, bi.getWidth(), bi.getHeight(),2,2);
+                g2.fillRoundRect(0, 0, bi.getWidth(), bi.getHeight(), 2, 2);
                 descrImage = ImageUtilities.mergeImages(bi, descrImage,
                         0, 0);
             }
@@ -144,19 +148,19 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        if(pce.getPropertyName().equals(PROP_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_NAME)) {
-            fireNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_NAME)) {
+            fireNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_DISPLAYNAME)) {
-            fireDisplayNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_DISPLAYNAME)) {
+            fireDisplayNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION) || pce.getPropertyName().equals(IDescriptor.PROP_SHORTDESCRIPTION)) {
-            fireShortDescriptionChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION) || pce.getPropertyName().equals(IDescriptor.PROP_SHORTDESCRIPTION)) {
+            fireShortDescriptionChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-		if(pce.getPropertyName().equals(PROP_ICON) || pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
+        if (pce.getPropertyName().equals(PROP_ICON) || pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
             fireIconChange();
         }
-		if(pce.getPropertyName().equals(PROP_OPENED_ICON) || pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
+        if (pce.getPropertyName().equals(PROP_OPENED_ICON) || pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
             fireOpenedIconChange();
         }
     }

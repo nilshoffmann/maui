@@ -34,22 +34,22 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IProjectMenuProvider.class)
+@ServiceProvider(service = IProjectMenuProvider.class)
 public class PeaksMenuProvider implements IProjectMenuProvider {
 
-	@Override
-	public String getName() {
-		return "Peaks";
-	}
+    @Override
+    public String getName() {
+        return "Peaks";
+    }
 
-	@Override
-	public String getActionPath() {
-		return "Actions/ChromAUIProjectLogicalView/Peaks";
-	}
-	
-	@Override
-	public int getPosition() {
-		return -40;
-	}
-	
+    @Override
+    public String getActionPath() {
+        return "Actions/ChromAUIProjectLogicalView/Peaks";
+    }
+
+    @Override
+    public int getPosition() {
+        return -40;
+    }
+
 }

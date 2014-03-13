@@ -27,26 +27,82 @@
  */
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
-import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import javax.swing.Action;
+import javax.swing.JMenuItem;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.ContextAwareAction;
+import org.openide.util.HelpCtx;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
+import org.openide.util.actions.Presenter;
+import org.openide.util.actions.SystemAction;
 
 /**
  *
  * @author Nils Hoffmann
  */
 @ActionID(category = "ContainerNodeActions/ChromatogramNode",
-	id = "net.sf.maltcms.chromaui.project.spi.nodes.ChromatogramNodePopupAction")
-@ActionRegistration(displayName = "#CTL_ChromatogramNodePopupAction")
+        id = "net.sf.maltcms.chromaui.project.spi.nodes.ChromatogramNodePopupAction")
+@ActionRegistration(displayName = "#CTL_ChromatogramNodePopupAction", lazy = true)
 @NbBundle.Messages("CTL_ChromatogramNodePopupAction=Open")
-public final class ChromatogramNodePopupAction extends NodePopupAction implements ActionListener {
+public final class ChromatogramNodePopupAction extends SystemAction implements Presenter.Menu, Presenter.Popup, ContextAwareAction {
 
-	public ChromatogramNodePopupAction() {
-		super("Open");
-		setActions(new Action[0]);
-//		setActions(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open").toArray(new Action[0]));
-	}
+    private final NodePopupMenuAction action = new NodePopupMenuAction(false, "Open","Open", "Actions/ContainerNodeActions/ChromatogramNode/Open");
 
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        // do nothing -- should never be called
+    }
+
+    @Override
+    public String getName() {
+        return (String) action.getValue(Action.NAME);
+    }
+
+    @Override
+    public HelpCtx getHelpCtx() {
+        return HelpCtx.DEFAULT_HELP;
+        // If you will provide context help then use:
+        // return new HelpCtx(RSMEditorActionAction.class);
+    }
+
+    @Override
+    public JMenuItem getMenuPresenter() {
+        return action.getMenuPresenter();
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return action.getPopupPresenter();
+    }
+
+    @Override
+    public Action createContextAwareInstance(Lookup actionContext) {
+        if (actionContext.lookupAll(IChromatogramDescriptor.class).isEmpty()) {
+            this.setEnabled(false);
+        } else {
+            this.setEnabled(true);
+        }
+        return this;
+    }
+
+//    private final List<IChromatogramDescriptor> chromatograms;
+//    
+//    public ChromatogramNodePopupAction(List<IChromatogramDescriptor> chromatograms) {
+//        this.chromatograms = chromatograms;
+//        setActions(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open").toArray(new Action[0]));
+//    }
+//    
+//    @Override
+//    public Action createContextAwareInstance(Lookup lkp) {
+//        if (!lkp.lookupAll(IChromatogramDescriptor.class).isEmpty()) {
+//            setEnabled(true);
+//        }else{
+//            setEnabled(false);
+//        }
+//        return super.createContextAwareInstance(lkp);
+//    }
 }

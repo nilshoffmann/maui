@@ -34,22 +34,22 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IProjectMenuProvider.class)
+@ServiceProvider(service = IProjectMenuProvider.class)
 public class DatabaseMenuProvider implements IProjectMenuProvider {
 
-	@Override
-	public String getName() {
-		return "Database";
-	}
+    @Override
+    public String getName() {
+        return "Database";
+    }
 
-	@Override
-	public String getActionPath() {
-		return "Actions/ChromAUIProjectLogicalView/Database";
-	}
-	
-	@Override
-	public int getPosition() {
-		return -30;
-	}
-	
+    @Override
+    public String getActionPath() {
+        return "Actions/ChromAUIProjectLogicalView/Database";
+    }
+
+    @Override
+    public int getPosition() {
+        return -30;
+    }
+
 }

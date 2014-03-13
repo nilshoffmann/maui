@@ -65,201 +65,227 @@ import org.openide.util.actions.Presenter;
  * @author nilshoffmann
  */
 public class ChromatogramNode extends FilterNode implements
-	PropertyChangeListener {
+        PropertyChangeListener {
 
-	public ChromatogramNode(Node original, org.openide.nodes.Children children,
-		Lookup lookup) {
-		super(original, children, lookup);
-		lookup.lookup(IChromatogramDescriptor.class).addPropertyChangeListener(WeakListeners.propertyChange(this,
-			lookup.lookup(IChromatogramDescriptor.class)));
-	}
+    public ChromatogramNode(Node original, org.openide.nodes.Children children,
+            Lookup lookup) {
+        super(original, children, lookup);
+        lookup.lookup(IChromatogramDescriptor.class).addPropertyChangeListener(WeakListeners.propertyChange(this,
+                lookup.lookup(IChromatogramDescriptor.class)));
+    }
 
-	public ChromatogramNode(Node original, org.openide.nodes.Children children) {
-		super(original, children);
-	}
+    public ChromatogramNode(Node original, org.openide.nodes.Children children) {
+        super(original, children);
+    }
 
-	public ChromatogramNode(Node original) {
-		super(original);
-	}
+    public ChromatogramNode(Node original) {
+        super(original);
+    }
 
-	@Override
-	public PropertySet[] getPropertySets() {
-		PropertySet[] propSets = super.getPropertySets();
-		final IChromatogramDescriptor icd = getLookup().lookup(
-			IChromatogramDescriptor.class);
-		if (icd == null) {
-			return propSets;
-		}
-		List<PropertySet> propertySets = new LinkedList<PropertySet>();
-		propertySets.addAll(Arrays.asList(propSets));
-		try {
-			BeanInfo beanInfo = Utilities.getBeanInfo(IChromatogramDescriptor.class);
-			Descriptor d = BeanNode.computeProperties(icd, beanInfo);
-			Sheet.Set pset = Sheet.createPropertiesSet();
-			pset.setName("chromatogramNormal");
-			pset.setDisplayName("Chromatogram Properties");
-			pset.put(d.property);
-			BeanDescriptor bd = beanInfo.getBeanDescriptor();
-			if ((bd != null) && (bd.getValue("propertiesHelpID") != null)) { // NOI18N
-				pset.setValue("helpID", bd.getValue("propertiesHelpID")); // NOI18N
-			}
+    @Override
+    public PropertySet[] getPropertySets() {
+        PropertySet[] propSets = super.getPropertySets();
+        final IChromatogramDescriptor icd = getLookup().lookup(
+                IChromatogramDescriptor.class);
+        if (icd == null) {
+            return propSets;
+        }
+        List<PropertySet> propertySets = new LinkedList<PropertySet>();
+        propertySets.addAll(Arrays.asList(propSets));
+        try {
+            BeanInfo beanInfo = Utilities.getBeanInfo(IChromatogramDescriptor.class);
+            Descriptor d = BeanNode.computeProperties(icd, beanInfo);
+            Sheet.Set pset = Sheet.createPropertiesSet();
+            pset.setName("chromatogramNormal");
+            pset.setDisplayName("Chromatogram Properties");
+            pset.put(d.property);
+            BeanDescriptor bd = beanInfo.getBeanDescriptor();
+            if ((bd != null) && (bd.getValue("propertiesHelpID") != null)) { // NOI18N
+                pset.setValue("helpID", bd.getValue("propertiesHelpID")); // NOI18N
+            }
 
-			propertySets.add(pset);
+            propertySets.add(pset);
 
-			if (d.expert.length != 0) {
-				Sheet.Set eset = Sheet.createExpertSet();
-				eset.setName("chromatogramExpert");
-				eset.setDisplayName("Chromatogram Expert Properties");
-				eset.put(d.expert);
-				if ((bd != null) && (bd.getValue("expertHelpID") != null)) { // NOI18N
-					eset.setValue("helpID", bd.getValue("expertHelpID")); // NOI18N
-				}
+            if (d.expert.length != 0) {
+                Sheet.Set eset = Sheet.createExpertSet();
+                eset.setName("chromatogramExpert");
+                eset.setDisplayName("Chromatogram Expert Properties");
+                eset.put(d.expert);
+                if ((bd != null) && (bd.getValue("expertHelpID") != null)) { // NOI18N
+                    eset.setValue("helpID", bd.getValue("expertHelpID")); // NOI18N
+                }
 
-				propertySets.add(eset);
-			}
-		} catch (IntrospectionException ex) {
-			Exceptions.printStackTrace(ex);
-		}
-		return propertySets.toArray(new PropertySet[propertySets.size()]);
-	}
+                propertySets.add(eset);
+            }
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return propertySets.toArray(new PropertySet[propertySets.size()]);
+    }
 
-	@Override
-	public Action[] getActions(boolean context) {
-		return createActions(context, "Actions/ContainerNodeActions/ChromatogramNode");//, "Actions/ContainerNodeActions/ChromatogramNode/Open");
-//		Set<Action> allActions = new LinkedHashSet<Action>();
-//		INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
-//		allActions.addAll(Utilities.actionsForPath(
-//			"Actions/ContainerNodeActions/ChromatogramNode"));
-//		allActions.removeAll(Utilities.actionsForPath(
-//			"Actions/ContainerNodeActions/ChromatogramNode/Open"));
-//		Set<Action> openActions = new LinkedHashSet<Action>();
-//		//avoid double entries in main menu and Open submenu
-//		openActions.addAll(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open"));
-//		allActions.add(f.createMenuItem("Open", "Actions/ContainerNodeActions/ChromatogramNode/Open"));
+    @Override
+    public Action[] getActions(boolean context) {
+        ArrayList<Action> actions = new ArrayList<Action>();
+//        Set<Action> nodeActions = new LinkedHashSet<Action>();
+//        INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
+//        List<IChromatogramNodeMenuProvider> providers = new ArrayList<IChromatogramNodeMenuProvider>(Lookup.getDefault().lookupAll(IChromatogramNodeMenuProvider.class));
+//        Collections.sort(providers, new Comparator<IChromatogramNodeMenuProvider>() {
 //
-//		Action[] originalActions = super.getActions(context);
-//		allActions.addAll(Arrays.asList(originalActions));
-//		allActions.removeAll(openActions);
-////		List<String> exclusions = Arrays.asList("net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.RawChromatogram1DViewOpenAction");
-////		Set<Action> actionsToRemove = new HashSet<Action>();
-////		for (String s : exclusions) {
-////			for (Action a : allActions) {
-////				if (a != null && a.getClass().getName().equals(s)) {
-////					actionsToRemove.add(a);
-////				}
-////			}
-////		}
-////		allActions.removeAll(actionsToRemove);
-////        containerActions.addAll(getLookup().lookupAll(Action.class));
-//		return allActions.toArray(new Action[allActions.size()]);
-	}
+//            @Override
+//            public int compare(IChromatogramNodeMenuProvider o1, IChromatogramNodeMenuProvider o2) {
+//                return o1.getPosition() - o2.getPosition();
+//            }
+//        });
+//        for (IChromatogramNodeMenuProvider ipmp : providers) {
+//            nodeActions.add(f.createMenuItem(ipmp.getName(), ipmp.getActionPath()));
+//        }
+//        actions.addAll(nodeActions);
+        actions.add(ChromatogramNodePopupAction.findObject(ChromatogramNodePopupAction.class, true));
+        actions.add(null);
+        actions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
+        actions.addAll(Arrays.asList(super.getActions(context)));
+//        Action[] actions = createActions(context, "Actions/ContainerNodeActions/ChromatogramNode");//, "Actions/ContainerNodeActions/ChromatogramNode/Open");
+        return actions.toArray(new Action[actions.size()]);
+//        return actions;
+    }
 
-	/**
-	 * Retrieves actions from the given paths.
-	 *
-	 * @param context Action context sensitivity
-	 * @param paths   Action paths
-	 * @return All found actions from the given paths
-	 */
-	protected Action[] createActions(boolean context, String... paths) {
-		ArrayList<Action> subActions = new ArrayList<Action>();
-		Set<Action> actions = new LinkedHashSet<Action>();
-		for (String path : paths) {
-			List<? extends Action> actionsForPath = Utilities.actionsForPath(path);
-			for (Action a : actionsForPath) {
-				if (a instanceof Presenter.Popup) {
-					List<Action> presenterActions = this.findSubActions((Presenter.Popup) a);
-					if (!presenterActions.isEmpty()) {
-						subActions.addAll(presenterActions);
-					} else {
-						continue;
-					}
-				}
-				actions.add(a);
-			}
-		}
+    /**
+     * Retrieves actions from the given paths.
+     *
+     * @param context Action context sensitivity
+     * @param paths Action paths
+     * @return All found actions from the given paths
+     */
+    protected Action[] createActions(boolean context, String... paths) {
+        ArrayList<Action> subActions = new ArrayList<Action>();
+        Set<Action> actions = new LinkedHashSet<Action>();
+        actions.add(new ChromatogramNodePopupAction());
+//        for (String path : paths) {
+//            List<? extends Action> actionsForPath = Utilities.actionsForPath(path);
+//            for (Action a : actionsForPath) {
+//                if (a instanceof Presenter.Popup) {
+//                    List<Action> presenterActions = this.findSubActions((Presenter.Popup) a);
+//                    if (!presenterActions.isEmpty()) {
+//                        subActions.addAll(presenterActions);
+//                    } 
+//                } else if (a instanceof Presenter.Menu) {
+//                    List<Action> menuActions = this.findSubMenuActions((Presenter.Menu) a);
+//                    if (!menuActions.isEmpty()) {
+//                        subActions.addAll(menuActions);
+//                    } 
+//                } else {
+//                    actions.add(a);
+//                }
+//
+//            }
+//        }
 
-		List<Action> parent = Arrays.asList(super.getActions(context));
-		actions.addAll(parent);
+        List<Action> parent = Arrays.asList(super.getActions(context));
+        actions.addAll(parent);
 
-		// remove all actions that are already in a submenu
-		actions.removeAll(subActions);
+        // remove all actions that are already in a submenu
+        actions.removeAll(subActions);
 
-		return actions.toArray(new Action[actions.size()]);
-	}
+        return actions.toArray(new Action[actions.size()]);
+    }
 
-	private List<Action> findSubActions(Presenter.Popup subMenu) {
-		List<Action> actions = new ArrayList<Action>();
+    private List<Action> findSubActions(Presenter.Popup subMenu) {
+        List<Action> actions = new ArrayList<Action>();
 
-		JMenuItem item = subMenu.getPopupPresenter();
-		if (item instanceof JMenu) {
-			JMenu menu = (JMenu) item;
-			for (int i = 0; i < menu.getItemCount(); i++) {
-				Action a = menu.getItem(i).getAction();
-				actions.add(a);
+        JMenuItem item = subMenu.getPopupPresenter();
+        if (item instanceof JMenu) {
+            JMenu menu = (JMenu) item;
+            for (int i = 0; i < menu.getItemCount(); i++) {
+                Action a = menu.getItem(i).getAction();
+                actions.add(a);
+                if (a instanceof Presenter.Menu) {
+                    actions.addAll(this.findSubMenuActions((Presenter.Menu) a));
+                } else if (a instanceof Presenter.Popup) {
+                    actions.addAll(this.findSubActions((Presenter.Popup) a));
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Expected JMenu instance, got " + item.getClass().getName());
+        }
 
-				if (a instanceof Presenter.Popup) {
-					actions.addAll(this.findSubActions((Presenter.Popup) a));
-				}
-			}
-		}
+        return actions;
+    }
 
-		return actions;
-	}
+    private List<Action> findSubMenuActions(Presenter.Menu subMenu) {
+        List<Action> actions = new ArrayList<Action>();
 
-	@Override
-	public Image getIcon(int type) {
-		Image descrImage = ImageUtilities.loadImage(
-			"net/sf/maltcms/chromaui/project/resources/cdflogo.png");
-		int w = descrImage.getWidth(null);
-		int h = descrImage.getHeight(null);
-		IChromatogramDescriptor descr = getLookup().lookup(
-			IChromatogramDescriptor.class);
-		if (descr != null) {
-			Color c = descr.getTreatmentGroup().getColor();
-			if (c != null) {
-				BufferedImage bi = new BufferedImage(w / 10, h / 10,
-					BufferedImage.TYPE_INT_ARGB);
-				Graphics2D g2 = bi.createGraphics();
-				g2.setColor(c);
-				g2.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-				descrImage = ImageUtilities.mergeImages(descrImage, bi,
-					w - bi.getWidth(), h - bi.getHeight());
-			}
+        JMenuItem item = subMenu.getMenuPresenter();
+        if (item instanceof JMenu) {
+            JMenu menu = (JMenu) item;
+            for (int i = 0; i < menu.getItemCount(); i++) {
+                Action a = menu.getItem(i).getAction();
+                actions.add(a);
+                if (a instanceof Presenter.Menu) {
+                    actions.addAll(this.findSubMenuActions((Presenter.Menu) a));
+                } else if (a instanceof Presenter.Popup) {
+                    actions.addAll(this.findSubActions((Presenter.Popup) a));
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Expected JMenu instance, got " + item.getClass().getName());
+        }
 
-		}
-		return descrImage;
-	}
+        return actions;
+    }
 
-	@Override
-	public String getDisplayName() {
-		return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();
-	}
+    @Override
+    public Image getIcon(int type) {
+        Image descrImage = ImageUtilities.loadImage(
+                "net/sf/maltcms/chromaui/project/resources/cdflogo.png");
+        int w = descrImage.getWidth(null);
+        int h = descrImage.getHeight(null);
+        IChromatogramDescriptor descr = getLookup().lookup(
+                IChromatogramDescriptor.class);
+        if (descr != null) {
+            Color c = descr.getTreatmentGroup().getColor();
+            if (c != null) {
+                BufferedImage bi = new BufferedImage(w / 10, h / 10,
+                        BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2 = bi.createGraphics();
+                g2.setColor(c);
+                g2.fillRect(0, 0, bi.getWidth(), bi.getHeight());
+                descrImage = ImageUtilities.mergeImages(descrImage, bi,
+                        w - bi.getWidth(), h - bi.getHeight());
+            }
 
-	@Override
-	public String getHtmlDisplayName() {
-		return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();
-	}
+        }
+        return descrImage;
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent pce) {
-		if (pce.getPropertyName().equals(PROP_NAME)) {
-			fireNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
-		}
-		if (pce.getPropertyName().equals(PROP_DISPLAY_NAME)) {
-			fireDisplayNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
-		}
-		if (pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
-			fireShortDescriptionChange((String) pce.getOldValue(), (String) pce.getNewValue());
-		}
-		if (pce.getPropertyName().equals(PROP_ICON)) {
-			fireIconChange();
-		}
-		if (pce.getPropertyName().equals(PROP_OPENED_ICON)) {
-			fireOpenedIconChange();
-		}
-		if (pce.getPropertyName().equals("color")) {
-			fireIconChange();
-		}
-	}
+    @Override
+    public String getDisplayName() {
+        return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();
+    }
+
+    @Override
+    public String getHtmlDisplayName() {
+        return getLookup().lookup(IChromatogramDescriptor.class).getDisplayName();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        if (pce.getPropertyName().equals(PROP_NAME)) {
+            fireNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
+        }
+        if (pce.getPropertyName().equals(PROP_DISPLAY_NAME)) {
+            fireDisplayNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
+        }
+        if (pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)) {
+            fireShortDescriptionChange((String) pce.getOldValue(), (String) pce.getNewValue());
+        }
+        if (pce.getPropertyName().equals(PROP_ICON)) {
+            fireIconChange();
+        }
+        if (pce.getPropertyName().equals(PROP_OPENED_ICON)) {
+            fireOpenedIconChange();
+        }
+        if (pce.getPropertyName().equals("color")) {
+            fireIconChange();
+        }
+    }
 }

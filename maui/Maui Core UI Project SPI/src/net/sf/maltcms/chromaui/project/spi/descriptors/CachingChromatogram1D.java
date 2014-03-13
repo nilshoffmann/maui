@@ -468,7 +468,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
 	@Override
 	public int getNumberOfScansForMsLevel(short msLevelValue) {
 		init();
-		if (msLevelValue == (short) 1 && msScanMap == null) {
+		if (msLevelValue == (short) 1 || msScanMap == null) {
 			return getNumberOfScans();
 		}
 		return msScanMap.get(msLevelValue).size();

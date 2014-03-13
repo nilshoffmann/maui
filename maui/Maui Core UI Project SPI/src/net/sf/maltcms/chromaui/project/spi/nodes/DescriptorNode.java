@@ -39,8 +39,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
-import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import org.apache.commons.lang.ClassUtils;
 import org.openide.actions.PropertiesAction;
@@ -85,18 +85,18 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
 
     @Override
     public Action[] getActions(boolean context) {
-		List<?> interfaces = ClassUtils.getAllInterfaces(getBean().getClass());
-		List<?> superClasses = ClassUtils.getAllSuperclasses(getBean().getClass());
+        List<?> interfaces = ClassUtils.getAllInterfaces(getBean().getClass());
+        List<?> superClasses = ClassUtils.getAllSuperclasses(getBean().getClass());
         LinkedHashSet<Action> descriptorActions = new LinkedHashSet<Action>();
         for (Object o : interfaces) {
-			Class<?> c = (Class)o;
+            Class<?> c = (Class) o;
             descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getName()));
             descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getSimpleName()));
         }
-		for (Object o : superClasses) {
-			Class<?> c = (Class)o;
+        for (Object o : superClasses) {
+            Class<?> c = (Class) o;
             descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
                     getName()));
             descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.
@@ -121,7 +121,7 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
             IColorizableDescriptor colorDescr = (IColorizableDescriptor) getBean();
             Color c = colorDescr.getColor();
             if (c != null) {
-                BufferedImage bi = new BufferedImage(w/10, h/10,
+                BufferedImage bi = new BufferedImage(w / 10, h / 10,
                         BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g2 = bi.createGraphics();
 
@@ -129,7 +129,7 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
                 g2.fillRect(0, 0, bi.getWidth(), bi.getHeight());
                 descrImage = ImageUtilities.mergeImages(bi, descrImage,
-                        w-bi.getWidth(), h-bi.getHeight());
+                        w - bi.getWidth(), h - bi.getHeight());
             }
 
         }
@@ -143,23 +143,23 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        if(pce.getPropertyName().equals(PROP_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_NAME)) {
-            fireNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_NAME)) {
+            fireNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_DISPLAYNAME)) {
-            fireDisplayNameChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_DISPLAY_NAME) || pce.getPropertyName().equals(IDescriptor.PROP_DISPLAYNAME)) {
+            fireDisplayNameChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION)  || pce.getPropertyName().equals(IDescriptor.PROP_SHORTDESCRIPTION)) {
-            fireShortDescriptionChange((String)pce.getOldValue(),(String)pce.getNewValue());
+        if (pce.getPropertyName().equals(PROP_SHORT_DESCRIPTION) || pce.getPropertyName().equals(IDescriptor.PROP_SHORTDESCRIPTION)) {
+            fireShortDescriptionChange((String) pce.getOldValue(), (String) pce.getNewValue());
         }
-        if(pce.getPropertyName().equals(PROP_ICON)) {
+        if (pce.getPropertyName().equals(PROP_ICON)) {
             fireIconChange();
         }
-		if(pce.getPropertyName().equals(PROP_OPENED_ICON)) {
+        if (pce.getPropertyName().equals(PROP_OPENED_ICON)) {
             fireOpenedIconChange();
         }
-		if(pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
-			fireIconChange();
-		}
+        if (pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
+            fireIconChange();
+        }
     }
 }

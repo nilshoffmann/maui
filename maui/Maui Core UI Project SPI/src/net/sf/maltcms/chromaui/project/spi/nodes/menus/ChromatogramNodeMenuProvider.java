@@ -27,29 +27,28 @@
  */
 package net.sf.maltcms.chromaui.project.spi.nodes.menus;
 
-import net.sf.maltcms.chromaui.project.api.nodes.IProjectMenuProvider;
+import net.sf.maltcms.chromaui.project.api.nodes.IChromatogramNodeMenuProvider;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service = IProjectMenuProvider.class)
-public class ScriptsMenuProvider implements IProjectMenuProvider {
+@ServiceProvider(service = IChromatogramNodeMenuProvider.class)
+public class ChromatogramNodeMenuProvider implements IChromatogramNodeMenuProvider {
 
     @Override
     public String getName() {
-        return "Scripts";
+        return "Open";
     }
 
     @Override
     public String getActionPath() {
-        return "Actions/ChromAUIProjectLogicalView/Scripts";
+        return "Actions/ContainerNodeActions/ChromatogramNode/Open";
     }
 
     @Override
     public int getPosition() {
-        return -20;
+        return -50;
     }
-
 }
