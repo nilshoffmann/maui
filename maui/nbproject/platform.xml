@@ -22,6 +22,9 @@
     <condition property="download.tasks.required">
         <and>
             <not>
+                <available file="${harness.dir}${file.separator}tasks.jar"/>
+            </not>
+            <not>
                 <available file="${java.io.tmpdir}${file.separator}tasks.jar"/>
             </not>
         </and>
@@ -55,7 +58,7 @@
         <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
     </target>
     
-	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks">
+	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks" if="download.enabled">
 		<!--if="download.enabled">-->
         <pathconvert pathsep="|" property="download.clusters" setonempty="true">
             <mapper type="flatten"/>

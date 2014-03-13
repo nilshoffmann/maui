@@ -1,0 +1,43 @@
+maui/BrandingModule/nbproject/private/private.xml
+maui/BrandingModule/src/net/sf/maltcms/chromaui/branding/Bundle.properties
+maui/BrandingModule/src/net/sf/maltcms/chromaui/branding/layer.xml
+maui/CDFFileHandle/nbproject/private/private.xml
+maui/ChartComponents/nbproject/private/private.xml
+maui/ChromAProject/nbproject/private/private.xml
+maui/ChromaTOFPeakImporter/nbproject/private/private.xml
+maui/ChromatogramHeatmapViewer/nbproject/private/private.xml
+maui/ExecutionSupport/nbproject/private/private.xml
+maui/FeatureSupport/nbproject/private/private.xml
+maui/FileHandles/nbproject/private/private.xml
+maui/GCViewer/nbproject/private/private.xml
+maui/GroovyActions/nbproject/private/private.xml
+maui/Heatmap3DViewer/nbproject/private/private.xml
+maui/MSDatabaseSearchProvider/nbproject/private/private.xml
+maui/MSViewer/nbproject/private/private.xml
+"maui/Maui CeBiTec Branding/nbproject/private/private.xml"
+"maui/Maui Core Pipeline Editor/nbproject/private/private.xml"
+"maui/Maui Core UI Project SPI/manifest.mf"
+"maui/Maui Core UI Project SPI/nbproject/genfiles.properties"
+"maui/Maui Core UI Project SPI/nbproject/private/private.xml"
+"maui/Maui Welcome/nbproject/private/private.xml"
+maui/MeltDBConnector/nbproject/genfiles.properties
+maui/MeltDBConnector/nbproject/private/private.xml
+maui/MetaboliteDatabaseViewer/nbproject/private/private.xml
+maui/PeakNormalization/nbproject/private/private.xml
+maui/PeakTableViewer/nbproject/private/private.xml
+maui/PipelineRunner/nbproject/private/private.xml
+maui/StatisticsView/nbproject/private/private.xml
+maui/site/nbproject/private/private.properties
+maui/site/nbproject/private/private.xml
+nbproject/private/private.xml
+omics-base/ChromaDBProjectType/nbproject/genfiles.properties
+omics-base/ChromaDBProjectType/nbproject/private/private.xml
+"omics-base/Common Charting/manifest.mf"
+"omics-base/Common Charting/nbproject/genfiles.properties"
+"omics-base/Common Charting/nbproject/private/private.xml"
+omics-base/DB4oDatabaseServices/nbproject/private/private.xml
+omics-base/DatabaseServices/nbproject/private/private.xml
+"omics-base/Maui Lib Jzy3d/nbproject/private/private.xml"
+omics-base/PCAViewer/nbproject/private/private.xml
+omics-base/RServeBridge/nbproject/private/private.xml
+omics-base/UISupport/nbproject/private/private.xml
