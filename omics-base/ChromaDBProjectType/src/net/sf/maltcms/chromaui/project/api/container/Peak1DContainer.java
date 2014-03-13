@@ -39,11 +39,11 @@ import org.openide.util.ImageUtilities;
  *
  * @author Nils Hoffmann
  */
-public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDescriptor>{
+public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDescriptor> {
 
     public final String PROP_CHROMATOGRAM = "chromatogram";
     public final String PROP_COLOR = "color";
-    
+
     @Indexed
     private IChromatogramDescriptor chromatogram;
 
@@ -56,27 +56,27 @@ public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDes
         activate(ActivationPurpose.WRITE);
         IChromatogramDescriptor oldDescr = this.chromatogram;
         this.chromatogram = chromatogram;
-        firePropertyChange(PROP_CHROMATOGRAM,oldDescr,this.chromatogram);
+        firePropertyChange(PROP_CHROMATOGRAM, oldDescr, this.chromatogram);
     }
-    
-    private Color color = new Color(255,255,255,0);
-    
+
+    private Color color = new Color(255, 255, 255, 0);
+
     public Color getColor() {
         activate(ActivationPurpose.READ);
         return color;
     }
-    
+
     public void setColor(Color color) {
         activate(ActivationPurpose.WRITE);
         Color old = this.color;
         this.color = color;
         firePropertyChange(PROP_COLOR, old, this.color);
     }
-    
+
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/Peaks.png");
     }
-    
+
 }

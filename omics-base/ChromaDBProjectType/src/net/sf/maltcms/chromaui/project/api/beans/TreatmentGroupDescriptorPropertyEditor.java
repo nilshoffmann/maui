@@ -35,13 +35,13 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor
  * @author Nils Hoffmann
  */
 public class TreatmentGroupDescriptorPropertyEditor extends PropertyEditorSupport {
-    
+
     public TreatmentGroupDescriptorPropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        ITreatmentGroupDescriptor id = (ITreatmentGroupDescriptor)getValue();
+        ITreatmentGroupDescriptor id = (ITreatmentGroupDescriptor) getValue();
         return id.getDisplayName();
     }
 

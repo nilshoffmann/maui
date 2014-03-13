@@ -35,17 +35,18 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor
 import org.openide.util.ImageUtilities;
 
 /**
- * Container for chromatogram descriptors belonging to one specific treatment group.
- * 
+ * Container for chromatogram descriptors belonging to one specific treatment
+ * group or study variable. Multiple of these will form an assay.
+ *
  * @author Nils Hoffmann
  */
 public class TreatmentGroupContainer extends ADatabaseBackedContainer<IChromatogramDescriptor>
         implements ITreatmentGroupDescriptor {
-    
+
     private ITreatmentGroupDescriptor treatmentGroup;
 
     public static String PROP_TREATMENTGROUP = "treatmentGroup";
-    
+
     public ITreatmentGroupDescriptor getTreatmentGroup() {
         activate(ActivationPurpose.READ);
         return this.treatmentGroup;

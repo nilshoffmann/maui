@@ -35,14 +35,14 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
  * @author Nils Hoffmann
  */
 public class SampleGroupDescriptorPropertyEditor extends PropertyEditorSupport {
-    
+
     public SampleGroupDescriptorPropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        ISampleGroupDescriptor id = (ISampleGroupDescriptor)getValue();
-        return id==null?"<NA>":id.getDisplayName();
+        ISampleGroupDescriptor id = (ISampleGroupDescriptor) getValue();
+        return id == null ? "<NA>" : id.getDisplayName();
     }
 
     @Override

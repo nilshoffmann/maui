@@ -30,7 +30,7 @@ package net.sf.maltcms.chromaui.project.api.nodes;
 /**
  * Register implementations of this class by adding a ServiceProvider annotation
  * before the class declaration:
- * <code>@ServiceProvider(service=IProjectMenuProvider)</code>.
+ * <code>@ServiceProvider(service=IObjectMenuProvider)</code>.
  *
  * The name returned will be used when the project menu is displayed. The
  * position attribute defines the order in which menus are displayed. User menus
@@ -49,6 +49,23 @@ package net.sf.maltcms.chromaui.project.api.nodes;
  *
  * @author Nils Hoffmann
  */
-public interface IProjectMenuProvider extends IObjectNodeMenuProvider{
+public interface IObjectNodeMenuProvider {
 
+    /**
+     *
+     * @return the display name of this submenu.
+     */
+    public String getName();
+
+    /**
+     *
+     * @return the action path for this submenu
+     */
+    public String getActionPath();
+
+    /**
+     *
+     * @return the position of this submenu
+     */
+    public int getPosition();
 }

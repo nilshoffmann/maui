@@ -67,9 +67,9 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
     @Override
     public int compareTo(IBasicDescriptor ic) {
         if (ic instanceof IContainer) {
-            if (getPrecedence() < ((IContainer)ic).getPrecedence()) {
+            if (getPrecedence() < ((IContainer) ic).getPrecedence()) {
                 return -1;
-            } else if (getPrecedence() > ((IContainer)ic).getPrecedence()) {
+            } else if (getPrecedence() > ((IContainer) ic).getPrecedence()) {
                 return 1;
             }
         }
@@ -81,13 +81,13 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         activate(ActivationPurpose.READ);
         return members;
     }
-    
+
     @Override
     public void setMembers(Collection<T> members) {
         activate(ActivationPurpose.WRITE);
-        if(members instanceof ActivatableArrayList) {
-            this.members = (ActivatableArrayList<T>)members;
-        }else{
+        if (members instanceof ActivatableArrayList) {
+            this.members = (ActivatableArrayList<T>) members;
+        } else {
             this.members = new ActivatableArrayList<T>(members);
         }
         firePropertyChange(PROP_MEMBERS, null,
@@ -128,6 +128,6 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
 //            sb.append(igd.getLocation()+"\n");
         //}
         return sb.toString();
-}
+    }
 
 }

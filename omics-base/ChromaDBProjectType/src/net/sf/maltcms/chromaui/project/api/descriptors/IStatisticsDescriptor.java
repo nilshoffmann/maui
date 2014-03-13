@@ -31,6 +31,5 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  * @author Nils Hoffmann
  */
 public interface IStatisticsDescriptor extends IBasicDescriptor {
-    
-    
+
 }

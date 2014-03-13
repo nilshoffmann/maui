@@ -63,5 +63,5 @@ public interface IPropertyChangeSupport {
     void removePropertyChangeListener(String string, PropertyChangeListener pl);
 
     void removePropertyChangeListener(PropertyChangeListener pl);
-    
+
 }

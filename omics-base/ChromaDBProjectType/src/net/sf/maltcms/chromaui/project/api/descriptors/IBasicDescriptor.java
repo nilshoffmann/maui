@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
 import com.db4o.ta.Activatable;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -37,18 +38,18 @@ import org.openide.util.HelpCtx;
  *
  * @author Nils Hoffmann
  */
-public interface IBasicDescriptor extends Activatable, Comparable<IBasicDescriptor>, HelpCtx.Provider, IPropertyChangeSupport {
+public interface IBasicDescriptor extends Activatable, Comparable<IBasicDescriptor>, HelpCtx.Provider, IPropertyChangeSupport, Serializable {
 
     final String PROP_DISPLAYNAME = "displayName";
     final String PROP_NAME = "name";
     final String PROP_DATE = "date";
     final String PROP_ID = "id";
     final String PROP_SHORTDESCRIPTION = "shortDescription";
-	final String PROP_PROJECT = "project";
-	
-	public IChromAUIProject getProject();
-	
-	public void setProject(IChromAUIProject project);
+    final String PROP_PROJECT = "project";
+
+    public IChromAUIProject getProject();
+
+    public void setProject(IChromAUIProject project);
 
     public String getDisplayName();
 

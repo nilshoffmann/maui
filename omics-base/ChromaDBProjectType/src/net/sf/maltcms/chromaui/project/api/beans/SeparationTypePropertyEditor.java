@@ -35,13 +35,13 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  * @author Nils Hoffmann
  */
 public class SeparationTypePropertyEditor extends PropertyEditorSupport {
-    
+
     public SeparationTypePropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        ISeparationType id = (ISeparationType)getValue();
+        ISeparationType id = (ISeparationType) getValue();
         return id.getSeparationType();
     }
 

@@ -42,11 +42,11 @@ import ucar.ma2.Array;
 public interface IPeakGroupDescriptor extends IBasicDescriptor {
 
     final String PROP_PEAKGROUPCONTAINER = "peakGroupContainer";
-    
+
     public PeakGroupContainer getPeakGroupContainer();
-    
+
     public void setPeakGroupContainer(PeakGroupContainer pgc);
-    
+
     public List<IPeakAnnotationDescriptor> getPeakAnnotationDescriptors();
 
     public void setPeakAnnotationDescriptors(
@@ -57,46 +57,50 @@ public interface IPeakGroupDescriptor extends IBasicDescriptor {
     public double getMedianApexTime();
 
     public double getMeanArea(IPeakNormalizer normalizer);
-    
+
     public double getMedianArea(IPeakNormalizer normalizer);
 
     public double getMeanApexIntensity(IPeakNormalizer normalizer);
-    
+
     public double getMeanAreaLog10(IPeakNormalizer normalizer);
 
     public double getMeanApexIntensityLog10(IPeakNormalizer normalizer);
 
     public double getApexTimeStdDev();
-    
+
     public double getAreaStdDev(IPeakNormalizer normalizer);
-    
+
     public String getMajorityName();
-	
-	public double getMajorityNamePercentage();
-	
-	public String getMajorityNativeDatabaseId();
-	
-	public String getMajorityDisplayName();
-    
+
+    public double getMajorityNamePercentage();
+
+    public String getMajorityNativeDatabaseId();
+
+    public String getMajorityDisplayName();
+
     public String getCas();
-    
+
     public void setCas(String cas);
-    
+
     public String getFormula();
 
     public void setFormula(String formula);
-    
-    public Tuple2D<Array,Array> getMeanMassSpectrum();
-    
+
+    public Tuple2D<Array, Array> getMeanMassSpectrum();
+
     public int getIndex();
-    
+
     public void setIndex(int i);
-    
-    public Map<ITreatmentGroupDescriptor,Set<IPeakAnnotationDescriptor>> getPeaksByTreatmentGroup();
-    
-    public Map<ISampleGroupDescriptor,Set<IPeakAnnotationDescriptor>> getPeaksBySampleGroup();
+
+    public Map<ITreatmentGroupDescriptor, Set<IPeakAnnotationDescriptor>> getPeaksByTreatmentGroup();
+
+    public Map<ISampleGroupDescriptor, Set<IPeakAnnotationDescriptor>> getPeaksBySampleGroup();
 
     public IPeakAnnotationDescriptor getPeakForSample(IChromatogramDescriptor chromatogramDescriptor);
-    
+
     public StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors);
+    
+    public Set<IPeakAnnotationDescriptor> getPeaksForTreatmentGroup(ITreatmentGroupDescriptor group);
+    
+    public Set<IPeakAnnotationDescriptor> getPeaksForSampleGroup(ISampleGroupDescriptor group);
 }

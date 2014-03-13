@@ -27,7 +27,7 @@
  */
 package net.sf.maltcms.chromaui.project.api.beans;
 
-import java.beans.*;
+import java.beans.PropertyEditorSupport;
 import java.util.UUID;
 
 /**
@@ -35,13 +35,13 @@ import java.util.UUID;
  * @author Nils Hoffmann
  */
 public class UUIDPropertyEditor extends PropertyEditorSupport {
-    
+
     public UUIDPropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        UUID id = (UUID)getValue();
+        UUID id = (UUID) getValue();
         return id.toString();
     }
 

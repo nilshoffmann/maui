@@ -33,7 +33,8 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
 import org.openide.util.ImageUtilities;
 
 /**
- * FIXME IStatisticsDescriptor needs a refactoring 
+ * FIXME IStatisticsDescriptor needs a refactoring
+ *
  * @author Nils Hoffmann
  */
 public class StatisticsContainer extends ADatabaseBackedContainer<IStatisticsDescriptor> {
@@ -62,7 +63,7 @@ public class StatisticsContainer extends ADatabaseBackedContainer<IStatisticsDes
         this.method = method;
         firePropertyChange(PROP_METHOD, oldMethod, method);
     }
-    
+
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(

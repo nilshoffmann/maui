@@ -36,13 +36,13 @@ import org.netbeans.api.project.ProjectUtils;
  * @author Nils Hoffmann
  */
 public class ChromAUIProjectPropertyEditor extends PropertyEditorSupport {
-    
+
     public ChromAUIProjectPropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        IChromAUIProject id = (IChromAUIProject)getValue();
+        IChromAUIProject id = (IChromAUIProject) getValue();
         return ProjectUtils.getInformation(id).getDisplayName();
     }
 

@@ -27,13 +27,9 @@
  */
 package net.sf.maltcms.chromaui.project.api;
 
-import cross.datastructures.fragments.IFileFragment;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
@@ -41,7 +37,6 @@ import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 
@@ -56,11 +51,10 @@ public interface IMauiProject extends PropertyChangeListener {
     void addToLookup(Object... obj);
 
     Collection<IChromatogramDescriptor> getChromatograms();
-    
+
 //    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp);
 //    
 //    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp);
-
     <T extends IContainer> Collection<T> getContainer(Class<T> c);
 
     Collection<IDatabaseDescriptor> getDatabases();
@@ -68,27 +62,27 @@ public interface IMauiProject extends PropertyChangeListener {
     Collection<Peak1DContainer> getPeaks(IChromatogramDescriptor descriptor);
 
     Collection<ITreatmentGroupDescriptor> getTreatmentGroups();
-	
-	Collection<ISampleGroupDescriptor> getSampleGroups();
-	
-	Collection<SampleGroupContainer> getSampleGroupsForTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup);
-	
-	<T extends IBasicDescriptor> T getDescriptorById(UUID descriptorId, Class<? extends T> descriptorClass);
-	
-	<T extends IContainer> T getContainerById(UUID containerId, Class<? extends T> containerClass);
+
+    Collection<ISampleGroupDescriptor> getSampleGroups();
+
+    Collection<SampleGroupContainer> getSampleGroupsForTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup);
+
+    <T extends IBasicDescriptor> T getDescriptorById(UUID descriptorId, Class<? extends T> descriptorClass);
+
+    <T extends IContainer> T getContainerById(UUID containerId, Class<? extends T> containerClass);
 
     void removeContainer(IContainer... ic);
 
     void updateContainer(IContainer... ic);
-    
+
     void removeDescriptor(IBasicDescriptor... descriptor);
-    
+
     File getOutputLocation(Object exporter);
-    
+
     File getImportLocation(Object importer);
-	
-	File getImportDirectory();
-	
-	File getOutputDirectory();
-	
+
+    File getImportDirectory();
+
+    File getOutputDirectory();
+
 }

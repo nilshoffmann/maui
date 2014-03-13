@@ -37,9 +37,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 public interface IGenericContainer<T extends IBasicDescriptor> extends IBasicDescriptor {
 
     final String PROP_MEMBERS = "members";
-    
+
     Collection<T> getMembers();
-    
+
     void setMembers(Collection<T> members);
 
     void setMembers(T... f);
@@ -47,5 +47,5 @@ public interface IGenericContainer<T extends IBasicDescriptor> extends IBasicDes
     void addMembers(T... f);
 
     void removeMembers(T... f);
-    
+
 }

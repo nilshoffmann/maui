@@ -25,36 +25,12 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project.api.beans;
-
-import java.beans.PropertyEditorSupport;
-import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
+package net.sf.maltcms.chromaui.project.api.nodes;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class GenericDescriptorPropertyEditor extends PropertyEditorSupport {
-
-    public GenericDescriptorPropertyEditor() {
-    }
-
-    @Override
-    public String getAsText() {
-        Object value = getValue();
-        if (value instanceof IDescriptor) {
-            IDescriptor id = (IDescriptor) value;
-            return id.getDisplayName();
-        } else if (value instanceof IBasicDescriptor) {
-            IBasicDescriptor id = (IBasicDescriptor) value;
-            return id.getDisplayName();
-        }
-        return "<NA>";
-    }
-
-    @Override
-    public void setAsText(String string) throws IllegalArgumentException {
-        throw new IllegalArgumentException("Editing of descriptor name is not supported!");
-    }
+public interface IChromatogramNodeMenuProvider extends IObjectNodeMenuProvider {
+    
 }

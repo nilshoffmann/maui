@@ -43,15 +43,16 @@ import org.openide.util.HelpCtx;
  * @author Nils Hoffmann
  */
 public class ABasicDescriptor implements IBasicDescriptor {
+
     private transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    
+
     protected PropertyChangeSupport getPropertyChangeSupport() {
-        if(this.pcs == null) {
+        if (this.pcs == null) {
             this.pcs = new PropertyChangeSupport(this);
         }
         return this.pcs;
     }
-    
+
     @Override
     public synchronized void removePropertyChangeListener(String string, PropertyChangeListener pl) {
         getPropertyChangeSupport().removePropertyChangeListener(string, pl);
@@ -121,22 +122,22 @@ public class ABasicDescriptor implements IBasicDescriptor {
     public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
         getPropertyChangeSupport().addPropertyChangeListener(pl);
     }
-	
-	private transient IChromAUIProject project;
-	
-	@Override
-	public IChromAUIProject getProject() {
-		return project;
-	}
-	
-	@Override
-	public void setProject(IChromAUIProject project) {
-		IChromAUIProject old = this.project;
-		this.project = project;
+
+    private transient IChromAUIProject project;
+
+    @Override
+    public IChromAUIProject getProject() {
+        return project;
+    }
+
+    @Override
+    public void setProject(IChromAUIProject project) {
+        IChromAUIProject old = this.project;
+        this.project = project;
 //		if(old!=project) {
 //			getPropertyChangeSupport().firePropertyChange(IDescriptor.PROP_PROJECT, old, this.project);
 //		}
-	}
+    }
 
     private transient Activator activator;
 
@@ -158,7 +159,7 @@ public class ABasicDescriptor implements IBasicDescriptor {
             activator.activate(activationPurpose);
         }
     }
-    
+
     @Indexed
     private String name = "<NA>";
 
@@ -185,7 +186,7 @@ public class ABasicDescriptor implements IBasicDescriptor {
         this.name = name;
         getPropertyChangeSupport().firePropertyChange(PROP_NAME, oldName, name);
     }
-    
+
     private String displayName = "<NA>";
 
     /**
@@ -214,10 +215,10 @@ public class ABasicDescriptor implements IBasicDescriptor {
         this.displayName = displayName;
         getPropertyChangeSupport().firePropertyChange(PROP_DISPLAYNAME, oldDisplayName, displayName);
     }
-    
+
     @Indexed
     private Date date = new Date();
-    
+
     @Override
     public Date getDate() {
         activate(ActivationPurpose.READ);
@@ -231,10 +232,10 @@ public class ABasicDescriptor implements IBasicDescriptor {
         this.date = date;
         firePropertyChange(PROP_DATE, old, date);
     }
-    
+
     @Indexed
     private UUID id = UUID.randomUUID();
-    
+
     @Override
     public UUID getId() {
         activate(ActivationPurpose.READ);
@@ -248,9 +249,9 @@ public class ABasicDescriptor implements IBasicDescriptor {
         this.id = id;
         firePropertyChange(PROP_ID, old, id);
     }
-    
+
     private String shortDescription = "";
-    
+
     @Override
     public String getShortDescription() {
         activate(ActivationPurpose.READ);
@@ -269,7 +270,7 @@ public class ABasicDescriptor implements IBasicDescriptor {
     public String toString() {
         return getDisplayName();
     }
-    
+
     @Override
     public int compareTo(IBasicDescriptor t) {
         return getId().compareTo(t.getId());
@@ -301,5 +302,5 @@ public class ABasicDescriptor implements IBasicDescriptor {
         hash = 89 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
-    
+
 }

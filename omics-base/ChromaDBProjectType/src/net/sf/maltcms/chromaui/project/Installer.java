@@ -27,18 +27,17 @@
  */
 package net.sf.maltcms.chromaui.project;
 
+import java.beans.PropertyEditorManager;
 import org.openide.modules.ModuleInstall;
 
 public class Installer extends ModuleInstall {
 
-	@Override
-	public void restored() {
-//		PropertyEditorManager.registerEditor(UUID.class, UUIDPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IDetectorType.class, DetectorTypePropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ISeparationType.class, SeparationTypePropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ITreatmentGroupDescriptor.class, TreatmentGroupDescriptorPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(ISampleGroupDescriptor.class, SampleGroupDescriptorPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IChromAUIProject.class, ChromAUIProjectPropertyEditor.class);
-//		PropertyEditorManager.registerEditor(IDescriptor.class, GenericDescriptorPropertyEditor.class);
-	}
+    @Override
+    public void restored() {
+        String[] searchPath = PropertyEditorManager.getEditorSearchPath();
+        String[] newPath = new String[searchPath.length + 1];
+        System.arraycopy(searchPath, 0, newPath, 0, searchPath.length);
+        newPath[searchPath.length] = "net.sf.maltcms.chromaui.project.api.beans";
+        PropertyEditorManager.setEditorSearchPath(newPath);
+    }
 }

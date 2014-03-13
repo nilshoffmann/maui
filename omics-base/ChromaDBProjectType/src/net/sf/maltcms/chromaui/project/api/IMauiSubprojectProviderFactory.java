@@ -33,8 +33,7 @@ import org.netbeans.spi.project.SubprojectProvider;
  *
  * @author hoffmann
  */
-
-
 public interface IMauiSubprojectProviderFactory {
-	public SubprojectProvider provide(IChromAUIProject project);
+
+    public SubprojectProvider provide(IChromAUIProject project);
 }

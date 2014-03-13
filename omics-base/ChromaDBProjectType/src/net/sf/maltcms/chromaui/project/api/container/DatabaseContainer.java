@@ -36,11 +36,11 @@ import org.openide.util.ImageUtilities;
  * @author Nils Hoffmann
  */
 public class DatabaseContainer extends ADatabaseBackedContainer<IDatabaseDescriptor> {
-    
+
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/DBDescriptor.png");
     }
-    
+
 }

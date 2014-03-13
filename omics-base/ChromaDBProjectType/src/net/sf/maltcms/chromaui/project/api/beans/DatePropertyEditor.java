@@ -27,7 +27,7 @@
  */
 package net.sf.maltcms.chromaui.project.api.beans;
 
-import java.beans.*;
+import java.beans.PropertyEditorSupport;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -36,13 +36,13 @@ import java.util.Date;
  * @author Nils Hoffmann
  */
 public class DatePropertyEditor extends PropertyEditorSupport {
-    
+
     public DatePropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        Date id = (Date)getValue();
+        Date id = (Date) getValue();
         return SimpleDateFormat.getDateTimeInstance().format(id);
     }
 

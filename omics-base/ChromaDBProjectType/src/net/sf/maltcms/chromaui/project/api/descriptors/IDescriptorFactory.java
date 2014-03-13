@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
 import cross.datastructures.fragments.IFileFragment;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
@@ -45,14 +46,17 @@ import org.openide.loaders.DataObjectNotFoundException;
  * @author Nils Hoffmann
  */
 public interface IDescriptorFactory {
+
     public DataObject getDataObject(IResourceDescriptor id) throws DataObjectNotFoundException, IOException;
 
-	public IChromatogram1D newChromatogram1D(IFileFragment chromDescr);
-	public IChromatogram2D newChromatogram2D(IFileFragment chromDescr);
-	
+    public IChromatogram1D newChromatogram1D(IFileFragment chromDescr);
+
+    public IChromatogram2D newChromatogram2D(IFileFragment chromDescr);
+
     public IPeakGroupDescriptor newPeakGroupDescriptor(String name);
 
     public ISampleGroupDescriptor newSampleGroupDescriptor(String name);
+
     public IChromatogramDescriptor newChromatogramDescriptor();
 
     public IChromatogramDescriptor newChromatogramDescriptor(String name, ITreatmentGroupDescriptor treatmentGroup, ISampleGroupDescriptor sampleGroup, INormalizationDescriptor normalization);
@@ -65,15 +69,16 @@ public interface IDescriptorFactory {
             DatabaseType type);
 
     public IPeakGroupDescriptor newPeakGroupDescriptor(
-            List<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool);
+            Collection<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool);
 
     public IDatabaseDescriptor newDatabaseDescriptor(String location,
             DatabaseType type,
             ISeparationType separationType, IDetectorType detectorType);
 
     /**
-     * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a 
+     * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a
      * normalization value of 1.0;
+     *
      * @return a new default normalization descriptor
      */
     public INormalizationDescriptor newNormalizationDescriptor();
@@ -85,7 +90,7 @@ public interface IDescriptorFactory {
             double similarity, String library, String cas, String formula,
             String method, double startTime, double apexTime, double stopTime,
             double area, double intensity);
-    
+
     public IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
@@ -95,7 +100,7 @@ public interface IDescriptorFactory {
             double area, double intensity, double rt1, double rt2);
 
     public IAnovaDescriptor newAnovaDescriptor();
-    
+
     public IPcaDescriptor newPcaDescriptor();
 
     public void addPeakAnnotations(IChromAUIProject project,
@@ -103,6 +108,6 @@ public interface IDescriptorFactory {
             List<IPeakAnnotationDescriptor> peaks, IToolDescriptor trd);
 
     public Image getImage(IBasicDescriptor descriptor);
-    
+
     public IScanSelectionDescriptor newScanSelectionDescriptor();
 }

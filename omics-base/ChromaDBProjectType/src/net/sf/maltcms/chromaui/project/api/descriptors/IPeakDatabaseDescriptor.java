@@ -32,8 +32,9 @@ import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 
 /**
  * A custom database descriptor that can associate to peaks in the project.
+ *
  * @author Nils Hoffmann
  */
 public interface IPeakDatabaseDescriptor extends IDatabaseDescriptor, IContainer<Peak1DContainer> {
-	
+
 }

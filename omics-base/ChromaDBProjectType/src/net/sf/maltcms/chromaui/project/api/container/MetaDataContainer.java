@@ -41,7 +41,7 @@ public class MetaDataContainer extends ADatabaseBackedContainer<IMetaDataDescrip
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
-            "net/sf/maltcms/chromaui/project/resources/ProjectMetadata.png");
+                "net/sf/maltcms/chromaui/project/resources/ProjectMetadata.png");
     }
 
 }

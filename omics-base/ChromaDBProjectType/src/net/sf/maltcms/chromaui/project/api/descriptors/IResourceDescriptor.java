@@ -31,10 +31,10 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  *
  * @author Nils Hoffmann
  */
-public interface IResourceDescriptor extends IBasicDescriptor{
+public interface IResourceDescriptor extends IBasicDescriptor {
 
     String getResourceLocation();
 
     void setResourceLocation(String u);
-    
+
 }

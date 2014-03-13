@@ -39,11 +39,18 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public interface INodeFactory {
+
     Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup);
-	Node createDescriptorNode(IBasicDescriptor key, Lookup lookup);
+
+    Node createDescriptorNode(IBasicDescriptor key, Lookup lookup);
+
     Node createContainerNode(IContainer key, Children children, Lookup lookup);
-	Node createContainerNode(IContainer key, Lookup lookup);
-	<T extends IBasicDescriptor> Children createContainerChildren(IContainer<T> key, Lookup lookup);
-	Action createMenuItem(String name, String path);
-	Action createMenuItem(String name, Action[] actions);
+
+    Node createContainerNode(IContainer key, Lookup lookup);
+
+    <T extends IBasicDescriptor> Children createContainerChildren(IContainer<T> key, Lookup lookup);
+
+    Action createMenuItem(String name, String path);
+
+    Action createMenuItem(String name, Action[] actions);
 }

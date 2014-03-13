@@ -40,44 +40,44 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public class DetectorTypePropertyEditor extends PropertyEditorSupport {
-    
+
     public DetectorTypePropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        IDetectorType id = (IDetectorType)getValue();
+        IDetectorType id = (IDetectorType) getValue();
         return id.getDetectorType();
     }
 
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
-		IDetectorType dt = getDetectorTypeForName(string);
-		setValue(dt);
+        IDetectorType dt = getDetectorTypeForName(string);
+        setValue(dt);
     }
-	
-	private IDetectorType getDetectorTypeForName(String name) throws IllegalArgumentException {
-		String[] tags = getTags();
+
+    private IDetectorType getDetectorTypeForName(String name) throws IllegalArgumentException {
+        String[] tags = getTags();
         int idx = Arrays.binarySearch(tags, name);
-		if(idx<0) {
-			throw new IllegalArgumentException(name+" is not a valid value for detector type! Valid ones are: "+Arrays.deepToString(tags));
-		}
-		Collection<? extends IDetectorType> detectorTypes = Lookup.getDefault().lookupAll(IDetectorType.class);
-		for(IDetectorType dt:detectorTypes) {
-			if(name.equals(dt.getDetectorType())) {
-				return dt;
-			}
-		}
-		throw new IllegalArgumentException("Could not find a matching detector type for name "+name);
-	}
-	
-	@Override
-	public String[] getTags() {
-		Collection<? extends IDetectorType> detectorTypes = Lookup.getDefault().lookupAll(IDetectorType.class);
-		List<String> names = new LinkedList<String>();
-		for(IDetectorType dt:detectorTypes) {
-			names.add(dt.getDetectorType());
-		}
-		return names.toArray(new String[names.size()]);
-	}
+        if (idx < 0) {
+            throw new IllegalArgumentException(name + " is not a valid value for detector type! Valid ones are: " + Arrays.deepToString(tags));
+        }
+        Collection<? extends IDetectorType> detectorTypes = Lookup.getDefault().lookupAll(IDetectorType.class);
+        for (IDetectorType dt : detectorTypes) {
+            if (name.equals(dt.getDetectorType())) {
+                return dt;
+            }
+        }
+        throw new IllegalArgumentException("Could not find a matching detector type for name " + name);
+    }
+
+    @Override
+    public String[] getTags() {
+        Collection<? extends IDetectorType> detectorTypes = Lookup.getDefault().lookupAll(IDetectorType.class);
+        List<String> names = new LinkedList<String>();
+        for (IDetectorType dt : detectorTypes) {
+            names.add(dt.getDetectorType());
+        }
+        return names.toArray(new String[names.size()]);
+    }
 }

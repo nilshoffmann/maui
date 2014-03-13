@@ -33,7 +33,8 @@ import java.awt.Desktop;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.*;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.net.URI;
 import javax.swing.JComponent;
@@ -50,10 +51,10 @@ import org.openide.explorer.propertysheet.PropertyModel;
  */
 public class URIPropertyEditor extends PropertyEditorSupport implements ExPropertyEditor, InplaceEditor.Factory {
 
-	private InplaceEditor ed = null;
+    private InplaceEditor ed = null;
 
-	public URIPropertyEditor() {
-	}
+    public URIPropertyEditor() {
+    }
 
 //	@Override
 //	public String getAsText() {
@@ -73,138 +74,136 @@ public class URIPropertyEditor extends PropertyEditorSupport implements ExProper
 //			setValue(URI.create(string));
 //		}
 //	}
+    @Override
+    public void attachEnv(PropertyEnv pe) {
+        pe.registerInplaceEditorFactory(this);
+    }
 
-	@Override
-	public void attachEnv(PropertyEnv pe) {
-		pe.registerInplaceEditorFactory(this);
-	}
-
-	@Override
-	public InplaceEditor getInplaceEditor() {
-		if (ed == null) {
-			ed = new Inplace();
-		}
-		return ed;
-	}
+    @Override
+    public InplaceEditor getInplaceEditor() {
+        if (ed == null) {
+            ed = new Inplace();
+        }
+        return ed;
+    }
 
 //	@Override
 //	public boolean supportsCustomEditor() {
 //		return true;
 //	}
-
-	private static class Inplace implements InplaceEditor {
+    private static class Inplace implements InplaceEditor {
 
 //		private final JXDatePicker picker = new JXDatePicker();
-		private final JLabel label = new JLabel();
-		private URI value;
-		private PropertyEditor editor = null;
+        private final JLabel label = new JLabel();
+        private URI value;
+        private PropertyEditor editor = null;
 
-		public Inplace() {
-			label.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					URI uri = (URI) getValue();
-					if (uri != null) {
-						try {
-							if (Desktop.isDesktopSupported()) {
-								Desktop.getDesktop().browse(uri);
-							}
-						} catch (IllegalArgumentException iae) {
-						} catch (IOException ex) {
+        public Inplace() {
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    URI uri = (URI) getValue();
+                    if (uri != null) {
+                        try {
+                            if (Desktop.isDesktopSupported()) {
+                                Desktop.getDesktop().browse(uri);
+                            }
+                        } catch (IllegalArgumentException iae) {
+                        } catch (IOException ex) {
 //							Exceptions.printStackTrace(ex);
-						}
-					} else {
-						throw new NullPointerException();
-					}
-				}
-			});
-			label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		}
+                        }
+                    } else {
+                        throw new NullPointerException();
+                    }
+                }
+            });
+            label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
 
-		@Override
-		public void connect(PropertyEditor propertyEditor, PropertyEnv env) {
-			editor = propertyEditor;
-			reset();
-		}
+        @Override
+        public void connect(PropertyEditor propertyEditor, PropertyEnv env) {
+            editor = propertyEditor;
+            reset();
+        }
 
-		@Override
-		public JComponent getComponent() {
-			return label;
-		}
+        @Override
+        public JComponent getComponent() {
+            return label;
+        }
 
-		@Override
-		public void clear() {
-			//avoid memory leaks:
-			editor = null;
-			model = null;
-		}
+        @Override
+        public void clear() {
+            //avoid memory leaks:
+            editor = null;
+            model = null;
+        }
 
-		@Override
-		public Object getValue() {
-			return this.value;
-		}
+        @Override
+        public Object getValue() {
+            return this.value;
+        }
 
-		@Override
-		public void setValue(Object object) {
-			this.value = (URI) object;
-			setLabel(((URI) object));
-		}
+        @Override
+        public void setValue(Object object) {
+            this.value = (URI) object;
+            setLabel(((URI) object));
+        }
 
-		@Override
-		public boolean supportsTextEntry() {
-			return false;
-		}
+        @Override
+        public boolean supportsTextEntry() {
+            return false;
+        }
 
-		@Override
-		public void reset() {
+        @Override
+        public void reset() {
 //			URI d = (URI) ;
 //			if (d != null) {
-			setValue(editor.getValue());
+            setValue(editor.getValue());
 //			}
-		}
+        }
 
-		private void setLabel(URI uri) {
-			label.setText(getHtmlLabel(uri));
-		}
-		
-		public String getHtmlLabel(URI uri) {
-			return "<html><font color=\"#000099\"><u>" + uri + "</u></font></html>";
-		}
+        private void setLabel(URI uri) {
+            label.setText(getHtmlLabel(uri));
+        }
 
-		@Override
-		public KeyStroke[] getKeyStrokes() {
-			return new KeyStroke[0];
-		}
+        public String getHtmlLabel(URI uri) {
+            return "<html><font color=\"#000099\"><u>" + uri + "</u></font></html>";
+        }
 
-		@Override
-		public PropertyEditor getPropertyEditor() {
-			return editor;
-		}
+        @Override
+        public KeyStroke[] getKeyStrokes() {
+            return new KeyStroke[0];
+        }
 
-		@Override
-		public PropertyModel getPropertyModel() {
-			return model;
-		}
-		private PropertyModel model;
+        @Override
+        public PropertyEditor getPropertyEditor() {
+            return editor;
+        }
 
-		@Override
-		public void setPropertyModel(PropertyModel propertyModel) {
-			this.model = propertyModel;
-		}
+        @Override
+        public PropertyModel getPropertyModel() {
+            return model;
+        }
+        private PropertyModel model;
 
-		@Override
-		public boolean isKnownComponent(Component component) {
-			return component == label || label.isAncestorOf(component);
-		}
+        @Override
+        public void setPropertyModel(PropertyModel propertyModel) {
+            this.model = propertyModel;
+        }
 
-		@Override
-		public void addActionListener(ActionListener actionListener) {
-			//do nothing - not needed for this component
-		}
+        @Override
+        public boolean isKnownComponent(Component component) {
+            return component == label || label.isAncestorOf(component);
+        }
 
-		@Override
-		public void removeActionListener(ActionListener actionListener) {
-			//do nothing - not needed for this component
-		}
-	}
+        @Override
+        public void addActionListener(ActionListener actionListener) {
+            //do nothing - not needed for this component
+        }
+
+        @Override
+        public void removeActionListener(ActionListener actionListener) {
+            //do nothing - not needed for this component
+        }
+    }
 }
