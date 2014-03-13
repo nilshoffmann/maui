@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,6 +58,7 @@ import net.sf.maltcms.chromaui.charts.dataset.MSSeries;
 import net.sf.maltcms.chromaui.charts.format.ScaledNumberFormatter;
 import net.sf.maltcms.chromaui.charts.labels.TopKItemsLabelGenerator;
 import net.sf.maltcms.chromaui.charts.tools.ChromatogramVisualizerTools;
+import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
@@ -100,240 +102,240 @@ import ucar.ma2.Array;
  */
 public class MassSpectrumPanel extends JPanel implements LookupListener {
 
-	private XYSeriesCollection sc;
-	private XYPlot plot;
-	private HashMap<Comparable, Double> scales = new HashMap<Comparable, Double>();
-	private ExecutorService es = Executors.newFixedThreadPool(1);
-	private int topK = 15;
-	private int activeMS = -1;
-	private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
-	private ChartPanel cp;
-	private Result<ISelection> lookupResult;
-	private Result<IPeakGroupDescriptor> peakGroupResult;
+    private XYSeriesCollection sc;
+    private XYPlot plot;
+    private HashMap<Comparable, Double> scales = new HashMap<Comparable, Double>();
+    private ExecutorService es = Executors.newFixedThreadPool(1);
+    private int topK = 15;
+    private int activeMS = -1;
+    private ScaledNumberFormatter defaultNumberFormat = new ScaledNumberFormatter();
+    private ChartPanel cp;
+    private Result<ISelection> lookupResult;
+    private Result<IPeakGroupDescriptor> peakGroupResult;
 //    private Result<IScan2D> scan2DSelection;
-	private Result<IMetabolite> metaboliteSelection;
-	private Result<IPeakAnnotationDescriptor> peakAnnotationDescriptorResult;
-	private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<MSSeries, IScan>();
-	private DatabaseSearchPanel ddp = null;
-	private Lookup contentProviderLookup;
-	private double barWidth = 0.5d;
-	private boolean addSeriesToTopPlot = true;
-	private XYBarDataset barDataset = null;
+    private Result<IMetabolite> metaboliteSelection;
+    private Result<IPeakAnnotationDescriptor> peakAnnotationDescriptorResult;
+    private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<MSSeries, IScan>();
+    private DatabaseSearchPanel ddp = null;
+    private Lookup contentProviderLookup;
+    private double barWidth = 0.5d;
+    private boolean addSeriesToTopPlot = true;
+    private XYBarDataset barDataset = null;
 
-	public MassSpectrumPanel(Lookup contentProviderLookup) {
+    public MassSpectrumPanel(Lookup contentProviderLookup) {
 //		System.out.println("Opening MassSpectrumPanel");
-		this.contentProviderLookup = contentProviderLookup;
-		initComponents();
-		initChartComponents();
-	}
+        this.contentProviderLookup = contentProviderLookup;
+        initComponents();
+        initChartComponents();
+    }
 
-	/**
-	 * Creates new form MassSpectrumPanel
-	 */
-	public MassSpectrumPanel() {
-		this(Utilities.actionsGlobalContext());
-	}
+    /**
+     * Creates new form MassSpectrumPanel
+     */
+    public MassSpectrumPanel() {
+        this(Utilities.actionsGlobalContext());
+    }
 
-	private void initChartComponents() {
+    private void initChartComponents() {
 
-		this.sc = new XYSeriesCollection();
-		barDataset = new XYBarDataset(sc, barWidth);
-		XYBarRenderer renderer = new XYBarRenderer(0.1d);
-		StandardXYBarPainter sp = new StandardXYBarPainter();
-		renderer.setBarPainter(sp);
-		renderer.setShadowVisible(false);
-		renderer.setDrawBarOutline(false);
-		NumberAxis intensityAxis = new NumberAxis("intensity");
-		intensityAxis.setNumberFormatOverride(defaultNumberFormat);
-		intensityAxis.setUpperMargin(0.10d);
-		NumberAxis mzAxis = new NumberAxis("m/z");
-		mzAxis.setAutoRangeIncludesZero(false);
-		this.plot = new XYPlot(barDataset, mzAxis, intensityAxis, renderer);
-		this.plot.setForegroundAlpha(0.85f);
+        this.sc = new XYSeriesCollection();
+        barDataset = new XYBarDataset(sc, barWidth);
+        XYBarRenderer renderer = new XYBarRenderer(0.1d);
+        StandardXYBarPainter sp = new StandardXYBarPainter();
+        renderer.setBarPainter(sp);
+        renderer.setShadowVisible(false);
+        renderer.setDrawBarOutline(false);
+        NumberAxis intensityAxis = new NumberAxis("intensity");
+        intensityAxis.setNumberFormatOverride(defaultNumberFormat);
+        intensityAxis.setUpperMargin(0.10d);
+        NumberAxis mzAxis = new NumberAxis("m/z");
+        mzAxis.setAutoRangeIncludesZero(false);
+        this.plot = new XYPlot(barDataset, mzAxis, intensityAxis, renderer);
+        this.plot.setForegroundAlpha(0.85f);
 
-		plot.setDomainCrosshairLockedOnData(true);
-		plot.setDomainCrosshairVisible(true);
-		((XYBarRenderer) plot.getRenderer()).setShadowVisible(false);
-		((XYBarRenderer) plot.getRenderer()).setDrawBarOutline(false);
-		((XYBarRenderer) plot.getRenderer()).setBaseFillPaint(Color.RED);
-		((XYBarRenderer) plot.getRenderer()).setBarPainter(
-			new StandardXYBarPainter());
-		plot.getRenderer().setBaseItemLabelsVisible(true);
-		plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
-			@Override
-			public String generateToolTip(XYDataset xyd, int i, int i1) {
-				Comparable comp = xyd.getSeriesKey(i);
-				double x = xyd.getXValue(i, i1);
-				double y = xyd.getYValue(i, i1);
-				StringBuilder sb = new StringBuilder();
-				sb.append(comp);
-				sb.append(": ");
-				sb.append("x=");
-				sb.append(String.format("%.4f", x));
-				sb.append(" y=");
-				sb.append(String.format("%.4f", y));
-				return sb.toString();
-			}
-		});
-		plot.setDomainPannable(true);
-		plot.setRangePannable(true);
-		JFreeChart msChart = new JFreeChart(this.plot);
-		msChart.addChangeListener(this.defaultNumberFormat);
+        plot.setDomainCrosshairLockedOnData(true);
+        plot.setDomainCrosshairVisible(true);
+        ((XYBarRenderer) plot.getRenderer()).setShadowVisible(false);
+        ((XYBarRenderer) plot.getRenderer()).setDrawBarOutline(false);
+        ((XYBarRenderer) plot.getRenderer()).setBaseFillPaint(Color.RED);
+        ((XYBarRenderer) plot.getRenderer()).setBarPainter(
+                new StandardXYBarPainter());
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+        plot.getRenderer().setBaseToolTipGenerator(new XYToolTipGenerator() {
+            @Override
+            public String generateToolTip(XYDataset xyd, int i, int i1) {
+                Comparable comp = xyd.getSeriesKey(i);
+                double x = xyd.getXValue(i, i1);
+                double y = xyd.getYValue(i, i1);
+                StringBuilder sb = new StringBuilder();
+                sb.append(comp);
+                sb.append(": ");
+                sb.append("x=");
+                sb.append(String.format("%.4f", x));
+                sb.append(" y=");
+                sb.append(String.format("%.4f", y));
+                return sb.toString();
+            }
+        });
+        plot.setDomainPannable(true);
+        plot.setRangePannable(true);
+        JFreeChart msChart = new JFreeChart(this.plot);
+        msChart.addChangeListener(this.defaultNumberFormat);
 //		System.out.println("Creating ms chart 3");
-		this.cp = new ContextAwareChartPanel(msChart, true, true, true, true, true);
-		this.cp.setInitialDelay(1);
-		this.cp.getChart().getLegend().setVisible(true);
-		this.cp.setMouseWheelEnabled(true);
-		this.clearActionPerformed(null);
-		this.jPanel2.removeAll();
-		this.jPanel2.add(cp);
-		this.jPanel2.repaint();
-		this.jSpinner1.setValue(topK);
-	}
+        this.cp = new ContextAwareChartPanel(msChart, true, true, true, true, true);
+        this.cp.setInitialDelay(1);
+        this.cp.getChart().getLegend().setVisible(true);
+        this.cp.setMouseWheelEnabled(true);
+        this.clearActionPerformed(null);
+        this.jPanel2.removeAll();
+        this.jPanel2.add(cp);
+        this.jPanel2.repaint();
+        this.jSpinner1.setValue(topK);
+    }
 
-	public void addIdentification() {
-		// Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
-		NotifyDescriptor nd = new NotifyDescriptor(
-			ddp, // instance of your panel
-			"Select Databases and Settings", // title of the dialog
-			NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
-			NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
-			null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
-			// otherwise specify options as:
-			//     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
-			NotifyDescriptor.OK_OPTION // default option is "Yes"
-		);
-		ddp.updateView();
-		// let's display the dialog now...
-		if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-			if (ddp.getSelectedDatabases().isEmpty()) {
-				return;
-			}
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					IQuery<IScan> query = Lookup.getDefault().lookup(
-						IQueryFactory.class).createQuery(
-							ddp.getSelectedDatabases(), ddp.getRetentionIndexCalculator(), ddp.getSelectedMetabolitePredicate(), ddp.getMatchThreshold(),
-							ddp.getMaxNumberOfHits(), ddp.getRIWindow(), seriesToScan.values().
-							toArray(new IScan[seriesToScan.size()]));
-					try {
-						List<QueryResultList<IScan>> results = query.call();
-						Box outerBox = Box.createVerticalBox();
-						for (QueryResultList<IScan> mdqrl : results) {
-							for (IQueryResult<IScan> result : mdqrl) {
-								Box vbox = Box.createVerticalBox();
-								JLabel label = new JLabel("Results for scan " + result.getScan().getScanIndex() + " at " + result.getScan().getScanAcquisitionTime() + " with ri: " + result.getRetentionIndex());
-								JLabel dbLabel = new JLabel("DB: " + result.getDatabaseDescriptor().
-									getResourceLocation());
-								vbox.add(label);
-								vbox.add(dbLabel);
-								JLabel parameterLabel = new JLabel("Minimum Score: " + ddp.getMatchThreshold() + "; Maximum #Hits Returned: " + ddp.getMaxNumberOfHits());
-								vbox.add(parameterLabel);
-								DefaultTableModel dlm = new DefaultTableModel(new String[]{
-									"Score", "RI", "Name", "ID", "MW",
-									"Formula",
-									"Max Mass"}, 0);
-								for (IMetabolite metabolite : result.getMetabolites()) {
-									String name = metabolite.getName();
-									if (name.lastIndexOf("_") != -1) {
-										name = name.substring(
-											name.lastIndexOf(
-												"_") + 1);
-									}
-									dlm.addRow(new Object[]{result.getScoreFor(
-										metabolite), result.getRiFor(
-										metabolite), name, metabolite.getID(), metabolite.getMW(),
-										metabolite.getFormula(),
-										metabolite.getMaxMass()});
-								}
-								JTable jl = new JTable(dlm);
-								JScrollPane resultScrollPane = new JScrollPane(
-									jl);
-								jl.setAutoCreateRowSorter(true);
-								jl.setUpdateSelectionOnSort(true);
-								vbox.add(resultScrollPane);
-								outerBox.add(vbox);
-								outerBox.add(Box.createVerticalStrut(10));
-							}
-						}
-						JScrollPane jsp = new JScrollPane(outerBox);
-						NotifyDescriptor nd = new NotifyDescriptor(
-							jsp, // instance of your panel
-							"Database Search Results", // title of the dialog
-							NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
-							NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
-							null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
-							// otherwise specify options as:
-							//     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
-							NotifyDescriptor.OK_OPTION // default option is "Yes"
-						);
-						if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-						}
-						//DBConnectionManager.close();
-					} catch (Exception ex) {
-						Exceptions.printStackTrace(ex);
-					}
-				}
-			};
-			RequestProcessor.getDefault().post(r);
+    public void addIdentification() {
+        // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
+        NotifyDescriptor nd = new NotifyDescriptor(
+                ddp, // instance of your panel
+                "Select Databases and Settings", // title of the dialog
+                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+                null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+                // otherwise specify options as:
+                //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                NotifyDescriptor.OK_OPTION // default option is "Yes"
+        );
+        ddp.updateView();
+        // let's display the dialog now...
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            if (ddp.getSelectedDatabases().isEmpty()) {
+                return;
+            }
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    IQuery<IScan> query = Lookup.getDefault().lookup(
+                            IQueryFactory.class).createQuery(
+                                    ddp.getSelectedDatabases(), ddp.getRetentionIndexCalculator(), ddp.getSelectedMetabolitePredicate(), ddp.getMatchThreshold(),
+                                    ddp.getMaxNumberOfHits(), ddp.getRIWindow(), seriesToScan.values().
+                                    toArray(new IScan[seriesToScan.size()]));
+                    try {
+                        List<QueryResultList<IScan>> results = query.call();
+                        Box outerBox = Box.createVerticalBox();
+                        for (QueryResultList<IScan> mdqrl : results) {
+                            for (IQueryResult<IScan> result : mdqrl) {
+                                Box vbox = Box.createVerticalBox();
+                                JLabel label = new JLabel("Results for scan " + result.getScan().getScanIndex() + " at " + result.getScan().getScanAcquisitionTime() + " with ri: " + result.getRetentionIndex());
+                                JLabel dbLabel = new JLabel("DB: " + result.getDatabaseDescriptor().
+                                        getResourceLocation());
+                                vbox.add(label);
+                                vbox.add(dbLabel);
+                                JLabel parameterLabel = new JLabel("Minimum Score: " + ddp.getMatchThreshold() + "; Maximum #Hits Returned: " + ddp.getMaxNumberOfHits());
+                                vbox.add(parameterLabel);
+                                DefaultTableModel dlm = new DefaultTableModel(new String[]{
+                                    "Score", "RI", "Name", "ID", "MW",
+                                    "Formula",
+                                    "Max Mass"}, 0);
+                                for (IMetabolite metabolite : result.getMetabolites()) {
+                                    String name = metabolite.getName();
+                                    if (name.lastIndexOf("_") != -1) {
+                                        name = name.substring(
+                                                name.lastIndexOf(
+                                                        "_") + 1);
+                                    }
+                                    dlm.addRow(new Object[]{result.getScoreFor(
+                                        metabolite), result.getRiFor(
+                                        metabolite), name, metabolite.getID(), metabolite.getMW(),
+                                        metabolite.getFormula(),
+                                        metabolite.getMaxMass()});
+                                }
+                                JTable jl = new JTable(dlm);
+                                JScrollPane resultScrollPane = new JScrollPane(
+                                        jl);
+                                jl.setAutoCreateRowSorter(true);
+                                jl.setUpdateSelectionOnSort(true);
+                                vbox.add(resultScrollPane);
+                                outerBox.add(vbox);
+                                outerBox.add(Box.createVerticalStrut(10));
+                            }
+                        }
+                        JScrollPane jsp = new JScrollPane(outerBox);
+                        NotifyDescriptor nd = new NotifyDescriptor(
+                                jsp, // instance of your panel
+                                "Database Search Results", // title of the dialog
+                                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                                NotifyDescriptor.PLAIN_MESSAGE, // ... of a question type => a question mark icon
+                                null, // we have specified YES_NO_OPTION => can be null, options specified by L&F,
+                                // otherwise specify options as:
+                                //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
+                                NotifyDescriptor.OK_OPTION // default option is "Yes"
+                        );
+                        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+                        }
+                        //DBConnectionManager.close();
+                    } catch (Exception ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            };
+            RequestProcessor.getDefault().post(r);
 
-		}
-	}
+        }
+    }
 
-	private void updateActiveMassSpectrum() {
-		Object[] obj = new Object[sc.getSeriesCount()];
-		for (int i = 0; i < sc.getSeriesCount(); i++) {
-			obj[i] = sc.getSeries(i).getKey();
-		}
-		activeMassSpectrum.setModel(new DefaultComboBoxModel(obj));
-	}
+    private void updateActiveMassSpectrum() {
+        Object[] obj = new Object[sc.getSeriesCount()];
+        for (int i = 0; i < sc.getSeriesCount(); i++) {
+            obj[i] = sc.getSeries(i).getKey();
+        }
+        activeMassSpectrum.setModel(new DefaultComboBoxModel(obj));
+    }
 
-	private void addTopKLabels(int topk, int series) {
+    private void addTopKLabels(int topk, int series) {
 //		System.out.println("addTopKLabels: " + topk + " " + series);
-		if (series >= 0 && sc.getSeriesCount() > series) {
-			TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topk, series);
+        if (series >= 0 && sc.getSeriesCount() > series) {
+            TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topk, series);
 //			System.out.println(seriesItemList);
-			if (activeMS >= 0) {
+            if (activeMS >= 0) {
 //				System.out.println("Updating plot");
-				plot.getRenderer().setBaseItemLabelsVisible(true);
-				plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
-					labelGenerator);
-				plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
-				plot.getRenderer().setSeriesItemLabelFont(activeMS, plot.getRenderer().getBaseItemLabelFont().deriveFont(12.0f));
-				plot.notifyListeners(new PlotChangeEvent(plot));
-				ChartCustomizer.setSeriesColors(plot, 0.95f);
-				ChartCustomizer.setSeriesStrokes(plot, 2.0f);
-			}
-		}
-	}
+                plot.getRenderer().setBaseItemLabelsVisible(true);
+                plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
+                        labelGenerator);
+                plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
+                plot.getRenderer().setSeriesItemLabelFont(activeMS, plot.getRenderer().getBaseItemLabelFont().deriveFont(12.0f));
+                plot.notifyListeners(new PlotChangeEvent(plot));
+                ChartCustomizer.setSeriesColors(plot, 0.95f);
+                ChartCustomizer.setSeriesStrokes(plot, 2.0f);
+            }
+        }
+    }
 
-	private TopKItemsLabelGenerator createTopKItemsLabelGenerator(int topK, int series) {
-		List<Point> seriesItemList = new ArrayList<Point>();
-		Comparator<Point> c = new Comparator<Point>() {
-			@Override
-			public int compare(Point o1, Point o2) {
-				double v1 = sc.getYValue(o1.x, o1.y);
-				double v2 = sc.getYValue(o2.x, o2.y);
-				return Double.compare(Math.abs(v1), Math.abs(v2));
-			}
-		};
-		for (int i = 0; i < sc.getItemCount(series); i++) {
-			double intens = sc.getYValue(series, i);
-			if (Math.abs(intens) > 0) {
-				seriesItemList.add(new Point(series, i));
-			}
-		}
-		Collections.sort(seriesItemList, c);
-		return new TopKItemsLabelGenerator(seriesItemList, topK);
-	}
+    private TopKItemsLabelGenerator createTopKItemsLabelGenerator(int topK, int series) {
+        List<Point> seriesItemList = new ArrayList<Point>();
+        Comparator<Point> c = new Comparator<Point>() {
+            @Override
+            public int compare(Point o1, Point o2) {
+                double v1 = sc.getYValue(o1.x, o1.y);
+                double v2 = sc.getYValue(o2.x, o2.y);
+                return Double.compare(Math.abs(v1), Math.abs(v2));
+            }
+        };
+        for (int i = 0; i < sc.getItemCount(series); i++) {
+            double intens = sc.getYValue(series, i);
+            if (Math.abs(intens) > 0) {
+                seriesItemList.add(new Point(series, i));
+            }
+        }
+        Collections.sort(seriesItemList, c);
+        return new TopKItemsLabelGenerator(seriesItemList, topK);
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -527,22 +529,22 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_addMsActionPerformed
 
     private void clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearActionPerformed
-		this.sc.removeAllSeries();
-		this.sc = new XYSeriesCollection();
-		this.scales.clear();
-		this.seriesToScan.clear();
-		this.cp.repaint();
-		this.activeMassSpectrum.setModel(
-			new DefaultComboBoxModel(new Object[]{}));
-		this.plot.setDataset(sc);
+        this.sc.removeAllSeries();
+        this.sc = new XYSeriesCollection();
+        this.scales.clear();
+        this.seriesToScan.clear();
+        this.cp.repaint();
+        this.activeMassSpectrum.setModel(
+                new DefaultComboBoxModel(new Object[]{}));
+        this.plot.setDataset(sc);
     }//GEN-LAST:event_clearActionPerformed
 
     private void fixXAxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixXAxisActionPerformed
-		this.plot.getDomainAxis().setAutoRange(!fixXAxis.isSelected());
+        this.plot.getDomainAxis().setAutoRange(!fixXAxis.isSelected());
     }//GEN-LAST:event_fixXAxisActionPerformed
 
     private void fixYAxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixYAxisActionPerformed
-		this.plot.getRangeAxis().setAutoRange(!fixYAxis.isSelected());
+        this.plot.getRangeAxis().setAutoRange(!fixYAxis.isSelected());
     }//GEN-LAST:event_fixYAxisActionPerformed
 
     private void hideAnnotationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideAnnotationsActionPerformed
@@ -560,98 +562,98 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //
 //            }
 //        }
-		int idx = activeMassSpectrum.getSelectedIndex();
-		if (activeMS >= idx) {
+        int idx = activeMassSpectrum.getSelectedIndex();
+        if (activeMS >= idx) {
 //            this.plot.getRenderer().setBaseItemLabelsVisible(!hideAnnotations.isSelected());
-			this.plot.getRenderer().setSeriesItemLabelsVisible(idx,
-				!hideAnnotations.isSelected());
-			hideAnnotations.setSelected(!this.plot.getRenderer().
-				isSeriesItemLabelsVisible(idx));
-		}
+            this.plot.getRenderer().setSeriesItemLabelsVisible(idx,
+                    !hideAnnotations.isSelected());
+            hideAnnotations.setSelected(!this.plot.getRenderer().
+                    isSeriesItemLabelsVisible(idx));
+        }
     }//GEN-LAST:event_hideAnnotationsActionPerformed
 
     private void activeMassSpectrumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activeMassSpectrumActionPerformed
-		int key = activeMassSpectrum.getSelectedIndex();
-		activeMS = key;
-		//addTopKLabels(topK, key);
-		activeMassSpectrum.setSelectedIndex(key);
-		hideAnnotations.setSelected(!this.plot.getRenderer().
-			isSeriesItemLabelsVisible(key));
+        int key = activeMassSpectrum.getSelectedIndex();
+        activeMS = key;
+        //addTopKLabels(topK, key);
+        activeMassSpectrum.setSelectedIndex(key);
+        hideAnnotations.setSelected(!this.plot.getRenderer().
+                isSeriesItemLabelsVisible(key));
     }//GEN-LAST:event_activeMassSpectrumActionPerformed
 
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
-		int key = activeMassSpectrum.getSelectedIndex();
-		if (!seriesToScan.isEmpty()) {
-			seriesToScan.remove((MSSeries) this.sc.getSeries(key));
-			this.sc.removeSeries(key);
-			updateActiveMassSpectrum();
-		}
+        int key = activeMassSpectrum.getSelectedIndex();
+        if (!seriesToScan.isEmpty()) {
+            seriesToScan.remove((MSSeries) this.sc.getSeries(key));
+            this.sc.removeSeries(key);
+            updateActiveMassSpectrum();
+        }
     }//GEN-LAST:event_removeActionPerformed
 
     private void absoluteRelativeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRelativeToggleActionPerformed
 //        this.defaultNumberFormat.setRelativeMode(absoluteRelativeToggle.isSelected());
-		int i = 0;
-		for (MSSeries mss : seriesToScan.keySet()) {
-			mss.setNormalize(absoluteRelativeToggle.isSelected());
-			activeMS = i;
-			addTopKLabels(topK, i++);
-		}
-		this.cp.chartChanged(new AxisChangeEvent(this.plot.getRangeAxis()));
+        int i = 0;
+        for (MSSeries mss : seriesToScan.keySet()) {
+            mss.setNormalize(absoluteRelativeToggle.isSelected());
+            activeMS = i;
+            addTopKLabels(topK, i++);
+        }
+        this.cp.chartChanged(new AxisChangeEvent(this.plot.getRangeAxis()));
     }//GEN-LAST:event_absoluteRelativeToggleActionPerformed
 
     private void addSeriesTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSeriesTopActionPerformed
-		this.addSeriesToTopPlot = this.addSeriesTop.isSelected();
+        this.addSeriesToTopPlot = this.addSeriesTop.isSelected();
     }//GEN-LAST:event_addSeriesTopActionPerformed
 
     private void diffToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_diffToggleActionPerformed
-		if (!diffToggle.isSelected()) {
-			if (!seriesToScan.isEmpty()) {
-				if (this.sc.getSeries("DIFFERENCE") != null) {
-					int idx = this.sc.getSeriesIndex("DIFFERENCE");
-					seriesToScan.remove((MSSeries) this.sc.getSeries(idx));
-					this.sc.removeSeries(idx);
-					updateActiveMassSpectrum();
-					this.plot.getRenderer().setSeriesVisible(0, true);
-					this.plot.getRenderer().setSeriesVisible(1, true);
-				}
-			}
-		} else {
-			if (seriesToScan.keySet().size() > 2 || seriesToScan.keySet().size() < 2) {
-				DialogDisplayer dd = DialogDisplayer.getDefault();
-				dd.notify(new NotifyDescriptor.Message("Difference view only works for two spectra!", NotifyDescriptor.INFORMATION_MESSAGE));
-				diffToggle.setSelected(false);
-			} else {
-				MSSeries[] series = seriesToScan.keySet().toArray(new MSSeries[2]);
-				MSSeries diff = series[0].differenceTo(series[1]);
-				addSeries(diff, diff.asScan(), true);
-				this.plot.getRenderer().setSeriesVisible(0, false);
-				this.plot.getRenderer().setSeriesVisible(1, false);
-				this.cp.chartChanged(new AxisChangeEvent(this.plot.getRangeAxis()));
-			}
-		}
+        if (!diffToggle.isSelected()) {
+            if (!seriesToScan.isEmpty()) {
+                if (this.sc.getSeries("DIFFERENCE") != null) {
+                    int idx = this.sc.getSeriesIndex("DIFFERENCE");
+                    seriesToScan.remove((MSSeries) this.sc.getSeries(idx));
+                    this.sc.removeSeries(idx);
+                    updateActiveMassSpectrum();
+                    this.plot.getRenderer().setSeriesVisible(0, true);
+                    this.plot.getRenderer().setSeriesVisible(1, true);
+                }
+            }
+        } else {
+            if (seriesToScan.keySet().size() > 2 || seriesToScan.keySet().size() < 2) {
+                DialogDisplayer dd = DialogDisplayer.getDefault();
+                dd.notify(new NotifyDescriptor.Message("Difference view only works for two spectra!", NotifyDescriptor.INFORMATION_MESSAGE));
+                diffToggle.setSelected(false);
+            } else {
+                MSSeries[] series = seriesToScan.keySet().toArray(new MSSeries[2]);
+                MSSeries diff = series[0].differenceTo(series[1]);
+                addSeries(diff, diff.asScan(), true);
+                this.plot.getRenderer().setSeriesVisible(0, false);
+                this.plot.getRenderer().setSeriesVisible(1, false);
+                this.cp.chartChanged(new AxisChangeEvent(this.plot.getRangeAxis()));
+            }
+        }
     }//GEN-LAST:event_diffToggleActionPerformed
 
     private void barWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_barWidthSpinnerStateChanged
 //		System.out.println("Received spinner state changed!");
-		if (this.barDataset != null) {
-			barWidth = ((Double) barWidthSpinner.getValue()).doubleValue();
-			barDataset = new XYBarDataset(sc, barWidth);
-			this.plot.setDataset(barDataset);
-		}
+        if (this.barDataset != null) {
+            barWidth = ((Double) barWidthSpinner.getValue()).doubleValue();
+            barDataset = new XYBarDataset(sc, barWidth);
+            this.plot.setDataset(barDataset);
+        }
     }//GEN-LAST:event_barWidthSpinnerStateChanged
 
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
-		int series = plot.getSeriesCount();
-		topK = (Integer) jSpinner1.getValue();
-		for (int i = 0; i < series; i++) {
-			activeMS = i;
-			TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topK, series);
-			plot.getRenderer().setBaseItemLabelsVisible(true);
-			plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
-				labelGenerator);
-			plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
-			plot.notifyListeners(new PlotChangeEvent(plot));
-		}
+        int series = plot.getSeriesCount();
+        topK = (Integer) jSpinner1.getValue();
+        for (int i = 0; i < series; i++) {
+            activeMS = i;
+            TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topK, series);
+            plot.getRenderer().setBaseItemLabelsVisible(true);
+            plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
+                    labelGenerator);
+            plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
+            plot.notifyListeners(new PlotChangeEvent(plot));
+        }
     }//GEN-LAST:event_jSpinner1StateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -679,169 +681,185 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private javax.swing.JButton remove;
     // End of variables declaration//GEN-END:variables
 
-	@Override
-	public void resultChanged(LookupEvent ev) {
-//		System.out.println("MassSpectrumPanel received LookupEvent");
-		Collection<? extends ISelection> coll = lookupResult.allInstances();
-		if (coll.size() > 0) {
-//			System.out.println("Received " + coll.size() + " ISelection objects from lookup");
-//            System.out.println("Found " + contentProviderLookup.lookupAll(IChromatogram.class).size() + " chromatograms in lookup!");
-//            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
-			boolean add = addMs.isSelected();
-			if (!add) {
-				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-			}
-			if (coll.size() > 1) {
-				add = true;
-			}
-//            if (ichromDescr != null) {
-			for (ISelection scan : coll) {
-				IScan target = null;
-				if (scan.getTarget() instanceof IScan) {
+    @Override
+    public void resultChanged(LookupEvent ev) {
+        Collection<? extends ISelection> coll = lookupResult.allInstances();
+        if (coll.size() > 0) {
+            handleSelection(coll);
+        } else if (!metaboliteSelection.allInstances().isEmpty()) {
+            Collection<? extends IMetabolite> metabolites = metaboliteSelection.allInstances();
+            handleMetabolites(metabolites);
+        } else if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
+            Collection<? extends IPeakAnnotationDescriptor> peakGroups = peakAnnotationDescriptorResult.allInstances();
+            handlePeakAnnotationDescriptors(peakGroups);
+        } else if (!peakGroupResult.allInstances().isEmpty()) {
+            Collection<? extends IPeakGroupDescriptor> peakGroups = peakGroupResult.allInstances();
+            handlePeakGroupDescriptors(peakGroups);
+        }
+    }
+
+    private void handleSelection(Collection<? extends ISelection> coll) {
+        boolean add = addMs.isSelected();
+        if (!add) {
+            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+        }
+        if (coll.size() > 1) {
+            add = true;
+        }
+        for (ISelection scan : coll) {
+            handleChromatogramScanSelection(scan, add);
+            handleFoldChangeElementSelection(scan);
+        }
+    }
+
+    private void handleMetabolites(Collection<? extends IMetabolite> metabolites) {
+        boolean add = addMs.isSelected();
+        if (!add) {
+            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+        }
+        if (metabolites.size() > 1) {
+            add = true;
+        }
+        for (IMetabolite metabolite : metabolites) {
+            final IScan scan = new Scan1D(metabolite.getMassSpectrum().getFirst(), metabolite.getMassSpectrum().getSecond(), metabolite.getScanIndex(), metabolite.getRetentionTime());
+            setData(scan, metabolite.getID(), add);
+        }
+    }
+
+    private void handlePeakAnnotationDescriptors(Collection<? extends IPeakAnnotationDescriptor> peakGroups) {
+        boolean add = addMs.isSelected();
+        if (!add) {
+            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+        }
+        if (peakGroups.size() > 1) {
+            add = true;
+        }
+        for (IPeakAnnotationDescriptor ipad : peakGroups) {
+            final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
+            setData(scan, ipad.getDisplayName(), add);
+        }
+    }
+
+    private void handlePeakGroupDescriptors(Collection<? extends IPeakGroupDescriptor> peakGroups) {
+        boolean add = addMs.isSelected();
+        if (!add) {
+            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
+        }
+        add = true;
+        for (IPeakGroupDescriptor ipgd : peakGroups) {
+            for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
+                final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
+                setData(scan, ipad.getDisplayName(), add);
+            }
+        }
+    }
+
+    private void handleChromatogramScanSelection(ISelection scan, boolean add) {
+        IScan target = null;
+        if (scan.getTarget() instanceof IScan) {
 //					System.out.println("Target is IScan");
-					target = (IScan) scan.getTarget();
-				}
-				IChromatogram source = null;
-				if (scan.getSource() instanceof IChromatogram) {
+            target = (IScan) scan.getTarget();
+        }
+        IChromatogram source = null;
+        if (scan.getSource() instanceof IChromatogram) {
 //					System.out.println("Source is IChromatogram");
-					source = (IChromatogram) scan.getSource();
-				}
-				if (source != null && target != null) {
+            source = (IChromatogram) scan.getSource();
+        }
+        if (source != null && target != null) {
 //					System.out.println("Source and target are not null!");
-					String name = source.getParent().getName();
-					setData(target, name, add);
-				}
-			}
-//            }
-		} else if (!metaboliteSelection.allInstances().isEmpty()) {
-//			System.out.println("Received metabolite selection with " + metaboliteSelection.allInstances().size() + " elements from lookup");
-			boolean add = addMs.isSelected();
-			if (!add) {
-				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-			}
-			if (metaboliteSelection.allInstances().size() > 1) {
-				add = true;
-			}
-			for (IMetabolite metabolite : metaboliteSelection.allInstances()) {
-				final IScan scan = new Scan1D(metabolite.getMassSpectrum().getFirst(), metabolite.getMassSpectrum().getSecond(), metabolite.getScanIndex(), metabolite.getRetentionTime());
-				setData(scan, metabolite.getID(), add);
-			}
-		} else if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
-//			System.out.println("Received peak annotations with " + peakAnnotationDescriptorResult.allInstances().size() + " elements from lookup");
-			boolean add = addMs.isSelected();
-			if (!add) {
-				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-			}
-			if (peakAnnotationDescriptorResult.allInstances().size() > 1) {
-				add = true;
-			}
-			for (IPeakAnnotationDescriptor ipad : peakAnnotationDescriptorResult.allInstances()) {
-				final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
-				setData(scan, ipad.getDisplayName(), add);
-			}
-		} else if (!peakGroupResult.allInstances().isEmpty()) {
-//			System.out.println("Received peak group results");
-			boolean add = addMs.isSelected();
-			if (!add) {
-				clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-			}
-			add = true;
-			for (IPeakGroupDescriptor ipgd : peakGroupResult.allInstances()) {
-				for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
-					final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
-					setData(scan, ipad.getDisplayName(), add);
-				}
-			}
-		}
-//        if (!scan2DSelection.allInstances().isEmpty()) {
-//            System.out.println("Received scan 2d from lookup");
-//            IChromatogram ichromDescr = contentProviderLookup.lookup(IChromatogram.class);
-//            if (ichromDescr != null) {
-//                boolean add = addMs.isSelected();
-//                if (scan2DSelection.allInstances().size() > 1) {
-//                    add = true;
-//                }
-//                for (IScan2D scan : scan2DSelection.allInstances()) {
-//                    String name = ichromDescr.getParent().getName();
-//                    setData(scan, name, add);
-//                }
-//            }
-//        }
-	}
+            String name = source.getParent().getName();
+            setData(target, name, add);
+        }
+    }
+    
+    private void handleFoldChangeElementSelection(ISelection scan) {
+        
+        IPeakGroupDescriptor target = null;
+        if (scan.getTarget() instanceof IPeakGroupDescriptor) {
+            target = (IPeakGroupDescriptor) scan.getTarget();
+        }
+        StatisticsContainer source = null;
+        if (scan.getSource() instanceof StatisticsContainer) {
+            source = (StatisticsContainer) scan.getSource();
+        }
+        if (source != null && target != null) {
+            handlePeakGroupDescriptors(Arrays.asList(target));
+        }
+    }
 
-	protected void setData(final IScan scan, final String name, final boolean add) {
-		Runnable s = new Runnable() {
-			@Override
-			public void run() {
+    protected void setData(final IScan scan, final String name, final boolean add) {
+        Runnable s = new Runnable() {
+            @Override
+            public void run() {
 //				System.out.println("Change ms called in MassSpectrumPanel");
-				MSSeries s = null;
-				if (scan instanceof IScan2D) {
-					s = ChromatogramVisualizerTools.getMSSeries2D(
-						(IScan2D) scan, name, addSeriesToTopPlot);
-				} else if (scan instanceof IScan1D) {
-					s = ChromatogramVisualizerTools.getMSSeries1D(
-						(IScan1D) scan, name, addSeriesToTopPlot);
-				}
-				if (s != null) {
-					addSeries(s, scan, add);
-				} else {
-					System.err.println("MSSeries was null!");
-				}
-			}
-		};
-		es.submit(s);
-	}
+                MSSeries s = null;
+                if (scan instanceof IScan2D) {
+                    s = ChromatogramVisualizerTools.getMSSeries2D(
+                            (IScan2D) scan, name, addSeriesToTopPlot);
+                } else if (scan instanceof IScan1D) {
+                    s = ChromatogramVisualizerTools.getMSSeries1D(
+                            (IScan1D) scan, name, addSeriesToTopPlot);
+                }
+                if (s != null) {
+                    addSeries(s, scan, add);
+                } else {
+                    System.err.println("MSSeries was null!");
+                }
+            }
+        };
+        es.submit(s);
+    }
 
-	public void addSeries(final MSSeries s, final IScan scan, final boolean add) {
-		s.setNormalize(absoluteRelativeToggle.isSelected());
-		if (add) {
-			try {
-				sc.getSeries(s.getKey());
-			} catch (Exception e) {
-				sc.addSeries(s);
-				seriesToScan.put(s, scan);
-			}
+    public void addSeries(final MSSeries s, final IScan scan, final boolean add) {
+        s.setNormalize(absoluteRelativeToggle.isSelected());
+        if (add) {
+            try {
+                sc.getSeries(s.getKey());
+            } catch (Exception e) {
+                sc.addSeries(s);
+                seriesToScan.put(s, scan);
+            }
 
-		} else {
-			seriesToScan.clear();
-			sc = new XYSeriesCollection();
-			sc.addSeries(s);
-			seriesToScan.put(s, scan);
-			//cp.repaint();
+        } else {
+            seriesToScan.clear();
+            sc = new XYSeriesCollection();
+            sc.addSeries(s);
+            seriesToScan.put(s, scan);
+            //cp.repaint();
 //                            XYPlot plot = (XYPlot) cp.getChart().getPlot();
-			plot.setDataset(sc);
-			sc.addChangeListener(plot);
-		}
-		updateActiveMassSpectrum();
-		activeMS = seriesToScan.size() - 1;
-		addTopKLabels(topK, activeMS);
-		ChartCustomizer.setSeriesColors(plot, 0.95f);
-		ChartCustomizer.setSeriesStrokes(plot, 2.0f);
-	}
+            plot.setDataset(sc);
+            sc.addChangeListener(plot);
+        }
+        updateActiveMassSpectrum();
+        activeMS = seriesToScan.size() - 1;
+        addTopKLabels(topK, activeMS);
+        ChartCustomizer.setSeriesColors(plot, 0.95f);
+        ChartCustomizer.setSeriesStrokes(plot, 2.0f);
+    }
 
-	public void componentOpened() {
-		lookupResult = contentProviderLookup.lookupResult(ISelection.class);
-		lookupResult.addLookupListener(this);
-		metaboliteSelection = contentProviderLookup.lookupResult(IMetabolite.class);
-		metaboliteSelection.addLookupListener(this);
-		peakAnnotationDescriptorResult = contentProviderLookup.lookupResult(IPeakAnnotationDescriptor.class);
-		peakAnnotationDescriptorResult.addLookupListener(this);
-		peakGroupResult = contentProviderLookup.lookupResult(IPeakGroupDescriptor.class);
-		peakGroupResult.addLookupListener(this);
-	}
+    public void componentOpened() {
+        lookupResult = contentProviderLookup.lookupResult(ISelection.class);
+        lookupResult.addLookupListener(this);
+        metaboliteSelection = contentProviderLookup.lookupResult(IMetabolite.class);
+        metaboliteSelection.addLookupListener(this);
+        peakAnnotationDescriptorResult = contentProviderLookup.lookupResult(IPeakAnnotationDescriptor.class);
+        peakAnnotationDescriptorResult.addLookupListener(this);
+        peakGroupResult = contentProviderLookup.lookupResult(IPeakGroupDescriptor.class);
+        peakGroupResult.addLookupListener(this);
+    }
 
-	public void componentClosed() {
-		if (lookupResult != null) {
-			lookupResult.removeLookupListener(this);
-		}
-		if (metaboliteSelection != null) {
-			metaboliteSelection.removeLookupListener(this);
-		}
-		if (peakAnnotationDescriptorResult != null) {
-			peakAnnotationDescriptorResult.removeLookupListener(this);
-		}
-		if (peakGroupResult != null) {
-			peakGroupResult.removeLookupListener(this);
-		}
-	}
+    public void componentClosed() {
+        if (lookupResult != null) {
+            lookupResult.removeLookupListener(this);
+        }
+        if (metaboliteSelection != null) {
+            metaboliteSelection.removeLookupListener(this);
+        }
+        if (peakAnnotationDescriptorResult != null) {
+            peakAnnotationDescriptorResult.removeLookupListener(this);
+        }
+        if (peakGroupResult != null) {
+            peakGroupResult.removeLookupListener(this);
+        }
+    }
 }
