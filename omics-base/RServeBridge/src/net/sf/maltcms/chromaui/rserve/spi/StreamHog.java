@@ -32,7 +32,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/** helper class that consumes output of a process. In addition, it filter output of the REG command on Windows to look for InstallPath registry entry which specifies the location of R. */
+/**
+ * helper class that consumes output of a process. In addition, it filter output
+ * of the REG command on Windows to look for InstallPath registry entry which
+ * specifies the location of R.
+ */
 public class StreamHog extends Thread {
 
     InputStream is;
@@ -68,7 +72,7 @@ public class StreamHog extends Thread {
                         System.out.println("R InstallPath = " + s);
                     }
                 } else {
-                    System.out.println(name+">" + line);
+                    System.out.println(name + ">" + line);
                 }
             }
         } catch (IOException e) {

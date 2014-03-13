@@ -41,5 +41,5 @@ public class Installer extends ModuleInstall {
         super.close();
         RserveConnectionFactory.getInstance().closeConnection();
     }
-    
+
 }

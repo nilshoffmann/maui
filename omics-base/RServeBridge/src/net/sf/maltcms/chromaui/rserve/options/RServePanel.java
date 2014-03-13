@@ -30,11 +30,7 @@ package net.sf.maltcms.chromaui.rserve.options;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
-import net.sf.maltcms.chromaui.rserve.spi.PlotDemo;
-import net.sf.maltcms.chromaui.rserve.spi.StartRserve;
 import org.netbeans.api.keyring.Keyring;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
@@ -249,11 +245,11 @@ final class RServePanel extends javax.swing.JPanel {
                 ex.printStackTrace();
             }
         } catch (RserveException ex) {
-            ex.printStackTrace(); 
-        } 
+            ex.printStackTrace();
+        }
         return false;
     }
-    
+
     private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testButtonActionPerformed
         Runnable r = new Runnable() {
             @Override
@@ -265,10 +261,10 @@ final class RServePanel extends javax.swing.JPanel {
                         store();
 //                        RConnection testConnection = RserveConnectionFactory.getDefaultConnection();
 //                        PlotDemo.createPlotDemo(testConnection);
-                        if(testRserve()) {
-                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!",NotifyDescriptor.INFORMATION_MESSAGE));
-                        }else{
-                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve failed!",NotifyDescriptor.ERROR_MESSAGE));
+                        if (testRserve()) {
+                            DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!", NotifyDescriptor.INFORMATION_MESSAGE));
+                        } else {
+                            DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve failed!", NotifyDescriptor.ERROR_MESSAGE));
                         }
                     } else {
                         try {
@@ -277,10 +273,10 @@ final class RServePanel extends javax.swing.JPanel {
                             store();
 //                            RConnection testConnection = RserveConnectionFactory.getInstance().getRemoteConnection(address, port, userNameField.getText(), passwordField.getPassword());
 //                            PlotDemo.createPlotDemo(testConnection);
-                            if(testRserve()) {
-                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!",NotifyDescriptor.INFORMATION_MESSAGE));
-                            }else{
-                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve failed!",NotifyDescriptor.ERROR_MESSAGE));
+                            if (testRserve()) {
+                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!", NotifyDescriptor.INFORMATION_MESSAGE));
+                            } else {
+                                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve failed!", NotifyDescriptor.ERROR_MESSAGE));
                             }
                         } catch (UnknownHostException ex) {
                             Exceptions.printStackTrace(ex);
@@ -327,13 +323,6 @@ final class RServePanel extends javax.swing.JPanel {
     }
 
     void load() {
-        // TODO read settings and initialize GUI
-        // Example:        
-        // someCheckBox.setSelected(Preferences.userNodeForPackage(RServePanel.class).getBoolean("someFlag", false));
-        // or for org.openide.util with API spec. version >= 7.4:
-        // someCheckBox.setSelected(NbPreferences.forModule(RServePanel.class).getBoolean("someFlag", false));
-        // or:
-        // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
         localRserveSettingsField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVEARGS, ""));
         remoteHostIpField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_HOST, "127.0.0.1"));
         remoteHostPortField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_PORT, "6311"));
@@ -357,13 +346,6 @@ final class RServePanel extends javax.swing.JPanel {
             Keyring.save("Rserve://" + remoteHostIpField.getText().trim(), passwordField.getPassword(), "Rserve password for host " + remoteHostIpField.getText());
         }
         NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_DEBUG, debugMode.isSelected() + "");
-        // TODO store modified settings
-        // Example:
-        // Preferences.userNodeForPackage(RServePanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or for org.openide.util with API spec. version >= 7.4:
-        // NbPreferences.forModule(RServePanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or:
-        // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
     }
 
     boolean valid() {

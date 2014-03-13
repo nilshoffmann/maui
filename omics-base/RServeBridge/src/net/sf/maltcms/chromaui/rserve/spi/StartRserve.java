@@ -27,18 +27,18 @@
  */
 package net.sf.maltcms.chromaui.rserve.spi;
 
-import java.io.*;
+import java.io.File;
 import org.rosuda.REngine.Rserve.RConnection;
 
 /**
  * simple class that start Rserve locally if it's not running already - see
- * mainly
- * <code>checkLocalRserve</code> method. It spits out quite some debugging
- * outout of the console, so feel free to modify it for your application if
- * desired.<p> <i>Important:</i> All applications should shutdown every Rserve
- * that they started! Never leave Rserve running if you started it after your
- * application quits since it may pose a security risk. Inform the user if you
- * started an Rserve instance.
+ * mainly <code>checkLocalRserve</code> method. It spits out quite some
+ * debugging outout of the console, so feel free to modify it for your
+ * application if desired.<p>
+ * <i>Important:</i> All applications should shutdown every Rserve that they
+ * started! Never leave Rserve running if you started it after your application
+ * quits since it may pose a security risk. Inform the user if you started an
+ * Rserve instance.
  */
 public class StartRserve {
 
@@ -47,7 +47,7 @@ public class StartRserve {
      * <code>launchRserve(cmd, "--no-save --slave", "--no-save --slave", false)</code>
      */
     public static boolean launchRserve(String cmd) {
-        return launchRserve(cmd, "--no-save --slave", "--no-save --slave", false);
+        return launchRserve(cmd, "--no-save --vanilla --slave", "--no-save", false);
     }
 
     /**
@@ -71,6 +71,7 @@ public class StartRserve {
                 isWindows = true; /*
                  * Windows startup
                  */
+
                 p = Runtime.getRuntime().exec(
                         "\"" + cmd + "\" -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs);
             } else /*
@@ -94,7 +95,7 @@ public class StartRserve {
                     try {
                         String execString = cmd + " CMD /Library/Frameworks/R.framework/Resources/library/Rserve/libs/Rserve-bin.so " + rargs;
                         System.out.print("Starting via " + execString);
-                        p = Runtime.getRuntime().exec(execString);
+                        p = Runtime.getRuntime().exec(execString.trim().split(" "));
                         if (!isWindows) /*
                          * on Windows the process will never return, so we cannot wait
                          */ {
@@ -143,8 +144,8 @@ public class StartRserve {
             }
             System.out.println("waiting for Rserve to start ... (" + p + ")");
             // we need to fetch the output - some platforms will die if you don't ...
-            StreamHog errorHog = new StreamHog("Rserve",p.getErrorStream(), false);
-            StreamHog outputHog = new StreamHog("Rserve",p.getInputStream(), false);
+            StreamHog errorHog = new StreamHog("Rserve", p.getErrorStream(), false);
+            StreamHog outputHog = new StreamHog("Rserve", p.getInputStream(), false);
             if (!isWindows) /*
              * on Windows the process will never return, so we cannot wait
              */ {
@@ -160,6 +161,7 @@ public class StartRserve {
          * because at this point the process execution itself was successful and
          * the start up is usually asynchronous
          */
+
         while (attempts > 0) {
             try {
                 RConnection c = new RConnection();
@@ -187,7 +189,7 @@ public class StartRserve {
      * to start it using the defaults for the platform where it is run on. This
      * method is meant to be set-and-forget and cover most default setups. For
      * special setups you may get more control over R with
-     * <<code>launchRserve</code> instead.
+     * <code>launchRserve</code> instead.
      */
     public static boolean checkLocalRserve() {
         if (isRserveRunning()) {
@@ -202,7 +204,7 @@ public class StartRserve {
             try {
                 Process rp = Runtime.getRuntime().exec(
                         "reg query HKLM\\Software\\R-core\\R");
-                StreamHog regHog = new StreamHog("reg query",rp.getInputStream(), true);
+                StreamHog regHog = new StreamHog("reg query", rp.getInputStream(), true);
                 rp.waitFor();
                 regHog.join();
                 installPath = regHog.getInstallPath();
@@ -234,14 +236,14 @@ public class StartRserve {
                     || ((new File("/usr/local/lib/R/bin/R")).exists()
                     && launchRserve("/usr/local/lib/R/bin/R"))
                     || ((new File("/usr/lib/R/bin/R")).exists() && launchRserve(
-                    "/usr/lib/R/bin/R"))
+                            "/usr/lib/R/bin/R"))
                     || ((new File("/usr/local/bin/R")).exists() && launchRserve(
-                    "/usr/local/bin/R"))
+                            "/usr/local/bin/R"))
                     || ((new File("/sw/bin/R")).exists() && launchRserve("/sw/bin/R"))
                     || ((new File("/usr/common/bin/R")).exists() && launchRserve(
-                    "/usr/common/bin/R"))
+                            "/usr/common/bin/R"))
                     || ((new File("/opt/bin/R")).exists() && launchRserve(
-                    "/opt/bin/R")));
+                            "/opt/bin/R")));
         }
     }
 

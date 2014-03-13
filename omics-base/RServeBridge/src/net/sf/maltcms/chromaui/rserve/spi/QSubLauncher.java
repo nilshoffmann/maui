@@ -38,19 +38,16 @@ import org.openide.util.NbPreferences;
  */
 public class QSubLauncher {
 
-    
     public void launch(List<String> rserveOptions) {
-        
+
         List<String> qsubCommand = new ArrayList<String>();
-        
+
         NbPreferences.forModule(QSubLauncher.class).put("rserveRemoteIp", "");
-        
+
         String rserveRemoteIp = NbPreferences.forModule(QSubLauncher.class).get("rserveRemoteIp", "127.0.0.1");
         String rserveUserName = System.getProperty("user.name");
         String rservePassword = UUID.randomUUID().toString();
-        
+
     }
-    
-    
-    
+
 }

@@ -81,11 +81,11 @@ public class RserveConnection extends Thread {
 
     protected RConnection connect() throws RserveException, IllegalStateException, IllegalArgumentException {
         if (state == State.INITIALIZED) {
-            if(hostIp == null) {
+            if (hostIp == null || scope == Scope.LOCAL) {
                 Logger.getLogger(RserveConnection.class.getName()).info("Localhost session.");
                 connection = new RConnection();
-            }else{
-                Logger.getLogger(RserveConnection.class.getName()).info("Session on: " + hostIp.toString()+ " at port "+hostPort);
+            } else {
+                Logger.getLogger(RserveConnection.class.getName()).info("Session on: " + hostIp.toString() + " at port " + hostPort);
                 connection = new RConnection(hostIp.getHostAddress(), hostPort);
             }
             if (connection.needLogin()) {
@@ -121,7 +121,7 @@ public class RserveConnection extends Thread {
                 case CONNECTED:
                     switch (scope) {
                         case LOCAL:
-                            if(startedLocalRserve) {
+                            if (startedLocalRserve) {
                                 try {
                                     Logger.getLogger(RserveConnection.class.getName()).info("Shutting down local server...");
                                     connection.serverShutdown();
@@ -141,7 +141,7 @@ public class RserveConnection extends Thread {
             }
             try {
                 //connection.unlock(connectionLock);
-                if(startedLocalRserve){
+                if (startedLocalRserve) {
                     connection.shutdown();
                 }
                 connection.close();

@@ -34,10 +34,10 @@ import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
-@OptionsPanelController.SubRegistration(location = "Advanced", id="RServe", 
-displayName = "#AdvancedOption_DisplayName_RServe",
-keywords = "#AdvancedOption_Keywords_RServe",
-keywordsCategory = "Advanced/RServe")
+@OptionsPanelController.SubRegistration(location = "Advanced", id = "RServe",
+        displayName = "#AdvancedOption_DisplayName_RServe",
+        keywords = "#AdvancedOption_Keywords_RServe",
+        keywordsCategory = "Advanced/RServe")
 public final class RServeOptionsPanelController extends OptionsPanelController {
 
     private RServePanel panel;

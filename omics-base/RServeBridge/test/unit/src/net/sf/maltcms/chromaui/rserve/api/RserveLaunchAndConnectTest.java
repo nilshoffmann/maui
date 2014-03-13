@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.rserve.api;
 
 import java.util.Arrays;
+import net.sf.maltcms.chromaui.rserve.spi.StartRserveOriginal;
 import org.junit.Test;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
@@ -38,14 +39,15 @@ import org.rosuda.REngine.Rserve.RserveException;
  *
  * @author Nils Hoffmann
  */
-public class RserveConnectionFactoryTest {
+public class RserveLaunchAndConnectTest {
 
     /**
      * Test of getDefaultConnection method, of class RserveConnectionFactory.
      */
     @Test
     public void testGetDefaultConnection() throws RserveException, REXPMismatchException {
-        RConnection connection = RserveConnectionFactory.getDefaultConnection();
+        StartRserveOriginal.checkLocalRserve();
+        RConnection connection = new RConnection();
         try {
             REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
             try {
@@ -67,5 +69,26 @@ public class RserveConnectionFactoryTest {
             System.out.println("Closing connection!");
             connection.close();
         } 
+//        try {
+//            REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
+//            try {
+//                System.out.println("Result: "
+//                        + Arrays.toString(rexp.asDoubles()));
+//            } catch (REXPMismatchException ex) {
+//                throw ex;
+//            }
+//        } catch (RserveException ex) {
+//            throw ex;
+//        } finally {
+//            try{
+//                connection.serverShutdown();
+//            }catch(RserveException re) {
+//                System.err.println("serverShutdown failed, trying normal shutdown!");
+//            }
+//            System.out.println("Shutting down connection!");
+//            connection.shutdown();
+//            System.out.println("Closing connection!");
+//            connection.close();
+//        } 
     }
 }

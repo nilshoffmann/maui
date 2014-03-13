@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -39,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import net.sf.maltcms.chromaui.rserve.spi.StartRserveOriginal;
 import net.sf.maltcms.chromaui.rserve.spi.StreamHog;
 import org.netbeans.api.keyring.Keyring;
 import org.openide.util.Exceptions;
@@ -60,8 +60,9 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
     public static final String KEY_RSERVE_USER = "rserveUser";
     private boolean isLocalServer = false;
     private RConnection activeConnection = null;
-    public static final String defaultUnixRlocations =
-            "/Library/Frameworks/R.framework/Resources/bin/R,"
+    public static final String defaultUnixRlocations
+            = "/Library/Frameworks/R.framework/Resources/bin/R,"
+            + "/bin/sh,"
             + "/usr/local/lib/R/bin/R,"
             + "/usr/lib/R/bin/R,"
             + "/usr/local/bin/R,"
@@ -74,7 +75,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
     ///Library/Frameworks/R.framework/Resources/library/Rserve/libs/Rserve-bin.so,
     public static final String defaultRserveCalls = "Rserve,INLINEARGUMENT";
     public static final String KEY_RARGS = "rargs";
-    public static final String defaultRargs = "--vanilla --slave --no-save";// --gui-none";
+    public static final String defaultRargs = "--vanilla --no-save";// --gui-none";
     public static final String KEY_RSERVEARGS = "rserveArgs";
     public static final String defaultRserveArgs = "";
     public static final String KEY_RBINARY_LOCATION = "rBinaryLocation";
@@ -90,8 +91,6 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
     private String rserveRemoteHost;
     private String rserveRemotePort;
     private boolean debug = false;
-    private Thread shutdownHook;
-    private int lock;
     private String userName;
     private AtomicBoolean startedLocal = new AtomicBoolean(false);
 
@@ -118,7 +117,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
 //			closeConnection();
 //		}
         isLocalServer = localServer;
-        debug = Boolean.valueOf(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_DEBUG,"false"));
+        debug = Boolean.valueOf(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_DEBUG, "false"));
         userName = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_USER, null);
         StringBuilder sb = new StringBuilder();
         sb.append("unixRlocations: ").append(Arrays.toString(unixRlocations)).append("\n");
@@ -140,7 +139,6 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
 
     //DO NOT CHANGE!!!
     public static RConnection getDefaultConnection() {
-//		return RserveConnectionFactory.hotfixConnection();
         RserveConnectionFactory factory = RserveConnectionFactory.getInstance();
         if (factory.isLocalServer) {
             return factory.getLocalConnection();
@@ -182,14 +180,14 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
 
     public boolean isWindows() {
         String osname = System.getProperty("os.name");
-        System.out.println("os.name: "+osname);
+        System.out.println("os.name: " + osname);
         if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
                 equals("Windows")) {
             return true;
         }
         return false;
     }
-    
+
     public boolean isDarwin() {
         String osname = System.getProperty("os.name");
         if (osname != null && osname.equals("Mac OS X")) {
@@ -198,102 +196,127 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         return false;
     }
 
-    public List<String> buildRserveCommand(File rBinaryLocation, boolean debug, String rServeCallValue, String rServeArgs, String rArgs) {
-        List<String> commandList = new ArrayList<String>();
-        String[] rRargs = rArgs.split(" ");
-        if(isWindows()) {
-            commandList.add("\"" + rBinaryLocation.getAbsolutePath() + "\"");
-        }else{
-            commandList.add(rBinaryLocation.getAbsolutePath());
-        }
-//        commandList.addAll(Arrays.asList(rRargs));
-        if (isWindows()) {
-            commandList.addAll(Arrays.asList("-e", "\"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rArgs + " " + rServeArgs + "')\""));
-        } else {
-            if (rServeCallValue.equals("INLINEARGUMENT")) {
-                if(isDarwin()) {
-                        commandList.addAll(Arrays.asList("-e", "library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rArgs + " " +rServeArgs + "')"));
-                }else{
-                    commandList.addAll(Arrays.asList("-e", "\"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rArgs+" "+rServeArgs + "')\""));
-                }
-            } else {
-                commandList.addAll(Arrays.asList("CMD", rServeCallValue));
-                commandList.addAll(Arrays.asList(rRargs));
-                commandList.addAll(Arrays.asList(rServeArgs.split(" ")));
-            }
-        }
-        
-        return commandList;
-    }
+//    public List<String> buildRserveCommand(File rBinaryLocation, boolean debug, String rServeCallValue, String rServeArgs, String rArgs) {
+//        List<String> commandList = new ArrayList<String>();
+//        String[] rRargs = rArgs.trim().split(" ");
+//        if (isWindows()) {
+//            commandList.add("\"" + rBinaryLocation.getAbsolutePath() + "\"");
+//        } else {
+//            if(rBinaryLocation.equals("/bin/sh")) {
+//                commandList.add(rBinaryLocation.getAbsolutePath());
+//                commandList.add("-c");
+//            }else{
+//                commandList.add(rBinaryLocation.getAbsolutePath());
+//            }
+//            
+//        }
+//        StringBuilder args = new StringBuilder();
+//        for (String arg : rRargs) {
+//            args.append(arg);
+//            args.append(" ");
+//        }
+//        String[] rSArgs = rServeArgs.trim().split(" ");
+//        for (String arg : rSArgs) {
+//            args.append(arg);
+//            args.append(" ");
+//        }
+//        String jointArgs = args.toString().trim();
+//
+////        commandList.addAll(Arrays.asList(rRargs));
+//        if (isWindows()) {
+//            commandList.addAll(Arrays.asList("-e", "\"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + jointArgs + "')\""));
+//        } else {
+//            if (rServeCallValue.equals("INLINEARGUMENT")) {
+//                if (isDarwin()) {
+//                    commandList.addAll(Arrays.asList("-e", "library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + jointArgs + "')"));
+//                } else {
+//                    commandList.addAll(Arrays.asList("-e", "\"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + jointArgs + "')\""));
+//                }
+//            } else {
+//                commandList.addAll(Arrays.asList("CMD", rServeCallValue));
+//                commandList.addAll(Arrays.asList(rRargs));
+//                commandList.addAll(Arrays.asList(rSArgs));
+//            }
+//        }
+//
+//        return commandList;
+//    }
 
     public synchronized RConnection startLocalAndConnect() {
-        //List<String> rserveCmd = new ArrayList<String>();
-        if (rBinaryLocation == null) {
-            rBinaryLocation = getRBinaryLocation();
-        }
-        Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.INFO, "R binary location: {0}", rBinaryLocation);
-        if (startedLocal.compareAndSet(false, true)) {
-            //rserveCmd.add(rBinaryLocation.getAbsolutePath());
-            //rserveCmd.add("CMD");
-            if (rserveCall == null) {
-                int exitValue = -1;
-                for (String rserveCallValue : rserveCalls) {
-                    List<String> rserveCmd = buildRserveCommand(rBinaryLocation, debug, rserveCallValue, rServeArgs, rArgs);
-                    Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.INFO, "Trying to run: {0}", rserveCmd);
-                    Process p = null;
-                    try {
-                        p = startProcessAndWait(rserveCmd, false);
-                        for (int i = 0; i < 5; i++) {
-                            try {
-                                //RserveConnection rserveConnection = new RserveConnection(null, -1, true);
-                                RConnection conn = new RConnection();//rserveConnection.getConnection();
-                                Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.INFO, "Connected to Rserve version {0}", conn.getServerVersion());
-                                Logger.getLogger(RserveConnectionFactory.class.getName()).info("Keeping rserveCall for future reference!");
-                                //setConnection(connection);
-                                rserveCall = rserveCallValue;
-                                //							lock = conn.tryLock();
-                                if (p != null) {
-//                                    p.destroy();
-                                }
-                                startedLocal.compareAndSet(true, false);
-                                return conn;
-                            } catch (RserveException ex2) {
-                                System.err.println(
-                                        "Failed to connect on try " + (1 + i) + "/5");
-                            }
-                            
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException ix) {
-                            };
-                        }
-                    } catch (Exception e) {
-                        if (p != null) {
-                            p.destroy();
-                        }
-                    }
-                }
-                throw new RuntimeException("Could not determine local Rserve command!");
+        if(StartRserveOriginal.checkLocalRserve()) {
+            try {
+                return new RConnection();
+            } catch (RserveException ex) {
+               throw new RuntimeException("Could not connect to local Rserve!");
             }
-        } else {
-            throw new IllegalStateException("Already tried to start local instance!");
         }
-        return null;
-//return Arrays.asList(rBinaryLocation.getAbsolutePath(), "CMD", rserveCall);
+        throw new RuntimeException("Could not start local Rserve!");
+//        //List<String> rserveCmd = new ArrayList<String>();
+//        if (rBinaryLocation == null) {
+//            rBinaryLocation = getRBinaryLocation();
+//        }
+//        Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.INFO, "R binary location: {0}", rBinaryLocation);
+//        if (startedLocal.compareAndSet(false, true)) {
+//            //rserveCmd.add(rBinaryLocation.getAbsolutePath());
+//            //rserveCmd.add("CMD");
+//            if (rserveCall == null) {
+//                int exitValue = -1;
+//                for (String rserveCallValue : rserveCalls) {
+//                    List<String> rserveCmd = buildRserveCommand(rBinaryLocation, debug, rserveCallValue, rServeArgs, rArgs);
+//                    Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.INFO, "Trying to run: ''{0}''", rserveCmd);
+//                    Process p = null;
+//                    try {
+//                        p = startProcessAndWait(rserveCmd, true);
+//                        int retries = 5;
+//                        for (int i = 0; i < retries; i++) {
+//                            try {
+//                                //RserveConnection rserveConnection = new RserveConnection(null, -1, true);
+//                                RConnection conn = new RConnection(rserveRemoteHost,Integer.parseInt(rserveRemotePort));//rserveConnection.getConnection();
+//                                Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.INFO, "Connected to Rserve version {0}", conn.getServerVersion());
+//                                Logger.getLogger(RserveConnectionFactory.class.getName()).info("Keeping rserveCall for future reference!");
+//                                //setConnection(connection);
+//                                rserveCall = rserveCallValue;
+//                                //							lock = conn.tryLock();
+//                                if (p != null) {
+////                                    p.destroy();
+//                                }
+//                                startedLocal.compareAndSet(true, false);
+//                                return conn;
+//                            } catch (RserveException ex2) {
+//                                System.err.println(
+//                                        "Failed to connect on try " + (1 + i) + "/" + retries);
+//                            }
+//
+//                            try {
+//                                Thread.sleep(1000);
+//                            } catch (InterruptedException ix) {
+//                            };
+//                        }
+//                    } catch (Exception e) {
+//                        if (p != null) {
+//                            p.destroy();
+//                        }
+//                    }
+//                }
+//                startedLocal.compareAndSet(true, false);
+//                throw new RuntimeException("Could not determine local Rserve command!");
+//            }
+//        } else {
+//            throw new IllegalStateException("Already tried to start local instance!");
+//        }
+//        return null;
+//    }
     }
 
-//	public static RConnection hotfixConnection() {
-//		return RserveConnectionFactory.getInstance().getLocalConnection();
-//	}
     public Process startProcess(List<String> command, boolean capture) {
         boolean isWindows = isWindows();
         try {
             ProcessBuilder pb = new ProcessBuilder(command);
             String pname = command.get(0);
-            if(isWindows) {
-                pname = pname.substring(pname.lastIndexOf("\\")+1);
-            }else{
-                pname = pname.substring(pname.lastIndexOf("/")+1);
+            if (isWindows) {
+                pname = pname.substring(pname.lastIndexOf("\\") + 1);
+            } else {
+                pname = pname.substring(pname.lastIndexOf("/") + 1);
             }
             Process p = pb.start();//Runtime.getRuntime().exec(command);
             StreamHog errorHog = new StreamHog(pname,
@@ -315,10 +338,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         try {
             ProcessBuilder bp = new ProcessBuilder(commandString);
             String pname = commandString.get(0);
-            if(isWindows) {
-                pname = pname.substring(pname.lastIndexOf("\\")+1);
-            }else{
-                pname = pname.substring(pname.lastIndexOf("/")+1);
+            if (isWindows) {
+                pname = pname.substring(pname.lastIndexOf("\\") + 1);
+            } else {
+                pname = pname.substring(pname.lastIndexOf("/") + 1);
             }
             p = bp.start();
             StreamHog errorHog = new StreamHog(pname,
@@ -327,9 +350,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
             StreamHog outputHog = new StreamHog(pname,
                     p.getInputStream(),
                     capture);
-            if (!isWindows) /*
-             * on Windows the process will never return, so we cannot wait
-             */ {
+            if (!isWindows) {
+                /*
+                 * on Windows the process will never return, so we cannot wait
+                 */
                 try {
                     p.waitFor();
                 } catch (InterruptedException ex) {
@@ -362,6 +386,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
             setConnection(connection);
             return connection;
         } catch (RserveException ex) {
+            Logger.getLogger(RserveConnectionFactory.class.getName()).severe("Received an Rserve Exception: " + ex.getLocalizedMessage() + " with description: " + ex.getRequestErrorDescription());
             Logger.getLogger(RserveConnectionFactory.class.getName()).info("Failed to connect to local Rserve ... launching new local instance!");
             connection = startLocalAndConnect();
             if (connection != null) {
@@ -372,33 +397,6 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
                     return connection;
                 }
             }
-//			Process p = null;
-//			try {
-//				p = startProcessAndWait();
-//				for (int i = 0; i < 5; i++) {
-//					try {
-//						connection = new RConnection();
-//						//setConnection(connection);
-//						isLocalServer = true;
-//						return connection;
-//					} catch (RserveException ex2) {
-//						if (p != null) {
-//							p.destroy();
-//						}
-//						System.err.println(
-//								"Failed to connect on try " + (1 + i) + "/5");
-//					}
-//					try {
-//						Thread.sleep(500);
-//					} catch (InterruptedException ix) {
-//					};
-//				}
-//			} catch (Exception e) {
-//				if (p != null) {
-//					p.destroy();
-//				}
-//				System.err.println("Failed to connect to Rserve: " + e.getLocalizedMessage());
-//			}
         }
         throw new NullPointerException();
     }
@@ -472,7 +470,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
             try {
                 Process rp = Runtime.getRuntime().exec(
                         "reg query HKLM\\Software\\R-core\\R");
-                StreamHog regHog = new StreamHog("reg query",rp.getInputStream(), true);
+                StreamHog regHog = new StreamHog("reg query", rp.getInputStream(), true);
                 rp.waitFor();
                 regHog.join();
                 installPath = regHog.getInstallPath();
@@ -536,7 +534,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         if (activeConnection != null) {
             if (!activeConnection.isConnected()) {
                 activeConnection = null;
-            }else{
+            } else {
                 return activeConnection;
             }
         }
@@ -545,9 +543,9 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
 
     public RConnection getRemoteConnection() {
         if (activeConnection != null) {
-            if(!activeConnection.isConnected()) {
+            if (!activeConnection.isConnected()) {
                 activeConnection = null;
-            }else{
+            } else {
                 return activeConnection;
             }
         }
@@ -568,15 +566,4 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
     public void preferenceChange(PreferenceChangeEvent pce) {
         loadPreferences();
     }
-//	public Thread getShutdownHook() {
-//		if (shutdownHook == null) {
-//			shutdownHook = new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					RserveConnectionFactory.getInstance().closeConnection();
-//				}
-//			});
-//		}
-//		return shutdownHook;
-//	}
 }
