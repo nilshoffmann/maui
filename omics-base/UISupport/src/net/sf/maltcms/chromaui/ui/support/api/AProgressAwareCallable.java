@@ -66,6 +66,7 @@ public abstract class AProgressAwareCallable<T> implements Callable<T>,
     @Override
     public boolean cancel() {
         cancel = true;
+        progressHandle.finish();
         return cancel;
     }
 

@@ -65,6 +65,7 @@ public abstract class AProgressAwareRunnable implements Runnable,
     @Override
     public boolean cancel() {
         cancel = true;
+        progressHandle.finish();
         return cancel;
     }
 
@@ -79,18 +80,18 @@ public abstract class AProgressAwareRunnable implements Runnable,
         task.schedule(0);
         return task;
     }
-    
+
     public static Future<?> createAndRun(String taskName, AProgressAwareRunnable runnable, ExecutorService es) {
         final ProgressHandle handle = ProgressHandleFactory.createHandle(
                 taskName, runnable);
         runnable.setProgressHandle(handle);
         return es.submit(runnable);
     }
-    
-    public static <T> Future<T> createAndRun(String taskName, AProgressAwareCallable<T> runnable, ICompletionService<T> es) {
+
+    public static <T> Future<T> createAndRun(String taskName, AProgressAwareRunnable runnable, ICompletionService<T> es, T result) {
         final ProgressHandle handle = ProgressHandleFactory.createHandle(
                 taskName, runnable);
         runnable.setProgressHandle(handle);
-        return es.submit(runnable);
+        return es.submit(runnable, result);
     }
 }
