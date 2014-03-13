@@ -1,0 +1,152 @@
+/* 
+ * Maui, Maltcms User Interface. 
+ * Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
+ *
+ * Project website: http://maltcms.sf.net
+ *
+ * Maui may be used under the terms of either the
+ *
+ * GNU Lesser General Public License (LGPL)
+ * http://www.gnu.org/licenses/lgpl.html
+ *
+ * or the
+ *
+ * Eclipse Public License (EPL)
+ * http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * As a user/recipient of Maui, you may choose which license to receive the code 
+ * under. Certain files or entire directories may not be covered by this 
+ * dual license, but are subject to licenses compatible to both LGPL and EPL.
+ * License exceptions are explicitly declared in all relevant files or in a 
+ * LICENSE file in the relevant directories.
+ *
+ * Maui is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
+ * for details.
+ */
+package net.sf.maltcms.chromaui.foldChangeViewer.actions;
+
+import cross.datastructures.tuple.Tuple2D;
+import cross.datastructures.tuple.TupleND;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.SwingUtilities;
+import net.sf.maltcms.chromaui.foldChangeViewer.charts.datasets.FoldChangeDataset;
+import net.sf.maltcms.chromaui.foldChangeViewer.charts.datasets.FoldChangeElement;
+import net.sf.maltcms.chromaui.foldChangeViewer.charts.datasets.FoldChangeElementProvider;
+import net.sf.maltcms.chromaui.foldChangeViewer.ui.FoldChangeViewTopComponent;
+import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import net.sf.maltcms.chromaui.ui.support.api.LookupUtils;
+import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
+
+@ActionID(category = "Maui",
+        id = "net.sf.maltcms.chromaui.normalization.spi.OpenPeakGroupFoldChangePlot")
+@ActionRegistration(displayName = "#CTL_OpenPeakGroupFoldChangePlot")
+@ActionReferences({
+    @ActionReference(path = "Actions/ContainerNodeActions/StatisticsContainer/anova")
+})
+@Messages("CTL_OpenPeakGroupFoldChangePlot=Show Fold Change Plot")
+public final class OpenPeakGroupFoldChangePlot implements ActionListener {
+
+    private final StatisticsContainer context;
+
+    public OpenPeakGroupFoldChangePlot(StatisticsContainer context) {
+        this.context = context;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        if (context.getMethod().equalsIgnoreCase("anova")) {
+            IChromAUIProject project = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
+            TupleND<ITreatmentGroupDescriptor> g = new TupleND<ITreatmentGroupDescriptor>(project.getTreatmentGroups());
+            List<IAnovaDescriptor> anovas = new ArrayList<IAnovaDescriptor>();
+            for (IStatisticsDescriptor statd : context.getMembers()) {
+                if (statd instanceof IAnovaDescriptor) {
+                    anovas.add((IAnovaDescriptor) statd);
+                }
+            }
+            if (anovas.isEmpty()) {
+                return;
+            }
+            //fold change does only make sense between groups
+            IPeakNormalizer normalizer = null;
+            for (Tuple2D<ITreatmentGroupDescriptor, ITreatmentGroupDescriptor> pair : g.getPairs()) {
+                for (IAnovaDescriptor group : anovas) {
+                    IPeakGroupDescriptor peakGroup = group.getPeakGroupDescriptor();
+                    if (normalizer == null) {
+                        normalizer = NormalizationDialog.getPeakNormalizer(peakGroup.getPeakGroupContainer());
+                    }
+                }
+                RunnableAction ra = new RunnableAction(context, pair.getFirst(), pair.getSecond(), normalizer);
+                RunnableAction.createAndRun("Loading fold change view", ra);
+            }
+        }
+    }
+
+    private class RunnableAction extends AProgressAwareRunnable {
+
+        private final StatisticsContainer statisticsContainer;
+        private final ITreatmentGroupDescriptor lhs;
+        private final ITreatmentGroupDescriptor rhs;
+        private final IPeakNormalizer peakNormalizer;
+
+        public RunnableAction(StatisticsContainer statisticsContainer, ITreatmentGroupDescriptor lhs, ITreatmentGroupDescriptor rhs, IPeakNormalizer peakNormalizer) {
+            this.statisticsContainer = statisticsContainer;
+            this.lhs = lhs;
+            this.rhs = rhs;
+            this.peakNormalizer = peakNormalizer;
+        }
+
+        public void onEdt(Runnable r) {
+            SwingUtilities.invokeLater(r);
+        }
+
+        @Override
+        public void run() {
+            try {
+                progressHandle.start(1);
+                int workunit = 0;
+
+                List<INamedElementProvider<? extends StatisticsContainer, ? extends FoldChangeElement>> providers = new ArrayList<INamedElementProvider<? extends StatisticsContainer, ? extends FoldChangeElement>>();
+                InstanceContent ic = new InstanceContent();
+                FoldChangeElementProvider provider = new FoldChangeElementProvider(lhs.getDisplayName() + " vs " + rhs.getDisplayName(), statisticsContainer, lhs, rhs, peakNormalizer);
+                providers.add(provider);
+                ic.add(statisticsContainer);
+
+                final FoldChangeDataset ds = new FoldChangeDataset(providers, lhs.getDisplayName() + " vs " + rhs.getDisplayName(), new AbstractLookup(ic));
+                onEdt(new Runnable() {
+                    @Override
+                    public void run() {
+                        FoldChangeViewTopComponent topComponent = new FoldChangeViewTopComponent();
+                        topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), ds);
+                        topComponent.open();
+//                            topComponent.load();
+                    }
+                });
+
+            } finally {
+                progressHandle.finish();
+            }
+        }
+    }
+
+}
