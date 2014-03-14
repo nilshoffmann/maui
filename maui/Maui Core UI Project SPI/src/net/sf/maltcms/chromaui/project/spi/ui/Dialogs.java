@@ -51,14 +51,14 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public class Dialogs {
-    
+
     public static Collection<? extends IToolDescriptor> showAndSelectToolDescriptors(final Set<IToolDescriptor> itd, final Lookup lookup) {
         return showAndSelectToolDescriptors(itd, lookup, false);
     }
-    
+
     public static Collection<? extends IToolDescriptor> showAndSelectToolDescriptors(final Set<IToolDescriptor> itd, final Lookup lookup, final boolean singleSelection) {
         DialogPanel dp = new DialogPanel();
-        dp.init("Annotations of Tool: ",singleSelection);
+        dp.init("Annotations of Tool: ", singleSelection);
         dp.getExplorerManager().setRootContext(new AbstractNode(Children.create(new ChildFactory<IToolDescriptor>() {
 
             @Override
@@ -72,13 +72,13 @@ public class Dialogs {
                 Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, lookup);
                 Node toolNode;
                 try {
-                    toolNode = new DescriptorNode(key){
+                    toolNode = new DescriptorNode(key) {
 
-						@Override
-						public String getDisplayName() {
-							return key.getDisplayName()+" "+key.getDate();
-						}
-					};
+                        @Override
+                        public String getDisplayName() {
+                            return key.getDisplayName() + " " + key.getDate();
+                        }
+                    };
                 } catch (IntrospectionException ex) {
                     Exceptions.printStackTrace(ex);
                     toolNode = Node.EMPTY;
@@ -87,12 +87,12 @@ public class Dialogs {
                 return toolNode;
             }
         }, true)));
-			NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, "Select Tool Results for Deletion",NotifyDescriptor.OK_CANCEL_OPTION);
+        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, "Select Tool Results for Deletion", NotifyDescriptor.OK_CANCEL_OPTION);
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             Node[] selectedNodes = dp.getExplorerManager().getSelectedNodes();
             List<IToolDescriptor> toolDescriptors = new LinkedList<IToolDescriptor>();
-            for(Node n : selectedNodes) {
+            for (Node n : selectedNodes) {
                 toolDescriptors.addAll(n.getLookup().lookupAll(IToolDescriptor.class));
             }
             return toolDescriptors;

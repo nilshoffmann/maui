@@ -1,98 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="help" name="OmicsPlatform">
 
-	<property environment="env" />
-	<property name="maui.dir" value="maui"/>
-	<property name="maui-ext.dir" value="maui-ext"/>
-	<property name="omics-base.dir" value="omics-base"/>
-	<property name="platform.parentdir" value="${basedir}"/>
-	<property file="nbproject/platform-defaults.properties"/>
+    <property environment="env" />
+    <property name="maui.dir" value="maui"/>
+    <property name="maui-ext.dir" value="maui-ext"/>
+    <property name="omics-base.dir" value="omics-base"/>
+    <property name="platform.parentdir" value="${basedir}"/>
+    <property file="nbproject/platform-defaults.properties"/>
 
-	<target name="help" description="Prints usage info using -projecthelp">
-		<java classname="org.apache.tools.ant.Main">
-			<arg value="-buildfile" />
-			<arg value="${ant.file}" />
-			<arg value="-projecthelp" />
-		</java>
-	</target>
+    <target name="help" description="Prints usage info using -projecthelp">
+        <java classname="org.apache.tools.ant.Main">
+            <arg value="-buildfile" />
+            <arg value="${ant.file}" />
+            <arg value="-projecthelp" />
+        </java>
+    </target>
 	
-	<!-- build targets -->
-	<target name="bootstrap-build" description="Removes existing platform directory, then initializes the build system and fetches dependencies" depends="delete-platform,build-all">
+    <!-- build targets -->
+    <target name="bootstrap-build" description="Removes existing platform directory, then initializes the build system and fetches dependencies" depends="delete-platform,build-all">
 		
-	</target>
+    </target>
 	
-	<target name="build-all" description="Build All" depends="build-maui-ext"></target>
+    <target name="build-all" description="Build All" depends="build-maui-ext"></target>
 	
-	<target name="build-maui" description="Build Maui" depends="build-omics-base">
-		<ant antfile="${maui.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
-	</target>
+    <target name="build-maui" description="Build Maui" depends="build-omics-base">
+        <ant antfile="${maui.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
+    </target>
 	
-	<target name="build-omics-base" description="Build Omics Base">
-		<ant antfile="${omics-base.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
-	</target>
+    <target name="build-omics-base" description="Build Omics Base">
+        <ant antfile="${omics-base.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
+    </target>
 	
-	<target name="build-maui-ext" description="Build Maui Ext" depends="build-maui">
-		<ant antfile="${maui-ext.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
-	</target>
+    <target name="build-maui-ext" description="Build Maui Ext" depends="build-maui">
+        <ant antfile="${maui-ext.dir}/build.xml" target="build" inheritall="false" inheritrefs="false"/>
+    </target>
 	
-	<!-- clean targets -->
-	<target name="clean-maui" description="Clean Maui">
-		<ant antfile="${maui.dir}/build.xml" target="clean" inheritall="false" inheritrefs="false"/>
-	</target>
+    <!-- clean targets -->
+    <target name="clean-maui" description="Clean Maui">
+        <ant antfile="${maui.dir}/build.xml" target="clean" inheritall="false" inheritrefs="false"/>
+    </target>
 	
-	<target name="clean-omics-base" description="Clean Omics Base">
-		<ant antfile="${omics-base.dir}/build.xml" target="clean" inheritall="false" inheritrefs="false"/>
-	</target>
+    <target name="clean-omics-base" description="Clean Omics Base">
+        <ant antfile="${omics-base.dir}/build.xml" target="clean" inheritall="false" inheritrefs="false"/>
+    </target>
 	
-	<target name="clean-maui-ext" description="Clean Maui Ext">
-		<ant antfile="${maui-ext.dir}/build.xml" target="clean" inheritall="false" inheritrefs="false"/>
-	</target>
+    <target name="clean-maui-ext" description="Clean Maui Ext">
+        <ant antfile="${maui-ext.dir}/build.xml" target="clean" inheritall="false" inheritrefs="false"/>
+    </target>
 	
-	<target name="clean-all" description="Clean all" depends="clean-omics-base,clean-maui,clean-maui-ext">
+    <target name="clean-all" description="Clean all" depends="clean-omics-base,clean-maui,clean-maui-ext">
 		
-	</target>
+    </target>
 	
-	<target name="check-platform">
-		<echo>Checking for platform directory</echo>
-		<condition property="platform.exists">
-			<available file="platform-${platform.version}" type="dir"/>
-		</condition>
-	</target>
+    <target name="check-platform">
+        <echo>Checking for platform directory</echo>
+        <condition property="platform.exists">
+            <available file="platform-${platform.version}" type="dir"/>
+        </condition>
+    </target>
 	
-	<target name="delete-platform" description="Remove downloaded platform files" depends="check-platform" if="platform.exists">
-		<echo>Deleting platform directory</echo>
-		<delete dir="platform-${platform.version}" failonerror="false"/> 
-	</target>
+    <target name="delete-platform" description="Remove downloaded platform files" depends="check-platform" if="platform.exists">
+        <echo>Deleting platform directory</echo>
+        <delete dir="platform-${platform.version}" failonerror="false"/> 
+    </target>
 	
-	<target name="delete-maltcms" description="Remove downloaded maltcms files" depends="check-platform" if="platform.exists">
-		<echo>Deleting maltcms directory</echo>
-		<delete dir="platform-${platform.version}/maltcms" failonerror="false"/> 
-		<delete file="platform-${platform.version}/platform.complete" failonerror="false"/>
-	</target>
+    <target name="delete-maltcms" description="Remove downloaded maltcms files" depends="check-platform" if="platform.exists">
+        <echo>Deleting maltcms directory</echo>
+        <delete dir="platform-${platform.version}/maltcms" failonerror="false"/> 
+        <delete file="platform-${platform.version}/platform.complete" failonerror="false"/>
+    </target>
 	
-	<!-- run targets -->
-	<target name="run-omics-base" description="Run Omics Base">
-		<ant antfile="${omics-base.dir}/build.xml" target="run" inheritall="false" inheritrefs="false"/>
-	</target>
-	<target name="run-maui" description="Run Maui">
-		<ant antfile="${maui.dir}/build.xml" target="run" inheritall="false" inheritrefs="false"/>
-	</target>
-	<target name="run-maui-ext" description="Run Maui Ext">
-		<ant antfile="${maui-ext.dir}/build.xml" target="run" inheritall="false" inheritrefs="false"/>
-	</target>
+    <!-- run targets -->
+    <target name="run-omics-base" description="Run Omics Base">
+        <ant antfile="${omics-base.dir}/build.xml" target="run" inheritall="false" inheritrefs="false"/>
+    </target>
+    <target name="run-maui" description="Run Maui">
+        <ant antfile="${maui.dir}/build.xml" target="run" inheritall="false" inheritrefs="false"/>
+    </target>
+    <target name="run-maui-ext" description="Run Maui Ext">
+        <ant antfile="${maui-ext.dir}/build.xml" target="run" inheritall="false" inheritrefs="false"/>
+    </target>
 	
-	<!-- test targets -->
-	<target name="test-omics-base" description="Test Omics Base">
-		<ant antfile="${omics-base.dir}/build.xml" target="test" inheritall="false" inheritrefs="false"/>
-	</target>
-	<target name="test-maui" description="Test Maui">
-		<ant antfile="${maui.dir}/build.xml" target="test" inheritall="false" inheritrefs="false"/>
-	</target>
-	<target name="test-maui-ext" description="Test Maui Ext">
-		<ant antfile="${maui-ext.dir}/build.xml" target="test" inheritall="false" inheritrefs="false"/>
-	</target>
-	<target name="test-all" depends="test-omics-base,test-maui,test-maui-ext">
+    <!-- test targets -->
+    <target name="test-omics-base" description="Test Omics Base">
+        <ant antfile="${omics-base.dir}/build.xml" target="test" inheritall="false" inheritrefs="false"/>
+    </target>
+    <target name="test-maui" description="Test Maui">
+        <ant antfile="${maui.dir}/build.xml" target="test" inheritall="false" inheritrefs="false"/>
+    </target>
+    <target name="test-maui-ext" description="Test Maui Ext">
+        <ant antfile="${maui-ext.dir}/build.xml" target="test" inheritall="false" inheritrefs="false"/>
+    </target>
+    <target name="test-all" depends="test-omics-base,test-maui,test-maui-ext">
 		
-	</target>
+    </target>
 
 </project>

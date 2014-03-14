@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="platform" default="download" basedir=".">
-    <import file="preparation.xml"/>
-    <fileset dir="${nbplatform.nb721.netbeans.dest.dir}" id="platform.path"/>
+    <import file="${basedir}/../nbproject/platform.xml"/>
+<!--    <fileset dir="${nbplatform.nb721.netbeans.dest.dir}" id="platform.path"/>
     <mkdir dir="${nbplatform.nb721.netbeans.dest.dir}"/>
     <pathconvert refid="platform.path"
                  property="platform.notempty"
@@ -14,9 +14,9 @@
             <not>
                 <available file="${nbplatform.active.dir}${file.separator}platform.complete"/>
             </not>
-<!--            <not>
+                        <not>
                 <isset property="platform.notempty"/>
-            </not>-->
+            </not>
         </and>
     </condition>
     <condition property="download.tasks.required">
@@ -35,7 +35,7 @@
             <not>
                 <available file="${harness.dir}${file.separator}suite.xml"/>
             </not>
-            <!--<isset property="download.enabled"/>-->
+            <isset property="download.enabled"/>
         </and>
     </condition>
     
@@ -43,10 +43,10 @@
         <mkdir dir="${harness.dir}"/>
         <autoupdate installdir="${nbplatform.active.dir}" updatecenter="${autoupdate.catalog.url}">
             <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
-				<!--<modules includes="org[.]netbeans[.]*" clusters="harness"/>-->
+            <modules includes="org[.]netbeans[.]*" clusters="harness"/>
         </autoupdate>
-		<echo message="Copying patched build xml to harness"/>
-		<copy failonerror="true" file="${harness.dir}${file.separator}build.xml" tofile="${harness.dir}${file.separator}build.xml.bak"/>
+        <echo message="Copying patched build xml to harness"/>
+        <copy failonerror="true" file="${harness.dir}${file.separator}build.xml" tofile="${harness.dir}${file.separator}build.xml.bak"/>
         <copy file="${basedir}${file.separator}..${file.separator}nbproject${file.separator}harness-build.xml" tofile="${harness.dir}${file.separator}build.xml"/>
     </target>
 
@@ -58,8 +58,8 @@
         <get src="${bootstrap.url}" dest="${tasks.jar}" usetimestamp="true" verbose="true"/>
     </target>
     
-	<target name="download" depends="-init-netbeans, -init-hudson, download-tasks" if="download.enabled">
-		<!--if="download.enabled">-->
+    <target name="download" depends="-init-netbeans, -init-hudson, download-tasks" if="download.enabled">
+        if="download.enabled">
         <pathconvert pathsep="|" property="download.clusters" setonempty="true">
             <mapper type="flatten"/>
             <path path="${cluster.path}"/>
@@ -78,16 +78,16 @@
                 <download-platform url="${autoupdate.catalog.@{url}}"/>
             </sequential>
         </for>
-		<touch file="${nbplatform.active.dir}${file.separator}platform.complete"/>
+        <touch file="${nbplatform.active.dir}${file.separator}platform.complete"/>
     </target>
     
     <macrodef name="download-platform">
         <attribute name="url"/>
         <sequential>
             <autoupdate installdir="${nbplatform.active.dir}" updatecenter="@{url}">
-				<modules includes=".*" clusters="${download.clusters}"/>
+                <modules includes=".*" clusters="${download.clusters}"/>
                 <modules includes="org[.]netbeans[.]modules[.]apisupport[.]harness" clusters="harness"/>
             </autoupdate>
         </sequential>
-    </macrodef>
+    </macrodef>-->
 </project>

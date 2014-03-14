@@ -38,3 +38,8 @@ maui/.DS_Store
 /installer/stub/ext/engine/build/
 /installer/stub/ext/engine/dist/
 /installer/stub/ext/components/products/helloworld/nbproject/private/
+/omics-base/dist/
+/nbi/stub/ext/components/products/helloworld/nbproject/private/
+/nbi/stub/ext/engine/build/
+/nbi/stub/ext/engine/dist/
+/nbi/stub/ext/engine/nbproject/private/

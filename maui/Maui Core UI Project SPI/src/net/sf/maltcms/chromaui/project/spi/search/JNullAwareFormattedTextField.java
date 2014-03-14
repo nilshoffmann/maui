@@ -35,28 +35,27 @@ import javax.swing.JFormattedTextField;
  * @author Nils Hoffmann
  */
 public class JNullAwareFormattedTextField extends JFormattedTextField {
-	
-	private boolean allowsNull = true;
-	
-	public boolean isBlank() {
-		return getText().trim().isEmpty();
-	}
 
-	public boolean isAllowsNull() {
-		return allowsNull;
-	}
+    private boolean allowsNull = true;
 
-	public void setAllowsNull(boolean allowsNull) {
-		this.allowsNull = allowsNull;
-	}
-	
-	@Override
+    public boolean isBlank() {
+        return getText().trim().isEmpty();
+    }
+
+    public boolean isAllowsNull() {
+        return allowsNull;
+    }
+
+    public void setAllowsNull(boolean allowsNull) {
+        this.allowsNull = allowsNull;
+    }
+
+    @Override
     public void commitEdit() throws ParseException {
-        if(isAllowsNull() && isBlank()) {
+        if (isAllowsNull() && isBlank()) {
             setValue(null);
-        }
-        else {
+        } else {
             super.commitEdit();
-         }
+        }
     }
 }
