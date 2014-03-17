@@ -37,10 +37,9 @@
                 </and>
             </condition>
         </fail>
-        <!--TODO: replace potential backward slashes in generated-jdk-location-forward-slashes and generated-installers-location-forward-slashes-->
         <propertyfile file="${suite.dir}/nbproject/installer.properties">
             <entry key="suite.location" value="${suite.dir}"/>
-            <entry key="nbi.cluster.location" value="${nbplatform.harness.dir}"/><!--${nbplatform.harness.dir}-->
+            <entry key="nbi.cluster.location" value="${nbplatform.harness.dir}"/>
             <entry key="nbi.stub.location" value="${nbi.cluster.location}/nbi/stub"/>
             <entry key="nbi.stub.common.location" value="${nbi.cluster.location}/nbi/.common"/>
             <entry key="nbi.ant.tasks.jar" value="${nbi.cluster.location}/modules/ext/nbi-ant-tasks.jar"/>
@@ -53,13 +52,11 @@
             <entry key="generator-jdk-location-forward-slashes" value="${java.home}"/>
             <entry key="generated-installers-location-forward-slashes" value="${suite.dir}/build/dist"/>
             <entry key="pack200.enabled" value="${auxiliary.org-netbeans-modules-apisupport-installer.pack200-enabled}" default="false"/>
-            <!--<entry key="pack200.enabled" value="true" default="false"/>-->
             <entry key="suite.nbi.product.uid" value="${app.name}"/>
             <entry key="suite.nbi.product.version" value="${app.version.release}"/>
             <entry key="nbi.product.uid" value="${app.name}"/>
             <entry key="nbi.product.version" value="${app.version.release}"/>
         </propertyfile>
-        <!-- ${nbplatform.harness.dir}/nbi/stub/ -->
         <ant antfile="${nbplatform.harness.dir}/nbi/stub/template.xml" taskname="build" dir="${nbplatform.harness.dir}/nbi/stub/" inheritall="false" inheritrefs="false">
             <property file="${suite.dir}/nbproject/installer.properties"/>
         </ant>
@@ -70,23 +67,35 @@
             <condition>
                 <and>
                     <not>
-                        <available file="${suite.dir}/dist/maui-linux.sh"/>
+                        <available file="${suite.dir}/dist/${app.name}-linux.sh"/>
                     </not>
                     <not>
-                        <available file="${suite.dir}/dist/maui-macosx.tgz"/>
+                        <available file="${suite.dir}/dist/${app.name}-macosx.tgz"/>
                     </not>					
                     <not>
-                        <available file="${suite.dir}/dist/maui-solaris.sh"/>
+                        <available file="${suite.dir}/dist/${app.name}-solaris.sh"/>
                     </not>
                     <not>
-                        <available file="${suite.dir}/dist/maui-windows.exe"/>
+                        <available file="${suite.dir}/dist/${app.name}-windows.exe"/>
+                    </not>
+                </and>
+            </condition>
+        </fail>
+    </target>
+    
+    <target name="check-zip-site" description="Check that site is ready!">
+        <fail message="Installers have not been created! Please create them manually!">
+            <condition>
+                <and>
+                    <not>
+                        <available file="${suite.dir}/dist/${app.name}-site.zip"/>
                     </not>
                 </and>
             </condition>
         </fail>
     </target>
 	
-    <target name="prepare-release" description="Prepares a release" depends="build-versioned,test,nbms,build-installers,check-installers">
+    <target name="prepare-release" description="Prepares a release" depends="build-versioned,test,nbms,build-installers,check-installers,build-zip-site">
     </target>
 
     <!--    <target name="deploy" description="Deploys release files" depends="prepare-release,upload-credentials,upload-updatecenter,upload-build,upload-homepage">
@@ -229,21 +238,9 @@
             </classpath>
         </taskdef>
     </target>
-	
-    <target name="javadoc" depends="-init,-init-ant-contrib,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
-        <!-- create a path for later reference -->
-        <path id="modules.sorted.path">
-            <pathelement path="${modules.sorted}"/>
-        </path>
-        <subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
-        <mkdir dir="${suite.dir}/build/site/javadoc"/>
-        <copy todir="${suite.dir}/build/site/javadoc" flatten="false">
-            <fileset dir="${suite.dir}">
-                <include name="**/build/javadoc/**"/>
-                <exclude name="build/javadoc/**"/>
-            </fileset>
-            <cutdirsmapper dirs="3"/>
-        </copy>
+    
+    <target name="build-site" depends="-init,-init-ant-contrib,branding,release" description="Copies and prepares the site for distribution.">
+        <mkdir dir="${suite.dir}/build/site"/>
         <copy todir="${suite.dir}/build/site/" flatten="false">
             <fileset dir="${suite.dir}/site/public_html">
                 <include name="**"/>
@@ -254,8 +251,24 @@
                 <filter token="app.version" value="${app.version}"/>
             </filterset>
         </copy>
+    </target>
+	
+    <target name="javadoc" depends="-init,-init-ant-contrib,branding,release,-hide-excluded-modules,build-site" description="Create JavaDoc for all modules in the suite.">
+        <!-- create a path for later reference -->
+        <path id="modules.sorted.path">
+            <pathelement path="${modules.sorted}"/>
+        </path>
+        <subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
+        <mkdir dir="${suite.dir}/build/site/javadoc/${app.version}"/>
+        <copy todir="${suite.dir}/build/site/javadoc/${app.version}" flatten="false">
+            <fileset dir="${suite.dir}">
+                <include name="**/build/javadoc/**"/>
+                <exclude name="build/javadoc/**"/>
+            </fileset>
+            <cutdirsmapper dirs="3"/>
+        </copy>
         <echo>Modules sorted: ${modules.sorted}</echo>
-        <echo file="${suite.dir}/build/site/javadoc/index.html"><![CDATA[
+        <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html"><![CDATA[
 <!DOCTYPE html>
 <html>
 	<head>
@@ -310,15 +323,15 @@
                 <echo level="info">Localizing Bundle location: ${localizing-bundle.location}</echo>
                 <echo level="info">Module javadoc relative location: ${module-javadoc-hyphenated.location}</echo>
                 <if>
-                    <available file="${suite.dir}/build/site/javadoc/${module-javadoc-hyphenated.location}/index.html"/>
+                    <available file="${suite.dir}/build/site/javadoc/${app.version}/${module-javadoc-hyphenated.location}/index.html"/>
                     <then>
                         <!-- append link to index.html-->
-                        <echo file="${suite.dir}/build/site/javadoc/index.html" append="true"><![CDATA[
+                        <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html" append="true"><![CDATA[
 <li><a href="${module-javadoc-hyphenated.location}/index.html">${relative-path}</a></li>
 ]]></echo>
                     </then>
                     <else>
-                        <echo level="warn">Skipping due to missing javadoc at ${suite.dir}/build/site/javadoc/${module-javadoc-hyphenated.location}</echo>
+                        <echo level="warn">Skipping due to missing javadoc at ${suite.dir}/build/site/javadoc/${app.version}/${module-javadoc-hyphenated.location}</echo>
                     </else>
                 </if>
                 <!-- reset properties for next module -->
@@ -328,7 +341,7 @@
                 <var name="module-javadoc-hyphenated.location" unset="true"/>
             </sequential>
         </for>
-        <echo file="${suite.dir}/build/site/javadoc/index.html" append="true"><![CDATA[
+        <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html" append="true"><![CDATA[
 </ul>
 	</body>
 </html>
@@ -336,11 +349,11 @@
     </target> 
 	
     <target name="zip-javadoc" depends="javadoc">
-        <zip destfile="${suite.dir}/build/site/javadoc.zip" basedir="${suite.dir}/build/site/javadoc"/>
+        <zip destfile="${suite.dir}/build/site/javadoc.zip" basedir="${suite.dir}/build/site/javadoc/${app.version}"/>
     </target>
 	
-    <target name="build-zip-site">
+    <target name="build-zip-site" depends="build-site,javadoc">
         <mkdir dir="${suite.dir}/dist/"/>
-        <zip destfile="${suite.dir}/dist/maui-site.zip" basedir="${suite.dir}/build/site"/>
+        <zip destfile="${suite.dir}/dist/${app.name}-site.zip" basedir="${suite.dir}/build/site"/>
     </target>
 </project>
