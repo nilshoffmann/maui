@@ -38,7 +38,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
  * @author Nils Hoffmann
  */
 public class SampleGroupDescriptor extends ADescriptor implements ISampleGroupDescriptor {
-    
+
     private String comment = "<NA>";
     public static final String PROP_COMMENT = "comment";
 
@@ -65,7 +65,7 @@ public class SampleGroupDescriptor extends ADescriptor implements ISampleGroupDe
         this.comment = comment;
         firePropertyChange(PROP_COMMENT, oldComment, comment);
     }
-    
+
     private Color color = Color.RED;
     public static final String PROP_COLOR = "color";
 

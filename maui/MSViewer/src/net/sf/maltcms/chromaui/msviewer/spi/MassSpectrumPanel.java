@@ -771,9 +771,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             setData(target, name, add);
         }
     }
-    
+
     private void handleFoldChangeElementSelection(ISelection scan) {
-        
+
         IPeakGroupDescriptor target = null;
         if (scan.getTarget() instanceof IPeakGroupDescriptor) {
             target = (IPeakGroupDescriptor) scan.getTarget();

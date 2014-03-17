@@ -33,8 +33,8 @@ import com.db4o.collections.ActivatableHashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
-import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
+import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
 
@@ -44,7 +44,6 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  */
 public class UserDatabaseDescriptor extends ADescriptor implements IDatabaseDescriptor {
 
-   
     private String resourceLocation = "<NA>";
     public static final String PROP_RESOURCELOCATION = "resourceLocation";
 
@@ -72,7 +71,7 @@ public class UserDatabaseDescriptor extends ADescriptor implements IDatabaseDesc
         firePropertyChange(PROP_RESOURCELOCATION, oldLocation,
                 resourceLocation);
     }
-    
+
     private DatabaseType type = DatabaseType.USER;
     public static final String PROP_TYPE = "type";
 
@@ -173,5 +172,5 @@ public class UserDatabaseDescriptor extends ADescriptor implements IDatabaseDesc
         firePropertyChange(PROP_MASKEDMASSES,
                 old, maskedMasses);
     }
-    
+
 }

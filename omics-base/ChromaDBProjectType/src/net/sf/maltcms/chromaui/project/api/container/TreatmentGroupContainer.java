@@ -55,6 +55,7 @@ public class TreatmentGroupContainer extends ADatabaseBackedContainer<IChromatog
     public void setTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup) {
         activate(ActivationPurpose.WRITE);
         ITreatmentGroupDescriptor old = this.treatmentGroup;
+        treatmentGroup.setProject(getProject());
         this.treatmentGroup = treatmentGroup;
         firePropertyChange(PROP_TREATMENTGROUP,
                 old, this.treatmentGroup);

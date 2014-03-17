@@ -237,7 +237,8 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jSeparator2 = new javax.swing.JToolBar.Separator();
+        jLabel1 = new javax.swing.JLabel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
         seriesComboBox = new javax.swing.JComboBox();
         hideShowSeries = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
@@ -258,8 +259,12 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         });
         jToolBar1.add(jButton1);
         jToolBar1.add(jSeparator1);
-        jToolBar1.add(jSeparator2);
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(Chromatogram1DViewTopComponent.class, "Chromatogram1DViewTopComponent.jLabel1.text")); // NOI18N
+        jToolBar1.add(jLabel1);
+        jToolBar1.add(filler1);
+
+        seriesComboBox.setPrototypeDisplayValue(new SeriesItem(null,"ABCDEFGHIJKLMN",false));
         seriesComboBox.setRenderer(new VisibilityComboBoxRenderer());
         jToolBar1.add(seriesComboBox);
 
@@ -347,11 +352,12 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         this.syncViewport = jCheckBox2.isSelected();
     }//GEN-LAST:event_jCheckBox2ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.Box.Filler filler1;
     private javax.swing.JButton hideShowSeries;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JComboBox seriesComboBox;

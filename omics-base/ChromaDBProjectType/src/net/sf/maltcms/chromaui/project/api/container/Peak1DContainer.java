@@ -55,6 +55,7 @@ public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDes
     public void setChromatogram(IChromatogramDescriptor chromatogram) {
         activate(ActivationPurpose.WRITE);
         IChromatogramDescriptor oldDescr = this.chromatogram;
+        chromatogram.setProject(getProject());
         this.chromatogram = chromatogram;
         firePropertyChange(PROP_CHROMATOGRAM, oldDescr, this.chromatogram);
     }

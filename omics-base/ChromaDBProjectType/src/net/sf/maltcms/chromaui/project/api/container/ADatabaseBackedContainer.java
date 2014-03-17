@@ -32,6 +32,7 @@ import com.db4o.collections.ActivatableArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 
@@ -47,6 +48,16 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
 
     public ADatabaseBackedContainer() {
         setName(getClass().getSimpleName());
+    }
+
+    @Override
+    public void setProject(IChromAUIProject project) {
+        super.setProject(project);
+        if (project != null) {
+            for (T t : getMembers()) {
+                t.setProject(project);
+            }
+        }
     }
 
     @Override
@@ -90,6 +101,9 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         } else {
             this.members = new ActivatableArrayList<T>(members);
         }
+        for (T t : this.members) {
+            t.setProject(getProject());
+        }
         firePropertyChange(PROP_MEMBERS, null,
                 this.members);
     }
@@ -97,6 +111,9 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
     @Override
     public void setMembers(T... f) {
         activate(ActivationPurpose.WRITE);
+        for (T t : f) {
+            t.setProject(getProject());
+        }
         this.members = new ActivatableArrayList<T>(Arrays.asList(f));
         firePropertyChange(PROP_MEMBERS, null,
                 this.members);
@@ -105,6 +122,9 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
     @Override
     public void addMembers(T... f) {
         activate(ActivationPurpose.WRITE);
+        for (T t : f) {
+            t.setProject(getProject());
+        }
         this.members.addAll(Arrays.asList(f));
         firePropertyChange(PROP_MEMBERS, null,
                 this.members);

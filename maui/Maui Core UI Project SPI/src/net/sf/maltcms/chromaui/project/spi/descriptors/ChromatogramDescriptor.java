@@ -29,9 +29,6 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.collections.ActivatableArrayList;
-import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import cross.datastructures.fragments.FileFragment;
 import java.io.File;
 import java.net.URI;
@@ -39,8 +36,11 @@ import java.util.List;
 import maltcms.datastructures.ms.IChromatogram;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.GC;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
@@ -67,6 +67,9 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 
     public void setPeakAnnotations(List<Peak1DContainer> peakAnnotations) {
         activate(ActivationPurpose.WRITE);
+        for(Peak1DContainer peaks:peakAnnotations) {
+            peaks.setProject(getProject());
+        }
         List<Peak1DContainer> oldValue = this.peakAnnotations;
         this.peakAnnotations = new ActivatableArrayList<Peak1DContainer>(peakAnnotations);
         firePropertyChange("peakAnnotations", oldValue, this.peakAnnotations);
@@ -81,6 +84,7 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
     @Override
     public void setTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup) {
         activate(ActivationPurpose.WRITE);
+        treatmentGroup.setProject(getProject());
         ITreatmentGroupDescriptor oldValue = this.treatmentGroup;
         this.treatmentGroup = treatmentGroup;
         firePropertyChange("treatmentGroup", oldValue, this.treatmentGroup);
@@ -103,25 +107,25 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 
     @Override
     public IChromatogram getChromatogram() {
-		if(this.chromatogram==null) {
-			URI uri = null;
-			try {
-				if(getResourceLocation().startsWith("file:") || getResourceLocation().startsWith("http:") || getResourceLocation().startsWith("https:")) {
-					uri = URI.create(getResourceLocation());
-				}else{
-					uri = new File(getResourceLocation()).toURI();
-				}
-			}catch(IllegalArgumentException iae) {
-				System.err.println("Resource location is not an URI!");
-				uri = new File(getResourceLocation()).toURI();
-			}
+        if (this.chromatogram == null) {
+            URI uri = null;
+            try {
+                if (getResourceLocation().startsWith("file:") || getResourceLocation().startsWith("http:") || getResourceLocation().startsWith("https:")) {
+                    uri = URI.create(getResourceLocation());
+                } else {
+                    uri = new File(getResourceLocation()).toURI();
+                }
+            } catch (IllegalArgumentException iae) {
+                System.err.println("Resource location is not an URI!");
+                uri = new File(getResourceLocation()).toURI();
+            }
 
-			if (getSeparationType().getFeatureDimensions() == 2) {
-					this.chromatogram = new CachingChromatogram2D(new FileFragment(uri));
-			} else {
-				this.chromatogram = new CachingChromatogram1D(new FileFragment(uri));
-			}
-		}
+            if (getSeparationType().getFeatureDimensions() == 2) {
+                this.chromatogram = new CachingChromatogram2D(new FileFragment(uri));
+            } else {
+                this.chromatogram = new CachingChromatogram1D(new FileFragment(uri));
+            }
+        }
         return this.chromatogram;
     }
 
@@ -129,7 +133,6 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 //    public String toString() {
 //        return "ChromatogramDescriptor{" + "resourceLocation=" + getResourceLocation() + ", treatmentGroup=" + getTreatmentGroup() + ", separationType=" + getSeparationType() + ", detectorType=" + getDetectorType() + '}';
 //    }
-
     @Override
     public void setSeparationType(ISeparationType st) {
         activate(ActivationPurpose.WRITE);
@@ -168,6 +171,7 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
     public void setNormalizationDescriptor(
             INormalizationDescriptor normalizationDescriptor) {
         activate(ActivationPurpose.WRITE);
+        normalizationDescriptor.setProject(getProject());
         INormalizationDescriptor oldValue = this.normalizationDescriptor;
         this.normalizationDescriptor = normalizationDescriptor;
         firePropertyChange("normalizationDescriptor", oldValue,
@@ -195,6 +199,7 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
     @Override
     public void setSampleGroup(ISampleGroupDescriptor sampleGroup) {
         activate(ActivationPurpose.WRITE);
+        sampleGroup.setProject(getProject());
         ISampleGroupDescriptor oldSampleGroup = this.sampleGroup;
         this.sampleGroup = sampleGroup;
         firePropertyChange(PROP_SAMPLEGROUP, oldSampleGroup, sampleGroup);

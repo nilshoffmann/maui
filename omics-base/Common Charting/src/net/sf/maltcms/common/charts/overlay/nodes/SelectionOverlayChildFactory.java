@@ -70,7 +70,7 @@ public class SelectionOverlayChildFactory extends ChildFactory<ISelection> imple
     protected Node createNodeForKey(ISelection key) {
         try {
             SelectionNode selectionNode = new SelectionNode(key);
-            FilterNode fn = new FilterNode(selectionNode, Children.LEAF, new ProxyLookup(selectionNode.getLookup(), Lookups.fixed(key)));
+            FilterNode fn = new FilterNode(selectionNode, Children.LEAF, new ProxyLookup(selectionNode.getLookup(), Lookups.fixed(key, key.getSource(), key.getTarget())));
             return fn;
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);

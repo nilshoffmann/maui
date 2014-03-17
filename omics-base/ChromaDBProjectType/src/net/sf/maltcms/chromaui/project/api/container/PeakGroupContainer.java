@@ -53,6 +53,9 @@ public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescr
     public void setStatisticsContainers(List<StatisticsContainer> statisticsContainers) {
         activate(ActivationPurpose.WRITE);
         List<StatisticsContainer> old = this.statisticsContainers;
+        for (StatisticsContainer sc : statisticsContainers) {
+            sc.setProject(getProject());
+        }
         this.statisticsContainers = statisticsContainers;
         firePropertyChange(PROP_STATISTICSCONTAINERS, old, this.statisticsContainers);
     }

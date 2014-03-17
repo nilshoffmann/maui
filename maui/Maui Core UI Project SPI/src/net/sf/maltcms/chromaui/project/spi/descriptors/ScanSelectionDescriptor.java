@@ -39,7 +39,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IScanSelectionDescriptor;
  * @author Nils Hoffmann
  */
 public class ScanSelectionDescriptor extends ADescriptor implements IScanSelectionDescriptor {
-    
+
     private IScan scan;
 
     @Override
@@ -57,7 +57,7 @@ public class ScanSelectionDescriptor extends ADescriptor implements IScanSelecti
     }
 
     private IChromatogramDescriptor chromatogramDescriptor;
-    
+
     @Override
     public IChromatogramDescriptor getChromatogramDescriptor() {
         activate(ActivationPurpose.READ);
@@ -67,9 +67,10 @@ public class ScanSelectionDescriptor extends ADescriptor implements IScanSelecti
     @Override
     public void setChromatogramDescriptor(IChromatogramDescriptor chromatogramDescriptor) {
         activate(ActivationPurpose.WRITE);
+        chromatogramDescriptor.setProject(getProject());
         IChromatogramDescriptor old = this.chromatogramDescriptor;
         this.chromatogramDescriptor = chromatogramDescriptor;
-        firePropertyChange(PROP_CHROM_DESCRIPTOR,  old, this.chromatogramDescriptor);
+        firePropertyChange(PROP_CHROM_DESCRIPTOR, old, this.chromatogramDescriptor);
     }
 
     @Override

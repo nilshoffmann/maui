@@ -126,27 +126,11 @@ public class ChromatogramNode extends FilterNode implements
     @Override
     public Action[] getActions(boolean context) {
         ArrayList<Action> actions = new ArrayList<Action>();
-//        Set<Action> nodeActions = new LinkedHashSet<Action>();
-//        INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
-//        List<IChromatogramNodeMenuProvider> providers = new ArrayList<IChromatogramNodeMenuProvider>(Lookup.getDefault().lookupAll(IChromatogramNodeMenuProvider.class));
-//        Collections.sort(providers, new Comparator<IChromatogramNodeMenuProvider>() {
-//
-//            @Override
-//            public int compare(IChromatogramNodeMenuProvider o1, IChromatogramNodeMenuProvider o2) {
-//                return o1.getPosition() - o2.getPosition();
-//            }
-//        });
-//        for (IChromatogramNodeMenuProvider ipmp : providers) {
-//            nodeActions.add(f.createMenuItem(ipmp.getName(), ipmp.getActionPath()));
-//        }
-//        actions.addAll(nodeActions);
         actions.add(ChromatogramNodePopupAction.findObject(ChromatogramNodePopupAction.class, true));
         actions.add(null);
         actions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
         actions.addAll(Arrays.asList(super.getActions(context)));
-//        Action[] actions = createActions(context, "Actions/ContainerNodeActions/ChromatogramNode");//, "Actions/ContainerNodeActions/ChromatogramNode/Open");
         return actions.toArray(new Action[actions.size()]);
-//        return actions;
     }
 
     /**
@@ -160,32 +144,10 @@ public class ChromatogramNode extends FilterNode implements
         ArrayList<Action> subActions = new ArrayList<Action>();
         Set<Action> actions = new LinkedHashSet<Action>();
         actions.add(new ChromatogramNodePopupAction());
-//        for (String path : paths) {
-//            List<? extends Action> actionsForPath = Utilities.actionsForPath(path);
-//            for (Action a : actionsForPath) {
-//                if (a instanceof Presenter.Popup) {
-//                    List<Action> presenterActions = this.findSubActions((Presenter.Popup) a);
-//                    if (!presenterActions.isEmpty()) {
-//                        subActions.addAll(presenterActions);
-//                    } 
-//                } else if (a instanceof Presenter.Menu) {
-//                    List<Action> menuActions = this.findSubMenuActions((Presenter.Menu) a);
-//                    if (!menuActions.isEmpty()) {
-//                        subActions.addAll(menuActions);
-//                    } 
-//                } else {
-//                    actions.add(a);
-//                }
-//
-//            }
-//        }
-
         List<Action> parent = Arrays.asList(super.getActions(context));
         actions.addAll(parent);
-
         // remove all actions that are already in a submenu
         actions.removeAll(subActions);
-
         return actions.toArray(new Action[actions.size()]);
     }
 
@@ -213,7 +175,6 @@ public class ChromatogramNode extends FilterNode implements
 
     private List<Action> findSubMenuActions(Presenter.Menu subMenu) {
         List<Action> actions = new ArrayList<Action>();
-
         JMenuItem item = subMenu.getMenuPresenter();
         if (item instanceof JMenu) {
             JMenu menu = (JMenu) item;

@@ -162,6 +162,7 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
     @Override
     public void setPeakGroupDescriptor(IPeakGroupDescriptor peakGroupDescriptor) {
         activate(ActivationPurpose.WRITE);
+        peakGroupDescriptor.setProject(getProject());
         IPeakGroupDescriptor oldPeakGroupDescriptor = this.peakGroupDescriptor;
         this.peakGroupDescriptor = peakGroupDescriptor;
         firePropertyChange(PROP_PEAKGROUPDESCRIPTOR, oldPeakGroupDescriptor,

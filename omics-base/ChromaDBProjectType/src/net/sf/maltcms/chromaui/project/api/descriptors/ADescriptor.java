@@ -51,6 +51,7 @@ public class ADescriptor extends ABasicDescriptor implements IDescriptor {
     public void setTool(IToolDescriptor tool) {
         activate(ActivationPurpose.WRITE);
         IToolDescriptor old = this.tool;
+        tool.setProject(getProject());
         this.tool = tool;
         firePropertyChange(PROP_TOOL, old, tool);
     }

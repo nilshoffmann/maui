@@ -41,7 +41,7 @@ import net.sf.maltcms.chromaui.project.api.persistence.PersistentShape;
 public class Peak2DAnnotationDescriptor extends PeakAnnotationDescriptor implements IPeak2DAnnotationDescriptor {
 
     private double firstColumnRt = Double.NaN;
-    
+
     @Override
     public double getFirstColumnRt() {
         activate(ActivationPurpose.READ);
@@ -55,7 +55,7 @@ public class Peak2DAnnotationDescriptor extends PeakAnnotationDescriptor impleme
         this.firstColumnRt = firstColumnRt;
         firePropertyChange(PROP_FIRSTCOLUMNRT, old, this.firstColumnRt);
     }
-    
+
     private double secondColumnRt = Double.NaN;
 
     @Override
@@ -71,23 +71,23 @@ public class Peak2DAnnotationDescriptor extends PeakAnnotationDescriptor impleme
         this.secondColumnRt = secondColumnRt;
         firePropertyChange(PROP_SECONDCOLUMNRT, old, this.secondColumnRt);
     }
-	
-	private Shape bounds = null;
-	
-	@Override
-	public Shape getBounds() {
-		activate(ActivationPurpose.READ);
-		if(bounds==null) {
-			setBounds(new PersistentShape(new Rectangle2D.Double(getFirstColumnRt()-2,getSecondColumnRt()-2,5,5)));
-		}
-		return bounds;
-	}
-	
-	@Override
-	public void setBounds(Shape bounds) {
-		activate(ActivationPurpose.WRITE);
+
+    private Shape bounds = null;
+
+    @Override
+    public Shape getBounds() {
+        activate(ActivationPurpose.READ);
+        if (bounds == null) {
+            setBounds(new PersistentShape(new Rectangle2D.Double(getFirstColumnRt() - 2, getSecondColumnRt() - 2, 5, 5)));
+        }
+        return bounds;
+    }
+
+    @Override
+    public void setBounds(Shape bounds) {
+        activate(ActivationPurpose.WRITE);
         Shape old = this.bounds;
         this.bounds = new PersistentShape(bounds);
         firePropertyChange(PROP_BOUNDS, old, this.bounds);
-	}
+    }
 }

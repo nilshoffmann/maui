@@ -132,8 +132,10 @@ public class ABasicDescriptor implements IBasicDescriptor {
 
     @Override
     public void setProject(IChromAUIProject project) {
-        IChromAUIProject old = this.project;
-        this.project = project;
+        if (project != null) {
+            IChromAUIProject old = this.project;
+            this.project = project;
+        }
 //		if(old!=project) {
 //			getPropertyChangeSupport().firePropertyChange(IDescriptor.PROP_PROJECT, old, this.project);
 //		}

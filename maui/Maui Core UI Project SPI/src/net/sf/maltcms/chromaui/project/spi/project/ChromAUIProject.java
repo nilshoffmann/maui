@@ -487,8 +487,10 @@ public class ChromAUIProject implements IChromAUIProject {
                 if (chrom != null) {
                     String chromName = chrom.getDisplayName();
                     String descrName = descriptor.getDisplayName();
-                    if (chromName.equals(descrName)) {
-                        peaks.add(container);
+                    if (chromName !=null && descrName != null) {
+                        if (chromName.equals(descrName)) {
+                            peaks.add(container);
+                        }
                     }
                 }
             }

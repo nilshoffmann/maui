@@ -45,38 +45,38 @@ import ucar.ma2.Array;
 @Data
 public class SerializableScan1D implements Externalizable {
 
-	@Setter(AccessLevel.NONE)
-	private Scan1D scan;
+    @Setter(AccessLevel.NONE)
+    private Scan1D scan;
 
-	public SerializableScan1D() {
-	}
+    public SerializableScan1D() {
+    }
 
-	public SerializableScan1D(Scan1D scan) {
-		this.scan = scan;
-	}
+    public SerializableScan1D(Scan1D scan) {
+        this.scan = scan;
+    }
 
-	@Override
-	public void writeExternal(ObjectOutput oo) throws IOException {
-		if (scan != null) {
-			oo.writeInt(scan.getScanIndex());
-			oo.writeDouble(scan.getScanAcquisitionTime());
-			oo.writeDouble(scan.getTotalIntensity());
-			oo.writeShort(scan.getMsLevel());
-			oo.writeObject(new SerializableArray(scan.getMasses()));
-			oo.writeObject(new SerializableArray(scan.getIntensities()));
-		}
-	}
+    @Override
+    public void writeExternal(ObjectOutput oo) throws IOException {
+        if (scan != null) {
+            oo.writeInt(scan.getScanIndex());
+            oo.writeDouble(scan.getScanAcquisitionTime());
+            oo.writeDouble(scan.getTotalIntensity());
+            oo.writeShort(scan.getMsLevel());
+            oo.writeObject(new SerializableArray(scan.getMasses()));
+            oo.writeObject(new SerializableArray(scan.getIntensities()));
+        }
+    }
 
-	@Override
-	public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
-		int scanIndex = oi.readInt();
-		double sat = oi.readDouble();
-		double tic = oi.readDouble();
-		short msLevel = oi.readShort();
-		SerializableArray ma = (SerializableArray) oi.readObject();
-		Array masses = ma.getArray();
-		SerializableArray ia = (SerializableArray) oi.readObject();
-		Array intensities = ia.getArray();
-		this.scan = new Scan1D(masses, intensities, scanIndex, sat, msLevel);
-	}
+    @Override
+    public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
+        int scanIndex = oi.readInt();
+        double sat = oi.readDouble();
+        double tic = oi.readDouble();
+        short msLevel = oi.readShort();
+        SerializableArray ma = (SerializableArray) oi.readObject();
+        Array masses = ma.getArray();
+        SerializableArray ia = (SerializableArray) oi.readObject();
+        Array intensities = ia.getArray();
+        this.scan = new Scan1D(masses, intensities, scanIndex, sat, msLevel);
+    }
 }

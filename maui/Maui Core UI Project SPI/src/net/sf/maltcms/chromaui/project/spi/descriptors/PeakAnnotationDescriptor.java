@@ -38,7 +38,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
  * @author nilshoffmann
  */
 public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnotationDescriptor {
-
+    
     private String method = "<NA>";
     public static final String PROP_METHOD = "method";
 
@@ -455,12 +455,13 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     public void setChromatogramDescriptor(
             IChromatogramDescriptor chromatogramDescriptor) {
         activate(ActivationPurpose.WRITE);
+        chromatogramDescriptor.setProject(getProject());
         IChromatogramDescriptor oldChromatogramDescriptor = this.chromatogramDescriptor;
         this.chromatogramDescriptor = chromatogramDescriptor;
         firePropertyChange(PROP_CHROMATOGRAMDESCRIPTOR,
                 oldChromatogramDescriptor, chromatogramDescriptor);
     }
-
+    
     @Override
     public String toString() {
         IChromatogramDescriptor descriptor = getChromatogramDescriptor();
@@ -470,7 +471,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
             return getChromatogramDescriptor().getDisplayName() + "@" + String.format("%.2f", getApexTime()) + " sec (" + String.format("%.2f", getApexTime() / 60.0d) + " min) area=" + getArea() + ", inten=" + getApexIntensity();
         }
     }
-
+    
     @Override
     public int compareTo(IBasicDescriptor t) {
         if (t instanceof IPeakAnnotationDescriptor) {
@@ -481,7 +482,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
     private double startTime = Double.NaN;
     public static final String PROP_STARTTIME = "startTime";
-
+    
     @Override
     public void setStartTime(double startTime) {
         activate(ActivationPurpose.WRITE);
@@ -489,7 +490,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.startTime = startTime;
         firePropertyChange(PROP_STARTTIME, old, this.startTime);
     }
-
+    
     @Override
     public double getStartTime() {
         activate(ActivationPurpose.READ);
@@ -497,7 +498,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
     private double stopTime = Double.NaN;
     public static final String PROP_STOPTIME = "stopTime";
-
+    
     @Override
     public void setStopTime(double stopTime) {
         activate(ActivationPurpose.WRITE);
@@ -505,7 +506,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.stopTime = stopTime;
         firePropertyChange(PROP_STOPTIME, old, this.stopTime);
     }
-
+    
     @Override
     public double getStopTime() {
         activate(ActivationPurpose.READ);
@@ -513,13 +514,13 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
     private double apexTime = Double.NaN;
     public static final String PROP_APEXTIME = "apexTime";
-
+    
     @Override
     public double getApexTime() {
         activate(ActivationPurpose.READ);
         return apexTime;
     }
-
+    
     @Override
     public void setApexTime(double apexTime) {
         activate(ActivationPurpose.WRITE);
@@ -529,7 +530,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
     private double area = Double.NaN;
     public static final String PROP_AREA = "area";
-
+    
     @Override
     public void setArea(double area) {
         activate(ActivationPurpose.WRITE);
@@ -537,7 +538,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.area = area;
         firePropertyChange(PROP_AREA, old, this.area);
     }
-
+    
     @Override
     public double getArea() {
         activate(ActivationPurpose.READ);
@@ -545,7 +546,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
     private double rawArea = Double.NaN;
     public static final String PROP_RAWAREA = "rawArea";
-
+    
     @Override
     public void setRawArea(double rawArea) {
         activate(ActivationPurpose.WRITE);
@@ -553,7 +554,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.rawArea = rawArea;
         firePropertyChange(PROP_RAWAREA, old, this.rawArea);
     }
-
+    
     @Override
     public double getRawArea() {
         activate(ActivationPurpose.READ);
@@ -561,7 +562,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
     private double baselineArea = Double.NaN;
     public static final String PROP_BASELINEAREA = "baselineArea";
-
+    
     @Override
     public void setBaselineArea(double baselineArea) {
         activate(ActivationPurpose.WRITE);
@@ -569,7 +570,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.baselineArea = baselineArea;
         firePropertyChange(PROP_BASELINEAREA, old, this.baselineArea);
     }
-
+    
     @Override
     public double getBaselineArea() {
         activate(ActivationPurpose.READ);
@@ -577,13 +578,13 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
     }
     private double apexIntensity = Double.NaN;
     public static final String PROP_APEXINTENSITY = "apexIntensity";
-
+    
     @Override
     public double getApexIntensity() {
         activate(ActivationPurpose.READ);
         return apexIntensity;
     }
-
+    
     @Override
     public void setApexIntensity(double apexIntensity) {
         activate(ActivationPurpose.WRITE);
@@ -591,7 +592,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.apexIntensity = apexIntensity;
         firePropertyChange(PROP_APEXINTENSITY, old, this.apexIntensity);
     }
-
+    
     @Override
     public String getDisplayName() {
         String displayName = super.getDisplayName();
@@ -611,7 +612,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
             return displayName;
         }
     }
-
+    
     @Override
     public void setDisplayName(String displayName) {
         if (displayName != null && displayName.
@@ -621,16 +622,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
             super.setDisplayName(displayName);
         }
     }
-
+    
     private double normalizedArea = Double.NaN;
     public static final String PROP_NORMALIZEDAREA = "normalizedArea";
-
+    
     @Override
     public double getNormalizedArea() {
         activate(ActivationPurpose.READ);
         return normalizedArea;
     }
-
+    
     @Override
     public void setNormalizedArea(double normalizedArea) {
         activate(ActivationPurpose.WRITE);
@@ -638,16 +639,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.normalizedArea = normalizedArea;
         firePropertyChange(PROP_NORMALIZEDAREA, old, this.normalizedArea);
     }
-
+    
     private String[] normalizationMethods = new String[0];
     public static final String PROP_NORMALIZATIONMETHODS = "normalizationMethods";
-
+    
     @Override
     public String[] getNormalizationMethods() {
         activate(ActivationPurpose.READ);
         return normalizationMethods;
     }
-
+    
     @Override
     public void setNormalizationMethods(String... normalizationMethods) {
         activate(ActivationPurpose.WRITE);
@@ -655,16 +656,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.normalizationMethods = normalizationMethods;
         firePropertyChange(PROP_NORMALIZATIONMETHODS, old, this.normalizationMethods);
     }
-
+    
     private String nativeDatabaseId = "NA";
     public static final String PROP_NATIVEDATABASEID = "nativeDatbaseId";
-
+    
     @Override
     public String getNativeDatabaseId() {
         activate(ActivationPurpose.READ);
         return nativeDatabaseId;
     }
-
+    
     @Override
     public void setNativeDatabaseId(String id) {
         activate(ActivationPurpose.WRITE);
@@ -672,10 +673,10 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.nativeDatabaseId = id;
         firePropertyChange(PROP_NATIVEDATABASEID, old, this.nativeDatabaseId);
     }
-
+    
     private double baselineStartTime = Double.NaN;
     public static final String PROP_BASELINE_START_TIME = "baselineStartTime";
-
+    
     @Override
     public void setBaselineStartTime(double baselineStartTime) {
         activate(ActivationPurpose.WRITE);
@@ -683,16 +684,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.baselineStartTime = baselineStartTime;
         firePropertyChange(PROP_BASELINE_START_TIME, old, this.baselineStartTime);
     }
-
+    
     @Override
     public double getBaselineStartTime() {
         activate(ActivationPurpose.READ);
         return this.baselineStartTime;
     }
-
+    
     private double baselineStopTime = Double.NaN;
     public static final String PROP_BASELINE_STOP_TIME = "baselineStopTime";
-
+    
     @Override
     public void setBaselineStopTime(double baselineStopTime) {
         activate(ActivationPurpose.WRITE);
@@ -700,16 +701,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.baselineStopTime = baselineStopTime;
         firePropertyChange(PROP_BASELINE_STOP_TIME, old, this.baselineStopTime);
     }
-
+    
     @Override
     public double getBaselineStopTime() {
         activate(ActivationPurpose.READ);
         return this.baselineStopTime;
     }
-
+    
     private double baselineStartIntensity = Double.NaN;
     public static final String PROP_BASELINE_START_INTENSITY = "baselineStartIntensity";
-
+    
     @Override
     public void setBaselineStartIntensity(double baselineStartIntensity) {
         activate(ActivationPurpose.WRITE);
@@ -717,16 +718,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.baselineStartIntensity = baselineStartIntensity;
         firePropertyChange(PROP_BASELINE_START_INTENSITY, old, this.baselineStartIntensity);
     }
-
+    
     @Override
     public double getBaselineStartIntensity() {
         activate(ActivationPurpose.READ);
         return this.baselineStartIntensity;
     }
-
+    
     private double baselineStopIntensity = Double.NaN;
     public static final String PROP_BASELINE_STOP_INTENSITY = "baselineStopIntensity";
-
+    
     @Override
     public void setBaselineStopIntensity(double baselineStopIntensity) {
         activate(ActivationPurpose.WRITE);
@@ -734,16 +735,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.baselineStopIntensity = baselineStopIntensity;
         firePropertyChange(PROP_BASELINE_STOP_INTENSITY, old, this.baselineStopIntensity);
     }
-
+    
     @Override
     public double getBaselineStopIntensity() {
         activate(ActivationPurpose.READ);
         return this.baselineStopIntensity;
     }
-
+    
     private double startIntensity = Double.NaN;
     public static final String PROP_START_INTENSITY = "startIntensity";
-
+    
     @Override
     public void setStartIntensity(double startIntensity) {
         activate(ActivationPurpose.WRITE);
@@ -751,16 +752,16 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.startIntensity = startIntensity;
         firePropertyChange(PROP_START_INTENSITY, old, this.startIntensity);
     }
-
+    
     @Override
     public double getStartIntensity() {
         activate(ActivationPurpose.READ);
         return this.startIntensity;
     }
-
+    
     private double stopIntensity = Double.NaN;
     public static final String PROP_STOP_INTENSITY = "stopIntensity";
-
+    
     @Override
     public void setStopIntensity(double stopIntensity) {
         activate(ActivationPurpose.WRITE);
@@ -768,7 +769,7 @@ public class PeakAnnotationDescriptor extends ADescriptor implements IPeakAnnota
         this.stopIntensity = stopIntensity;
         firePropertyChange(PROP_STOP_INTENSITY, old, this.stopIntensity);
     }
-
+    
     @Override
     public double getStopIntensity() {
         activate(ActivationPurpose.READ);

@@ -55,6 +55,7 @@ public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogram
     public void setSampleGroup(ISampleGroupDescriptor sampleGroup) {
         activate(ActivationPurpose.WRITE);
         ISampleGroupDescriptor old = this.sampleGroup;
+        sampleGroup.setProject(getProject());
         this.sampleGroup = sampleGroup;
         firePropertyChange(PROP_SAMPLEGROUP,
                 old, this.sampleGroup);

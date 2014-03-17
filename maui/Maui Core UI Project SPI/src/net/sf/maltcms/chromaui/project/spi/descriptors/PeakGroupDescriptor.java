@@ -144,6 +144,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
                 peakAnnotationDescriptors);
         for (IPeakAnnotationDescriptor pad : peakAnnotationDescriptors) {
             pad.addPropertyChangeListener(this);
+            pad.setProject(getProject());
         }
         firePropertyChange(PROP_PEAKANNOTATIONDESCRIPTORS,
                 oldPeakAnnotationDescriptors, peakAnnotationDescriptors);
@@ -236,6 +237,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     @Override
     public void setPeakGroupContainer(PeakGroupContainer peakGroupContainer) {
         activate(ActivationPurpose.WRITE);
+        peakGroupContainer.setProject(getProject());
         PeakGroupContainer old = this.peakGroupContainer;
         this.peakGroupContainer = peakGroupContainer;
         firePropertyChange(PROP_PEAKGROUPCONTAINER, old, peakGroupContainer);
