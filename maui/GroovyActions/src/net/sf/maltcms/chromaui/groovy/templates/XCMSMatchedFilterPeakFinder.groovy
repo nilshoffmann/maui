@@ -39,9 +39,9 @@ import maltcms.datastructures.ms.*;
 import ucar.ma2.*;
 
 /**
- * 
- * @author ${user}
- */
+* 
+* @author ${user}
+*/
 class ${name} implements RawDataGroovyScript {
 
     final String name = "${name}"
@@ -53,28 +53,20 @@ class ${name} implements RawDataGroovyScript {
     double fullWidthAtHalfMaximum = 5.0
     int max = 10
     String xcmsRScriptLocation = "scripts/R/xcmsMatchedFilterPeakFinder.R"
-	String rscriptLocation = "/vol/r-2.13/bin/Rscript"
-	
-	String rscript = """
+    String rscriptLocation = "/vol/r-2.13/bin/Rscript"
+
+    String rscript = """
 suppressPackageStartupMessages(library("optparse"))
-
 option_list <- list(
-
 make_option("--filepath",default=getwd(),help="Path to chromatogram file [default %default]"),
-
 make_option("--out",default=getwd(),help="Path to output directory [default %default]"),
-
 make_option("--snr", default=10.0,
 help="Signal-to-noise threshold for peaks [default %default]"),
-
 make_option("--max", default=5,
 help="Maximum number of peaks per EIC [default %default]"),
-
 make_option("--fwhm", default=30.0,
 help="Full width at half maximum for peaks [default %default]"))
-
 opt <- parse_args(OptionParser(option_list=option_list))
-
 print(opt)
 
 SNR <- opt\$snr
@@ -93,14 +85,14 @@ peaks <- findPeaks(xraw,max=MAX,snthresh=SNR,fwhm=FWHM);
 write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.names=TRUE,sep="\t");
 """
     
-    private boolean cancel = false
+private boolean cancel = false
 
-    private Process process
+private Process process
 
-    public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
-        this.project = project
-        this.progressHandle = progressHandle
-        this.dataObjects = dobjects
+public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
+    this.project = project
+    this.progressHandle = progressHandle
+    this.dataObjects = dobjects
     }
     
     public String getCategory() {
@@ -113,7 +105,7 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
         if(process!=null) {
             process.waitForOrKill(1000)
         }
-	}
+    }
     
     private int createCall(File outdir, File rscriptLocation, Collection<CDFDataObject> dataObjects, OutputWriter writer) {
         def dobjects = dataObjects as Set
@@ -155,14 +147,14 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
             
             def jobLines = dataObjects.size()
             def rscriptLocation = new File(xcmsRScriptLocation)
-			if(!rscriptLocation.isAbsolute()) {
-				File rscriptFile = new File(FileUtil.toFile(project.getProjectDirectory()),xcmsRScriptLocation)
-				rscriptFile.getParentFile().mkdirs()
-				rscriptLocation = rscriptFile
-			}
-			if(!rscriptLocation.exists()) {
-				rscriptLocation.setText(rscript)
-			}
+            if(!rscriptLocation.isAbsolute()) {
+                File rscriptFile = new File(FileUtil.toFile(project.getProjectDirectory()),xcmsRScriptLocation)
+                rscriptFile.getParentFile().mkdirs()
+                rscriptLocation = rscriptFile
+            }
+            if(!rscriptLocation.exists()) {
+                rscriptLocation.setText(rscript)
+            }
 
             int exitValue = createCall(outdir, rscriptLocation, dataObjects, writer)
             
@@ -213,8 +205,7 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
             IChromatogramDescriptor chromatogram = chromatograms.get(
                 chromName);
 
-            writer.println(
-                        "Using " + chromatogram.getResourceLocation() + " as chromatogram!");
+            writer.println("Using " + chromatogram.getResourceLocation() + " as chromatogram!");
             File file = reports.get(chromName);
             int index = 0
             //fields
@@ -270,7 +261,7 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
                         }else{
                             descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
                                 chromatogram,
-				"@"+String.format("%.2f",rt),
+                                "@"+String.format("%.2f",rt),
                                 mzs[0],
                                 mzs,
                                 Double.NaN,
@@ -280,7 +271,7 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
                                 null,
                                 null,
                                 null,
-				"XCMS Matched Filter",
+                                "XCMS Matched Filter",
                                 rtmin,
                                 rt,
                                 rtmax,
@@ -315,9 +306,9 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
                     int cnt = 0
                     mvals.each{ 
                         key,value -> 
-						massValues[cnt] = key
-						intensityValues[cnt] = value
-						cnt++
+                        massValues[cnt] = key
+                        intensityValues[cnt] = value
+                        cnt++
                     }
                     descriptor.setMassValues(massValues)
                     descriptor.setIntensityValues(intensityValues)
@@ -342,20 +333,17 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
             file ->
             String chromName = file.getName();
             while(chromName.contains(".")) {
-                chromName = chromName.substring(0, chromName.lastIndexOf(
-							"."));
+                chromName = chromName.substring(0, chromName.lastIndexOf("."));
             }
             if (chromatograms.containsKey(chromName)) {
                 reports.put(chromName, file);
                 writer.println("Adding report: " + chromName+" with file "+file.absolutePath);
             } else {
-                writer.println(
-							"Could not find matching chromatogram for report: " + chromName);
+                writer.println("Could not find matching chromatogram for report: " + chromName);
             }
         }
         if (reports.size() != chromatograms.size()) {
-            writer.println(
-                    "Not all chromatograms could be matched!");
+            writer.println("Not all chromatograms could be matched!");
         }
         return reports;
     }
@@ -365,14 +353,12 @@ write.table(peaks, file=paste(OUTDIR,"/",basename(FILEPATH),".xpt",sep=""), col.
         for (IChromatogramDescriptor descriptor : project.getChromatograms()) {
             String chromName = new File(descriptor.getResourceLocation()).getName();
             while(chromName.contains(".")) {
-                chromName = chromName.substring(0, chromName.lastIndexOf(
-						"."));
+                chromName = chromName.substring(0, chromName.lastIndexOf("."));
             }
             chromatograms.put(chromName, descriptor);
-            writer.println(
-					"Added chromatogram " + chromName + ": " + descriptor);
+            writer.println("Added chromatogram " + chromName + ": " + descriptor);
         }
         return chromatograms;
     }
 
-}
+    }

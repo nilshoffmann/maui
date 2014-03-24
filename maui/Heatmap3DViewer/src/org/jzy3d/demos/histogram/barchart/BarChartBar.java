@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.colors.Color;
@@ -48,13 +47,14 @@ import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Quad;
 import org.jzy3d.plot3d.primitives.Shape;
+import org.jzy3d.plot3d.primitives.pickable.Pickable;
 import org.jzy3d.plot3d.rendering.view.Camera;
 
 /**
  *
  * @author ao
  */
-public class BarChartBar<ITEM> extends HistogramBar {
+public class BarChartBar<ITEM> extends HistogramBar implements Pickable {
 
     public static float BAR_RADIUS = 5;
     public static float BAR_RADIUS_Y = 5;
@@ -67,6 +67,7 @@ public class BarChartBar<ITEM> extends HistogramBar {
     public GLU gluObj;
     private final String info;
     private ITEM item;
+    private int pickingId = -1;
 
     public BarChartBar(Chart c, String info, ITEM item) {
         super();
@@ -252,16 +253,26 @@ public class BarChartBar<ITEM> extends HistogramBar {
     }
 
     public void setSelected(boolean selected) {
-        if (tr == null) {
-            tr = new ToggleTextTooltipRenderer(info, this);
-//            chart.getView().addTooltip(tr);
-        }
-        if (selected) {
-            setWireframeWidth(3);
-            tr.setVisible(true);
-        } else {
-            setWireframeWidth(1);
-            tr.setVisible(false);
-        }
+//        if (tr == null) {
+//            tr = new ToggleTextTooltipRenderer(info, this);
+////            chart.getScene().getGraph().addTooltip(tr);
+//        }
+//        if (selected) {
+//            setWireframeWidth(3);
+//            tr.setVisible(true);
+//        } else {
+//            setWireframeWidth(1);
+//            tr.setVisible(false);
+//        }
+    }
+
+    @Override
+    public void setPickingId(int i) {
+        this.pickingId = i;
+    }
+
+    @Override
+    public int getPickingId() {
+        return this.pickingId;
     }
 }

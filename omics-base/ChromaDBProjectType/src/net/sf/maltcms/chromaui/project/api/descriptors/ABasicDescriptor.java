@@ -35,6 +35,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.util.HelpCtx;
 
@@ -236,7 +237,7 @@ public class ABasicDescriptor implements IBasicDescriptor {
     }
 
     @Indexed
-    private UUID id = UUID.randomUUID();
+    private final UUID id = UUID.randomUUID();
 
     @Override
     public UUID getId() {
@@ -246,10 +247,11 @@ public class ABasicDescriptor implements IBasicDescriptor {
 
     @Override
     public void setId(UUID id) {
-        activate(ActivationPurpose.WRITE);
-        UUID old = this.id;
-        this.id = id;
-        firePropertyChange(PROP_ID, old, id);
+//        activate(ActivationPurpose.WRITE);
+//        UUID old = this.id;
+//        this.id = id;
+//        firePropertyChange(PROP_ID, old, id);
+        Logger.getLogger(ABasicDescriptor.class.getName()).warning("Setting of UUIDs is no longer supported! UUIDs are created automatically when objects are first instantiated!");
     }
 
     private String shortDescription = "";

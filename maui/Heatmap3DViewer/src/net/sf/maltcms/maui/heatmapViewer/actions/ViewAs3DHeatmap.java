@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.actions;
 
-import com.jogamp.newt.Screen;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.exception.ResourceNotAvailableException;
 import java.awt.event.ActionEvent;
@@ -41,22 +40,10 @@ import maltcms.datastructures.quadTree.QuadTree;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.maui.heatmapViewer.HeatmapViewerTopComponent;
-import net.sf.maltcms.maui.heatmapViewer.chart.controllers.LabeledMouseSelector;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ArrayD2Mapper;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.QuadTreeMapper;
-import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
-import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.ChartLauncher;
-import org.jzy3d.chart.Settings;
-import org.jzy3d.chart.controllers.ControllerType;
-import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
-import org.jzy3d.events.ControllerEvent;
-import org.jzy3d.events.ControllerEventListener;
 import org.jzy3d.maths.Rectangle;
-import org.jzy3d.plot3d.primitives.AbstractDrawable;
-import org.jzy3d.plot3d.primitives.CompileableComposite;
-import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
@@ -69,80 +56,80 @@ import ucar.ma2.MAMath;
 import ucar.ma2.MAMath.MinMax;
 
 @ActionID(
-		category = "ContainerNodeActions/ChromatogramNode/Open",
-		id = "net.sf.maltcms.maui.heatmapViewer.actions.ViewAs3DHeatmap")
+        category = "ContainerNodeActions/ChromatogramNode/Open",
+        id = "net.sf.maltcms.maui.heatmapViewer.actions.ViewAs3DHeatmap")
 @ActionRegistration(
-		displayName = "#CTL_ViewAs3DHeatmap")
+        displayName = "#CTL_ViewAs3DHeatmap")
 @Messages("CTL_ViewAs3DHeatmap=Open as 3D Heatmap")
 public final class ViewAs3DHeatmap implements ActionListener {
 
-	private final IChromatogramDescriptor context;
+    private final IChromatogramDescriptor context;
 
-	public ViewAs3DHeatmap(IChromatogramDescriptor context) {
-		this.context = context;
-	}
+    public ViewAs3DHeatmap(IChromatogramDescriptor context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		if (context.getSeparationType().getFeatureDimensions() == 2) {
-			ViewAs3DHeatmapRunnable vr = new ViewAs3DHeatmapRunnable();
-			ViewAs3DHeatmapRunnable.createAndRun("Creating 3D Heatmap View", vr);
-		} else {
-			NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + context.getSeparationType().getFeatureDimensions() + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
-			DialogDisplayer.getDefault().notify(nd);
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        if (context.getSeparationType().getFeatureDimensions() == 2) {
+            ViewAs3DHeatmapRunnable vr = new ViewAs3DHeatmapRunnable();
+            ViewAs3DHeatmapRunnable.createAndRun("Creating 3D Heatmap View", vr);
+        } else {
+            NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + context.getSeparationType().getFeatureDimensions() + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
+            DialogDisplayer.getDefault().notify(nd);
+        }
+    }
 
-	private class ViewAs3DHeatmapRunnable extends AProgressAwareRunnable {
+    private class ViewAs3DHeatmapRunnable extends AProgressAwareRunnable {
 
-		@Override
-		public void run() {
-			if (context.getSeparationType().getFeatureDimensions() == 2) {
-				try {
-					progressHandle.start();
-					progressHandle.progress("Loading heatmap data");
-					IChromatogram chrom = context.getChromatogram();
-					if (chrom instanceof IChromatogram2D) {
-						IChromatogram2D chrom2d = (IChromatogram2D) chrom;
+        @Override
+        public void run() {
+            if (context.getSeparationType().getFeatureDimensions() == 2) {
+                try {
+                    progressHandle.start();
+                    progressHandle.progress("Loading heatmap data");
+                    IChromatogram chrom = context.getChromatogram();
+                    if (chrom instanceof IChromatogram2D) {
+                        IChromatogram2D chrom2d = (IChromatogram2D) chrom;
 
-						//check for first_column_elution_time and second_column_elution_time
-						try {
-							IVariableFragment fcet = chrom2d.getParent().getChild("first_column_elution_time", true);
-							Array fcetArray = fcet.getArray();
-							MinMax fmm = MAMath.getMinMax(fcetArray);
-							IVariableFragment scet = chrom2d.getParent().getChild("second_column_elution_time", true);
-							Array scetArray = scet.getArray();
-							MinMax smm = MAMath.getMinMax(scetArray);
-							IVariableFragment tic = chrom2d.getParent().getChild("total_intensity", true);
-							Array ticArray = tic.getArray();
-							Array modTimeArray = null;
-							try {
-								IVariableFragment modTime = chrom2d.getParent().getChild("modulation_time");
-								modTimeArray = modTime.getArray();
-							} catch (ResourceNotAvailableException rnae) {
-							}
-							MinMax tmm = MAMath.getMinMax(ticArray);
-							int length = fcet.getDimensions()[0].getLength();
-							final Rectangle bounds = new Rectangle((int) fmm.min, (int) smm.min, (int) (fmm.max - fmm.min), (int) (smm.max - smm.min));
-							final Rectangle2D bounds2d = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
-							QuadTree<Integer> qt = new QuadTree<Integer>(bounds2d);
-							for (int i = 0; i < length; i++) {
-								qt.put(new Point2D.Float(fcetArray.getFloat(i), scetArray.getFloat(i)), ticArray.getInt(i));
-							}
-							double radiusx = 10;
-							if (modTimeArray != null) {
-								radiusx = modTimeArray.getDouble(0) * 3;
-							}
-							final QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds2d, radiusx, 10);
-							SwingUtilities.invokeLater(new Runnable() {
-								@Override
-								public void run() {
-									final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
-									hvtc.open();
-									hvtc.requestActive();
-									hvtc.setMapper(qtm);
-								}
-							});
+                        //check for first_column_elution_time and second_column_elution_time
+                        try {
+                            IVariableFragment fcet = chrom2d.getParent().getChild("first_column_elution_time", true);
+                            Array fcetArray = fcet.getArray();
+                            MinMax fmm = MAMath.getMinMax(fcetArray);
+                            IVariableFragment scet = chrom2d.getParent().getChild("second_column_elution_time", true);
+                            Array scetArray = scet.getArray();
+                            MinMax smm = MAMath.getMinMax(scetArray);
+                            IVariableFragment tic = chrom2d.getParent().getChild("total_intensity", true);
+                            Array ticArray = tic.getArray();
+                            Array modTimeArray = null;
+                            try {
+                                IVariableFragment modTime = chrom2d.getParent().getChild("modulation_time");
+                                modTimeArray = modTime.getArray();
+                            } catch (ResourceNotAvailableException rnae) {
+                            }
+                            MinMax tmm = MAMath.getMinMax(ticArray);
+                            int length = fcet.getDimensions()[0].getLength();
+                            final Rectangle bounds = new Rectangle((int) fmm.min, (int) smm.min, (int) (fmm.max - fmm.min), (int) (smm.max - smm.min));
+                            final Rectangle2D bounds2d = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
+                            QuadTree<Integer> qt = new QuadTree<Integer>(bounds2d);
+                            for (int i = 0; i < length; i++) {
+                                qt.put(new Point2D.Float(fcetArray.getFloat(i), scetArray.getFloat(i)), ticArray.getInt(i));
+                            }
+                            double radiusx = 10;
+                            if (modTimeArray != null) {
+                                radiusx = modTimeArray.getDouble(0) * 3;
+                            }
+                            final QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds2d, radiusx, 10);
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
+                                    hvtc.open();
+                                    hvtc.requestActive();
+                                    hvtc.setMapper(qtm);
+                                }
+                            });
 //							fcetArray = null;
 //							scetArray = null;
 //							ticArray = null;
@@ -189,49 +176,46 @@ public final class ViewAs3DHeatmap implements ActionListener {
 //							Settings.getInstance().setHardwareAccelerated(true);
 //							Screen screen = Settings.getInstance().getScreen();
 //							chart.getFactory().newFrame(chart, new Rectangle(0, 0, 800, 600), "HeatmapViewer");
-							//SurfaceViewerPanel svp1 = new SurfaceViewerPanel(chart);
+                            //SurfaceViewerPanel svp1 = new SurfaceViewerPanel(chart);
 
 //							} catch (IOException ex) {
 //								Logger.getLogger(HeatmapViewer.class.getName()).log(Level.SEVERE,
 //										null, ex);
 //							}
+                        } catch (ResourceNotAvailableException rnae) {
+                            final int modulations = chrom2d.getNumberOfModulations();
+                            final int spm = chrom2d.getNumberOfScansPerModulation();
+                            final ArrayInt.D2 surface = new ArrayInt.D2(modulations, spm);
+                            int scanIndex = 0;
+                            progressHandle.progress("Creating surface");
+                            Array tic = chrom2d.getParent().getChild("total_intensity").getArray();
+                            for (int i = 0; i < modulations; i++) {
+                                for (int j = 0; j < spm; j++) {
+                                    int height = (int) tic.getInt(scanIndex++);
+                                    surface.set(i, j, height);
+                                }
+                            }
+                            final ViewportMapper m = new ArrayD2Mapper(surface);
+                            progressHandle.progress("Creating Top Component");
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
+                                    hvtc.open();
+                                    hvtc.requestActive();
+                                    hvtc.setMapper(m);
+                                }
+                            });
+                        }
 
-						} catch (ResourceNotAvailableException rnae) {
-							final int modulations = chrom2d.getNumberOfModulations();
-							final int spm = chrom2d.getNumberOfScansPerModulation();
-							final ArrayInt.D2 surface = new ArrayInt.D2(modulations, spm);
-							int scanIndex = 0;
-							progressHandle.progress("Creating surface");
-							Array tic = chrom2d.getParent().getChild("total_intensity").getArray();
-							for (int i = 0; i < modulations; i++) {
-								for (int j = 0; j < spm; j++) {
-									int height = (int) tic.getInt(scanIndex++);
-									surface.set(i, j, height);
-								}
-							}
-							final ViewportMapper m = new ArrayD2Mapper(surface);
-							progressHandle.progress("Creating Top Component");
-							SwingUtilities.invokeLater(new Runnable() {
-								@Override
-								public void run() {
-									final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
-									hvtc.open();
-									hvtc.requestActive();
-									hvtc.setMapper(m);
-								}
-							});
-						}
-
-
-
-						progressHandle.progress("Done!");
-					}
-				} finally {
-					progressHandle.finish();
-				}
-			} else {
-				throw new NotImplementedException("No support for " + context.getSeparationType().getFeatureDimensions() + " separation dimensions!");
-			}
-		}
-	}
+                        progressHandle.progress("Done!");
+                    }
+                } finally {
+                    progressHandle.finish();
+                }
+            } else {
+                throw new NotImplementedException("No support for " + context.getSeparationType().getFeatureDimensions() + " separation dimensions!");
+            }
+        }
+    }
 }

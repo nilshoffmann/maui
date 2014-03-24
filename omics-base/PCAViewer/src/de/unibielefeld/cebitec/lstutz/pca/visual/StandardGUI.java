@@ -114,7 +114,8 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
         this.hash = hash;
 //		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		this.setTitle(title);
-        this.setPreferredSize(new Dimension(840, 510));
+        setOpaque(true);
+//        this.setPreferredSize(new Dimension(840, 510));
         this.setLayout(new BorderLayout());
         this.create_universe(hash);
         this.add(BorderLayout.CENTER, can);
@@ -124,10 +125,10 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
         this.add(BorderLayout.EAST, info);
         this.setVisible(true);
 //		this.pack();
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-        int x = (screenSize.width - this.getSize().width) / 2;
-        int y = (screenSize.height - this.getSize().height) / 2;
+//        Toolkit toolkit = Toolkit.getDefaultToolkit();
+//        Dimension screenSize = toolkit.getScreenSize();
+        int x = (this.getSize().width) / 2;
+        int y = (this.getSize().height) / 2;
         this.setLocation(x, y);
     }
 
@@ -137,7 +138,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
 
     private void create_universe(HashMap<String, ArrayList<DataModel>> hash) {
         can = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
-        can.setPreferredSize(new Dimension(640, 480));
+//        can.setPreferredSize(new Dimension(640, 480));
         can.setMinimumSize(new Dimension(320, 280));
 
         uni = new SimpleUniverse(can);
@@ -293,10 +294,10 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
 
                 Material mat = new Material();
                 mat.setDiffuseColor(d.getColor());
-                System.out.println(d.getColor());
+//                System.out.println(d.getColor());
                 Color3f ambient = new Color3f(d.getColor());
                 ambient.scale(.7f);
-                System.out.println(ambient);
+//                System.out.println(ambient);
                 mat.setAmbientColor(ambient);
                 app.setMaterial(mat);
 
@@ -307,8 +308,8 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
                     object = new Box(.02f, .02f, .02f, Box.GENERATE_NORMALS, app);
                 } else if (d.getShape().equals("l")) {
                     if (coords.get(0).compareTo(Double.NaN) != 0
-                        && coords.get(1).compareTo(Double.NaN) != 0
-                        && coords.get(2).compareTo(Double.NaN) != 0) {
+                            && coords.get(1).compareTo(Double.NaN) != 0
+                            && coords.get(2).compareTo(Double.NaN) != 0) {
                         LineArray la = new LineArray(30, LineArray.COORDINATES | LineArray.COLOR_3);
                         la.setCoordinate(0, new Point3f(0f, 0, 0));
                         la.setColor(0, new Color3f(0, 0, 0));
@@ -327,15 +328,15 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
 
                 Vector3d vec = new Vector3d();
                 if (coords.get(0).compareTo(Double.NaN) != 0
-                    && coords.get(1).compareTo(Double.NaN) != 0
-                    && coords.get(2).compareTo(Double.NaN) != 0) {
+                        && coords.get(1).compareTo(Double.NaN) != 0
+                        && coords.get(2).compareTo(Double.NaN) != 0) {
                     vec.x = (coords.get(0) / max);
                     vec.y = (coords.get(1) / max);
                     vec.z = (coords.get(2) / max);
                 } else {
                     continue;
                 }
-                System.out.println(vec);
+//                System.out.println(vec);
                 Transform3D transform = new Transform3D();
                 transform.setTranslation(vec);
                 TransformGroup trans_group1 = new TransformGroup(transform);
@@ -363,16 +364,16 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
         pickCanvas.setShapeLocation(e);
         PickResult result = pickCanvas.pickClosest();
         if (result == null) {
-            System.out.println("Nothing picked");
+//            System.out.println("Nothing picked");
         } else {
             Primitive p = (Primitive) result.getNode(PickResult.PRIMITIVE);
             if (p != null) {
                 //FIXME introduce instance content and mapping
-                System.out.println(p.getClass().getName());
+//                System.out.println(p.getClass().getName());
                 info.set_coords(get_model(p));
                 this.selDa = get_model(p);
             } else {
-                System.out.println("Nix");
+//                System.out.println("Nix");
             }
         }
     }
@@ -385,11 +386,11 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
                 p.getLocalToVworld(t);
                 Vector3f coords = new Vector3f();
                 t.get(coords);
-				//System.out.println(coords);
+                //System.out.println(coords);
                 //System.out.println(d.getCoordinates().get(0)/d.getFactor());
                 if (((Double) (d.getCoordinates().get(0) / d.getFactor())).floatValue() == coords.x
-                    && ((Double) (d.getCoordinates().get(1) / d.getFactor())).floatValue() == coords.y
-                    && ((Double) (d.getCoordinates().get(2) / d.getFactor())).floatValue() == coords.z) {
+                        && ((Double) (d.getCoordinates().get(1) / d.getFactor())).floatValue() == coords.y
+                        && ((Double) (d.getCoordinates().get(2) / d.getFactor())).floatValue() == coords.z) {
                     //System.out.println("Found one");
 
                     Object payload = d.getPayload();
@@ -408,7 +409,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
     }
 
     public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
+//        revalidate();
     }
 
     public void mouseExited(MouseEvent e) {
@@ -464,7 +465,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
             uni.getViewingPlatform().getViewPlatformTransform().setTransform(transform);
         } else if (e.getActionCommand().equals("change background")) {
             Color3f col = new Color3f(JColorChooser.showDialog(this,
-                "Choose Background Color", Color.BLACK));
+                    "Choose Background Color", Color.BLACK));
             b.setColor(col);
             if (e.getSource() instanceof JButton) {
                 if (((JButton) e.getSource()).getParent() instanceof InfoPanel) {
@@ -496,7 +497,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
                 Double y = selDa.getCoordinates().get(1);
                 Double z = selDa.getCoordinates().get(2);
                 String con = "Name: " + name + "\nAnnotation: " + anno + "\nx: " + x
-                    + "\ny: " + y + "\nz: " + z;
+                        + "\ny: " + y + "\nz: " + z;
                 StringSelection stringSelection = new StringSelection(con);
                 Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
                 c.setContents(stringSelection, this);
@@ -510,10 +511,10 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
             String key = sender.getName();
             if (sender.getState()) {
                 visibleNodes.set(address.get(key));
-                System.out.println("setting " + key + " at " + address.get(key));
+//                System.out.println("setting " + key + " at " + address.get(key));
             } else {
                 visibleNodes.clear(address.get(key));
-                System.out.println("unsetting " + key + " at " + address.get(key));
+//                System.out.println("unsetting " + key + " at " + address.get(key));
             }
             switchGroup.setChildMask(visibleNodes);
         } catch (Exception e) {

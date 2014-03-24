@@ -25,14 +25,12 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-@TemplateRegistrations(value={
-	@TemplateRegistration(scriptEngine="freemarker",displayName="Groovy Project Script",folder="Maui",content="templates/DefaultProjectScript.groovy"),
-	@TemplateRegistration(scriptEngine="freemarker",displayName="Groovy CDF Script",folder="Maui",content="templates/DefaultRawDataScript.groovy"),
-	@TemplateRegistration(scriptEngine="freemarker",displayName="Groovy CSV Script",folder="Maui",content="templates/DefaultCSVScript.groovy"),
-	@TemplateRegistration(scriptEngine="freemarker",displayName="Groovy/R XCMS Matched Filter Peak Finder Script",folder="Maui",content="templates/XCMSMatchedFilterPeakFinder.groovy"),
-})
+@TemplateRegistrations(value = {
+    @TemplateRegistration(scriptEngine = "freemarker", displayName = "Groovy Project Script", folder = "Maui", content = "templates/DefaultProjectScript.groovy"),
+    @TemplateRegistration(scriptEngine = "freemarker", displayName = "Groovy CDF Script", folder = "Maui", content = "templates/DefaultRawDataScript.groovy"),
+    @TemplateRegistration(scriptEngine = "freemarker", displayName = "Groovy CSV Script", folder = "Maui", content = "templates/DefaultCSVScript.groovy"),
+    @TemplateRegistration(scriptEngine = "freemarker", displayName = "Groovy/R XCMS Matched Filter Peak Finder Script", folder = "Maui", content = "templates/XCMSMatchedFilterPeakFinder.groovy"),})
 package net.sf.maltcms.chromaui.groovy;
 
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.api.templates.TemplateRegistrations;
-

@@ -36,6 +36,7 @@ import org.jzy3d.chart.Chart;
 import org.jzy3d.colors.Color;
 import org.jzy3d.demos.AbstractDemo;
 import org.jzy3d.maths.Rectangle;
+import org.jzy3d.picking.PickingSupport;
 import org.jzy3d.plot3d.primitives.axes.layout.renderers.ITickRenderer;
 import org.jzy3d.plot3d.rendering.canvas.CanvasSwing;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
@@ -56,15 +57,15 @@ public class BarChartDemo extends AbstractDemo {
 
     public BarChartDemo() {
 //        Settings.getInstance().setHardwareAccelerated(true);
-        chart = new Chart(Quality.Intermediate,"swing");
+        chart = new Chart(Quality.Intermediate,"awt");
         setupTitle();
         setupAxes();
 //        cab.setAxe(chart.getView().getBounds());
-
+        PickingSupport pickingSupport = new PickingSupport();
         setupMouseNavigation();
         setupKeyboardNavigation();
         setupKeyboardSave();
-        setupMouseSelection();
+        setupMouseSelection(pickingSupport);
         setupLegend();
 
         Scene scene = chart.getScene();
@@ -84,6 +85,7 @@ public class BarChartDemo extends AbstractDemo {
                 System.out.println("Bar har height: " + bar.getHeight());
 //                bar.getShape().getBounds().getZRange();
                 scene.add(bar);
+                pickingSupport.registerDrawableObject(bar, bar.getItem());
             }
         }
 
@@ -102,9 +104,9 @@ public class BarChartDemo extends AbstractDemo {
         }
     }
 
-    private void setupMouseSelection() {
-        mouseSelection = new LabeledMouseSelector(chart);
-        chart.getCanvas().addKeyController(mouseSelection);
+    private void setupMouseSelection(PickingSupport pickingSupport) {
+        mouseSelection = new LabeledMouseSelector(chart, pickingSupport);
+        mouseSelection.register(chart);
     }
 
     private void setupTitle() {

@@ -28,101 +28,100 @@
 package de.unibielefeld.cebitec.lstutz.pca.data;
 
 import java.util.ArrayList;
-
 import javax.vecmath.Color3f;
 
-public class DataModel{
-	
-	private String label;
-	private Color3f color;
-	private String shape;
-	private ArrayList<Double> coordinates = new ArrayList<Double>();
-	private Heading heading;
-	private Double factor;
-	private String annotation, link;
-	private Object payload;
+public class DataModel {
 
-	public DataModel(){
-		
-	}
-	
-	public DataModel(String label, Color3f color, String shape, ArrayList<Double> coordinates){
-		this.label=label;
-		this.color=color;
-		this.shape=shape;
-		this.coordinates=coordinates;
-	}
+    private String label;
+    private Color3f color;
+    private String shape;
+    private ArrayList<Double> coordinates = new ArrayList<Double>();
+    private Heading heading;
+    private Double factor;
+    private String annotation, link;
+    private Object payload;
 
-	public String getLabel() {
-		return label;
-	}
+    public DataModel() {
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    }
 
-	public Color3f getColor() {
-		return color;
-	}
+    public DataModel(String label, Color3f color, String shape, ArrayList<Double> coordinates) {
+        this.label = label;
+        this.color = color;
+        this.shape = shape;
+        this.coordinates = coordinates;
+    }
 
-	public void setColor(Color3f color) {
-		this.color = color;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public String getShape() {
-		return shape;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setShape(String shape) {
-		this.shape = shape;
-	}
+    public Color3f getColor() {
+        return color;
+    }
 
-	public ArrayList<Double> getCoordinates() {
-		return coordinates;
-	}
+    public void setColor(Color3f color) {
+        this.color = color;
+    }
 
-	public void setCoordinates(ArrayList<Double> coordinates) {
-		this.coordinates = coordinates;
-	}
-	
-	public Heading getHeading() {
-		return heading;
-	}
-	
-	public void setHeading(Heading heading) {
-		this.heading = heading;
-	}
+    public String getShape() {
+        return shape;
+    }
 
-	public Double getFactor() {
-		return factor;
-	}
+    public void setShape(String shape) {
+        this.shape = shape;
+    }
 
-	public void setFactor(Double factor) {
-		this.factor = factor;
-	}
+    public ArrayList<Double> getCoordinates() {
+        return coordinates;
+    }
 
-	public String getAnnotation() {
-		return annotation;
-	}
+    public void setCoordinates(ArrayList<Double> coordinates) {
+        this.coordinates = coordinates;
+    }
 
-	public void setAnnotation(String annotation) {
-		this.annotation = annotation;
-	}
+    public Heading getHeading() {
+        return heading;
+    }
 
-	public String getLink() {
-		return link;
-	}
+    public void setHeading(Heading heading) {
+        this.heading = heading;
+    }
 
-	public void setLink(String link) {
-		this.link = link;
-	}
-	
-	public void setPayload(Object object) {
-		this.payload = object;
-	}
-	
-	public Object getPayload() {
-		return this.payload;
-	}
-	
+    public Double getFactor() {
+        return factor;
+    }
+
+    public void setFactor(Double factor) {
+        this.factor = factor;
+    }
+
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public void setPayload(Object object) {
+        this.payload = object;
+    }
+
+    public Object getPayload() {
+        return this.payload;
+    }
+
 }

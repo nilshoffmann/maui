@@ -24,22 +24,22 @@ import maltcms.*;
 import cross.datastructures.fragments.IFileFragment
 
 /**
- *
- * @author ${user}
- */
+*
+* @author ${user}
+*/
 class ${name} implements CSVDataGroovyScript {
     
     String name = "${name}"
-	String category = "Project modification"
+    String category = "Project modification"
     IChromAUIProject project
     Collection<CSVDataObject> dataObjects
     ProgressHandle progressHandle
     
-	public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CSVDataObject> dobjs) {
-		this.project = project;
-		this.progressHandle = progressHandle;
-		this.dataObjects = dobjs;
-	}
+    public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CSVDataObject> dobjs) {
+        this.project = project;
+        this.progressHandle = progressHandle;
+        this.dataObjects = dobjs;
+    }
     
     @Override
     public boolean cancel() {
@@ -48,20 +48,20 @@ class ${name} implements CSVDataGroovyScript {
     
     @Override
     public void run() {
-		File outdir = project.getOutputLocation(this);
-		try {
-			progressHandle.setDisplayName(name)
-			progressHandle.start(dataObjects.length)
-			def i = 1;
-			dataObjects.each{ it ->
-				progressHandle.progress("Processing ${r"${rootFragment.getName()}"}",i)
-				//do something
+        File outdir = project.getOutputLocation(this);
+        try {
+            progressHandle.setDisplayName(name)
+            progressHandle.start(dataObjects.length)
+            def i = 1;
+            dataObjects.each{ it ->
+                progressHandle.progress("Processing ${r"${rootFragment.getName()}"}",i)
+                //do something
 
-				i++
-			}
-		} finally {
-			progressHandle.finish()
-		}
+                i++
+            }
+        } finally {
+            progressHandle.finish()
+        }
         FileObject fo = FileUtil.toFileObject(outdir)
         fo.refresh()
     }

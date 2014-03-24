@@ -27,7 +27,6 @@
  */
 package de.unibielefeld.cebitec.lstutz.pca;
 
-
 public class Startup {
 //	public static void main(String args[]){
 ////		System.setSecurityManager(null);

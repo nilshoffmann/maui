@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.maui.heatmapViewer;
 
-import com.jogamp.newt.Screen;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -37,138 +36,109 @@ import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.BufferedImageMa
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
 import org.jzy3d.chart.Chart;
+import org.jzy3d.chart.ChartLauncher;
 import org.jzy3d.chart.controllers.ControllerType;
+import org.jzy3d.chart.controllers.mouse.camera.NewtCameraMouseController;
+import org.jzy3d.chart.factories.AWTChartComponentFactory;
+import org.jzy3d.chart.factories.IChartComponentFactory.Toolkit;
 import org.jzy3d.colors.Color;
 import org.jzy3d.demos.histogram.barchart.BarChartBar;
+import org.jzy3d.demos.histogram.barchart.LabeledMouseSelector;
 import org.jzy3d.events.ControllerEvent;
 import org.jzy3d.events.ControllerEventListener;
 import org.jzy3d.maths.Coord3d;
+import org.jzy3d.maths.Rectangle;
+import org.jzy3d.picking.PickingSupport;
 import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
-import org.jzy3d.chart.ChartLauncher;
-import org.jzy3d.chart.Settings;
-import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
-import org.jzy3d.chart.factories.AWTChartComponentFactory;
-import org.jzy3d.maths.Rectangle;
+import org.jzy3d.plot3d.rendering.legends.colorbars.AWTColorbarLegend;
 
 /**
  *
  * @author Nils Hoffmann
  */
 public class HeatmapViewer {
-
-	public static void main(String[] args) {
-		ViewportMapper mapper = null;
-		CompileableComposite cc = null;
-		Rectangle roi = null;
-		SurfaceFactory sf = new SurfaceFactory();
-
-		try {
-			if (mapper == null) {
-				BufferedImage bi = ImageIO.read(HeatmapViewer.class.
-						getClassLoader().getResourceAsStream(
-						"net/sf/maltcms/maui/heatmapViewer/chromatogram.png"));
-				mapper = new BufferedImageMapper(bi);
-				//select a smaller rectangle, if the complete image is too large
-				//Rectangle roi = new Rectangle(200, 200, 300, 300);
+    
+    public static void main(String[] args) {
+        ViewportMapper mapper = null;
+        CompileableComposite cc = null;
+        Rectangle roi = null;
+        SurfaceFactory sf = new SurfaceFactory();
+        
+        try {
+            Chart chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.newt);
+            if (mapper == null) {
+                BufferedImage bi = ImageIO.read(HeatmapViewer.class.
+                        getClassLoader().getResourceAsStream(
+                                "net/sf/maltcms/maui/heatmapViewer/chromatogram.png"));
+                mapper = new BufferedImageMapper(bi);
+                //select a smaller rectangle, if the complete image is too large
+                //Rectangle roi = new Rectangle(200, 200, 300, 300);
 //                roi = new Rectangle(200, 200, 300, 300);
-				roi = new Rectangle(0, 0, bi.getWidth(), bi.getHeight());
-				boolean fastTesselation = true;
-				cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
-						fastTesselation, (int) (roi.width / 16), (int) (roi.height / 16));
-			}
-			if (roi == null) {
-				throw new IllegalArgumentException("Could not create surface image!");
-			}
-
-			Chart chart = AWTChartComponentFactory.chart(Quality.Advanced, "awt");
-			chart.getScene().getGraph().add(cc);
-			for (int i = 0; i < 10; i++) {
-				int xpos = (int) (roi.x + (int) (Math.random() * (roi.width)));
-				int ypos = (int) (roi.y + (int) (Math.random() * (roi.height)));
-				String item = xpos + " " + ypos;
-				BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
-						item);
-				bcb.setData(new Coord3d(xpos, ypos,
-						cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
-						ypos) - cc.getBounds().getZmin(),
-						new Color((float) Math.random(), (float) Math.random(),
-						(float) Math.random(), 0.3f));
-				chart.getScene().getGraph().add(bcb);
-			}
-
-//			LabeledMouseSelector lms = new LabeledMouseSelector(chart);
-//			chart.getCanvas().addKeyController(lms);
-//            chart.getAxeLayout().setXAxeLabel("Retention Time 1");
-//            chart.getAxeLayout().setYAxeLabel("Retention Time 2");
-//            chart.getAxeLayout().setZAxeLabel("Relative Intensity");
-			//cc.setLegend(new ColorbarLegend(cc, chart.getView().getAxe().getLayout()));
-			//cc.setLegendDisplayed(true);
-//            chart.addTooltip(new ITooltipRenderer() {
-//
-//                private IntegerCoord2d currentPosition = null;
-//
-//                public void render(Graphics2D g2d) {
-////                    Graphics2D g2d = (Graphics2D) g;
-//                    if (currentPosition != null) {
-//                        g2d.setStroke(new BasicStroke(4.0f));
-//                        g2d.setColor(java.awt.Color.BLACK);
-//                        g2d.drawRect(currentPosition.x, currentPosition.y, 100,
-//                                100);
-//                    }
-//                }
-//
-//                public void updateScreenPosition(IntegerCoord2d position) {
-//                    this.currentPosition = position;
-//                }
-//            });
-//            chart.getView().getTooltips();
-//            chart.getView().setViewPositionMode(ViewPositionMode.TOP);
-//            chart.getView().setAxeBoxDisplayed(false);
-			chart.getView().setMaximized(true);
-			chart.getView().getCamera().setScreenGridDisplayed(false);
-//            chart.getView().setSquared(false);
-//            chart.addRenderer(new Renderer2d() {
-//
-//                public void paint(Graphics g) {
-//                    Graphics2D g2d = (Graphics2D) g;
-//                    g2d.setStroke(new BasicStroke(4.0f));
-//                    g2d.setColor(java.awt.Color.BLACK);
-//                    g2d.drawRect(10, 50, 100, 100);
-//
-//                }
-//            });
-			AWTCameraMouseController mouse = new AWTCameraMouseController();
-			chart.addController(mouse);
-			mouse.addControllerEventListener(new ControllerEventListener() {
-				public void controllerEventFired(ControllerEvent e) {
-					if (e.getType() == ControllerType.PAN) {
-						System.out.println("Mouse[PAN]: " + e.getValue());
-
-					} else if (e.getType() == ControllerType.SHIFT) {
-						System.out.println("Mouse[SHIFT]: " + e.getValue());
-					} else if (e.getType() == ControllerType.ZOOM) {
-						System.out.println("Mouse[ZOOM]: " + e.getValue());
-					} else if (e.getType() == ControllerType.ROTATE) {
-						System.out.println("Mouse[ROTATE]:" + e.getValue());
-					}
-				}
-			});
-			//SurfaceViewerPanel svp1 = new SurfaceViewerPanel(chart);
-			ChartLauncher.instructions();
-			Settings.getInstance().setHardwareAccelerated(true);
-			Screen screen = Settings.getInstance().getScreen();
-			chart.getFactory().newFrame(chart, new Rectangle(0, 0, 800, 600), "HeatmapViewer");
-//            ChartLauncher.openChart(chart, new Rectangle(800, 600),
-//                    "HeatmapViewer");
-		} catch (IOException ex) {
-			Logger.getLogger(HeatmapViewer.class.getName()).log(Level.SEVERE,
-					null, ex);
-		}
-	}
-
-	public static void openFrame(final Chart chart, final Rectangle rect) {
-		ChartLauncher.frame(chart, rect, "SurfaceViewerPanel");
-
-	}
+                roi = new Rectangle(0, 0, bi.getWidth(), bi.getHeight());
+                boolean fastTesselation = true;
+                cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
+                        fastTesselation, (int) bi.getWidth()/4, (int) bi.getHeight()/4);
+                System.out.println("Tesselating "+(int) bi.getWidth()/4+"x"+(int) bi.getHeight()/4);
+                chart.getScene().getGraph().add(cc);
+                cc.setLegend(new AWTColorbarLegend(cc, chart.getView().getAxe().getLayout()));
+                cc.setLegendDisplayed(true);
+            }
+            if (roi == null) {
+                throw new IllegalArgumentException("Could not create surface image!");
+            }
+            
+            PickingSupport pickingSupport = new PickingSupport();
+            for (int i = 0; i < 10; i++) {
+                int xpos = (int) (roi.x + (int) (Math.random() * (roi.width)));
+                int ypos = (int) (roi.y + (int) (Math.random() * (roi.height)));
+                String item = xpos + " " + ypos;
+                BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
+                        item);
+                bcb.setPickingId(i);
+                pickingSupport.registerDrawableObject(bcb, item);
+                bcb.setData(new Coord3d(xpos, ypos,
+                        cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
+                                ypos) - cc.getBounds().getZmin(),
+                        new Color((float) Math.random(), (float) Math.random(),
+                                (float) Math.random(), 0.3f));
+                chart.getScene().getGraph().add(bcb);
+            }
+            LabeledMouseSelector lms = new LabeledMouseSelector(chart, pickingSupport);
+            lms.register(chart);
+            chart.getAxeLayout().setXAxeLabel("Retention Time 1");
+            chart.getAxeLayout().setYAxeLabel("Retention Time 2");
+            chart.getAxeLayout().setZAxeLabel("Relative Intensity");
+            chart.getView().setMaximized(true);
+            chart.getView().getCamera().setScreenGridDisplayed(false);
+            NewtCameraMouseController mouse = new NewtCameraMouseController();
+            mouse.register(chart);
+            mouse.addControllerEventListener(new ControllerEventListener() {
+                public void controllerEventFired(ControllerEvent e) {
+                    if (e.getType() == ControllerType.PAN) {
+                        System.out.println("Mouse[PAN]: " + e.getValue());
+                        
+                    } else if (e.getType() == ControllerType.SHIFT) {
+                        System.out.println("Mouse[SHIFT]: " + e.getValue());
+                    } else if (e.getType() == ControllerType.ZOOM) {
+                        System.out.println("Mouse[ZOOM]: " + e.getValue());
+                    } else if (e.getType() == ControllerType.ROTATE) {
+                        System.out.println("Mouse[ROTATE]:" + e.getValue());
+                    }
+                }
+            });
+            //SurfaceViewerPanel svp1 = new SurfaceViewerPanel(chart);
+//            ChartLauncher.instructions();
+//            Settings.getInstance().setHardwareAccelerated(true);
+            chart.getFactory().newFrame(chart, new Rectangle(0, 0, 800, 600), "HeatmapViewer");
+        } catch (IOException ex) {
+            Logger.getLogger(HeatmapViewer.class.getName()).log(Level.SEVERE,
+                    null, ex);
+        }
+    }
+    
+    public static void openFrame(final Chart chart, final Rectangle rect) {
+        ChartLauncher.frame(chart, rect, "SurfaceViewerPanel");
+        
+    }
 }

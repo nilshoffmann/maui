@@ -27,11 +27,10 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.chart.controllers;
 
-
 import com.jogamp.newt.event.MouseEvent;
 import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.controllers.mouse.camera.NewtCameraMouseController;
 import org.jzy3d.chart.controllers.mouse.NewtMouseUtilities;
+import org.jzy3d.chart.controllers.mouse.camera.NewtCameraMouseController;
 import org.jzy3d.chart.controllers.thread.camera.CameraThreadController;
 import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord2d;
@@ -49,9 +48,9 @@ public class CustomMouseControl extends NewtCameraMouseController {
         this.chart = chart;
     }
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		Coord2d mouse = new Coord2d(e.getX(), e.getY());
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        Coord2d mouse = new Coord2d(e.getX(), e.getY());
 
         // Rotate
         if (NewtMouseUtilities.isLeftDown(e)) {
@@ -68,17 +67,17 @@ public class CustomMouseControl extends NewtCameraMouseController {
             }
         }
         prevMouse = mouse;
-	}
+    }
 
-	@Override
-	public void mouseWheelMoved(MouseEvent e) {
-		if (threadController != null) {
+    @Override
+    public void mouseWheelMoved(MouseEvent e) {
+        if (threadController != null) {
             threadController.stop();
         }
 
         float factor = 1 + (e.getRotation()[0] / 20.0f);
         zoomAll(factor);
-	}
+    }
 
     protected void zoomAll(final float factor) {
         for (Chart c : targets) {

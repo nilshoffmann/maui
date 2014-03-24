@@ -31,6 +31,7 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.config.CommonConfiguration;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.config.FileConfiguration;
+import com.db4o.config.QueryEvaluationMode;
 import com.db4o.diagnostic.DiagnosticToConsole;
 import com.db4o.ext.DatabaseFileLockedException;
 import com.db4o.io.Bin;
@@ -38,10 +39,15 @@ import com.db4o.io.BinConfiguration;
 import com.db4o.io.FileStorage;
 import com.db4o.io.PagingMemoryStorage;
 import com.db4o.reflect.jdk.JdkReflector;
+import com.db4o.ta.DeactivatingRollbackStrategy;
+import com.db4o.ta.TransparentActivationSupport;
+import com.db4o.ta.TransparentPersistenceSupport;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 
 /**
@@ -59,26 +65,26 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
     public final void open() {
         authenticate();
         if (eoc == null) {
-			try {
-				preOpen();
-				System.out.println("Opening ObjectContainer at " + projectDBLocation.getAbsolutePath());
-				eoc = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath() + "-inMemory");
-				postOpen();
-			}catch(DatabaseFileLockedException ex) {
-				//database file already opened 
-			}catch(Exception e) {
-				System.out.println("Caught unhandled exception, closing database "+projectDBLocation.getAbsolutePath());
-				if(eoc!=null) {
-					eoc.close();
-				}
-				throw e;
-			}catch(Error e) {
-				System.out.println("Caught unhandled error, closing database "+projectDBLocation.getAbsolutePath());
-				if(eoc!=null) {
-					eoc.close();
-				}
-				throw e;
-			}
+            try {
+                preOpen();
+                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Opening ObjectContainer at {0}", projectDBLocation.getAbsolutePath());
+                eoc = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath() + "-inMemory");
+                postOpen();
+            } catch (DatabaseFileLockedException ex) {
+                //database file already opened 
+            } catch (Exception e) {
+                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.WARNING, "Caught unhandled exception, closing database {0}", projectDBLocation.getAbsolutePath());
+                if (eoc != null) {
+                    eoc.close();
+                }
+                throw e;
+            } catch (Error e) {
+                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.SEVERE, "Caught unhandled error, closing database {0}", projectDBLocation.getAbsolutePath());
+                if (eoc != null) {
+                    eoc.close();
+                }
+                throw e;
+            }
         }
     }
 
@@ -129,6 +135,11 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
         fileConfiguration.storage(memoryStorage);
         CommonConfiguration cc = configuration.common();
         cc.reflectWith(new JdkReflector(domainClassLoader));
+        cc.add(new TransparentActivationSupport());
+        cc.add(new TransparentPersistenceSupport(
+                new DeactivatingRollbackStrategy()));
+        cc.queries().evaluationMode(QueryEvaluationMode.SNAPSHOT);
+//        cc.add(new UuidSupport());
         if (isVerboseDiagnostics()) {
             cc.diagnostic().addListener(new DiagnosticToConsole());
         }

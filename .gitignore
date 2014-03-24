@@ -43,3 +43,5 @@ maui/.DS_Store
 /nbi/stub/ext/engine/build/
 /nbi/stub/ext/engine/dist/
 /nbi/stub/ext/engine/nbproject/private/
+/platform-8.0/
+/platform-7.4/

@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.project.spi.project;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,109 +45,117 @@ import org.openide.filesystems.FileChangeListener;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileRenameEvent;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.ChangeSupport;
 import org.openide.util.Exceptions;
-import org.openide.util.WeakListeners;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Nils Hoffmann
  */
-
-@ServiceProvider(service=IMauiSubprojectProviderFactory.class)
+@ServiceProvider(service = IMauiSubprojectProviderFactory.class)
 public class MauiSubprojectProviderFactory implements IMauiSubprojectProviderFactory {
 
-	private class MauiSubprojectProvider implements SubprojectProvider, FileChangeListener {
-	
-		private final IChromAUIProject project;
-		private final ChangeSupport changeSupport = new ChangeSupport(this);
-		
-		public MauiSubprojectProvider(IChromAUIProject project) {
-			this.project = project;
-		}
-		
-		@Override
-		public Set<? extends Project> getSubprojects() {
-			System.out.println("Subproject location: "+project.getOutputDir());
-			return loadProjects(project.getOutputDir());
-		}
+    private class MauiSubprojectProvider implements SubprojectProvider, FileChangeListener {
 
-		 private Set loadProjects(FileObject dir) {
-			Set newProjects = new HashSet();
-			if (dir != null) {
-				for (FileObject childFolder : dir.getChildren()) {
-					System.out.println("Checking files in "+childFolder.getName());
-					if(childFolder.getName().startsWith("maltcms-")) {
-						for (FileObject maltcmsChildFolder :childFolder.getChildren()) {
-							System.out.println("Found maltcms folder: "+maltcmsChildFolder.getName());
-							try {
-								Project subp = ProjectManager.getDefault().
-									findProject(maltcmsChildFolder);
-								if (subp != null && subp instanceof SimpleChromAProject) {
-									newProjects.add((SimpleChromAProject) subp);
-									subp.getProjectDirectory().addFileChangeListener(this);
-								}
-							} catch (IOException ex) {
-								Exceptions.printStackTrace(ex);
-							} catch (IllegalArgumentException ex) {
-								Exceptions.printStackTrace(ex);
-							}
-						}
-					}
-				}
-			}else{
-				System.err.println("Project directory was null!");
-			}
-			
-			return Collections.unmodifiableSet(newProjects);
-		}
+        private final IChromAUIProject project;
+        private final ChangeSupport changeSupport = new ChangeSupport(this);
 
-		@Override
-		public void addChangeListener(ChangeListener cl) {
-			changeSupport.addChangeListener(cl);
-		}
+        public MauiSubprojectProvider(IChromAUIProject project) {
+            this.project = project;
+        }
 
-		@Override
-		public void removeChangeListener(ChangeListener cl) {
-			changeSupport.removeChangeListener(cl);
-		}
+        @Override
+        public Set<? extends Project> getSubprojects() {
+            System.out.println("Subproject location: " + project.getOutputDir());
+            return loadProjects(project.getOutputDir());
+        }
 
-		@Override
-		public void fileFolderCreated(FileEvent fe) {
-			changeSupport.fireChange();
-		}
+        private Set loadProjects(FileObject dir) {
+            Set newProjects = new HashSet();
+            if (dir != null) {
+                File dirFile = FileUtil.toFile(dir);
+                FileFilter directoryFilter = new FileFilter() {
 
-		@Override
-		public void fileDataCreated(FileEvent fe) {
-			changeSupport.fireChange();
-		}
+                    @Override
+                    public boolean accept(File pathname) {
+                        return pathname.isDirectory();
+                    }
+                };
+                File[] children = dirFile.listFiles(directoryFilter);
+                for (File childFolder : children) {
+                    System.out.println("Checking files in " + childFolder.getName());
+                    if (childFolder.getName().startsWith("maltcms-")) {
+                        for (File maltcmsChildFolder : childFolder.listFiles(directoryFilter)) {
+                            System.out.println("Found maltcms folder: " + maltcmsChildFolder.getName());
+                            try {
+                                Project subp = ProjectManager.getDefault().
+                                        findProject(FileUtil.toFileObject(maltcmsChildFolder));
+                                if (subp != null && subp instanceof SimpleChromAProject) {
+                                    newProjects.add((SimpleChromAProject) subp);
+                                    subp.getProjectDirectory().addFileChangeListener(this);
+                                }
+                            } catch (IOException ex) {
+                                Exceptions.printStackTrace(ex);
+                            } catch (IllegalArgumentException ex) {
+                                Exceptions.printStackTrace(ex);
+                            }
+                        }
+                    }
+                }
+            } else {
+                System.err.println("Project directory was null!");
+            }
 
-		@Override
-		public void fileChanged(FileEvent fe) {
-			changeSupport.fireChange();
-		}
+            return Collections.unmodifiableSet(newProjects);
+        }
 
-		@Override
-		public void fileDeleted(FileEvent fe) {
-			changeSupport.fireChange();
-		}
+        @Override
+        public void addChangeListener(ChangeListener cl) {
+            changeSupport.addChangeListener(cl);
+        }
 
-		@Override
-		public void fileRenamed(FileRenameEvent fre) {
-			changeSupport.fireChange();
-		}
+        @Override
+        public void removeChangeListener(ChangeListener cl) {
+            changeSupport.removeChangeListener(cl);
+        }
 
-		@Override
-		public void fileAttributeChanged(FileAttributeEvent fae) {
-			changeSupport.fireChange();
-		}
-	}
+        @Override
+        public void fileFolderCreated(FileEvent fe) {
+            changeSupport.fireChange();
+        }
 
-	@Override
-	public SubprojectProvider provide(IChromAUIProject project) {
-		System.out.println("Creating subproject provider for project "+project);
-		return new MauiSubprojectProvider(project);
-	}
-	
+        @Override
+        public void fileDataCreated(FileEvent fe) {
+            changeSupport.fireChange();
+        }
+
+        @Override
+        public void fileChanged(FileEvent fe) {
+            changeSupport.fireChange();
+        }
+
+        @Override
+        public void fileDeleted(FileEvent fe) {
+            changeSupport.fireChange();
+        }
+
+        @Override
+        public void fileRenamed(FileRenameEvent fre) {
+            changeSupport.fireChange();
+        }
+
+        @Override
+        public void fileAttributeChanged(FileAttributeEvent fae) {
+            changeSupport.fireChange();
+        }
+    }
+
+    @Override
+    public SubprojectProvider provide(IChromAUIProject project) {
+        System.out.println("Creating subproject provider for project " + project);
+        return new MauiSubprojectProvider(project);
+    }
+
 }

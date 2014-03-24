@@ -50,6 +50,8 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
 import org.netbeans.api.progress.ProgressHandle;
@@ -66,156 +68,159 @@ import org.openide.util.NbPreferences;
  */
 public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
 
-	/**
-	 * Throws IllegalArgumentException if either projectDBFile or ic are null.
-	 *
-	 * @param projectDBFile
-	 * @param ic
-	 * @throws IllegalArgumentException
-	 */
-	public DB4oCrudProvider(File projectDBFile, ICredentials ic,
-			ClassLoader domainClassLoader) throws IllegalArgumentException {
-		super(projectDBFile, ic, domainClassLoader);
-	}
-	
-	private long toBytes(int blockSize) {
-		return 2l * (long) blockSize * 1073741824l;
-	}
-	
-	private float toGBytes(long bytes) {
-		return ((float) bytes) / 1073741824.0f;
-	}
-	
-	@Override
-	public final void preOpen() {
-		boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
-		if (updateDatabaseSize) {
-			System.out.println("Updating database size for "+projectDBLocation.getAbsolutePath());
-			int blockSize = Math.max(1, Math.min(254,Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2));
-			ProgressHandle ph = ProgressHandleFactory.createHandle("Defragmentation of " + projectDBLocation);
-			ph.start();
-			try {
-				ph.progress("Defragmenting database file");
-				EmbeddedObjectContainer c = null;
-				try {
-					c = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath());
-					long currentSizeBytes = c.ext().systemInfo().totalSize();
-					long targetSizeBytes = toBytes(blockSize);
-					System.out.println("Current size: "+toGBytes(currentSizeBytes)+" GBytes");
-					System.out.println("Requested size: "+toGBytes(targetSizeBytes)+" GBytes");
-					if (targetSizeBytes < currentSizeBytes) {
-						NotifyDescriptor nd = new NotifyDescriptor.Message("Can not shrink database to requested size! Required: " + toGBytes(currentSizeBytes) + " requested: " + targetSizeBytes, NotifyDescriptor.WARNING_MESSAGE);
-						DialogDisplayer.getDefault().notify(nd);
-						return;
-					}
-				} catch (Exception e) {
-					Exceptions.printStackTrace(e);
-				} finally {
-					if(c!=null) {
-						try{
-							c.close();
-						}catch(Db4oIOException dex) {
-							Exceptions.printStackTrace(dex);
-						}
-					}
-				}
-				DefragmentConfig config = new DefragmentConfig(projectDBLocation.getAbsolutePath());
-				config.objectCommitFrequency(10000);
-				config.forceBackupDelete(true);
-				EmbeddedConfiguration configuration = configure();
-				System.out.println("Setting maximum database size to " + (blockSize * 2) + " GBytes");
-				configuration.file().blockSize(blockSize);
-				config.db4oConfig(configuration);
-				Defragment.defrag(config);
-			} catch (IOException ex) {
-				System.err.println("Defragmentation failed!");
-				Exceptions.printStackTrace(ex);
-				System.err.println("Restoring database from backup!");
-				//restore backup file
-				File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
-				ph.progress("Restoring database from backup file");
-				try {
-					Files.copy(backupFile.toPath(), projectDBLocation.toPath());
-				} catch (IOException ex1) {
-					Exceptions.printStackTrace(ex1);
-				}
-			} finally {
-				ph.progress("Deleting backup file");
-				File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
-				backupFile.delete();
-				ph.finish();
-			}
-		}
-	}
-	
-	@Override
-	public final void open() {
-		authenticate();
-		if (eoc == null) {
-			try {
-				preOpen();
-				System.out.println("Opening ObjectContainer at " + projectDBLocation.getAbsolutePath());
-				eoc = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath());
-				postOpen();
-			} catch (DatabaseFileLockedException ex) {
-				//database file already opened 
-				NotifyDescriptor nd = new NotifyDescriptor.Message("Database file "+projectDBLocation.getAbsolutePath()+" is locked by another process! Please close other programs acessing the database file before retrying!",NotifyDescriptor.ERROR_MESSAGE);
-				DialogDisplayer.getDefault().notify(nd);
-			} catch( Exception e) {
-				System.out.println("Caught unhandled exception, closing database "+projectDBLocation.getAbsolutePath());
-				if(eoc!=null) {
-					eoc.close();
-				}
-				throw e;
-			} catch(Error e) {
-				System.out.println("Caught unhandled error, closing database "+projectDBLocation.getAbsolutePath());
-				if(eoc!=null) {
-					eoc.close();
-				}
-				throw e;
-			}
-		}
-	}
-	
-	@Override
-	public final void postOpen() {
-		if (backupDatabase) {
-			System.out.println("Activating automatic scheduled backup of database!");
-			backupService = Executors.newSingleThreadScheduledExecutor();
-			backupService.scheduleAtFixedRate(new Runnable() {
-				@Override
-				public void run() {
-					System.out.println("Running scheduled backup of database!");
-					Date d = new Date();
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
-					File backupDirectory = new File(projectDBLocation.getParentFile(), "backup");
-					backupDirectory.mkdirs();
-					File backupFile = new File(backupDirectory, sdf.format(d) + "-" + projectDBLocation.getName());
-					System.out.println("Storing backup at " + backupFile);
-					eoc.ext().backup(backupFile.getAbsolutePath());
-				}
-			}, backupTimeInterval, backupTimeInterval, backupTimeUnit);
-		}
-	}
-	
-	@Override
-	public final EmbeddedConfiguration configure() {
-		EmbeddedConfiguration ec = com.db4o.Db4oEmbedded.newConfiguration();
-		ec.common().reflectWith(new JdkReflector(domainClassLoader));
-		ec.common().add(new TransparentActivationSupport());
-		ec.common().add(new TransparentPersistenceSupport(
-				new DeactivatingRollbackStrategy()));
-		ec.common().queries().evaluationMode(QueryEvaluationMode.SNAPSHOT);
-		ec.common().maxStackDepth(80);
-		ec.common().bTreeNodeSize(2048);
-		ec.file().generateUUIDs(ConfigScope.GLOBALLY);
-		if (isVerboseDiagnostics()) {
-			ec.common().diagnostic().addListener(new DiagnosticToConsole());
-		}
-		Storage fileStorage = new FileStorage();
-		// A cache with 128 pages of 1024KB size, gives a 128KB cache
-		Storage cachingStorage = new CachingStorage(fileStorage, 20480, 4096);
-		ec.file().storage(cachingStorage);
-		return ec;
-	}
+    /**
+     * Throws IllegalArgumentException if either projectDBFile or ic are null.
+     *
+     * @param projectDBFile
+     * @param ic
+     * @throws IllegalArgumentException
+     */
+    public DB4oCrudProvider(File projectDBFile, ICredentials ic,
+            ClassLoader domainClassLoader) throws IllegalArgumentException {
+        super(projectDBFile, ic, domainClassLoader);
+    }
+
+    private long toBytes(int blockSize) {
+        return 2l * (long) blockSize * 1073741824l;
+    }
+
+    private float toGBytes(long bytes) {
+        return ((float) bytes) / 1073741824.0f;
+    }
+
+    @Override
+    public final void preOpen() {
+        boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
+        if (updateDatabaseSize) {
+            Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Updating database size for {0}", projectDBLocation.getAbsolutePath());
+            int blockSize = Math.max(1, Math.min(254, Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2));
+            ProgressHandle ph = ProgressHandleFactory.createHandle("Defragmentation of " + projectDBLocation);
+            ph.start();
+            try {
+                ph.progress("Defragmenting database file");
+                EmbeddedObjectContainer c = null;
+                try {
+                    c = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath());
+                    long currentSizeBytes = c.ext().systemInfo().totalSize();
+                    long targetSizeBytes = toBytes(blockSize);
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.FINE, "Current size: {0} GBytes", toGBytes(currentSizeBytes));
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.FINE, "Requested size: {0} GBytes", toGBytes(targetSizeBytes));
+                    if (targetSizeBytes < currentSizeBytes) {
+                        NotifyDescriptor nd = new NotifyDescriptor.Message("Can not shrink database to requested size! Required: " + toGBytes(currentSizeBytes) + " requested: " + targetSizeBytes, NotifyDescriptor.WARNING_MESSAGE);
+                        DialogDisplayer.getDefault().notify(nd);
+                        return;
+                    }
+                } catch (Exception e) {
+                    Exceptions.printStackTrace(e);
+                } finally {
+                    if (c != null) {
+                        try {
+                            c.close();
+                        } catch (Db4oIOException dex) {
+                            Exceptions.printStackTrace(dex);
+                        }
+                    }
+                }
+                DefragmentConfig config = new DefragmentConfig(projectDBLocation.getAbsolutePath());
+                config.objectCommitFrequency(10000);
+                config.forceBackupDelete(true);
+                EmbeddedConfiguration configuration = configure();
+                Logger.getLogger(DB4oCrudProvider.class.getName()).info("Setting maximum database size to " + (blockSize * 2) + " GBytes");
+                configuration.file().blockSize(blockSize);
+                config.db4oConfig(configuration);
+                Defragment.defrag(config);
+            } catch (IOException ex) {
+                Logger.getLogger(DB4oCrudProvider.class.getName()).severe("Defragmentation failed!");
+                Exceptions.printStackTrace(ex);
+                Logger.getLogger(DB4oCrudProvider.class.getName()).info("Restoring database from backup!");
+                //restore backup file
+                File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
+                ph.progress("Restoring database from backup file");
+                try {
+                    Files.copy(backupFile.toPath(), projectDBLocation.toPath());
+                } catch (IOException ex1) {
+                    Exceptions.printStackTrace(ex1);
+                }
+            } finally {
+                ph.progress("Deleting backup file");
+                File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
+                backupFile.delete();
+                ph.finish();
+            }
+        }
+    }
+
+    @Override
+    public final void open() {
+        authenticate();
+        if (eoc == null) {
+            try {
+                preOpen();
+                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Opening ObjectContainer at {0}", projectDBLocation.getAbsolutePath());
+                eoc = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath());
+                postOpen();
+            } catch (DatabaseFileLockedException ex) {
+                //database file already opened 
+                NotifyDescriptor nd = new NotifyDescriptor.Message("Database file " + projectDBLocation.getAbsolutePath() + " is locked by another process! Please close other programs acessing the database file before retrying!", NotifyDescriptor.ERROR_MESSAGE);
+                DialogDisplayer.getDefault().notify(nd);
+            } catch (Exception e) {
+                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.WARNING, "Caught unhandled exception, closing database {0}", projectDBLocation.getAbsolutePath());
+                if (eoc != null) {
+                    eoc.close();
+                }
+                throw e;
+            } catch (Error e) {
+                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.SEVERE, "Caught unhandled error, closing database {0}", projectDBLocation.getAbsolutePath());
+                if (eoc != null) {
+                    eoc.close();
+                }
+                throw e;
+            }
+        }
+    }
+
+    @Override
+    public final void postOpen() {
+        if (backupDatabase) {
+            Logger.getLogger(DB4oCrudProvider.class.getName()).info("Activating automatic scheduled backup of database!");
+            backupService = Executors.newSingleThreadScheduledExecutor();
+            backupService.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).info("Running scheduled backup of database!");
+                    Date d = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+                    File backupDirectory = new File(projectDBLocation.getParentFile(), "backup");
+                    backupDirectory.mkdirs();
+                    File backupFile = new File(backupDirectory, sdf.format(d) + "-" + projectDBLocation.getName());
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Storing backup at {0}", backupFile);
+                    eoc.ext().backup(backupFile.getAbsolutePath());
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Finished backup of {0}", projectDBLocation.getParentFile());
+                }
+            }, backupTimeInterval, backupTimeInterval, backupTimeUnit);
+        }
+    }
+
+    @Override
+    public final EmbeddedConfiguration configure() {
+        EmbeddedConfiguration ec = com.db4o.Db4oEmbedded.newConfiguration();
+        ec.common().reflectWith(new JdkReflector(domainClassLoader));
+        ec.common().add(new TransparentActivationSupport());
+        ec.common().add(new TransparentPersistenceSupport(
+                new DeactivatingRollbackStrategy()));
+        ec.common().queries().evaluationMode(QueryEvaluationMode.SNAPSHOT);
+        ec.common().maxStackDepth(80);
+        ec.common().bTreeNodeSize(2048);
+//        ec.common().add(new UuidSupport());
+        ec.file().generateUUIDs(ConfigScope.GLOBALLY);
+        ec.file().generateCommitTimestamps(true);
+        if (isVerboseDiagnostics()) {
+            ec.common().diagnostic().addListener(new DiagnosticToConsole());
+        }
+        Storage fileStorage = new FileStorage();
+        // A cache with 128 pages of 1024KB size, gives a 128KB cache
+        Storage cachingStorage = new CachingStorage(fileStorage, 20480, 4096);
+        ec.file().storage(cachingStorage);
+        return ec;
+    }
 }

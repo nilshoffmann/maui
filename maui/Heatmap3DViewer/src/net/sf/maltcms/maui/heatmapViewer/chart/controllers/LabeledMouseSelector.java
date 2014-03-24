@@ -45,6 +45,7 @@ import org.jzy3d.plot3d.rendering.view.View;
  * @author ao
  */
 public class LabeledMouseSelector extends AWTAbstractMouseSelector implements KeyListener {
+
     private final Chart target;
 
     public LabeledMouseSelector(Chart target) {
@@ -76,7 +77,7 @@ public class LabeledMouseSelector extends AWTAbstractMouseSelector implements Ke
             }
         }
         if (bestMatch != null) {
-            System.out.println("Found BarChartBar: "+bestMatch.getItem());
+            System.out.println("Found BarChartBar: " + bestMatch.getItem());
             bestMatch.setSelected(true);
         }
     }
@@ -86,7 +87,7 @@ public class LabeledMouseSelector extends AWTAbstractMouseSelector implements Ke
         return;
     }
 
-	@Override
+    @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SHIFT:
@@ -99,11 +100,11 @@ public class LabeledMouseSelector extends AWTAbstractMouseSelector implements Ke
         target.render(); // update message display
     }
 
-	@Override
+    @Override
     public void keyTyped(KeyEvent e) {
     }
 
-	@Override
+    @Override
     public void keyPressed(KeyEvent e) {
         if (!holding) {
             switch (e.getKeyCode()) {
@@ -119,8 +120,8 @@ public class LabeledMouseSelector extends AWTAbstractMouseSelector implements Ke
     }
     protected boolean holding = false;
 
-	@Override
-	public void clearLastSelection() {
-		
-	}
+    @Override
+    public void clearLastSelection() {
+
+    }
 }

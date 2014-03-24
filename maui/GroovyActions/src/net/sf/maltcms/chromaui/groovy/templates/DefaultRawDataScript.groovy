@@ -27,16 +27,16 @@ import cross.datastructures.fragments.IFileFragment
 class ${name} implements RawDataGroovyScript {
     
     String name = "${name}"
-	String category = "Raw data processing"
+    String category = "Raw data processing"
     IChromAUIProject project
     Collection<CDFDataObject> dataObjects
     ProgressHandle progressHandle
     
-	public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
-		this.project = project
-		this.progressHandle = progressHandle
-		this.dataObjects = dobjects
-	}
+    public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
+            this.project = project
+            this.progressHandle = progressHandle
+            this.dataObjects = dobjects
+    }
     
     @Override
     public boolean cancel() {
@@ -45,23 +45,23 @@ class ${name} implements RawDataGroovyScript {
     
     @Override
     public void run() {
-		File outdir = project.getOutputLocation(this);
-		try {
-			progressHandle.setDisplayName(name)
-			progressHandle.start(dataObjects.size())
-			def i = 1;
-			dataObjects.each{ it ->
-				progressHandle.progress("Processing ${r"${it.fragment.name}"}",i)
-				//do something
+        File outdir = project.getOutputLocation(this);
+        try {
+                progressHandle.setDisplayName(name)
+                progressHandle.start(dataObjects.size())
+                def i = 1;
+                dataObjects.each{ it ->
+                        progressHandle.progress("Processing ${r"${it.fragment.name}"}",i)
+                        //do something
 
-				i++
-			}
-		} finally {
-			progressHandle.finish()
-		}
+                        i++
+                }
+        } finally {
+                progressHandle.finish()
+        }
         FileObject fo = FileUtil.toFileObject(outdir)
         fo.refresh()
     }
-	
+
 }
 

@@ -50,35 +50,35 @@ import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.scene.Graph;
-import org.openide.util.NbBundle;
-import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
+import org.openide.windows.TopComponent;
 
 /**
  * Top component which displays something.
  */
 @ConvertAsProperties(dtd = "-//net.sf.maltcms.maui.heatmapViewer//HeatmapViewer//EN",
-autostore = false)
+        autostore = false)
 @TopComponent.Description(preferredID = "HeatmapViewerTopComponent",
-//iconBase="SET/PATH/TO/ICON/HERE", 
-persistenceType = TopComponent.PERSISTENCE_NEVER)
+        //iconBase="SET/PATH/TO/ICON/HERE", 
+        persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "net.sf.maltcms.maui.heatmapViewer.HeatmapViewerTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_HeatmapViewerAction",
-preferredID = "HeatmapViewerTopComponent")
+        preferredID = "HeatmapViewerTopComponent")
 public final class HeatmapViewerTopComponent extends TopComponent {
 
     private Chart chart = null;
     private AbstractDrawable cc;
     private List<BarChartBar<String>> barChartBars = new ArrayList<BarChartBar<String>>();
     private ViewportMapper mapper = null;
-	private Rectangle roi = null;
+    private Rectangle roi = null;
     private int sampling = 5;
-	private AtomicBoolean updatingScene = new AtomicBoolean(false);
+    private AtomicBoolean updatingScene = new AtomicBoolean(false);
 
     public HeatmapViewerTopComponent() {
         initComponents();
@@ -145,10 +145,10 @@ public final class HeatmapViewerTopComponent extends TopComponent {
         if (sampling != old) {
             jButton1.setEnabled(false);
             jTextField1.setText(sampling + "");
-			if(updatingScene.compareAndSet(false, true)) {
-				SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
-				SceneUpdater.createAndRun("Updating Scene", su);
-			}
+            if (updatingScene.compareAndSet(false, true)) {
+                SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
+                SceneUpdater.createAndRun("Updating Scene", su);
+            }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -158,10 +158,10 @@ public final class HeatmapViewerTopComponent extends TopComponent {
         if (sampling != old) {
             jButton2.setEnabled(false);
             jTextField1.setText(sampling + "");
-			if(updatingScene.compareAndSet(false, true)) {
-				SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
-				SceneUpdater.createAndRun("Updating Scene", su);
-			}
+            if (updatingScene.compareAndSet(false, true)) {
+                SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
+                SceneUpdater.createAndRun("Updating Scene", su);
+            }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -177,13 +177,13 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 
     @Override
     public void componentOpened() {
-        
+
     }
 
     public void setMapper(ViewportMapper mapper) {
         this.mapper = mapper;
-		this.roi = mapper.getViewport();
-		buildScene();
+        this.roi = mapper.getViewport();
+        buildScene();
     }
 
     private class SceneUpdater extends AProgressAwareRunnable {
@@ -201,43 +201,43 @@ public final class HeatmapViewerTopComponent extends TopComponent {
                 progressHandle.start();
                 progressHandle.progress("Removing old scene elements");
 //                synchronized (graph) {
-                    if (cc != null) {
-                        graph.remove(cc, false);
-                    }
-                    for (BarChartBar<String> bcb : barChartBars) {
-                        graph.remove(bcb, false);
-                    }
-                    SurfaceFactory sf = new SurfaceFactory();
+                if (cc != null) {
+                    graph.remove(cc, false);
+                }
+                for (BarChartBar<String> bcb : barChartBars) {
+                    graph.remove(bcb, false);
+                }
+                SurfaceFactory sf = new SurfaceFactory();
 //        ViewportMapper mapper = null;
 
-                    progressHandle.progress("Building surface");
-                    boolean fastTesselation = true;
+                progressHandle.progress("Building surface");
+                boolean fastTesselation = true;
 //                    if(coords==null) {
-                        cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
-                            fastTesselation, (int) (roi.width / sampling), (int) (roi.height / sampling));
+                cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
+                        fastTesselation, (int) (roi.width / sampling), (int) (roi.height / sampling));
 //                    }else{
 //                        //use delaunay builder
 //                        cc = sf.createDelaunaySurface(coords);
 //                    }
-                    progressHandle.progress("Adding to scene");
-                    System.out.println("Adding surface to scene graph");
-                    graph.add(cc);
+                progressHandle.progress("Adding to scene");
+                System.out.println("Adding surface to scene graph");
+                graph.add(cc);
 //                }
-
-//            for (int i = 0; i < 10; i++) {
-//                int xpos = (int) (roi.getX() + (double) (Math.random() * (roi.getWidth())));
-//                int ypos = (int) (roi.getY() + (double) (Math.random() * (roi.getHeight())));
-//                String item = xpos + " " + ypos;
-//                BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
-//                        item);
-//                bcb.setData(new Coord3d(xpos, ypos,
-//                        cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
-//                        ypos) - cc.getBounds().getZmin(),
-//                        new Color((float) Math.random(), (float) Math.random(),
-//                        (float) Math.random(), 0.3f));
-//                chart.getScene().getGraph().add(bcb);
-//                barChartBars.add(bcb);
-//            }
+//
+//                for (int i = 0; i < 10; i++) {
+//                    int xpos = (int) (roi.x + (double) (Math.random() * (roi.width)));
+//                    int ypos = (int) (roi.y + (double) (Math.random() * (roi.height)));
+//                    String item = xpos + " " + ypos;
+//                    BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
+//                            item);
+//                    bcb.setData(new Coord3d(xpos, ypos,
+//                            cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
+//                                    ypos) - cc.getBounds().getZmin(),
+//                            new Color((float) Math.random(), (float) Math.random(),
+//                                    (float) Math.random(), 0.3f));
+//                    chart.getScene().getGraph().add(bcb);
+//                    barChartBars.add(bcb);
+//                }
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -259,52 +259,20 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 //        SceneUpdater su = new SceneUpdater(graph);
 //        SceneUpdater.createAndRun("Scene Updater", su);
 //    }
-
     private Chart getChart() {
         if (chart == null) {
-			chart = AWTChartComponentFactory.chart(Quality.Intermediate, "awt");
+            chart = AWTChartComponentFactory.chart(Quality.Intermediate, "awt");
 //            chart = new Chart(Quality.Intermediate, "awt");
             LabeledMouseSelector lms = new LabeledMouseSelector(chart);
             chart.getCanvas().addKeyController(lms);
 
-//            chart.getAxeLayout().setXAxeLabel("Retention Time 1");
-//            chart.getAxeLayout().setYAxeLabel("Retention Time 2");
-//            chart.getAxeLayout().setZAxeLabel("Total Intensity");
-            //cc.setLegend(new ColorbarLegend(cc, chart.getView().getAxe().getLayout()));
-            //cc.setLegendDisplayed(true);
-//            chart.getView().add(new ITooltipRenderer() {
-//                private IntegerCoord2d currentPosition = null;
-//
-//                public void render(Graphics2D g2d) {
-////                    Graphics2D g2d = (Graphics2D) g;
-//                    if (currentPosition != null) {
-//                        g2d.setStroke(new BasicStroke(4.0f));
-//                        g2d.setColor(java.awt.Color.BLACK);
-//                        g2d.drawRect(currentPosition.x, currentPosition.y, 100,
-//                                100);
-//                    }
-//                }
-//
-//                public void updateScreenPosition(IntegerCoord2d position) {
-//                    this.currentPosition = position;
-//                }
-//            });
-//            chart.getView().getTooltips();
-//            chart.getView().setViewPositionMode(ViewPositionMode.TOP);
-//            chart.getView().setAxeBoxDisplayed(false);
+            chart.getAxeLayout().setXAxeLabel("Retention Time 1");
+            chart.getAxeLayout().setYAxeLabel("Retention Time 2");
+            chart.getAxeLayout().setZAxeLabel("Total Intensity");
+            cc.setLegend(new org.jzy3d.plot3d.rendering.legends.colorbars.AWTColorbarLegend(cc, chart.getView().getAxe().getLayout()));
+            cc.setLegendDisplayed(true);
             chart.getView().setMaximized(true);
             chart.getView().getCamera().setScreenGridDisplayed(false);
-//            chart.getView().setSquared(false);
-//            chart.addRenderer(new Renderer2d() {
-//
-//                public void paint(Graphics g) {
-//                    Graphics2D g2d = (Graphics2D) g;
-//                    g2d.setStroke(new BasicStroke(4.0f));
-//                    g2d.setColor(java.awt.Color.BLACK);
-//                    g2d.drawRect(10, 50, 100, 100);
-//
-//                }
-//            });
             AWTCameraMouseController mouse = new AWTCameraMouseController();
             chart.addController(mouse);
             mouse.addControllerEventListener(new ControllerEventListener() {
@@ -348,11 +316,11 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 //                setEnabled(false);
 //        addComposite(getChart().getScene().getGraph());
 //		getChart();
-		if(cc==null) {
-			SurfaceFactory sf = new SurfaceFactory();
-			cc = sf.createSurface(mapper.getClippedViewport(roi), mapper);
-			getChart().addDrawable(cc);
-		}
+        if (cc == null) {
+            SurfaceFactory sf = new SurfaceFactory();
+            cc = sf.createSurface(mapper.getClippedViewport(roi), mapper);
+            getChart().addDrawable(cc);
+        }
 //                setEnabled(true);
 ////                requestActive();
 //            }

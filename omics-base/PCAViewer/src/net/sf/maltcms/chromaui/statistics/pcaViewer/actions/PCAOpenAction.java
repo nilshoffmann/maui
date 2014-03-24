@@ -27,18 +27,17 @@
  */
 package net.sf.maltcms.chromaui.statistics.pcaViewer.actions;
 
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
+import java.awt.event.ActionListener;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
 import net.sf.maltcms.chromaui.statistics.pcaViewer.tasks.PCAOpenActionRunnable;
-import org.openide.awt.ActionRegistration;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReferences;
+import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "DescriptorNodeActions/IPcaDescriptor",
-id = "net.sf.maltcms.chromaui.statistics.pcaViewer.actions.PCAOpenAction")
+        id = "net.sf.maltcms.chromaui.statistics.pcaViewer.actions.PCAOpenAction")
 @ActionRegistration(displayName = "#CTL_PCAOpenAction")
 @ActionReferences({})
 @Messages("CTL_PCAOpenAction=View PCA")
@@ -52,7 +51,7 @@ public final class PCAOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-		PCAOpenActionRunnable r = new PCAOpenActionRunnable(context);
-		PCAOpenActionRunnable.createAndRun("Loading pca plot", r);
+        PCAOpenActionRunnable r = new PCAOpenActionRunnable(context);
+        PCAOpenActionRunnable.createAndRun("Loading pca plot", r);
     }
 }

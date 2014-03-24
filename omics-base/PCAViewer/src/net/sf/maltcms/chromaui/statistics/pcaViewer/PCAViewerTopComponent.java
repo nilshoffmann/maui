@@ -31,11 +31,15 @@ import de.unibielefeld.cebitec.lstutz.pca.data.ParserUtilities;
 import de.unibielefeld.cebitec.lstutz.pca.data.PcaDescriptorAdapter;
 import de.unibielefeld.cebitec.lstutz.pca.visual.StandardGUI;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.DefaultComboBoxModel;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.CancellableRunnable;
 import net.sf.maltcms.chromaui.ui.support.api.ResultListener;
@@ -81,80 +85,102 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
                 "HINT_PCAViewerTopComponent"));
         associateLookup(lookup);
         addComponentListener(this);
+        setOpaque(true);
+        setComboBoxModel();
 //        putClientProperty(TopComponent.PROP_DRAGGING_DISABLED, Boolean.TRUE);
 //        putClientProperty(TopComponent.PROP_SLIDING_DISABLED, Boolean.TRUE);
 //        putClientProperty(TopComponent.PROP_UNDOCKING_DISABLED, Boolean.TRUE);
     }
 
     public void setData(StandardGUI sg) {
-        if (scene == null) {
-            sg.setInstanceContent(content);
-            add(sg, BorderLayout.CENTER);
-        } else {
-            remove(scene);
+        if (updatingView.get()) {
+            Dimension d = getSize();
+            if (scene == null && sg != null) {
+                sg.setInstanceContent(content);
+                add(sg, BorderLayout.CENTER);
+            } else {
+                remove(scene);
 //            throw new IllegalStateException("StandardGUI may only be added once!");
-            sg.setInstanceContent(content);
-            add(sg, BorderLayout.CENTER);
+                if (sg != null) {
+                    sg.setInstanceContent(content);
+                    add(sg, BorderLayout.CENTER);
+                }
+            }
+            scene = sg;
         }
-        scene = sg;
+        revalidate();
     }
 
     private void setComboBoxModel() {
         firstPrincipleComponentComboBox.setModel(createModel(pcaDescriptor));
         secondPrincipleComponentComboBox.setModel(createModel(pcaDescriptor));
         thirdPrincipleComponentComboBox.setModel(createModel(pcaDescriptor));
+        revalidate();
     }
 
     private DefaultComboBoxModel<PrincipalComponent> createModel(IPcaDescriptor pcaDescriptor) {
-        int pcs = pcaDescriptor.getSdev().getShape()[0];
-        PrincipalComponent[] pc = new PrincipalComponent[pcs];
-        for (int i = 0; i < pcs; i++) {
-            pc[i] = new PrincipalComponent(i, pcaDescriptor.getSdev().getDouble(i));
+        if (pcaDescriptor == null) {
+            PrincipalComponent[] pc = new PrincipalComponent[0];
+            DefaultComboBoxModel<PrincipalComponent> dcbm = new DefaultComboBoxModel<>(pc);
+            return dcbm;
+        } else {
+            int pcs = pcaDescriptor.getSdev().getShape()[0];
+            PrincipalComponent[] pc = new PrincipalComponent[pcs];
+            for (int i = 0; i < pcs; i++) {
+                pc[i] = new PrincipalComponent(i, pcaDescriptor.getSdev().getDouble(i));
+            }
+            DefaultComboBoxModel<PrincipalComponent> dcbm = new DefaultComboBoxModel<>(pc);
+            return dcbm;
         }
-        DefaultComboBoxModel<PrincipalComponent> dcbm = new DefaultComboBoxModel<>(pc);
-        return dcbm;
     }
 
     @Override
     public void componentResized(ComponentEvent e) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         //need to update complete component tree
-        invalidate();
-        if (getTopLevelAncestor() != null) {
-            requestFocusInWindow();
-            getTopLevelAncestor().invalidate();
-            getTopLevelAncestor().revalidate();
-//            repaint();
-        }
+//        requestFocusInWindow();
+        revalidate();
+//        invalidate();
+//        if (getTopLevelAncestor() != null) {
+//            getTopLevelAncestor().invalidate();
+//            getTopLevelAncestor().revalidate();
+////            repaint();
+//        }
     }
 
     @Override
     public void componentMoved(ComponentEvent e) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         //need to update complete component tree
-        invalidate();
-        if (getTopLevelAncestor() != null) {
-            requestFocusInWindow();
-            getTopLevelAncestor().invalidate();
-            getTopLevelAncestor().revalidate();
-//            repaint();
-        }
+        revalidate();
+//        invalidate();
+//        if (getTopLevelAncestor() != null) {
+//            requestFocusInWindow();
+//            getTopLevelAncestor().invalidate();
+//            getTopLevelAncestor().revalidate();
+////            repaint();
+//        }
     }
 
     @Override
     public void componentShown(ComponentEvent e) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        revalidate();
     }
 
     @Override
     public void componentHidden(ComponentEvent e) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        revalidate();
     }
 
-    @Data
+    @RequiredArgsConstructor
+    @EqualsAndHashCode(exclude = {"stdev"})
     private class PrincipalComponent {
 
+        @Getter
         private final int index;
+        @Getter
         private final double stdev;
 
         @Override
@@ -186,6 +212,7 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         setOpaque(true);
         setLayout(new java.awt.BorderLayout());
 
+        jToolBar1.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jToolBar1.setRollover(true);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PCAViewerTopComponent.class, "PCAViewerTopComponent.jLabel1.text")); // NOI18N
@@ -223,47 +250,67 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         });
         jToolBar1.add(thirdPrincipleComponentComboBox);
 
-        add(jToolBar1, java.awt.BorderLayout.PAGE_START);
+        add(jToolBar1, java.awt.BorderLayout.WEST);
     }// </editor-fold>//GEN-END:initComponents
 
     private void firstPrincipleComponentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstPrincipleComponentComboBoxActionPerformed
-        updateView();
+        int componentIdx0 = ((PrincipalComponent) firstPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        int componentIdx1 = ((PrincipalComponent) secondPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        int componentIdx2 = ((PrincipalComponent) thirdPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        updateView(componentIdx0, componentIdx1, componentIdx2);
     }//GEN-LAST:event_firstPrincipleComponentComboBoxActionPerformed
 
     private void secondPrincipleComponentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondPrincipleComponentComboBoxActionPerformed
-        updateView();
+        int componentIdx0 = ((PrincipalComponent) firstPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        int componentIdx1 = ((PrincipalComponent) secondPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        int componentIdx2 = ((PrincipalComponent) thirdPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        updateView(componentIdx0, componentIdx1, componentIdx2);
     }//GEN-LAST:event_secondPrincipleComponentComboBoxActionPerformed
 
     private void thirdPrincipleComponentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thirdPrincipleComponentComboBoxActionPerformed
-        updateView();
+        int componentIdx0 = ((PrincipalComponent) firstPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        int componentIdx1 = ((PrincipalComponent) secondPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        int componentIdx2 = ((PrincipalComponent) thirdPrincipleComponentComboBox.getSelectedItem()).getIndex();
+        updateView(componentIdx0, componentIdx1, componentIdx2);
     }//GEN-LAST:event_thirdPrincipleComponentComboBoxActionPerformed
 
-    private void updateView() {
+    @Value
+    private static class StandardGUIParameters {
+
+        private final StandardGUI gui;
+        private final int componentIdx0;
+        private final int componentIdx1;
+        private final int componentIdx2;
+    }
+
+    private void updateView(final int component0, final int component1, final int component2) {
         if (updatingView.compareAndSet(false, true)) {
-            CancellableRunnable<StandardGUI> guiBuilder = new CancellableRunnable<StandardGUI>(true) {
+            CancellableRunnable<StandardGUIParameters> guiBuilder = new CancellableRunnable<StandardGUIParameters>(true) {
 
                 @Override
                 public void body() {
-                    try {
+                    if (updatingView.get()) {
                         String name = "MeltDB 3D Viewer";
-                        int componentIdx0 = ((PrincipalComponent) firstPrincipleComponentComboBox.getSelectedItem()).getIndex();
-                        int componentIdx1 = ((PrincipalComponent) secondPrincipleComponentComboBox.getSelectedItem()).getIndex();
-                        int componentIdx2 = ((PrincipalComponent) thirdPrincipleComponentComboBox.getSelectedItem()).getIndex();
-                        final StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(pcaDescriptor, componentIdx0, componentIdx1, componentIdx2)));
-                        notifyListeners(gui);
-                    } finally {
-                        updatingView.set(false);
+                        final StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(pcaDescriptor, component0, component1, component2)));
+                        final StandardGUIParameters params = new StandardGUIParameters(gui, component0, component1, component2);
+                        notifyListeners(params);
                     }
                 }
             };
-            guiBuilder.addResultListener(new ResultListener<StandardGUI>() {
+            guiBuilder.addResultListener(new ResultListener<StandardGUIParameters>() {
 
                 @Override
-                public void listen(StandardGUI r) {
-                    setData(r);
-                    firstPrincipleComponentComboBox.setEnabled(true);
-                    secondPrincipleComponentComboBox.setEnabled(true);
-                    thirdPrincipleComponentComboBox.setEnabled(true);
+                public void listen(StandardGUIParameters r) {
+                    if (updatingView.get()) {
+                        firstPrincipleComponentComboBox.setSelectedIndex(r.getComponentIdx0());
+                        firstPrincipleComponentComboBox.setEnabled(true);
+                        secondPrincipleComponentComboBox.setSelectedIndex(r.getComponentIdx1());
+                        secondPrincipleComponentComboBox.setEnabled(true);
+                        thirdPrincipleComponentComboBox.setSelectedIndex(r.getComponentIdx2());
+                        thirdPrincipleComponentComboBox.setEnabled(true);
+                        setData(r.getGui());
+                        updatingView.compareAndSet(true, false);
+                    }
                 }
             });
             CancellableRunnable.createAndRun("Creating PCA component model...", guiBuilder);
@@ -296,24 +343,65 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
     protected void componentActivated() {
         super.componentActivated();
         //need to update complete component tree
-        invalidate();
-        if (getTopLevelAncestor() != null) {
-            getTopLevelAncestor().invalidate();
-            getTopLevelAncestor().revalidate();
-//            repaint();
-        }
+//        invalidate();
+//        if (getTopLevelAncestor() != null) {
+//            getTopLevelAncestor().invalidate();
+//            getTopLevelAncestor().revalidate();
+////            repaint();
+//        }
+        revalidate();
     }
 
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
-        // TODO store your settings
+//        p.setProperty("projectLocation", this.project.getProjectDirectory().getPath());
+//        p.setProperty("pcaDescriptorUUID", this.pcaDescriptor.getId().toString());
+//        if (this.firstPrincipleComponentComboBox.getSelectedItem() instanceof PrincipalComponent) {
+//            p.setProperty("principalComponent1", "" + ((PrincipalComponent) this.firstPrincipleComponentComboBox.getSelectedItem()).getIndex());
+//        }
+//        if (this.secondPrincipleComponentComboBox.getSelectedItem() instanceof PrincipalComponent) {
+//            p.setProperty("principalComponent2", "" + ((PrincipalComponent) this.secondPrincipleComponentComboBox.getSelectedItem()).getIndex());
+//        }
+//        if (this.thirdPrincipleComponentComboBox.getSelectedItem() instanceof PrincipalComponent) {
+//            p.setProperty("principalComponent3", "" + ((PrincipalComponent) this.thirdPrincipleComponentComboBox.getSelectedItem()).getIndex());
+//        }
     }
 
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
-        // TODO read your settings according to their version
+//        if (version.equals("1.0")) {
+//            String projectLocationProp = p.getProperty("projectLocation", "NA");
+//            String pcaDescriptorUUIDProp = p.getProperty("pcaDescriptorUUID", "NA");
+//            if (!(projectLocationProp.equals("NA") && pcaDescriptorUUIDProp.equals("NA"))) {
+//                FileObject projectToBeOpened = FileUtil.toFileObject(new File(projectLocationProp));
+//                try {
+//                    Project managedProject = ProjectManager.getDefault().findProject(projectToBeOpened);
+//                    OpenProjects.getDefault().open(new Project[]{managedProject}, false, true);
+//                    int pca1 = 0;
+//                    int pca2 = 1;
+//                    int pca3 = 2;
+//                    if ((managedProject != null && this.project != null) && managedProject.getProjectDirectory().equals(this.project.getProjectDirectory())) {
+//                        pca1 = Integer.parseInt(p.getProperty("principalComponent1", "0"));
+//                        pca2 = Integer.parseInt(p.getProperty("principalComponent2", "1"));
+//                        pca3 = Integer.parseInt(p.getProperty("principalComponent3", "2"));
+//                        this.project = managedProject;
+//                        if (managedProject instanceof IChromAUIProject) {
+//                            IChromAUIProject icp = (IChromAUIProject) managedProject;
+//                            IPcaDescriptor descr = icp.getDescriptorById(UUID.fromString(pcaDescriptorUUIDProp), IPcaDescriptor.class);
+//                            if (descr != null) {
+//                                setPcaDescriptor(pcaDescriptor);
+//                            }
+//                        }
+//                    }
+//                } catch (IOException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                } catch (IllegalArgumentException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                }
+//            }
+//        }
     }
 
     public void setPcaDescriptor(IPcaDescriptor pcaDescriptor) {
@@ -324,12 +412,9 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         this.project = pcaDescriptor.getProject();
         this.pcaDescriptor = pcaDescriptor;
         setComboBoxModel();
-        firstPrincipleComponentComboBox.setSelectedIndex(0);
-        secondPrincipleComponentComboBox.setSelectedIndex(1);
-        thirdPrincipleComponentComboBox.setSelectedIndex(2);
         firstPrincipleComponentComboBox.setEnabled(false);
         secondPrincipleComponentComboBox.setEnabled(false);
         thirdPrincipleComponentComboBox.setEnabled(false);
-        updateView();
+        updateView(0, 1, 2);
     }
 }

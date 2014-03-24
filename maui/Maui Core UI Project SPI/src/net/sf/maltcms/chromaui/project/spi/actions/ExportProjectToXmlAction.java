@@ -28,9 +28,11 @@
 package net.sf.maltcms.chromaui.project.spi.actions;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
-import com.thoughtworks.xstream.converters.reflection.SunUnsafeReflectionProvider;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import com.thoughtworks.xstream.core.ClassLoaderReference;
+import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,45 +41,52 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Collection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.IMauiProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.spi.project.ChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.netbeans.api.project.ProjectUtils;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
+import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
-//@ActionID(category = "Maui",
-//        id = "net.sf.maltcms.chromaui.project.spi.actions.ExportProjectToXmlAction")
-//@ActionRegistration(displayName = "#CTL_ExportProjectToXmlAction")
-//@ActionReferences({
-//    @ActionReference(path = "Menu/File", position = 1415)})
+@ActionID(category = "Maui",
+        id = "net.sf.maltcms.chromaui.project.spi.actions.ExportProjectToXmlAction")
+@ActionRegistration(displayName = "#CTL_ExportProjectToXmlAction")
+@ActionReferences({
+    @ActionReference(path = "Menu/File", position = 1415)})
 @Messages("CTL_ExportProjectToXmlAction=Export to XML")
 public final class ExportProjectToXmlAction implements ActionListener {
-
+    
     private final IChromAUIProject context;
-
+    
     public ExportProjectToXmlAction(IChromAUIProject context) {
         this.context = context;
     }
-
+    
     @RequiredArgsConstructor
     private class XMLExportTask extends AProgressAwareRunnable {
-
+        
         private final IChromAUIProject context;
-
+        
         @Override
         public void run() {
             try {
                 getProgressHandle().start();
                 getProgressHandle().setDisplayName("Exporting project to XML");
                 ClassLoaderReference clr = new ClassLoaderReference(Lookup.getDefault().lookup(ClassLoader.class));
-                final XStream xstream = new XStream(new SunUnsafeReflectionProvider(), new StaxDriver(), clr);
+                final XStream xstream = new XStream(new PureJavaReflectionProvider(), new StaxDriver(), clr);
 //                xstream.setMode(XStream.XPATH_RELATIVE_REFERENCES);
 //                Converter c = new Converter() {
 //                    @Override
@@ -117,12 +126,18 @@ public final class ExportProjectToXmlAction implements ActionListener {
 //                };
 //                xstream.registerConverter(c, XStream.PRIORITY_VERY_HIGH);
                 JavaBeanConverter descriptorConverter = new JavaBeanConverter(xstream.getMapper(), IBasicDescriptor.class);
-                xstream.registerConverter(descriptorConverter);
+                xstream.registerConverter(descriptorConverter, XStream.PRIORITY_VERY_HIGH);
+                CollectionConverter cc = new CollectionConverter(xstream.getMapper(), com.db4o.collections.ActivatableCollection.class);
+                xstream.registerConverter(cc, XStream.PRIORITY_VERY_HIGH);
+                xstream.allowTypesByWildcard(new String[]{"net.sf.maltcms.chromaui.project.api.container.*", "net.sf.maltcms.chromaui.project.api.descriptors.*", "net.sf.maltcms.chromaui.project.api.types.*", "maltcms.datastructures.*", "de.unibielefeld.*"});
+                xstream.denyTypesByWildcard(new String[]{"org.openide.**", "org.netbeans.**", "javax.**", "java.awt.**", "com.db4o.**"});
+                xstream.denyTypes(new Class[]{ChromAUIProject.class, IChromAUIProject.class, IMauiProject.class});
+                xstream.setMode(XStream.XPATH_RELATIVE_REFERENCES);
                 File outputFile = new File(FileUtil.toFile(context.getProjectDirectory()), "project-export.xml");
                 OutputStream fos = null;
                 try {
                     fos = new BufferedOutputStream(new FileOutputStream(outputFile));
-                    xstream.toXML(new ChromAUIProjectAdapter(context), fos);
+                    xstream.marshal(new ChromAUIProjectAdapter(context), new PrettyPrintWriter(new OutputStreamWriter(fos)));
                     fos.close();
                 } catch (IOException ex) {
 //                    Exceptions.printStackTrace(ex);
@@ -161,7 +176,7 @@ public final class ExportProjectToXmlAction implements ActionListener {
             setDisplayName(ProjectUtils.getInformation(project).getDisplayName());
         }
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (context != null) {

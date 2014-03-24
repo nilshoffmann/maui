@@ -44,6 +44,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api.ChromaTOFImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -60,6 +61,7 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.SampleGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.project.ChromAUIProject;
+import net.sf.maltcms.chromaui.project.spi.runnables.ImportAndiChromFileTask;
 import net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
 import org.apache.commons.io.FileUtils;
@@ -448,9 +450,26 @@ public class DBProjectFactory {
                     Exceptions.printStackTrace(ex);
                 }
             } else {
-                fragment = new FileFragment(dataDir, StringTools.removeFileExt(f.getName()) + ".cdf");
-                System.out.println("Adding data file " + fragment.getName());
-                fragment.addSourceFile(new FileFragment(f));
+                FileFragment sourceFileFragment = new FileFragment(f);
+                try {
+                    //try chromatof csv parser
+                    File importDir = new File(projdir, "import");
+                    importDir = new File(importDir, "DBProjectFactory");
+                    sourceFileFragment.getChild("ordinate_values", true);
+                    try {
+                        List<File> files = ImportAndiChromFileTask.createAndRun("Importing ANDI-CHROM file " + f.getName(), new ImportAndiChromFileTask(new File(importDir, StringTools.removeFileExt(f.getName())), new File[]{f})).get();
+                        fragment = new FileFragment(dataDir, files.get(0).getName());
+                        fragment.addSourceFile(new FileFragment(files.get(0)));
+                    } catch (InterruptedException ex) {
+                        Exceptions.printStackTrace(ex);
+                    } catch (ExecutionException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                } catch (ResourceNotAvailableException rnae) {
+                    fragment = new FileFragment(dataDir, StringTools.removeFileExt(f.getName()) + ".cdf");
+                    System.out.println("Adding data file " + fragment.getName());
+                    fragment.addSourceFile(new FileFragment(f));
+                }
             }
             System.out.println("Returning fragment: " + fragment.getUri());
             return fragment;
