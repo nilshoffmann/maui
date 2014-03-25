@@ -29,21 +29,20 @@ package net.sf.maltcms.common.charts.overlay.nodes;
 
 import java.awt.Image;
 import java.beans.IntrospectionException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import javax.swing.Action;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
-import org.apache.commons.lang.ClassUtils;
+import static org.apache.commons.lang.ClassUtils.getAllInterfaces;
+import static org.apache.commons.lang.ClassUtils.getAllSuperclasses;
 import org.openide.actions.PropertiesAction;
 import org.openide.explorer.view.CheckableNode;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
-import org.openide.util.ImageUtilities;
+import static org.openide.util.ImageUtilities.loadImage;
 import org.openide.util.Lookup;
-import org.openide.util.Utilities;
-import org.openide.util.actions.SystemAction;
+import static org.openide.util.Utilities.actionsForPath;
+import static org.openide.util.actions.SystemAction.get;
 
 /**
  *
@@ -100,46 +99,46 @@ public class OverlayNode<T extends ChartOverlay> extends BeanNode<T> implements 
     @Override
     public void setSelected(Boolean selected) {
         getBean().setVisible(selected);
-		fireIconChange();
+        fireIconChange();
     }
 
     @Override
     public Action[] getActions(boolean context) {
-		List<?> interfaces = ClassUtils.getAllInterfaces(getBean().getClass());
-		List<?> superClasses = ClassUtils.getAllSuperclasses(getBean().getClass());
-        LinkedHashSet<Action> containerActions = new LinkedHashSet<Action>();
+        List<?> interfaces = getAllInterfaces(getBean().getClass());
+        List<?> superClasses = getAllSuperclasses(getBean().getClass());
+        LinkedHashSet<Action> containerActions = new LinkedHashSet<>();
         for (Object o : interfaces) {
-			Class<?> c = (Class)o;
-            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+            Class<?> c = (Class) o;
+            containerActions.addAll(actionsForPath("Actions/OverlayNodeActions/" + c.
                     getName()));
-            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+            containerActions.addAll(actionsForPath("Actions/OverlayNodeActions/" + c.
                     getSimpleName()));
         }
-		for (Object o : superClasses) {
-			Class<?> c = (Class)o;
-            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+        for (Object o : superClasses) {
+            Class<?> c = (Class) o;
+            containerActions.addAll(actionsForPath("Actions/OverlayNodeActions/" + c.
                     getName()));
-            containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + c.
+            containerActions.addAll(actionsForPath("Actions/OverlayNodeActions/" + c.
                     getSimpleName()));
         }
-        containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + getBean().
+        containerActions.addAll(actionsForPath("Actions/OverlayNodeActions/" + getBean().
                 getClass().getName()));
-        containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/" + getBean().
+        containerActions.addAll(actionsForPath("Actions/OverlayNodeActions/" + getBean().
                 getClass().getSimpleName()));
         containerActions.add(null);
-        containerActions.addAll(Utilities.actionsForPath("Actions/OverlayNodeActions/DefaultActions"));
-        containerActions.add(SystemAction.get(PropertiesAction.class));
+        containerActions.addAll(actionsForPath("Actions/OverlayNodeActions/DefaultActions"));
+        containerActions.add(get(PropertiesAction.class));
         return containerActions.toArray(new Action[containerActions.size()]);
     }
-    
+
     @Override
     public Image getIcon(int type) {
-        if(isSelected()) {
-            return ImageUtilities.loadImage(
-                "net/sf/maltcms/common/charts/resources/SelectionVisible.png");
-        }else{
-            return ImageUtilities.loadImage(
-                "net/sf/maltcms/common/charts/resources/SelectionHidden.png");
+        if (isSelected()) {
+            return loadImage(
+                    "net/sf/maltcms/common/charts/resources/SelectionVisible.png");
+        } else {
+            return loadImage(
+                    "net/sf/maltcms/common/charts/resources/SelectionHidden.png");
         }
     }
 }

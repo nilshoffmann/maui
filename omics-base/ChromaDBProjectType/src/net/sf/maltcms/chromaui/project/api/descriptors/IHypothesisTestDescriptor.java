@@ -32,6 +32,7 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  * @author Nils Hoffmann
  */
 public interface IHypothesisTestDescriptor {
+
     String PROP_DEGREESOFFREEDOM = "degreesOfFreedom";
     String PROP_FACTORS = "factors";
     String PROP_PVALUES = "pvalues";
@@ -79,23 +80,23 @@ public interface IHypothesisTestDescriptor {
      * @param pValues new values of pValues
      */
     void setPvalues(double[] pValues);
-    
+
     /**
-     * Set the value of pvalueAdjustmentMethod for pvalue correction
-	 * in multiple testing.
+     * Set the value of pvalueAdjustmentMethod for pvalue correction in multiple
+     * testing.
      *
      * @param method the pvalue adjustment method to use
      */
     void setPvalueAdjustmentMethod(String method);
-    
-    
+
     /**
      * Get the value of pvalueAdjustmentMethod
+     *
      * @return the value of pvalueAdjustmentMethod
      */
     String getPvalueAdjustmentMethod();
-    
+
     void setGroupSize(int size);
-    
+
     int getGroupSize();
 }

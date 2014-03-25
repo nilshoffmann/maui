@@ -33,7 +33,7 @@ import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.openide.explorer.view.CheckableNode;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
-import org.openide.util.ImageUtilities;
+import static org.openide.util.ImageUtilities.loadImage;
 import org.openide.util.Lookup;
 
 /**
@@ -44,7 +44,7 @@ public class SelectionNode extends BeanNode<ISelection> implements CheckableNode
 
     private boolean checkable = true;
     private boolean checkEnabled = true;
-    
+
     public SelectionNode(ISelection bean) throws IntrospectionException {
         super(bean);
     }
@@ -56,7 +56,7 @@ public class SelectionNode extends BeanNode<ISelection> implements CheckableNode
     public SelectionNode(ISelection bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children, lkp);
     }
- 
+
     @Override
     public boolean isCheckable() {
         return checkable;
@@ -76,16 +76,16 @@ public class SelectionNode extends BeanNode<ISelection> implements CheckableNode
     public void setSelected(Boolean selected) {
         getBean().setVisible(selected);
     }
-    
+
     @Override
     public Image getIcon(int type) {
-        if(isSelected()) {
-            return ImageUtilities.loadImage(
-                "net/sf/maltcms/common/charts/resources/SelectionVisible.png");
-        }else{
-            return ImageUtilities.loadImage(
-                "net/sf/maltcms/common/charts/resources/SelectionHidden.png");
+        if (isSelected()) {
+            return loadImage(
+                    "net/sf/maltcms/common/charts/resources/SelectionVisible.png");
+        } else {
+            return loadImage(
+                    "net/sf/maltcms/common/charts/resources/SelectionHidden.png");
         }
     }
-    
+
 }

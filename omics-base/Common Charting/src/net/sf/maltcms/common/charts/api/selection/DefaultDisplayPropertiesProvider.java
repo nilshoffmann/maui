@@ -27,59 +27,55 @@
  */
 package net.sf.maltcms.common.charts.api.selection;
 
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYZDataset;
-
 /**
  *
  * @author Nils Hoffmann
  */
 public class DefaultDisplayPropertiesProvider implements IDisplayPropertiesProvider {
 
-	@Override
-	public String getName(ISelection selection) {
-		return selection.getTarget().toString();
-	}
+    @Override
+    public String getName(ISelection selection) {
+        return selection.getTarget().toString();
+    }
 
-	@Override
-	public String getDisplayName(ISelection selection) {
-		return selection.getTarget().toString();
-	}
+    @Override
+    public String getDisplayName(ISelection selection) {
+        return selection.getTarget().toString();
+    }
 
-	@Override
-	public String getShortDescription(ISelection selection) {
-		return selection.getTarget().toString() + " with source: " + selection.getSource().toString();
-	}
+    @Override
+    public String getShortDescription(ISelection selection) {
+        return selection.getTarget().toString() + " with source: " + selection.getSource().toString();
+    }
 
-	@Override
-	public String getSourceName(ISelection selection) {
-		return selection.getSource().toString();
-	}
+    @Override
+    public String getSourceName(ISelection selection) {
+        return selection.getSource().toString();
+    }
 
-	@Override
-	public String getSourceDisplayName(ISelection selection) {
-		return selection.getSource().toString();
-	}
+    @Override
+    public String getSourceDisplayName(ISelection selection) {
+        return selection.getSource().toString();
+    }
 
-	@Override
-	public String getSourceShortDescription(ISelection selection) {
-		return selection.getSource().toString();
-	}
+    @Override
+    public String getSourceShortDescription(ISelection selection) {
+        return selection.getSource().toString();
+    }
 
-	@Override
-	public String getTargetName(ISelection selection) {
-		return selection.getTarget().toString();
-	}
+    @Override
+    public String getTargetName(ISelection selection) {
+        return selection.getTarget().toString();
+    }
 
-	@Override
-	public String getTargetDisplayName(ISelection selection) {
-		return selection.getTarget().toString();
-	}
+    @Override
+    public String getTargetDisplayName(ISelection selection) {
+        return selection.getTarget().toString();
+    }
 
-	@Override
-	public String getTargetShortDescription(ISelection selection) {
-		return selection.getTarget().toString();
-	}
+    @Override
+    public String getTargetShortDescription(ISelection selection) {
+        return selection.getTarget().toString();
+    }
 
 }

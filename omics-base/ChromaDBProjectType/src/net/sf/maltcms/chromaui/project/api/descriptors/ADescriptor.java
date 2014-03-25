@@ -31,22 +31,24 @@ import com.db4o.activation.ActivationPurpose;
 import com.db4o.config.annotations.Indexed;
 
 /**
- * Base class for bits of information in the domain model.
- * Containers extend this base class, as well as all other Descriptor implementations.
- * Provides basic functionality for name, displayName, date, id, shortDescription
- * and tool. A tool is the thing that created the descriptor in the first place.
+ * Base class for bits of information in the domain model. Containers extend
+ * this base class, as well as all other Descriptor implementations. Provides
+ * basic functionality for name, displayName, date, id, shortDescription and
+ * tool. A tool is the thing that created the descriptor in the first place.
+ *
  * @author Nils Hoffmann
  */
 public class ADescriptor extends ABasicDescriptor implements IDescriptor {
 
-    @Indexed IToolDescriptor tool = DescriptorFactory.newToolResultDescriptor();
-    
+    @Indexed
+    IToolDescriptor tool = DescriptorFactory.newToolResultDescriptor();
+
     @Override
     public IToolDescriptor getTool() {
         activate(ActivationPurpose.READ);
         return tool;
     }
-    
+
     @Override
     public void setTool(IToolDescriptor tool) {
         activate(ActivationPurpose.WRITE);
@@ -55,5 +57,5 @@ public class ADescriptor extends ABasicDescriptor implements IDescriptor {
         this.tool = tool;
         firePropertyChange(PROP_TOOL, old, tool);
     }
-    
+
 }

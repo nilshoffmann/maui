@@ -41,67 +41,68 @@ import org.openide.util.lookup.InstanceContent;
  * @author Nils Hoffmann
  */
 public class ACategoryDataset<SOURCE, TARGET> extends DefaultCategoryDataset implements ILookupDataset<SOURCE, TARGET> {
-	protected final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
-	private final InstanceContent content = new InstanceContent();
-	private final Lookup lookup = new AbstractLookup(content);
-	private final IDisplayPropertiesProvider displayPropertiesProvider;
 
-	public ACategoryDataset(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
-		targetProvider = new ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>>(l);
-		for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
-			content.add(nep.getSource());
-		}
-		this.displayPropertiesProvider = provider;
-		content.add(this.displayPropertiesProvider);
-	}
+    protected final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
+    private final InstanceContent content = new InstanceContent();
+    private final Lookup lookup = new AbstractLookup(content);
+    private final IDisplayPropertiesProvider displayPropertiesProvider;
 
-	public ACategoryDataset(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
-		this(l, new DefaultDisplayPropertiesProvider());
-	}
+    public ACategoryDataset(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
+        targetProvider = new ArrayList<>(l);
+        for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
+            content.add(nep.getSource());
+        }
+        this.displayPropertiesProvider = provider;
+        content.add(this.displayPropertiesProvider);
+    }
 
-	public ACategoryDataset(ADataset1D<SOURCE, TARGET> delegate) {
-		this(delegate.getNamedElementProvider(), delegate.getLookup().lookup(IDisplayPropertiesProvider.class));
-	}
+    public ACategoryDataset(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
+        this(l, new DefaultDisplayPropertiesProvider());
+    }
 
-	@Override
-	public List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider() {
-		return targetProvider;
-	}
+    public ACategoryDataset(ADataset1D<SOURCE, TARGET> delegate) {
+        this(delegate.getNamedElementProvider(), delegate.getLookup().lookup(IDisplayPropertiesProvider.class));
+    }
 
-	@Override
-	public Lookup getLookup() {
-		return lookup;
-	}
+    @Override
+    public List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider() {
+        return targetProvider;
+    }
 
-	@Override
-	public TARGET getTarget(int seriesIndex, int itemIndex) {
+    @Override
+    public Lookup getLookup() {
+        return lookup;
+    }
+
+    @Override
+    public TARGET getTarget(int seriesIndex, int itemIndex) {
 //        System.out.println("Retrieving target from series " + seriesIndex + ", item " + itemIndex);
-		return targetProvider.get(seriesIndex).get(itemIndex);
-	}
+        return targetProvider.get(seriesIndex).get(itemIndex);
+    }
 
-	@Override
-	public SOURCE getSource(int seriesIndex) {
+    @Override
+    public SOURCE getSource(int seriesIndex) {
 //        System.out.println("Retrieving source for index: " + seriesIndex);
-		return targetProvider.get(seriesIndex).getSource();
-	}
+        return targetProvider.get(seriesIndex).getSource();
+    }
 
-	@Override
-	public Comparable<?> getRowKey(int i) {
-		return targetProvider.get(i).getKey();
-	}
+    @Override
+    public Comparable<?> getRowKey(int i) {
+        return targetProvider.get(i).getKey();
+    }
 
-	@Override
-	public String getDescription() {
-		StringBuilder sb = new StringBuilder();
-		for (INamedElementProvider<? extends SOURCE, ? extends TARGET> np : targetProvider) {
-			sb.append(np.getKey());
-			sb.append(", ");
-		}
-		return sb.toString();
-	}
+    @Override
+    public String getDescription() {
+        StringBuilder sb = new StringBuilder();
+        for (INamedElementProvider<? extends SOURCE, ? extends TARGET> np : targetProvider) {
+            sb.append(np.getKey());
+            sb.append(", ");
+        }
+        return sb.toString();
+    }
 
-	@Override
-	public String getDisplayName() {
-		return targetProvider.size() + " datasets";
-	}
+    @Override
+    public String getDisplayName() {
+        return targetProvider.size() + " datasets";
+    }
 }

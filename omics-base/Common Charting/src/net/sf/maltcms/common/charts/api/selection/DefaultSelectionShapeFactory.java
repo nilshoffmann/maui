@@ -24,7 +24,7 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
- */ 
+ */
 package net.sf.maltcms.common.charts.api.selection;
 
 import java.awt.Shape;
@@ -32,21 +32,21 @@ import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.XYItemEntity;
 
 /**
- * Default implementation of selection shapes. Simply returns the area as 
+ * Default implementation of selection shapes. Simply returns the area as
  * returned by the passed in XYItemEntity.
- * 
+ *
  * @author Nils Hoffmann
  */
 public class DefaultSelectionShapeFactory implements ISelectionShapeFactory {
 
-	@Override
-	public Shape createSelectionShape(XYItemEntity entity) {
-		return entity.getArea();
-	}
-	
-	@Override
-	public Shape createSelectionShape(CategoryItemEntity entity) {
-		return entity.getArea();
-	}
-	
+    @Override
+    public Shape createSelectionShape(XYItemEntity entity) {
+        return entity.getArea();
+    }
+
+    @Override
+    public Shape createSelectionShape(CategoryItemEntity entity) {
+        return entity.getArea();
+    }
+
 }

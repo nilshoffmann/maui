@@ -32,25 +32,27 @@ package de.unibielefeld.gi.kotte.laborprogramm.centralLookup;
  * @author Nils Hoffmann
  */
 public interface ICentralLookupFactory {
-	/**
-	 * Returns the default CentralLookup instance.
-	 * 
-	 * @return 
-	 */
-	CentralLookup getDefault();
-	/**
-	 * Creates and / or returns a CentralLookup instance with the 
-	 * given name.
-	 * 
-	 * @param name
-	 * @return 
-	 */
-	CentralLookup getNamed(String name);
-	/**
-	 * Allows to explicitly remove a named lookup from the lookup factory's 
-	 * internal map.
-	 * 
-	 * @param name 
-	 */
-	void removeNamed(String name);
+
+    /**
+     * Returns the default CentralLookup instance.
+     *
+     * @return
+     */
+    CentralLookup getDefault();
+
+    /**
+     * Creates and / or returns a CentralLookup instance with the given name.
+     *
+     * @param name
+     * @return
+     */
+    CentralLookup getNamed(String name);
+
+    /**
+     * Allows to explicitly remove a named lookup from the lookup factory's
+     * internal map.
+     *
+     * @param name
+     */
+    void removeNamed(String name);
 }

@@ -35,6 +35,7 @@ import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
+import static org.openide.util.Utilities.actionsForPath;
 
 /**
  *
@@ -57,8 +58,8 @@ public class SelectionOverlayNode extends OverlayNode<SelectionOverlay> {
     @Override
     public Action[] getActions(boolean context) {
         Action[] actions = super.getActions(context);
-        List<? extends Action> selectionActions = Utilities.actionsForPath("Actions/OverlayNodeActions/SelectionOverlay");
-        List<Action> nodeActions = new ArrayList<Action>(selectionActions);
+        List<? extends Action> selectionActions = actionsForPath("Actions/OverlayNodeActions/SelectionOverlay");
+        List<Action> nodeActions = new ArrayList<>(selectionActions);
         nodeActions.add(null);
         for (Action a : actions) {
             if (a != null && a.isEnabled()) {

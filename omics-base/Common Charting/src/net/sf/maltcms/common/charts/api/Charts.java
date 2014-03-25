@@ -28,14 +28,14 @@
 package net.sf.maltcms.common.charts.api;
 
 import java.beans.IntrospectionException;
-import javax.swing.SwingUtilities;
+import static javax.swing.SwingUtilities.invokeLater;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import net.sf.maltcms.common.charts.overlay.nodes.OverlayNode;
 import net.sf.maltcms.common.charts.ui.XYChartTopComponent;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
+import static org.openide.util.Exceptions.printStackTrace;
 import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Task;
@@ -48,42 +48,42 @@ import org.openide.windows.WindowManager;
  * @author Nils Hoffmann
  */
 public class Charts {
-    
+
     public static Node overlayNode(ChartOverlay chartOverlay) {
         try {
-            OverlayNode<ChartOverlay> node = new OverlayNode<ChartOverlay>(chartOverlay);
+            OverlayNode<ChartOverlay> node = new OverlayNode<>(chartOverlay);
             return node;
         } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
+            printStackTrace(ex);
         }
         return Node.EMPTY;
     }
-    
+
     public static Node overlayNode(ChartOverlay chartOverlay, Children children) {
         try {
-            OverlayNode<ChartOverlay> node = new OverlayNode<ChartOverlay>(chartOverlay, children);
+            OverlayNode<ChartOverlay> node = new OverlayNode<>(chartOverlay, children);
             return node;
         } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
+            printStackTrace(ex);
         }
         return Node.EMPTY;
     }
-    
+
     public static Node overlayNode(ChartOverlay chartOverlay, Children children, Lookup lookup) {
         try {
-            OverlayNode<ChartOverlay> node = new OverlayNode<ChartOverlay>(chartOverlay, children, lookup);
+            OverlayNode<ChartOverlay> node = new OverlayNode<>(chartOverlay, children, lookup);
             return node;
         } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
+            printStackTrace(ex);
         }
         return Node.EMPTY;
     }
-    
-    public static <TARGET> void openXYChart(final Class<TARGET> typeClass, final ADataset1D<?,TARGET> dataset, final XYChartBuilder builder, final TaskListener listener) {
+
+    public static <TARGET> void openXYChart(final Class<TARGET> typeClass, final ADataset1D<?, TARGET> dataset, final XYChartBuilder builder, final TaskListener listener) {
         Task t = RequestProcessor.getDefault().create(new Runnable() {
             @Override
             public void run() {
-                SwingUtilities.invokeLater(new Runnable() {
+                invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         TopComponent tc = WindowManager.getDefault().findTopComponent("navigatorTC");
@@ -92,11 +92,11 @@ public class Charts {
                         }
                     }
                 });
-                SwingUtilities.invokeLater(new Runnable() {
+                invokeLater(new Runnable() {
 
                     @Override
                     public void run() {
-                        XYChartTopComponent<TARGET> xytc = new XYChartTopComponent<TARGET>(typeClass, dataset, builder);
+                        XYChartTopComponent<TARGET> xytc = new XYChartTopComponent<>(typeClass, dataset, builder);
                         xytc.open();
                         xytc.requestActive();
                     }
@@ -107,5 +107,5 @@ public class Charts {
         t.addTaskListener(listener);
         RequestProcessor.getDefault().post(t);
     }
-    
+
 }

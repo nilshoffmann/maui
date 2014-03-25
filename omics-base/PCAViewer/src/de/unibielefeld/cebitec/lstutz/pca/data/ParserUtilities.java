@@ -84,13 +84,13 @@ public class ParserUtilities {
     }
 
     public static HashMap<String, ArrayList<DataModel>> group_data(ArrayList<DataModel> list) {
-        HashMap<String, ArrayList<DataModel>> temp = new HashMap<String, ArrayList<DataModel>>();
+        HashMap<String, ArrayList<DataModel>> temp = new HashMap<>();
         for (DataModel d : list) {
             String key = d.getColor().x + "," + d.getColor().y + "," + d.getColor().z;
             if (temp.get(key) != null) {
                 temp.get(key).add(d);
             } else {
-                ArrayList<DataModel> l = new ArrayList<DataModel>();
+                ArrayList<DataModel> l = new ArrayList<>();
                 l.add(d);
                 temp.put(key, l);
             }

@@ -5,14 +5,14 @@
 <project name="de.unibielefeld.gi.kotte.laborprogramm.debug" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project de.unibielefeld.gi.kotte.laborprogramm.debug.</description>
     <import file="nbproject/build-impl.xml"/>
-	<import file="../../nbproject/custom-nbm.xml"/>
-	<target name="nbm" depends="custom-nbm.nbm">
-		<antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
-	</target>
-	<target name="javadoc">
-		<echo message="Skipping target javadoc"/>
-	</target>
-	<target name="javadoc-nb">
-		<echo message="Skipping target javadoc-nb"/>
-	</target>
+    <import file="../../nbproject/custom-nbm.xml"/>
+    <target name="nbm" depends="custom-nbm.nbm">
+        <antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
+    </target>
+    <target name="javadoc">
+        <echo message="Skipping target javadoc"/>
+    </target>
+    <target name="javadoc-nb">
+        <echo message="Skipping target javadoc-nb"/>
+    </target>
 </project>

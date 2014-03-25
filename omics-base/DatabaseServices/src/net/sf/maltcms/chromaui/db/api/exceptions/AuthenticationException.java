@@ -31,7 +31,7 @@ package net.sf.maltcms.chromaui.db.api.exceptions;
  *
  * @author Nils Hoffmann
  */
-public class AuthenticationException extends RuntimeException{
+public class AuthenticationException extends RuntimeException {
 
     public AuthenticationException(Throwable cause) {
         super(cause);

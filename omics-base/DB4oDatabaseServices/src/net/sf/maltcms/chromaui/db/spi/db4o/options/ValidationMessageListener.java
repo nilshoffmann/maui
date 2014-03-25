@@ -32,5 +32,6 @@ package net.sf.maltcms.chromaui.db.spi.db4o.options;
  * @author Nils Hoffmann
  */
 interface ValidationMessageListener {
+
     public void validationMessage(ValidationMessage message);
 }

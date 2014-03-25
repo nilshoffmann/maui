@@ -33,6 +33,6 @@ import java.util.HashMap;
  *
  * @author Nils Hoffmann
  */
-public class ProjectSettings extends HashMap<String,Object>{
+public class ProjectSettings extends HashMap<String, Object> {
 
 }

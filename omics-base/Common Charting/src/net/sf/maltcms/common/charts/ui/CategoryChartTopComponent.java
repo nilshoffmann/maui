@@ -32,24 +32,24 @@ import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.CategoryChartBuilder;
-import net.sf.maltcms.common.charts.api.ChartCustomizer;
 import net.sf.maltcms.common.charts.api.dataset.ACategoryDataset;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.CategoryMouseSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
+import static net.sf.maltcms.common.charts.ui.Bundle.CTL_CategoryChartTopComponent;
+import static net.sf.maltcms.common.charts.ui.Bundle.HINT_CategoryChartTopComponent;
 import org.jfree.chart.ChartPanel;
-import org.jfree.data.category.CategoryDataset;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.util.Lookup;
-import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.RequestProcessor;
+import static org.openide.util.RequestProcessor.getDefault;
 import org.openide.util.Task;
 import org.openide.util.TaskListener;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.Lookups;
+import static org.openide.util.lookup.Lookups.fixed;
 import org.openide.util.lookup.ProxyLookup;
+import org.openide.windows.TopComponent;
 
 /**
  * Top component which displays a CategoryChart.
@@ -66,24 +66,24 @@ public final class CategoryChartTopComponent<TARGET> extends TopComponent implem
     private InstanceContentSelectionHandler selectionHandler;
 
     public CategoryChartTopComponent(Class<TARGET> resultType, final ACategoryDataset<?, TARGET> dataset, final CategoryChartBuilder cb) {
-        associateLookup(new ProxyLookup(lookup, Lookups.fixed(new NavigatorLookupHint() {
+        associateLookup(new ProxyLookup(lookup, fixed(new NavigatorLookupHint() {
             @Override
             public String getContentType() {
                 return "application/jfreechart+overlay";
             }
         })));
         initComponents();
-        setName(Bundle.CTL_CategoryChartTopComponent());
-        setToolTipText(Bundle.HINT_CategoryChartTopComponent());
+        setName(CTL_CategoryChartTopComponent());
+        setToolTipText(HINT_CategoryChartTopComponent());
         setEnabled(false);
-        Task t = RequestProcessor.getDefault().create(new Runnable() {
+        Task t = getDefault().create(new Runnable() {
             @Override
             public void run() {
                 createChartPanel(cb, dataset, content);
             }
         });
         t.addTaskListener(this);
-        RequestProcessor.getDefault().post(t);
+        getDefault().post(t);
     }
 
     @Override
@@ -153,7 +153,7 @@ public final class CategoryChartTopComponent<TARGET> extends TopComponent implem
             @Override
             public void run() {
                 panel = getLookup().lookup(ChartPanel.class);
-				JScrollPane pane = new JScrollPane(panel);
+                JScrollPane pane = new JScrollPane(panel);
                 add(pane, BorderLayout.CENTER);
                 selectionHandler = getLookup().lookup(InstanceContentSelectionHandler.class);
                 setEnabled(true);
@@ -176,7 +176,7 @@ public final class CategoryChartTopComponent<TARGET> extends TopComponent implem
         customPanel.getChart().getCategoryPlot().getRangeAxis().addChangeListener(so);
         customPanel.getChart().getCategoryPlot().getDomainAxis().addChangeListener(so);
         InstanceContentSelectionHandler selectionHandler = new InstanceContentSelectionHandler(content, so, InstanceContentSelectionHandler.Mode.ON_CLICK, dataset);
-        CategoryMouseSelectionHandler<TARGET> sl = new CategoryMouseSelectionHandler<TARGET>(dataset);
+        CategoryMouseSelectionHandler<TARGET> sl = new CategoryMouseSelectionHandler<>(dataset);
         sl.addSelectionChangeListener(so);
         sl.addSelectionChangeListener(selectionHandler);
         customPanel.addChartMouseListener(sl);

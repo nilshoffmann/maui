@@ -34,10 +34,10 @@ import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 
 /**
- * Abstract base class for implementations of a typed {@link org.openide.util.LookupListener}, 
- * supporting additional methods from {@link ILookupResultListener} for dynamic registration and 
- * deregistration.
- * 
+ * Abstract base class for implementations of a typed
+ * {@link org.openide.util.LookupListener}, supporting additional methods from
+ * {@link ILookupResultListener} for dynamic registration and deregistration.
+ *
  * @author Nils Hoffmann
  */
 public abstract class AbstractLookupResultListener<T> implements LookupListener, ILookupResultListener {
@@ -49,7 +49,7 @@ public abstract class AbstractLookupResultListener<T> implements LookupListener,
     private final Lookup contentProviderLookup;
 
     public AbstractLookupResultListener(Class<? extends T> typeToListenFor) {
-        this(typeToListenFor,Utilities.actionsGlobalContext());
+        this(typeToListenFor, Utilities.actionsGlobalContext());
     }
 
     public AbstractLookupResultListener(Class<? extends T> typeToListenFor, Lookup contentProviderLookup) {
@@ -60,7 +60,7 @@ public abstract class AbstractLookupResultListener<T> implements LookupListener,
     @Override
     public void register(Lookup targetLookup) {
         result = targetLookup.lookupResult(typeToListenFor);
-        if(result!=null) {
+        if (result != null) {
             result.addLookupListener(this);
             resultChanged(new LookupEvent(result));
         }
@@ -68,7 +68,7 @@ public abstract class AbstractLookupResultListener<T> implements LookupListener,
 
     @Override
     public void deregister() {
-        if(result!=null) {
+        if (result != null) {
             result.removeLookupListener(this);
         }
         result = null;

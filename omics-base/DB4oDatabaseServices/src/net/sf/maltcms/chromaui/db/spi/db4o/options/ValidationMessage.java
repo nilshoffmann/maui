@@ -34,11 +34,12 @@ import java.awt.Component;
  * @author Nils Hoffmann
  */
 public class ValidationMessage {
-    
-    public static enum Type{
-        CLEAR,WARNING,ERROR,INFO;
+
+    public static enum Type {
+
+        CLEAR, WARNING, ERROR, INFO;
     };
-    
+
     private final Component source;
     private final Type type;
     private final String message;
@@ -60,5 +61,5 @@ public class ValidationMessage {
     public String getMessage() {
         return message;
     }
-    
+
 }

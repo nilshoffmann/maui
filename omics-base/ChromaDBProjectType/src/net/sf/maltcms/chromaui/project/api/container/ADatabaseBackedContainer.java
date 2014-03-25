@@ -44,7 +44,7 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         implements IContainer<T> {
 
     private int precedence = 0;
-    private List<T> members = new ActivatableArrayList<T>();
+    private List<T> members = new ActivatableArrayList<>();
 
     public ADatabaseBackedContainer() {
         setName(getClass().getSimpleName());
@@ -99,7 +99,7 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         if (members instanceof ActivatableArrayList) {
             this.members = (ActivatableArrayList<T>) members;
         } else {
-            this.members = new ActivatableArrayList<T>(members);
+            this.members = new ActivatableArrayList<>(members);
         }
         for (T t : this.members) {
             t.setProject(getProject());
@@ -114,7 +114,7 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         for (T t : f) {
             t.setProject(getProject());
         }
-        this.members = new ActivatableArrayList<T>(Arrays.asList(f));
+        this.members = new ActivatableArrayList<>(Arrays.asList(f));
         firePropertyChange(PROP_MEMBERS, null,
                 this.members);
     }

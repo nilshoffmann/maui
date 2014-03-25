@@ -28,10 +28,12 @@
 package de.unibielefeld.gi.kotte.laborprogramm.centralLookup.impl;
 
 import de.unibielefeld.gi.kotte.laborprogramm.centralLookup.CentralLookup;
+import static de.unibielefeld.gi.kotte.laborprogramm.centralLookup.CentralLookup.getDefault;
 import de.unibielefeld.gi.kotte.laborprogramm.centralLookup.ICentralLookupFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.openide.util.Lookup;
 
 /**
  *
@@ -39,39 +41,39 @@ import org.openide.util.Lookup;
  */
 public class CentralLookupFactoryTest {
 
-	/**
-	 * Test of getDefault method, of class CentralLookupFactory.
-	 */
-	@Test
-	public void testGetDefault() {
-		CentralLookup lookupExpected = CentralLookup.getDefault();
-		ICentralLookupFactory lookupFactory = Lookup.getDefault().lookup(ICentralLookupFactory.class);
-		assertSame(lookupExpected, lookupFactory.getDefault());
-	}
+    /**
+     * Test of getDefault method, of class CentralLookupFactory.
+     */
+    @Test
+    public void testGetDefault() {
+        CentralLookup lookupExpected = getDefault();
+        ICentralLookupFactory lookupFactory = getDefault().lookup(ICentralLookupFactory.class);
+        assertSame(lookupExpected, lookupFactory.getDefault());
+    }
 
-	/**
-	 * Test of getNamed method, of class CentralLookupFactory.
-	 */
-	@Test
-	public void testGetNamed() {
-		ICentralLookupFactory lookupFactory = Lookup.getDefault().lookup(ICentralLookupFactory.class);
-		CentralLookupFactory clf = new CentralLookupFactory();
-		//fail if the classes change, e.g. by an additional ServiceProvider
-		assertEquals(lookupFactory.getClass(),clf.getClass());
-		CentralLookup lookupExpected = clf.getNamed("testLookup");
-		CentralLookup lookupReceived = lookupFactory.getNamed("testLookup");
-		assertEquals(lookupExpected.getClass(),lookupReceived.getClass());
-	}
-	
-	/**
-	 * Test of removeNamed method, of class CentralLookupFactory.
-	 */
-	@Test
-	public void testRemoveNamed() {
-		CentralLookupFactory clf = new CentralLookupFactory();
-		CentralLookup lookupExpected = clf.getNamed("testLookup");
-		clf.removeNamed("testLookup");
-		CentralLookup lookupReceived = clf.getNamed("testLookup");
-		assertNotSame(lookupExpected,lookupReceived);
-	}
+    /**
+     * Test of getNamed method, of class CentralLookupFactory.
+     */
+    @Test
+    public void testGetNamed() {
+        ICentralLookupFactory lookupFactory = getDefault().lookup(ICentralLookupFactory.class);
+        CentralLookupFactory clf = new CentralLookupFactory();
+        //fail if the classes change, e.g. by an additional ServiceProvider
+        assertEquals(lookupFactory.getClass(), clf.getClass());
+        CentralLookup lookupExpected = clf.getNamed("testLookup");
+        CentralLookup lookupReceived = lookupFactory.getNamed("testLookup");
+        assertEquals(lookupExpected.getClass(), lookupReceived.getClass());
+    }
+
+    /**
+     * Test of removeNamed method, of class CentralLookupFactory.
+     */
+    @Test
+    public void testRemoveNamed() {
+        CentralLookupFactory clf = new CentralLookupFactory();
+        CentralLookup lookupExpected = clf.getNamed("testLookup");
+        clf.removeNamed("testLookup");
+        CentralLookup lookupReceived = clf.getNamed("testLookup");
+        assertNotSame(lookupExpected, lookupReceived);
+    }
 }

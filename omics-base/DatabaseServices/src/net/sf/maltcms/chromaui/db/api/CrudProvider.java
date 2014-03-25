@@ -40,7 +40,7 @@ public class CrudProvider {
     public static ICrudProvider getProviderFor(URL databaseLocation) throws ProviderNotFoundException {
         return getProviderFor(databaseLocation,
                 new NoAuthCredentials(), Lookup.getDefault().lookup(
-                ClassLoader.class));
+                        ClassLoader.class));
     }
 
     protected static ICrudProvider getProviderFor(URL databaseLocation,

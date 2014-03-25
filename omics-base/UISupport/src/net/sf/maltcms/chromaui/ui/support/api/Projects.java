@@ -49,52 +49,52 @@ import org.openide.nodes.Node;
  */
 public class Projects {
 
-	public static Node[] getNodesFor(Collection<Project> projects) {
-		Node[] projectNodes = new Node[projects.size()];
-		int i = 0;
-		for (Project p : projects) {
-			projectNodes[i++] = new FilterNode(p.getLookup().lookup(LogicalViewProvider.class).createLogicalView(), Children.LEAF);
-		}
-		return projectNodes;
-	}
+    public static Node[] getNodesFor(Collection<Project> projects) {
+        Node[] projectNodes = new Node[projects.size()];
+        int i = 0;
+        for (Project p : projects) {
+            projectNodes[i++] = new FilterNode(p.getLookup().lookup(LogicalViewProvider.class).createLogicalView(), Children.LEAF);
+        }
+        return projectNodes;
+    }
 
-	public static <T extends Project> Collection<T> getSelectedOpenProject(Class<T> projectClass, String title, String comboBoxTitle) {
-		Collection<Project> openProjects = new ArrayList<Project>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
-		DialogPanel panel = new DialogPanel();
-		panel.init(comboBoxTitle, true);
-		Children.Array ca = new Children.Array();
-		ca.add(getNodesFor(openProjects));
-		panel.getExplorerManager().setRootContext(new AbstractNode(ca));
-		NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(panel, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
-		// let's display the dialog now...
-		if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-			Node[] selectedNodes = panel.getExplorerManager().getSelectedNodes();
-			List<T> selectedProjects = new LinkedList<T>();
-			for (Node n : selectedNodes) {
-				selectedProjects.addAll(n.getLookup().lookupAll(projectClass));
-			}
-			return Collections.singletonList(selectedProjects.get(0));
-		}
-		return Collections.emptyList();
-	}
+    public static <T extends Project> Collection<T> getSelectedOpenProject(Class<T> projectClass, String title, String comboBoxTitle) {
+        Collection<Project> openProjects = new ArrayList<>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
+        DialogPanel panel = new DialogPanel();
+        panel.init(comboBoxTitle, true);
+        Children.Array ca = new Children.Array();
+        ca.add(getNodesFor(openProjects));
+        panel.getExplorerManager().setRootContext(new AbstractNode(ca));
+        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(panel, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
+        // let's display the dialog now...
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            Node[] selectedNodes = panel.getExplorerManager().getSelectedNodes();
+            List<T> selectedProjects = new LinkedList<>();
+            for (Node n : selectedNodes) {
+                selectedProjects.addAll(n.getLookup().lookupAll(projectClass));
+            }
+            return Collections.singletonList(selectedProjects.get(0));
+        }
+        return Collections.emptyList();
+    }
 
-	public static <T extends Project> Collection<T> getSelectedOpenProjects(Class<T> projectClass, String title, String comboBoxTitle) {
-		Collection<Project> openProjects = new ArrayList<Project>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
-		DialogPanel panel = new DialogPanel();
-		panel.init(comboBoxTitle, false);
-		Children.Array ca = new Children.Array();
-		ca.add(getNodesFor(openProjects));
-		panel.getExplorerManager().setRootContext(new AbstractNode(ca));
-		NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(panel, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
-		// let's display the dialog now...
-		if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-			Node[] selectedNodes = panel.getExplorerManager().getSelectedNodes();
-			List<T> selectedProjects = new LinkedList<T>();
-			for (Node n : selectedNodes) {
-				selectedProjects.addAll(n.getLookup().lookupAll(projectClass));
-			}
-			return selectedProjects;
-		}
-		return Collections.emptyList();
-	}
+    public static <T extends Project> Collection<T> getSelectedOpenProjects(Class<T> projectClass, String title, String comboBoxTitle) {
+        Collection<Project> openProjects = new ArrayList<>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
+        DialogPanel panel = new DialogPanel();
+        panel.init(comboBoxTitle, false);
+        Children.Array ca = new Children.Array();
+        ca.add(getNodesFor(openProjects));
+        panel.getExplorerManager().setRootContext(new AbstractNode(ca));
+        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(panel, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
+        // let's display the dialog now...
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            Node[] selectedNodes = panel.getExplorerManager().getSelectedNodes();
+            List<T> selectedProjects = new LinkedList<>();
+            for (Node n : selectedNodes) {
+                selectedProjects.addAll(n.getLookup().lookupAll(projectClass));
+            }
+            return selectedProjects;
+        }
+        return Collections.emptyList();
+    }
 }

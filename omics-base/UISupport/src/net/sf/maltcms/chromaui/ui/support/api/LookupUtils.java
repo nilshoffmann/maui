@@ -35,21 +35,21 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public class LookupUtils {
-	
-	public static <T> T ensureSingle(Lookup lookup, Class<? extends T> typeClass) throws IllegalArgumentException {
-		Collection<? extends T> c = lookup.lookupAll(typeClass);
-		if(c.size()>1) {
-			throw new IllegalArgumentException("Lookup contained more than one instance of "+typeClass.getCanonicalName()+": "+c.size()+" instances found!");
-		}
-		return c.iterator().next();
-	}
-	
-	public static <T> T ensureK(Lookup lookup, Class<? extends T> typeClass, int k) throws IllegalArgumentException {
-		Collection<? extends T> c = lookup.lookupAll(typeClass);
-		if(c.size()!=k) {
-			throw new IllegalArgumentException("Lookup contained different number of instances of "+typeClass.getCanonicalName()+": "+c.size()+" instances found, "+k+" were required!");
-		}
-		return c.iterator().next();
-	}
-	
+
+    public static <T> T ensureSingle(Lookup lookup, Class<? extends T> typeClass) throws IllegalArgumentException {
+        Collection<? extends T> c = lookup.lookupAll(typeClass);
+        if (c.size() > 1) {
+            throw new IllegalArgumentException("Lookup contained more than one instance of " + typeClass.getCanonicalName() + ": " + c.size() + " instances found!");
+        }
+        return c.iterator().next();
+    }
+
+    public static <T> T ensureK(Lookup lookup, Class<? extends T> typeClass, int k) throws IllegalArgumentException {
+        Collection<? extends T> c = lookup.lookupAll(typeClass);
+        if (c.size() != k) {
+            throw new IllegalArgumentException("Lookup contained different number of instances of " + typeClass.getCanonicalName() + ": " + c.size() + " instances found, " + k + " were required!");
+        }
+        return c.iterator().next();
+    }
+
 }

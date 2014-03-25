@@ -31,25 +31,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
-import org.openide.util.LookupEvent;
-import org.openide.util.NbBundle;
-import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
-//import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
+import org.openide.util.NbBundle;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Top component which displays something.
  */
 @ConvertAsProperties(
-dtd = "-//de.unibielefeld.gi.kotte.laborprogramm.debug//LookupMonitor//EN",
-autostore = false)
+        dtd = "-//de.unibielefeld.gi.kotte.laborprogramm.debug//LookupMonitor//EN",
+        autostore = false)
 public final class LookupMonitorTopComponent extends TopComponent implements
         LookupListener {
 
@@ -65,7 +64,7 @@ public final class LookupMonitorTopComponent extends TopComponent implements
     private boolean update = false;
     private InstanceContent content = new InstanceContent();
     private Lookup lookup = new AbstractLookup(content);
-    private List<Object> activeSelection = new ArrayList<Object>();
+    private List<Object> activeSelection = new ArrayList<>();
 
     public LookupMonitorTopComponent() {
 //        associateLookup(lookup);

@@ -99,7 +99,7 @@ public class ChartCustomizer {
                     BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         }
     }
-    
+
     public static void setSeriesShapes(XYPlot plot, Shape s) {
         XYItemRenderer renderer = plot.getRenderer();
         int series = plot.getSeriesCount();

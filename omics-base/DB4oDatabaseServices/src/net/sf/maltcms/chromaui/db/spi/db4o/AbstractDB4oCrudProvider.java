@@ -128,9 +128,9 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
 
     @Override
     public final ICrudSession createSession() {
-		if(eoc==null) {
-			open();
-		}
+        if (eoc == null) {
+            open();
+        }
         DB4oCrudSession session = new DB4oCrudSession(ic, eoc);
         openSessions.add(session);
         return session;
@@ -147,11 +147,11 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
     public boolean isBackupDatabase() {
         return backupDatabase;
     }
-    
+
     public boolean isVerboseDiagnostics() {
         return verboseDiagnostics;
     }
-    
+
     public void setVerboseDiagnostics(boolean verboseDiagnostics) {
         this.verboseDiagnostics = verboseDiagnostics;
     }

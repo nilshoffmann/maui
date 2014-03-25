@@ -93,6 +93,7 @@ public class StartRserveOriginal {
             String osname = System.getProperty("os.name");
             if (osname != null && osname.length() >= 7 && osname.substring(0, 7).equals("Windows")) {
                 isWindows = true; /* Windows startup */
+
                 command = "\"" + cmd + "\" -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs;
                 p = Runtime.getRuntime().exec(command);
             } else /* unix startup */ {
@@ -120,7 +121,7 @@ public class StartRserveOriginal {
         while (attempts > 0) {
             try {
                 RConnection c = new RConnection();
-                System.out.println("Rserve is running. Launched with command: '"+command+"'");
+                System.out.println("Rserve is running. Launched with command: '" + command + "'");
                 c.close();
                 return true;
             } catch (Exception e2) {

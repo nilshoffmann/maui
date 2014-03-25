@@ -57,10 +57,10 @@ public class PlotDemo extends JLabel {
         try {
             String device = "png"; // device we'll call (this would work with pretty much any bitmap device)
 
-			// connect to Rserve (if the user specified a server at the command line, use it, otherwise connect locally)
+            // connect to Rserve (if the user specified a server at the command line, use it, otherwise connect locally)
 //            RConnection c = new RConnection("127.0.0.1");
 //                    (args.length > 0) ? args[0] : "127.0.0.1");
-			// if Cairo is installed, we can get much nicer graphics, so try to load it
+            // if Cairo is installed, we can get much nicer graphics, so try to load it
 //            if (c.parseAndEval("suppressWarnings(require('Cairo',quietly=TRUE))").
 //                    asInteger() > 0) {
 //                device = "CairoJPEG"; // great, we can use Cairo device
@@ -68,7 +68,7 @@ public class PlotDemo extends JLabel {
 //                System.out.println(
 //                        "(consider installing Cairo package for better bitmap output)");
 //            }
-			// we are careful here - not all R binaries support jpeg
+            // we are careful here - not all R binaries support jpeg
             // so we rather capture any failures
             REXP xp = c.parseAndEval(
                     "try(" + device + "('test.png'))");//,quality=90
@@ -88,7 +88,7 @@ public class PlotDemo extends JLabel {
             c.parseAndEval(
                     "data(iris); attach(iris); plot(Sepal.Length, Petal.Length, col=unclass(Species)); dev.off()");
 
-			// There is no I/O API in REngine because it's actually more efficient to use R for this
+            // There is no I/O API in REngine because it's actually more efficient to use R for this
             // we limit the file size to 1MB which should be sufficient and we delete the file as well
             xp = c.parseAndEval(
                     "r=readBin('test.png','raw',1024*1024); unlink('test.png'); r");

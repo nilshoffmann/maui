@@ -28,8 +28,9 @@
 package net.sf.maltcms.common.charts;
 
 import org.openide.modules.ModuleInstall;
+
 /**
- * 
+ *
  * @author Nils Hoffmann
  */
 public class Installer extends ModuleInstall {

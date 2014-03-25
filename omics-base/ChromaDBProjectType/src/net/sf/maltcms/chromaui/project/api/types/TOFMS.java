@@ -33,7 +33,7 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IDetectorType.class)
+@ServiceProvider(service = IDetectorType.class)
 public class TOFMS implements IDetectorType {
 
     private final String detectorType = "TOF-MS";

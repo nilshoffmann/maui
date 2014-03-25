@@ -44,5 +44,5 @@ public class OverlayRootNode extends AbstractNode {
     public OverlayRootNode(Children children, Lookup lookup) {
         super(children, lookup);
     }
-    
+
 }

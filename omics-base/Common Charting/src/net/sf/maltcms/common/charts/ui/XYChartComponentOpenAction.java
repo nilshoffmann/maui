@@ -30,12 +30,9 @@ package net.sf.maltcms.common.charts.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import javax.swing.SwingUtilities;
+import static javax.swing.SwingUtilities.invokeLater;
 import net.sf.maltcms.common.charts.api.XYChartBuilder;
-import net.sf.maltcms.common.charts.api.dataset.DatasetUtils;
+import static net.sf.maltcms.common.charts.api.dataset.DatasetUtils.createDataset;
 import net.sf.maltcms.common.charts.api.dataset.Numeric1DDataset;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
@@ -51,13 +48,13 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 @ActionID(
-    category = "Window",
-id = "net.sf.maltcms.chromaui.charts.ui.XYChartComponentOpenAction")
+        category = "Window",
+        id = "net.sf.maltcms.chromaui.charts.ui.XYChartComponentOpenAction")
 @ActionRegistration(
-    displayName = "#CTL_XYChartComponentOpenAction")
+        displayName = "#CTL_XYChartComponentOpenAction")
 @ActionReferences({
     @ActionReference(path = "Menu/Window",
-    position = 0)})
+            position = 0)})
 @Messages("CTL_XYChartComponentOpenAction=Open XYChart")
 public final class XYChartComponentOpenAction implements ActionListener {
 
@@ -66,20 +63,20 @@ public final class XYChartComponentOpenAction implements ActionListener {
         Task t = RequestProcessor.getDefault().create(new Runnable() {
             @Override
             public void run() {
-                final Numeric1DDataset<Point2D> dataset = DatasetUtils.createDataset();
+                final Numeric1DDataset<Point2D> dataset = createDataset();
                 final XYChartBuilder builder = new XYChartBuilder();
                 XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
                 renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
                 renderer.setBaseItemLabelsVisible(true);
-				NumberAxis domain = new NumberAxis("x-axis");
-				domain.setLowerBound(-100);
-				domain.setUpperBound(1000);
-				domain.setLowerMargin(0.1);
-				domain.setUpperMargin(0.1);
-				domain.setPositiveArrowVisible(true);
-				domain.setNegativeArrowVisible(true);
-                builder.xy(dataset).renderer(renderer).domainAxis(domain).minimumDrawSize(400, 300).preferredDrawSize(800,600).maximumDrawSize(1280, 1024).plot().chart("Sample plot").createLegend(true);
-                SwingUtilities.invokeLater(new Runnable() {
+                NumberAxis domain = new NumberAxis("x-axis");
+                domain.setLowerBound(-100);
+                domain.setUpperBound(1000);
+                domain.setLowerMargin(0.1);
+                domain.setUpperMargin(0.1);
+                domain.setPositiveArrowVisible(true);
+                domain.setNegativeArrowVisible(true);
+                builder.xy(dataset).renderer(renderer).domainAxis(domain).minimumDrawSize(400, 300).preferredDrawSize(800, 600).maximumDrawSize(1280, 1024).plot().chart("Sample plot").createLegend(true);
+                invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         TopComponent tc = WindowManager.getDefault().findTopComponent("navigatorTC");
@@ -88,11 +85,11 @@ public final class XYChartComponentOpenAction implements ActionListener {
                         }
                     }
                 });
-                SwingUtilities.invokeLater(new Runnable() {
+                invokeLater(new Runnable() {
 
                     @Override
                     public void run() {
-                        XYChartTopComponent<Point2D> xytc = new XYChartTopComponent<Point2D>(Point2D.class, dataset, builder);
+                        XYChartTopComponent<Point2D> xytc = new XYChartTopComponent<>(Point2D.class, dataset, builder);
                         xytc.open();
                         xytc.requestActive();
                     }

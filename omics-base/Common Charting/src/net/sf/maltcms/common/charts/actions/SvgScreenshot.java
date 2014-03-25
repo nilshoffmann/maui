@@ -31,17 +31,21 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import static java.awt.geom.AffineTransform.getTranslateInstance;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import static java.lang.System.getProperty;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.batik.dom.GenericDOMImplementation;
+import static org.apache.batik.dom.GenericDOMImplementation.getDOMImplementation;
 import org.apache.batik.svggen.CachedImageHandlerBase64Encoder;
 import org.apache.batik.svggen.GenericImageHandler;
 import org.apache.batik.svggen.SVGGeneratorContext;
+import static org.apache.batik.svggen.SVGGeneratorContext.createDefault;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -49,6 +53,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
+import static org.openide.windows.WindowManager.getDefault;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -68,23 +73,23 @@ public final class SvgScreenshot implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Frame f = WindowManager.getDefault().getMainWindow();
+        Frame f = getDefault().getMainWindow();
         DOMImplementation impl
-                = GenericDOMImplementation.getDOMImplementation();
+                = getDOMImplementation();
         String svgNS = "http://www.w3.org/2000/svg";
         Document myFactory = impl.createDocument(svgNS, "svg", null);
-        SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(myFactory);
+        SVGGeneratorContext ctx = createDefault(myFactory);
         ctx.setEmbeddedFontsOn(true);
         GenericImageHandler ihandler = new CachedImageHandlerBase64Encoder();
         ctx.setGenericImageHandler(ihandler);
         SVGGraphics2D g2d = new SVGGraphics2D(ctx, true);
-        g2d.setTransform(AffineTransform.getTranslateInstance(0, -f.getHeight()));
+        g2d.setTransform(getTranslateInstance(0, -f.getHeight()));
         f.invalidate();
         f.revalidate();
         f.print(g2d);
         Writer out = null;
         try {
-            File outputDir = new File(System.getProperty("user.home"), "maui-screenshots");
+            File outputDir = new File(getProperty("user.home"), "maui-screenshots");
             outputDir.mkdirs();
             Date d = new Date();
             File file = new File(outputDir, new SimpleDateFormat().format(d) + ".svg");

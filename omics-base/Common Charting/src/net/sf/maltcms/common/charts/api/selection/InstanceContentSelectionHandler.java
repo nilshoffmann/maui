@@ -32,14 +32,17 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection.Type;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayNode;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionSourceChildFactory;
 import org.openide.nodes.Children;
+import static org.openide.nodes.Children.create;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import static org.openide.util.Exceptions.printStackTrace;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
 
@@ -54,13 +57,13 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         ON_CLICK, ON_HOVER, ON_KEY
     };
     private final InstanceContent content;
-    private final Deque<ISelection> activeSelection = new LinkedList<ISelection>();
+    private final Deque<ISelection> activeSelection = new LinkedList<>();
     private final SelectionOverlay overlay;
     private Mode mode;
     private final int capacity;
     private Lookup.Provider dataset;
     // private TARGET lastItem = null;
-    private ExecutorService es = Executors.newSingleThreadExecutor();
+    private ExecutorService es = newSingleThreadExecutor();
     private AtomicBoolean updatePending = new AtomicBoolean(false);
     private Node selectionOverlayNode;
 
@@ -92,9 +95,9 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
             content.remove(selectionOverlayNode);
         }
         try {
-            selectionOverlayNode = new SelectionOverlayNode(overlay, Children.create(new SelectionSourceChildFactory(overlay, dataset), true));
+            selectionOverlayNode = new SelectionOverlayNode(overlay, create(new SelectionSourceChildFactory(overlay, dataset), true));
         } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
+            printStackTrace(ex);
             selectionOverlayNode = Node.EMPTY;
         }
         content.add(selectionOverlayNode);

@@ -64,7 +64,7 @@ public interface IBasicDescriptor extends Activatable, Comparable<IBasicDescript
     public void setDate(Date date);
 
     public UUID getId();
-    
+
     @Deprecated
     public void setId(UUID id);
 

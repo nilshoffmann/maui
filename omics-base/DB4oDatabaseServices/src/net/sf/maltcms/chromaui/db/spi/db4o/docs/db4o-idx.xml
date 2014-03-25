@@ -28,5 +28,5 @@ for details.
 -->
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
-	<indexitem text="About Common db4o Database Services SPI" target="net.sf.maltcms.chromaui.db.spi.db4o.about"/>
+    <indexitem text="About Common db4o Database Services SPI" target="net.sf.maltcms.chromaui.db.spi.db4o.about"/>
 </index>

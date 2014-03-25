@@ -37,12 +37,20 @@ import org.openide.windows.TopComponent;
  * @author Nils Hoffmann
  */
 public interface IRegistry {
+
     public TopComponent getTopComponentFor(Object object);
-    public Map<Object,TopComponent> getTopComponentsForProject(Project project);
+
+    public Map<Object, TopComponent> getTopComponentsForProject(Project project);
+
     public TopComponent openTopComponentFor(Object object, Class<? extends TopComponent> topComponentClass);
-	public void registerTopComponentFor(Object object, TopComponent topComponent);
-	public void unregisterTopComponentFor(Object object, TopComponent topComponent);
-	public void unregisterTopComponentFor(Project project, Object object, TopComponent topComponent);
+
+    public void registerTopComponentFor(Object object, TopComponent topComponent);
+
+    public void unregisterTopComponentFor(Object object, TopComponent topComponent);
+
+    public void unregisterTopComponentFor(Project project, Object object, TopComponent topComponent);
+
     public List<TopComponent> closeTopComponentsFor(Object object);
+
     public List<TopComponent> closeTopComponentsForProject(Project project);
 }

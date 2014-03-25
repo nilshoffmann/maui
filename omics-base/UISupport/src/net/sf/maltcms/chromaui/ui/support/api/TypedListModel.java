@@ -36,8 +36,8 @@ import javax.swing.AbstractListModel;
  * @author Nils Hoffmann
  */
 public class TypedListModel<T> extends AbstractListModel {
-    
-    private List<T> model = new LinkedList<T>();
+
+    private List<T> model = new LinkedList<>();
 
     @Override
     public int getSize() {
@@ -48,5 +48,5 @@ public class TypedListModel<T> extends AbstractListModel {
     public Object getElementAt(int i) {
         return model.get(i);
     }
-    
+
 }

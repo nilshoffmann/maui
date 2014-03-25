@@ -46,50 +46,50 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 
 @ActionID(
-		category = "Tools",
-		id = "net.sf.maltcms.chromaui.db.spi.db4o.actions.CheckDatabaseConsistency")
+        category = "Tools",
+        id = "net.sf.maltcms.chromaui.db.spi.db4o.actions.CheckDatabaseConsistency")
 @ActionRegistration(
-		displayName = "#CTL_CheckDatabaseConsistency")
+        displayName = "#CTL_CheckDatabaseConsistency")
 @ActionReference(path = "Menu/Tools", position = 0, separatorAfter = 50)
 @Messages("CTL_CheckDatabaseConsistency=Check Database Consistency")
 public final class CheckDatabaseConsistency implements ActionListener {
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		FileChooserBuilder fcb = new FileChooserBuilder(CheckDatabaseConsistency.class);
-		fcb.setDefaultWorkingDirectory(new File(System.getProperty("netbeans.projects.dir",System.getProperty("user.home"))));
-		File f = fcb.showOpenDialog();
-		if(f!=null) {
-			InputOutput io = IOProvider.getDefault().getIO ("Db4o Database Consistency Check", true);
-			io.select();
-			try {
-				ConsistencyChecker cc = new ConsistencyChecker(Db4oEmbedded.openFile(f.getAbsolutePath()));
-				ConsistencyReport cr = cc.checkSlotConsistency();
-				if(cr.consistent()) {
-					io.getOut().println ("Database is consistent");
-				}else{
-					io.getErr().println ("Database is not consistent!");
-					if(cr.dupes().size()>0) {
-						io.getErr().println("Found the following duplicates:");
-						for(Pair<SlotDetail,SlotDetail> p:cr.dupes()) {
-							io.getErr().println("Duplicate: ");
-							io.getErr().println("\t"+p.first+"\t"+p.second);
-						}
-					}
-					if(cr.overlaps().size()>0) {
-						io.getErr().println("Found the following overlaps:");
-						for(Pair<SlotDetail,SlotDetail> p:cr.overlaps()) {
-							io.getErr().println("Overlap: ");
-							io.getErr().println("\t"+p.first+"\t"+p.second);
-						}
-					}
-					io.getOut().println(cr.toString());
-				}
-				io.getOut().close();
-				io.getErr().close();
-			}catch(DatabaseFileLockedException dfle) {
-				Logger.getLogger(CheckDatabaseConsistency.class.getName()).warning("Database file "+f+" is locked!");
-			}
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        FileChooserBuilder fcb = new FileChooserBuilder(CheckDatabaseConsistency.class);
+        fcb.setDefaultWorkingDirectory(new File(System.getProperty("netbeans.projects.dir", System.getProperty("user.home"))));
+        File f = fcb.showOpenDialog();
+        if (f != null) {
+            InputOutput io = IOProvider.getDefault().getIO("Db4o Database Consistency Check", true);
+            io.select();
+            try {
+                ConsistencyChecker cc = new ConsistencyChecker(Db4oEmbedded.openFile(f.getAbsolutePath()));
+                ConsistencyReport cr = cc.checkSlotConsistency();
+                if (cr.consistent()) {
+                    io.getOut().println("Database is consistent");
+                } else {
+                    io.getErr().println("Database is not consistent!");
+                    if (cr.dupes().size() > 0) {
+                        io.getErr().println("Found the following duplicates:");
+                        for (Pair<SlotDetail, SlotDetail> p : cr.dupes()) {
+                            io.getErr().println("Duplicate: ");
+                            io.getErr().println("\t" + p.first + "\t" + p.second);
+                        }
+                    }
+                    if (cr.overlaps().size() > 0) {
+                        io.getErr().println("Found the following overlaps:");
+                        for (Pair<SlotDetail, SlotDetail> p : cr.overlaps()) {
+                            io.getErr().println("Overlap: ");
+                            io.getErr().println("\t" + p.first + "\t" + p.second);
+                        }
+                    }
+                    io.getOut().println(cr.toString());
+                }
+                io.getOut().close();
+                io.getErr().close();
+            } catch (DatabaseFileLockedException dfle) {
+                Logger.getLogger(CheckDatabaseConsistency.class.getName()).warning("Database file " + f + " is locked!");
+            }
+        }
+    }
 }

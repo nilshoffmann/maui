@@ -32,7 +32,8 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  * @author Nils Hoffmann
  */
 public interface IAnnotation<T> extends IBasicDescriptor {
+
     public T getAnnotation();
-    
+
     public void setAnnotation(T t);
 }

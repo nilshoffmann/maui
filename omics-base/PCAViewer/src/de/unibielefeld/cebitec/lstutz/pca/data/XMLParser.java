@@ -28,6 +28,7 @@
 package de.unibielefeld.cebitec.lstutz.pca.data;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.List;
 import javax.vecmath.Color3f;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 /**
@@ -65,7 +67,7 @@ public class XMLParser {
     }
 
     public ArrayList<DataModel> parse_data() {
-        ArrayList<DataModel> data = new ArrayList<DataModel>();
+        ArrayList<DataModel> data = new ArrayList<>();
         try {
             SAXBuilder builder = new SAXBuilder();
             Document doc = builder.build(bf);
@@ -78,7 +80,7 @@ public class XMLParser {
                 Color3f s = ParserUtilities.parse_hex_color(cluster.getAttributeValue("color"));
                 for (Element item : (List<Element>) cluster.getChildren()) {
                     DataModel d = new DataModel();
-                    ArrayList<Double> coords = new ArrayList<Double>();
+                    ArrayList<Double> coords = new ArrayList<>();
                     coords.add(Double.parseDouble(item.getAttributeValue("x")));
                     coords.add(Double.parseDouble(item.getAttributeValue("y")));
                     coords.add(Double.parseDouble(item.getAttributeValue("z")));
@@ -92,7 +94,7 @@ public class XMLParser {
                     data.add(d);
                 }
             }
-        } catch (Exception e) {
+        } catch (JDOMException | IOException | NumberFormatException e) {
             e.printStackTrace();
         }
         return data;

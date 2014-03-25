@@ -30,10 +30,10 @@ package net.sf.maltcms.common.charts.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.SwingUtilities;
+import static javax.swing.SwingUtilities.invokeLater;
 import net.sf.maltcms.common.charts.api.CategoryChartBuilder;
 import net.sf.maltcms.common.charts.api.dataset.ACategoryDataset;
-import net.sf.maltcms.common.charts.api.dataset.DatasetUtils;
+import static net.sf.maltcms.common.charts.api.dataset.DatasetUtils.createCategoryDataset;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.renderer.category.MinMaxCategoryRenderer;
@@ -63,7 +63,7 @@ public final class CategoryChartComponentOpenAction implements ActionListener {
         Task t = RequestProcessor.getDefault().create(new Runnable() {
             @Override
             public void run() {
-                final ACategoryDataset<List<Double>, Double> dataset = DatasetUtils.createCategoryDataset();
+                final ACategoryDataset<List<Double>, Double> dataset = createCategoryDataset();
                 final CategoryChartBuilder builder = new CategoryChartBuilder();
 
                 MinMaxCategoryRenderer renderer = new MinMaxCategoryRenderer();
@@ -72,7 +72,7 @@ public final class CategoryChartComponentOpenAction implements ActionListener {
 
                 CategoryAxis domain = new CategoryAxis("Categories");
                 builder.categories(dataset).renderer(renderer).domainAxis(domain).minimumDrawSize(400, 300).preferredDrawSize(800, 600).maximumDrawSize(1280, 1024).plot().chart("Sample plot").createLegend(true);
-                SwingUtilities.invokeLater(new Runnable() {
+                invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         TopComponent tc = WindowManager.getDefault().findTopComponent("navigatorTC");
@@ -81,11 +81,11 @@ public final class CategoryChartComponentOpenAction implements ActionListener {
                         }
                     }
                 });
-                SwingUtilities.invokeLater(new Runnable() {
+                invokeLater(new Runnable() {
 
                     @Override
                     public void run() {
-                        CategoryChartTopComponent<Double> xytc = new CategoryChartTopComponent<Double>(Double.class, dataset, builder);
+                        CategoryChartTopComponent<Double> xytc = new CategoryChartTopComponent<>(Double.class, dataset, builder);
                         xytc.open();
                         xytc.requestActive();
                     }

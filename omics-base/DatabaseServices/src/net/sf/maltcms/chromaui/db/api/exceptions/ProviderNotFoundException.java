@@ -31,7 +31,7 @@ package net.sf.maltcms.chromaui.db.api.exceptions;
  *
  * @author Nils Hoffmann
  */
-public class ProviderNotFoundException extends RuntimeException{
+public class ProviderNotFoundException extends RuntimeException {
 
     public ProviderNotFoundException(Throwable cause) {
         super(cause);

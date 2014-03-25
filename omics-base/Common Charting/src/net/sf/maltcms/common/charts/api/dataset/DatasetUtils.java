@@ -28,9 +28,14 @@
 package net.sf.maltcms.common.charts.api.dataset;
 
 import java.awt.geom.Point2D;
+import static java.lang.Math.random;
+import static java.lang.System.nanoTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import static java.util.Arrays.sort;
+import static java.util.Arrays.sort;
 import java.util.Collections;
+import static java.util.Collections.reverseOrder;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -118,7 +123,7 @@ public class DatasetUtils {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
-        List<INamedElementProvider<? extends List<Double>, ? extends Double>> l = new ArrayList<INamedElementProvider<? extends List<Double>, ? extends Double>>();
+        List<INamedElementProvider<? extends List<Double>, ? extends Double>> l = new ArrayList<>();
         l.add(nep1);
         l.add(nep2);
         return new NumericCategoryDataset(l);
@@ -163,16 +168,16 @@ public class DatasetUtils {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
-        List<INamedElementProvider<? extends List<Point2D>, ? extends Point2D>> l = new ArrayList<INamedElementProvider<? extends List<Point2D>, ? extends Point2D>>();
+        List<INamedElementProvider<? extends List<Point2D>, ? extends Point2D>> l = new ArrayList<>();
         l.add(nep);
-        return new Numeric1DDataset<Point2D>(l);
+        return new Numeric1DDataset<>(l);
     }
 
     public static List<Point2D> createSamplePoints(int n) {
-        Random r = new Random(System.nanoTime());
-        List<Point2D> points = new ArrayList<Point2D>();
+        Random r = new Random(nanoTime());
+        List<Point2D> points = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            double random = Math.random();
+            double random = random();
 //			if(random>0.95) {
 //				points.add(new Point2D.Double(Double.POSITIVE_INFINITY,r.nextDouble() * 256.0d));
 //			}else{
@@ -183,8 +188,8 @@ public class DatasetUtils {
     }
 
     public static List<Double> createSampleDoubles(int n) {
-        Random r = new Random(System.nanoTime());
-        List<Double> points = new ArrayList<Double>();
+        Random r = new Random(nanoTime());
+        List<Double> points = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             points.add(r.nextDouble() * 256.0d);
         }
@@ -228,9 +233,9 @@ public class DatasetUtils {
         }
         Comparator<SortablePair> comp = new SortablePairComparator();
         if (descending) {
-            Arrays.sort(sp, Collections.reverseOrder(comp));
+            sort(sp, reverseOrder(comp));
         } else {
-            Arrays.sort(sp, comp);
+            sort(sp, comp);
         }
         final int[] ranks = new int[domainValues.length];
         for (int i = 0; i < sp.length; i++) {

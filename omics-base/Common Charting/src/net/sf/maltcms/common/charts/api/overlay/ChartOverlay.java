@@ -36,18 +36,25 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public interface ChartOverlay extends Overlay, Lookup.Provider {
+
     public void setVisible(boolean b);
+
     public boolean isVisible();
+
     public boolean isVisibilityChangeable();
+
     public int getLayerPosition();
+
     public void setLayerPosition(int pos);
-    
+
     public String getName();
+
     public String getDisplayName();
+
     public String getShortDescription();
-	
-	public Node createNodeDelegate();
-    
+
+    public Node createNodeDelegate();
+
     public final int LAYER_LOWEST = Integer.MIN_VALUE;
     public final int LAYER_HIGHEST = Integer.MAX_VALUE;
     public final String PROP_VISIBLE = "visible";

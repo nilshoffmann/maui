@@ -74,7 +74,7 @@ public class DetectorTypePropertyEditor extends PropertyEditorSupport {
     @Override
     public String[] getTags() {
         Collection<? extends IDetectorType> detectorTypes = Lookup.getDefault().lookupAll(IDetectorType.class);
-        List<String> names = new LinkedList<String>();
+        List<String> names = new LinkedList<>();
         for (IDetectorType dt : detectorTypes) {
             names.add(dt.getDetectorType());
         }

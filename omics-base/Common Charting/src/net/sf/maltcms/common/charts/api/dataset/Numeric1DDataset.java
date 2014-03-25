@@ -28,6 +28,10 @@
 package net.sf.maltcms.common.charts.api.dataset;
 
 import java.awt.geom.Point2D;
+import static java.lang.Math.max;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.min;
 import java.util.List;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
@@ -103,10 +107,10 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
             int[] nranks = new int[nep.size()];
             for (int i = 0; i < nep.size(); i++) {
                 Point2D point = nep.getSource().get(i);
-                minX = Math.min(minX, point.getX());
-                minY = Math.min(minY, point.getY());
-                maxX = Math.max(maxX, point.getX());
-                maxY = Math.max(maxY, point.getY());
+                minX = min(minX, point.getX());
+                minY = min(minY, point.getY());
+                maxX = max(maxX, point.getX());
+                maxY = max(maxY, point.getY());
                 nranks[i] = i;
             }
             ranks[nepCnt++] = nranks;

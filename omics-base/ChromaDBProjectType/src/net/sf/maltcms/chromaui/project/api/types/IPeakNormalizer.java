@@ -34,7 +34,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
  * @author Nils Hoffmann
  */
 public interface IPeakNormalizer {
-    
+
     public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor);
-    
+
 }

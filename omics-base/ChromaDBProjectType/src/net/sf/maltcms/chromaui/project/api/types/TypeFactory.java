@@ -43,5 +43,5 @@ public final class TypeFactory {
     public static Collection<? extends IDetectorType> getAvailableDetectorTypes() {
         return Lookup.getDefault().lookupAll(IDetectorType.class);
     }
-    
+
 }

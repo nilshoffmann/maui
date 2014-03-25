@@ -27,13 +27,11 @@
  */
 package net.sf.maltcms.chromaui.db.api;
 
-import net.sf.maltcms.chromaui.db.api.ICredentialsProvider;
-
 /**
  *
  * @author Nils Hoffmann
  */
-public class KeyStoreCredentialsProvider implements ICredentialsProvider{
+public class KeyStoreCredentialsProvider implements ICredentialsProvider {
 
     @Override
     public String getName() {

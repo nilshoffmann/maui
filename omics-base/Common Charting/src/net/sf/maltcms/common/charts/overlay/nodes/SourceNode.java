@@ -36,18 +36,18 @@ import org.openide.util.Lookup;
 
 /**
  *
- *  @author Nils Hoffmann
+ * @author Nils Hoffmann
  */
 public class SourceNode extends BeanNode<Object> {
 
     public SourceNode(Object bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children, lkp);
     }
-    
+
     @Override
     public String getName() {
         IDisplayPropertiesProvider provider = getLookup().lookup(IDisplayPropertiesProvider.class);
-        if(provider!=null) {
+        if (provider != null) {
             return provider.getSourceName(getLookup().lookup(ISelection.class));
         }
         return getBean().toString();
@@ -56,7 +56,7 @@ public class SourceNode extends BeanNode<Object> {
     @Override
     public String getDisplayName() {
         IDisplayPropertiesProvider provider = getLookup().lookup(IDisplayPropertiesProvider.class);
-        if(provider!=null) {
+        if (provider != null) {
             return provider.getSourceDisplayName(getLookup().lookup(ISelection.class));
         }
         return getBean().toString();
@@ -65,10 +65,10 @@ public class SourceNode extends BeanNode<Object> {
     @Override
     public String getShortDescription() {
         IDisplayPropertiesProvider provider = getLookup().lookup(IDisplayPropertiesProvider.class);
-        if(provider!=null) {
+        if (provider != null) {
             return provider.getSourceShortDescription(getLookup().lookup(ISelection.class));
         }
         return getBean().toString();
     }
-    
+
 }

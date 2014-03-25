@@ -317,7 +317,6 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         }
     }
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox firstPrincipleComponentComboBox;
     private javax.swing.JLabel jLabel1;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opt X-Axis="R_value" Y-Axis="Treatment of roots with the LMW EPS Dimer" Z-Axis="Treatment of roots with the LMW EPS Monomer">
-  <cluster name="1">
-    <item name="TC112865" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC112865&amp;CONFIRM=TC112865" annotation="GENE PRODUCT: Inorganic phosphate transporter 1-3 
+    <cluster name="1">
+        <item name="TC112865" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC112865&amp;CONFIRM=TC112865" annotation="GENE PRODUCT: Inorganic phosphate transporter 1-3 
 GO NUMBERS: 5315 6817 16021 
 DESCRIPTION: 
 Inorganic phosphate transporter 1-3 (AtPht1;3) (H(+)/Pi cotransporter).
@@ -19,9 +19,9 @@ KEYWORDS: Membrane; Phosphate transport; Symport; Transmembrane; Transport
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC116366" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC116366&amp;CONFIRM=TC116366" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC116366" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC116366&amp;CONFIRM=TC116366" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC121899" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC121899&amp;CONFIRM=TC121899" annotation="EC NUMBER: 2.7.11.-
+        <item name="TC121899" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC121899&amp;CONFIRM=TC121899" annotation="EC NUMBER: 2.7.11.-
 GENE PRODUCT: Cysteine-rich receptor-like protein kinase 37 precursor 
 DESCRIPTION: 
 Cysteine-rich receptor-like protein kinase 37 precursor (EC 2.7.11.-) (Cysteine-rich RLK37).
@@ -39,7 +39,7 @@ KEYWORDS: ATP-binding; Glycoprotein; Kinase; Membrane; Nucleotide-binding; Recep
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC124587" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124587&amp;CONFIRM=TC124587" annotation="EC NUMBER: 3.4.21.-
+        <item name="TC124587" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124587&amp;CONFIRM=TC124587" annotation="EC NUMBER: 3.4.21.-
 GENE PRODUCT: Subtilisin-like protease precursor 
 DESCRIPTION: 
 Subtilisin-like protease precursor (EC 3.4.21.-) (Cucumisin-like serine protease).
@@ -59,7 +59,7 @@ KEYWORDS: Calcium; Cell wall; Direct protein sequencing; Glycoprotein; Hydrolase
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC125959" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC125959&amp;CONFIRM=TC125959" annotation="EC NUMBER: 2.7.1.68
+        <item name="TC125959" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC125959&amp;CONFIRM=TC125959" annotation="EC NUMBER: 2.7.1.68
 GENE PRODUCT: phosphatidylinositol-4-phosphate 5-kinase family protein 
 GO NUMBERS: 16307 46488 
 DESCRIPTION: 
@@ -77,7 +77,7 @@ KEYWORDS: Kinase; Repeat; Transferase
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC128248" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC128248&amp;CONFIRM=TC128248" annotation="GENE PRODUCT: Putative disease resistance protein RGA3 
+        <item name="TC128248" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC128248&amp;CONFIRM=TC128248" annotation="GENE PRODUCT: Putative disease resistance protein RGA3 
 GO NUMBERS: 5524 6915 
 DESCRIPTION: 
 Putative disease resistance protein RGA3 (RGA1-blb) (Blight resistance protein B149).
@@ -95,7 +95,7 @@ KEYWORDS: ATP-binding; Leucine-rich repeat; Nucleotide-binding; Plant defense; R
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC128910" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC128910&amp;CONFIRM=TC128910" annotation="NAME: Eno2
+        <item name="TC128910" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC128910&amp;CONFIRM=TC128910" annotation="NAME: Eno2
 EC NUMBER: 4.2.1.11
 GENE PRODUCT: enolase, putative
 GO NUMBERS: 15 4634 6096 
@@ -116,11 +116,11 @@ KEYWORDS: Allergen; Cytoplasm; Glycolysis; Lyase; Magnesium; Metal-binding
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC130381" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130381&amp;CONFIRM=TC130381" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC130381" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130381&amp;CONFIRM=TC130381" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC133386" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133386&amp;CONFIRM=TC133386" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC133386" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133386&amp;CONFIRM=TC133386" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC133886" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133886&amp;CONFIRM=TC133886" annotation="GENE PRODUCT: heavy-metal-associated domain-containing protein
+        <item name="TC133886" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133886&amp;CONFIRM=TC133886" annotation="GENE PRODUCT: heavy-metal-associated domain-containing protein
 GO NUMBERS: 30001 46872 
 DESCRIPTION: 
 Heavy metal transport/detoxification protein
@@ -128,22 +128,22 @@ COMMENT:
 Used Tools:
 Blast2x vs KEGG, InterPro
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC134349" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134349&amp;CONFIRM=TC134349" annotation="GENE PRODUCT: scarecrow transcription factor family
+        <item name="TC134349" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134349&amp;CONFIRM=TC134349" annotation="GENE PRODUCT: scarecrow transcription factor family
 DESCRIPTION: 
 GRAS transcription factor
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG, InterPro
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC134709" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134709&amp;CONFIRM=TC134709" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC134709" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134709&amp;CONFIRM=TC134709" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC134784" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134784&amp;CONFIRM=TC134784" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC134784" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134784&amp;CONFIRM=TC134784" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC136336" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136336&amp;CONFIRM=TC136336" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC136336" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136336&amp;CONFIRM=TC136336" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC136380" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136380&amp;CONFIRM=TC136380" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC136380" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136380&amp;CONFIRM=TC136380" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC136431" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136431&amp;CONFIRM=TC136431" annotation="NAME: pgm1
+        <item name="TC136431" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136431&amp;CONFIRM=TC136431" annotation="NAME: pgm1
 EC NUMBER: 5.4.2.2
 GENE PRODUCT: Phosphoglucomutase, cytoplasmic 
 DESCRIPTION: 
@@ -161,7 +161,7 @@ KEYWORDS: Carbohydrate metabolism; Cytoplasm; Glucose metabolism; Isomerase; Mag
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC136665" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136665&amp;CONFIRM=TC136665" annotation="GENE PRODUCT: Pleiotropic drug resistance protein 1 (NtPDR1).
+        <item name="TC136665" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136665&amp;CONFIRM=TC136665" annotation="GENE PRODUCT: Pleiotropic drug resistance protein 1 (NtPDR1).
 GO NUMBERS: 5524 16887 
 DESCRIPTION: 
 ABC transporter related
@@ -178,7 +178,7 @@ KEYWORDS: ATP-binding; Membrane; Nucleotide-binding; Repeat; Transmembrane; Tran
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC136981" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136981&amp;CONFIRM=TC136981" annotation="NAME: gch
+        <item name="TC136981" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136981&amp;CONFIRM=TC136981" annotation="NAME: gch
 EC NUMBER: 3.5.4.16
 GENE PRODUCT: GTP cyclohydrolase I
 GO NUMBERS: 3934 5737 19438 
@@ -195,15 +195,15 @@ KEYWORDS: Complete proteome; Hydrolase; One-carbon metabolism
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC137520" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC137520&amp;CONFIRM=TC137520" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC137520" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC137520&amp;CONFIRM=TC137520" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC137648" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC137648&amp;CONFIRM=TC137648" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC137648" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC137648&amp;CONFIRM=TC137648" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138301" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138301&amp;CONFIRM=TC138301" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC138301" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138301&amp;CONFIRM=TC138301" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138343" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138343&amp;CONFIRM=TC138343" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC138343" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138343&amp;CONFIRM=TC138343" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138875" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138875&amp;CONFIRM=TC138875" annotation="GENE PRODUCT: expressed protein
+        <item name="TC138875" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138875&amp;CONFIRM=TC138875" annotation="GENE PRODUCT: expressed protein
 GO NUMBERS: 16020 
 DESCRIPTION: 
 Protein of unknown function DUF6, transmembrane
@@ -211,11 +211,11 @@ COMMENT:
 Used Tools:
 Blast2x vs KEGG, InterPro
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC139682" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC139682&amp;CONFIRM=TC139682" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC139682" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC139682&amp;CONFIRM=TC139682" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC140121" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140121&amp;CONFIRM=TC140121" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC140121" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140121&amp;CONFIRM=TC140121" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC140439" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140439&amp;CONFIRM=TC140439" annotation="EC NUMBER: 3.1.1.11
+        <item name="TC140439" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140439&amp;CONFIRM=TC140439" annotation="EC NUMBER: 3.1.1.11
 GENE PRODUCT: pectinesterase family protein
 DESCRIPTION: 
 Pectinesterase-2 precursor (EC 3.1.1.11) (Pectin methylesterase) (PE).
@@ -231,11 +231,11 @@ KEYWORDS: Aspartyl esterase; Cell wall; Cell wall biogenesis/degradation; Glycop
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC140808" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140808&amp;CONFIRM=TC140808" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC140808" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140808&amp;CONFIRM=TC140808" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC140937" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140937&amp;CONFIRM=TC140937" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC140937" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC140937&amp;CONFIRM=TC140937" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC141277" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC141277&amp;CONFIRM=TC141277" annotation="NAME: tag
+        <item name="TC141277" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC141277&amp;CONFIRM=TC141277" annotation="NAME: tag
 EC NUMBER: 3.2.2.20
 GENE PRODUCT: methyladenine glycosylase family protein
 GO NUMBERS: 6284 8725 
@@ -251,11 +251,11 @@ KEYWORDS: Complete proteome; DNA damage; DNA repair; Hydrolase
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="F7FE2E" shape="sphere" x="2" y="3" z="12" />
-  </cluster>
-  <cluster name="2">
-    <item name="TC116760" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC116760&amp;CONFIRM=TC116760" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+    </cluster>
+    <cluster name="2">
+        <item name="TC116760" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC116760&amp;CONFIRM=TC116760" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC124347" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124347&amp;CONFIRM=TC124347" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC124347" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124347&amp;CONFIRM=TC124347" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 GO NUMBERS: 4674 5524 6468 
 DESCRIPTION: 
 Protein kinase, C-terminal
@@ -263,7 +263,7 @@ COMMENT:
 Used Tools:
 InterPro
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC129765" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC129765&amp;CONFIRM=TC129765" annotation="GENE PRODUCT: glutamine synthetase, putative
+        <item name="TC129765" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC129765&amp;CONFIRM=TC129765" annotation="GENE PRODUCT: glutamine synthetase, putative
 GO NUMBERS: 3824 
 DESCRIPTION: 
 Glutamine synthetase/guanido kinase, catalytic region
@@ -271,7 +271,7 @@ COMMENT:
 Used Tools:
 Blast2x vs KEGG, InterPro, Blast2x vs KOG
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC130704" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130704&amp;CONFIRM=TC130704" annotation="GENE PRODUCT: Peptidyl-prolyl cis-trans isomerase CYP40 
+        <item name="TC130704" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130704&amp;CONFIRM=TC130704" annotation="GENE PRODUCT: Peptidyl-prolyl cis-trans isomerase CYP40 
 GO NUMBERS: 5488 
 DESCRIPTION: 
 Peptidyl-prolyl cis-trans isomerase CYP40 (EC 5.2.1.8) (PPIase CYP40) (Rotamase CYP40) (Cyclophilin-40) (Cyclophilin of 40 kDa) (Protein SQUINT).
@@ -291,12 +291,12 @@ KEYWORDS: Chaperone; Cyclosporin; Cytoplasm; Isomerase; Repeat; Rotamase; TPR re
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC130735" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130735&amp;CONFIRM=TC130735" annotation="GENE PRODUCT: amine oxidase family protein / SWIRM domain-containing protein
+        <item name="TC130735" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130735&amp;CONFIRM=TC130735" annotation="GENE PRODUCT: amine oxidase family protein / SWIRM domain-containing protein
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG, Blast2x vs KOG
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC130793" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130793&amp;CONFIRM=TC130793" annotation="GENE PRODUCT: expressed protein
+        <item name="TC130793" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC130793&amp;CONFIRM=TC130793" annotation="GENE PRODUCT: expressed protein
 GO NUMBERS: 30246 
 DESCRIPTION: 
 Carbohydrate-binding-like fold
@@ -304,9 +304,9 @@ COMMENT:
 Used Tools:
 Blast2x vs KEGG, InterPro
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC132592" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC132592&amp;CONFIRM=TC132592" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC132592" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC132592&amp;CONFIRM=TC132592" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC132667" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC132667&amp;CONFIRM=TC132667" annotation="EC NUMBER: 1.11.1.7
+        <item name="TC132667" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC132667&amp;CONFIRM=TC132667" annotation="EC NUMBER: 1.11.1.7
 GENE PRODUCT: peroxidase, putative 
 GO NUMBERS: 4601 6118 6979 20037 
 DESCRIPTION: 
@@ -326,7 +326,7 @@ KEYWORDS: 3D-structure; Calcium; Direct protein sequencing; Glycoprotein; Heme; 
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC135309" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135309&amp;CONFIRM=TC135309" annotation="EC NUMBER: 2.7.1.-
+        <item name="TC135309" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135309&amp;CONFIRM=TC135309" annotation="EC NUMBER: 2.7.1.-
 GENE PRODUCT: Protein kinase APK1A, chloroplast precursor 
 DESCRIPTION: 
 Protein kinase APK1A, chloroplast precursor (EC 2.7.11.1).
@@ -343,21 +343,21 @@ KEYWORDS: ATP-binding; Chloroplast; Kinase; Nucleotide-binding; Plastid; Serine/
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC135311" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135311&amp;CONFIRM=TC135311" annotation="GENE PRODUCT: gibberellin-regulated family protein
+        <item name="TC135311" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135311&amp;CONFIRM=TC135311" annotation="GENE PRODUCT: gibberellin-regulated family protein
 DESCRIPTION: 
 Gibberellin regulated protein
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG, InterPro
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC136735" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136735&amp;CONFIRM=TC136735" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC136735" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136735&amp;CONFIRM=TC136735" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC137306" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC137306&amp;CONFIRM=TC137306" annotation="GENE PRODUCT: hydroxyproline-rich glycoprotein family protein
+        <item name="TC137306" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC137306&amp;CONFIRM=TC137306" annotation="GENE PRODUCT: hydroxyproline-rich glycoprotein family protein
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138935" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138935&amp;CONFIRM=TC138935" annotation="GENE PRODUCT: Aquaporin PIP1-2 
+        <item name="TC138935" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138935&amp;CONFIRM=TC138935" annotation="GENE PRODUCT: Aquaporin PIP1-2 
 GO NUMBERS: 5215 6810 16020 
 DESCRIPTION: 
 Aquaporin PIP1-2 (AtPIP1;2) (Plasma membrane intrinsic protein 1b) (PIP1b) (Transmembrane protein A) (TMP-A) (AthH2).
@@ -375,9 +375,9 @@ KEYWORDS: Acetylation; Membrane; Repeat; Transmembrane; Transport
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="FF0000" shape="sphere" x="2" y="3" z="12" />
-  </cluster>
-  <cluster name="3">
-    <item name="TC118129" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC118129&amp;CONFIRM=TC118129" annotation="EC NUMBER: 1.11.1.7
+    </cluster>
+    <cluster name="3">
+        <item name="TC118129" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC118129&amp;CONFIRM=TC118129" annotation="EC NUMBER: 1.11.1.7
 GENE PRODUCT: peroxidase, putative 
 GO NUMBERS: 4601 6118 6979 20037 
 DESCRIPTION: 
@@ -398,11 +398,11 @@ KEYWORDS: Calcium; Glycoprotein; Heme; Hydrogen peroxide; Iron; Metal-binding; O
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC120269" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC120269&amp;CONFIRM=TC120269" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC120269" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC120269&amp;CONFIRM=TC120269" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC120585" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC120585&amp;CONFIRM=TC120585" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC120585" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC120585&amp;CONFIRM=TC120585" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC121386" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC121386&amp;CONFIRM=TC121386" annotation="NAME: LPD1
+        <item name="TC121386" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC121386&amp;CONFIRM=TC121386" annotation="NAME: LPD1
 EC NUMBER: 1.8.1.4
 GENE PRODUCT: Dihydrolipoyl dehydrogenase, mitochondrial precursor 
 GO NUMBERS: 5737 16491 45454 
@@ -425,7 +425,7 @@ KEYWORDS: 3D-structure; Direct protein sequencing; FAD; Flavoprotein; Mitochondr
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC122267" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC122267&amp;CONFIRM=TC122267" annotation="GENE PRODUCT: TMV resistance protein N.
+        <item name="TC122267" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC122267&amp;CONFIRM=TC122267" annotation="GENE PRODUCT: TMV resistance protein N.
 GO NUMBERS: 5524 6915 
 DESCRIPTION: 
 NB-ARC
@@ -445,7 +445,7 @@ KEYWORDS: Alternative splicing; ATP-binding; Cytoplasm; Hypersensitive response;
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC124758" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124758&amp;CONFIRM=TC124758" annotation="NAME: crb3
+        <item name="TC124758" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC124758&amp;CONFIRM=TC124758" annotation="NAME: crb3
 GENE PRODUCT: WD repeat protein 18.
 DESCRIPTION: 
 WD40 repeat-like
@@ -457,29 +457,29 @@ KEYWORDS: Repeat; WD repeat
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC125891" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC125891&amp;CONFIRM=TC125891" annotation="GENE PRODUCT: hypothetical protein
+        <item name="TC125891" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC125891&amp;CONFIRM=TC125891" annotation="GENE PRODUCT: hypothetical protein
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC128432" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC128432&amp;CONFIRM=TC128432" annotation="GENE PRODUCT: expressed protein
+        <item name="TC128432" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC128432&amp;CONFIRM=TC128432" annotation="GENE PRODUCT: expressed protein
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC129040" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC129040&amp;CONFIRM=TC129040" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC129040" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC129040&amp;CONFIRM=TC129040" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC131320" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC131320&amp;CONFIRM=TC131320" annotation="GENE PRODUCT: endonuclease/exonuclease/phosphatase family protein
+        <item name="TC131320" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC131320&amp;CONFIRM=TC131320" annotation="GENE PRODUCT: endonuclease/exonuclease/phosphatase family protein
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC133053" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133053&amp;CONFIRM=TC133053" annotation="GENE PRODUCT: hydroxyproline-rich glycoprotein family protein
+        <item name="TC133053" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133053&amp;CONFIRM=TC133053" annotation="GENE PRODUCT: hydroxyproline-rich glycoprotein family protein
 COMMENT: 
 Used Tools:
 Blast2x vs KEGG, Blast2x vs KOG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC133526" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133526&amp;CONFIRM=TC133526" annotation="GENE PRODUCT: Nipped-B-like protein (Delangin) (SCC2 homolog).
+        <item name="TC133526" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC133526&amp;CONFIRM=TC133526" annotation="GENE PRODUCT: Nipped-B-like protein (Delangin) (SCC2 homolog).
 COMMENT: 
 Blast2x vs SP:
 FUNCTION: Probably plays a structural role in chromatin. Involved in sister chromatid cohesion, possibly by interacting with the cohesin complex (By similarity).
@@ -500,7 +500,7 @@ KEYWORDS: Alternative splicing; Cell cycle; Disease mutation; Nucleus; Phosphory
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, Blast2x vs KOG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC134363" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134363&amp;CONFIRM=TC134363" annotation="GENE PRODUCT: GATA transcription factor 19.
+        <item name="TC134363" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC134363&amp;CONFIRM=TC134363" annotation="GENE PRODUCT: GATA transcription factor 19.
 GO NUMBERS: 3700 6355 8270 
 DESCRIPTION: 
 Zinc finger, NHR/GATA-type
@@ -515,11 +515,11 @@ KEYWORDS: DNA-binding; Metal-binding; Nucleus; Transcription; Transcription regu
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC135018" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135018&amp;CONFIRM=TC135018" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC135018" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC135018&amp;CONFIRM=TC135018" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC136834" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136834&amp;CONFIRM=TC136834" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC136834" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC136834&amp;CONFIRM=TC136834" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138241" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138241&amp;CONFIRM=TC138241" annotation="NAME: csbC
+        <item name="TC138241" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138241&amp;CONFIRM=TC138241" annotation="NAME: csbC
 GENE PRODUCT: Probable polyol transporter 4.
 GO NUMBERS: 5351 8643 16020 
 DESCRIPTION: 
@@ -535,11 +535,11 @@ KEYWORDS: Membrane; Sugar transport; Symport; Transmembrane; Transport
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138430" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138430&amp;CONFIRM=TC138430" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC138430" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138430&amp;CONFIRM=TC138430" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138560" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138560&amp;CONFIRM=TC138560" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC138560" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138560&amp;CONFIRM=TC138560" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC138566" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138566&amp;CONFIRM=TC138566" annotation="EC NUMBER: 3.1.1.29
+        <item name="TC138566" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC138566&amp;CONFIRM=TC138566" annotation="EC NUMBER: 3.1.1.29
 GENE PRODUCT: Peptidyl-tRNA hydrolase, mitochondrial precursor 
 GO NUMBERS: 4045 6412 
 DESCRIPTION: 
@@ -556,9 +556,9 @@ KEYWORDS: Hydrolase; Mitochondrion; mRNA processing; mRNA splicing; Ribonucleopr
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC139216" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC139216&amp;CONFIRM=TC139216" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC139216" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC139216&amp;CONFIRM=TC139216" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC139625" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC139625&amp;CONFIRM=TC139625" annotation="NAME: agp
+        <item name="TC139625" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC139625&amp;CONFIRM=TC139625" annotation="NAME: agp
 EC NUMBER: 2.7.7.27
 GENE PRODUCT: glucose-1-phosphate adenylyltransferase 
 GO NUMBERS: 16740 
@@ -581,9 +581,9 @@ KEYWORDS: Allosteric enzyme; Amyloplast; Chloroplast; Nucleotidyltransferase; Pl
 Used Tools:
 Blast2x vs KEGG, Blast2x vs SP, InterPro, Blast2x vs KOG
 " color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC141642" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC141642&amp;CONFIRM=TC141642" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC141642" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC141642&amp;CONFIRM=TC141642" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-    <item name="TC141678" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC141678&amp;CONFIRM=TC141678" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
+        <item name="TC141678" URL="http://www.cebitec.uni-bielefeld.de/groups/brf/software/sams/cgi-bin/sams.cgi?ACTION=dh&amp;TYPE=list&amp;SELECT=TC141678&amp;CONFIRM=TC141678" annotation="GENE PRODUCT: hypothetical protein predicted by Glimmer/Critica
 COMMENT: No hits found." color="00FF00" shape="sphere" x="2" y="3" z="12" />
-  </cluster>
+    </cluster>
 </opt>

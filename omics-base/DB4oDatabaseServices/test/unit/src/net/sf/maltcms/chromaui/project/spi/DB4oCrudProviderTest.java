@@ -27,20 +27,19 @@
  */
 package net.sf.maltcms.chromaui.project.spi;
 
-import org.junit.Test;
-import org.netbeans.junit.NbModuleSuite;
-import net.sf.maltcms.chromaui.db.spi.db4o.DB4oCrudProvider;
-import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
-import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Arrays;
-import java.io.File;
-import java.util.Collection;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
+import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
+import net.sf.maltcms.chromaui.db.spi.db4o.DB4oCrudProvider;
+import org.junit.Test;
+import org.netbeans.junit.NbModuleSuite;
 import org.netbeans.junit.NbTestCase;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -52,7 +51,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
 
         private Integer first;
         private String second;
-        
+
         public IntStringTuple(Integer itg, String str) {
             this.first = first;
             this.second = second;
@@ -75,9 +74,11 @@ public class DB4oCrudProviderTest extends NbTestCase {
         }
     }
 
-    class Tuple2D<T,U> {
+    class Tuple2D<T, U> {
+
         private T first;
         private U second;
+
         public Tuple2D(T t, U u) {
             this.first = t;
             this.second = u;
@@ -101,7 +102,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
 
         @Override
         public String toString() {
-            return "["+first+","+second+"]";
+            return "[" + first + "," + second + "]";
         }
     }
 
@@ -111,7 +112,6 @@ public class DB4oCrudProviderTest extends NbTestCase {
 
 //    public DB4oCrudProviderTest() {
 //    }
-
     public static junit.framework.Test suite() {
         return NbModuleSuite.create(NbModuleSuite.createConfiguration(DB4oCrudProviderTest.class));
     }
@@ -187,7 +187,6 @@ public class DB4oCrudProviderTest extends NbTestCase {
         } finally {
             instance.close();
         }
-
 
     }
 

@@ -42,7 +42,7 @@ import ucar.ma2.ArrayDouble;
 public class PcaDescriptorAdapter {
 
     public ArrayList<DataModel> parse_data(IPcaDescriptor pcaDescr, int pc1, int pc2, int pc3) {
-        ArrayList<DataModel> data = new ArrayList<DataModel>();
+        ArrayList<DataModel> data = new ArrayList<>();
         Heading head = new Heading();
         head.setHeading_x("PC" + pc1);
         head.setHeading_y("PC" + pc2);

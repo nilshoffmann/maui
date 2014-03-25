@@ -110,7 +110,7 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
         // go with default activated Node strategy
 //        return null;
 //        return null;
-        return ((OverlayNavigatorPanelUI)getComponent()).getLookup();
+        return ((OverlayNavigatorPanelUI) getComponent()).getLookup();
     }
 
     /**

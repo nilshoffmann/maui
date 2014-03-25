@@ -32,5 +32,5 @@ package net.sf.maltcms.chromaui.project.api.nodes;
  * @author Nils Hoffmann
  */
 public interface IChromatogramNodeMenuProvider extends IObjectNodeMenuProvider {
-    
+
 }

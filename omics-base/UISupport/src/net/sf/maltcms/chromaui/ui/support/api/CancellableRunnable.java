@@ -26,7 +26,7 @@ import org.openide.util.Task;
  */
 public abstract class CancellableRunnable<R> implements Runnable, Cancellable {
 
-    private HashSet<ResultListener<R>> listeners = new HashSet<ResultListener<R>>();
+    private HashSet<ResultListener<R>> listeners = new HashSet<>();
     private boolean updateOnEventDispatchThread = false;
     public ProgressHandle handle;
 

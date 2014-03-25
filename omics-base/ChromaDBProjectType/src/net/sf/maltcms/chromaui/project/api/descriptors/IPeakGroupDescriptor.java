@@ -99,8 +99,8 @@ public interface IPeakGroupDescriptor extends IBasicDescriptor {
     public IPeakAnnotationDescriptor getPeakForSample(IChromatogramDescriptor chromatogramDescriptor);
 
     public StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors);
-    
+
     public Set<IPeakAnnotationDescriptor> getPeaksForTreatmentGroup(ITreatmentGroupDescriptor group);
-    
+
     public Set<IPeakAnnotationDescriptor> getPeaksForSampleGroup(ISampleGroupDescriptor group);
 }

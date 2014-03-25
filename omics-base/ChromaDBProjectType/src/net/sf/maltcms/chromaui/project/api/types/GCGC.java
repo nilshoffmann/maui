@@ -33,8 +33,9 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=ISeparationType.class)
+@ServiceProvider(service = ISeparationType.class)
 public class GCGC implements ISeparationType {
+
     private final String separationType = "GCxGC";
     private final String longName = "comprehensive two-dimensional gas chromatography";
     private int featureDimensions = 2;
@@ -53,7 +54,7 @@ public class GCGC implements ISeparationType {
     public int getFeatureDimensions() {
         return featureDimensions;
     }
-    
+
     @Override
     public String toString() {
         return getSeparationType();

@@ -32,5 +32,6 @@ package net.sf.maltcms.common.charts.api.selection;
  * @author Nils Hoffmann
  */
 public interface IClearable {
-	void clear();
+
+    void clear();
 }

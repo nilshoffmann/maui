@@ -33,31 +33,31 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IDetectorType.class)
+@ServiceProvider(service = IDetectorType.class)
 public class FID implements IDetectorType {
 
-	private final String detectorType = "FID";
+    private final String detectorType = "FID";
     private final String longName = "flame ionization detector";
     private final int featureDimensions = 1;
-	
-	@Override
-	public String getDetectorType() {
-		return detectorType;
-	}
 
-	@Override
-	public String getLongName() {
-		return longName;
-	}
+    @Override
+    public String getDetectorType() {
+        return detectorType;
+    }
 
-	@Override
-	public int getFeatureDimensions() {
-		return featureDimensions;
-	}
+    @Override
+    public String getLongName() {
+        return longName;
+    }
 
-	@Override
-	public String toString() {
-		return getDetectorType();
-	}
-	
+    @Override
+    public int getFeatureDimensions() {
+        return featureDimensions;
+    }
+
+    @Override
+    public String toString() {
+        return getDetectorType();
+    }
+
 }

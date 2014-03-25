@@ -40,7 +40,7 @@ public interface ILookupResultListener extends LookupListener {
     void deregister();
 
     void register(Lookup targetLookup);
-    
+
     @Override
     void resultChanged(LookupEvent result);
 

@@ -145,6 +145,7 @@ public class InfoPanel extends JPanel implements MouseListener {
         this.repaint();
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
 //        if (e.getSource() == link) {
 //            throw new NotImplementedException();
@@ -160,21 +161,25 @@ public class InfoPanel extends JPanel implements MouseListener {
 //        }
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         // TODO Auto-generated method stub
 
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
 
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         // TODO Auto-generated method stub
 
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         // TODO Auto-generated method stub
 

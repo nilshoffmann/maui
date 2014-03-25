@@ -108,9 +108,7 @@ public class URIPropertyEditor extends PropertyEditorSupport implements ExProper
                             if (Desktop.isDesktopSupported()) {
                                 Desktop.getDesktop().browse(uri);
                             }
-                        } catch (IllegalArgumentException iae) {
-                        } catch (IOException ex) {
-//							Exceptions.printStackTrace(ex);
+                        } catch (IllegalArgumentException | IOException iae) {
                         }
                     } else {
                         throw new NullPointerException();

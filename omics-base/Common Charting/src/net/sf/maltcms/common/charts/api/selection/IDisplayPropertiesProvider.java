@@ -29,19 +29,26 @@ package net.sf.maltcms.common.charts.api.selection;
 
 /**
  *
- *  @author Nils Hoffmann
+ * @author Nils Hoffmann
  */
 public interface IDisplayPropertiesProvider {
+
     public String getName(ISelection selection);
+
     public String getDisplayName(ISelection selection);
+
     public String getShortDescription(ISelection selection);
-    
+
     public String getSourceName(ISelection selection);
+
     public String getSourceDisplayName(ISelection selection);
+
     public String getSourceShortDescription(ISelection selection);
-    
+
     public String getTargetName(ISelection selection);
+
     public String getTargetDisplayName(ISelection selection);
+
     public String getTargetShortDescription(ISelection selection);
 
 }

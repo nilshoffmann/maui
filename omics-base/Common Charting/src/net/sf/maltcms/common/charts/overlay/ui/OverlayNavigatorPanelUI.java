@@ -118,7 +118,7 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
             Node oldRoot = manager.getRootContext();
             List<String[]> paths = outline.getExpandedPaths(oldRoot);
             List<String[]> selectedPaths = getSelectedPaths();
-            final List<Node> l = new ArrayList<Node>(overlays);
+            final List<Node> l = new ArrayList<>(overlays);
             Collections.sort(l, new Comparator<Node>() {
                 @Override
                 public int compare(Node t, Node t1) {
@@ -149,38 +149,39 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
             setSelectedPaths(selectedPaths);
         }
     }
-    
+
     private void setSelectedPaths(List<String[]> selectedPaths) {
-        final List<Node> selectedNodes = new ArrayList<Node>();
-            Node root = manager.getRootContext();
-            for (String[] sp : selectedPaths) {
+        final List<Node> selectedNodes = new ArrayList<>();
+        Node root = manager.getRootContext();
+        for (String[] sp : selectedPaths) {
 //                LOG.log(Level.FINE, "{0}: selecting {1}", new Object[] {id, Arrays.asList(sp)});
-                try {
-                    Node n = NodeOp.findPath(root, sp);
-                    if (n != null) {
-                        selectedNodes.add(n);
-                    }
-                } catch (NodeNotFoundException x) {
-//                    LOG.log(Level.FINE, null, x);
+            try {
+                Node n = NodeOp.findPath(root, sp);
+                if (n != null) {
+                    selectedNodes.add(n);
                 }
+            } catch (NodeNotFoundException x) {
+//                    LOG.log(Level.FINE, null, x);
             }
-            if (!selectedNodes.isEmpty()) {
+        }
+        if (!selectedNodes.isEmpty()) {
 //                LOG.log(Level.FINE, "{0}: Switching to AWT", id);
-                EventQueue.invokeLater(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            manager.setSelectedNodes(selectedNodes.toArray(new Node[selectedNodes.size()]));
-                        } catch (PropertyVetoException x) {
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        manager.setSelectedNodes(selectedNodes.toArray(new Node[selectedNodes.size()]));
+                    } catch (PropertyVetoException x) {
 //                            LOG.log(Level.FINE, null, x);
-                        }
-//                        LOG.log(Level.FINE, "{0}: done.", id);
                     }
-                });
-            }
+//                        LOG.log(Level.FINE, "{0}: done.", id);
+                }
+            });
+        }
     }
-    
+
     private List<String[]> getSelectedPaths() {
-        List<String[]> result = new ArrayList<String[]>();
+        List<String[]> result = new ArrayList<>();
         Node root = manager.getRootContext();
         for (Node n : manager.getSelectedNodes()) {
             String[] path = NodeOp.createPath(n, root);

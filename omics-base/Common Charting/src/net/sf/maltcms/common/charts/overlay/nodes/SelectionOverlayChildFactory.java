@@ -39,8 +39,10 @@ import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import static org.openide.util.Exceptions.printStackTrace;
 import org.openide.util.WeakListeners;
 import org.openide.util.lookup.Lookups;
+import static org.openide.util.lookup.Lookups.fixed;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
@@ -70,10 +72,10 @@ public class SelectionOverlayChildFactory extends ChildFactory<ISelection> imple
     protected Node createNodeForKey(ISelection key) {
         try {
             SelectionNode selectionNode = new SelectionNode(key);
-            FilterNode fn = new FilterNode(selectionNode, Children.LEAF, new ProxyLookup(selectionNode.getLookup(), Lookups.fixed(key, key.getSource(), key.getTarget())));
+            FilterNode fn = new FilterNode(selectionNode, Children.LEAF, new ProxyLookup(selectionNode.getLookup(), fixed(key, key.getSource(), key.getTarget())));
             return fn;
         } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
+            printStackTrace(ex);
 
         }
         return Node.EMPTY;

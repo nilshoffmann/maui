@@ -104,7 +104,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
     private InfoPanel info;
     private Background b;
     private java.util.BitSet visibleNodes;
-    private HashMap<String, Integer> address = new HashMap<String, Integer>();
+    private HashMap<String, Integer> address = new HashMap<>();
     private Switch switchGroup;
     private DataModel selDa;
     private InstanceContent content;
@@ -360,6 +360,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
         enablePicking(data_branch);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         pickCanvas.setShapeLocation(e);
         PickResult result = pickCanvas.pickClosest();
@@ -408,18 +409,22 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
         return null;
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
 //        revalidate();
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         // TODO Auto-generated method stub
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         // TODO Auto-generated method stub
     }
@@ -442,69 +447,80 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
                 Geometry g = (Geometry) e.nextElement();
                 g.setCapability(g.ALLOW_INTERSECT);
             }
-        } catch (ClassCastException e) {
+        } catch (ClassCastException | javax.media.j3d.RestrictedAccessException e) {
             // not a Shape3D node ignore exception
-        } catch (javax.media.j3d.RestrictedAccessException rae) {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("xy")) {
-            Transform3D transform = new Transform3D();
-            transform.setTranslation(new Vector3f(0, 0, 3.5f));
-            uni.getViewingPlatform().getViewPlatformTransform().setTransform(transform);
-        } else if (e.getActionCommand().equals("xz")) {
-            Transform3D transform = new Transform3D();
-            transform.lookAt(new Point3d(0, 3.5, 0), new Point3d(0, 0, 0), new Vector3d(0, 0, 1));
-            transform.invert();
-            uni.getViewingPlatform().getViewPlatformTransform().setTransform(transform);
-        } else if (e.getActionCommand().equals("yz")) {
-            Transform3D transform = new Transform3D();
-            transform.lookAt(new Point3d(3.5, 0, 0), new Point3d(0, 0, 0), new Vector3d(0, 0, 1));
-            transform.invert();
-            uni.getViewingPlatform().getViewPlatformTransform().setTransform(transform);
-        } else if (e.getActionCommand().equals("change background")) {
-            Color3f col = new Color3f(JColorChooser.showDialog(this,
-                    "Choose Background Color", Color.BLACK));
-            b.setColor(col);
-            if (e.getSource() instanceof JButton) {
-                if (((JButton) e.getSource()).getParent() instanceof InfoPanel) {
-                    ((InfoPanel) ((JButton) e.getSource()).getParent()).set_background(col);
-                    ((InfoPanel) ((JButton) e.getSource()).getParent()).set_colors();
+        switch (e.getActionCommand()) {
+            case "xy": {
+                Transform3D transform = new Transform3D();
+                transform.setTranslation(new Vector3f(0, 0, 3.5f));
+                uni.getViewingPlatform().getViewPlatformTransform().setTransform(transform);
+                break;
+            }
+            case "xz": {
+                Transform3D transform = new Transform3D();
+                transform.lookAt(new Point3d(0, 3.5, 0), new Point3d(0, 0, 0), new Vector3d(0, 0, 1));
+                transform.invert();
+                uni.getViewingPlatform().getViewPlatformTransform().setTransform(transform);
+                break;
+            }
+            case "yz": {
+                Transform3D transform = new Transform3D();
+                transform.lookAt(new Point3d(3.5, 0, 0), new Point3d(0, 0, 0), new Vector3d(0, 0, 1));
+                transform.invert();
+                uni.getViewingPlatform().getViewPlatformTransform().setTransform(transform);
+                break;
+            }
+            case "change background":
+                Color3f col = new Color3f(JColorChooser.showDialog(this,
+                        "Choose Background Color", Color.BLACK));
+                b.setColor(col);
+                if (e.getSource() instanceof JButton) {
+                    if (((JButton) e.getSource()).getParent() instanceof InfoPanel) {
+                        ((InfoPanel) ((JButton) e.getSource()).getParent()).set_background(col);
+                        ((InfoPanel) ((JButton) e.getSource()).getParent()).set_colors();
+                    }
                 }
-            }
-        } else if (e.getActionCommand().equals("export")) {
-            BufferedImage bi = new java.awt.image.BufferedImage(can.getWidth(), can.getHeight(), BufferedImage.TYPE_INT_RGB);
-            ImageComponent2D im2d = new ImageComponent2D(ImageComponent.FORMAT_RGB, bi);
-            Raster ras = new Raster(new Point3f(-1.0f, -1.0f, -1.0f), Raster.RASTER_COLOR, 0, 0, can.getWidth(), can.getHeight(), im2d, null);
-            GraphicsContext3D gc3d = can.getGraphicsContext3D();
-            gc3d.readRaster(ras);
-            BufferedImage bimage = ras.getImage().getImage();
-            JFileChooser fc = new JFileChooser();
-            fc.showSaveDialog(this);
-            File f = fc.getSelectedFile();
-            try {
-                ImageIO.write(bimage, "png", f);
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        } else if (e.getActionCommand().equals("clip")) {
-            if (selDa != null) {
-                String name = selDa.getLabel();
-                String anno = selDa.getAnnotation();
-                Double x = selDa.getCoordinates().get(0);
-                Double y = selDa.getCoordinates().get(1);
-                Double z = selDa.getCoordinates().get(2);
-                String con = "Name: " + name + "\nAnnotation: " + anno + "\nx: " + x
-                        + "\ny: " + y + "\nz: " + z;
-                StringSelection stringSelection = new StringSelection(con);
-                Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
-                c.setContents(stringSelection, this);
-            }
+                break;
+            case "export":
+                BufferedImage bi = new java.awt.image.BufferedImage(can.getWidth(), can.getHeight(), BufferedImage.TYPE_INT_RGB);
+                ImageComponent2D im2d = new ImageComponent2D(ImageComponent.FORMAT_RGB, bi);
+                Raster ras = new Raster(new Point3f(-1.0f, -1.0f, -1.0f), Raster.RASTER_COLOR, 0, 0, can.getWidth(), can.getHeight(), im2d, null);
+                GraphicsContext3D gc3d = can.getGraphicsContext3D();
+                gc3d.readRaster(ras);
+                BufferedImage bimage = ras.getImage().getImage();
+                JFileChooser fc = new JFileChooser();
+                fc.showSaveDialog(this);
+                File f = fc.getSelectedFile();
+                try {
+                    ImageIO.write(bimage, "png", f);
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                break;
+            case "clip":
+                if (selDa != null) {
+                    String name = selDa.getLabel();
+                    String anno = selDa.getAnnotation();
+                    Double x = selDa.getCoordinates().get(0);
+                    Double y = selDa.getCoordinates().get(1);
+                    Double z = selDa.getCoordinates().get(2);
+                    String con = "Name: " + name + "\nAnnotation: " + anno + "\nx: " + x
+                            + "\ny: " + y + "\nz: " + z;
+                    StringSelection stringSelection = new StringSelection(con);
+                    Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    c.setContents(stringSelection, this);
+                }
+                break;
         }
     }
 
+    @Override
     public void itemStateChanged(ItemEvent evt) {
         try {
             Checkbox sender = (Checkbox) evt.getSource();
@@ -523,6 +539,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
 
     }
 
+    @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
         // TODO Auto-generated method stub
     }

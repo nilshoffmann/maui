@@ -32,5 +32,5 @@ package net.sf.maltcms.chromaui.project.api;
  * @author Nils Hoffmann
  */
 public interface IMaltcmsClassPathProvider {
-    
+
 }

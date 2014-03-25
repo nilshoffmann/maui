@@ -49,6 +49,6 @@ package net.sf.maltcms.chromaui.project.api.nodes;
  *
  * @author Nils Hoffmann
  */
-public interface IProjectMenuProvider extends IObjectNodeMenuProvider{
+public interface IProjectMenuProvider extends IObjectNodeMenuProvider {
 
 }

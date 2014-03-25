@@ -241,13 +241,12 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
 //
 //        return commandList;
 //    }
-
     public synchronized RConnection startLocalAndConnect() {
-        if(StartRserveOriginal.checkLocalRserve()) {
+        if (StartRserveOriginal.checkLocalRserve()) {
             try {
                 return new RConnection();
             } catch (RserveException ex) {
-               throw new RuntimeException("Could not connect to local Rserve!");
+                throw new RuntimeException("Could not connect to local Rserve!");
             }
         }
         throw new RuntimeException("Could not start local Rserve!");

@@ -84,36 +84,36 @@ public class CategorySelection implements ISelection {
         }
     }
 
-	@Override
+    @Override
     public CategoryDataset getDataset() {
         return dataset;
     }
 
-	@Override
-	public void setDataset(Dataset dataset) {
-		if(!(dataset instanceof CategoryDataset)) {
-			throw new IllegalArgumentException("Only CategoryDatasets supported!");
-		}
-		setDataset((CategoryDataset)dataset);
-	}
-	
+    @Override
+    public void setDataset(Dataset dataset) {
+        if (!(dataset instanceof CategoryDataset)) {
+            throw new IllegalArgumentException("Only CategoryDatasets supported!");
+        }
+        setDataset((CategoryDataset) dataset);
+    }
+
     public void setDataset(CategoryDataset dataset) {
         CategoryDataset old = dataset;
         this.dataset = dataset;
         pcs.firePropertyChange(PROP_DATASET, old, this.dataset);
     }
 
-	@Override
+    @Override
     public int getSeriesIndex() {
         return seriesIndex;
     }
 
-	@Override
+    @Override
     public int getItemIndex() {
         return itemIndex;
     }
 
-	@Override
+    @Override
     public Type getType() {
         return type;
     }
@@ -128,6 +128,7 @@ public class CategorySelection implements ISelection {
         return target;
     }
 
+    @Override
     public Shape getSelectionShape() {
         return selectionShape;
     }
@@ -171,7 +172,7 @@ public class CategorySelection implements ISelection {
         hash = 79 * hash + this.seriesIndex;
         hash = 79 * hash + this.itemIndex;
         hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
-		//target and source may or may not implement equals and hashcode correctly, so better leave them out
+        //target and source may or may not implement equals and hashcode correctly, so better leave them out
 //        hash = 79 * hash + (this.target != null ? this.target.hashCode() : 0);
 //        hash = 79 * hash + (this.source != null ? this.source.hashCode() : 0);
         return hash;
@@ -186,13 +187,13 @@ public class CategorySelection implements ISelection {
             return false;
         }
         final CategorySelection other = (CategorySelection) obj;
-		try {
-			if (this.dataset.getRowKey(this.seriesIndex) != other.getDataset().getRowKey(this.seriesIndex) && (this.dataset.getRowKey(this.seriesIndex) == null || !this.dataset.getRowKey(this.seriesIndex).equals(other.getDataset().getRowKey(this.seriesIndex)))) {
-				return false;
-			}
-		}catch(ArrayIndexOutOfBoundsException aiex) {
-			return false;
-		}
+        try {
+            if (this.dataset.getRowKey(this.seriesIndex) != other.getDataset().getRowKey(this.seriesIndex) && (this.dataset.getRowKey(this.seriesIndex) == null || !this.dataset.getRowKey(this.seriesIndex).equals(other.getDataset().getRowKey(this.seriesIndex)))) {
+                return false;
+            }
+        } catch (ArrayIndexOutOfBoundsException aiex) {
+            return false;
+        }
         if (this.seriesIndex != other.seriesIndex) {
             return false;
         }
@@ -202,7 +203,7 @@ public class CategorySelection implements ISelection {
         if (this.type != other.type) {
             return false;
         }
-		//target and source may or may not implement equals and hashcode correctly, so better leave them out
+        //target and source may or may not implement equals and hashcode correctly, so better leave them out
 //        if (this.target != other.target && (this.target == null || !this.target.equals(other.target))) {
 //            return false;
 //        }

@@ -39,29 +39,29 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = ICentralLookupFactory.class)
 public class CentralLookupFactory implements ICentralLookupFactory {
 
-	private ConcurrentHashMap<String, CentralLookup> namedLookupMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, CentralLookup> namedLookupMap = new ConcurrentHashMap<>();
 
-	@Override
-	public CentralLookup getDefault() {
-		return CentralLookup.getDefault();
-	}
+    @Override
+    public CentralLookup getDefault() {
+        return CentralLookup.getDefault();
+    }
 
-	@Override
-	public CentralLookup getNamed(String name) {
-		CentralLookup lookup = null;
-		if (namedLookupMap.containsKey(name)) {
-			lookup = namedLookupMap.get(name);
-		} else {
-			lookup = new CentralLookup();
-			namedLookupMap.put(name, lookup);
-		}
-		return lookup;
-	}
+    @Override
+    public CentralLookup getNamed(String name) {
+        CentralLookup lookup = null;
+        if (namedLookupMap.containsKey(name)) {
+            lookup = namedLookupMap.get(name);
+        } else {
+            lookup = new CentralLookup();
+            namedLookupMap.put(name, lookup);
+        }
+        return lookup;
+    }
 
-	@Override
-	public void removeNamed(String name) {
-		if(namedLookupMap.containsKey(name)) {
-			namedLookupMap.remove(name);
-		}
-	}
+    @Override
+    public void removeNamed(String name) {
+        if (namedLookupMap.containsKey(name)) {
+            namedLookupMap.remove(name);
+        }
+    }
 }

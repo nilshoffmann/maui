@@ -35,8 +35,8 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import org.openide.util.ImageUtilities;
 
 /**
- * Container for chromatogram descriptors originating from the same sample, 
- * for example for technical sample replicates.
+ * Container for chromatogram descriptors originating from the same sample, for
+ * example for technical sample replicates.
  *
  * @author Nils Hoffmann
  */

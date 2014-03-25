@@ -160,13 +160,13 @@ public interface IPeakAnnotationDescriptor extends IBasicDescriptor {
     public void setNormalizationMethods(String... normalizationMethod);
 
     public String[] getNormalizationMethods();
-    
+
     public void setInchi(String inchi);
-    
+
     public String getInchi();
-    
+
     public void setSmiles(String smiles);
-    
+
     public String getSmiles();
 
 }

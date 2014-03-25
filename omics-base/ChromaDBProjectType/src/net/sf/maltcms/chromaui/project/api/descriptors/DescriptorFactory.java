@@ -46,21 +46,21 @@ import org.openide.util.Lookup;
  * @author Nils Hoffmann
  */
 public class DescriptorFactory {
-    
+
     public static final IDescriptorFactory factoryImpl = Lookup.getDefault().lookup(IDescriptorFactory.class);
 
     public static DataObject getDataObject(IResourceDescriptor id) throws DataObjectNotFoundException, IOException {
         return factoryImpl.getDataObject(id);
     }
-	
-	public static IChromatogram1D newChromatogram1D(IFileFragment descr) {
-		return factoryImpl.newChromatogram1D(descr);
-	}
 
-	public static IChromatogram2D newChromatogram2D(IFileFragment descr) {
-		return factoryImpl.newChromatogram2D(descr);
-	}
-	
+    public static IChromatogram1D newChromatogram1D(IFileFragment descr) {
+        return factoryImpl.newChromatogram1D(descr);
+    }
+
+    public static IChromatogram2D newChromatogram2D(IFileFragment descr) {
+        return factoryImpl.newChromatogram2D(descr);
+    }
+
     public static IPeakGroupDescriptor newPeakGroupDescriptor(String name) {
         return factoryImpl.newPeakGroupDescriptor(name);
     }
@@ -99,12 +99,13 @@ public class DescriptorFactory {
     public static IDatabaseDescriptor newDatabaseDescriptor(String location,
             DatabaseType type,
             ISeparationType separationType, IDetectorType detectorType) {
-       return factoryImpl.newDatabaseDescriptor(location, type);
+        return factoryImpl.newDatabaseDescriptor(location, type);
     }
 
     /**
-     * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a 
+     * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a
      * normalization value of 1.0;
+     *
      * @return a default normalization descriptor
      */
     public static INormalizationDescriptor newNormalizationDescriptor() {
@@ -120,7 +121,7 @@ public class DescriptorFactory {
             double area, double intensity) {
         return factoryImpl.newPeakAnnotationDescriptor(chromatogram, name, uniqueMass, quantMasses, retentionIndex, snr, fwhh, similarity, library, cas, formula, method, startTime, apexTime, stopTime, area, intensity);
     }
-    
+
     public static IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
@@ -134,7 +135,7 @@ public class DescriptorFactory {
     public static IAnovaDescriptor newAnovaDescriptor() {
         return factoryImpl.newAnovaDescriptor();
     }
-    
+
     public static IPcaDescriptor newPcaDescriptor() {
         return factoryImpl.newPcaDescriptor();
     }
@@ -148,7 +149,7 @@ public class DescriptorFactory {
     public static Image getImage(IBasicDescriptor descriptor) {
         return factoryImpl.getImage(descriptor);
     }
-    
+
     public static IScanSelectionDescriptor newScanSelectionDescriptor() {
         return factoryImpl.newScanSelectionDescriptor();
     }

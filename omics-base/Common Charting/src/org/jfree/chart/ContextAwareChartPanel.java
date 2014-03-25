@@ -41,6 +41,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import static javax.imageio.ImageIO.write;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -48,7 +49,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.batik.dom.GenericDOMImplementation;
+import static org.apache.batik.dom.GenericDOMImplementation.getDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
+import static org.apache.batik.svggen.SVGGeneratorContext.createDefault;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.jfree.chart.panel.Overlay;
 import org.openide.filesystems.FileChooserBuilder;
@@ -61,7 +64,7 @@ import org.w3c.dom.Document;
  */
 public class ContextAwareChartPanel extends ChartPanel {
 
-    private List<Overlay> overlays = new ArrayList<Overlay>();
+    private List<Overlay> overlays = new ArrayList<>();
     private IActionProvider popupMenuActionProvider = null;
 
     public ContextAwareChartPanel(JFreeChart chart) {
@@ -346,7 +349,7 @@ public class ContextAwareChartPanel extends ChartPanel {
             BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = image.createGraphics();
             paintComponent(g2);
-            ImageIO.write(image, "PNG", new File(filename));
+            write(image, "PNG", new File(filename));
         }
     }
 
@@ -368,10 +371,10 @@ public class ContextAwareChartPanel extends ChartPanel {
                 }
             }
             DOMImplementation impl
-                    = GenericDOMImplementation.getDOMImplementation();
+                    = getDOMImplementation();
             String svgNS = "http://www.w3.org/2000/svg";
             Document myFactory = impl.createDocument(svgNS, "svg", null);
-            SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(myFactory);
+            SVGGeneratorContext ctx = createDefault(myFactory);
             ctx.setEmbeddedFontsOn(true);
             SVGGraphics2D g2d = new SVGGraphics2D(ctx, true);
             paintChart(g2d);

@@ -36,9 +36,9 @@ import org.jfree.chart.ChartMouseListener;
 public interface IMouseSelectionHandler<TARGET> extends ChartMouseListener {
 
     public void clear();
-    
+
     public void addSelectionChangeListener(ISelectionChangeListener listener);
-    
+
     public void removeSelectionChangeListener(ISelectionChangeListener listener);
-    
+
 }

@@ -41,9 +41,9 @@ import org.openide.util.Exceptions;
  * @author hoffmann
  */
 public class StandardGUIMain {
-	
-	public static void main(String[] args) {
-		String name = "MeltDB 3D Viewer";
+
+    public static void main(String[] args) {
+        String name = "MeltDB 3D Viewer";
         URL url = StandardGUIMain.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/meltdb.xml");
 ////        URL url = getClass().getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/end_test.xml");
 ////        if (args[0].equals("xml")) {
@@ -59,26 +59,26 @@ public class StandardGUIMain {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-		URL url2 = StandardGUIMain.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/assault.txt");
-		InputStream is = null;
-		try {
-			is = url2.openStream();
-			CSVParser csvParser = new CSVParser(is);
-			StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(csvParser.parse_data()));
+        URL url2 = StandardGUIMain.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/assault.txt");
+        InputStream is = null;
+        try {
+            is = url2.openStream();
+            CSVParser csvParser = new CSVParser(is);
+            StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(csvParser.parse_data()));
             PCAViewerTopComponent pvtc = new PCAViewerTopComponent();
             pvtc.setData(gui);
             pvtc.open();
             pvtc.requestActive();
-		} catch (IOException ex) {
-			Exceptions.printStackTrace(ex);
-		} finally {
-			if(is!=null) {
-				try{
-					is.close();
-				}catch(IOException ex) {
-					Exceptions.printStackTrace(ex);
-				}
-			}
-		}
-	}
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
+    }
 }

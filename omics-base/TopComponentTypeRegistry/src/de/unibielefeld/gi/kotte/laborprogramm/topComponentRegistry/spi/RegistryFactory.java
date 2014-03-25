@@ -33,19 +33,20 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * RegistryFactory is the default implementation for @see IRegistryFactory.
- * Other Implementations may be retrieved by calling 
+ * Other Implementations may be retrieved by calling
+ *
  * @see Lookup.getDefault().lookupAll(IRegistryFactory.class).
- * 
+ *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IRegistryFactory.class)
-public class RegistryFactory implements IRegistryFactory{
+@ServiceProvider(service = IRegistryFactory.class)
+public class RegistryFactory implements IRegistryFactory {
 
     private static IRegistry registry;
 
     @Override
     public IRegistry getDefault() {
-        if(registry==null) {
+        if (registry == null) {
             registry = new Registry();
         }
         return registry;

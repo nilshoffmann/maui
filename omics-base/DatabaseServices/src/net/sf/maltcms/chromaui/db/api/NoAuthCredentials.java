@@ -31,7 +31,7 @@ package net.sf.maltcms.chromaui.db.api;
  *
  * @author Nils Hoffmann
  */
-public final class NoAuthCredentials implements ICredentials{
+public final class NoAuthCredentials implements ICredentials {
 
     private String name = "Project database";
 
@@ -52,7 +52,7 @@ public final class NoAuthCredentials implements ICredentials{
 
     @Override
     public void provideCredentials(ICredentialsProvider icp) {
-        
+
     }
 
 }

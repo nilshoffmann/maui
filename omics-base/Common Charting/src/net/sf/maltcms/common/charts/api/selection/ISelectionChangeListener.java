@@ -34,5 +34,6 @@ import java.util.EventListener;
  * @author Nils Hoffmann
  */
 public interface ISelectionChangeListener extends EventListener {
+
     public void selectionStateChanged(SelectionChangeEvent ce);
 }

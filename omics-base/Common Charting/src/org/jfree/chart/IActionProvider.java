@@ -34,5 +34,6 @@ import javax.swing.Action;
  * @author Nils Hoffmann
  */
 public interface IActionProvider {
-	Action[] getActions();
+
+    Action[] getActions();
 }

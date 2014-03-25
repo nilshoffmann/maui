@@ -27,14 +27,13 @@
  */
 package net.sf.maltcms.chromaui.project.api.types;
 
-import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IDetectorType.class)
+@ServiceProvider(service = IDetectorType.class)
 public class QUADMS implements IDetectorType {
 
     private final String detectorType = "QUAD-MS";

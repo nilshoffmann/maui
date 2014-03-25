@@ -59,16 +59,16 @@ public class RserveLaunchAndConnectTest {
         } catch (RserveException ex) {
             throw ex;
         } finally {
-            try{
+            try {
                 connection.serverShutdown();
-            }catch(RserveException re) {
+            } catch (RserveException re) {
                 System.err.println("serverShutdown failed, trying normal shutdown!");
             }
             System.out.println("Shutting down connection!");
             connection.shutdown();
             System.out.println("Closing connection!");
             connection.close();
-        } 
+        }
 //        try {
 //            REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
 //            try {

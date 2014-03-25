@@ -40,11 +40,14 @@ import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
+import static org.openide.nodes.Children.create;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import static org.openide.util.Exceptions.printStackTrace;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 import org.openide.util.lookup.Lookups;
+import static org.openide.util.lookup.Lookups.fixed;
 
 /**
  *
@@ -52,7 +55,7 @@ import org.openide.util.lookup.Lookups;
  */
 public class SelectionSourceChildFactory extends ChildFactory<Object> implements PropertyChangeListener {
 
-    private final Map<Object, Set<ISelection>> sourceToSelection = new LinkedHashMap<Object, Set<ISelection>>();
+    private final Map<Object, Set<ISelection>> sourceToSelection = new LinkedHashMap<>();
     private final SelectionOverlay so;
     private final Lookup.Provider dataset;
 
@@ -71,7 +74,7 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
                     Set<ISelection> selection = sourceToSelection.get(sel.getSource());
                     selection.add(sel);
                 } else {
-                    Set<ISelection> selection = new LinkedHashSet<ISelection>();
+                    Set<ISelection> selection = new LinkedHashSet<>();
                     selection.add(sel);
                     sourceToSelection.put(sel.getSource(), selection);
                 }
@@ -89,11 +92,11 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
     protected Node createNodeForKey(Object key) {
         try {
             ISelection selection = sourceToSelection.get(key).iterator().next();
-            Lookup lookup = Lookups.fixed(selection, dataset.getLookup().lookup(IDisplayPropertiesProvider.class));
-            SourceNode sn = new SourceNode(key, Children.create(new SelectionOverlayChildFactory(key, sourceToSelection.get(key), so), true), lookup);
+            Lookup lookup = fixed(selection, dataset.getLookup().lookup(IDisplayPropertiesProvider.class));
+            SourceNode sn = new SourceNode(key, create(new SelectionOverlayChildFactory(key, sourceToSelection.get(key), so), true), lookup);
             return sn;
         } catch (IntrospectionException ex) {
-            Exceptions.printStackTrace(ex);
+            printStackTrace(ex);
             return Node.EMPTY;
         }
     }

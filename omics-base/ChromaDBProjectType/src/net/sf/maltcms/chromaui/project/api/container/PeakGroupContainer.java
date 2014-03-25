@@ -41,7 +41,7 @@ import org.openide.util.ImageUtilities;
  */
 public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescriptor> {
 
-    private List<StatisticsContainer> statisticsContainers = new ActivatableArrayList<StatisticsContainer>();
+    private List<StatisticsContainer> statisticsContainers = new ActivatableArrayList<>();
 
     public final String PROP_STATISTICSCONTAINERS = "statisticsContainers";
 

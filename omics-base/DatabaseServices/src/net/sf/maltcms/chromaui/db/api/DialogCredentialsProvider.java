@@ -27,19 +27,17 @@
  */
 package net.sf.maltcms.chromaui.db.api;
 
-import net.sf.maltcms.chromaui.db.api.ICredentialsProvider;
-
 /**
  *
  * @author Nils Hoffmann
  */
-public final class DialogCredentialsProvider implements ICredentialsProvider{
+public final class DialogCredentialsProvider implements ICredentialsProvider {
 
     private String name = null;
 
     @Override
     public final String getName() {
-        if(this.name ==null) {
+        if (this.name == null) {
             getCredentials();
         }
         return this.name;

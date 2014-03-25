@@ -50,7 +50,7 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
     private final IDisplayPropertiesProvider displayPropertiesProvider;
 
     public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
-        targetProvider = new ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>>(l);
+        targetProvider = new ArrayList<>(l);
         for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
             content.add(nep.getSource());
         }

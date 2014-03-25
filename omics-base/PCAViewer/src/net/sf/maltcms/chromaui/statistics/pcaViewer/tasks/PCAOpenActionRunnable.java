@@ -47,7 +47,7 @@ public class PCAOpenActionRunnable extends AProgressAwareRunnable {
     @Override
     public void run() {
         ProgressHandle handle = ProgressHandleFactory.createHandle(
-            "Creating 1D Chromatogram plot");
+                "Creating 1D Chromatogram plot");
         try {
             handle.setDisplayName("Loading pca data");//+new File(this.files.getResourceLocation()).getName());
             handle.start();

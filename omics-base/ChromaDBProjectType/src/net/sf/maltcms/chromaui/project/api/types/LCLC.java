@@ -33,7 +33,7 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=ISeparationType.class)
+@ServiceProvider(service = ISeparationType.class)
 public class LCLC implements ISeparationType {
 
     private final String separationType = "LCxLC";

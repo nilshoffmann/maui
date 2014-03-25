@@ -35,7 +35,7 @@ public class DataModel {
     private String label;
     private Color3f color;
     private String shape;
-    private ArrayList<Double> coordinates = new ArrayList<Double>();
+    private ArrayList<Double> coordinates = new ArrayList<>();
     private Heading heading;
     private Double factor;
     private String annotation, link;

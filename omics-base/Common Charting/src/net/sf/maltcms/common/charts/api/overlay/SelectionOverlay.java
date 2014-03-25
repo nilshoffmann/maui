@@ -28,6 +28,7 @@
 package net.sf.maltcms.common.charts.api.overlay;
 
 import java.awt.AlphaComposite;
+import static java.awt.AlphaComposite.getInstance;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
@@ -35,20 +36,25 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import static java.awt.geom.AffineTransform.getTranslateInstance;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import static java.util.Collections.unmodifiableSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import static java.util.concurrent.Executors.newScheduledThreadPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.sf.maltcms.common.charts.api.Charts;
+import static net.sf.maltcms.common.charts.api.Charts.overlayNode;
+import static net.sf.maltcms.common.charts.api.Charts.overlayNode;
 import static net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay.toView;
 import net.sf.maltcms.common.charts.api.selection.IClearable;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
@@ -68,6 +74,7 @@ import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
+import static org.openide.util.Utilities.actionsGlobalContext;
 import org.openide.util.WeakListeners;
 
 /**
@@ -77,8 +84,8 @@ import org.openide.util.WeakListeners;
 public class SelectionOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener, IClearable {
 
     private ISelection mouseHoverSelection;
-    private final Set<ISelection> mouseClickSelection = new LinkedHashSet<ISelection>();
-    private final Set<ISelection> flashSelection = new LinkedHashSet<ISelection>();
+    private final Set<ISelection> mouseClickSelection = new LinkedHashSet<>();
+    private final Set<ISelection> flashSelection = new LinkedHashSet<>();
     private Color selectionFillColor = new Color(255, 64, 64);
     private Color hoverFillColor = new Color(64, 64, 255);
     private Lookup.Result<ISelection> selectionLookupResult;
@@ -88,7 +95,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
     private final Crosshair domainCrosshair;
     private final Crosshair rangeCrosshair;
     private final CrosshairOverlay crosshairOverlay;
-    private final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService ses = newScheduledThreadPool(1);
     private FlashRunnable flashRunner = null;
     public static final String PROP_SELECTION_FILL_COLOR = "selectionFillColor";
     public static final String PROP_HOVER_FILL_COLOR = "hoverFillColor";
@@ -118,7 +125,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         crosshairOverlay.addDomainCrosshair(domainCrosshair);
         crosshairOverlay.addRangeCrosshair(rangeCrosshair);
         setLayerPosition(LAYER_HIGHEST);
-        selectionLookupResult = Utilities.actionsGlobalContext().lookupResult(ISelection.class);
+        selectionLookupResult = actionsGlobalContext().lookupResult(ISelection.class);
         selectionLookupResult.addLookupListener(this);
     }
 
@@ -138,7 +145,7 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
 
     public Set<ISelection> getMouseClickSelection() {
         synchronized (this.mouseClickSelection) {
-            return Collections.unmodifiableSet(new LinkedHashSet<ISelection>(this.mouseClickSelection));
+            return unmodifiableSet(new LinkedHashSet<>(this.mouseClickSelection));
         }
     }
 
@@ -309,8 +316,8 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
             if (scale) {
                 transformed = scaleAtOrigin(entity, hoverScaleX, hoverScaleY).createTransformedShape(entity);
             }
-            transformed = AffineTransform.getTranslateInstance(entity.getBounds2D().getCenterX() - transformed.getBounds2D().getCenterX(), entity.getBounds2D().getCenterY() - transformed.getBounds2D().getCenterY()).createTransformedShape(transformed);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillAlpha));
+            transformed = getTranslateInstance(entity.getBounds2D().getCenterX() - transformed.getBounds2D().getCenterX(), entity.getBounds2D().getCenterY() - transformed.getBounds2D().getCenterY()).createTransformedShape(transformed);
+            g2.setComposite(getInstance(AlphaComposite.SRC_OVER, fillAlpha));
             g2.fill(transformed);
             g2.setColor(Color.DARK_GRAY);
             g2.draw(transformed);
@@ -430,13 +437,13 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
     public Node createNodeDelegate() {
         Node node = null;
         if (nodeReference == null) {
-            node = Charts.overlayNode(this, Children.LEAF, getLookup());
-            nodeReference = new WeakReference<Node>(node);
+            node = overlayNode(this, Children.LEAF, getLookup());
+            nodeReference = new WeakReference<>(node);
         } else {
             node = nodeReference.get();
             if (node == null) {
-                node = Charts.overlayNode(this, Children.LEAF, getLookup());
-                nodeReference = new WeakReference<Node>(node);
+                node = overlayNode(this, Children.LEAF, getLookup());
+                nodeReference = new WeakReference<>(node);
             }
         }
         return node;

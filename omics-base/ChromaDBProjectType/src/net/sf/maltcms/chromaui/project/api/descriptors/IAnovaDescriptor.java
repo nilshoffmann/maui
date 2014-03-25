@@ -32,6 +32,7 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  * @author Nils Hoffmann
  */
 public interface IAnovaDescriptor extends IStatisticsDescriptor, IHypothesisTestDescriptor {
+
     String PROP_FVALUES = "fvalues";
 
     /**
@@ -47,7 +48,7 @@ public interface IAnovaDescriptor extends IStatisticsDescriptor, IHypothesisTest
      * @param fValues new value of fValues
      */
     void setFvalues(double[] fValues);
-    
+
     String PROP_PEAKGROUPDESCRIPTOR = "peakGroupDescriptor";
 
     /**
@@ -63,5 +64,5 @@ public interface IAnovaDescriptor extends IStatisticsDescriptor, IHypothesisTest
      * @param peakGroupDescriptor new value of peakGroupDescriptor
      */
     void setPeakGroupDescriptor(IPeakGroupDescriptor peakGroupDescriptor);
-    
+
 }

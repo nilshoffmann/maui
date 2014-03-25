@@ -35,21 +35,21 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
-		category = "OverlayNodeActions/DefaultActions",
-		id = "net.sf.maltcms.common.charts.overlay.nodes.actions.ClearSelection")
+        category = "OverlayNodeActions/DefaultActions",
+        id = "net.sf.maltcms.common.charts.overlay.nodes.actions.ClearSelection")
 @ActionRegistration(
-		displayName = "#CTL_ClearSelection")
+        displayName = "#CTL_ClearSelection")
 @Messages("CTL_ClearSelection=Clear")
 public final class ClearSelection implements ActionListener {
 
-	private final IClearable context;
+    private final IClearable context;
 
-	public ClearSelection(IClearable context) {
-		this.context = context;
-	}
+    public ClearSelection(IClearable context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		context.clear();
-	}
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        context.clear();
+    }
 }

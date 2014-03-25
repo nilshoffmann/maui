@@ -37,8 +37,8 @@ import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
  * @author Nils Hoffmann
  */
 public interface IQuery<T> {
-    
+
     <T> Collection<T> retrieve(Predicate<T> predicate) throws AuthenticationException;
-    
+
     <T> Collection<T> retrieve(Predicate<T> predicate, Comparator<T> comparator) throws AuthenticationException;
 }

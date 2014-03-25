@@ -42,14 +42,12 @@ import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandle
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.util.Lookup;
-import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Task;
@@ -58,6 +56,7 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
+import org.openide.windows.TopComponent;
 
 /**
  * Top component which displays an XYChart.
@@ -154,7 +153,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
                 int nrenderer = panel.getChart().getXYPlot().getRendererCount();
                 XYPlot plot = panel.getChart().getXYPlot();
                 int ndatasets = panel.getChart().getXYPlot().getDatasetCount();
-                List<Shape> shapes = new LinkedList<Shape>();
+                List<Shape> shapes = new LinkedList<>();
                 for (int i = 0; i < nrenderer; i++) {
                     for (int j = 0; j < plot.getDataset(i).getSeriesCount(); j++) {
                         XYDataset d = plot.getDataset(i);
@@ -164,18 +163,24 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
                         }
                     }
                 }
-                if (renderer.equals("Line And Shape")) {
-                    panel.getChart().getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
-                } else if (renderer.equals("Line")) {
-                    panel.getChart().getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, false));
-                } else if (renderer.equals("Shape")) {
-                    panel.getChart().getXYPlot().setRenderer(new XYLineAndShapeRenderer(false, true));
-                } else if (renderer.equals("Area")) {
-                    panel.getChart().getXYPlot().setRenderer(new XYAreaRenderer(XYAreaRenderer.AREA));
-                } else if (renderer.equals("Area w/ Shapes")) {
-                    panel.getChart().getXYPlot().setRenderer(new XYAreaRenderer(XYAreaRenderer.AREA_AND_SHAPES));
+                switch (renderer) {
+                    case "Line And Shape":
+                        panel.getChart().getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
+                        break;
+                    case "Line":
+                        panel.getChart().getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, false));
+                        break;
+                    case "Shape":
+                        panel.getChart().getXYPlot().setRenderer(new XYLineAndShapeRenderer(false, true));
+                        break;
+                    case "Area":
+                        panel.getChart().getXYPlot().setRenderer(new XYAreaRenderer(XYAreaRenderer.AREA));
+                        break;
+                    case "Area w/ Shapes":
+                        panel.getChart().getXYPlot().setRenderer(new XYAreaRenderer(XYAreaRenderer.AREA_AND_SHAPES));
+                        break;
                 }
-				panel.getChart().getXYPlot().getRenderer().setBaseToolTipGenerator(new StandardXYToolTipGenerator("%2.5f", NumberFormat.getNumberInstance(), NumberFormat.getNumberInstance()));
+                panel.getChart().getXYPlot().getRenderer().setBaseToolTipGenerator(new StandardXYToolTipGenerator("%2.5f", NumberFormat.getNumberInstance(), NumberFormat.getNumberInstance()));
                 int shapeIndex = 0;
                 for (int i = 0; i < nrenderer; i++) {
                     for (int j = 0; j < plot.getDataset(i).getSeriesCount(); j++) {
@@ -258,7 +263,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
         customPanel.getChart().getXYPlot().getRangeAxis().addChangeListener(so);
         customPanel.getChart().getXYPlot().getDomainAxis().addChangeListener(so);
         InstanceContentSelectionHandler selectionHandler = new InstanceContentSelectionHandler(content, so, InstanceContentSelectionHandler.Mode.ON_CLICK, dataset);
-        XYMouseSelectionHandler<TARGET> sl = new XYMouseSelectionHandler<TARGET>(dataset);
+        XYMouseSelectionHandler<TARGET> sl = new XYMouseSelectionHandler<>(dataset);
         sl.addSelectionChangeListener(so);
         sl.addSelectionChangeListener(selectionHandler);
         customPanel.addChartMouseListener(sl);

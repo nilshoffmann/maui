@@ -87,7 +87,7 @@ public abstract class AProgressAwareCallable<T> implements Callable<T>,
         runnable.setProgressHandle(handle);
         return es.submit(runnable);
     }
-    
+
     public static <T> Future<T> createAndRun(String taskName, AProgressAwareCallable<T> runnable, ICompletionService<T> es) {
         final ProgressHandle handle = ProgressHandleFactory.createHandle(
                 taskName, runnable);

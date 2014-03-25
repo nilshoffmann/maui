@@ -32,6 +32,7 @@ package net.sf.maltcms.chromaui.project.api.types;
  * @author Nils Hoffmann
  */
 public enum NormalizationType {
+
     DRYWEIGHT,
     CELLCOUNT,
     MAXIONINTENSITY,

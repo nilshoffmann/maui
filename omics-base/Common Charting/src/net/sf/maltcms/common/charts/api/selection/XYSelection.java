@@ -57,36 +57,36 @@ public class XYSelection implements ISelection {
         }
     }
 
-	@Override
+    @Override
     public XYDataset getDataset() {
         return dataset;
     }
 
-	@Override
-	public void setDataset(Dataset dataset) {
-		if(!(dataset instanceof XYDataset)) {
-			throw new IllegalArgumentException("Only XYDatasets supported!");
-		}
-		setDataset((XYDataset)dataset);
-	}
-	
+    @Override
+    public void setDataset(Dataset dataset) {
+        if (!(dataset instanceof XYDataset)) {
+            throw new IllegalArgumentException("Only XYDatasets supported!");
+        }
+        setDataset((XYDataset) dataset);
+    }
+
     public void setDataset(XYDataset dataset) {
         XYDataset old = dataset;
         this.dataset = dataset;
         pcs.firePropertyChange(PROP_DATASET, old, this.dataset);
     }
 
-	@Override
+    @Override
     public int getSeriesIndex() {
         return seriesIndex;
     }
 
-	@Override
+    @Override
     public int getItemIndex() {
         return itemIndex;
     }
 
-	@Override
+    @Override
     public Type getType() {
         return type;
     }
@@ -101,7 +101,7 @@ public class XYSelection implements ISelection {
         return target;
     }
 
-	@Override
+    @Override
     public Shape getSelectionShape() {
         return selectionShape;
     }
@@ -145,7 +145,7 @@ public class XYSelection implements ISelection {
         hash = 79 * hash + this.seriesIndex;
         hash = 79 * hash + this.itemIndex;
         hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
-		//target and source may or may not implement equals and hashcode correctly, so better leave them out
+        //target and source may or may not implement equals and hashcode correctly, so better leave them out
 //        hash = 79 * hash + (this.target != null ? this.target.hashCode() : 0);
 //        hash = 79 * hash + (this.source != null ? this.source.hashCode() : 0);
         return hash;
@@ -160,13 +160,13 @@ public class XYSelection implements ISelection {
             return false;
         }
         final XYSelection other = (XYSelection) obj;
-		try {
-			if (this.dataset.getSeriesKey(this.seriesIndex) != other.getDataset().getSeriesKey(this.seriesIndex) && (this.dataset.getSeriesKey(this.seriesIndex) == null || !this.dataset.getSeriesKey(this.seriesIndex).equals(other.getDataset().getSeriesKey(this.seriesIndex)))) {
-				return false;
-			}
-		}catch(ArrayIndexOutOfBoundsException aiex) {
-			return false;
-		}
+        try {
+            if (this.dataset.getSeriesKey(this.seriesIndex) != other.getDataset().getSeriesKey(this.seriesIndex) && (this.dataset.getSeriesKey(this.seriesIndex) == null || !this.dataset.getSeriesKey(this.seriesIndex).equals(other.getDataset().getSeriesKey(this.seriesIndex)))) {
+                return false;
+            }
+        } catch (ArrayIndexOutOfBoundsException aiex) {
+            return false;
+        }
         if (this.seriesIndex != other.seriesIndex) {
             return false;
         }
@@ -176,7 +176,7 @@ public class XYSelection implements ISelection {
         if (this.type != other.type) {
             return false;
         }
-		//target and source may or may not implement equals and hashcode correctly, so better leave them out
+        //target and source may or may not implement equals and hashcode correctly, so better leave them out
 //        if (this.target != other.target && (this.target == null || !this.target.equals(other.target))) {
 //            return false;
 //        }

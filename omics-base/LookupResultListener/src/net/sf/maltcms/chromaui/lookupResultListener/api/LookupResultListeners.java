@@ -42,7 +42,7 @@ import org.openide.util.LookupEvent;
 public class LookupResultListeners implements List<AbstractLookupResultListener>,
         ILookupResultListener {
 
-    private ArrayList<AbstractLookupResultListener> lookupResultListeners = new ArrayList<AbstractLookupResultListener>(
+    private ArrayList<AbstractLookupResultListener> lookupResultListeners = new ArrayList<>(
             2);
 
     @Override
@@ -193,21 +193,21 @@ public class LookupResultListeners implements List<AbstractLookupResultListener>
 
     @Override
     public void deregister() {
-        for(AbstractLookupResultListener listener:this) {
+        for (AbstractLookupResultListener listener : this) {
             listener.deregister();
         }
     }
 
     @Override
     public void register(Lookup targetLookup) {
-        for(AbstractLookupResultListener listener:this) {
+        for (AbstractLookupResultListener listener : this) {
             listener.register(targetLookup);
         }
     }
 
     @Override
     public void resultChanged(LookupEvent result) {
-        for(AbstractLookupResultListener listener:this) {
+        for (AbstractLookupResultListener listener : this) {
             listener.resultChanged(result);
         }
     }
