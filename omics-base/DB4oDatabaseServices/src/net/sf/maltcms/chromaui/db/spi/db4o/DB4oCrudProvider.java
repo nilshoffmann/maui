@@ -40,6 +40,12 @@ import com.db4o.ext.Db4oIOException;
 import com.db4o.io.CachingStorage;
 import com.db4o.io.FileStorage;
 import com.db4o.io.Storage;
+import com.db4o.monitoring.FreespaceMonitoringSupport;
+import com.db4o.monitoring.IOMonitoringSupport;
+import com.db4o.monitoring.NativeQueryMonitoringSupport;
+import com.db4o.monitoring.ObjectLifecycleMonitoringSupport;
+import com.db4o.monitoring.QueryMonitoringSupport;
+import com.db4o.monitoring.ReferenceSystemMonitoringSupport;
 import com.db4o.reflect.jdk.JdkReflector;
 import com.db4o.ta.DeactivatingRollbackStrategy;
 import com.db4o.ta.TransparentActivationSupport;
@@ -208,18 +214,27 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
         ec.common().add(new TransparentActivationSupport());
         ec.common().add(new TransparentPersistenceSupport(
                 new DeactivatingRollbackStrategy()));
-        ec.common().queries().evaluationMode(QueryEvaluationMode.SNAPSHOT);
+        ec.common().queries().evaluationMode(QueryEvaluationMode.LAZY);
+        ec.common().optimizeNativeQueries(true);
         ec.common().maxStackDepth(80);
         ec.common().bTreeNodeSize(2048);
+        ec.common().weakReferences(true);
 //        ec.common().add(new UuidSupport());
+        ec.file().asynchronousSync(true);
         ec.file().generateUUIDs(ConfigScope.GLOBALLY);
         ec.file().generateCommitTimestamps(true);
         if (isVerboseDiagnostics()) {
             ec.common().diagnostic().addListener(new DiagnosticToConsole());
+            ec.common().add(new QueryMonitoringSupport());
+            ec.common().add(new NativeQueryMonitoringSupport());
+            ec.common().add(new ObjectLifecycleMonitoringSupport());
+            ec.common().add(new IOMonitoringSupport());
+            ec.common().add(new FreespaceMonitoringSupport());
+            ec.common().add(new ReferenceSystemMonitoringSupport());
         }
         Storage fileStorage = new FileStorage();
-        // A cache with 128 pages of 1024KB size, gives a 128KB cache
-        Storage cachingStorage = new CachingStorage(fileStorage, 20480, 4096);
+        // A cache with 128 pages of 1024B size, gives a 128KB cache
+        Storage cachingStorage = new CachingStorage(fileStorage, 128, 1024);
         ec.file().storage(cachingStorage);
         return ec;
     }
