@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.msviewer.spi;
+package net.sf.maltcms.chromaui.msviewer.ui.panel;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -437,7 +437,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jToolBar2.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jToolBar2.setRollover(true);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/sf/maltcms/chromaui/msviewer/spi/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle"); // NOI18N
         clear.setText(bundle.getString("MassSpectrumPanel.clear.text")); // NOI18N
         clear.setFocusable(false);
         clear.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -600,11 +600,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void absoluteRelativeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRelativeToggleActionPerformed
 //        this.defaultNumberFormat.setRelativeMode(absoluteRelativeToggle.isSelected());
         int i = 0;
+        int prevActiveMS = activeMS;
         for (MSSeries mss : seriesToScan.keySet()) {
             mss.setNormalize(absoluteRelativeToggle.isSelected());
             activeMS = i;
             addTopKLabels(topK, i++);
         }
+        this.activeMS = prevActiveMS;
         this.cp.chartChanged(new AxisChangeEvent(this.plot.getRangeAxis()));
     }//GEN-LAST:event_absoluteRelativeToggleActionPerformed
 
@@ -650,11 +652,14 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_barWidthSpinnerStateChanged
 
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
-        int series = plot.getSeriesCount();
+        int series = seriesToScan.keySet().size();
         this.topK = (Integer) jSpinner1.getValue();
+        int prevActiveMS = activeMS;
         for (int i = 0; i < series; i++) {
+            activeMS = i;
             addTopKLabels(topK, i);
         }
+        activeMS = prevActiveMS;
     }//GEN-LAST:event_jSpinner1StateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

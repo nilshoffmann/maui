@@ -46,7 +46,7 @@
             <Component class="javax.swing.JToggleButton" name="hideAnnotations">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.hideAnnotations.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.hideAnnotations.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -69,10 +69,10 @@
             <Component class="javax.swing.JButton" name="remove">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.remove.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.remove.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.remove.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.remove.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -87,7 +87,7 @@
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.jLabel1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.jLabel1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -142,7 +142,7 @@
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.jLabel2.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.jLabel2.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -168,7 +168,7 @@
                   <SpinnerModel initial="0" maximum="500" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.jSpinner1.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.jSpinner1.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>
@@ -206,7 +206,7 @@
             <Component class="javax.swing.JButton" name="clear">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.clear.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.clear.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -219,7 +219,7 @@
             <Component class="javax.swing.JToggleButton" name="addMs">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.addMs.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.addMs.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -233,7 +233,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.addSeriesTop.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.addSeriesTop.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -248,7 +248,7 @@
             <Component class="javax.swing.JToggleButton" name="absoluteRelativeToggle">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.absoluteRelativeToggle.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.absoluteRelativeToggle.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -261,7 +261,7 @@
             <Component class="javax.swing.JToggleButton" name="diffToggle">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.diffToggle.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.diffToggle.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -276,7 +276,7 @@
             <Component class="javax.swing.JToggleButton" name="fixXAxis">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.fixXAxis.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.fixXAxis.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -289,7 +289,7 @@
             <Component class="javax.swing.JToggleButton" name="fixYAxis">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/spi/Bundle.properties" key="MassSpectrumPanel.fixYAxis.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/maltcms/chromaui/msviewer/ui/panel/Bundle.properties" key="MassSpectrumPanel.fixYAxis.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>

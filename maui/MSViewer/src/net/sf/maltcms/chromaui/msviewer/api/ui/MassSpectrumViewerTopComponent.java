@@ -28,7 +28,7 @@
 package net.sf.maltcms.chromaui.msviewer.api.ui;
 
 import java.awt.BorderLayout;
-import net.sf.maltcms.chromaui.msviewer.spi.MassSpectrumPanel;
+import net.sf.maltcms.chromaui.msviewer.ui.panel.MassSpectrumPanel;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;

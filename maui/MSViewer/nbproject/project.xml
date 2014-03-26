@@ -146,9 +146,7 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages>
-                <package>net.sf.maltcms.chromaui.msviewer.api.ui</package>
-            </public-packages>
+            <public-packages/>
         </data>
     </configuration>
 </project>
