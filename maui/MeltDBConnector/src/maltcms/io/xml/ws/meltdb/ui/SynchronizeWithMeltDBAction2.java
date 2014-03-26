@@ -27,19 +27,26 @@
  */
 package maltcms.io.xml.ws.meltdb.ui;
 
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import maltcms.io.xml.ws.meltdb.MeltDBSession;
+import maltcms.io.xml.ws.meltdb.WebServiceClient;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.api.keyring.Keyring;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbPreferences;
 
 @ActionID(
-    category = "File",
-    id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction2")
+        category = "File",
+        id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction2")
 @ActionRegistration(
-    displayName = "#CTL_SynchronizeWithMeltDBAction2")
+        displayName = "#CTL_SynchronizeWithMeltDBAction2")
 @ActionReference(path = "Menu/File", position = 1423, separatorAfter = 1424)
 @Messages("CTL_SynchronizeWithMeltDBAction2=Synchronize With MeltDB 2")
 public final class SynchronizeWithMeltDBAction2 implements ActionListener {
@@ -52,9 +59,35 @@ public final class SynchronizeWithMeltDBAction2 implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-//        MeltDBWebserviceSynchronizationClient mw = new MeltDBWebserviceSynchronizationClient(session);
-//        Dialog d = DialogDisplayer.getDefault().createDialog(new DialogDescriptor(mw.getPanel(), "MeltDB Synchronization", true, null));
-//        d.setVisible(true);
+        final CredentialsPanel cp = new CredentialsPanel();
+        String userName = NbPreferences.forModule(SynchronizeWithMeltDBAction2.class).get("userName", System.getProperty("user.name"));
+        cp.setUserName(userName);
+        cp.setStoreInKeyring(NbPreferences.forModule(SynchronizeWithMeltDBAction2.class).getBoolean("storeInKeyring", true));
+        char[] password = Keyring.read(userName + "@meltdb");
+        if (password != null) {
+            cp.setPassword(password);
+        }
+        DialogDescriptor dd = new DialogDescriptor(cp, "MeltDB Login", true, DialogDescriptor.OK_CANCEL_OPTION, DialogDescriptor.OK_OPTION, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String user = cp.getUserName();
+                NbPreferences.forModule(SynchronizeWithMeltDBAction2.class).put("userName", user);
+                NbPreferences.forModule(SynchronizeWithMeltDBAction2.class).putBoolean("storeInKeyring", cp.isStoreInKeyring());
+                Keyring.save(user + "@meltdb", cp.getPassword(), "MeltDB account");
+                cp.setUserName(null);
+                char[] c = cp.getPassword();
+                for (int i = 0; i < c.length; i++) {
+                    c[i] = 0;
+                }
+                cp.setPassword(new char[0]);
+                MeltDBSession session = new MeltDBSession(user, Keyring.read(user+"@meltdb"));
+                WebServiceClient mw = new WebServiceClient(session);
+                Dialog d = DialogDisplayer.getDefault().createDialog(new DialogDescriptor(mw.getPanel(), "MeltDB Synchronization", true, null));
+                d.setVisible(true);
+            }
+        });
+        DialogDisplayer.getDefault().notify(dd);
     }
 
 }

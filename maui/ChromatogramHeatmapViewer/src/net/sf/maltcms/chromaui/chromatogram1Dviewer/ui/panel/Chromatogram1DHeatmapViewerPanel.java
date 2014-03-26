@@ -44,12 +44,12 @@ import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.GradientPaintScale;
-import net.sf.maltcms.chromaui.ui.paintScales.PaintScaleDialogAction;
-import net.sf.maltcms.chromaui.ui.paintScales.PaintScaleTarget;
-import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import net.sf.maltcms.chromaui.charts.events.DomainMarkerKeyListener;
+import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import net.sf.maltcms.chromaui.charts.tools.ChartTools;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.api.ChromatogramViewViewport;
+import net.sf.maltcms.chromaui.ui.paintScales.PaintScaleDialogAction;
+import net.sf.maltcms.chromaui.ui.paintScales.PaintScaleTarget;
 import net.sf.maltcms.chromaui.ui.rangeSlider.RangeSlider;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
@@ -417,7 +417,7 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1183, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

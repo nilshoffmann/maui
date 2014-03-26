@@ -111,7 +111,7 @@ public final class PeakImportVisualPanel2 extends JPanel implements ListSelectio
     }
 
     private WebServiceClient initMeltDBSession(char[] password) {
-        MeltDBSession ms = new MeltDBSession(userName, String.valueOf(password));
+        MeltDBSession ms = new MeltDBSession(userName, password);
         WebServiceClient wsc = new WebServiceClient(ms);
         add(wsc.getControlPanel());
         projectsList = wsc.getProjectsList();

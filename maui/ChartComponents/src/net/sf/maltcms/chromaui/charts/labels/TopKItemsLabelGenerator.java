@@ -41,27 +41,27 @@ import org.jfree.data.xy.XYDataset;
  */
 public class TopKItemsLabelGenerator implements XYItemLabelGenerator {
 
-	private final Set<Point> topK;
-	private final List<Point> sublist;
+    private final Set<Point> topK;
+    private final List<Point> sublist;
 
-	public TopKItemsLabelGenerator(List<Point> sm, int k) {
+    public TopKItemsLabelGenerator(List<Point> sm, int k) {
 //		System.out.println("Length of list: " + sm.size());
 //		System.out.println("K=" + k);
-		this.sublist = sm.subList(Math.max(0, sm.size() - k), sm.size());
-		topK = new HashSet<Point>();
+        this.sublist = sm.subList(Math.max(0, sm.size() - k), sm.size());
+        topK = new HashSet<Point>();
 //		System.out.println("Sublist length: " + this.sublist.size());
-		topK.addAll(this.sublist);
+        topK.addAll(this.sublist);
 //		System.out.println("Top K: " + topK);
-	}
+    }
 
-	@Override
-	public String generateLabel(XYDataset arg0, int arg1, int arg2) {
-		if (this.topK.contains(new Point(arg1, arg2))) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(String.format("%.4f", arg0.getXValue(arg1, arg2)));
-			return sb.toString();
-		}
+    @Override
+    public String generateLabel(XYDataset arg0, int arg1, int arg2) {
+        if (this.topK.contains(new Point(arg1, arg2))) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("%.4f", arg0.getXValue(arg1, arg2)));
+            return sb.toString();
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

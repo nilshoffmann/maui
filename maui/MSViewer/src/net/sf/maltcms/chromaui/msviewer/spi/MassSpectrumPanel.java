@@ -341,9 +341,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
         jPanel1 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
-        fixXAxis = new javax.swing.JToggleButton();
-        fixYAxis = new javax.swing.JToggleButton();
-        jSeparator2 = new javax.swing.JToolBar.Separator();
         hideAnnotations = new javax.swing.JToggleButton();
         activeMassSpectrum = new javax.swing.JComboBox();
         remove = new javax.swing.JButton();
@@ -351,6 +348,10 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jLabel1 = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 32767));
         barWidthSpinner = new javax.swing.JSpinner();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 32767));
+        jLabel2 = new javax.swing.JLabel();
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 32767));
+        jSpinner1 = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
         clear = new javax.swing.JButton();
@@ -360,35 +361,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         absoluteRelativeToggle = new javax.swing.JToggleButton();
         diffToggle = new javax.swing.JToggleButton();
         jSeparator4 = new javax.swing.JToolBar.Separator();
-        jSpinner1 = new javax.swing.JSpinner();
+        fixXAxis = new javax.swing.JToggleButton();
+        fixYAxis = new javax.swing.JToggleButton();
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
-
-        fixXAxis.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.fixXAxis.text")); // NOI18N
-        fixXAxis.setFocusable(false);
-        fixXAxis.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        fixXAxis.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        fixXAxis.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fixXAxisActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(fixXAxis);
-
-        fixYAxis.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.fixYAxis.text")); // NOI18N
-        fixYAxis.setFocusable(false);
-        fixYAxis.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        fixYAxis.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        fixYAxis.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fixYAxisActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(fixYAxis);
-        jToolBar1.add(jSeparator2);
 
         hideAnnotations.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.hideAnnotations.text")); // NOI18N
         hideAnnotations.setFocusable(false);
@@ -409,6 +388,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jToolBar1.add(activeMassSpectrum);
 
         remove.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.remove.text")); // NOI18N
+        remove.setToolTipText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.remove.toolTipText")); // NOI18N
         remove.setFocusable(false);
         remove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         remove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -433,6 +413,20 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
             }
         });
         jToolBar1.add(barWidthSpinner);
+        jToolBar1.add(filler2);
+
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jLabel2.text")); // NOI18N
+        jToolBar1.add(jLabel2);
+        jToolBar1.add(filler3);
+
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, 500, 1));
+        jSpinner1.setToolTipText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jSpinner1.toolTipText")); // NOI18N
+        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSpinner1StateChanged(evt);
+            }
+        });
+        jToolBar1.add(jSpinner1);
 
         jPanel1.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
@@ -502,14 +496,27 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jToolBar2.add(diffToggle);
         jToolBar2.add(jSeparator4);
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, 500, 1));
-        jSpinner1.setToolTipText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jSpinner1.toolTipText")); // NOI18N
-        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSpinner1StateChanged(evt);
+        fixXAxis.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.fixXAxis.text")); // NOI18N
+        fixXAxis.setFocusable(false);
+        fixXAxis.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        fixXAxis.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        fixXAxis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fixXAxisActionPerformed(evt);
             }
         });
-        jToolBar2.add(jSpinner1);
+        jToolBar2.add(fixXAxis);
+
+        fixYAxis.setText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.fixYAxis.text")); // NOI18N
+        fixYAxis.setFocusable(false);
+        fixYAxis.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        fixYAxis.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        fixYAxis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fixYAxisActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(fixYAxis);
 
         jPanel1.add(jToolBar2, java.awt.BorderLayout.WEST);
 
@@ -644,15 +651,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
         int series = plot.getSeriesCount();
-        topK = (Integer) jSpinner1.getValue();
+        this.topK = (Integer) jSpinner1.getValue();
         for (int i = 0; i < series; i++) {
-            activeMS = i;
-            TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topK, series);
-            plot.getRenderer().setBaseItemLabelsVisible(true);
-            plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
-                    labelGenerator);
-            plot.getRenderer().setSeriesItemLabelsVisible(activeMS, true);
-            plot.notifyListeners(new PlotChangeEvent(plot));
+            addTopKLabels(topK, i);
         }
     }//GEN-LAST:event_jSpinner1StateChanged
 
@@ -665,14 +666,16 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private javax.swing.JButton clear;
     private javax.swing.JToggleButton diffToggle;
     private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
     private javax.swing.JToggleButton fixXAxis;
     private javax.swing.JToggleButton fixYAxis;
     private javax.swing.JToggleButton hideAnnotations;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JSpinner jSpinner1;
