@@ -25,16 +25,26 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.impl;
 
-import net.sf.maltcms.chromaui.groovy.api.GroovyProjectDataObjectScript;
-import maltcms.ui.fileHandles.csv.CSVDataObject;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.spi.project.ui.PrivilegedTemplates;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
-public interface CSVDataGroovyScript extends GroovyProjectDataObjectScript<IChromAUIProject,CSVDataObject> {
+public final class PrivilegedTemplatesImpl implements PrivilegedTemplates {
+
+    private static final String[] PRIVILEGED_NAMES = new String[]{
+        "Templates/Maui/Groovy/DefaultProjectScript.groovy",
+        "Templates/Maui/Groovy/DefaultRawDataScript.groovy",
+        "Templates/Maui/Groovy/DefaultCSVScript.groovy",
+        "Templates/Maui/Groovy/XCMSMatchedFilterPeakFinder.groovy"
+    };
+
+    @Override
+    public String[] getPrivilegedTemplates() {
+        return PRIVILEGED_NAMES;
+    }
 
 }

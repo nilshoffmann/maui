@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
-import net.sf.maltcms.chromaui.groovy.RawDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import org.openide.loaders.DataObject;
@@ -33,9 +33,9 @@ class ${name} implements RawDataGroovyScript {
     ProgressHandle progressHandle
     
     public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
-            this.project = project
-            this.progressHandle = progressHandle
-            this.dataObjects = dobjects
+        this.project = project
+        this.progressHandle = progressHandle
+        this.dataObjects = dobjects
     }
     
     @Override

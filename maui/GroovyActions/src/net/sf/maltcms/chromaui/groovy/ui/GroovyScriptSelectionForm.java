@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.ui;
 
 import java.awt.Component;
 import java.io.IOException;

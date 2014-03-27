@@ -1,4 +1,4 @@
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.impl;
 
 import groovy.lang.GroovyClassLoader;
 import java.awt.event.ActionEvent;
@@ -7,14 +7,12 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import net.sf.maltcms.chromaui.groovy.api.GroovyProjectScript;
+import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectManager;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
@@ -29,22 +27,21 @@ import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
-import org.openide.util.Utilities;
 
 /**
  *
  * @author hoffmann
  */
-
 @ActionID(category = "Groovy",
-id = "net.sf.maltcms.chromaui.groovy.ProjectGroovyAction")
+        id = "net.sf.maltcms.chromaui.groovy.ProjectGroovyAction")
 @ActionRegistration(displayName = "#CTL_ProjectGroovyAction")
 @ActionReferences({
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Scripts", position = 500)
 })
 @NbBundle.Messages("CTL_ProjectGroovyAction=Run Project Groovy Action")
 public final class ProjectGroovyAction implements ActionListener {
-	private final IChromAUIProject context;
+
+    private final IChromAUIProject context;
 
     public ProjectGroovyAction(IChromAUIProject context) {
         this.context = context;
@@ -72,9 +69,9 @@ public final class ProjectGroovyAction implements ActionListener {
                     Exceptions.printStackTrace(ex);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
-                } catch(ClassCastException ex) {
-					System.out.println("Ignoring groovy script with wrong class!");
-				}
+                } catch (ClassCastException ex) {
+                    System.out.println("Ignoring groovy script with wrong class!");
+                }
             }
 
             GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
@@ -93,7 +90,7 @@ public final class ProjectGroovyAction implements ActionListener {
                         DialogDescriptor bnd = new DialogDescriptor(ps,
                                 "Set Script Properties");
                         Object bndRet = DialogDisplayer.getDefault().notify(bnd);
-                        if(DialogDescriptor.CANCEL_OPTION.equals(bndRet)) {
+                        if (DialogDescriptor.CANCEL_OPTION.equals(bndRet)) {
                             return;
                         }
                     } catch (IntrospectionException ex) {

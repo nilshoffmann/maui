@@ -25,8 +25,9 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.impl;
 
+import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
 import groovy.lang.GroovyClassLoader;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
+import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.netbeans.api.progress.ProgressHandle;
@@ -43,7 +45,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.loaders.DataObject;
 
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
@@ -60,7 +61,7 @@ import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Groovy",
-id = "net.sf.maltcms.chromaui.groovy.GenericGroovyRawDataAction")
+        id = "net.sf.maltcms.chromaui.groovy.GenericGroovyRawDataAction")
 @ActionRegistration(displayName = "#CTL_GenericGroovyRawDataAction")
 @ActionReferences({
     @ActionReference(path = "Loaders/application/x-cdf/Actions", position = 500)
@@ -82,7 +83,7 @@ public final class GenericGroovyRawDataAction implements ActionListener {
             try {
                 project = ProjectManager.getDefault().findProject(currentFileObject);
                 if (project != null && project instanceof IChromAUIProject) {
-                    System.out.println("Found IChromAUIProject at location "+project.getProjectDirectory()+" as parent of "+fobj);
+                    System.out.println("Found IChromAUIProject at location " + project.getProjectDirectory() + " as parent of " + fobj);
                     return (IChromAUIProject) project;
                 }
             } catch (IOException ex) {
@@ -125,9 +126,9 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                     Exceptions.printStackTrace(ex);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
-                } catch(ClassCastException ex) {
-					System.out.println("Ignoring groovy script with wrong class!");
-				}
+                } catch (ClassCastException ex) {
+                    System.out.println("Ignoring groovy script with wrong class!");
+                }
             }
 
             GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
@@ -146,7 +147,7 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                         DialogDescriptor bnd = new DialogDescriptor(ps,
                                 "Set Script Properties");
                         Object bndRet = DialogDisplayer.getDefault().notify(bnd);
-                        if(DialogDescriptor.CANCEL_OPTION.equals(bndRet)) {
+                        if (DialogDescriptor.CANCEL_OPTION.equals(bndRet)) {
                             return;
                         }
                     } catch (IntrospectionException ex) {

@@ -25,17 +25,21 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.impl;
 
-import net.sf.maltcms.chromaui.ui.support.api.ContextAction;
 import groovy.lang.GroovyClassLoader;
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.Action;
 import maltcms.ui.fileHandles.csv.CSVDataObject;
+import net.sf.maltcms.chromaui.groovy.api.CSVDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.ui.support.api.ContextAction;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
@@ -45,8 +49,11 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.explorer.propertysheet.PropertySheet;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.nodes.BeanNode;
+import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
@@ -58,13 +65,12 @@ import org.openide.util.Utilities;
  * @author nilshoffmann
  */
 @ActionID(category = "Groovy",
-id = "net.sf.maltcms.chromaui.groovy.GenericGroovyCSVDataAction")
+        id = "net.sf.maltcms.chromaui.groovy.GenericGroovyCSVDataAction")
 @ActionRegistration(displayName = "#CTL_GenericGroovyCSVDataAction")
 @ActionReferences({
     @ActionReference(path = "Loaders/text/csv/Actions", position = -500),
-	@ActionReference(path = "Loaders/text/tsv/Actions", position = -500),
-	@ActionReference(path = "Loaders/text/txt/Actions", position = -500),
-})
+    @ActionReference(path = "Loaders/text/tsv/Actions", position = -500),
+    @ActionReference(path = "Loaders/text/txt/Actions", position = -500),})
 @Messages("CTL_GenericGroovyCSVDataAction=Run CSV Groovy Action")
 public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
 
@@ -104,9 +110,9 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
                     Exceptions.printStackTrace(ex);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
-                } catch(ClassCastException ex) {
-					System.out.println("Ignoring groovy script with wrong class!");
-				}
+                } catch (ClassCastException ex) {
+                    System.out.println("Ignoring groovy script with wrong class!");
+                }
             }
 
             GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
@@ -117,20 +123,34 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
             if (DialogDescriptor.OK_OPTION.equals(ret)) {
                 CSVDataGroovyScript selectedScript = gssf.getSelectedScript(
                         CSVDataGroovyScript.class);
-                ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.getName());
-                selectedScript.create(icap, handle, instances);
-                RequestProcessor rp = new RequestProcessor(selectedScript.
-                        getName(), 1, true);
-                rp.post(selectedScript);
-            } else {
+                if (selectedScript != null) {
+                    try {
+                        BeanNode bn = new BeanNode(selectedScript);
+                        PropertySheet ps = new PropertySheet();
+                        ps.setNodes(new Node[]{bn});
+                        DialogDescriptor bnd = new DialogDescriptor(ps,
+                                "Set Script Properties");
+                        Object bndRet = DialogDisplayer.getDefault().notify(bnd);
+                        if (DialogDescriptor.CANCEL_OPTION.equals(bndRet)) {
+                            return;
+                        }
+                    } catch (IntrospectionException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                    ProgressHandle handle = ProgressHandleFactory.createHandle(selectedScript.getName());
+                    selectedScript.create(icap, handle, instances);
+                    RequestProcessor rp = new RequestProcessor(selectedScript.
+                            getName(), 1, true);
+                    rp.post(selectedScript);
+                } else {
+                }
             }
         }
     }
 
-    
-
     @Override
-    public Action createContextAwareInstance(Lookup actionContext) {
+    public Action createContextAwareInstance(Lookup actionContext
+    ) {
         return new GenericGroovyCSVDataAction(actionContext);
     }
 }

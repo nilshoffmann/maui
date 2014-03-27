@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
-import net.sf.maltcms.chromaui.groovy.CSVDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.api.CSVDataGroovyScript;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import maltcms.ui.fileHandles.csv.CSVDataObject;
 import org.openide.loaders.DataObject;

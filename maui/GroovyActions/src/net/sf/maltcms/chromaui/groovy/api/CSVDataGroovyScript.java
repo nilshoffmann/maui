@@ -25,4 +25,15 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.api;
+
+import maltcms.ui.fileHandles.csv.CSVDataObject;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+
+/**
+ *
+ * @author nilshoffmann
+ */
+public interface CSVDataGroovyScript extends GroovyProjectDataObjectScript<IChromAUIProject, CSVDataObject> {
+
+}

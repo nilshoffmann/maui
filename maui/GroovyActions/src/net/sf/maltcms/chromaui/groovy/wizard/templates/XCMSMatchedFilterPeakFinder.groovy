@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat
 
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
-import net.sf.maltcms.chromaui.groovy.RawDataGroovyScript;
-import net.sf.maltcms.chromaui.groovy.CSVFile;
+import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.api.CSVFile;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -89,10 +89,10 @@ private boolean cancel = false
 
 private Process process
 
-public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
-    this.project = project
-    this.progressHandle = progressHandle
-    this.dataObjects = dobjects
+    public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CDFDataObject> dobjects) {
+        this.project = project
+        this.progressHandle = progressHandle
+        this.dataObjects = dobjects
     }
     
     public String getCategory() {

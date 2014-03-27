@@ -36,9 +36,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.*;
+import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
+import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
+import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
+import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
+import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import org.netbeans.spi.project.ui.support.NodeFactorySupport;
+import org.openide.filesystems.FileAttributeEvent;
+import org.openide.filesystems.FileChangeListener;
+import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileRenameEvent;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.AbstractNode;
@@ -65,6 +75,48 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 //        System.out.println("Created ChromaUIProjectNodes Factory");
         this.cp = cp;
         this.cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
+        cp.getLocation().addRecursiveListener(new FileChangeListener() {
+
+            @Override
+            public void fileFolderCreated(FileEvent fe) {
+                refresh(true);
+            }
+
+            @Override
+            public void fileDataCreated(FileEvent fe) {
+                refresh(true);
+            }
+
+            @Override
+            public void fileChanged(FileEvent fe) {
+                refresh(true);
+            }
+
+            @Override
+            public void fileDeleted(FileEvent fe) {
+                refresh(true);
+            }
+
+            @Override
+            public void fileRenamed(FileRenameEvent fre) {
+                refresh(true);
+            }
+
+            @Override
+            public void fileAttributeChanged(FileAttributeEvent fae) {
+                refresh(true);
+            }
+        });
+    }
+
+    protected FileObject getScriptsFileObject() {
+        FileObject projectDir = cp.getProjectDirectory();
+        FileObject pipelinesDir;
+        pipelinesDir = projectDir.getFileObject("scripts");
+        if (pipelinesDir != null && pipelinesDir.isFolder()) {
+            return pipelinesDir;
+        }
+        return null;
     }
 
     protected FileObject getPipelineFileObject() {
@@ -127,6 +179,11 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
             }
         }
 
+        FileObject gvy = getScriptsFileObject();
+        if(gvy != null) {
+            list.add(gvy);
+        }
+        
         FileObject fobj = getPipelineFileObject();
         if (fobj != null) {
             list.add(fobj);

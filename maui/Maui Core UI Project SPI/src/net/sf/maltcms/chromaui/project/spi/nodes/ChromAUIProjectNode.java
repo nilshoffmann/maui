@@ -38,7 +38,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.Action;
-import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.api.nodes.IProjectMenuProvider;
@@ -48,7 +47,6 @@ import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
-import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
@@ -60,8 +58,6 @@ import org.openide.util.lookup.ProxyLookup;
  * @author nilshoffmann
  */
 public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements PropertyChangeListener, LookupListener {
-
-    private Result<IMetabolite> metaboliteSelection;
 
     public ChromAUIProjectNode(IChromAUIProject bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children, lkp);
@@ -77,7 +73,6 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
         setName(bean.getProjectDirectory().getName());
         setShortDescription(bean.getLocation().getPath());
         bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
-        metaboliteSelection = Utilities.actionsGlobalContext().lookupResult(IMetabolite.class);
     }
 
     @Override
@@ -99,6 +94,7 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
         nodeActions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
 //		nodeActions.add(f.createMenuItem("Default","Actions/ChromAUIProjectLogicalView/DefaultActions"));
         nodeActions.add(null);
+        nodeActions.add(CommonProjectActions.newFileAction());
         nodeActions.add(CommonProjectActions.copyProjectAction());
         nodeActions.add(CommonProjectActions.deleteProjectAction());
         nodeActions.add(null);
@@ -157,6 +153,6 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 
     @Override
     public void resultChanged(LookupEvent le) {
-        System.out.println("Received IMetabolite in global selection: " + metaboliteSelection.allInstances().toString());
+//        System.out.println("Received IMetabolite in global selection: " + metaboliteSelection.allInstances().toString());
     }
 }

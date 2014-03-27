@@ -25,19 +25,14 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
-
-import org.openide.modules.ModuleInstall;
+package net.sf.maltcms.chromaui.groovy.impl;
 
 /**
- * Manages a module's lifecycle. Remember that an installer is optional and
- * often not needed at all.
+ *
+ * @author Nils Hoffmann
  */
-public class Installer extends ModuleInstall {
 
-    @Override
-    public void restored() {
-        // By default, do nothing.
-        // Put your startup code here.
-    }
+
+public class RecommendedTemplatesImpl {
+    
 }

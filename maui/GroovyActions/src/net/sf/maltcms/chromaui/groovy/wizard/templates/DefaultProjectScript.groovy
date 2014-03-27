@@ -18,27 +18,27 @@ import cross.*;
 import maltcms.*;
 
 /**
- *
- * @author ${user}
- */
+*
+* @author ${user}
+*/
 class ${name} implements GroovyProjectScript<IChromAUIProject> {
     
     String name = "${name}"
     IChromAUIProject project
     ProgressHandle progressHandle
     
-	public String getName() {
-		return name
-	}
+    public String getName() {
+        return name
+    }
 
-	public String getCategory() {
+    public String getCategory() {
         return "Project modification"
-	}
-    
-	public void create(IChromAUIProject project, ProgressHandle progressHandle) {
-		this.project = project;
-		this.progressHandle = progressHandle;
-	}
+    }
+
+    public void create(IChromAUIProject project, ProgressHandle progressHandle) {
+        this.project = project;
+        this.progressHandle = progressHandle;
+    }
     
     @Override
     public boolean cancel() {
@@ -49,16 +49,16 @@ class ${name} implements GroovyProjectScript<IChromAUIProject> {
     
     @Override
     public void run() {
-		//uncomment if you need a tool specific output location
-		File outdir = project.getOutputLocation(this);
-		try {
-			progressHandle.start()
-			progressHandle.progress("Processing project "+project.getLocation())
-			//do something with the project
-		} finally {
-			progressHandle.finish()
-		}
-		//uncomment, if you used a tool specific output location
+        //uncomment if you need a tool specific output location
+        File outdir = project.getOutputLocation(this);
+        try {
+            progressHandle.start()
+            progressHandle.progress("Processing project "+project.getLocation())
+            //do something with the project
+        } finally {
+            progressHandle.finish()
+        }
+        //uncomment, if you used a tool specific output location
         FileObject fo = FileUtil.toFileObject(outdir)
         fo.refresh()
     }

@@ -84,6 +84,7 @@ import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.CopyOperationImplementation;
 import org.netbeans.spi.project.DeleteOperationImplementation;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.support.LookupProviderSupport;
 import org.netbeans.spi.project.ui.ProjectOpenedHook;
 import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.DialogDisplayer;
@@ -141,8 +142,8 @@ public class ChromAUIProject implements IChromAUIProject {
     }
 
     public ChromAUIProject() {
-        lkp = new AbstractLookup(
-                ic);
+        lkp = LookupProviderSupport.createCompositeLookup(new AbstractLookup(
+                ic),"Projects/net-sf-maltcms-chromaui-project/Lookup");
         if (state != null) {
             ic.add(state);
         }

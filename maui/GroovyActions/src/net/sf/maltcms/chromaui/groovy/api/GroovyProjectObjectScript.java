@@ -34,9 +34,14 @@ import org.openide.util.Cancellable;
 /**
  *
  * @author Nils Hoffmann
+ * @param <T>
+ * @param <U>
  */
 public interface GroovyProjectObjectScript<T extends Project, U> extends Runnable, Cancellable {
+
     public String getName();
+
     public String getCategory();
-    public void create(T project, ProgressHandle progressHandle, U...objects);    
+
+    public void create(T project, ProgressHandle progressHandle, U... objects);
 }

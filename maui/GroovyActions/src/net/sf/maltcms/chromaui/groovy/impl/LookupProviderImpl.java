@@ -25,16 +25,22 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.impl;
 
-import net.sf.maltcms.chromaui.groovy.api.GroovyProjectDataObjectScript;
-import maltcms.ui.fileHandles.cdf.CDFDataObject;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.spi.project.LookupProvider;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
-public interface RawDataGroovyScript extends GroovyProjectDataObjectScript<IChromAUIProject,CDFDataObject> {
-    
+@LookupProvider.Registration(projectType = "net-sf-maltcms-chromaui-project")
+public class LookupProviderImpl implements LookupProvider {
+
+    @Override
+    public Lookup createAdditionalLookup(Lookup lkp) {
+        return Lookups.fixed(new PrivilegedTemplatesImpl());
+    }
+
 }

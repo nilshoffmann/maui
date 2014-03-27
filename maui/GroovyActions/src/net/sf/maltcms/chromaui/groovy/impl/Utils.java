@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.groovy;
+package net.sf.maltcms.chromaui.groovy.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,6 @@ import net.sf.maltcms.chromaui.groovy.options.GroovyScriptLocationsPanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
 /**
@@ -77,17 +76,17 @@ public class Utils {
             try {
                 groovyDir = icap.getLocation().createFolder("groovy");
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+//                Exceptions.printStackTrace(ex);
             }
         } else {
             groovyDir = icap.getLocation().getFileObject("groovy/");
         }
-		FileObject scriptsGroovyDir = null;
-		if (!new File(fo, "scripts/groovy").isDirectory()) {
+        FileObject scriptsGroovyDir = null;
+        if (!new File(fo, "scripts/groovy").isDirectory()) {
             try {
                 scriptsGroovyDir = icap.getLocation().createFolder("scripts/groovy");
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+//                Exceptions.printStackTrace(ex);
             }
         } else {
             scriptsGroovyDir = icap.getLocation().getFileObject("scripts/groovy/");
@@ -97,7 +96,7 @@ public class Utils {
                 split(",");
         List<FileObject> scriptDirectories = new LinkedList<FileObject>();
         scriptDirectories.add(groovyDir);
-		scriptDirectories.add(scriptsGroovyDir);
+        scriptDirectories.add(scriptsGroovyDir);
         for (String str : scriptLocations) {
             if (!str.isEmpty()) {
                 scriptDirectories.add(FileUtil.toFileObject(new File(str)));

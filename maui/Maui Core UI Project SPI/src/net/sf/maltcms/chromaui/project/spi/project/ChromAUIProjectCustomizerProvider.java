@@ -43,17 +43,17 @@ import org.openide.util.lookup.Lookups;
  */
 public class ChromAUIProjectCustomizerProvider implements CustomizerProvider {
 
-	public final IChromAUIProject project;
-	public static final String CUSTOMIZER_FOLDER_PATH =
-			"Projects/net-sf-maltcms-chromaui-project-api-ichromauiproject/Customizer";
+    public final IChromAUIProject project;
+    public static final String CUSTOMIZER_FOLDER_PATH
+            = "Projects/net-sf-maltcms-chromaui-project-api-ichromauiproject/Customizer";
 
-	public ChromAUIProjectCustomizerProvider(IChromAUIProject project) {
-		this.project = project;
-	}
+    public ChromAUIProjectCustomizerProvider(IChromAUIProject project) {
+        this.project = project;
+    }
 
-	@Override
-	public void showCustomizer() {
-		Dialog dialog = ProjectCustomizer.createCustomizerDialog(
+    @Override
+    public void showCustomizer() {
+        Dialog dialog = ProjectCustomizer.createCustomizerDialog(
                 //Path to layer folder:
                 CUSTOMIZER_FOLDER_PATH,
                 //Lookup, which must contain, at least, the Project:
@@ -66,9 +66,9 @@ public class ChromAUIProjectCustomizerProvider implements CustomizerProvider {
                 null);
         dialog.setTitle(ProjectUtils.getInformation(project).getDisplayName());
         dialog.setVisible(true);
-	}
-	
-	private class OKOptionListener implements ActionListener {
+    }
+
+    private class OKOptionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
