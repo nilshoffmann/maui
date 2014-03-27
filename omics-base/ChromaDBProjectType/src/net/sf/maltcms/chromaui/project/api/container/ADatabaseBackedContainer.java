@@ -77,6 +77,9 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
 
     @Override
     public int compareTo(IBasicDescriptor ic) {
+        if (ic == null) {
+            return 1;
+        }
         if (ic instanceof IContainer) {
             if (getPrecedence() < ((IContainer) ic).getPrecedence()) {
                 return -1;
@@ -84,7 +87,15 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
                 return 1;
             }
         }
-        return getDisplayName().compareTo(ic.getDisplayName());
+        if (getDisplayName() == null && ic.getDisplayName() == null) {
+            return 0;
+        } else if (getDisplayName() == null && ic.getDisplayName() != null) {
+            return -1;
+        } else if (getDisplayName() != null && ic.getDisplayName() == null) {
+            return 1;
+        } else {
+            return getDisplayName().compareTo(ic.getDisplayName());
+        }
     }
 
     @Override
