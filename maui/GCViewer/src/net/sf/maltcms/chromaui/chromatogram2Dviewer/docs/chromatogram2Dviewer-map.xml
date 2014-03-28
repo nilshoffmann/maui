@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Maui, Maltcms User Interface. 
-Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
+Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
 
 Project website: http://maltcms.sf.net
 
@@ -26,6 +26,7 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
 for details.
 -->
+
 <!DOCTYPE map PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN" "http://java.sun.com/products/javahelp/map_2_0.dtd">
 <map version="2.0">
 	<mapID target="net.sf.maltcms.chromaui.chromatogram2Dviewer.about" url="chromatogram2Dviewer-about.html"/>

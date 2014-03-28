@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Maui, Maltcms User Interface. 
-Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
+Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
 
 Project website: http://maltcms.sf.net
 
@@ -26,6 +26,7 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
 for details.
 -->
+
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
 </filesystem>

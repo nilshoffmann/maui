@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Maui, Maltcms User Interface. 
-Copyright (C) 2008-2012, The authors of Maui. All rights reserved.
+Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
 
 Project website: http://maltcms.sf.net
 
@@ -26,6 +26,7 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
 for details.
 -->
+
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0">
 	<title>Maui Vis Peak Table Viewer Help</title>
