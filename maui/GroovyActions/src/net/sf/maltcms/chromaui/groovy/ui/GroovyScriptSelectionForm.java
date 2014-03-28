@@ -52,7 +52,7 @@ import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class GroovyScriptSelectionForm extends javax.swing.JPanel implements Lookup.Provider {
 

@@ -27,15 +27,15 @@
  */
 package net.sf.maltcms.chromaui.groovy.impl;
 
-import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
 import groovy.lang.GroovyClassLoader;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
+import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
 import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -45,11 +45,10 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-
-import org.openide.awt.ActionRegistration;
+import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.awt.ActionID;
+import org.openide.awt.ActionRegistration;
 import org.openide.explorer.propertysheet.PropertySheet;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -62,7 +61,7 @@ import org.openide.util.Utilities;
 
 @ActionID(category = "Groovy",
         id = "net.sf.maltcms.chromaui.groovy.GenericGroovyRawDataAction")
-@ActionRegistration(displayName = "#CTL_GenericGroovyRawDataAction")
+@ActionRegistration(displayName = "#CTL_GenericGroovyRawDataAction", lazy = true)
 @ActionReferences({
     @ActionReference(path = "Loaders/application/x-cdf/Actions", position = 500)
 })

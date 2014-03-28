@@ -35,7 +35,7 @@ import org.openide.util.Cancellable;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  * @param <T>
  * @param <U>
  */

@@ -32,7 +32,7 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public interface CSVDataGroovyScript extends GroovyProjectDataObjectScript<IChromAUIProject, CSVDataObject> {
 

@@ -42,7 +42,7 @@ import org.openide.util.NbPreferences;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class Utils {
 

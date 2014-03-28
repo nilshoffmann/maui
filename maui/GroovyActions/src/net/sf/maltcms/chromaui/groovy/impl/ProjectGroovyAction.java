@@ -61,7 +61,7 @@ import org.openide.util.RequestProcessor;
  */
 @ActionID(category = "Groovy",
         id = "net.sf.maltcms.chromaui.groovy.ProjectGroovyAction")
-@ActionRegistration(displayName = "#CTL_ProjectGroovyAction")
+@ActionRegistration(displayName = "#CTL_ProjectGroovyAction", lazy = true)
 @ActionReferences({
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Scripts", position = 500)
 })

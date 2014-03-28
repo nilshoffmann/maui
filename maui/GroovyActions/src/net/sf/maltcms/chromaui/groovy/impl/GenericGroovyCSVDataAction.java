@@ -62,11 +62,11 @@ import org.openide.util.Utilities;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 @ActionID(category = "Groovy",
         id = "net.sf.maltcms.chromaui.groovy.GenericGroovyCSVDataAction")
-@ActionRegistration(displayName = "#CTL_GenericGroovyCSVDataAction")
+@ActionRegistration(displayName = "#CTL_GenericGroovyCSVDataAction", lazy = true)
 @ActionReferences({
     @ActionReference(path = "Loaders/text/csv/Actions", position = -500),
     @ActionReference(path = "Loaders/text/tsv/Actions", position = -500),
