@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.maltcms.chromaui.mockito
+OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/mockito/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.9.5
+

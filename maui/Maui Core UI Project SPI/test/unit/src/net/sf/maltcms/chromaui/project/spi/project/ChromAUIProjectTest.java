@@ -33,9 +33,9 @@ import java.util.UUID;
 import junit.framework.Assert;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor;
-import net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.TreatmentGroupDescriptor;
 import org.junit.Test;
 import org.netbeans.junit.NbModuleSuite;
@@ -48,33 +48,33 @@ import org.netbeans.junit.NbTestCase;
  */
 public class ChromAUIProjectTest extends NbTestCase {
 
-	public ChromAUIProjectTest(String name) {
-		super(name);
-	}
+    public ChromAUIProjectTest(String name) {
+        super(name);
+    }
 
     public static junit.framework.Test suite() {
         Configuration config = NbModuleSuite.createConfiguration(ChromAUIProjectTest.class);
-		config.enableClasspathModules(true);
-		config.enableModules("*");
-		config.gui(false);
+        config.enableClasspathModules(true);
+        config.enableModules("*");
+        config.gui(false);
         return config.suite();//ChromAUIProjectTest.class);
-   }
+    }
 //	
 //	protected void setUp() throws Exception {
 //        super.setUp();
 ////        org.netbeans.junit.MockServices.setServices(MockIToDialog.class);
 //    } 
-    
+
     /**
      * Test of addContainer method, of class ChromAUIProject.
      */
     @Test
     public void testAddContainer() throws Exception {
         System.out.println("addContainer");
-		IChromAUIProject cap = null;
+        IChromAUIProject cap = null;
         try {
             File f;
-            
+
             File userdir = new File(System.getProperty("java.io.tmpdir"));
             f = new File(new File(userdir, UUID.randomUUID().toString()), "chromauiproject.db4o");
             f.getParentFile().mkdirs();
@@ -84,7 +84,7 @@ public class ChromAUIProjectTest extends NbTestCase {
 
             cap = new ChromAUIProject();
             cap.activate(f.toURI().toURL());
-			cap.openSession();
+            cap.openSession();
             cap.getCrudProvider();
 //            ChromatogramContainer icc = new ChromatogramContainer();
             ChromatogramDescriptor gcd1 = new ChromatogramDescriptor();
@@ -102,7 +102,7 @@ public class ChromAUIProjectTest extends NbTestCase {
             tgd.setName("Group A");
             gcd1.setTreatmentGroup(tgd);
             gcd2.setTreatmentGroup(tgd);
-            
+
 //            Species sp1 = new Species();
 //            sp1.setOntology("AREGA AREGA");
 //            sp1.setPubmedId("231908123");
@@ -110,14 +110,14 @@ public class ChromAUIProjectTest extends NbTestCase {
 //            sa1.setAnnotation(sp1);
 //            icg.addAnnotations(sa1.getClass(), sa1); 
 //            tgd.addMembers(gcd1, gcd2);
-            icg.addMembers(gcd1,gcd2);
+            icg.addMembers(gcd1, gcd2);
 
             TreatmentGroupDescriptor tgd2 = new TreatmentGroupDescriptor();
             tgd2.setName("Group B");
             gcd3.setTreatmentGroup(tgd2);
             gcd4.setTreatmentGroup(tgd2);
 //            tgd2.addMembers(gcd3, gcd4);
-            icg.addMembers(gcd3,gcd4);
+            icg.addMembers(gcd3, gcd4);
 
             IContainer[] ic = new IContainer[]{icg};
             cap.addContainer(ic);
@@ -130,7 +130,6 @@ public class ChromAUIProjectTest extends NbTestCase {
 //                    System.out.println(descr.getResourceLocation());
 //                }
 //            }
-
             Collection<TreatmentGroupContainer> itgc = cap.getContainer(TreatmentGroupContainer.class);
             System.out.println("Query returned " + itgc.size() + " ITreatmentGroupContainer");
             for (TreatmentGroupContainer cont : itgc) {
@@ -143,15 +142,15 @@ public class ChromAUIProjectTest extends NbTestCase {
 //                    System.out.println(sa.toString());
 //                }
             }
-			TreatmentGroupContainer retrievedTgc = cap.getContainerById(icg.getId(), TreatmentGroupContainer.class);
-			Assert.assertEquals(icg.getId(), retrievedTgc);
-			
-			IChromatogramDescriptor descr = cap.getDescriptorById(gcd1.getId(), IChromatogramDescriptor.class);
-			Assert.assertEquals(gcd1.getId(), descr.getId());
+            TreatmentGroupContainer retrievedTgc = cap.getContainerById(icg.getId(), TreatmentGroupContainer.class);
+            Assert.assertEquals(icg.getId(), retrievedTgc);
+
+            IChromatogramDescriptor descr = cap.getDescriptorById(gcd1.getId(), IChromatogramDescriptor.class);
+            Assert.assertEquals(gcd1.getId(), descr.getId());
         } finally {
-            if(cap!=null) {
-				cap.closeSession();
-			}
+            if (cap != null) {
+                cap.closeSession();
+            }
         }
         // TODO review the generated test code and removeMembers the default call to fail.
         //fail("The test case is a prototype.");
@@ -169,7 +168,6 @@ public class ChromAUIProjectTest extends NbTestCase {
 //        // TODO review the generated test code and removeMembers the default call to fail.
 //        //fail("The test case is a prototype.");
 //    }
-
     /**
      * Test of getContainer method, of class ChromAUIProject.
      */
@@ -184,7 +182,6 @@ public class ChromAUIProjectTest extends NbTestCase {
 ////        // TODO review the generated test code and removeMembers the default call to fail.
 ////        fail("The test case is a prototype.");
 //    }
-
     /**
      * Test of main method, of class ChromAUIProject.
      */
