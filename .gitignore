@@ -15,11 +15,8 @@ omics-base/*/build
 omics-base/*/nbproject/private
 platform-7.2.1/
 /maui/dist/
-
-
 /maui-ext/pipelineTestModule/target/
 /maui-ext/dist/
-
 .DS_Store
 maui-ext/.DS_Store
 maui-ext/pipelineTestModule/.DS_Store
