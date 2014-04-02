@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javax.swing.SwingUtilities;
 import lombok.Data;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
@@ -83,7 +82,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                 anovaDescriptors.setMethod("Anova");
                 anovaDescriptors.setDisplayName("Analysis of Variance");
                 int maxFactors = 0;
-				int unit = 0;
+                int unit = 0;
                 List<double[]> pvalues = new ArrayList<double[]>();
                 for (IPeakGroupDescriptor descr : container.getMembers()) {
                     int i = 0;
@@ -197,10 +196,10 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                         targetsvs));
                             }
                         }
-						
-						//cleanup
-						c.eval("rm(groups,peakAreas,peaks,anovaResult)");
-						
+
+                        //cleanup
+                        c.eval("rm(groups,peakAreas,peaks,anovaResult)");
+
                         ad.setPeakGroupDescriptor(descr);
                         ad.setName("Anova " + descr.getName());
                         System.out.println("GroupDescriptor:" + ad.getPeakGroupDescriptor().getDisplayName());
@@ -209,10 +208,9 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                         anovaDescriptors.addMembers(ad);
                         ad.setPvalueAdjustmentMethod(pvalueAdjustmentMethod.getDisplayName());
                     }
-					progressHandle.progress(unit++);
+                    progressHandle.progress(unit++);
                 }
                 adjustPvalues(pvalues, maxFactors, c, anovaDescriptors);
-
 
                 List<StatisticsContainer> statContainers = container.getStatisticsContainers();
                 if (statContainers == null) {
@@ -220,8 +218,8 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                 }
                 statContainers.add(anovaDescriptors);
                 container.setStatisticsContainers(statContainers);
-				progressHandle.progress("Adding Anova results");
-				project.updateContainer(container);
+                progressHandle.progress("Adding Anova results");
+                project.updateContainer(container);
                 // close RConnection, we're done
                 //c.close();
             } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)

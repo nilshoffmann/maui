@@ -1,34 +1,170 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="custom-nbm">
+<project name="custom-nbm" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <description>Provides a customized nbm target to package javadoc and source.</description>
-<!--    <import file="nbproject/build-impl.xml"/>-->
+    <!--    <import file="nbproject/build-impl.xml"/>-->
+    <import file="preparation.xml"/>
 	
-	<target name="nbm" depends="init,netbeans,-nbm-prompt-for-storepass,-init-executables,nbm-src-javadoc" description="Build NBM archive.">
-		<!-- call harness build.xml nbm target -->
-		<antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
+    <target name="nbm" depends="init,netbeans,-nbm-prompt-for-storepass,-init-executables,nbm-src-javadoc" description="Build NBM archive.">
+        <!-- call harness build.xml nbm target -->
+        <antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
     </target>
 	
-	<target name="-nbm-src-javadoc-prepare" depends="-javadoc-init">
-		<!-- inclusion base in nbm is below the release folder -->
-		<mkdir dir="release/docs"/>
-	</target>
+    <target name="-nbm-src-javadoc-prepare" depends="-javadoc-init">
+        <!-- inclusion base in nbm is below the release folder -->
+        <mkdir dir="release/docs"/>
+    </target>
 	
-	<target name="nbm-src" depends="-nbm-src-javadoc-prepare" if="${nbm.bundle.src}">
-		<!-- bundle src -->
-		<echo>Bundling src for nbm</echo>
-		<zip basedir="." destfile="build/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-src.zip" includes="**" 
-			excludes="build/**, nbproject/private/**, release/docs/**"/>
-		<copy file="build/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-src.zip" todir="release/docs" />
-	</target>
+    <target name="nbm-src" depends="-nbm-src-javadoc-prepare" if="${nbm.bundle.src}">
+        <!-- bundle src -->
+        <echo>Bundling src for nbm</echo>
+        <zip basedir="." destfile="build/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-src.zip" includes="**" 
+             excludes="build/**, nbproject/private/**, release/docs/**"/>
+        <copy file="build/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-src.zip" todir="release/docs" />
+    </target>
 	
-	<target name="nbm-javadoc" depends="-nbm-src-javadoc-prepare,javadoc" if="${nbm.bundle.javadoc}">
-		<!-- bundle javadoc -->
-		<echo>Bundling javadoc for nbm</echo>
-		<zip basedir="build/javadoc/${code.name.base.dashes}/" destfile="build/javadoc/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-doc.zip" includes="**" />
-		<copy file="build/javadoc/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-doc.zip" todir="release/docs" />
-	</target>
+    <target name="nbm-javadoc" depends="-nbm-src-javadoc-prepare,javadoc" if="${nbm.bundle.javadoc}">
+        <!-- bundle javadoc -->
+        <echo>Bundling javadoc for nbm</echo>
+        <zip basedir="build/javadoc/${code.name.base.dashes}/" destfile="build/javadoc/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-doc.zip" includes="**" />
+        <copy file="build/javadoc/${code.name.base.dashes}-${mf.OpenIDE-Module-Specification-Version}-doc.zip" todir="release/docs" />
+    </target>
 	
-	<target name="nbm-src-javadoc" depends="nbm-src,nbm-javadoc"/>
+    <target name="nbm-src-javadoc" depends="nbm-src,nbm-javadoc"/>
+    
+    <target name="-init-ant-contrib-tasks">
+        <property name="ant-contrib-tasks-filename" value="ant-contrib-1.0b3.jar"/>
+        <echo>Configuring ant contrib tasks for Netbeans use...</echo>
+        <property name="ant-contrib-tasks-loc" value="../../tools/ant/${ant-contrib-tasks-filename}"/>
+        <available file="${ant-contrib-tasks-loc}" property="ant-contrib-tasks.present"/>
+        <fail unless="ant-contrib-tasks.present" message="The ant-contrib-tasks jar doesn't exist at: ${ant-contrib-tasks-loc}, can't build. Check your settings!" />
+        <taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement location="${ant-contrib-tasks-loc}"/>
+            </classpath>
+        </taskdef>
+    </target>
+    
+    <target name="-init-maven-ant-tasks">
+        <property name="maven-ant-tasks-filename" value="maven-ant-tasks-2.1.3.jar"/>
+        <echo>Configuring ant-maven tasks for Netbeans use...</echo>
+        <property name="maven-ant-tasks-loc" value="../../tools/ant/${maven-ant-tasks-filename}"/>
+        <available file="${maven-ant-tasks-loc}" property="maven-ant-tasks.present"/>
+        <fail unless="maven-ant-tasks.present" message="The maven-ant-tasks jar doesn't exist at: ${maven-ant-tasks-loc}, can't build. Check your settings!" />
+        <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant">
+            <classpath>
+                <pathelement location="${maven-ant-tasks-loc}"/>
+            </classpath>
+        </typedef>
+    </target>
+    
+    <target name="install-mvn-artifacts" depends="-init-ant-contrib-tasks,-init-maven-ant-tasks,nbm">
+        <loadfile srcfile="${basedir}/manifest.mf" property="module-manifest.hyphenatedName">
+            <filterchain>
+                <linecontains>
+                    <contains value="OpenIDE-Module:"/>
+                </linecontains>
+                <!-- avoid newlines in filtered output -->
+                <tokenfilter delimoutput="">
+                    <!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
+                    <replacestring from="OpenIDE-Module:" to=""/>
+                    <replaceregex pattern="/[0-9]+" replace="" flags="gi"/>
+                    <replacestring from="." to="-"/>
+                    <trim/>
+                </tokenfilter>
+            </filterchain>
+        </loadfile>
+        <loadfile srcfile="${basedir}/manifest.mf" property="module-manifest.artifactName">
+            <filterchain>
+                <linecontains>
+                    <contains value="OpenIDE-Module:"/>
+                </linecontains>
+                <!-- avoid newlines in filtered output -->
+                <tokenfilter delimoutput="">
+                    <!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
+                    <replacestring from="OpenIDE-Module:" to=""/>
+                    <replaceregex pattern="/[0-9]+" replace="" flags="gi"/>
+                    <trim/>
+                </tokenfilter>
+            </filterchain>
+        </loadfile>
+        <loadfile srcfile="${basedir}/manifest.mf" property="localizing-bundle.location">
+            <filterchain>
+                <linecontains>
+                    <contains value="OpenIDE-Module-Localizing-Bundle"/>
+                </linecontains>
+                <!-- avoid newlines in filtered output -->
+                <tokenfilter delimoutput="">
+                    <!-- remove prefix, trim whitespace -->
+                    <replacestring from="OpenIDE-Module-Localizing-Bundle:" to=""/>
+                    <trim/>
+                </tokenfilter>
+            </filterchain>
+        </loadfile>
+        <loadfile srcfile="${basedir}/manifest.mf" property="module-manifest.artifactVersion">
+            <filterchain>
+                <linecontains>
+                    <contains value="OpenIDE-Module-Specification-Version:"/>
+                </linecontains>
+                <!-- avoid newlines in filtered output -->
+                <tokenfilter delimoutput="">
+                    <!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
+                    <replacestring from="OpenIDE-Module-Specification-Version:" to=""/>
+                    <trim/>
+                </tokenfilter>
+            </filterchain>
+        </loadfile>
+        <!-- load localizing bundle -->
+        <property file="${basedir}/src/${localizing-bundle.location}"/>
+        <!-- artifact-properties -->
+        <if>
+            <isset property="artifact.group" />
+            <then>
+                <echo message="Artifact group set to ${artifact.group}" />
+            </then>
+            <else>
+                <property name="artifact.group" value="net.sf.maltcmsui" />
+                <echo message="Setting default value of artifact group to ${artifact.group}" />
+            </else>
+        </if>
+        <if>
+            <isset property="artifact.name" />
+            <then>
+                <echo message="Artifact name set to ${artifact.name}" />
+            </then>
+            <else>
+                <property name="artifact.name" value="${OpenIDE-Module-Name}" />
+                <echo message="Setting default value of artifact name to ${artifact.name}" />
+            </else>
+        </if>
+        <if>
+            <isset property="artifact.version" />
+            <then>
+                <echo message="Artifact version set to ${artifact.version}" />
+            </then>
+            <else>
+                <property name="artifact.version" value="${module-manifest.artifactVersion}" />
+                <echo message="Setting default value of artifact version to ${artifact.version}" />
+            </else>
+        </if>
+        <if>
+            <isset property="artifact.type" />
+            <then>
+                <echo message="Artifact type set to ${artifact.type}" />
+            </then>
+            <else>
+                <property name="artifact.type" value="nbm" />
+                <echo message="Setting default value of artifact type to ${artifact.type}" />
+            </else>
+        </if>
+        <property name="artifact.pom" value="pom.xml" />
+        <artifact:pom id="tmp.pom" groupid="${artifact.group}" artifactid="${artifact.name}" version="${artifact.version}" packaging="${artifact.type}" name="${artifact.name}" >
+            <dependency groupId="junit" artifactId="junit" version="4.1"/>
+        </artifact:pom>
+        <artifact:writepom pomRefId="tmp.pom" file="${artifact.pom}"/>
+        <artifact:install file="${basedir}/build/${module-manifest.hyphenatedName}.nbm">
+            <artifact:pom refid="tmp.pom"/>
+        </artifact:install>
+    </target>
 	
 </project>

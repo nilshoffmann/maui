@@ -56,6 +56,7 @@
                 <pathelement location="${ant-contrib-loc}"/>
             </classpath>
         </taskdef>
+        <echo>Using ant-contrib.jar at ${ant-contrib-loc}</echo>
     </target>
 
     <target name="-init-hudson" depends="-check-env" unless="isNetbeans">

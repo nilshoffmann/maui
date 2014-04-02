@@ -52,9 +52,9 @@
             <entry key="generator-jdk-location-forward-slashes" value="${java.home}"/>
             <entry key="generated-installers-location-forward-slashes" value="${suite.dir}/build/dist"/>
             <entry key="pack200.enabled" value="${auxiliary.org-netbeans-modules-apisupport-installer.pack200-enabled}" default="false"/>
-            <entry key="suite.nbi.product.uid" value="${app.name}"/>
+            <entry key="suite.nbi.product.uid" value="${branding.token}"/>
             <entry key="suite.nbi.product.version" value="${app.version.release}"/>
-            <entry key="nbi.product.uid" value="${app.name}"/>
+            <entry key="nbi.product.uid" value="${branding.token}"/>
             <entry key="nbi.product.version" value="${app.version.release}"/>
         </propertyfile>
         <ant antfile="${nbplatform.harness.dir}/nbi/stub/template.xml" taskname="build" dir="${nbplatform.harness.dir}/nbi/stub/" inheritall="false" inheritrefs="false">
