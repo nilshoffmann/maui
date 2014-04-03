@@ -29,7 +29,6 @@ package net.sf.maltcms.chromaui.msviewer.ui.panel;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,6 +44,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import maltcms.datastructures.ms.IChromatogram;
@@ -404,9 +404,10 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jToolBar1.add(jLabel1);
         jToolBar1.add(filler1);
 
-        barWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(0.5d, 1.0E-5d, 1.0d, 0.009999999776482582d));
+        barWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(0.5d, 1.0E-6d, 1.0d, 1.0E-6d));
         barWidthSpinner.setMinimumSize(new java.awt.Dimension(100, 28));
         barWidthSpinner.setPreferredSize(new java.awt.Dimension(100, 28));
+        barWidthSpinner.setEditor(new JSpinner.NumberEditor(barWidthSpinner,"#.######"));
         barWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 barWidthSpinnerStateChanged(evt);
@@ -570,7 +571,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //            }
 //        }
         int idx = activeMassSpectrum.getSelectedIndex();
-        if (activeMS >= idx) {
+        if (activeMS >= idx && !seriesToScan.isEmpty()) {
 //            this.plot.getRenderer().setBaseItemLabelsVisible(!hideAnnotations.isSelected());
             this.plot.getRenderer().setSeriesItemLabelsVisible(idx,
                     !hideAnnotations.isSelected());
@@ -689,28 +690,42 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private javax.swing.JButton remove;
     // End of variables declaration//GEN-END:variables
 
+    private int getLookupResultsSize() {
+        return lookupResult.allInstances().size() + metaboliteSelection.allInstances().size() + peakAnnotationDescriptorResult.allInstances().size() + peakGroupResult.allInstances().size();
+    }
+
     @Override
     public void resultChanged(LookupEvent ev) {
-        Collection<? extends ISelection> coll = lookupResult.allInstances();
-        if (coll.size() > 0) {
+        boolean addMsState = addMs.isSelected();
+        int selectedItems = getLookupResultsSize();
+        if (selectedItems > 0 && !addMsState && seriesToScan.keySet().size() >= 1) {
+            clearActionPerformed(null);
+        }
+        if (!addMsState) {
+            addMs.setSelected(true);
+        }
+        if (!lookupResult.allInstances().isEmpty()) {
+            Collection<? extends ISelection> coll = lookupResult.allInstances();
             handleSelection(coll);
-        } else if (!metaboliteSelection.allInstances().isEmpty()) {
+        }
+        if (!metaboliteSelection.allInstances().isEmpty()) {
             Collection<? extends IMetabolite> metabolites = metaboliteSelection.allInstances();
             handleMetabolites(metabolites);
-        } else if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
+        }
+        if (!peakAnnotationDescriptorResult.allInstances().isEmpty()) {
             Collection<? extends IPeakAnnotationDescriptor> peakGroups = peakAnnotationDescriptorResult.allInstances();
             handlePeakAnnotationDescriptors(peakGroups);
-        } else if (!peakGroupResult.allInstances().isEmpty()) {
+        }
+        if (!peakGroupResult.allInstances().isEmpty()) {
             Collection<? extends IPeakGroupDescriptor> peakGroups = peakGroupResult.allInstances();
             handlePeakGroupDescriptors(peakGroups);
         }
+        //restore addMsState
+        addMs.setSelected(addMsState);
     }
 
     private void handleSelection(Collection<? extends ISelection> coll) {
         boolean add = addMs.isSelected();
-        if (!add) {
-            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-        }
         if (coll.size() > 1) {
             add = true;
         }
@@ -722,9 +737,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
     private void handleMetabolites(Collection<? extends IMetabolite> metabolites) {
         boolean add = addMs.isSelected();
-        if (!add) {
-            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-        }
         if (metabolites.size() > 1) {
             add = true;
         }
@@ -736,9 +748,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
     private void handlePeakAnnotationDescriptors(Collection<? extends IPeakAnnotationDescriptor> peakGroups) {
         boolean add = addMs.isSelected();
-        if (!add) {
-            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-        }
         if (peakGroups.size() > 1) {
             add = true;
         }
@@ -749,11 +758,8 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }
 
     private void handlePeakGroupDescriptors(Collection<? extends IPeakGroupDescriptor> peakGroups) {
-        boolean add = addMs.isSelected();
-        if (!add) {
-            clearActionPerformed(new ActionEvent(this, 0, "CLEAR"));
-        }
-        add = true;
+//        boolean add = addMs.isSelected();
+        boolean add = true;
         for (IPeakGroupDescriptor ipgd : peakGroups) {
             for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
                 final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
