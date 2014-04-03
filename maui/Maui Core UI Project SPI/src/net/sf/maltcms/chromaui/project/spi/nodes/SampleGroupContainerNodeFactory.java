@@ -30,7 +30,6 @@ package net.sf.maltcms.chromaui.project.spi.nodes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,7 +43,6 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
-import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -61,12 +59,12 @@ public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends
 
     final SampleGroupContainer cp;
     private Lookup lkp;
-	private IChromAUIProject project;
+    private IChromAUIProject project;
 
     public SampleGroupContainerNodeFactory(SampleGroupContainer cp, Lookup lkp) {
         this.cp = cp;
         this.lkp = lkp;
-		this.project = lkp.lookup(IChromAUIProject.class);
+        this.project = lkp.lookup(IChromAUIProject.class);
         cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
     }
 
@@ -77,15 +75,15 @@ public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends
             if (container == null || container.isEmpty()) {
                 return true;
             }
-			for (IChromatogramDescriptor idesc : container) {
-				if (Thread.interrupted()) {
-					return false;
-				} else {
-					if (idesc != null) {
-						list.add((T) idesc);
-					}
-				}
-			}
+            for (IChromatogramDescriptor idesc : container) {
+                if (Thread.interrupted()) {
+                    return false;
+                } else {
+                    if (idesc != null) {
+                        list.add((T) idesc);
+                    }
+                }
+            }
             Collections.sort(list, new Comparator<IBasicDescriptor>() {
                 @Override
                 public int compare(IBasicDescriptor t,
@@ -103,7 +101,7 @@ public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends
 
     @Override
     protected Node createNodeForKey(IBasicDescriptor key) {
-		if (key instanceof IChromatogramDescriptor) {
+        if (key instanceof IChromatogramDescriptor) {
             IChromatogramDescriptor cd = (IChromatogramDescriptor) key;
             System.out.println(cd.getResourceLocation());
 
@@ -117,15 +115,13 @@ public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends
                         cd), lkp);
                 ChromatogramNode cn = new ChromatogramNode(n,
                         Children.create(new ChromatogramChildNodeFactory(
-                        cd, lkp), true), lookup);
+                                        cd, lkp), true), lookup);
                 dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
                 key.addPropertyChangeListener(WeakListeners.propertyChange(this, key));
                 cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-				key.setProject(lkp.lookup(IChromAUIProject.class));
+                key.setProject(lkp.lookup(IChromAUIProject.class));
                 return cn;
             } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             } catch (IllegalArgumentException ex) {
                 Exceptions.printStackTrace(ex);

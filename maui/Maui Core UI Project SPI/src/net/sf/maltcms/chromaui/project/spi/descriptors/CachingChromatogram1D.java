@@ -98,7 +98,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     public CachingChromatogram1D(final IFileFragment e) {
         this.parent = e;
         String id = e.getUri().toString() + "-1D";
-        whm = CacheFactory.createAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this);
+        whm = CacheFactory.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this, 10, 20);
     }
 
     private void init() {

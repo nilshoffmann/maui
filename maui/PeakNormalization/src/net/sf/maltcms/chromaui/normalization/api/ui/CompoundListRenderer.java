@@ -37,6 +37,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 public class CompoundListRenderer extends DefaultListCellRenderer {
+
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -53,10 +54,14 @@ public class CompoundListRenderer extends DefaultListCellRenderer {
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-        if(((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().isEmpty()) {
-            setText(((IPeakGroupDescriptor) value).getDisplayName());
+        if (value != null) {
+            if (((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().isEmpty()) {
+                setText(((IPeakGroupDescriptor) value).getDisplayName());
+            } else {
+                setText("@" + String.format("%.2f", ((IPeakGroupDescriptor) value).getMedianApexTime()) + ": " + ((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().get(0).getDisplayName());
+            }
         }else{
-            setText("@"+String.format("%.2f",((IPeakGroupDescriptor) value).getMedianApexTime())+": "+((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().get(0).getDisplayName());
+            setText("");
         }
         setFont(list.getFont());
         return this;

@@ -338,7 +338,7 @@ public class DBProjectFactory {
             File projdir, File[] inputFiles,
             Map<File, String> fileToGroup, Map<File, File> importFileMap) throws RuntimeException, IOException {
         Boolean copyFiles = (Boolean) props.get("copy.files");
-        if (copyFiles.booleanValue()) {
+        if (copyFiles) {
             Map<File, String> newFileToGroup = new LinkedHashMap<File, String>();
             System.out.println("Copying files to user project directory!");
             try {
