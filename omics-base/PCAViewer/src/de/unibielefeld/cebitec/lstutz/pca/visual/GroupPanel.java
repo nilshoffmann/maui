@@ -33,7 +33,10 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.Box;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.vecmath.Color3f;
 
 public class GroupPanel extends JPanel {
@@ -44,6 +47,8 @@ public class GroupPanel extends JPanel {
      *
      */
     private static final long serialVersionUID = 1L;
+
+    private JLabel label = null;
 
     public GroupPanel(HashMap<String, ArrayList<DataModel>> hash, StandardGUI gui) {
 //        this.setPreferredSize(new Dimension(840, 30));
@@ -57,6 +62,11 @@ public class GroupPanel extends JPanel {
             bla.addItemListener(gui);
             this.add(bla);
         }
+        label = new JLabel("Selected:");
+        label.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+        this.add(new JSeparator(JSeparator.VERTICAL));
+        this.add(Box.createHorizontalGlue());
+        this.add(label);
         this.set_colors();
     }
 
@@ -76,7 +86,21 @@ public class GroupPanel extends JPanel {
         this.repaint();
     }
 
+    public void set_coords(DataModel da) {
+        this.label.setText("Selected: "+get40CharString(da.getLabel()));
+        this.label.setToolTipText("<html><p>" + da.getLabel() + "</p></html>");
+    }
+
+    public String get40CharString(String label) {
+        if (label.length() > 37) {
+            String shortString = label.substring(0, Math.min(37, label.length()));
+            return shortString + "...";
+        }
+        return label;
+    }
+
     public void set_colors() {
+        label.setForeground(create_complement(this.getBackground()));
         //achsen.setForeground(create_complement(this.getBackground()));
         this.repaint();
     }

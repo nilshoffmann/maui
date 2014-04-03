@@ -31,11 +31,13 @@ import de.unibielefeld.cebitec.lstutz.pca.data.ParserUtilities;
 import de.unibielefeld.cebitec.lstutz.pca.data.PcaDescriptorAdapter;
 import de.unibielefeld.cebitec.lstutz.pca.visual.StandardGUI;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JColorChooser;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -200,23 +202,34 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
     private void initComponents() {
 
         jToolBar1 = new javax.swing.JToolBar();
-        jLabel1 = new javax.swing.JLabel();
+        xButton = new javax.swing.JButton();
         firstPrincipleComponentComboBox = new javax.swing.JComboBox();
         jSeparator2 = new javax.swing.JToolBar.Separator();
-        jLabel2 = new javax.swing.JLabel();
+        yButton = new javax.swing.JButton();
         secondPrincipleComponentComboBox = new javax.swing.JComboBox();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jLabel3 = new javax.swing.JLabel();
+        zButton = new javax.swing.JButton();
         thirdPrincipleComponentComboBox = new javax.swing.JComboBox();
 
         setOpaque(true);
         setLayout(new java.awt.BorderLayout());
 
+        jToolBar1.setFloatable(false);
         jToolBar1.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jToolBar1.setRollover(true);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PCAViewerTopComponent.class, "PCAViewerTopComponent.jLabel1.text")); // NOI18N
-        jToolBar1.add(jLabel1);
+        xButton.setBackground(new java.awt.Color(11, 255, 0));
+        xButton.setFont(xButton.getFont().deriveFont(xButton.getFont().getStyle() | java.awt.Font.BOLD));
+        org.openide.awt.Mnemonics.setLocalizedText(xButton, org.openide.util.NbBundle.getMessage(PCAViewerTopComponent.class, "PCAViewerTopComponent.xButton.text")); // NOI18N
+        xButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        xButton.setOpaque(true);
+        xButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        xButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(xButton);
 
         firstPrincipleComponentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         firstPrincipleComponentComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -227,8 +240,18 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         jToolBar1.add(firstPrincipleComponentComboBox);
         jToolBar1.add(jSeparator2);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(PCAViewerTopComponent.class, "PCAViewerTopComponent.jLabel2.text")); // NOI18N
-        jToolBar1.add(jLabel2);
+        yButton.setBackground(new java.awt.Color(255, 0, 0));
+        yButton.setFont(yButton.getFont().deriveFont(yButton.getFont().getStyle() | java.awt.Font.BOLD));
+        org.openide.awt.Mnemonics.setLocalizedText(yButton, org.openide.util.NbBundle.getMessage(PCAViewerTopComponent.class, "PCAViewerTopComponent.yButton.text")); // NOI18N
+        yButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        yButton.setOpaque(true);
+        yButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        yButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(yButton);
 
         secondPrincipleComponentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         secondPrincipleComponentComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -239,8 +262,18 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         jToolBar1.add(secondPrincipleComponentComboBox);
         jToolBar1.add(jSeparator1);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(PCAViewerTopComponent.class, "PCAViewerTopComponent.jLabel3.text")); // NOI18N
-        jToolBar1.add(jLabel3);
+        zButton.setBackground(new java.awt.Color(0, 8, 255));
+        zButton.setFont(zButton.getFont().deriveFont(zButton.getFont().getStyle() | java.awt.Font.BOLD));
+        org.openide.awt.Mnemonics.setLocalizedText(zButton, org.openide.util.NbBundle.getMessage(PCAViewerTopComponent.class, "PCAViewerTopComponent.zButton.text")); // NOI18N
+        zButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zButton.setOpaque(true);
+        zButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        zButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(zButton);
 
         thirdPrincipleComponentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         thirdPrincipleComponentComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -257,22 +290,46 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         int componentIdx0 = ((PrincipalComponent) firstPrincipleComponentComboBox.getSelectedItem()).getIndex();
         int componentIdx1 = ((PrincipalComponent) secondPrincipleComponentComboBox.getSelectedItem()).getIndex();
         int componentIdx2 = ((PrincipalComponent) thirdPrincipleComponentComboBox.getSelectedItem()).getIndex();
-        updateView(componentIdx0, componentIdx1, componentIdx2);
+        updateView(scene, componentIdx0, componentIdx1, componentIdx2);
     }//GEN-LAST:event_firstPrincipleComponentComboBoxActionPerformed
 
     private void secondPrincipleComponentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondPrincipleComponentComboBoxActionPerformed
         int componentIdx0 = ((PrincipalComponent) firstPrincipleComponentComboBox.getSelectedItem()).getIndex();
         int componentIdx1 = ((PrincipalComponent) secondPrincipleComponentComboBox.getSelectedItem()).getIndex();
         int componentIdx2 = ((PrincipalComponent) thirdPrincipleComponentComboBox.getSelectedItem()).getIndex();
-        updateView(componentIdx0, componentIdx1, componentIdx2);
+        updateView(scene, componentIdx0, componentIdx1, componentIdx2);
     }//GEN-LAST:event_secondPrincipleComponentComboBoxActionPerformed
 
     private void thirdPrincipleComponentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thirdPrincipleComponentComboBoxActionPerformed
         int componentIdx0 = ((PrincipalComponent) firstPrincipleComponentComboBox.getSelectedItem()).getIndex();
         int componentIdx1 = ((PrincipalComponent) secondPrincipleComponentComboBox.getSelectedItem()).getIndex();
         int componentIdx2 = ((PrincipalComponent) thirdPrincipleComponentComboBox.getSelectedItem()).getIndex();
-        updateView(componentIdx0, componentIdx1, componentIdx2);
+        updateView(scene, componentIdx0, componentIdx1, componentIdx2);
     }//GEN-LAST:event_thirdPrincipleComponentComboBoxActionPerformed
+
+    private void yButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yButtonActionPerformed
+        if(scene!=null) {
+            Color c = JColorChooser.showDialog(this, "Select Y-Axis color", scene.get_y_color());
+            scene.set_y_color(c);
+            yButton.setBackground(c);
+        }
+    }//GEN-LAST:event_yButtonActionPerformed
+
+    private void xButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xButtonActionPerformed
+        if(scene!=null) {
+            Color c = JColorChooser.showDialog(this, "Select X-Axis color", scene.get_x_color());
+            scene.set_x_color(c);
+            xButton.setBackground(c);
+        }
+    }//GEN-LAST:event_xButtonActionPerformed
+
+    private void zButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zButtonActionPerformed
+        if(scene!=null) {
+            Color c = JColorChooser.showDialog(this, "Select Z-Axis color", scene.get_z_color());
+            scene.set_z_color(c);
+            zButton.setBackground(c);
+        }
+    }//GEN-LAST:event_zButtonActionPerformed
 
     @Value
     private static class StandardGUIParameters {
@@ -283,7 +340,7 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         private final int componentIdx2;
     }
 
-    private void updateView(final int component0, final int component1, final int component2) {
+    private void updateView(final StandardGUI oldGui, final int component0, final int component1, final int component2) {
         if (updatingView.compareAndSet(false, true)) {
             CancellableRunnable<StandardGUIParameters> guiBuilder = new CancellableRunnable<StandardGUIParameters>(true) {
 
@@ -292,6 +349,11 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
                     if (updatingView.get()) {
                         String name = "MeltDB 3D Viewer";
                         final StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(pcaDescriptor, component0, component1, component2)));
+                        if(oldGui!=null) {
+                            gui.set_x_color(oldGui.get_x_color());
+                            gui.set_y_color(oldGui.get_y_color());
+                            gui.set_z_color(oldGui.get_z_color());
+                        }
                         final StandardGUIParameters params = new StandardGUIParameters(gui, component0, component1, component2);
                         notifyListeners(params);
                     }
@@ -319,14 +381,14 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox firstPrincipleComponentComboBox;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JComboBox secondPrincipleComponentComboBox;
     private javax.swing.JComboBox thirdPrincipleComponentComboBox;
+    private javax.swing.JButton xButton;
+    private javax.swing.JButton yButton;
+    private javax.swing.JButton zButton;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
@@ -414,6 +476,6 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         firstPrincipleComponentComboBox.setEnabled(false);
         secondPrincipleComponentComboBox.setEnabled(false);
         thirdPrincipleComponentComboBox.setEnabled(false);
-        updateView(0, 1, 2);
+        updateView(scene, 0, 1, 2);
     }
 }

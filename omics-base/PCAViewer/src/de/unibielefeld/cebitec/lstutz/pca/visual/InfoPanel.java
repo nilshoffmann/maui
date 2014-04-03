@@ -32,42 +32,40 @@ import de.unibielefeld.cebitec.lstutz.pca.data.Heading;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.vecmath.Color3f;
 
-public class InfoPanel extends JPanel implements MouseListener {
+public class InfoPanel extends JPanel {
 
     /**
      *
      */
     private static final long serialVersionUID = 1L;
-    private JLabel achsen, info, label, x, y, z, color, view, export;
+    private JLabel achsen, info, label, x, y, z, color, view, export, heading_x, heading_y, heading_z;
 //    private Link link;
 
     public InfoPanel(Heading h, StandardGUI g) {
 //        this.setPreferredSize(new Dimension(200, 480));
         this.setMinimumSize(new Dimension(250, 300));
 //        this.setBackground(new Color(51, 51, 51));
-        this.setLayout(new GridLayout(19, 1, 0, 2));
-        achsen = new JLabel("Axis labeling:");
-        this.add(achsen);
-        JLabel heading_x = new JLabel(h.getHeading_x());
-        heading_x.setForeground(Color.green);
-        this.add(heading_x);
-        JLabel heading_y = new JLabel(h.getHeading_y());
-        heading_y.setForeground(Color.red);
-        this.add(heading_y);
-        JLabel heading_z = new JLabel(h.getHeading_z());
-        heading_z.setForeground(Color.blue);
-        this.add(heading_z);
+        this.setLayout(new GridLayout(13, 1, 0, 2));
+//        achsen = new JLabel("Axis labeling:");
+//        this.add(achsen);
+//        heading_x = new JLabel(h.getHeading_x());
+//        heading_x.setForeground(Color.green);
+//        this.add(heading_x);
+//        heading_y = new JLabel(h.getHeading_y());
+//        heading_y.setForeground(Color.red);
+//        this.add(heading_y);
+//        heading_z = new JLabel(h.getHeading_z());
+//        heading_z.setForeground(Color.blue);
+//        this.add(heading_z);
         info = new JLabel("Current Selection:");
         this.add(info);
-        label = new JLabel("Nothing selected");
-        this.add(label);
+//        label = new JLabel("Nothing selected");
+//        this.add(label);
 //        link = new Link("Nothing selected", "http://");
 //        link.addMouseListener(this);
 //        this.add(link);
@@ -113,8 +111,8 @@ public class InfoPanel extends JPanel implements MouseListener {
     }
 
     public void set_coords(DataModel da) {
-        this.label.setText("Label = " + da.getLabel());
-        this.label.setToolTipText(da.getAnnotation());
+//        this.label.setText("Label = " + da.getLabel());
+//        this.label.setToolTipText(da.getAnnotation());
         this.x.setText("x = " + da.getCoordinates().get(0));
         this.y.setText("y = " + da.getCoordinates().get(1));
         this.z.setText("z = " + da.getCoordinates().get(2));
@@ -132,8 +130,8 @@ public class InfoPanel extends JPanel implements MouseListener {
     }
 
     public void set_colors() {
-        achsen.setForeground(create_complement(this.getBackground()));
-        label.setForeground(create_complement(this.getBackground()));
+//        achsen.setForeground(create_complement(this.getBackground()));
+//        label.setForeground(create_complement(this.getBackground()));
         color.setForeground(create_complement(this.getBackground()));
         view.setForeground(create_complement(this.getBackground()));
         x.setForeground(create_complement(this.getBackground()));
@@ -143,46 +141,6 @@ public class InfoPanel extends JPanel implements MouseListener {
         export.setForeground(create_complement(this.getBackground()));
 //        link.setForeground(create_complement(this.getBackground()));
         this.repaint();
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-//        if (e.getSource() == link) {
-//            throw new NotImplementedException();
-////			try {
-////				//Desktop.getDesktop().browse(new URI( ((Link)e.getSource()).getLink() ));
-////		        BasicService bs = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
-////		        // Invoke the showDocument method
-////		        bs.showDocument(new URL(((Link)e.getSource()).getLink())); 
-////			} catch (Exception e1) {
-////				// TODO Auto-generated catch block
-////				e1.printStackTrace();
-////			}
-//        }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
 }

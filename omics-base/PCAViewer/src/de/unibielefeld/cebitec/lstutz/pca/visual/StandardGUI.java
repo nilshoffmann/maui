@@ -102,6 +102,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
     private PickCanvas pickCanvas;
     private HashMap<String, ArrayList<DataModel>> hash;
     private InfoPanel info;
+    private GroupPanel group;
     private Background b;
     private java.util.BitSet visibleNodes;
     private HashMap<String, Integer> address = new HashMap<>();
@@ -109,6 +110,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
     private DataModel selDa;
     private InstanceContent content;
     private Object selectedPayload;
+    private Color xColor = Color.GREEN, yColor = Color.RED, zColor = Color.BLUE;
 
     public StandardGUI(String title, HashMap<String, ArrayList<DataModel>> hash) {
         this.hash = hash;
@@ -116,20 +118,29 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
 //		this.setTitle(title);
         setOpaque(true);
 //        this.setPreferredSize(new Dimension(840, 510));
-        this.setLayout(new BorderLayout());
-        this.create_universe(hash);
-        this.add(BorderLayout.CENTER, can);
-        GroupPanel grp = new GroupPanel(hash, this);
-        this.add(BorderLayout.SOUTH, grp);
-        info = new InfoPanel(hash.get(hash.keySet().toArray()[0]).get(0).getHeading(), this);
-        this.add(BorderLayout.EAST, info);
-        this.setVisible(true);
+        updateView();
+    }
+
+    private void updateView() {
+        if (this.hash != null) {
+            this.removeAll();
+            this.setLayout(new BorderLayout());
+            this.create_universe(hash);
+            this.add(BorderLayout.CENTER, can);
+            group = new GroupPanel(hash, this);
+            this.add(BorderLayout.SOUTH, group);
+            info = new InfoPanel(hash.get(hash.keySet().iterator().next()).get(0).getHeading(), this);
+            this.add(BorderLayout.EAST, info);
+            this.setVisible(true);
 //		this.pack();
 //        Toolkit toolkit = Toolkit.getDefaultToolkit();
 //        Dimension screenSize = toolkit.getScreenSize();
-        int x = (this.getSize().width) / 2;
-        int y = (this.getSize().height) / 2;
-        this.setLocation(x, y);
+            int x = (this.getSize().width) / 2;
+            int y = (this.getSize().height) / 2;
+            this.setLocation(x, y);
+            revalidate();
+            repaint();
+        }
     }
 
     public void setInstanceContent(InstanceContent content) {
@@ -148,75 +159,78 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
         //g.setCapability(Node.ENABLE_PICK_REPORTING);
         LineArray a = new LineArray(30, LineArray.COORDINATES | LineArray.COLOR_3);
         // x achse
+        Color xcolor = get_x_color();
         a.setCoordinate(0, new Point3f(-1.0f, 0, 0));
-        a.setColor(0, new Color3f(0, 1, 0));
+        a.setColor(0, new Color3f(xcolor));
         a.setCoordinate(1, new Point3f(1.0f, 0, 0));
-        a.setColor(1, new Color3f(0, 1, 0));
+        a.setColor(1, new Color3f(xcolor));
         // y achse
+        Color ycolor = get_y_color();
         a.setCoordinate(2, new Point3f(0, -1.0f, 0));
-        a.setColor(2, new Color3f(1, 0, 0));
+        a.setColor(2, new Color3f(ycolor));
         a.setCoordinate(3, new Point3f(0, 1.0f, 0));
-        a.setColor(3, new Color3f(1, 0, 0));
+        a.setColor(3, new Color3f(ycolor));
         // z achse
+        Color zcolor = get_z_color();
         a.setCoordinate(4, new Point3f(0, 0, -1.0f));
-        a.setColor(4, new Color3f(0, 0, 1));
+        a.setColor(4, new Color3f(zcolor));
         a.setCoordinate(5, new Point3f(0, 0, 1.0f));
-        a.setColor(5, new Color3f(0, 0, 1));
+        a.setColor(5, new Color3f(zcolor));
         // pfeil x achse
         a.setCoordinate(6, new Point3f(0.95f, .05f, 0));
-        a.setColor(6, new Color3f(0, 1, 0));
+        a.setColor(6, new Color3f(xcolor));
         a.setCoordinate(7, new Point3f(1, 0, 0));
-        a.setColor(7, new Color3f(0, 1, 0));
+        a.setColor(7, new Color3f(xcolor));
         a.setCoordinate(8, new Point3f(0.95f, -.05f, 0));
-        a.setColor(8, new Color3f(0, 1, 0));
+        a.setColor(8, new Color3f(xcolor));
         a.setCoordinate(9, new Point3f(1, 0, 0));
-        a.setColor(9, new Color3f(0, 1, 0));
+        a.setColor(9, new Color3f(xcolor));
 
         a.setCoordinate(18, new Point3f(0.95f, 0, .05f));
-        a.setColor(18, new Color3f(0, 1, 0));
+        a.setColor(18, new Color3f(xcolor));
         a.setCoordinate(19, new Point3f(1, 0, 0));
-        a.setColor(19, new Color3f(0, 1, 0));
+        a.setColor(19, new Color3f(xcolor));
         a.setCoordinate(20, new Point3f(0.95f, 0, -.05f));
-        a.setColor(20, new Color3f(0, 1, 0));
+        a.setColor(20, new Color3f(xcolor));
         a.setCoordinate(21, new Point3f(1, 0, 0));
-        a.setColor(21, new Color3f(0, 1, 0));
+        a.setColor(21, new Color3f(xcolor));
         // pfeil y achse
         a.setCoordinate(10, new Point3f(.05f, .95f, 0));
-        a.setColor(10, new Color3f(1, 0, 0));
+        a.setColor(10, new Color3f(ycolor));
         a.setCoordinate(11, new Point3f(0, 1, 0));
-        a.setColor(11, new Color3f(1, 0, 0));
+        a.setColor(11, new Color3f(ycolor));
         a.setCoordinate(12, new Point3f(-.05f, .95f, 0));
-        a.setColor(12, new Color3f(1, 0, 0));
+        a.setColor(12, new Color3f(ycolor));
         a.setCoordinate(13, new Point3f(0, 1, 0));
-        a.setColor(13, new Color3f(1, 0, 0));
+        a.setColor(13, new Color3f(ycolor));
 
         a.setCoordinate(22, new Point3f(0, .95f, .05f));
-        a.setColor(22, new Color3f(1, 0, 0));
+        a.setColor(22, new Color3f(ycolor));
         a.setCoordinate(23, new Point3f(0, 1, 0));
-        a.setColor(23, new Color3f(1, 0, 0));
+        a.setColor(23, new Color3f(ycolor));
         a.setCoordinate(24, new Point3f(0, .95f, -.05f));
-        a.setColor(24, new Color3f(1, 0, 0));
+        a.setColor(24, new Color3f(ycolor));
         a.setCoordinate(25, new Point3f(0, 1, 0));
-        a.setColor(25, new Color3f(1, 0, 0));
+        a.setColor(25, new Color3f(ycolor));
 
         // pfeil z achse
         a.setCoordinate(14, new Point3f(0, .05f, .95f));
-        a.setColor(14, new Color3f(0, 0, 1));
+        a.setColor(14, new Color3f(zcolor));
         a.setCoordinate(15, new Point3f(0, 0, 1));
-        a.setColor(15, new Color3f(0, 0, 1));
+        a.setColor(15, new Color3f(zcolor));
         a.setCoordinate(16, new Point3f(0, -.05f, .95f));
-        a.setColor(16, new Color3f(0, 0, 1));
+        a.setColor(16, new Color3f(zcolor));
         a.setCoordinate(17, new Point3f(0, 0, 1));
-        a.setColor(17, new Color3f(0, 0, 1));
+        a.setColor(17, new Color3f(zcolor));
 
         a.setCoordinate(26, new Point3f(.05f, 0, .95f));
-        a.setColor(26, new Color3f(0, 0, 1));
+        a.setColor(26, new Color3f(zcolor));
         a.setCoordinate(27, new Point3f(0, 0, 1));
-        a.setColor(27, new Color3f(0, 0, 1));
+        a.setColor(27, new Color3f(zcolor));
         a.setCoordinate(28, new Point3f(-.05f, 0, .95f));
-        a.setColor(28, new Color3f(0, 0, 1));
+        a.setColor(28, new Color3f(zcolor));
         a.setCoordinate(29, new Point3f(0, 0, 1));
-        a.setColor(29, new Color3f(0, 0, 1));
+        a.setColor(29, new Color3f(zcolor));
         //hinzufügen
         g.addChild(new Shape3D(a));
 
@@ -372,11 +386,39 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
                 //FIXME introduce instance content and mapping
 //                System.out.println(p.getClass().getName());
                 info.set_coords(get_model(p));
+                group.set_coords(get_model(p));
                 this.selDa = get_model(p);
             } else {
 //                System.out.println("Nix");
             }
         }
+    }
+
+    public void set_x_color(Color c) {
+        this.xColor = c;
+        updateView();
+    }
+
+    public void set_y_color(Color c) {
+        this.yColor = c;
+        updateView();
+    }
+
+    public void set_z_color(Color c) {
+        this.zColor = c;    
+        updateView();
+    }
+
+    public Color get_x_color() {
+        return xColor;
+    }
+
+    public Color get_y_color() {
+        return yColor;
+    }
+
+    public Color get_z_color() {
+        return zColor;
     }
 
     private DataModel get_model(Primitive p) {
