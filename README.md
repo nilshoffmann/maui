@@ -23,6 +23,10 @@ or
     git submodule init
     git submodule update
 
+## Updating the Proteus submodule to latest upstream state
+
+    git submodule update --remote
+
 # Building
 Maui requires Apache Ant to compile and package the application.
 
