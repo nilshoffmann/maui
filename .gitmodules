@@ -1,3 +1,4 @@
 [submodule "proteus"]
 	path = proteus
 	url = ssh://nilshoffmann@git.code.sf.net/p/maltcmsproteus/code
+	branch = master
