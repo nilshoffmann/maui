@@ -7,14 +7,6 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
-                    <code-name-base>net.sf.maltcms.common.charts</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>1.0</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>net.sf.maltcms.cross.nbm</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -86,7 +78,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>7.32.1.1.1</specification-version>
+                        <specification-version>8.0</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -102,7 +94,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>7.12.1.1</specification-version>
+                        <specification-version>7.23</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
