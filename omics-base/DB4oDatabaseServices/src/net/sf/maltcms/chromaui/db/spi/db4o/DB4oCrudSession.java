@@ -28,12 +28,14 @@
 package net.sf.maltcms.chromaui.db.spi.db4o;
 
 import com.db4o.ObjectContainer;
+import com.db4o.ext.DatabaseClosedException;
 import com.db4o.query.Predicate;
 import com.db4o.query.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
@@ -119,10 +121,15 @@ public final class DB4oCrudSession implements ICrudSession {
         authenticate(ic);
         //oc.ext().configure().activationDepth(10);
         ArrayList<T> a = new ArrayList<T>();
-        for (T t : oc.query(c)) {
-            a.add(t);
+        try {
+            for (T t : oc.query(c)) {
+                a.add(t);
+            }
+            return a;
+        } catch (DatabaseClosedException dce) {
+            Logger.getLogger(DB4oCrudSession.class.getName()).warning("Database is closing or already closed! Can not execute query!");
+            return Collections.emptyList();
         }
-        return a;
     }
 
     /**
@@ -134,29 +141,45 @@ public final class DB4oCrudSession implements ICrudSession {
      * @return
      */
     @Override
-    public final <T> Collection<T> retrieveByExample(T c) {
+    public final <T> Collection<T> retrieveByExample(T c
+    ) {
         if (c == null) {
             System.err.println("Can not retrieve with null example!");
             return Collections.emptyList();
         }
         authenticate(ic);
         //oc.ext().configure().activationDepth(10);
-        ArrayList<T> a = new ArrayList<T>();
-        for (Object o : oc.queryByExample(c)) {
-            a.add((T) c.getClass().cast(o));
+        try {
+            ArrayList<T> a = new ArrayList<T>();
+            for (Object o : oc.queryByExample(c)) {
+                a.add((T) c.getClass().cast(o));
+            }
+            return a;
+        } catch (DatabaseClosedException dce) {
+            Logger.getLogger(DB4oCrudSession.class.getName()).warning("Database is closing or already closed! Can not execute query!");
+            return Collections.emptyList();
         }
-        return a;
     }
 
     @Override
     public final Query getSODAQuery() {
         authenticate(ic);
-        return oc.query();
+        try {
+            return oc.query();
+        } catch (DatabaseClosedException dce) {
+            Logger.getLogger(DB4oCrudSession.class.getName()).warning("Database is closing or already closed! Can not execute query!");
+            return new VoidQuery();
+        }
     }
 
     public final <T> Collection<T> retrieve(Predicate<T> p) {
         authenticate(ic);
-        return oc.query(p);
+        try {
+            return oc.query(p);
+        } catch (DatabaseClosedException dce) {
+            Logger.getLogger(DB4oCrudSession.class.getName()).warning("Database is closing or already closed! Can not execute query!");
+            return Collections.emptyList();
+        }
     }
 
     private void authenticate(ICredentials ic) throws AuthenticationException {
@@ -171,6 +194,8 @@ public final class DB4oCrudSession implements ICrudSession {
         try {
             oc.commit();
         } catch (com.db4o.ext.DatabaseReadOnlyException droe) {
+        } catch (com.db4o.ext.DatabaseClosedException dce) {
+            Logger.getLogger(DB4oCrudSession.class.getName()).warning("Could not commit, database was already closed!");
         }
     }
 
@@ -196,7 +221,12 @@ public final class DB4oCrudSession implements ICrudSession {
 
     @Override
     public <T> IQuery<T> newQuery(Class<T> c) throws AuthenticationException {
-        DB4oQuery<T> db4oq = new DB4oQuery<T>(oc.ext().openSession());
-        return db4oq;
+        try {
+            DB4oQuery<T> db4oq = new DB4oQuery<T>(oc.ext().openSession());
+            return db4oq;
+        } catch (DatabaseClosedException dce) {
+            Logger.getLogger(DB4oCrudSession.class.getName()).warning("Database is closing or already closed! Can not execute query!");
+            return new VoidDB4oQuery<T>();
+        }
     }
 }

@@ -27,14 +27,19 @@
  */
 package net.sf.maltcms.chromaui.normalization.api.ui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
 /**
@@ -53,6 +58,7 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
     }
     private List<IPeakGroupDescriptor> peakGroups;
     private String previousPeakAnnotation = "";
+    private AtomicBoolean updating = new AtomicBoolean();
 
     public NormalizationSettingsPanel(PeakGroupContainer context) {
         previousPeakAnnotation = NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getPath()).get("peakGroupIdForNormalization", "");
@@ -70,15 +76,15 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
             //only add homogenous groups
             if (names.size() == 1) {
                 peakGroups.add(peakGroup);
-                if(previousPeakAnnotation.equals(peakGroup.getId().toString())) {
+                if (previousPeakAnnotation.equals(peakGroup.getId().toString())) {
                     previousSelection = peakGroup;
                 }
             }
         }
         initComponents();
-        if(previousSelection!=null) {
+        if (previousSelection != null) {
             updateModel(previousSelection.getMajorityDisplayName());
-        }else{
+        } else {
             updateModel("");
         }
     }
@@ -107,8 +113,15 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
     }
 
     public final void updateModel(String searchKey) {
-        internalNormalizationCompound.setModel(buildModel(searchKey));
-        selectPreviousPeakAnnotation();
+        final DefaultComboBoxModel model = buildModel(searchKey);
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                internalNormalizationCompound.setModel(model);
+                selectPreviousPeakAnnotation();
+            }
+        });
     }
 
     public final DefaultComboBoxModel buildModel(String searchKey) {
@@ -208,7 +221,10 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_internalNormalizationCompoundKeyTyped
 
     private void peakGroupNameSearchFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peakGroupNameSearchFieldKeyTyped
-        updateModel(peakGroupNameSearchField.getText().trim());
+        if (updating.compareAndSet(false, true)) {
+            ModelBuilder mb = new ModelBuilder();
+            ModelBuilder.createAndRun("Updating model", mb);
+        }
     }//GEN-LAST:event_peakGroupNameSearchFieldKeyTyped
 
     private void peakGroupNameSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peakGroupNameSearchFieldActionPerformed
@@ -230,5 +246,40 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
 
     public boolean isNormalizeToExternalQuantity() {
         return normalizeToExternalQuantity.isSelected();
+    }
+
+    private class ModelBuilder extends AProgressAwareRunnable {
+
+        @Override
+        public void run() {
+            getProgressHandle().start();
+            getProgressHandle().progress("Disabling components");
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        internalNormalizationCompound.setEnabled(false);
+                    }
+                });
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (InvocationTargetException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            try {
+                updateModel(peakGroupNameSearchField.getText().trim());
+            } finally {
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        internalNormalizationCompound.setEnabled(true);
+                    }
+                });
+                updating.compareAndSet(true, false);
+            }
+        }
+
     }
 }

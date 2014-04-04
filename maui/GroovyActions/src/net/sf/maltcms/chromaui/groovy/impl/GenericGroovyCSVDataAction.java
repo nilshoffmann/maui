@@ -40,6 +40,7 @@ import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
 import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.ContextAction;
+import net.sf.maltcms.chromaui.ui.support.api.Projects;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
@@ -58,7 +59,6 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
-import org.openide.util.Utilities;
 
 /**
  *
@@ -88,9 +88,9 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
 
     @Override
     public void doAction(Collection<? extends CSVDataObject> instances) {
-        IChromAUIProject icap = Utilities.actionsGlobalContext().lookup(
-                IChromAUIProject.class);
-        if (icap != null) {
+        Collection<? extends IChromAUIProject> projects = Projects.getSelectedOpenProject(IChromAUIProject.class, "Please select a project for this action", "Project");
+        if (!projects.isEmpty()) {
+            IChromAUIProject icap = projects.iterator().next();
             GroovyClassLoader gcl = new GroovyClassLoader();
             List<FileObject> scriptFiles = Utils.getScriptLocations(icap);
             List<CSVDataGroovyScript> groovyScripts = new LinkedList<CSVDataGroovyScript>();

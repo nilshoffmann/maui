@@ -57,7 +57,7 @@ public class NormalizationDialog {
             IPeakGroupDescriptor normalizationGroup = nsp.getInternalNormalizationGroup();
             if (normalizationGroup != null) {
                 System.out.println("Storing peak group with id as normalization reference for current project: " + normalizationGroup.getId());
-                NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getName()).put("peakGroupIdForNormalization", normalizationGroup.getId().toString());
+                NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getPath()).put("peakGroupIdForNormalization", normalizationGroup.getId().toString());
             }
             System.out.println("Selected normalization group: " + normalizationGroup.getMajorityName());
             IPeakNormalizer externalNormalizer = null;

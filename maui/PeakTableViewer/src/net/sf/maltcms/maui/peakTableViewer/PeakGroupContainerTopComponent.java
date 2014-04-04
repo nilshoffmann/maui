@@ -103,6 +103,7 @@ public final class PeakGroupContainerTopComponent extends TopComponent implement
 
         setLayout(new java.awt.BorderLayout());
 
+        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
         org.openide.awt.Mnemonics.setLocalizedText(hideSamples, org.openide.util.NbBundle.getMessage(PeakGroupContainerTopComponent.class, "PeakGroupContainerTopComponent.hideSamples.text")); // NOI18N

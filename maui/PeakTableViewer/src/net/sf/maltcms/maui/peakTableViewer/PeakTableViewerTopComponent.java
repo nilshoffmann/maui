@@ -34,9 +34,6 @@ import java.util.Iterator;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupDescriptorChildFactory;
-import org.openide.util.LookupEvent;
-import org.openide.util.NbBundle;
-import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -48,11 +45,14 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
+import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
+import org.openide.windows.TopComponent;
 
 /**
  * Top component which displays something.
@@ -116,6 +116,7 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
         setLayout(new java.awt.BorderLayout());
 
+        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
         org.openide.awt.Mnemonics.setLocalizedText(hideSamples, org.openide.util.NbBundle.getMessage(PeakTableViewerTopComponent.class, "PeakTableViewerTopComponent.hideSamples.text")); // NOI18N

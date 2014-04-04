@@ -33,11 +33,13 @@ import java.awt.event.ActionListener;
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
 import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.ui.support.api.Projects;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
@@ -84,6 +86,11 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                 if (project != null && project instanceof IChromAUIProject) {
                     System.out.println("Found IChromAUIProject at location " + project.getProjectDirectory() + " as parent of " + fobj);
                     return (IChromAUIProject) project;
+                }else{
+                    Collection<? extends IChromAUIProject> projects = Projects.getSelectedOpenProject(IChromAUIProject.class, "Please select a project for this action", "Project");
+                    if (!projects.isEmpty()) {
+                        return projects.iterator().next();
+                    }
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);

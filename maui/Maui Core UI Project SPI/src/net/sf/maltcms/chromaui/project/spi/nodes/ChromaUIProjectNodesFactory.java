@@ -32,9 +32,11 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
@@ -75,38 +77,39 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 //        System.out.println("Created ChromaUIProjectNodes Factory");
         this.cp = cp;
         this.cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
-        cp.getLocation().addRecursiveListener(new FileChangeListener() {
+        FileChangeListener fcl = (FileChangeListener)WeakListeners.create(FileChangeListener.class, new FileChangeListener() {
 
             @Override
             public void fileFolderCreated(FileEvent fe) {
-                refresh(true);
+                refresh(false);
             }
 
             @Override
             public void fileDataCreated(FileEvent fe) {
-                refresh(true);
+                refresh(false);
             }
 
             @Override
             public void fileChanged(FileEvent fe) {
-                refresh(true);
+                refresh(false);
             }
 
             @Override
             public void fileDeleted(FileEvent fe) {
-                refresh(true);
+                refresh(false);
             }
 
             @Override
             public void fileRenamed(FileRenameEvent fre) {
-                refresh(true);
+                refresh(false);
             }
 
             @Override
             public void fileAttributeChanged(FileAttributeEvent fae) {
-                refresh(true);
+                refresh(false);
             }
-        });
+        }, cp.getLocation());
+        cp.getLocation().addRecursiveListener(fcl);
     }
 
     protected FileObject getScriptsFileObject() {
@@ -132,64 +135,67 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     protected List<FileObject> getFileChildren() {
         FileObject[] fo = cp.getProjectDirectory().getChildren();
         List<FileObject> children = new ArrayList<FileObject>(fo.length);
-        for (FileObject fobj : fo) {
-            children.add(fobj);
-        }
+        children.addAll(Arrays.asList(fo));
         return children;
     }
 
     @Override
     protected boolean createKeys(List<Object> list) {
-        //filter the following containers from the primary project view
-        List<IContainer> containers = filter(this.cp.getContainer(
-                IContainer.class), Peak1DContainer.class, SampleGroupContainer.class);
-        for (IContainer ic : containers) {
-            if (Thread.interrupted()) {
-                return false;
-            }
-            if (ic.getPrecedence() == 0) {
-                if (ic instanceof TreatmentGroupContainer) {
-                    ic.setPrecedence(100000);
-                } else if (ic instanceof SampleGroupContainer) {
-                    ic.setPrecedence(150000);
-                } else if (ic instanceof DatabaseContainer) {
-                    ic.setPrecedence(200000);
-                } else if (ic instanceof Peak1DContainer) {
-                    ic.setPrecedence(300000);
-                } else if (ic instanceof PeakGroupContainer) {
-                    ic.setPrecedence(500000);
-                } else if (ic instanceof StatisticsContainer) {
-                    ic.setPrecedence(400000);
-                }
-            }
-        }
-
-        Collections.sort(containers);
-
-        if (Thread.interrupted()) {
-            return false;
-        } else {
+        try {
+            //filter the following containers from the primary project view
+            List<IContainer> containers = filter(this.cp.getContainer(
+                    IContainer.class), Peak1DContainer.class, SampleGroupContainer.class);
             for (IContainer ic : containers) {
                 if (Thread.interrupted()) {
                     return false;
                 }
-                if (ic != null) {
-                    list.add(ic);
+                if (ic.getPrecedence() == 0) {
+                    if (ic instanceof TreatmentGroupContainer) {
+                        ic.setPrecedence(100000);
+                    } else if (ic instanceof SampleGroupContainer) {
+                        ic.setPrecedence(150000);
+                    } else if (ic instanceof DatabaseContainer) {
+                        ic.setPrecedence(200000);
+                    } else if (ic instanceof Peak1DContainer) {
+                        ic.setPrecedence(300000);
+                    } else if (ic instanceof PeakGroupContainer) {
+                        ic.setPrecedence(500000);
+                    } else if (ic instanceof StatisticsContainer) {
+                        ic.setPrecedence(400000);
+                    }
                 }
             }
-        }
 
-        FileObject gvy = getScriptsFileObject();
-        if(gvy != null) {
-            list.add(gvy);
+            Collections.sort(containers);
+
+            if (Thread.interrupted()) {
+                return false;
+            } else {
+                for (IContainer ic : containers) {
+                    if (Thread.interrupted()) {
+                        return false;
+                    }
+                    if (ic != null) {
+                        list.add(ic);
+                    }
+                }
+            }
+
+            FileObject gvy = getScriptsFileObject();
+            if (gvy != null) {
+                list.add(gvy);
+            }
+
+            FileObject fobj = getPipelineFileObject();
+            if (fobj != null) {
+                list.add(fobj);
+            }
+            list.add("MALTCMS");
+            return true;
+        } catch (NullPointerException npe) {
+            Logger.getLogger(ChromaUIProjectNodesFactory.class.getName()).fine("Caught Null Pointer Exception while creating keys! Is the database currently closing?");
+            return true;
         }
-        
-        FileObject fobj = getPipelineFileObject();
-        if (fobj != null) {
-            list.add(fobj);
-        }
-        list.add("MALTCMS");
-        return true;
     }
 
     protected List<IContainer> filter(Collection<IContainer> l,

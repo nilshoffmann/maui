@@ -142,7 +142,7 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
         cc.maxStackDepth(80);
         cc.bTreeNodeSize(2048);
         cc.weakReferences(true);
-        cc.queries().evaluationMode(QueryEvaluationMode.LAZY);
+        cc.queries().evaluationMode(QueryEvaluationMode.IMMEDIATE);
 //        cc.add(new UuidSupport());
         if (isVerboseDiagnostics()) {
             cc.diagnostic().addListener(new DiagnosticToConsole());
