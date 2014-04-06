@@ -31,12 +31,11 @@ import groovy.lang.GroovyClassLoader;
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.Action;
 import maltcms.ui.fileHandles.csv.CSVDataObject;
 import net.sf.maltcms.chromaui.groovy.api.CSVDataGroovyScript;
-import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.api.ScriptLoader;
 import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.ContextAction;
@@ -86,37 +85,34 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
         super(contextType);
     }
 
+    private class CsvScriptLoader implements ScriptLoader<CSVDataGroovyScript> {
+
+        @Override
+        public CSVDataGroovyScript loadScript(FileObject fileObject, GroovyClassLoader classLoader) {
+            Class clazz;
+            try {
+                clazz = classLoader.parseClass(FileUtil.toFile(fileObject));
+                Class<CSVDataGroovyScript> irdgs = clazz.asSubclass(
+                        CSVDataGroovyScript.class);
+                CSVDataGroovyScript script = irdgs.newInstance();
+                return script;
+            } catch (InstantiationException | IllegalAccessException | CompilationFailedException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (ClassCastException ex) {
+                Logger.getLogger(GenericGroovyRawDataAction.class.getName()).warning("Ignoring groovy script with wrong class!");
+            }
+            return null;
+        }
+
+    }
+
     @Override
     public void doAction(Collection<? extends CSVDataObject> instances) {
         Collection<? extends IChromAUIProject> projects = Projects.getSelectedOpenProject(IChromAUIProject.class, "Please select a project for this action", "Project");
         if (!projects.isEmpty()) {
             IChromAUIProject icap = projects.iterator().next();
-            GroovyClassLoader gcl = new GroovyClassLoader();
-            List<FileObject> scriptFiles = Utils.getScriptLocations(icap);
-            List<CSVDataGroovyScript> groovyScripts = new LinkedList<CSVDataGroovyScript>();
-            for (FileObject child : scriptFiles) {
-                Class clazz;
-                try {
-                    clazz = gcl.parseClass(FileUtil.toFile(child));
-                    Class<CSVDataGroovyScript> irdgs = clazz.asSubclass(
-                            RawDataGroovyScript.class);
-                    CSVDataGroovyScript script = irdgs.newInstance();
-                    groovyScripts.add(script);
-                } catch (InstantiationException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IllegalAccessException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (CompilationFailedException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (ClassCastException ex) {
-                    System.out.println("Ignoring groovy script with wrong class!");
-                }
-            }
-
-            GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
-            gssf.setModel(groovyScripts);
+            GroovyScriptSelectionForm<CSVDataGroovyScript> gssf = new GroovyScriptSelectionForm<CSVDataGroovyScript>(Utils.getScriptDirectories(icap), new CsvScriptLoader());
+            gssf.updateModel();
             DialogDescriptor dd = new DialogDescriptor(gssf,
                     "Please select a script for execution");
             Object ret = DialogDisplayer.getDefault().notify(dd);

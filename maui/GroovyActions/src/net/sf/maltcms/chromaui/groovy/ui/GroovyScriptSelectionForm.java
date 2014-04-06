@@ -27,71 +27,93 @@
  */
 package net.sf.maltcms.chromaui.groovy.ui;
 
+import groovy.lang.GroovyClassLoader;
 import java.awt.Component;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JLabel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import net.sf.maltcms.chromaui.groovy.api.GroovyProjectDataObjectScript;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import org.netbeans.api.project.Project;
+import net.sf.maltcms.chromaui.groovy.api.GroovyScript;
+import net.sf.maltcms.chromaui.groovy.api.ScriptLoader;
+import net.sf.maltcms.chromaui.groovy.impl.Utils;
 import org.openide.ErrorManager;
 import org.openide.cookies.InstanceCookie;
+import org.openide.filesystems.FileAttributeEvent;
+import org.openide.filesystems.FileChangeListener;
+import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileRenameEvent;
 import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.Lookups;
+import org.openide.util.WeakListeners;
 import org.openide.util.lookup.ProxyLookup;
 
-/**
- *
- * @author Nils Hoffmann
- */
-public class GroovyScriptSelectionForm extends javax.swing.JPanel implements Lookup.Provider {
+public class GroovyScriptSelectionForm<T extends GroovyScript> extends javax.swing.JPanel implements Lookup.Provider, FileChangeListener {
 
-    private Lookup lookup;
+    private final Lookup lookup;
+    private final List<FileObject> scriptDirectories;
+    private final ScriptLoader<? extends T> sl;
 
     /**
      * Creates new form GroovyScriptSelectionForm
      */
-    public GroovyScriptSelectionForm() {
-        initComponents();
-        Project p = Utilities.actionsGlobalContext().lookup(Project.class);
-        DataFolder groovyDir = null;
-        if (p instanceof IChromAUIProject) {
-            IChromAUIProject project = (IChromAUIProject) p;
-            try {
-                groovyDir = DataFolder.findFolder(FileUtil.createFolder(project.getLocation(), "groovy"));
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+    public GroovyScriptSelectionForm(List<FileObject> scriptDirectories, ScriptLoader<? extends T> sl) {
+        this.scriptDirectories = scriptDirectories;
+        for (FileObject scriptDir : scriptDirectories) {
+            scriptDir.addFileChangeListener(WeakListeners.create(FileChangeListener.class, this, scriptDir));
         }
-        lookup = new ProxyLookup(Utilities.actionsGlobalContext(), Lookups.fixed(groovyDir));
+        this.sl = sl;
+        lookup = new ProxyLookup(Utilities.actionsGlobalContext());
+        initComponents();
     }
 
-    public void setModel(List<?> l) {
-        jComboBox1.setModel(new DefaultComboBoxModel(l.toArray()));
-        jComboBox1.setRenderer(new ListCellRenderer() {
-
-            @Override
-            public Component getListCellRendererComponent(JList jlist, Object o,
-                    int i, boolean bln, boolean bln1) {
-                if (o == null) {
-                    return new JLabel("<NOT AVAILABLE>");
-                }
-                if (o instanceof GroovyProjectDataObjectScript) {
-                    return new JLabel(((GroovyProjectDataObjectScript) o).getName());
-                }
-                return new JLabel(o.getClass().getName());
+    public void updateModel() {
+        GroovyClassLoader gcl = new GroovyClassLoader();
+        List<FileObject> scriptFiles = Utils.getGroovyScripts(scriptDirectories);
+        List<T> groovyScripts = new ArrayList<T>();
+        for (FileObject child : scriptFiles) {
+            T script = sl.loadScript(child, gcl);
+            if (script != null) {
+                groovyScripts.add(script);
+            } else {
+                //TODO add notification of the user that the script could not be loaded
             }
-        });
+        }
+        setModel(groovyScripts);
+    }
+
+    private class ScriptListCellRenderer extends DefaultListCellRenderer {
+
+        public ScriptListCellRenderer() {
+            super();
+        }
+
+        @Override
+        public Component getListCellRendererComponent(
+                JList<?> list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value == null) {
+                setText("<NOT AVAILABLE>");
+            } else if (value instanceof GroovyScript) {
+                setText(((GroovyScript) value).getName());
+            } else {
+                setText(value.getClass().getName());
+            }
+            return this;
+        }
+    }
+
+    public void setModel(List<? extends T> l) {
+        jComboBox1.setModel(new DefaultComboBoxModel(l.toArray()));
+        jComboBox1.setRenderer(new ScriptListCellRenderer());
     }
 
     public <T> T getSelectedScript(Class<T> c) {
@@ -191,8 +213,10 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel implements Loo
         if (fo != null && fo.isValid()) {
             try {
                 DataObject dob = DataObject.find(fo);
-                InstanceCookie ic = dob.getLookup().lookup(InstanceCookie.class);
-                if (ic != null) {
+                InstanceCookie ic = dob.getLookup().lookup(InstanceCookie.class
+                );
+                if (ic
+                        != null) {
                     Object instance = ic.instanceCreate();
                     if (instance instanceof Action) {
                         Action a = (Action) instance;
@@ -210,5 +234,35 @@ public class GroovyScriptSelectionForm extends javax.swing.JPanel implements Loo
     @Override
     public Lookup getLookup() {
         return lookup;
+    }
+
+    @Override
+    public void fileFolderCreated(FileEvent fe) {
+        updateModel();
+    }
+
+    @Override
+    public void fileDataCreated(FileEvent fe) {
+        updateModel();
+    }
+
+    @Override
+    public void fileChanged(FileEvent fe) {
+        updateModel();
+    }
+
+    @Override
+    public void fileDeleted(FileEvent fe) {
+        updateModel();
+    }
+
+    @Override
+    public void fileRenamed(FileRenameEvent fre) {
+        updateModel();
+    }
+
+    @Override
+    public void fileAttributeChanged(FileAttributeEvent fae) {
+        updateModel();
     }
 }

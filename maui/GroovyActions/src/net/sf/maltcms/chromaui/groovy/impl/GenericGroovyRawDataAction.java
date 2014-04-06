@@ -32,11 +32,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.IntrospectionException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import maltcms.ui.fileHandles.cdf.CDFDataObject;
 import net.sf.maltcms.chromaui.groovy.api.RawDataGroovyScript;
+import net.sf.maltcms.chromaui.groovy.api.ScriptLoader;
 import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.Projects;
@@ -86,7 +87,7 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                 if (project != null && project instanceof IChromAUIProject) {
                     System.out.println("Found IChromAUIProject at location " + project.getProjectDirectory() + " as parent of " + fobj);
                     return (IChromAUIProject) project;
-                }else{
+                } else {
                     Collection<? extends IChromAUIProject> projects = Projects.getSelectedOpenProject(IChromAUIProject.class, "Please select a project for this action", "Project");
                     if (!projects.isEmpty()) {
                         return projects.iterator().next();
@@ -102,6 +103,27 @@ public final class GenericGroovyRawDataAction implements ActionListener {
         return null;
     }
 
+    private class RawDataScriptLoader implements ScriptLoader<RawDataGroovyScript> {
+
+        @Override
+        public RawDataGroovyScript loadScript(FileObject fileObject, GroovyClassLoader classLoader) {
+            Class clazz;
+            try {
+                clazz = classLoader.parseClass(FileUtil.toFile(fileObject));
+                Class<RawDataGroovyScript> irdgs = clazz.asSubclass(
+                        RawDataGroovyScript.class);
+                RawDataGroovyScript script = irdgs.newInstance();
+                return script;
+            } catch (InstantiationException | IllegalAccessException | CompilationFailedException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (ClassCastException ex) {
+                Logger.getLogger(GenericGroovyRawDataAction.class.getName()).warning("Ignoring groovy script with wrong class!");
+            }
+            return null;
+        }
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent ev) {
         IChromAUIProject icap = Utilities.actionsGlobalContext().lookup(
@@ -111,34 +133,9 @@ public final class GenericGroovyRawDataAction implements ActionListener {
                 icap = locateProject(context.get(0));
             }
         }
-        if (icap
-                != null) {
-            GroovyClassLoader gcl = new GroovyClassLoader();
-            List<FileObject> scriptFiles = Utils.getScriptLocations(icap);
-            List<RawDataGroovyScript> groovyScripts = new ArrayList<RawDataGroovyScript>();
-            for (FileObject child : scriptFiles) {
-                Class clazz;
-                try {
-                    clazz = gcl.parseClass(FileUtil.toFile(child));
-                    Class<RawDataGroovyScript> irdgs = clazz.asSubclass(
-                            RawDataGroovyScript.class);
-                    RawDataGroovyScript script = irdgs.newInstance();
-                    groovyScripts.add(script);
-                } catch (InstantiationException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IllegalAccessException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (CompilationFailedException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (ClassCastException ex) {
-                    System.out.println("Ignoring groovy script with wrong class!");
-                }
-            }
-
-            GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
-            gssf.setModel(groovyScripts);
+        if (icap != null) {
+            GroovyScriptSelectionForm<RawDataGroovyScript> gssf = new GroovyScriptSelectionForm<RawDataGroovyScript>(Utils.getScriptDirectories(icap), new RawDataScriptLoader());
+            gssf.updateModel();
             DialogDescriptor dd = new DialogDescriptor(gssf,
                     "Please select a script for execution");
             Object ret = DialogDisplayer.getDefault().notify(dd);

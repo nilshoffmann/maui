@@ -32,9 +32,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.IntrospectionException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.groovy.api.GroovyProjectScript;
+import net.sf.maltcms.chromaui.groovy.api.ScriptLoader;
 import net.sf.maltcms.chromaui.groovy.ui.GroovyScriptSelectionForm;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -74,35 +74,32 @@ public final class ProjectGroovyAction implements ActionListener {
         this.context = context;
     }
 
+    private class ProjectScriptLoader implements ScriptLoader<GroovyProjectScript> {
+
+        @Override
+        public GroovyProjectScript loadScript(FileObject fileObject, GroovyClassLoader classLoader) {
+            Class clazz;
+            try {
+                clazz = classLoader.parseClass(FileUtil.toFile(fileObject));
+                Class<GroovyProjectScript> irdgs = clazz.asSubclass(
+                        GroovyProjectScript.class);
+                GroovyProjectScript script = irdgs.newInstance();
+                return script;
+            } catch (InstantiationException | IllegalAccessException | CompilationFailedException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (ClassCastException ex) {
+                Logger.getLogger(GenericGroovyRawDataAction.class.getName()).warning("Ignoring groovy script with wrong class!");
+            }
+            return null;
+        }
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (context != null) {
-            GroovyClassLoader gcl = new GroovyClassLoader();
-            List<FileObject> scriptFiles = Utils.getScriptLocations(context);
-            List<GroovyProjectScript> groovyScripts = new ArrayList<GroovyProjectScript>();
-            for (FileObject child : scriptFiles) {
-                Class clazz;
-                try {
-                    clazz = gcl.parseClass(FileUtil.toFile(child));
-                    Class<GroovyProjectScript> irdgs = clazz.asSubclass(
-                            GroovyProjectScript.class);
-                    GroovyProjectScript script = irdgs.newInstance();
-                    groovyScripts.add(script);
-                } catch (InstantiationException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IllegalAccessException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (CompilationFailedException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (ClassCastException ex) {
-                    System.out.println("Ignoring groovy script with wrong class!");
-                }
-            }
-
-            GroovyScriptSelectionForm gssf = new GroovyScriptSelectionForm();
-            gssf.setModel(groovyScripts);
+            GroovyScriptSelectionForm<GroovyProjectScript> gssf = new GroovyScriptSelectionForm<GroovyProjectScript>(Utils.getScriptDirectories(context), new ProjectScriptLoader());
+            gssf.updateModel();
             DialogDescriptor dd = new DialogDescriptor(gssf,
                     "Please select a script for execution");
             Object ret = DialogDisplayer.getDefault().notify(dd);

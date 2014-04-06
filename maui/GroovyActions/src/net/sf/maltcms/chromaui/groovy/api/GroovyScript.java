@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
@@ -27,17 +27,14 @@
  */
 package net.sf.maltcms.chromaui.groovy.api;
 
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.project.Project;
-import org.openide.util.Cancellable;
-
 /**
+ * Base interface for groovy scripts.
  *
  * @author Nils Hoffmann
- * @param <T>
- * @param <U>
  */
-public interface GroovyProjectObjectScript<T extends Project, U> extends Runnable, Cancellable, GroovyScript {
+public interface GroovyScript {
 
-    public void create(T project, ProgressHandle progressHandle, U... objects);
+    public String getName();
+
+    public String getCategory();
 }

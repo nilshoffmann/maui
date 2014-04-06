@@ -31,11 +31,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import net.sf.maltcms.chromaui.groovy.options.GroovyScriptLocationsPanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbPreferences;
@@ -69,44 +71,55 @@ public class Utils {
         return groovyScripts;
     }
 
-    public static List<FileObject> getScriptLocations(IChromAUIProject icap) {
-        File fo = FileUtil.toFile(icap.getLocation());
-        FileObject groovyDir = null;
-        if (!new File(fo, "groovy").isDirectory()) {
-            try {
-                groovyDir = icap.getLocation().createFolder("groovy");
-            } catch (IOException ex) {
+    public static List<FileObject> getScriptDirectories(Project p) {
+        if (p instanceof IChromAUIProject) {
+            IChromAUIProject icap = (IChromAUIProject) p;
+            File fo = FileUtil.toFile(icap.getLocation());
+            FileObject groovyDir = null;
+            if (!new File(fo, "groovy").isDirectory()) {
+                try {
+                    groovyDir = icap.getLocation().createFolder("groovy");
+                } catch (IOException ex) {
 //                Exceptions.printStackTrace(ex);
+                }
+            } else {
+                groovyDir = icap.getLocation().getFileObject("groovy/");
             }
-        } else {
-            groovyDir = icap.getLocation().getFileObject("groovy/");
-        }
-        FileObject scriptsGroovyDir = null;
-        if (!new File(fo, "scripts/groovy").isDirectory()) {
-            try {
-                scriptsGroovyDir = icap.getLocation().createFolder("scripts").createFolder("groovy");
-            } catch (IOException ex) {
+            FileObject scriptsGroovyDir = null;
+            if (!new File(fo, "scripts/groovy").isDirectory()) {
+                try {
+                    scriptsGroovyDir = icap.getLocation().createFolder("scripts").createFolder("groovy");
+                } catch (IOException ex) {
 //                Exceptions.printStackTrace(ex);
+                }
+            } else {
+                scriptsGroovyDir = icap.getLocation().getFileObject("scripts/").getFileObject("groovy/");
             }
-        } else {
-            scriptsGroovyDir = icap.getLocation().getFileObject("scripts/").getFileObject("groovy/");
-        }
-        String[] scriptLocations = NbPreferences.forModule(
-                GroovyScriptLocationsPanel.class).get("scriptLocations", "").
-                split(",");
-        List<FileObject> scriptDirectories = new LinkedList<FileObject>();
-        if (groovyDir != null) {
-            scriptDirectories.add(groovyDir);
-        }
-        if (scriptsGroovyDir != null) {
-            scriptDirectories.add(scriptsGroovyDir);
-        }
-        for (String str : scriptLocations) {
-            if (str != null && !str.isEmpty()) {
-                scriptDirectories.add(FileUtil.toFileObject(new File(str)));
+            String[] scriptLocations = NbPreferences.forModule(
+                    GroovyScriptLocationsPanel.class).get("scriptLocations", "").
+                    split(",");
+            List<FileObject> scriptDirectories = new LinkedList<FileObject>();
+            if (groovyDir != null) {
+                scriptDirectories.add(groovyDir);
             }
+            if (scriptsGroovyDir != null) {
+                scriptDirectories.add(scriptsGroovyDir);
+            }
+            for (String str : scriptLocations) {
+                if (str != null && !str.isEmpty()) {
+                    scriptDirectories.add(FileUtil.toFileObject(new File(str)));
+                }
+            }
+            return scriptDirectories;
         }
-        List<FileObject> scriptFiles = Utils.getGroovyScripts(scriptDirectories);
-        return scriptFiles;
+        return Collections.emptyList();
+    }
+
+    public static List<FileObject> getScriptLocations(Project icap) {
+        if (icap instanceof IChromAUIProject) {
+            List<FileObject> scriptFiles = Utils.getGroovyScripts(getScriptDirectories((IChromAUIProject) icap));
+            return scriptFiles;
+        }
+        return Collections.emptyList();
     }
 }
