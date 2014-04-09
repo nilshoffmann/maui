@@ -46,6 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IMetabolite;
@@ -179,6 +180,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         });
         plot.setDomainPannable(true);
         plot.setRangePannable(true);
+        sc.addChangeListener(plot);
         JFreeChart msChart = new JFreeChart(this.plot);
         msChart.addChangeListener(this.defaultNumberFormat);
 //		System.out.println("Creating ms chart 3");
@@ -190,7 +192,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         this.jPanel2.removeAll();
         this.jPanel2.add(cp);
         this.jPanel2.repaint();
-        this.jSpinner1.setValue(topK);
+        this.massLabelsSpinner.setValue(topK);
     }
 
     public void addIdentification() {
@@ -292,12 +294,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }
 
     private void addTopKLabels(int topk, int series) {
-//		System.out.println("addTopKLabels: " + topk + " " + series);
         if (series >= 0 && sc.getSeriesCount() > series) {
             TopKItemsLabelGenerator labelGenerator = createTopKItemsLabelGenerator(topk, series);
-//			System.out.println(seriesItemList);
             if (activeMS >= 0) {
-//				System.out.println("Updating plot");
                 plot.getRenderer().setBaseItemLabelsVisible(true);
                 plot.getRenderer().setSeriesItemLabelGenerator(activeMS,
                         labelGenerator);
@@ -351,7 +350,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 32767));
         jLabel2 = new javax.swing.JLabel();
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 32767));
-        jSpinner1 = new javax.swing.JSpinner();
+        massLabelsSpinner = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
         clear = new javax.swing.JButton();
@@ -420,14 +419,14 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         jToolBar1.add(jLabel2);
         jToolBar1.add(filler3);
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, 500, 1));
-        jSpinner1.setToolTipText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.jSpinner1.toolTipText")); // NOI18N
-        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+        massLabelsSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 500, 1));
+        massLabelsSpinner.setToolTipText(org.openide.util.NbBundle.getMessage(MassSpectrumPanel.class, "MassSpectrumPanel.massLabelsSpinner.toolTipText")); // NOI18N
+        massLabelsSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSpinner1StateChanged(evt);
+                massLabelsSpinnerStateChanged(evt);
             }
         });
-        jToolBar1.add(jSpinner1);
+        jToolBar1.add(massLabelsSpinner);
 
         jPanel1.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
@@ -556,23 +555,8 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_fixYAxisActionPerformed
 
     private void hideAnnotationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideAnnotationsActionPerformed
-//        this.annotations = this.plot.getAnnotations();
-//        this.plot.clearAnnotations();
-//        if (!hideAnnotations.isSelected()) {
-//            int i = 0;
-//            for (Object o : this.annotations) {
-//                if (i == this.annotations.size() - 1) {
-//                    this.plot.addAnnotation((XYAnnotation) o, true);
-//                } else {
-//                    this.plot.addAnnotation((XYAnnotation) o, false);
-//                }
-//                i++;
-//
-//            }
-//        }
         int idx = activeMassSpectrum.getSelectedIndex();
         if (activeMS >= idx && !seriesToScan.isEmpty()) {
-//            this.plot.getRenderer().setBaseItemLabelsVisible(!hideAnnotations.isSelected());
             this.plot.getRenderer().setSeriesItemLabelsVisible(idx,
                     !hideAnnotations.isSelected());
             hideAnnotations.setSelected(!this.plot.getRenderer().
@@ -583,7 +567,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void activeMassSpectrumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activeMassSpectrumActionPerformed
         int key = activeMassSpectrum.getSelectedIndex();
         activeMS = key;
-        //addTopKLabels(topK, key);
         activeMassSpectrum.setSelectedIndex(key);
         hideAnnotations.setSelected(!this.plot.getRenderer().
                 isSeriesItemLabelsVisible(key));
@@ -599,7 +582,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_removeActionPerformed
 
     private void absoluteRelativeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRelativeToggleActionPerformed
-//        this.defaultNumberFormat.setRelativeMode(absoluteRelativeToggle.isSelected());
         int i = 0;
         int prevActiveMS = activeMS;
         for (MSSeries mss : seriesToScan.keySet()) {
@@ -628,7 +610,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                 }
             }
         } else {
-            if (seriesToScan.keySet().size() > 2 || seriesToScan.keySet().size() < 2) {
+            if (seriesToScan.size() > 2 || seriesToScan.size() < 2) {
                 DialogDisplayer dd = DialogDisplayer.getDefault();
                 dd.notify(new NotifyDescriptor.Message("Difference view only works for two spectra!", NotifyDescriptor.INFORMATION_MESSAGE));
                 diffToggle.setSelected(false);
@@ -644,24 +626,23 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }//GEN-LAST:event_diffToggleActionPerformed
 
     private void barWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_barWidthSpinnerStateChanged
-//		System.out.println("Received spinner state changed!");
         if (this.barDataset != null) {
-            barWidth = ((Double) barWidthSpinner.getValue()).doubleValue();
+            barWidth = ((Double) barWidthSpinner.getValue());
             barDataset = new XYBarDataset(sc, barWidth);
             this.plot.setDataset(barDataset);
         }
     }//GEN-LAST:event_barWidthSpinnerStateChanged
 
-    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
+    private void massLabelsSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_massLabelsSpinnerStateChanged
         int series = seriesToScan.keySet().size();
-        this.topK = (Integer) jSpinner1.getValue();
+        this.topK = (Integer) massLabelsSpinner.getValue();
         int prevActiveMS = activeMS;
         for (int i = 0; i < series; i++) {
             activeMS = i;
             addTopKLabels(topK, i);
         }
         activeMS = prevActiveMS;
-    }//GEN-LAST:event_jSpinner1StateChanged
+    }//GEN-LAST:event_massLabelsSpinnerStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton absoluteRelativeToggle;
@@ -684,9 +665,9 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JSpinner massLabelsSpinner;
     private javax.swing.JButton remove;
     // End of variables declaration//GEN-END:variables
 
@@ -753,7 +734,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         }
         for (IPeakAnnotationDescriptor ipad : peakGroups) {
             final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
-            setData(scan, ipad.getChromatogramDescriptor().getDisplayName()+": "+ipad.getDisplayName(), add);
+            setData(scan, ipad.getChromatogramDescriptor().getDisplayName() + ": " + ipad.getDisplayName(), add);
         }
     }
 
@@ -763,7 +744,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         for (IPeakGroupDescriptor ipgd : peakGroups) {
             for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
                 final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
-                setData(scan, ipad.getChromatogramDescriptor().getDisplayName()+": "+ipad.getDisplayName(), add);
+                setData(scan, ipad.getChromatogramDescriptor().getDisplayName() + ": " + ipad.getDisplayName(), add);
             }
         }
     }
@@ -771,16 +752,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     private void handleChromatogramScanSelection(ISelection scan, boolean add) {
         IScan target = null;
         if (scan.getTarget() instanceof IScan) {
-//					System.out.println("Target is IScan");
             target = (IScan) scan.getTarget();
         }
         IChromatogram source = null;
         if (scan.getSource() instanceof IChromatogram) {
-//					System.out.println("Source is IChromatogram");
             source = (IChromatogram) scan.getSource();
         }
         if (source != null && target != null) {
-//					System.out.println("Source and target are not null!");
             String name = source.getParent().getName();
             setData(target, name, add);
         }
@@ -805,7 +783,6 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         Runnable s = new Runnable() {
             @Override
             public void run() {
-//				System.out.println("Change ms called in MassSpectrumPanel");
                 MSSeries s = null;
                 if (scan instanceof IScan2D) {
                     s = ChromatogramVisualizerTools.getMSSeries2D(
@@ -825,30 +802,33 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }
 
     public void addSeries(final MSSeries s, final IScan scan, final boolean add) {
-        s.setNormalize(absoluteRelativeToggle.isSelected());
-        if (add) {
-            try {
-                sc.getSeries(s.getKey());
-            } catch (Exception e) {
-                sc.addSeries(s);
-                seriesToScan.put(s, scan);
-            }
+        Runnable r = new Runnable() {
 
-        } else {
-            seriesToScan.clear();
-            sc = new XYSeriesCollection();
-            sc.addSeries(s);
-            seriesToScan.put(s, scan);
-            //cp.repaint();
-//                            XYPlot plot = (XYPlot) cp.getChart().getPlot();
-            plot.setDataset(sc);
-            sc.addChangeListener(plot);
-        }
-        updateActiveMassSpectrum();
-        activeMS = seriesToScan.size() - 1;
-        addTopKLabels(topK, activeMS);
-        ChartCustomizer.setSeriesColors(plot, 0.95f);
-        ChartCustomizer.setSeriesStrokes(plot, 2.0f);
+            @Override
+            public void run() {
+                s.setNormalize(absoluteRelativeToggle.isSelected());
+                if (add) {
+                    try {
+                        sc.getSeries(s.getKey());
+                    } catch (Exception e) {
+                        sc.addSeries(s);
+                        seriesToScan.put(s, scan);
+                    }
+
+                } else {
+                    seriesToScan.clear();
+                    sc.removeAllSeries();
+                    sc.addSeries(s);
+                    seriesToScan.put(s, scan);
+                }
+                updateActiveMassSpectrum();
+                activeMS = seriesToScan.size() - 1;
+                addTopKLabels(topK, activeMS);
+                ChartCustomizer.setSeriesColors(plot, 0.95f);
+                ChartCustomizer.setSeriesStrokes(plot, 2.0f);
+            }
+        };
+        SwingUtilities.invokeLater(r);
     }
 
     public void componentOpened() {

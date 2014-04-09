@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.sf.maltcms.chromaui.charts.tools.ChromatogramVisualizerTools;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
@@ -99,6 +98,7 @@ public class TicProvider {
         for (int i = 0; i < stics.size(); i++) {
             iter.setDoubleNext(((ArrayDouble.D1) stics.get(i)).get(mod));
         }
+        System.out.println("This is a text");
         return ret;
     }
 

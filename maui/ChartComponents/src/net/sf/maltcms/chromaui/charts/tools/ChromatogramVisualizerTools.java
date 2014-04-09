@@ -28,15 +28,10 @@
 package net.sf.maltcms.chromaui.charts.tools;
 
 import cross.datastructures.tuple.Tuple2D;
-import cross.exception.ResourceNotAvailableException;
 import java.text.DecimalFormat;
-import java.util.WeakHashMap;
-import maltcms.datastructures.caches.IScanLine;
-import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan1D;
 import maltcms.datastructures.ms.IScan2D;
 import net.sf.maltcms.chromaui.charts.dataset.MSSeries;
-import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
 
@@ -48,16 +43,16 @@ public class ChromatogramVisualizerTools {
 
     public static MSSeries getMSSeries1D(IScan1D scan, String prefix, boolean top) {
         DecimalFormat rt1format = new DecimalFormat("#0.00");
-        MSSeries s = new MSSeries(prefix+" @"+
-                rt1format.format(scan.getScanAcquisitionTime()));
+        MSSeries s = new MSSeries(prefix + " @"
+                + rt1format.format(scan.getScanAcquisitionTime()));
         Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(scan.getMasses(),
                 scan.getIntensities());
         IndexIterator mz = ms.getFirst().getIndexIterator();
         IndexIterator inten = ms.getSecond().getIndexIterator();
         while (mz.hasNext() && inten.hasNext()) {
-            if(top) {
+            if (top) {
                 s.add(mz.getDoubleNext(), inten.getDoubleNext());
-            }else{
+            } else {
                 s.add(mz.getDoubleNext(), -inten.getDoubleNext());
             }
         }
@@ -68,9 +63,9 @@ public class ChromatogramVisualizerTools {
         DecimalFormat rt1format = new DecimalFormat("#0");
         DecimalFormat rt2format = new DecimalFormat("#0.000");
         //System.out.println("First col scan acquisition time " + scanlineCache.);
-        MSSeries s = new MSSeries(prefix+" @"+rt1format.format(s2.
+        MSSeries s = new MSSeries(prefix + " @" + rt1format.format(s2.
                 getFirstColumnScanAcquisitionTime()) + ", " + rt2format.format(s2.
-                getSecondColumnScanAcquisitionTime()));
+                        getSecondColumnScanAcquisitionTime()));
 
         Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(s2.getMasses(), s2.
                 getIntensities());//scanlineCache.getSparseMassSpectra(imagePoint);
@@ -78,9 +73,9 @@ public class ChromatogramVisualizerTools {
         IndexIterator inten = ms.getSecond().getIndexIterator();
 //
         while (mz.hasNext() && inten.hasNext()) {
-            if(top) {
+            if (top) {
                 s.add(mz.getDoubleNext(), inten.getDoubleNext());
-            }else{
+            } else {
                 s.add(mz.getDoubleNext(), -inten.getDoubleNext());
             }
         }

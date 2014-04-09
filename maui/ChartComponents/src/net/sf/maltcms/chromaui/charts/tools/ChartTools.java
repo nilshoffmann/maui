@@ -29,13 +29,8 @@ package net.sf.maltcms.chromaui.charts.tools;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.charts.FastHeatMapPlot;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -51,21 +46,21 @@ import org.jfree.chart.renderer.xy.XYBlockRenderer;
  */
 public class ChartTools {
 
-	public static Point translatePointToImageCoord(XYPlot plot, final Point screenPoint,
-			final Rectangle2D screenDataArea) {
-		final ValueAxis da = plot.getDomainAxis();
-		final ValueAxis ra = plot.getRangeAxis();
+    public static Point translatePointToImageCoord(XYPlot plot, final Point screenPoint,
+            final Rectangle2D screenDataArea) {
+        final ValueAxis da = plot.getDomainAxis();
+        final ValueAxis ra = plot.getRangeAxis();
 
-		final double x = da.java2DToValue(screenPoint.getX(), screenDataArea,
-				plot.getDomainAxisEdge());
-		final double y = ra.java2DToValue(screenPoint.getY(), screenDataArea,
-				plot.getRangeAxisEdge());
+        final double x = da.java2DToValue(screenPoint.getX(), screenDataArea,
+                plot.getDomainAxisEdge());
+        final double y = ra.java2DToValue(screenPoint.getY(), screenDataArea,
+                plot.getRangeAxisEdge());
 
-		System.out.println(x + " - " + y);
+        System.out.println(x + " - " + y);
 
-		if (x > 0 && y > 0) {
-			return new Point((int) x, (int) y);
-		}
+        if (x > 0 && y > 0) {
+            return new Point((int) x, (int) y);
+        }
 
 //        final double axisXperc = (x - plot.getDomainAxis().getLowerBound())
 //                / (plot.getDomainAxis().getUpperBound() - plot.getDomainAxis().getLowerBound());
@@ -73,12 +68,10 @@ public class ChartTools {
 //                / (plot.getRangeAxis().getUpperBound() - plot.getRangeAxis().getLowerBound());
 //
 //        System.out.println(axisXperc + " - " + axisYperc);
-
 //        final int newX = (int) (axisXperc * this.imageWidth);
 //        final int newY = (int) (axisYperc * this.imageHeight);
-
-		return null;
-	}
+        return null;
+    }
 
 //    public static XYPlot getChartPanelByPNG(String filename, NumberAxis x,
 //            NumberAxis y) throws IOException {
@@ -104,38 +97,38 @@ public class ChartTools {
 //
 //        return (XYPlot) chart.getPlot();
 //    }
-	public static XYPlot getPlot3(XYPlot plot) {
-		XYPlot p = new XYPlot(plot.getDataset(), new NumberAxis(plot.getRangeAxis().getLabel()), new NumberAxis(plot.getDomainAxis().getLabel()), plot.getRenderer());
-		p.setOrientation(PlotOrientation.HORIZONTAL);
-		p.setDomainAxisLocation(AxisLocation.TOP_OR_RIGHT);
-		System.out.println("fixed auto range: " + plot.getRangeAxis().getRange().getUpperBound());
-		p.getDomainAxis().setFixedAutoRange(500);
+    public static XYPlot getPlot3(XYPlot plot) {
+        XYPlot p = new XYPlot(plot.getDataset(), new NumberAxis(plot.getRangeAxis().getLabel()), new NumberAxis(plot.getDomainAxis().getLabel()), plot.getRenderer());
+        p.setOrientation(PlotOrientation.HORIZONTAL);
+        p.setDomainAxisLocation(AxisLocation.TOP_OR_RIGHT);
+        System.out.println("fixed auto range: " + plot.getRangeAxis().getRange().getUpperBound());
+        p.getDomainAxis().setFixedAutoRange(500);
 
-		return p;
-	}
+        return p;
+    }
 
-	public static XYPlot getPlot2(XYPlot plot) {
-		plot.setDomainAxisLocation(AxisLocation.TOP_OR_LEFT);
-		return plot;
-	}
+    public static XYPlot getPlot2(XYPlot plot) {
+        plot.setDomainAxisLocation(AxisLocation.TOP_OR_LEFT);
+        return plot;
+    }
 
-	public static void changePaintScale(final XYPlot p, final PaintScale sps) {
-		if (p.getRenderer() instanceof XYBlockRenderer) {
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					XYBlockRenderer renderer = (XYBlockRenderer) p.getRenderer();
-					System.out.println("Setting paintscale");
-					renderer.setPaintScale(sps);
-					if (p instanceof FastHeatMapPlot) {
-						System.out.println("Resetting data image");
-						FastHeatMapPlot fhp = (FastHeatMapPlot) p;
-						fhp.resetDataImage();
-					}
-					p.notifyListeners(new PlotChangeEvent(p));
-				}
-			};
-			SwingUtilities.invokeLater(r);
-		}
-	}
+    public static void changePaintScale(final XYPlot p, final PaintScale sps) {
+        if (p.getRenderer() instanceof XYBlockRenderer) {
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    XYBlockRenderer renderer = (XYBlockRenderer) p.getRenderer();
+                    System.out.println("Setting paintscale");
+                    renderer.setPaintScale(sps);
+                    if (p instanceof FastHeatMapPlot) {
+                        System.out.println("Resetting data image");
+                        FastHeatMapPlot fhp = (FastHeatMapPlot) p;
+                        fhp.resetDataImage();
+                    }
+                    p.notifyListeners(new PlotChangeEvent(p));
+                }
+            };
+            SwingUtilities.invokeLater(r);
+        }
+    }
 }
