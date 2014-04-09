@@ -49,130 +49,130 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service = INodeFactory.class)
 public class NodeFactory implements INodeFactory {
-	
-	@Override
-	public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
-		DescriptorNode an;
-		try {
-			//causes a stack overflow error
+
+    @Override
+    public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
+        DescriptorNode an;
+        try {
+            //causes a stack overflow error
 //			if (key instanceof PeakGroupDescriptor) {
 //				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
 //				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
 //				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
 //			}
-			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
-			key.setProject(project);
-			an = new DescriptorNode(key, children, lookup);
-		} catch (IntrospectionException ex) {
-			Exceptions.printStackTrace(ex);
-			return Node.EMPTY;
-		}
-		return an;
-	}
+            IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+            key.setProject(project);
+            an = new DescriptorNode(key, children, lookup);
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+            return Node.EMPTY;
+        }
+        return an;
+    }
 
-	@Override
-	public Node createDescriptorNode(IBasicDescriptor key, Lookup lookup) {
-		DescriptorNode an;
-		try {
-			//causes a stack overflow error
+    @Override
+    public Node createDescriptorNode(IBasicDescriptor key, Lookup lookup) {
+        DescriptorNode an;
+        try {
+            //causes a stack overflow error
 //			if (key instanceof PeakGroupDescriptor) {
 //				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
 //				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
 //				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
 //			}
-			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
-			key.setProject(project);
-			an = new DescriptorNode(key, Children.LEAF, lookup);
-		} catch (IntrospectionException ex) {
-			Exceptions.printStackTrace(ex);
-			return Node.EMPTY;
-		}
-		return an;
-	}
+            IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+            key.setProject(project);
+            an = new DescriptorNode(key, Children.LEAF, lookup);
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+            return Node.EMPTY;
+        }
+        return an;
+    }
 
-	@Override
-	public Node createContainerNode(IContainer key, Children children, Lookup lookup) {
-		ContainerNode cn;
-		Children c = children;
-		if (c == null) {
-			try {
-				cn = new ContainerNode((IContainer<IBasicDescriptor>) key, lookup);
-				IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
-				key.setProject(project);
-				return cn;
-			} catch (IntrospectionException ex) {
-				Exceptions.printStackTrace(ex);
-			}
-		}
-		try {
-			//merge factory lookup from parent nodes with this container node lookup
-			cn = new ContainerNode((IContainer<IBasicDescriptor>) key, c,
-					lookup);
-			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
-			key.setProject(project);
-			return cn;
-		} catch (IntrospectionException ex) {
-			Exceptions.printStackTrace(ex);
-		}
-		return Node.EMPTY;
-	}
+    @Override
+    public Node createContainerNode(IContainer key, Children children, Lookup lookup) {
+        ContainerNode cn;
+        Children c = children;
+        if (c == null) {
+            try {
+                cn = new ContainerNode((IContainer<IBasicDescriptor>) key, lookup);
+                IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+                key.setProject(project);
+                return cn;
+            } catch (IntrospectionException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        try {
+            //merge factory lookup from parent nodes with this container node lookup
+            cn = new ContainerNode((IContainer<IBasicDescriptor>) key, c,
+                    lookup);
+            IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+            key.setProject(project);
+            return cn;
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
+    }
 
-	@Override
-	public Node createContainerNode(IContainer key, Lookup lookup) {
-		ContainerNode cn;
-		try {
-			cn = new ContainerNode((IContainer<IBasicDescriptor>) key, lookup);
-			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
-			key.setProject(project);
-			return cn;
-		} catch (IntrospectionException ex) {
-			Exceptions.printStackTrace(ex);
-		}
+    @Override
+    public Node createContainerNode(IContainer key, Lookup lookup) {
+        ContainerNode cn;
+        try {
+            cn = new ContainerNode((IContainer<IBasicDescriptor>) key, lookup);
+            IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+            key.setProject(project);
+            return cn;
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
 
-		return Node.EMPTY;
-	}
+        return Node.EMPTY;
+    }
 
-	@Override
-	public Action createMenuItem(String name, String path) {
-		Collection<? extends Action> actions = Utilities.
-				actionsForPath(path);
-		return createMenuItem(name, actions.toArray(new Action[actions.size()]));
-	}
+    @Override
+    public Action createMenuItem(String name, String path) {
+        Collection<? extends Action> actions = Utilities.
+                actionsForPath(path);
+        return createMenuItem(name, actions.toArray(new Action[actions.size()]));
+    }
 
-	@Override
-	public Action createMenuItem(String name, Action[] actions) {
-		NodePopupAction pnia = new NodePopupAction(name);
-		pnia.setActions(actions);
-		return pnia;
-	}
+    @Override
+    public Action createMenuItem(String name, Action[] actions) {
+        NodePopupAction pnia = new NodePopupAction(name);
+        pnia.setActions(actions);
+        return pnia;
+    }
 
-	@Override
-	public <T extends IBasicDescriptor> Children createContainerChildren(final IContainer<T> key, final Lookup lookup) {
-		return Children.create(new ChildFactory<T>() {
+    @Override
+    public <T extends IBasicDescriptor> Children createContainerChildren(final IContainer<T> key, final Lookup lookup) {
+        return Children.create(new ChildFactory<T>() {
 
-			@Override
-			protected boolean createKeys(List<T> list) {
-				for(T t:key.getMembers()) {
-					if (Thread.interrupted()) {
-						return false;
-					} else {
-						list.add(t);
-					}
-				}
-				return true;
-			}
+            @Override
+            protected boolean createKeys(List<T> list) {
+                for (T t : key.getMembers()) {
+                    if (Thread.interrupted()) {
+                        return false;
+                    } else {
+                        list.add(t);
+                    }
+                }
+                return true;
+            }
 
-			@Override
-			protected Node createNodeForKey(T key) {
-				try {
-					DescriptorNode dn = new DescriptorNode(key,Children.LEAF, lookup);
-					return dn;
-				} catch (IntrospectionException ex) {
-					Exceptions.printStackTrace(ex);
-				}
-				return Node.EMPTY;
-			}
-			
-		}, true);
-	}
+            @Override
+            protected Node createNodeForKey(T key) {
+                try {
+                    DescriptorNode dn = new DescriptorNode(key, Children.LEAF, lookup);
+                    return dn;
+                } catch (IntrospectionException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                return Node.EMPTY;
+            }
+
+        }, true);
+    }
 }

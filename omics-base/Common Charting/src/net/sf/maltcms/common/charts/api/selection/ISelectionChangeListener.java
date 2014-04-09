@@ -33,7 +33,7 @@ import java.util.EventListener;
  *
  * @author Nils Hoffmann
  */
-public interface ISelectionChangeListener extends EventListener {
+public interface ISelectionChangeListener extends EventListener, IClearable {
 
     public void selectionStateChanged(SelectionChangeEvent ce);
 }

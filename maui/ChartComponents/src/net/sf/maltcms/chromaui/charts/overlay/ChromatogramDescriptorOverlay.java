@@ -37,46 +37,45 @@ import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import static net.sf.maltcms.common.charts.api.overlay.ChartOverlay.PROP_VISIBLE;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import org.jfree.chart.ChartPanel;
-import org.openide.nodes.Node;
 
 /**
- * Virtual overlay to controll the visibility of all overlays associated to one 
+ * Virtual overlay to controll the visibility of all overlays associated to one
  * chromatotogram.
- * 
+ *
  * @author Nils Hoffmann
  */
 public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
 
-	private final List<ChartOverlay> overlays;
-	private final IChromatogramDescriptor descriptor;
+    private final List<ChartOverlay> overlays;
+    private final IChromatogramDescriptor descriptor;
 
-	public ChromatogramDescriptorOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, List<ChartOverlay> children) {
-		super(name, displayName, shortDescription, visibilityChangeable);
-		this.descriptor = descriptor;
-		this.overlays = children;
-		super.content.add(descriptor);
-	}
+    public ChromatogramDescriptorOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, List<ChartOverlay> children) {
+        super(name, displayName, shortDescription, visibilityChangeable);
+        this.descriptor = descriptor;
+        this.overlays = children;
+        super.content.add(descriptor);
+    }
 
-	@Override
-	public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
-		
-	}
+    @Override
+    public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
 
-	@Override
-	public void setVisible(boolean b) {
-		boolean old = super.isVisible();
-		boolean newValue = b;
-		for(ChartOverlay overlay:overlays) {
-			overlay.setVisible(newValue);
-		}
-		super.setVisible(newValue);
-		firePropertyChange(PROP_VISIBLE, old, newValue);
-		fireOverlayChanged();
-	}
-	
-	@Override
-	public void selectionStateChanged(SelectionChangeEvent ce) {
-		//TODO implement peak descriptor selection
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        boolean old = super.isVisible();
+        boolean newValue = b;
+        for (ChartOverlay overlay : overlays) {
+            overlay.setVisible(newValue);
+        }
+        super.setVisible(newValue);
+        firePropertyChange(PROP_VISIBLE, old, newValue);
+        fireOverlayChanged();
+    }
+
+    @Override
+    public void selectionStateChanged(SelectionChangeEvent ce) {
+        //TODO implement peak descriptor selection
 //        XYSelection selection = ce.getSelection();
 //
 //        if (selection == null) {
@@ -104,20 +103,24 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
 //                firePropertyChange(PROP_HOVER_SELECTION, null, mouseHoverSelection);
 //            }
 //        }
-		fireOverlayChanged();
-	}
+        fireOverlayChanged();
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent pce) {
-		fireOverlayChanged();
-	}
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        fireOverlayChanged();
+    }
 
-	public List<ChartOverlay> getOverlays() {
-		return overlays;
-	}
+    public List<ChartOverlay> getOverlays() {
+        return overlays;
+    }
 
-	public IChromatogramDescriptor getDescriptor() {
-		return descriptor;
-	}
+    public IChromatogramDescriptor getDescriptor() {
+        return descriptor;
+    }
 
+    @Override
+    public void clear() {
+        
+    }
 }

@@ -30,18 +30,12 @@ package net.sf.maltcms.common.charts.api.selection;
 import java.beans.IntrospectionException;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection.Type;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayNode;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionSourceChildFactory;
-import org.openide.nodes.Children;
 import static org.openide.nodes.Children.create;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import static org.openide.util.Exceptions.printStackTrace;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
@@ -62,9 +56,6 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
     private Mode mode;
     private final int capacity;
     private Lookup.Provider dataset;
-    // private TARGET lastItem = null;
-    private ExecutorService es = newSingleThreadExecutor();
-    private AtomicBoolean updatePending = new AtomicBoolean(false);
     private Node selectionOverlayNode;
 
     public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, Lookup.Provider dataset) {
@@ -121,6 +112,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         updateNode();
     }
 
+    @Override
     public void clear() {
         for (Object pt : activeSelection) {
             content.remove(pt);

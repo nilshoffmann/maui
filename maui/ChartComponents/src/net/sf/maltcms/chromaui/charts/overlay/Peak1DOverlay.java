@@ -69,7 +69,6 @@ import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import static net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay.toViewXY;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
-import net.sf.maltcms.common.charts.api.selection.IClearable;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import static net.sf.maltcms.common.charts.api.selection.ISelection.Type.CLICK;
 import static net.sf.maltcms.common.charts.api.selection.ISelection.Type.HOVER;
@@ -93,7 +92,7 @@ import org.openide.util.WeakListeners;
  *
  * @author Nils Hoffmann
  */
-public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener, IClearable {
+public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener {
 
     public final String PROP_DRAW_SHAPES = "drawShapes";
     public final String PROP_DRAW_LINES = "drawLines";

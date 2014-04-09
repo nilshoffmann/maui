@@ -40,7 +40,6 @@ import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
-import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.overlay.AbstractChartOverlay;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
@@ -50,34 +49,29 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.ui.RectangleEdge;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 
-/**
- *
- * @author Nils Hoffmann
- */
+
 public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
 
-	private final Peak1DContainer peakAnnotations;
-	private final IChromatogramDescriptor descriptor;
+    private final Peak1DContainer peakAnnotations;
+    private final IChromatogramDescriptor descriptor;
 
-	public Peak2DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
-		super(name, displayName, shortDescription, visibilityChangeable);
-		for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
-			if (!(descr instanceof IPeak2DAnnotationDescriptor)) {
-				throw new IllegalArgumentException("Must supply a peak container with 2d peaks!");
-			}
-		}
-		this.descriptor = descriptor;
-		this.peakAnnotations = peakAnnotations;
-		WeakListeners.propertyChange(this, peakAnnotations);
-		setLayerPosition(10);
+    public Peak2DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
+        super(name, displayName, shortDescription, visibilityChangeable);
+        for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
+            if (!(descr instanceof IPeak2DAnnotationDescriptor)) {
+                throw new IllegalArgumentException("Must supply a peak container with 2d peaks!");
+            }
+        }
+        this.descriptor = descriptor;
+        this.peakAnnotations = peakAnnotations;
+        WeakListeners.propertyChange(this, peakAnnotations);
+        setLayerPosition(10);
 //		content.add(descriptor);
 //		content.add(peakAnnotations);
-	}
+    }
 //	
 //	public Peak2DOverlay(Peak1DContainer peakAnnotations) {
 //		for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
@@ -88,43 +82,43 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 //		this.peakAnnotations = peakAnnotations;
 //	}
 
-	@Override
-	public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
-		if (isVisible()) {
-			Shape savedClip = g2.getClip();
-			Rectangle2D dataArea = chartPanel.getScreenDataArea();
-			g2.clip(dataArea);
-			JFreeChart chart = chartPanel.getChart();
-			XYPlot plot = (XYPlot) chart.getPlot();
-			ValueAxis xAxis = plot.getDomainAxis();
-			RectangleEdge xAxisEdge = plot.getDomainAxisEdge();
-			ValueAxis yAxis = plot.getRangeAxis();
-			RectangleEdge yAxisEdge = plot.getRangeAxisEdge();
-			Color c = g2.getColor();
-			Color fillColor = peakAnnotations.getColor();
-			if (fillColor == null || fillColor.equals(Color.WHITE) || fillColor.equals(new Color(255, 255, 255, 0))) {
-				System.out.println("Peak annotation color was null or white, using color from treatment group!");
-				fillColor = peakAnnotations.getChromatogram().getTreatmentGroup().getColor();
-			}
-			g2.setColor(ChartCustomizer.withAlpha(fillColor, 0.5f));
-			for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
-				IPeak2DAnnotationDescriptor descr2D = (IPeak2DAnnotationDescriptor) descr;
-				double x = descr2D.getFirstColumnRt();
-				double xx = xAxis.valueToJava2D(x, dataArea, xAxisEdge);
-				double y = descr2D.getSecondColumnRt();
-				double yy = yAxis.valueToJava2D(y, dataArea, yAxisEdge);
-				AffineTransform at = AffineTransform.getTranslateInstance(xx, yy);
-				at.concatenate(AffineTransform.getTranslateInstance(-x, -y));
-				g2.fill(at.createTransformedShape(descr2D.getBounds()));
-			}
-			g2.setColor(c);
-			g2.setClip(savedClip);
-		}
-	}
+    @Override
+    public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
+        if (isVisible()) {
+            Shape savedClip = g2.getClip();
+            Rectangle2D dataArea = chartPanel.getScreenDataArea();
+            g2.clip(dataArea);
+            JFreeChart chart = chartPanel.getChart();
+            XYPlot plot = (XYPlot) chart.getPlot();
+            ValueAxis xAxis = plot.getDomainAxis();
+            RectangleEdge xAxisEdge = plot.getDomainAxisEdge();
+            ValueAxis yAxis = plot.getRangeAxis();
+            RectangleEdge yAxisEdge = plot.getRangeAxisEdge();
+            Color c = g2.getColor();
+            Color fillColor = peakAnnotations.getColor();
+            if (fillColor == null || fillColor.equals(Color.WHITE) || fillColor.equals(new Color(255, 255, 255, 0))) {
+                System.out.println("Peak annotation color was null or white, using color from treatment group!");
+                fillColor = peakAnnotations.getChromatogram().getTreatmentGroup().getColor();
+            }
+            g2.setColor(ChartCustomizer.withAlpha(fillColor, 0.5f));
+            for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
+                IPeak2DAnnotationDescriptor descr2D = (IPeak2DAnnotationDescriptor) descr;
+                double x = descr2D.getFirstColumnRt();
+                double xx = xAxis.valueToJava2D(x, dataArea, xAxisEdge);
+                double y = descr2D.getSecondColumnRt();
+                double yy = yAxis.valueToJava2D(y, dataArea, yAxisEdge);
+                AffineTransform at = AffineTransform.getTranslateInstance(xx, yy);
+                at.concatenate(AffineTransform.getTranslateInstance(-x, -y));
+                g2.fill(at.createTransformedShape(descr2D.getBounds()));
+            }
+            g2.setColor(c);
+            g2.setClip(savedClip);
+        }
+    }
 
-	@Override
-	public void selectionStateChanged(SelectionChangeEvent ce) {
-		//TODO implement peak descriptor selection
+    @Override
+    public void selectionStateChanged(SelectionChangeEvent ce) {
+        //TODO implement peak descriptor selection
 //        XYSelection selection = ce.getSelection();
 //
 //        if (selection == null) {
@@ -152,36 +146,41 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 //                firePropertyChange(PROP_HOVER_SELECTION, null, mouseHoverSelection);
 //            }
 //        }
-		fireOverlayChanged();
-	}
+        fireOverlayChanged();
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent pce) {
-		fireOverlayChanged();
-	}
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        fireOverlayChanged();
+    }
 
-	public Peak1DContainer getPeakAnnotations() {
-		return peakAnnotations;
-	}
+    public Peak1DContainer getPeakAnnotations() {
+        return peakAnnotations;
+    }
 
-	public IChromatogramDescriptor getDescriptor() {
-		return descriptor;
-	}
+    public IChromatogramDescriptor getDescriptor() {
+        return descriptor;
+    }
 
-	@Override
-	public Node createNodeDelegate() {
-		System.err.println("Creating node delegate");
-		Node node = null;
-		if(nodeReference == null) {
-			node = Charts.overlayNode(this);
-			nodeReference = new WeakReference<Node>(node);
-		}else{
-			node = nodeReference.get();
-			if(node==null) {
-				node = Charts.overlayNode(this);
-				nodeReference = new WeakReference<Node>(node);
-			}
-		}
-		return node;
-	}
+    @Override
+    public Node createNodeDelegate() {
+        System.err.println("Creating node delegate");
+        Node node = null;
+        if (nodeReference == null) {
+            node = Charts.overlayNode(this);
+            nodeReference = new WeakReference<Node>(node);
+        } else {
+            node = nodeReference.get();
+            if (node == null) {
+                node = Charts.overlayNode(this);
+                nodeReference = new WeakReference<Node>(node);
+            }
+        }
+        return node;
+    }
+
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

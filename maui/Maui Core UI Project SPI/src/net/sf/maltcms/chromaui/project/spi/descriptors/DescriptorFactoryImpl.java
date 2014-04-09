@@ -265,6 +265,9 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
             } else if (descriptor instanceof IToolDescriptor) {
                 return ImageUtilities.loadImage(
                     "net/sf/maltcms/chromaui/project/resources/Tool.png");
+            } else if (descriptor instanceof IPeakGroupDescriptor) {
+                return ImageUtilities.loadImage(
+                    "net/sf/maltcms/chromaui/project/resources/PeakGroup.png");
             }
         }catch(Exception e) {
             Exceptions.printStackTrace(e);

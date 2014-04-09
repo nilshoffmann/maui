@@ -90,7 +90,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     private double modulationTime = -1;
     private double scanRate = 0.0;
     private RtProvider rtProvider = null;
-    private int prefetchSize = 100000;
+    private int prefetchSize = 1000;
     private int spm = -1;
     private int modulations = -1;
     private AtomicBoolean loading = new AtomicBoolean(false);
@@ -106,6 +106,10 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
         this.parent = e;
         String id = e.getUri().toString() + "-2D";
         whm = CacheFactory.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this, 10, 20);
+    }
+    
+    public void setPrefetchSize(int numberOfScansToLoad) {
+        this.prefetchSize = numberOfScansToLoad;
     }
 
     private void init() {
@@ -468,12 +472,16 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     @Override
     public Point getPointFor(int i) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        init();
+        IScan2D scan2d = getScan(i);
+        return new Point(scan2d.getFirstColumnScanIndex(),scan2d.getSecondColumnScanIndex());
     }
 
     @Override
     public Point getPointFor(double d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        init();
+        IScan2D scan2d = getScan(getIndexFor(d));
+        return new Point(scan2d.getFirstColumnScanIndex(),scan2d.getSecondColumnScanIndex());
     }
 
     public RtProvider getRtProvider() {

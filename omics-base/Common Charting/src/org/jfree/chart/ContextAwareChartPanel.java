@@ -27,6 +27,7 @@
  */
 package org.jfree.chart;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -39,30 +40,39 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import javax.imageio.ImageIO;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static javax.imageio.ImageIO.write;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.batik.dom.GenericDOMImplementation;
 import static org.apache.batik.dom.GenericDOMImplementation.getDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import static org.apache.batik.svggen.SVGGeneratorContext.createDefault;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.jfree.chart.panel.Overlay;
 import org.openide.filesystems.FileChooserBuilder;
+import org.openide.util.ContextAwareAction;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.openide.util.Utilities;
+import org.openide.util.actions.ActionPresenterProvider;
+import org.openide.util.actions.Presenter;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-/**
- *
- * @author Nils Hoffmann
- */
-public class ContextAwareChartPanel extends ChartPanel {
+public class ContextAwareChartPanel extends ChartPanel implements LookupListener {
 
     private List<Overlay> overlays = new ArrayList<>();
     private IActionProvider popupMenuActionProvider = null;
@@ -89,6 +99,7 @@ public class ContextAwareChartPanel extends ChartPanel {
 
     public void setPopupMenuActionProvider(IActionProvider actionProvider) {
         this.popupMenuActionProvider = actionProvider;
+        actionProvider.getLookup().lookupResult(Object.class).addLookupListener(this);
     }
 
     @Override
@@ -154,19 +165,91 @@ public class ContextAwareChartPanel extends ChartPanel {
         repaint();
     }
 
+    private List<Component> actionsToPopup(Action[] actions, Lookup lookup) {
+        // keeps actions for which was menu item created already (do not add them twice)
+        Set<Action> counted = new HashSet<Action>();
+        // components to be added (separators are null)
+        List<Component> components = new ArrayList<Component>();
+        System.err.println("Processing " + actions.length + " actions!");
+        for (Action action : actions) {
+            if (action != null && counted.add(action)) {
+                // switch to replacement action if there is some
+                if (action instanceof ContextAwareAction) {
+                    Action contextAwareAction = ((ContextAwareAction) action).createContextAwareInstance(lookup);
+                    if (contextAwareAction == null) {
+                        Logger.getLogger(Utilities.class.getName()).log(Level.WARNING, "ContextAwareAction.createContextAwareInstance(context) returns null. That is illegal!" + " action={0}, context={1}", new Object[]{action, lookup});
+                    } else {
+                        if (((ContextAwareAction) action).isEnabled()) {
+                            action = contextAwareAction;
+                        } else {
+                            //hide menu item
+                            action = null;
+                        }
+                    }
+                }
+                if (action != null) {
+                    JMenuItem item;
+                    if (action instanceof Presenter.Popup) {
+                        item = ((Presenter.Popup) action).getPopupPresenter();
+                        if (item == null) {
+                            Logger.getLogger(Utilities.class.getName()).log(Level.WARNING, "findContextMenuImpl, getPopupPresenter returning null for {0}", action);
+                            continue;
+                        }
+                    } else {
+                        // We need to correctly handle mnemonics with '&' etc.
+                        item = ActionPresenterProvider.getDefault().createPopupPresenter(action);
+                    }
+
+                    for (Component c : ActionPresenterProvider.getDefault().convertComponents(item)) {
+                        if (c instanceof JSeparator) {
+                            components.add(null);
+                        } else {
+                            components.add(c);
+                        }
+                    }
+                }
+            } else {
+                components.add(null);
+            }
+        }
+        System.err.println("Added " + components.size() + " menu items!");
+        return components;
+    }
+
     @Override
     protected JPopupMenu createPopupMenu(boolean properties,
             boolean copy, boolean save, boolean print, boolean zoom) {
         JPopupMenu result = new JPopupMenu(localizationResources.getString("Chart") + ":");
         boolean separator = false;
         if (popupMenuActionProvider != null) {
-            for (Action a : popupMenuActionProvider.getActions()) {
-                JMenuItem jmi = new JMenuItem(a);
-                result.add(jmi);
+            Action[] actions = popupMenuActionProvider.getActions();
+            List<Component> components = actionsToPopup(actions, popupMenuActionProvider.getLookup());
+            boolean nonempty = false; // has anything been added yet?
+            boolean pendingSep = false; // should there be a separator before any following item?
+            for (Component c : components) {
+                try {
+                    if (c == null) {
+                        pendingSep = nonempty;
+                    } else {
+                        nonempty = true;
+                        if (pendingSep) {
+                            pendingSep = false;
+                            result.addSeparator();
+                        }
+                        result.add(c);
+                    }
+                } catch (RuntimeException ex) {
+                    Exceptions.attachMessage(ex, "Current component: " + c); // NOI18N
+                    Exceptions.attachMessage(ex, "List of components: " + components); // NOI18N
+                    Exceptions.attachMessage(ex, "List of actions: " + Arrays.asList(actions)); // NOI18N
+                    Exceptions.printStackTrace(ex);
+                }
             }
             if (popupMenuActionProvider.getActions().length > 0) {
                 result.addSeparator();
             }
+        } else {
+            System.err.println("Popup menu provider is null!");
         }
 
         if (properties) {
@@ -406,6 +489,20 @@ public class ContextAwareChartPanel extends ChartPanel {
         if (command.equals("SAVE_AS_SVG")) {
             saveAsSvg();
         }
+
+    }
+
+    @Override
+    public void resultChanged(LookupEvent le) {
+        Runnable popupMenuCreator = new Runnable() {
+
+            @Override
+            public void run() {
+                setPopupMenu(createPopupMenu(true, true, true, true, true));
+            }
+
+        };
+        SwingUtilities.invokeLater(popupMenuCreator);
 
     }
 }

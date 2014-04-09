@@ -753,7 +753,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         }
         for (IPeakAnnotationDescriptor ipad : peakGroups) {
             final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
-            setData(scan, ipad.getDisplayName(), add);
+            setData(scan, ipad.getChromatogramDescriptor().getDisplayName()+": "+ipad.getDisplayName(), add);
         }
     }
 
@@ -763,7 +763,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
         for (IPeakGroupDescriptor ipgd : peakGroups) {
             for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
                 final IScan scan = new Scan1D(Array.factory(ipad.getMassValues()), Array.factory(ipad.getIntensityValues()), ipad.getIndex(), ipad.getApexTime());
-                setData(scan, ipad.getDisplayName(), add);
+                setData(scan, ipad.getChromatogramDescriptor().getDisplayName()+": "+ipad.getDisplayName(), add);
             }
         }
     }

@@ -56,10 +56,7 @@ import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
-/**
- *
- * @author Nils Hoffmann
- */
+
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -427,5 +424,15 @@ public class FoldChangeElement implements IPeakGroupDescriptor {
     @Override
     public HelpCtx getHelpCtx() {
         return peakGroup.getHelpCtx();
+    }
+
+    @Override
+    public float getNameAgreement() {
+        return peakGroup.getNameAgreement();
+    }
+
+    @Override
+    public float getGroupCoverage() {
+        return peakGroup.getGroupCoverage();
     }
 }

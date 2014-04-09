@@ -28,12 +28,13 @@
 package org.jfree.chart;
 
 import javax.swing.Action;
+import org.openide.util.Lookup;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public interface IActionProvider {
+public interface IActionProvider extends Lookup.Provider {
 
     Action[] getActions();
 }

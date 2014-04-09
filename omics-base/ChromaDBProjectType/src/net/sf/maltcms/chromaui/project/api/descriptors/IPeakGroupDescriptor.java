@@ -103,4 +103,16 @@ public interface IPeakGroupDescriptor extends IBasicDescriptor {
     public Set<IPeakAnnotationDescriptor> getPeaksForTreatmentGroup(ITreatmentGroupDescriptor group);
 
     public Set<IPeakAnnotationDescriptor> getPeaksForSampleGroup(ISampleGroupDescriptor group);
+    
+    /**
+     * Returns a float between 0 (no name agreement) and 1 (perfect name agreement).
+     * @return a float between 0 and 1
+     */
+    public float getNameAgreement();
+    
+    /**
+     * Returns a float between 0 (no treatment groups are covered) and 1 (all treatment groups are covered).
+     * @return a float between 0 and 1.
+     */
+    public float getGroupCoverage();
 }

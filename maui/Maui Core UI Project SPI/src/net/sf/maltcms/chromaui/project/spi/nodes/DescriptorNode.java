@@ -58,10 +58,7 @@ import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
-/**
- *
- * @author nilshoffmann
- */
+
 public class DescriptorNode extends BeanNode<IBasicDescriptor> implements PropertyChangeListener {
 
     public DescriptorNode(IBasicDescriptor bean, Children children, Lookup lkp) throws IntrospectionException {
@@ -131,13 +128,17 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
                 descrImage = ImageUtilities.mergeImages(bi, descrImage,
                         w - bi.getWidth(), h - bi.getHeight());
             }
-
         }
         return descrImage;
     }
 
     @Override
     public String getDisplayName() {
+        return getBean().getDisplayName();
+    }
+
+    @Override
+    public String getHtmlDisplayName() {
         return getBean().getDisplayName();
     }
 
@@ -160,6 +161,7 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
         }
         if (pce.getPropertyName().equals(IColorizableDescriptor.PROP_COLOR)) {
             fireIconChange();
+            fireOpenedIconChange();
         }
     }
 }

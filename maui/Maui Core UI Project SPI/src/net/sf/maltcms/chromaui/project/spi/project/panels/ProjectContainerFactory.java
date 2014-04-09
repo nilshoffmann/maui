@@ -47,41 +47,41 @@ import org.openide.util.lookup.ProxyLookup;
  * @author hoffmann
  */
 class ProjectContainerFactory extends ChildFactory<IContainer> implements
-		PropertyChangeListener {
+        PropertyChangeListener {
 
-	private Lookup lookup;
+    private Lookup lookup;
 
-	public ProjectContainerFactory(Lookup lookup) {
-		this.lookup = lookup;
-		IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
-		project.addPropertyChangeListener(this);
-	}
+    public ProjectContainerFactory(Lookup lookup) {
+        this.lookup = lookup;
+        IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
+        project.addPropertyChangeListener(this);
+    }
 
-	@Override
-	protected boolean createKeys(List<IContainer> list) {
-		IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
-		list.addAll(project.getContainer(IContainer.class));
-		Collections.sort(list);
-		return true;
-	}
+    @Override
+    protected boolean createKeys(List<IContainer> list) {
+        IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
+        list.addAll(project.getContainer(IContainer.class));
+        Collections.sort(list);
+        return true;
+    }
 
-	@Override
-	protected Node createNodeForKey(IContainer key) {
-		try {
-			IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
-			ContainerNode cn = new ContainerNode((IContainer) key, new ProxyLookup(lookup,project.getLookup()));
-			cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
-			((IContainer) key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
-			((IContainer) key).setProject(project);
-			return cn;
-		} catch (IntrospectionException ex) {
-			Exceptions.printStackTrace(ex);
-		}
-		return Node.EMPTY;
-	}
+    @Override
+    protected Node createNodeForKey(IContainer key) {
+        try {
+            IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
+            ContainerNode cn = new ContainerNode((IContainer) key, new ProxyLookup(lookup, project.getLookup()));
+            cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
+            ((IContainer) key).addPropertyChangeListener(WeakListeners.propertyChange(this, ((IContainer) key)));
+            ((IContainer) key).setProject(project);
+            return cn;
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		refresh(false);
-	}
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        refresh(false);
+    }
 }

@@ -33,6 +33,7 @@ import java.awt.BorderLayout;
 import java.util.Iterator;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupDescriptorChildFactory;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -40,8 +41,8 @@ import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
-import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
@@ -82,8 +83,8 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
         initComponents();
         view = new OutlineView("Peaks of Peak Group");
         view.setTreeSortable(true);
-        view.setPropertyColumns("shortDescription", "Short Description", "area", "Area");
-        view.getOutline().setRootVisible(false);
+        view.setPropertyColumns("shortDescription", "Short Description", "area", "Area", "cas", "CAS", "formula", "Formula", "apexTime", "Retention Time", "retentionIndex", "Retention Index");
+        view.getOutline().setRootVisible(true);
         add(view, BorderLayout.CENTER);
         setName(NbBundle.getMessage(PeakTableViewerTopComponent.class,
                 "CTL_PeakTableViewerTopComponent"));
@@ -173,7 +174,7 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
     }
 
     void writeProperties(java.util.Properties p) {
-		// better to version settings since initial version as advocated at
+        // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
     }
@@ -210,8 +211,9 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
         setDisplayName("Peaks for " + newPeakGroupDescriptor.getProject().getLocation().getName() + " - " + peakGroupDescriptor.getName());
         System.out.println("Setting node factory");
         final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupDescriptor), newPeakGroupDescriptor.getProject().getLookup());
-        PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(lkp, peakGroupDescriptor, hideChromatogramDescriptor);
-        Node rootNode = new AbstractNode(Children.create(childFactory, true), lkp);
+        PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(new ProxyLookup(newPeakGroupDescriptor.getProject().getLookup()), peakGroupDescriptor, hideChromatogramDescriptor);
+        Node dn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(peakGroupDescriptor, lkp);
+        Node rootNode = new FilterNode(dn, Children.create(childFactory, true), lkp);
         System.out.println("Setting root context");
         manager.setRootContext(rootNode);
     }

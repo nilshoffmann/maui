@@ -34,6 +34,7 @@ import cross.cache.ICacheDelegate;
 import cross.datastructures.tuple.Tuple2D;
 import cross.exception.NotImplementedException;
 import cross.tools.MathTools;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -60,16 +61,14 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import ucar.ma2.Array;
 
-/**
- *
- * @author nilshoffmann
- */
 public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescriptor, PropertyChangeListener, Lookup.Provider {
 
     private int index = -1;
     public static final String PROP_INDEX = "index";
     public static ICacheDelegate<UUID, String> groupToDisplayNameCache = CacheFactory.createVolatileCache("PeakGroupDescriptorDisplayNameCache", 60, 240, 10000);
     public static ICacheDelegate<UUID, String> groupToShortDescriptionCache = CacheFactory.createVolatileCache("PeakGroupDescriptorShortDescriptionCache", 60, 240, 10000);
+    private transient float nameAgreement = 0.0f;
+    private transient float groupCoverage = 0.0f;
 
     public PeakGroupDescriptor() {
 //        getPropertyChangeSupport().addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, this);
@@ -159,7 +158,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
-        StringBuilder sb = new StringBuilder(super.getName());
+        StringBuilder sb = new StringBuilder("<html>" + super.getName());
         sb.append(" (");
         Map<String, Integer> nameToCount = new HashMap<String, Integer>();
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
@@ -180,18 +179,41 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         }
         //System.out.println("Counts: " + nameToCount + " highest: " + highestCount + " for name " + mostFrequentName);
         float percentage = (float) highestCount / (float) peakAnnotationDescriptors.size();
+        nameAgreement = percentage;
+        sb.append("<font color='");
+        if (percentage < 0.1f) {
+            sb.append("#" + Integer.toHexString(Color.RED.getRGB()).substring(2));
+        } else if (percentage >= 0.1f && percentage < 0.9f) {
+            sb.append("#" + Integer.toHexString(Color.YELLOW.darker().getRGB()).substring(2));
+        } else if (percentage >= 0.9f) {
+            sb.append("#" + Integer.toHexString(Color.GREEN.getRGB()).substring(2));
+        }
+        sb.append("'>");
         sb.append(String.format("%.2f", percentage * 100.0f));
         sb.append("% ");
+        sb.append("</font>");
         sb.append(mostFrequentName);
         sb.append(")");
         if (getProject() != null) {
             IChromAUIProject project = getProject();
             int nchromatograms = project.getChromatograms().size();
             sb.append(" Coverage: ");
+            sb.append("<font color='");
             float coverage = ((float) peakAnnotationDescriptors.size()) / (float) nchromatograms;
+            if (coverage < 0.1f) {
+                sb.append("#" + Integer.toHexString(Color.RED.getRGB()).substring(2));
+            } else if (coverage >= 0.1f && coverage < 0.9f) {
+                sb.append("#" + Integer.toHexString(Color.YELLOW.darker().getRGB()).substring(2));
+            } else if (coverage >= 0.9f) {
+                sb.append("#" + Integer.toHexString(Color.GREEN.getRGB()).substring(2));
+            }
+            sb.append("'>");
+            groupCoverage = coverage;
             sb.append(String.format("%.2f", coverage * 100.f));
             sb.append("%");
+            sb.append("</font>");
         }
+        sb.append("</html>");
         return sb;
     }
 
@@ -507,13 +529,13 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
             displayName = createDisplayName(getPeakAnnotationDescriptors()).toString();
             groupToDisplayNameCache.put(getId(), displayName);
         }
-        return displayName;
+        return displayName.replaceAll("\\<.*?>","");
     }
-    
+
     @Override
     public String getShortDescription() {
         String shortDescription = groupToShortDescriptionCache.get(getId());
-        if(shortDescription==null) {
+        if (shortDescription == null) {
             shortDescription = createShortDescription(getPeakAnnotationDescriptors()).toString();
             groupToShortDescriptionCache.put(getId(), shortDescription);
         }
@@ -564,5 +586,17 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
             }
         }
         return set;
+    }
+
+    @Override
+    public float getNameAgreement() {
+        getDisplayName();
+        return nameAgreement;
+    }
+
+    @Override
+    public float getGroupCoverage() {
+        getDisplayName();
+        return groupCoverage;
     }
 }

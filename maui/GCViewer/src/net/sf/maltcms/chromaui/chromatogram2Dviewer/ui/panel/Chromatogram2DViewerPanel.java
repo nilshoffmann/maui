@@ -126,9 +126,9 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         chartPanel.setFocusable(true);
         jPanel2.add(chartPanel, BorderLayout.CENTER);
         content.add(chartPanel);
-		addKeyListener(this);
+        addKeyListener(this);
     }
-    
+
     public boolean isSyncViewport() {
         return syncViewport;
     }
@@ -436,25 +436,25 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     }//GEN-LAST:event_settingsButtonActionPerformed
 
     private void modeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_modeSpinnerStateChanged
-        if(selectionHandler!=null) {
-			selectionHandler.setMode(InstanceContentSelectionHandler.Mode.valueOf((String)modeSpinner.getValue()));
-		}
+        if (selectionHandler != null) {
+            selectionHandler.setMode(InstanceContentSelectionHandler.Mode.valueOf((String) modeSpinner.getValue()));
+        }
     }//GEN-LAST:event_modeSpinnerStateChanged
 
     private void boxWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_boxWidthSpinnerStateChanged
         XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
-		if(renderer instanceof XYBlockRenderer) {
-			XYBlockRenderer xyb = (XYBlockRenderer)renderer;
-			xyb.setBlockWidth((Double)boxWidthSpinner.getValue());
-		}
+        if (renderer instanceof XYBlockRenderer) {
+            XYBlockRenderer xyb = (XYBlockRenderer) renderer;
+            xyb.setBlockWidth((Double) boxWidthSpinner.getValue());
+        }
     }//GEN-LAST:event_boxWidthSpinnerStateChanged
 
     private void boxHeightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_boxHeightSpinnerStateChanged
         XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
-		if(renderer instanceof XYBlockRenderer) {
-			XYBlockRenderer xyb = (XYBlockRenderer)renderer;
-			xyb.setBlockHeight((Double)boxHeightSpinner.getValue());
-		}
+        if (renderer instanceof XYBlockRenderer) {
+            XYBlockRenderer xyb = (XYBlockRenderer) renderer;
+            xyb.setBlockHeight((Double) boxHeightSpinner.getValue());
+        }
     }//GEN-LAST:event_boxHeightSpinnerStateChanged
 
     private void handleSliderChange() {
@@ -475,11 +475,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             }
         };
         SwingUtilities.invokeLater(r);
-	}
+    }
 
     private void updateChart() {
         if (xyb != null && xyb instanceof XYNoBlockRenderer) {
-			throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
         }
         XYPlot plot = ((XYPlot) this.chartPanel.getChart().getPlot());
         ChartTools.changePaintScale(plot, this.ps);
@@ -532,8 +532,8 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             if (jfc != null) {
                 XYPlot plot = jfc.getXYPlot();
                 if (!jCheckBox2.isSelected()) {
-					Color bg = (Color) this.ps.getPaint(this.ps.getLowerBound());
-					System.out.println("Background color: "+bg);
+                    Color bg = (Color) this.ps.getPaint(this.ps.getLowerBound());
+                    System.out.println("Background color: " + bg);
                     setBackgroundColor(bg);
                 }
             }
@@ -553,8 +553,8 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     @Override
     public void keyPressed(KeyEvent ke) {
         System.out.println("Received key event: " + ke.toString());
-		if (ke.isControlDown()) {
-			modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
+        if (ke.isControlDown()) {
+            modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
         }
         if (getDataPoint() != null) {
             System.out.println("Data point is not null!");
@@ -581,7 +581,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
     @Override
     public void keyReleased(KeyEvent ke) {
-		modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_CLICK.toString());
+        modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_CLICK.toString());
     }
 
     public void setChartPanel(ChartPanel cp) {
@@ -594,16 +594,16 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
     public void setPlot(final XYPlot plot) {
         removeAxisListener();
-		ADataset2D dataset = null;
-		if(plot.getDataset() instanceof ADataset2D) {
-			dataset = (ADataset2D)plot.getDataset();
-		}else{
-			throw new IllegalArgumentException("Requires a plot with ADataset2D!");
-		}
+        ADataset2D dataset = null;
+        if (plot.getDataset() instanceof ADataset2D) {
+            dataset = (ADataset2D) plot.getDataset();
+        } else {
+            throw new IllegalArgumentException("Requires a plot with ADataset2D!");
+        }
         this.plot = plot;
         if (this.selectionOverlay != null) {
             this.content.remove(selectionOverlay);
-			this.selectionOverlay = null;
+            this.selectionOverlay = null;
         }
         if (selectionOverlay == null) {
             selectionOverlay = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
@@ -621,7 +621,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             }
         }
         if (selectionHandler == null) {
-            selectionHandler = new InstanceContentSelectionHandler(this.content, selectionOverlay, InstanceContentSelectionHandler.Mode.valueOf((String)modeSpinner.getValue()), dataset, 1);
+            selectionHandler = new InstanceContentSelectionHandler(this.content, selectionOverlay, InstanceContentSelectionHandler.Mode.valueOf((String) modeSpinner.getValue()), dataset, 1);
         } else {
             selectionHandler.setDataset(dataset);
         }
@@ -634,13 +634,13 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             mouseSelectionHandler.setDataset(dataset);
         }
 
-		XYItemRenderer xyir = plot.getRenderer();
-		if(xyir instanceof XYBlockRenderer) {
-			XYBlockRenderer xybr = (XYBlockRenderer)xyir;
-			boxWidthSpinner.setValue(xybr.getBlockWidth());
-			boxHeightSpinner.setValue(xybr.getBlockHeight());
-		}
-		
+        XYItemRenderer xyir = plot.getRenderer();
+        if (xyir instanceof XYBlockRenderer) {
+            XYBlockRenderer xybr = (XYBlockRenderer) xyir;
+            boxWidthSpinner.setValue(xybr.getBlockWidth());
+            boxHeightSpinner.setValue(xybr.getBlockHeight());
+        }
+
         AxisChangeListener listener = selectionOverlay;
         ValueAxis domain = this.plot.getDomainAxis();
         ValueAxis range = this.plot.getRangeAxis();
@@ -661,19 +661,19 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         addAxisListener();
         //add available chart overlays
         List<Overlay> overlays = new ArrayList<Overlay>(getLookup().lookupAll(Overlay.class));
-		Collections.sort(overlays, new Comparator<Overlay>() {
+        Collections.sort(overlays, new Comparator<Overlay>() {
 
-			@Override
-			public int compare(Overlay o1, Overlay o2) {
-				if(o1 instanceof ChartOverlay && o2 instanceof ChartOverlay) {
-					ChartOverlay co1 = (ChartOverlay) o1;
-					ChartOverlay co2 = (ChartOverlay) o2;
-					return Integer.compare(co1.getLayerPosition(), co2.getLayerPosition());
-				}else{
-					return 0;
-				}
-			}
-		});
+            @Override
+            public int compare(Overlay o1, Overlay o2) {
+                if (o1 instanceof ChartOverlay && o2 instanceof ChartOverlay) {
+                    ChartOverlay co1 = (ChartOverlay) o1;
+                    ChartOverlay co2 = (ChartOverlay) o2;
+                    return Integer.compare(co1.getLayerPosition(), co2.getLayerPosition());
+                } else {
+                    return 0;
+                }
+            }
+        });
         for (Overlay overlay : overlays) {
             if (!(overlay instanceof SelectionOverlay)) {
                 chartPanel.removeOverlay(overlay);
@@ -696,9 +696,9 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
                 overlay.addChangeListener(chartPanel);
             }
         }
-		//add selection overlay last
-		chartPanel.removeOverlay(selectionOverlay);
-		chartPanel.addOverlay(selectionOverlay);
+        //add selection overlay last
+        chartPanel.removeOverlay(selectionOverlay);
+        chartPanel.addOverlay(selectionOverlay);
     }
 
     @Override

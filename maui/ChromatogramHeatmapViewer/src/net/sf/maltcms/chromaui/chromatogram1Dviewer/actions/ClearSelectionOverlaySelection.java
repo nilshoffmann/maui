@@ -29,13 +29,10 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+import java.util.List;
 import net.sf.maltcms.common.charts.api.selection.IClearable;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
-import org.openide.cookies.InstanceCookie;
-import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
 /**
@@ -43,31 +40,23 @@ import org.openide.util.NbBundle;
  * @author Nils Hoffmann
  */
 @ActionID(
-        category = "OverlayNodeActions/SelectionOverlay",
-        id = "net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.ClearSelection")
+        category = "Chromatogram1DViewer",
+        id = "net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.ClearSelectionOverlaySelection")
 @ActionRegistration(
-        displayName = "#CTL_ClearSelection")
-@NbBundle.Messages("CTL_ClearSelection=Clear")
-public final class ClearSelection implements ActionListener {
+        displayName = "#CTL_ClearSelectionOverlaySelection")
+@NbBundle.Messages("CTL_ClearSelectionOverlaySelection=Clear Selection")
+public final class ClearSelectionOverlaySelection implements ActionListener {
 
-    private final Node context;
+    private final List<IClearable> context;
 
-    public ClearSelection(Node context) {
+    public ClearSelectionOverlaySelection(List<IClearable> context) {
         this.context = context;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        Object obj;
-        try {
-            obj = context.getLookup().lookup(InstanceCookie.class).instanceCreate();
-            if (obj instanceof IClearable) {
-                ((IClearable) obj).clear();
-            }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (ClassNotFoundException ex) {
-            Exceptions.printStackTrace(ex);
+        for (IClearable c : context) {
+            c.clear();
         }
     }
 }

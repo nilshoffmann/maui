@@ -84,7 +84,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     private IVariableFragment scanAcquisitionTimeVariable;
     private ICacheDelegate<Integer, SerializableScan1D> whm;
     private int scans;
-    private int prefetchSize = 10000;
+    private int prefetchSize = 500;
     private boolean initialized = false;
     private AtomicBoolean loading = new AtomicBoolean(false);
     private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(2);
@@ -99,6 +99,10 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
         this.parent = e;
         String id = e.getUri().toString() + "-1D";
         whm = CacheFactory.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this, 10, 20);
+    }
+    
+    public void setPrefetchSize(int numberOfScansToLoad) {
+        this.prefetchSize = numberOfScansToLoad;
     }
 
     private void init() {

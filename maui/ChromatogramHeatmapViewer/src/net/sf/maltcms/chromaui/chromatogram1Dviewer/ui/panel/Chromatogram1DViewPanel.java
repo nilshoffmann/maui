@@ -30,12 +30,17 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.panel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Action;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
@@ -51,6 +56,7 @@ import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandle
 import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ContextAwareChartPanel;
+import org.jfree.chart.IActionProvider;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
@@ -61,25 +67,56 @@ import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.ProxyLookup;
 
-/**
- *
- * @author nilshoffmann
- */
+
 public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
-        Lookup.Provider, AxisChangeListener {
+        Lookup.Provider, AxisChangeListener, KeyListener {
 
     private XYPlot plot;
-    private ChartPanel chartPanel;
+    private final ChartPanel chartPanel;
     private DomainMarkerKeyListener dmkl;
-    private InstanceContent content;
-    private Lookup lookup;
+    private final InstanceContent content;
+    private final Lookup lookup;
     private JFreeChart chart;
     private ChromatogramViewViewport viewport;
     private SelectionOverlay selectionOverlay;
     private InstanceContentSelectionHandler selectionHandler;
     private XYMouseSelectionHandler<IScan> mouseSelectionHandler;
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.isShiftDown()) {
+            selectionHandler.setMode(InstanceContentSelectionHandler.Mode.ON_HOVER);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        selectionHandler.setMode(InstanceContentSelectionHandler.Mode.ON_CLICK);
+    }
+
+    private class ActionProvider implements IActionProvider {
+
+        @Override
+        public Action[] getActions() {
+            Logger.getLogger(ActionProvider.class.getName()).log(Level.INFO, "Retrieved actions {0}", Utilities.actionsForPath("Actions/Chromatogram1DViewer"));
+            return Utilities.actionsForPath("Actions/Chromatogram1DViewer").toArray(new Action[0]);
+        }
+
+        @Override
+        public Lookup getLookup() {
+            return new ProxyLookup(lookup);
+        }
+
+    }
 
     /**
      * Creates new form Chromatogram1DViewPanel
@@ -89,7 +126,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
         this.content = topComponentInstanceContent;
         this.lookup = tcLookup;
         chart = new JFreeChart(new XYPlot());
-        chartPanel = new ContextAwareChartPanel(chart, true, true, true, true, true);
+        ContextAwareChartPanel chartPanel = new ContextAwareChartPanel(chart, true, true, true, true, true);
         Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
         chartPanel.setCursor(crosshairCursor);
         chartPanel.setInitialDelay(100);
@@ -97,6 +134,9 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
         chartPanel.setReshowDelay(0);
         chartPanel.setFocusable(true);
         chartPanel.setMouseWheelEnabled(true);
+        chartPanel.setPopupMenuActionProvider(new ActionProvider());
+        addKeyListener(this);
+        this.chartPanel = chartPanel;
         add(chartPanel, BorderLayout.CENTER);
         content.add(chartPanel);
     }

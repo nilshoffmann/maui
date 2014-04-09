@@ -45,42 +45,42 @@ import org.openide.util.lookup.ProxyLookup;
  */
 public class PeakGroupDescriptorChildFactory extends ChildFactory<IPeakAnnotationDescriptor> {
 
-	private final IPeakGroupDescriptor container;
-	private final Lookup lookup;
-	private boolean hideChromatogramDescriptors = false;
+    private final IPeakGroupDescriptor container;
+    private final Lookup lookup;
+    private boolean hideChromatogramDescriptors = false;
 
-	public PeakGroupDescriptorChildFactory(Lookup lookup, IPeakGroupDescriptor container, boolean hideChromatogramDescriptors) {
-		this.lookup = lookup;
-		this.container = container;
-		this.hideChromatogramDescriptors = hideChromatogramDescriptors;
-	}
+    public PeakGroupDescriptorChildFactory(Lookup lookup, IPeakGroupDescriptor container, boolean hideChromatogramDescriptors) {
+        this.lookup = lookup;
+        this.container = container;
+        this.hideChromatogramDescriptors = hideChromatogramDescriptors;
+    }
 
-	@Override
-	protected boolean createKeys(List<IPeakAnnotationDescriptor> list) {
-		for (IPeakAnnotationDescriptor ipad : container.getPeakAnnotationDescriptors()) {
-			if(Thread.interrupted()) {
-				return true;
-			}
-			list.add(ipad);
-		}
-		return true;
-	}
+    @Override
+    protected boolean createKeys(List<IPeakAnnotationDescriptor> list) {
+        for (IPeakAnnotationDescriptor ipad : container.getPeakAnnotationDescriptors()) {
+            if (Thread.interrupted()) {
+                return true;
+            }
+            list.add(ipad);
+        }
+        return true;
+    }
 
-	@Override
-	protected Node createNodeForKey(IPeakAnnotationDescriptor key) {
-		if (hideChromatogramDescriptors) {
-			return Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lookup, Lookups.fixed(key.getChromatogramDescriptor())));
-		} else {
-			IChromatogramDescriptor chromDesc = key.getChromatogramDescriptor();
-			Children.Array ca = new Children.Array();
-			ca.add(new Node[]{Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lookup, Lookups.fixed(key.getChromatogramDescriptor())))});
-			Node chromDescrNode = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(chromDesc, ca, new ProxyLookup(lookup));
-			return chromDescrNode;
-		}
-	}
+    @Override
+    protected Node createNodeForKey(IPeakAnnotationDescriptor key) {
+        if (hideChromatogramDescriptors) {
+            return Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lookup, Lookups.fixed(key.getChromatogramDescriptor())));
+        } else {
+            IChromatogramDescriptor chromDesc = key.getChromatogramDescriptor();
+            Children.Array ca = new Children.Array();
+            ca.add(new Node[]{Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Children.LEAF, new ProxyLookup(lookup, Lookups.fixed(key.getChromatogramDescriptor())))});
+            Node chromDescrNode = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(chromDesc, ca, new ProxyLookup(lookup));
+            return chromDescrNode;
+        }
+    }
 
-	public void setHideChromatogramDescriptors(boolean hideChromatogramDescriptors) {
-		this.hideChromatogramDescriptors = hideChromatogramDescriptors;
-		refresh(true);
-	}
+    public void setHideChromatogramDescriptors(boolean hideChromatogramDescriptors) {
+        this.hideChromatogramDescriptors = hideChromatogramDescriptors;
+        refresh(true);
+    }
 }
