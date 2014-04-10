@@ -38,8 +38,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,8 +48,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import maltcms.datastructures.ms.IChromatogram;
-import maltcms.datastructures.ms.IChromatogram2D;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
+import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseDouble;
+import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseDoubleArray;
+import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseIntegrationStartEnd;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
@@ -463,46 +463,6 @@ public class Utils {
 		return fragment;
 	}
 
-	public static double[] parseDoubleArray(String fieldName, TableRow row,
-			String elementSeparator) {
-		if (row.get(fieldName).contains(elementSeparator)) {
-			String[] values = row.get(fieldName).split(elementSeparator);
-			double[] v = new double[values.length];
-			for (int i = 0; i < v.length; i++) {
-				v[i] = parseDouble(values[i]);
-			}
-			return v;
-		}
-		return new double[]{parseDouble(row.get(fieldName))};
-	}
-
-	public static double parseDouble(String fieldName, TableRow tr) {
-		System.out.println("Retrieving " + fieldName);
-		String value = tr.get(fieldName);
-		System.out.println("Value: " + value);
-		return parseDouble(value);
-	}
-
-	public static double parseDouble(String s) {
-		return parseDouble(s, defaultLocale);
-	}
-
-	public static double parseDouble(String s, Locale locale) {
-		if (s == null || s.isEmpty()) {
-			return Double.NaN;
-		}
-		try {
-			return NumberFormat.getNumberInstance(locale).parse(s).doubleValue();
-		} catch (ParseException ex) {
-			try {
-				return NumberFormat.getNumberInstance(Locale.US).parse(s).
-						doubleValue();
-			} catch (ParseException ex1) {
-				return Double.NaN;
-			}
-		}
-	}
-
 	public static String key(IPeakAnnotationDescriptor ipad) {
 		if (ipad instanceof IPeak2DAnnotationDescriptor) {
 			IPeak2DAnnotationDescriptor descriptor = (IPeak2DAnnotationDescriptor) ipad;
@@ -520,17 +480,6 @@ public class Utils {
 				//                append(ipad.getApexTime()).
 				toString();
 		return key;
-	}
-
-	public static double parseIntegrationStartEnd(String s) {
-		if (s == null || s.isEmpty()) {
-			return Double.NaN;
-		}
-		if (s.contains(",")) {
-			String[] tokens = s.split(",");
-			return parseDouble(tokens[0])+parseDouble(tokens[1]);
-		}
-		return parseDouble(s);
 	}
 
 	public static LinkedHashMap<String, File> mapReports(LinkedHashMap<String, IChromatogramDescriptor> chromatograms, File[] files) {
