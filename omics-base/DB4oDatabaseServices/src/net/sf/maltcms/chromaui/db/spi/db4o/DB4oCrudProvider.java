@@ -98,60 +98,66 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
     public synchronized final void preOpen() {
         boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
         if (updateDatabaseSize) {
-            Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Updating database size for {0}", projectDBLocation.getAbsolutePath());
-            int blockSize = Math.max(1, Math.min(254, Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2));
-            ProgressHandle ph = ProgressHandleFactory.createHandle("Defragmentation of " + projectDBLocation);
-            ph.start();
-            try {
-                ph.progress("Defragmenting database file");
-                EmbeddedObjectContainer c = null;
+            NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Database file resize for " + projectDBLocation.getAbsolutePath() + " requested!\nContinue with resize?\nSelecting 'No' will cancel all other attempts!", NotifyDescriptor.YES_NO_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
+            Object obj = DialogDisplayer.getDefault().notify(ndd);
+            if (obj.equals(NotifyDescriptor.OK_OPTION)) {
+                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Updating database size for {0}", projectDBLocation.getAbsolutePath());
+                int blockSize = Math.max(1, Math.min(254, Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2));
+                ProgressHandle ph = ProgressHandleFactory.createHandle("Defragmentation of " + projectDBLocation);
+                ph.start();
                 try {
-                    c = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath());
-                    long currentSizeBytes = c.ext().systemInfo().totalSize();
-                    long targetSizeBytes = toBytes(blockSize);
-                    Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.FINE, "Current size: {0} GBytes", toGBytes(currentSizeBytes));
-                    Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.FINE, "Requested size: {0} GBytes", toGBytes(targetSizeBytes));
-                    if (targetSizeBytes < currentSizeBytes) {
-                        NotifyDescriptor nd = new NotifyDescriptor.Message("Can not shrink database to requested size! Required: " + toGBytes(currentSizeBytes) + " requested: " + targetSizeBytes, NotifyDescriptor.WARNING_MESSAGE);
-                        DialogDisplayer.getDefault().notify(nd);
-                        return;
-                    }
-                } catch (Exception e) {
-                    Exceptions.printStackTrace(e);
-                } finally {
-                    if (c != null) {
-                        try {
-                            c.close();
-                        } catch (Db4oIOException dex) {
-                            Exceptions.printStackTrace(dex);
+                    ph.progress("Defragmenting database file");
+                    EmbeddedObjectContainer c = null;
+                    try {
+                        c = Db4oEmbedded.openFile(configure(), projectDBLocation.getAbsolutePath());
+                        long currentSizeBytes = c.ext().systemInfo().totalSize();
+                        long targetSizeBytes = toBytes(blockSize);
+                        Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.FINE, "Current size: {0} GBytes", toGBytes(currentSizeBytes));
+                        Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.FINE, "Requested size: {0} GBytes", toGBytes(targetSizeBytes));
+                        if (targetSizeBytes < currentSizeBytes) {
+                            NotifyDescriptor nd = new NotifyDescriptor.Message("Can not shrink database to requested size! Required: " + toGBytes(currentSizeBytes) + " requested: " + targetSizeBytes, NotifyDescriptor.WARNING_MESSAGE);
+                            DialogDisplayer.getDefault().notify(nd);
+                            return;
+                        }
+                    } catch (Exception e) {
+                        Exceptions.printStackTrace(e);
+                    } finally {
+                        if (c != null) {
+                            try {
+                                c.close();
+                            } catch (Db4oIOException dex) {
+                                Exceptions.printStackTrace(dex);
+                            }
                         }
                     }
+                    DefragmentConfig config = new DefragmentConfig(projectDBLocation.getAbsolutePath());
+                    config.objectCommitFrequency(10000);
+                    config.forceBackupDelete(true);
+                    EmbeddedConfiguration configuration = configure();
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).info("Setting maximum database size to " + (blockSize * 2) + " GBytes");
+                    configuration.file().blockSize(blockSize);
+                    config.db4oConfig(configuration);
+                    Defragment.defrag(config);
+                } catch (IOException ex) {
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).severe("Defragmentation failed!");
+                    Exceptions.printStackTrace(ex);
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).info("Restoring database from backup!");
+                    //restore backup file
+                    File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
+                    ph.progress("Restoring database from backup file");
+                    try {
+                        Files.copy(backupFile.toPath(), projectDBLocation.toPath());
+                    } catch (IOException ex1) {
+                        Exceptions.printStackTrace(ex1);
+                    }
+                } finally {
+                    ph.progress("Deleting backup file");
+                    File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
+                    backupFile.delete();
+                    ph.finish();
                 }
-                DefragmentConfig config = new DefragmentConfig(projectDBLocation.getAbsolutePath());
-                config.objectCommitFrequency(10000);
-                config.forceBackupDelete(true);
-                EmbeddedConfiguration configuration = configure();
-                Logger.getLogger(DB4oCrudProvider.class.getName()).info("Setting maximum database size to " + (blockSize * 2) + " GBytes");
-                configuration.file().blockSize(blockSize);
-                config.db4oConfig(configuration);
-                Defragment.defrag(config);
-            } catch (IOException ex) {
-                Logger.getLogger(DB4oCrudProvider.class.getName()).severe("Defragmentation failed!");
-                Exceptions.printStackTrace(ex);
-                Logger.getLogger(DB4oCrudProvider.class.getName()).info("Restoring database from backup!");
-                //restore backup file
-                File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
-                ph.progress("Restoring database from backup file");
-                try {
-                    Files.copy(backupFile.toPath(), projectDBLocation.toPath());
-                } catch (IOException ex1) {
-                    Exceptions.printStackTrace(ex1);
-                }
-            } finally {
-                ph.progress("Deleting backup file");
-                File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
-                backupFile.delete();
-                ph.finish();
+            }else if(obj.equals(NotifyDescriptor.NO_OPTION)) {
+                NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", false);
             }
         }
     }
