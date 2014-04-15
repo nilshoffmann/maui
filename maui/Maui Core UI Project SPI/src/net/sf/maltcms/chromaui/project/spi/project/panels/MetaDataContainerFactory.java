@@ -26,7 +26,6 @@
  * for details.
  */
 package net.sf.maltcms.chromaui.project.spi.project.panels;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -34,7 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
@@ -45,7 +43,7 @@ import org.openide.util.WeakListeners;
  *
  * @author hoffmann
  */
-class MetaDataContainerFactory extends ChildFactory<IMetaDataDescriptor> implements
+class MetaDataContainerFactory extends ChildFactory<MetaDataContainer> implements
     PropertyChangeListener {
 
     private Lookup lookup;
@@ -57,21 +55,21 @@ class MetaDataContainerFactory extends ChildFactory<IMetaDataDescriptor> impleme
     }
 
     @Override
-    protected boolean createKeys(List<IMetaDataDescriptor> list) {
+    protected boolean createKeys(List<MetaDataContainer> list) {
         IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
         Collection<MetaDataContainer> metaData = project.getContainer(MetaDataContainer.class);
         if (metaData.isEmpty()) {
             return true;
         } else {
-            list.addAll(metaData.iterator().next().getMembers());
+            list.addAll(metaData);
             Collections.sort(list);
             return true;
         }
     }
 
     @Override
-    protected Node createNodeForKey(IMetaDataDescriptor key) {
-        return lookup.lookup(INodeFactory.class).createDescriptorNode(key, lookup);
+    protected Node createNodeForKey(MetaDataContainer key) {
+        return Lookup.getDefault().lookup(INodeFactory.class).createContainerNode(key, lookup);
     }
 
     @Override

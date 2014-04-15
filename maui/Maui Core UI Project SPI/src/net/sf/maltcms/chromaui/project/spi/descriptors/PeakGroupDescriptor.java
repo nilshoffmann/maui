@@ -71,9 +71,6 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     private transient float groupCoverage = 0.0f;
 
     public PeakGroupDescriptor() {
-//        getPropertyChangeSupport().addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, this);
-//        getPropertyChangeSupport().addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKGROUPCONTAINER, this);
-//        getPropertyChangeSupport().firePropertyChange(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, null, getPeakAnnotationDescriptors());
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             pad.addPropertyChangeListener(WeakListeners.propertyChange(this, pad));
         }

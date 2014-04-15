@@ -66,7 +66,7 @@ public final class ChromatogramNodePopupAction extends SystemAction implements P
     public HelpCtx getHelpCtx() {
         return HelpCtx.DEFAULT_HELP;
         // If you will provide context help then use:
-        // return new HelpCtx(RSMEditorActionAction.class);
+        // return new HelpCtx(ChromatogramNodePopupAction.class);
     }
 
     @Override
@@ -88,21 +88,4 @@ public final class ChromatogramNodePopupAction extends SystemAction implements P
         }
         return this;
     }
-
-//    private final List<IChromatogramDescriptor> chromatograms;
-//    
-//    public ChromatogramNodePopupAction(List<IChromatogramDescriptor> chromatograms) {
-//        this.chromatograms = chromatograms;
-//        setActions(Utilities.actionsForPath("Actions/ContainerNodeActions/ChromatogramNode/Open").toArray(new Action[0]));
-//    }
-//    
-//    @Override
-//    public Action createContextAwareInstance(Lookup lkp) {
-//        if (!lkp.lookupAll(IChromatogramDescriptor.class).isEmpty()) {
-//            setEnabled(true);
-//        }else{
-//            setEnabled(false);
-//        }
-//        return super.createContextAwareInstance(lkp);
-//    }
 }

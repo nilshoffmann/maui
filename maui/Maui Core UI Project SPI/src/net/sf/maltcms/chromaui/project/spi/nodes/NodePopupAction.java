@@ -102,7 +102,7 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
             this.context = context;
             p = context.lookup(Project.class);
             this.name = name;
-            putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, false);
+            putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, true);
             // TODO menu item label with optional mnemonics
             if (icon != null) {
                 putValue(SMALL_ICON, icon);

@@ -74,6 +74,7 @@ import org.openide.util.Exceptions;
 import ucar.ma2.ArrayDouble;
 
 /**
+ * Provides utility methods to create a new project.
  *
  * @author nilshoffmann
  */

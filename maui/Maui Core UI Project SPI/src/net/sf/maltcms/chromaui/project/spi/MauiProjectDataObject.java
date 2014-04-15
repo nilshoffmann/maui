@@ -51,7 +51,15 @@ public class MauiProjectDataObject extends MultiDataObject {
     protected Node createNodeDelegate() {
         try {
             IChromAUIProject p = (IChromAUIProject) ProjectManager.getDefault().findProject(this.getPrimaryFile().getParent());
-            return p.getLookup().lookup(ChromAUIProjectLogicalView.class).createLogicalView();
+            if(p==null) {
+                return Node.EMPTY;
+            }
+            ChromAUIProjectLogicalView logicalView = p.getLookup().lookup(ChromAUIProjectLogicalView.class);
+            if (logicalView != null) {
+                return logicalView.createLogicalView();
+            } else {
+                return Node.EMPTY;
+            }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } catch (NullPointerException npe) {

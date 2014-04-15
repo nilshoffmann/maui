@@ -54,12 +54,6 @@ public class NodeFactory implements INodeFactory {
     public Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup) {
         DescriptorNode an;
         try {
-            //causes a stack overflow error
-//			if (key instanceof PeakGroupDescriptor) {
-//				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-//				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
-//				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-//			}
             IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
             key.setProject(project);
             an = new DescriptorNode(key, children, lookup);
@@ -74,12 +68,6 @@ public class NodeFactory implements INodeFactory {
     public Node createDescriptorNode(IBasicDescriptor key, Lookup lookup) {
         DescriptorNode an;
         try {
-            //causes a stack overflow error
-//			if (key instanceof PeakGroupDescriptor) {
-//				key.addPropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-//				key.firePropertyChange(new PropertyChangeEvent(key, PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, false, true));
-//				key.removePropertyChangeListener(PeakGroupDescriptor.PROP_PEAKANNOTATIONDESCRIPTORS, ((PeakGroupDescriptor) key));
-//			}
             IChromAUIProject project = lookup.lookup(IChromAUIProject.class);
             key.setProject(project);
             an = new DescriptorNode(key, Children.LEAF, lookup);
@@ -143,6 +131,9 @@ public class NodeFactory implements INodeFactory {
     public Action createMenuItem(String name, Action[] actions) {
         NodePopupAction pnia = new NodePopupAction(name);
         pnia.setActions(actions);
+        if(actions.length==0) {
+            pnia.setEnabled(false);
+        }
         return pnia;
     }
 

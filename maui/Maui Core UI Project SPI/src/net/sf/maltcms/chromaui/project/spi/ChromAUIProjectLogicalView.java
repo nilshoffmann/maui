@@ -36,9 +36,9 @@ import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 
 /**
- * Implements @see{LogicalViewProvider} for @see{ChromaProject}.
- * Creates a virtual view, which is created from the bound xml file
- * in ChromaProject.
+ * Implements {@link LogicalViewProvider} for {@link IChromAUIProject}.
+ * Creates a virtual view, which is created from the database file
+ * referenced by IChromAUIProject.
  *
  * @author Nils Hoffmann
  */
@@ -55,9 +55,12 @@ public class ChromAUIProjectLogicalView implements LogicalViewProvider {
     }
 
     /**
-     * Create a logical view, based on @see{ProjectNode}.
+     * Create a logical view, based on {@link ProjectNode}.
      * Automatically adds subnodes/children.
-     * @return an instance of @see{ProjectNode} if @see{DataObject} exists, otherwise returns an empty @see{AbstractNode} instance.
+     * 
+     * @return an instance of {@code ProjectNode} if {@code DataObject} exists, otherwise returns an empty {@code AbstractNode} instance.
+     * @see ProjectNode
+     * @see DataObject
      */
     @Override
     public org.openide.nodes.Node createLogicalView() {

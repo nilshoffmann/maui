@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.project.spi.runnables;
 
-import java.io.File;
 import java.util.*;
 import lombok.Data;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -75,7 +74,7 @@ public class DeletePeakAnnotationsRunnable extends AProgressAwareRunnable {
                 }
                 progressHandle.progress("Removing Peak Containers for " + tools.size() + " Tools", 3);
                 project.removeContainer(peakContainers.toArray(new Peak1DContainer[peakContainers.size()]));
-				project.removeDescriptor(selectedTools.toArray(new IToolDescriptor[selectedTools.size()]));
+                project.removeDescriptor(selectedTools.toArray(new IToolDescriptor[selectedTools.size()]));
                 project.refresh();
 
             }

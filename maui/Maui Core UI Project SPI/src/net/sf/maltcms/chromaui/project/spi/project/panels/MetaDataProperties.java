@@ -26,7 +26,6 @@
  * for details.
  */
 package net.sf.maltcms.chromaui.project.spi.project.panels;
-
 import javax.swing.JComponent;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer.Category;

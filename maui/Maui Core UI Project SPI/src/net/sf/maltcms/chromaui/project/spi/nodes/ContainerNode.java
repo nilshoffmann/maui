@@ -65,14 +65,12 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
     public ContainerNode(IContainer<? extends IBasicDescriptor> bean, Lookup lkp) throws IntrospectionException {
         super(bean, Children.create(new ContainerNodeFactory((IContainer<?>) bean, lkp), true),
                 new ProxyLookup(lkp, Lookups.singleton(bean)));
-//        System.out.println("Creating container node for " + bean.getClass());
         bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
     }
 
     public ContainerNode(IContainer<? extends IBasicDescriptor> bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children,
                 new ProxyLookup(lkp, Lookups.singleton(bean)));
-//        System.out.println("Creating container node for " + bean.getClass());
         bean.addPropertyChangeListener(WeakListeners.propertyChange(this, bean));
     }
 

@@ -31,6 +31,10 @@ import java.awt.BorderLayout;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer.Category;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
@@ -38,37 +42,42 @@ import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 
-/**
- *
- * @author hoffmann
- */
-public class MetaDataPropertiesPanel extends javax.swing.JPanel implements ExplorerManager.Provider, Lookup.Provider {
+public class MetaDataPropertiesPanel extends javax.swing.JPanel implements ExplorerManager.Provider, Lookup.Provider, LookupListener {
 
     private final Lookup lookup;
     private final Category category;
     private final ExplorerManager manager;
+    private JPanel selectionContentPanel;
+    private Lookup.Result<MetaDataContainer> containerResult;
+    private BeanTreeView view;
 
     public MetaDataPropertiesPanel(Category category, Lookup lkp) {
         initComponents();
         this.category = category;
         this.manager = new ExplorerManager();
-        add(new BeanTreeView(), BorderLayout.CENTER);
+        selectionContentPanel = new JPanel();
+        view = new BeanTreeView();
+        JSplitPane jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(view), selectionContentPanel);
+        add(jsp, BorderLayout.CENTER);
+//        add(new JPanel(), BorderLayout.CENTER);
         this.manager.setRootContext(new AbstractNode(Children.create(new MetaDataContainerFactory(lkp), true)) {
 
             @Override
             public String getName() {
-                return "projectContainers";
+                return "metaDataContainers";
             }
 
             @Override
             public String getDisplayName() {
-                return "Project Containers"; //To change body of generated methods, choose Tools | Templates.
+                return "Meta Data Containers"; //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
             public String getShortDescription() {
-                return "Shows a list of all containers registered in the project database."; //To change body of generated methods, choose Tools | Templates.
+                return "Shows a list of all meta data containers registered in the project database."; //To change body of generated methods, choose Tools | Templates.
             }
         });
         ActionMap map = getActionMap();
@@ -82,6 +91,7 @@ public class MetaDataPropertiesPanel extends javax.swing.JPanel implements Explo
 //        keys.put(KeyStroke.getKeyStroke("control V"), DefaultEditorKit.pasteAction);
 //        keys.put(KeyStroke.getKeyStroke("DELETE"), "delete");
         lookup = ExplorerUtils.createLookup(manager, map);
+        containerResult = lookup.lookupResult(MetaDataContainer.class);
     }
 
     /**
@@ -114,11 +124,22 @@ public class MetaDataPropertiesPanel extends javax.swing.JPanel implements Explo
     public void addNotify() {
         super.addNotify();
         ExplorerUtils.activateActions(manager, true);
+        containerResult.addLookupListener(this);
     }
 
     @Override
     public void removeNotify() {
+        containerResult.removeLookupListener(this);
         ExplorerUtils.activateActions(manager, false);
         super.removeNotify();
+    }
+
+    @Override
+    public void resultChanged(LookupEvent le) {
+        selectionContentPanel.removeAll();
+        for (MetaDataContainer container : containerResult.allInstances()) {
+            selectionContentPanel.add(container.createEditor(), BorderLayout.CENTER);
+            break;
+        }
     }
 }

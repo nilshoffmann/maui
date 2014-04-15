@@ -36,10 +36,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
+import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
@@ -71,10 +73,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
         PropertyChangeListener {
 
     private final IChromAUIProject cp;
-    private boolean dbInitialized = false;
 
     public ChromaUIProjectNodesFactory(IChromAUIProject cp) {
-//        System.out.println("Created ChromaUIProjectNodes Factory");
         this.cp = cp;
         this.cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
         FileChangeListener fcl = (FileChangeListener)WeakListeners.create(FileChangeListener.class, new FileChangeListener() {
@@ -162,6 +162,8 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                         ic.setPrecedence(500000);
                     } else if (ic instanceof StatisticsContainer) {
                         ic.setPrecedence(400000);
+                    } else if (ic instanceof MetaDataContainer) {
+                        ic.setPrecedence(600000);
                     }
                 }
             }
@@ -236,10 +238,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
         } else if (key instanceof FileObject) {
             try {
                 DataObject dobj = DataObject.find((FileObject) key);
-//                Set<FileObject> children = dobj.files();
-//                dobj.addPropertyChangeListener(this);
                 Node n = dobj.getNodeDelegate();
-//                DataFolder.FolderNode fn = new DataFolder.FolderNode();
                 FilterNode fn = new FilterNode(n, new FilterNode.Children(n),
                         new ProxyLookup(n.getLookup(), cp.getLookup()));
                 fn.addPropertyChangeListener(WeakListeners.propertyChange(this, fn));
@@ -275,7 +274,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        System.out.println("Received prop change event for property " + pce.getPropertyName() + ": " + pce.getOldValue() + "=>" + pce.getNewValue() + " from " + pce.getSource().getClass());
+        Logger.getLogger(ChromaUIProjectNodesFactory.class.getName()).log(Level.FINE, "Received prop change event for property {0}: {1}=>{2} from {3}", new Object[]{pce.getPropertyName(), pce.getOldValue(), pce.getNewValue(), pce.getSource().getClass()});
         refresh(false);
     }
 }

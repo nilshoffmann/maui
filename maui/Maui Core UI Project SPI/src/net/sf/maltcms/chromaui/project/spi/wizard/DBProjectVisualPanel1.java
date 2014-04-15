@@ -49,7 +49,6 @@ import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.filesystems.FileChooserBuilder;
 import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataObject;
 import org.openide.util.NbBundle;
 
 public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
@@ -147,6 +146,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel1.class, "DBProjectVisualPanel1.jLabel2.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(copyFiles, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel1.class, "DBProjectVisualPanel1.copyFiles.text")); // NOI18N
+        copyFiles.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel1.class, "DBProjectVisualPanel1.copyFiles.toolTipText")); // NOI18N
         copyFiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyFilesActionPerformed(evt);
@@ -251,8 +251,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                 } else {
                     String ext = StringTools.getFileExtension(file.getName().toLowerCase());
                     int idx = Arrays.binarySearch(fileExtensions, ext);
-                    if(idx>=0) {
-                        System.out.println("Found matching file extension at index: "+idx+"="+fileExtensions[idx]);
+                    if (idx >= 0) {
+                        System.out.println("Found matching file extension at index: " + idx + "=" + fileExtensions[idx]);
                         return true;
                     }
                     return false;
@@ -271,12 +271,12 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
             for (File f : files) {
                 if (f.isDirectory()) {
                     Collection<File> l = FileUtils.listFiles(f, fileExtensions, true);
-                    for(File file:l) {
-						System.err.println("Adding file below selected directory: "+file);
+                    for (File file : l) {
+                        System.err.println("Adding file below selected directory: " + file);
                         getListModel().addElement(file);
                     }
                 } else {
-					System.err.println("Adding selected file: "+f);
+                    System.err.println("Adding selected file: " + f);
                     getListModel().addElement(f);
                 }
             }
@@ -405,7 +405,6 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
 //                    "Output base directory is a file.");
 //            return false;
 //        }
-
         wizardDescriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, "");
         return true;
     }

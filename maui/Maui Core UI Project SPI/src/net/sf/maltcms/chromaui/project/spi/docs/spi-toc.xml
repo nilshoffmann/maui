@@ -29,7 +29,12 @@ for details.
 
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-	<tocitem text="Maui Core UI Project SPI">
-		<tocitem text="About Maui Core UI Project SPI" target="net.sf.maltcms.chromaui.project.spi.about"/>
-	</tocitem>
+    <tocitem text="Maui Metabolomics Project">
+        <tocitem text="About Maui Metabolomics Project" target="net.sf.maltcms.chromaui.project.spi.about"/>
+        <tocitem text="Project Wizard">
+            <tocitem text="Name and Location" target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel1"/>
+            <tocitem text="Sample Groups and Settings" target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel2"/>
+            <tocitem text="Normalization" target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3"/>
+        </tocitem>
+    </tocitem>
 </toc>
