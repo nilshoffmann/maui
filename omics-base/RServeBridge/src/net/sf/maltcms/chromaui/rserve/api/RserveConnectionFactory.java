@@ -100,7 +100,6 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
     }
 
     private void loadPreferences() {
-//		closeConnection();
         unixRlocations = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RBINARY_LOCATIONS, defaultUnixRlocations).split(",");
         rArgs = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RARGS, defaultRargs);
         String rbinary = NbPreferences.forModule(RserveConnectionFactory.class).get(KEY_RBINARY_LOCATION, null);
@@ -113,9 +112,6 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         rserveRemoteHost = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_HOST, "127.0.0.1");
         rserveRemotePort = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_PORT, "6311");
         boolean localServer = Boolean.valueOf(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_LOCAL, "true"));
-//		if (localServer != isLocalServer) {
-//			closeConnection();
-//		}
         isLocalServer = localServer;
         debug = Boolean.valueOf(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_DEBUG, "false"));
         userName = NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_USER, null);
@@ -150,7 +146,6 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
     private void setConnection(RConnection connection) {
         if (this.activeConnection == null) {
             this.activeConnection = connection;
-//			lock = this.activeConnection.lock();
         } else {
             throw new IllegalStateException("Can not reset active connection! Call RserveConnectionFactory.closeConnection() before!");
         }
@@ -173,7 +168,6 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
                 }
             }
             this.activeConnection.close();
-//			this.activeConnection.unlock(lock);
             this.activeConnection = null;
         }
     }

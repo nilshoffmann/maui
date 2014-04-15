@@ -5,8 +5,39 @@
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
             <code-name-base>net.sf.maltcms.chromaui.jmztab</code-name-base>
             <suite-component/>
-            <module-dependencies/>
-            <public-packages/>
+            <module-dependencies>
+                <dependency>
+                    <code-name-base>net.sf.maltcms.maltcms.nbm</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.3.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.slf4j.slf4j.nbm</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.3.1</specification-version>
+                    </run-dependency>
+                </dependency>
+            </module-dependencies>
+            <public-packages>
+                <package>uk.ac.ebi.pride.jmztab.model</package>
+                <package>uk.ac.ebi.pride.jmztab.utils</package>
+                <package>uk.ac.ebi.pride.jmztab.utils.convert</package>
+                <package>uk.ac.ebi.pride.jmztab.utils.errors</package>
+                <package>uk.ac.ebi.pride.jmztab.utils.parser</package>
+            </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/jmztab-modular-util-2.1.6-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-util-2.1.6-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jmztab-modular-model-2.1.6-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-model-2.1.6-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
         </data>
     </configuration>
 </project>
