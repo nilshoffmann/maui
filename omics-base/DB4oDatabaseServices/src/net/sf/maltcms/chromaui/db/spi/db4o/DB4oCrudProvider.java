@@ -97,8 +97,26 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
     @Override
     public synchronized final void preOpen() {
         boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
+        File backupFile = new File(projectDBLocation.getParentFile(), projectDBLocation.getName() + ".backup");
+        if (backupFile.isFile()) {
+            NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Found database backup file at " + backupFile.getAbsolutePath() + "!\nShould I restore the project database from the backup?\nSelecting 'Yes' will restore the database from the backup.\nSelecting 'No' will remove the backup. 'Cancel' will leave the backup untouched (recommended).", "Restore from backup?", NotifyDescriptor.YES_NO_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
+            Object obj = DialogDisplayer.getDefault().notify(ndd);
+            //disable database size update
+            updateDatabaseSize = false;
+            if (obj.equals(NotifyDescriptor.OK_OPTION)) {
+                try {
+                    Files.copy(backupFile.toPath(), projectDBLocation.toPath());
+                } catch (IOException ex1) {
+                    Exceptions.printStackTrace(ex1);
+                }
+            } else if (obj.equals(NotifyDescriptor.CANCEL_OPTION)) {
+                //do nothing
+            } else {//NO OPTION
+                backupFile.delete();
+            }
+        }
         if (updateDatabaseSize) {
-            NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Database file resize for " + projectDBLocation.getAbsolutePath() + " requested!\nContinue with resize?\nSelecting 'No' will cancel all other attempts!", NotifyDescriptor.YES_NO_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
+            NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Database file resize for " + projectDBLocation.getAbsolutePath() + " requested!\nContinue with resize?\nSelecting 'No' will cancel all other attempts!", "Continue with resize?", NotifyDescriptor.YES_NO_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
             Object obj = DialogDisplayer.getDefault().notify(ndd);
             if (obj.equals(NotifyDescriptor.OK_OPTION)) {
                 Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Updating database size for {0}", projectDBLocation.getAbsolutePath());
@@ -143,7 +161,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
                     Exceptions.printStackTrace(ex);
                     Logger.getLogger(DB4oCrudProvider.class.getName()).info("Restoring database from backup!");
                     //restore backup file
-                    File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
+                    backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
                     ph.progress("Restoring database from backup file");
                     try {
                         Files.copy(backupFile.toPath(), projectDBLocation.toPath());
@@ -152,11 +170,11 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
                     }
                 } finally {
                     ph.progress("Deleting backup file");
-                    File backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
+                    backupFile = new File(projectDBLocation.getAbsolutePath(), ".backup");
                     backupFile.delete();
                     ph.finish();
                 }
-            }else if(obj.equals(NotifyDescriptor.NO_OPTION)) {
+            } else if (obj.equals(NotifyDescriptor.NO_OPTION)) {
                 NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", false);
             }
         }
