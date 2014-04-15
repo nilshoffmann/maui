@@ -32,6 +32,7 @@ import com.db4o.config.annotations.Indexed;
 import java.awt.Color;
 import java.awt.Image;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import org.openide.util.ImageUtilities;
 
@@ -39,10 +40,9 @@ import org.openide.util.ImageUtilities;
  *
  * @author Nils Hoffmann
  */
-public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDescriptor> {
+public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDescriptor> implements IColorizableDescriptor {
 
     public final String PROP_CHROMATOGRAM = "chromatogram";
-    public final String PROP_COLOR = "color";
 
     @Indexed
     private IChromatogramDescriptor chromatogram;
@@ -62,16 +62,18 @@ public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDes
 
     private Color color = new Color(255, 255, 255, 0);
 
+    @Override
     public Color getColor() {
         activate(ActivationPurpose.READ);
         return color;
     }
 
+    @Override
     public void setColor(Color color) {
         activate(ActivationPurpose.WRITE);
         Color old = this.color;
         this.color = color;
-        firePropertyChange(PROP_COLOR, old, this.color);
+        firePropertyChange(IColorizableDescriptor.PROP_COLOR, old, this.color);
     }
 
     @Override

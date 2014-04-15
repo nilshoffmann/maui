@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.project.api.container;
 
 import java.awt.Image;
+import javax.swing.JPanel;
 import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
 import org.openide.util.ImageUtilities;
 
@@ -36,12 +37,14 @@ import org.openide.util.ImageUtilities;
  *
  * @author Nils Hoffmann
  */
-public class MetaDataContainer extends ADatabaseBackedContainer<IMetaDataDescriptor> {
+public abstract class MetaDataContainer extends ADatabaseBackedContainer<IMetaDataDescriptor> {
 
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/ProjectMetadata.png");
     }
+    
+    public abstract JPanel createEditor();
 
 }

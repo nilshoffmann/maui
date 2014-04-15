@@ -31,6 +31,7 @@ import com.db4o.activation.ActivationPurpose;
 import java.awt.Color;
 import java.awt.Image;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IColorizableDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
 import org.openide.util.ImageUtilities;
 
@@ -84,6 +85,8 @@ public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogram
 
     @Override
     public void setColor(Color color) {
+        Color old = getSampleGroup().getColor();
         getSampleGroup().setColor(color);
+        firePropertyChange(IColorizableDescriptor.PROP_COLOR, old , color);
     }
 }
