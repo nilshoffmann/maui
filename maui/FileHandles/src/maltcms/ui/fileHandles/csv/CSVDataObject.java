@@ -28,21 +28,96 @@
 package maltcms.ui.fileHandles.csv;
 
 import java.io.IOException;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataNode;
+import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.nodes.Children;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
-import org.openide.nodes.Children;
-import org.openide.util.Lookup;
 import org.openide.text.DataEditorSupport;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 
+@NbBundle.Messages({
+    "LBL_CSV_LOADER=Files of CSV"
+})
+@MIMEResolver.ExtensionRegistration(
+        displayName = "#LBL_CSV_LOADER",
+        mimeType = "text/csv",
+        extension = {"csv", "CSV", "txt", "TXT", "tsv", "TSV"},
+        showInFileChooser = {"CSV, TSV"},
+        position = 300
+)
+@DataObject.Registration(
+        mimeType = "text/csv",
+        iconBase = "maltcms/ui/fileHandles/csv/resources/csvlogo.png",
+        displayName = "#LBL_CSV_LOADER",
+        position = 300
+)
+@ActionReferences({
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
+            position = 900,
+            separatorAfter = 1000
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
+            position = 1100,
+            separatorAfter = 1200
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
+            position = 1300
+    ),
+    @ActionReference(
+            path = "Loaders/text/csv/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400
+    )
+})
 public class CSVDataObject extends MultiDataObject {
 
     public CSVDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
+//        registerEditor("text/csv", true);
         CookieSet cookies = getCookieSet();
         cookies.add((Node.Cookie) DataEditorSupport.create(this, getPrimaryEntry(), cookies));
     }

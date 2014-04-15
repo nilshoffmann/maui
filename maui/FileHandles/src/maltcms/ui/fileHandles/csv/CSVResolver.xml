@@ -34,8 +34,8 @@ for details.
         <ext name="CSV"/>
         <ext name="tsv"/>
         <ext name="TSV"/>
-		<ext name="txt"/>
-		<ext name="TXT"/>
+        <ext name="txt"/>
+        <ext name="TXT"/>
         <resolver mime="text/csv"/>
     </file>
 </MIME-resolver>
