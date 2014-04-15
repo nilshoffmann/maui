@@ -62,7 +62,7 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
     }
 
     @Override
-    public final void open() {
+    public synchronized final void open() {
         authenticate();
         if (eoc == null) {
             try {
@@ -89,7 +89,7 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
     }
 
     @Override
-    public final void postOpen() {
+    public synchronized final void postOpen() {
         if (backupDatabase) {
             backupService = Executors.newSingleThreadScheduledExecutor();
             backupService.scheduleAtFixedRate(new Runnable() {
@@ -107,7 +107,7 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
     }
 
     @Override
-    public final EmbeddedConfiguration configure() {
+    public synchronized final EmbeddedConfiguration configure() {
         PagingMemoryStorage memoryStorage = new PagingMemoryStorage();
         FileStorage fileStorage = new FileStorage();
 

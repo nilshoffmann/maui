@@ -99,7 +99,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
     }
 
     @Override
-    public final void close() {
+    public final synchronized void close() {
         authenticate();
         if (eoc != null) {
             try {
@@ -179,13 +179,13 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
 
     public abstract EmbeddedConfiguration configure();
 
-    public void preOpen() {
+    public synchronized void preOpen() {
     }
 
-    public void postOpen() {
+    public synchronized void postOpen() {
     }
 
-    public void preClose() {
+    public synchronized void preClose() {
         if (backupDatabase && backupService != null) {
             backupService.shutdown();
             try {
@@ -198,6 +198,6 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
         }
     }
 
-    public void postClose() {
+    public synchronized void postClose() {
     }
 }

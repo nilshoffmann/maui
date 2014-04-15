@@ -95,7 +95,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
     }
 
     @Override
-    public final void preOpen() {
+    public synchronized final void preOpen() {
         boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
         if (updateDatabaseSize) {
             Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Updating database size for {0}", projectDBLocation.getAbsolutePath());
@@ -157,7 +157,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
     }
 
     @Override
-    public final void open() {
+    public synchronized final void open() {
         authenticate();
         if (eoc == null) {
             try {
@@ -186,7 +186,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
     }
 
     @Override
-    public final void postOpen() {
+    public synchronized final void postOpen() {
         if (backupDatabase) {
             Logger.getLogger(DB4oCrudProvider.class.getName()).info("Activating automatic scheduled backup of database!");
             backupService = Executors.newSingleThreadScheduledExecutor();
