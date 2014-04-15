@@ -29,18 +29,16 @@ package net.sf.maltcms.chromaui.db.spi.db4o.options;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JComponent;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
-import net.sf.maltcms.chromaui.ui.support.api.Projects;
+import net.sf.maltcms.chromaui.db.spi.db4o.runnables.DatabaseResizeRunnable;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 import org.openide.util.NbPreferences;
-import org.openide.util.RequestProcessor;
 
 @OptionsPanelController.SubRegistration(
         location = "Database",
@@ -63,51 +61,28 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
 
     @Override
     public void applyChanges() {
-        getPanel().store();
-        changed = false;
-        boolean automaticBackups = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false);
-        boolean verboseDiagnostics = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false);
-        boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
-        if (automaticBackups || verboseDiagnostics) {
-            Project[] projects = OpenProjects.getDefault().getOpenProjects();
-            //close all projects
-            OpenProjects.getDefault().close(projects);
-            //restore projects that were initially open
-            OpenProjects.getDefault().open(projects, false, true);
-        } else if (updateDatabaseSize) {
-            if (updateInProgress.compareAndSet(false, true)) {
-                System.out.println("Updating database sizes!");
-                final Project[] projects = OpenProjects.getDefault().getOpenProjects();
-                final Collection<Project> selectedProjects = Projects.getSelectedOpenProjects(Project.class, "Update Database Size", "Select Projects for Size Update");
+        if (!updateInProgress.get()) {
+            getPanel().store();
+            changed = false;
+            boolean automaticBackups = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false);
+            boolean verboseDiagnostics = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false);
+            boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
+            if (automaticBackups || verboseDiagnostics) {
+                Project[] projects = OpenProjects.getDefault().getOpenProjects();
                 //close all projects
                 OpenProjects.getDefault().close(projects);
-                RequestProcessor rp = new RequestProcessor("Database Size Updater", 1);
-                for (final Project p : selectedProjects) {
-                    rp.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            //open selected projects
-                            OpenProjects.getDefault().open(new Project[]{p}, false, false);
-                        }
-                    });
+                //restore projects that were initially open
+                OpenProjects.getDefault().open(projects, false, true);
+            } else if (updateDatabaseSize) {
+                if (updateInProgress.compareAndSet(false, true)) {
+                    DatabaseResizeRunnable drr = new DatabaseResizeRunnable(this);
+                    DatabaseResizeRunnable.createAndRun("Updating database size", drr);
+                } else {
+                    System.err.println("Update already in progress!");
                 }
-                rp.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Finalizing updates");
-                        OpenProjects.getDefault().close(selectedProjects.toArray(new Project[selectedProjects.size()]));
-                        //store that we updated the database size
-                        NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", false);
-                        //restore projects that were initially open
-                        OpenProjects.getDefault().open(projects, false, true);
-                        updateInProgress.set(false);
-                        getPanel().load();
-                        getPanel().store();
-                    }
-                });
-            } else {
-                System.err.println("Update already in progress!");
             }
+        }else{
+            changed();
         }
     }
 
@@ -159,5 +134,9 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
             pcs.firePropertyChange(OptionsPanelController.PROP_CHANGED, false, true);
         }
         pcs.firePropertyChange(OptionsPanelController.PROP_VALID, null, null);
+    }
+
+    public void setUpdating(boolean oldValue, boolean newValue) {
+        updateInProgress.compareAndSet(oldValue, newValue);
     }
 }
