@@ -57,47 +57,47 @@ public class StudyVariableDescriptor extends ABasicDescriptor implements IMzTabD
     }
 
     public Integer getElementId() {
-        return studyVariable.getId();
+        return getStudyVariable().getId();
     }
 
     public void setElementId(Integer id) {
-        studyVariable.setId(id);
+        getStudyVariable().setId(id);
     }
 
     public String getDescription() {
-        return studyVariable.getDescription();
+        return getStudyVariable().getDescription();
     }
 
     public SortedMap<Integer, Assay> getAssayMap() {
-        return studyVariable.getAssayMap();
+        return getStudyVariable().getAssayMap();
     }
 
     public SortedMap<Integer, Sample> getSampleMap() {
-        return studyVariable.getSampleMap();
+        return getStudyVariable().getSampleMap();
     }
 
     public void addAssay(Assay assay) {
-        studyVariable.addAssay(assay);
+        getStudyVariable().addAssay(assay);
     }
 
     public void addSample(Sample sample) {
-        studyVariable.addSample(sample);
+        getStudyVariable().addSample(sample);
     }
 
     public void setDescription(String description) {
-        studyVariable.setDescription(description);
+        getStudyVariable().setDescription(description);
     }
 
     public String toString() {
-        return studyVariable.toString();
+        return getStudyVariable().toString();
     }
 
     public MetadataElement getElement() {
-        return studyVariable.getElement();
+        return getStudyVariable().getElement();
     }
 
     public String getReference() {
-        return studyVariable.getReference();
+        return getStudyVariable().getReference();
     }
 
 }

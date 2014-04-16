@@ -55,48 +55,48 @@ public class AssayQuantificationModDescriptor extends ABasicDescriptor implement
     }
 
     public Integer getElementId() {
-        return assayQuantificationMod.getId();
+        return getAssayQuantificationMod().getId();
     }
 
     public void setElementId(Integer id) {
-        assayQuantificationMod.setId(id);
+        getAssayQuantificationMod().setId(id);
     }
 
     public String getReference() {
-        return assayQuantificationMod.getReference();
+        return getAssayQuantificationMod().getReference();
     }
 
     @Override
     public String toString() {
-        return assayQuantificationMod.toString();
+        return getAssayQuantificationMod().toString();
     }
 
     public Param getParam() {
-        return assayQuantificationMod.getParam();
+        return getAssayQuantificationMod().getParam();
     }
 
     public void setParam(Param param) {
-        assayQuantificationMod.setParam(param);
+        getAssayQuantificationMod().setParam(param);
     }
 
     public String getSite() {
-        return assayQuantificationMod.getSite();
+        return getAssayQuantificationMod().getSite();
     }
 
     public void setSite(String site) {
-        assayQuantificationMod.setSite(site);
+        getAssayQuantificationMod().setSite(site);
     }
 
     public String getPosition() {
-        return assayQuantificationMod.getPosition();
+        return getAssayQuantificationMod().getPosition();
     }
 
     public void setPosition(String position) {
-        assayQuantificationMod.setPosition(position);
+        getAssayQuantificationMod().setPosition(position);
     }
 
     public MetadataElement getElement() {
-        return assayQuantificationMod.getElement();
+        return getAssayQuantificationMod().getElement();
     }
 
 }

@@ -89,17 +89,6 @@ public class ContactDescriptor extends ABasicDescriptor implements IMzTabDescrip
         return getContact().toString();
     }
 
-    public boolean equals(Object o) {
-        return getContact().equals(o);
-    }
-
-    public int hashCode() {
-        if(getContact()==null) {
-            return 0;
-        }
-        return getContact().hashCode();
-    }
-
     public MetadataElement getElement() {
         return getContact().getElement();
     }

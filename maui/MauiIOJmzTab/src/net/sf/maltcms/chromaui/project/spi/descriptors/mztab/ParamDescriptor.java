@@ -38,7 +38,7 @@ public class ParamDescriptor extends ABasicDescriptor implements IMzTabDescripto
 
     private Param param;
 
-    public Param getPram() {
+    public Param getParam() {
         activate(ActivationPurpose.READ);
         return param;
     }
@@ -59,27 +59,19 @@ public class ParamDescriptor extends ABasicDescriptor implements IMzTabDescripto
     }
 
     public String getCvLabel() {
-        return param.getCvLabel();
+        return getParam().getCvLabel();
     }
 
     public String getAccession() {
-        return param.getAccession();
+        return getParam().getAccession();
     }
 
     public String getValue() {
-        return param.getValue();
-    }
-
-    public boolean equals(Object o) {
-        return param.equals(o);
-    }
-
-    public int hashCode() {
-        return param.hashCode();
+        return getParam().getValue();
     }
 
     public String toString() {
-        return param.toString();
+        return getParam().toString();
     }
 
 }

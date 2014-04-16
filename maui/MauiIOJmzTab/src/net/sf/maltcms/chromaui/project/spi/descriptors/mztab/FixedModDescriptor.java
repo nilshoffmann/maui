@@ -55,47 +55,47 @@ public class FixedModDescriptor extends ABasicDescriptor implements IMzTabDescri
     }
 
     public Integer getElementId() {
-        return fixedMod.getId();
+        return getFixedMod().getId();
     }
 
     public void setElementId(Integer id) {
-        fixedMod.setId(id);
+        getFixedMod().setId(id);
     }
 
     public Param getParam() {
-        return fixedMod.getParam();
+        return getFixedMod().getParam();
     }
 
     public void setParam(Param param) {
-        fixedMod.setParam(param);
+        getFixedMod().setParam(param);
     }
 
     public String getSite() {
-        return fixedMod.getSite();
+        return getFixedMod().getSite();
     }
 
     public void setSite(String site) {
-        fixedMod.setSite(site);
+        getFixedMod().setSite(site);
     }
 
     public String getPosition() {
-        return fixedMod.getPosition();
+        return getFixedMod().getPosition();
     }
 
     public void setPosition(String position) {
-        fixedMod.setPosition(position);
+        getFixedMod().setPosition(position);
     }
 
     public String toString() {
-        return fixedMod.toString();
+        return getFixedMod().toString();
     }
 
     public MetadataElement getElement() {
-        return fixedMod.getElement();
+        return getFixedMod().getElement();
     }
 
     public String getReference() {
-        return fixedMod.getReference();
+        return getFixedMod().getReference();
     }
 
 }

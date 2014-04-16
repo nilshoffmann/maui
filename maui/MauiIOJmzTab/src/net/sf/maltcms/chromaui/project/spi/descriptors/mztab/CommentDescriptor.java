@@ -28,67 +28,41 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab;
 
 import com.db4o.activation.ActivationPurpose;
-import java.util.List;
 import net.sf.maltcms.chromaui.jmztab.ui.api.IMzTabDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor;
-import uk.ac.ebi.pride.jmztab.model.MetadataElement;
-import uk.ac.ebi.pride.jmztab.model.Param;
-import uk.ac.ebi.pride.jmztab.model.Software;
+import uk.ac.ebi.pride.jmztab.model.Comment;
 
-public class SoftwareDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
+public class CommentDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
-    public final static String PROP_SOFTWARE = "software";
+    public final static String PROP_COMMENT = "comment";
 
-    private Software software;
+    private Comment comment;
 
-    public Software getSoftware() {
+    public Comment getComment() {
         activate(ActivationPurpose.READ);
-        return software;
+        return comment;
     }
 
-    public void setSoftware(Software element) {
+    public void setComment(Comment element) {
         activate(ActivationPurpose.WRITE);
-        Software old = this.software;
-        this.software = element;
+        Comment old = this.comment;
+        this.comment = element;
         setName(element.getClass().getSimpleName());
         setDisplayName(element.getClass().getSimpleName());
-        getPropertyChangeSupport().firePropertyChange(PROP_SOFTWARE, old, element);
+        getPropertyChangeSupport().firePropertyChange(PROP_COMMENT, old, element);
     }
 
-    public Integer getElementId() {
-        return getSoftware().getId();
+    public String getMsg() {
+        return getComment().getMsg();
     }
 
-    public void setElementId(Integer id) {
-        getSoftware().setId(id);
+    public void setMsg(String msg) {
+        getComment().setMsg(msg);
     }
 
-    public Param getParam() {
-        return getSoftware().getParam();
-    }
-
-    public void setParam(Param param) {
-        getSoftware().setParam(param);
-    }
-
-    public List<String> getSettingList() {
-        return getSoftware().getSettingList();
-    }
-
-    public void addSetting(String setting) {
-        getSoftware().addSetting(setting);
-    }
-
+    @Override
     public String toString() {
-        return getSoftware().toString();
-    }
-
-    public MetadataElement getElement() {
-        return getSoftware().getElement();
-    }
-
-    public String getReference() {
-        return getSoftware().getReference();
+        return getComment().toString();
     }
 
 }

@@ -31,9 +31,10 @@ import com.db4o.constraints.ConstraintViolationException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import net.sf.maltcms.chromaui.jmztab.ui.api.MzTabMetaDataContainer;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ContactDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.ContactContainer;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabMetaDataContainer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
@@ -58,15 +59,17 @@ public final class AddMzTabMetaData implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         Collection<? extends MzTabMetaDataContainer> c = context.getContainer(MzTabMetaDataContainer.class);
-        if(c.size()>=1) {
+        if (c.size() >= 1) {
             throw new ConstraintViolationException("Project must not contain more than one MzTab Meta Data Container!");
-        }else {
+        } else {
             MzTabMetaDataContainer container = new MzTabMetaDataContainer();
+            ContactContainer cc = new ContactContainer();
             ContactDescriptor cd = new ContactDescriptor();
             Contact contact = new Contact(1);
             cd.setContact(contact);
             cd.setName(System.getProperty("user.name"));
-            container.addMembers(cd);
+            cc.addMembers(cd);
+            container.setContacts(cc);
             context.addContainer(container);
         }
     }

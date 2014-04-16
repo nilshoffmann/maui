@@ -35,6 +35,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.jmztab.ui.nodes.MetaDataChildNodeFactory;
 import net.sf.maltcms.chromaui.jmztab.ui.nodes.MetaDataNode;
+import net.sf.maltcms.chromaui.jmztab.ui.util.MzTabFileToModelBuilder;
+import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabFileContainer;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
@@ -43,7 +46,6 @@ import org.openide.awt.ActionReferences;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
-import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
@@ -171,11 +173,11 @@ public class MzTabDataObject extends MultiDataObject {
             final MZTabFileParser parser = new MZTabFileParser(FileUtil.toFile(getPrimaryFile()), System.out);
             MZTabFile file = parser.getMZTabFile();
             if (parser.getErrorList().isEmpty()) {
-                Children c = Children.create(new MzTabChildFactory(getPrimaryFile(), file), true);
-                if (c == null) {
-                    return Node.EMPTY;
-                }
-                return new DataNode(this, c);
+                MzTabFileToModelBuilder mfmb = new MzTabFileToModelBuilder();
+                MzTabFileContainer container = mfmb.createFromFile(file);
+                Children c = Lookup.getDefault().lookup(INodeFactory.class).createContainerChildren(container, Lookup.EMPTY);
+                MzTabDataNode dataNode = new MzTabDataNode(this, c);
+                return dataNode;
             } else {
                 //TODO change to display parsing errors in IDE Log directly
                 Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Errors encountered while parsing file: {0}", getPrimaryFile().getPath());

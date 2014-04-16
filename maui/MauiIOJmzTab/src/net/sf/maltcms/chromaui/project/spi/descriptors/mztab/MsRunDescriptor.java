@@ -56,55 +56,55 @@ public class MsRunDescriptor extends ABasicDescriptor implements IMzTabDescripto
     }
 
     public Integer getElementId() {
-        return msRun.getId();
+        return getMsRun().getId();
     }
 
     public void setElementId(Integer id) {
-        msRun.setId(id);
+        getMsRun().setId(id);
     }
 
     public Param getFormat() {
-        return msRun.getFormat();
+        return getMsRun().getFormat();
     }
 
     public void setFormat(Param format) {
-        msRun.setFormat(format);
+        getMsRun().setFormat(format);
     }
 
     public Param getIdFormat() {
-        return msRun.getIdFormat();
+        return getMsRun().getIdFormat();
     }
 
     public void setIdFormat(Param idFormat) {
-        msRun.setIdFormat(idFormat);
+        getMsRun().setIdFormat(idFormat);
     }
 
     public URL getLocation() {
-        return msRun.getLocation();
+        return getMsRun().getLocation();
     }
 
     public void setLocation(URL location) {
-        msRun.setLocation(location);
+        getMsRun().setLocation(location);
     }
 
     public Param getFragmentationMethod() {
-        return msRun.getFragmentationMethod();
+        return getMsRun().getFragmentationMethod();
     }
 
     public void setFragmentationMethod(Param fragmentationMethod) {
-        msRun.setFragmentationMethod(fragmentationMethod);
+        getMsRun().setFragmentationMethod(fragmentationMethod);
     }
 
     public String toString() {
-        return msRun.toString();
+        return getMsRun().toString();
     }
 
     public MetadataElement getElement() {
-        return msRun.getElement();
+        return getMsRun().getElement();
     }
 
     public String getReference() {
-        return msRun.getReference();
+        return getMsRun().getReference();
     }
 
 }

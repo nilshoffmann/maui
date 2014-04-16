@@ -27,15 +27,15 @@
  */
 package net.sf.maltcms.chromaui.jmztab.ui.project.panels;
 
-import net.sf.maltcms.chromaui.jmztab.ui.api.MzTabMetaDataContainer;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabMetaDataContainer;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.Property;
-import org.netbeans.validation.api.ui.swing.ValidationPanel;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 
 /**
  *
@@ -211,11 +211,11 @@ public class StudyDetailsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_studyNameActionPerformed
 
     private void addContactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addContactActionPerformed
-        ValidationPanel vp = new ValidationPanel();
+//        ValidationPanel vp = new ValidationPanel();
         ContactPanel panel = new ContactPanel();
-        vp.setInnerComponent(panel);
-        panel.setupValidation(vp.getValidationGroup());
-        DialogDescriptor dd = Validation.createDialogDescriptor(vp, panel, "Add Contact");
+//        vp.setInnerComponent(panel);
+//        panel.setupValidation(vp.getValidationGroup());
+        NotifyDescriptor dd = new NotifyDescriptor.Confirmation(panel, "Add Contact", NotifyDescriptor.OK_CANCEL_OPTION);
         Object ret = DialogDisplayer.getDefault().notify(dd);
         if (DialogDescriptor.OK_OPTION.equals(ret)) {
             String cname = panel.getContactName();

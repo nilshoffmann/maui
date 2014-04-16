@@ -25,19 +25,27 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
+package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
-package net.sf.maltcms.chromaui.jmztab.ui.api;
-
-import javax.swing.JPanel;
-import net.sf.maltcms.chromaui.jmztab.ui.project.panels.StudyDetailsPanel;
+import java.util.SortedMap;
 import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.VariableModDescriptor;
+import uk.ac.ebi.pride.jmztab.model.Metadata;
+import uk.ac.ebi.pride.jmztab.model.VariableMod;
 
+public class VariableModContainer extends MetaDataContainer<VariableModDescriptor> {
 
-public class MzTabMetaDataContainer extends MetaDataContainer {
-    
-    @Override
-    public JPanel createEditor() {
-        return new StudyDetailsPanel(this);
+    public static VariableModContainer create(Metadata metadata) {
+        VariableModContainer c = new VariableModContainer();
+        c.setName("variableMods");
+        c.setDisplayName("Variable Mods");
+        SortedMap<Integer, VariableMod> map = metadata.getVariableModMap();
+        for (Integer key : map.keySet()) {
+            VariableModDescriptor d = new VariableModDescriptor();
+            d.setVariableMod(map.get(key));
+            c.addMembers(d);
+        }
+        return c;
     }
-    
+
 }

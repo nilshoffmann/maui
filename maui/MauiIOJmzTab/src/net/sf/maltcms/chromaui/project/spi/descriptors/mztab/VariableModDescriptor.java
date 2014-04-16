@@ -55,47 +55,47 @@ public class VariableModDescriptor extends ABasicDescriptor implements IMzTabDes
     }
 
     public Integer getElementId() {
-        return variableMod.getId();
+        return getVariableMod().getId();
     }
 
     public void setElementId(Integer id) {
-        variableMod.setId(id);
+        getVariableMod().setId(id);
     }
 
     public Param getParam() {
-        return variableMod.getParam();
+        return getVariableMod().getParam();
     }
 
     public void setParam(Param param) {
-        variableMod.setParam(param);
+        getVariableMod().setParam(param);
     }
 
     public String getSite() {
-        return variableMod.getSite();
+        return getVariableMod().getSite();
     }
 
     public void setSite(String site) {
-        variableMod.setSite(site);
+        getVariableMod().setSite(site);
     }
 
     public String getPosition() {
-        return variableMod.getPosition();
+        return getVariableMod().getPosition();
     }
 
     public void setPosition(String position) {
-        variableMod.setPosition(position);
+        getVariableMod().setPosition(position);
     }
 
     public String toString() {
-        return variableMod.toString();
+        return getVariableMod().toString();
     }
 
     public MetadataElement getElement() {
-        return variableMod.getElement();
+        return getVariableMod().getElement();
     }
 
     public String getReference() {
-        return variableMod.getReference();
+        return getVariableMod().getReference();
     }
 
 }

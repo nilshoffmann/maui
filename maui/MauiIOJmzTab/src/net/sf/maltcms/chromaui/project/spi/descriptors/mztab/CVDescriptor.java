@@ -54,56 +54,56 @@ public class CVDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
     }
 
     public Integer getElementId() {
-        return cv.getId();
+        return getCv().getId();
     }
 
     public void setElementId(Integer id) {
-        cv.setId(id);
+        getCv().setId(id);
     }
 
     public String getLabel() {
-        return cv.getLabel();
+        return getCv().getLabel();
     }
 
     public void setLabel(String label) {
-        cv.setLabel(label);
+        getCv().setLabel(label);
     }
 
     public String getFullName() {
-        return cv.getFullName();
+        return getCv().getFullName();
     }
 
     public void setFullName(String fullName) {
-        cv.setFullName(fullName);
+        getCv().setFullName(fullName);
     }
 
     public String getVersion() {
-        return cv.getVersion();
+        return getCv().getVersion();
     }
 
     public void setVersion(String version) {
-        cv.setVersion(version);
+        getCv().setVersion(version);
     }
 
     public String getUrl() {
-        return cv.getUrl();
+        return getCv().getUrl();
     }
 
     public void setUrl(String url) {
-        cv.setUrl(url);
+        getCv().setUrl(url);
     }
 
     @Override
     public String toString() {
-        return cv.toString();
+        return getCv().toString();
     }
 
     public MetadataElement getElement() {
-        return cv.getElement();
+        return getCv().getElement();
     }
 
     public String getReference() {
-        return cv.getReference();
+        return getCv().getReference();
     }
 
 }

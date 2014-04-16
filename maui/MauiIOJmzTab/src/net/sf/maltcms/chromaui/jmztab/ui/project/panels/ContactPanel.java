@@ -28,9 +28,6 @@
 
 package net.sf.maltcms.chromaui.jmztab.ui.project.panels;
 
-import org.netbeans.validation.api.builtin.stringvalidation.StringValidators;
-import org.netbeans.validation.api.ui.ValidationGroup;
-
 /**
  *
  * @author Nils Hoffmann
@@ -47,11 +44,11 @@ public class ContactPanel extends javax.swing.JPanel {
         email.setName("Email");
     }
     
-    public void setupValidation(ValidationGroup validationGroup) {
-        validationGroup.add(name, StringValidators.REQUIRE_NON_EMPTY_STRING);
-        validationGroup.add(affiliation, StringValidators.REQUIRE_NON_EMPTY_STRING);
-        validationGroup.add(email, StringValidators.EMAIL_ADDRESS, StringValidators.REQUIRE_NON_EMPTY_STRING);
-    }
+//    public void setupValidation(ValidationGroup validationGroup) {
+//        validationGroup.add(name, StringValidators.REQUIRE_NON_EMPTY_STRING);
+//        validationGroup.add(affiliation, StringValidators.REQUIRE_NON_EMPTY_STRING);
+//        validationGroup.add(email, StringValidators.EMAIL_ADDRESS, StringValidators.REQUIRE_NON_EMPTY_STRING);
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.

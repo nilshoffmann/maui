@@ -56,43 +56,43 @@ public class PublicationDescriptor extends ABasicDescriptor implements IMzTabDes
     }
 
     public Integer getElementId() {
-        return publication.getId();
+        return getPublication().getId();
     }
 
     public void setElementId(Integer id) {
-        publication.setId(id);
+        getPublication().setId(id);
     }
 
     public void addPublicationItem(PublicationItem item) {
-        publication.addPublicationItem(item);
+        getPublication().addPublicationItem(item);
     }
 
     public void addPublicationItems(Collection<PublicationItem> items) {
-        publication.addPublicationItems(items);
+        getPublication().addPublicationItems(items);
     }
 
     public int size() {
-        return publication.size();
+        return getPublication().size();
     }
 
     public String toString() {
-        return publication.toString();
+        return getPublication().toString();
     }
 
     public boolean equals(Object o) {
-        return publication.equals(o);
+        return getPublication().equals(o);
     }
 
     public int hashCode() {
-        return publication.hashCode();
+        return getPublication().hashCode();
     }
 
     public MetadataElement getElement() {
-        return publication.getElement();
+        return getPublication().getElement();
     }
 
     public String getReference() {
-        return publication.getReference();
+        return getPublication().getReference();
     }
 
 }

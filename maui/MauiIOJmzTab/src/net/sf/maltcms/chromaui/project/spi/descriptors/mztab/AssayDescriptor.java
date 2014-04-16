@@ -60,68 +60,68 @@ public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescripto
     }
     
     public Integer getElementId() {
-        return assay.getId();
+        return getAssay().getId();
     }
     
     public void setElementId(Integer id) {
-        assay.setId(id);
+        getAssay().setId(id);
     }
 
     public Param getQuantificationReagent() {
-        return assay.getQuantificationReagent();
+        return getAssay().getQuantificationReagent();
     }
 
     public Sample getSample() {
-        return assay.getSample();
+        return getAssay().getSample();
     }
 
     public MsRun getMsRun() {
-        return assay.getMsRun();
+        return getAssay().getMsRun();
     }
 
     public SortedMap<Integer, AssayQuantificationMod> getQuantificationModMap() {
-        return assay.getQuantificationModMap();
+        return getAssay().getQuantificationModMap();
     }
 
     public void setQuantificationReagent(Param quantificationReagent) {
-        assay.setQuantificationReagent(quantificationReagent);
+        getAssay().setQuantificationReagent(quantificationReagent);
     }
 
     public void setSample(Sample sample) {
-        assay.setSample(sample);
+        getAssay().setSample(sample);
     }
 
     public void setMsRun(MsRun msRun) {
-        assay.setMsRun(msRun);
+        getAssay().setMsRun(msRun);
     }
 
     public void addQuantificationMod(AssayQuantificationMod mod) {
-        assay.addQuantificationMod(mod);
+        getAssay().addQuantificationMod(mod);
     }
 
     public void addQuantificationModParam(Integer id, Param param) {
-        assay.addQuantificationModParam(id, param);
+        getAssay().addQuantificationModParam(id, param);
     }
 
     public void addQuantificationModSite(Integer id, String site) {
-        assay.addQuantificationModSite(id, site);
+        getAssay().addQuantificationModSite(id, site);
     }
 
     public void addQuantificationModPosition(Integer id, String position) {
-        assay.addQuantificationModPosition(id, position);
+        getAssay().addQuantificationModPosition(id, position);
     }
 
     @Override
     public String toString() {
-        return assay.toString();
+        return getAssay().toString();
     }
 
     public MetadataElement getElement() {
-        return assay.getElement();
+        return getAssay().getElement();
     }
 
     public String getReference() {
-        return assay.getReference();
+        return getAssay().getReference();
     }
     
 }

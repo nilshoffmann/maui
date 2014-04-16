@@ -56,63 +56,55 @@ public class InstrumentDescriptor extends ABasicDescriptor implements IMzTabDesc
     }
 
     public Integer getElementId() {
-        return instrument.getId();
+        return getInstrument().getId();
     }
 
     public void setElementId(Integer id) {
-        instrument.setId(id);
+        getInstrument().setId(id);
     }
 
     public Param getElementName() {
-        return instrument.getName();
+        return getInstrument().getName();
     }
 
     public void setElementName(Param name) {
-        instrument.setName(name);
+        getInstrument().setName(name);
     }
 
     public Param getSource() {
-        return instrument.getSource();
+        return getInstrument().getSource();
     }
 
     public void setSource(Param source) {
-        instrument.setSource(source);
+        getInstrument().setSource(source);
     }
 
     public Param getAnalyzer() {
-        return instrument.getAnalyzer();
+        return getInstrument().getAnalyzer();
     }
 
     public void setAnalyzer(Param analyzer) {
-        instrument.setAnalyzer(analyzer);
+        getInstrument().setAnalyzer(analyzer);
     }
 
     public Param getDetector() {
-        return instrument.getDetector();
+        return getInstrument().getDetector();
     }
 
     public void setDetector(Param detector) {
-        instrument.setDetector(detector);
+        getInstrument().setDetector(detector);
     }
 
     public String toString() {
-        return instrument.toString();
-    }
-
-    public boolean equals(Object o) {
-        return instrument.equals(o);
-    }
-
-    public int hashCode() {
-        return instrument.hashCode();
+        return getInstrument().toString();
     }
 
     public MetadataElement getElement() {
-        return instrument.getElement();
+        return getInstrument().getElement();
     }
 
     public String getReference() {
-        return instrument.getReference();
+        return getInstrument().getReference();
     }
     
 

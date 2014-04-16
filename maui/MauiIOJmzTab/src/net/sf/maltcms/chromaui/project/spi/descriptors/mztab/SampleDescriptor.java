@@ -56,71 +56,71 @@ public class SampleDescriptor extends ABasicDescriptor implements IMzTabDescript
     }
 
     public Integer getElementId() {
-        return sample.getId();
+        return getSample().getId();
     }
 
     public void setElementId(Integer id) {
-        sample.setId(id);
+        getSample().setId(id);
     }
 
     public List<Param> getSpeciesList() {
-        return sample.getSpeciesList();
+        return getSample().getSpeciesList();
     }
 
     public List<Param> getTissueList() {
-        return sample.getTissueList();
+        return getSample().getTissueList();
     }
 
     public List<Param> getCellTypeList() {
-        return sample.getCellTypeList();
+        return getSample().getCellTypeList();
     }
 
     public List<Param> getDiseaseList() {
-        return sample.getDiseaseList();
+        return getSample().getDiseaseList();
     }
 
     public List<Param> getCustomList() {
-        return sample.getCustomList();
+        return getSample().getCustomList();
     }
 
     public void addSpecies(Param param) {
-        sample.addSpecies(param);
+        getSample().addSpecies(param);
     }
 
     public void addTissue(Param param) {
-        sample.addTissue(param);
+        getSample().addTissue(param);
     }
 
     public void addCellType(Param param) {
-        sample.addCellType(param);
+        getSample().addCellType(param);
     }
 
     public void addDisease(Param param) {
-        sample.addDisease(param);
+        getSample().addDisease(param);
     }
 
     public String getDescription() {
-        return sample.getDescription();
+        return getSample().getDescription();
     }
 
     public void setDescription(String description) {
-        sample.setDescription(description);
+        getSample().setDescription(description);
     }
 
     public void addCustom(Param custom) {
-        sample.addCustom(custom);
+        getSample().addCustom(custom);
     }
 
     public String toString() {
-        return sample.toString();
+        return getSample().toString();
     }
 
     public MetadataElement getElement() {
-        return sample.getElement();
+        return getSample().getElement();
     }
 
     public String getReference() {
-        return sample.getReference();
+        return getSample().getReference();
     }
 
 }
