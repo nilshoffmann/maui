@@ -28,7 +28,6 @@
 package net.sf.maltcms.chromaui.project.api.container;
 
 import java.awt.Image;
-import javax.swing.JPanel;
 import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
 import org.openide.util.ImageUtilities;
 
@@ -36,8 +35,9 @@ import org.openide.util.ImageUtilities;
  * MetaData Container to contain arbitrary IMetaDataDescriptor instances.
  *
  * @author Nils Hoffmann
+ * @param <T> The real type of the contained IMetaDataDescriptors.
  */
-public abstract class MetaDataContainer extends ADatabaseBackedContainer<IMetaDataDescriptor> {
+public abstract class MetaDataContainer<T extends IMetaDataDescriptor> extends ADatabaseBackedContainer<IMetaDataDescriptor> implements IMetaDataDescriptor {
 
     @Override
     public Image getIcon(int type) {
@@ -45,6 +45,5 @@ public abstract class MetaDataContainer extends ADatabaseBackedContainer<IMetaDa
                 "net/sf/maltcms/chromaui/project/resources/ProjectMetadata.png");
     }
     
-    public abstract JPanel createEditor();
 
 }

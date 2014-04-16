@@ -39,6 +39,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 /**
  *
  * @author Nils Hoffmann
+ * @param <T>
  */
 public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> extends ADescriptor
         implements IContainer<T> {
