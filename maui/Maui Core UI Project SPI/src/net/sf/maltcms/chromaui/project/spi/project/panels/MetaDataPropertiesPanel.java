@@ -137,9 +137,9 @@ public class MetaDataPropertiesPanel extends javax.swing.JPanel implements Explo
     @Override
     public void resultChanged(LookupEvent le) {
         selectionContentPanel.removeAll();
-        for (MetaDataContainer container : containerResult.allInstances()) {
-            selectionContentPanel.add(container.createEditor(), BorderLayout.CENTER);
-            break;
-        }
+//        for (MetaDataContainer container : containerResult.allInstances()) {
+//            selectionContentPanel.add(container.createEditor(), BorderLayout.CENTER);
+//            break;
+//        }
     }
 }

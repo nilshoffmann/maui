@@ -131,19 +131,19 @@ public class NodeFactory implements INodeFactory {
     public Action createMenuItem(String name, Action[] actions) {
         NodePopupAction pnia = new NodePopupAction(name);
         pnia.setActions(actions);
-        if(actions.length==0) {
+        if (actions.length == 0) {
             pnia.setEnabled(false);
         }
         return pnia;
     }
 
     @Override
-    public <T extends IBasicDescriptor> Children createContainerChildren(final IContainer<T> key, final Lookup lookup) {
-        return Children.create(new ChildFactory<T>() {
+    public Children createContainerChildren(final IContainer key, final Lookup lookup) {
+        return Children.create(new ChildFactory<Object>() {
 
             @Override
-            protected boolean createKeys(List<T> list) {
-                for (T t : key.getMembers()) {
+            protected boolean createKeys(List<Object> list) {
+                for (Object t : key.getMembers()) {
                     if (Thread.interrupted()) {
                         return false;
                     } else {
@@ -154,12 +154,17 @@ public class NodeFactory implements INodeFactory {
             }
 
             @Override
-            protected Node createNodeForKey(T key) {
-                try {
-                    DescriptorNode dn = new DescriptorNode(key, Children.LEAF, lookup);
-                    return dn;
-                } catch (IntrospectionException ex) {
-                    Exceptions.printStackTrace(ex);
+            protected Node createNodeForKey(Object key) {
+                if (key instanceof IContainer) {
+                    Node cn = createContainerNode((IContainer)key, lookup);
+                    return cn;
+                } else if(key instanceof IBasicDescriptor){
+                    try {
+                        DescriptorNode dn = new DescriptorNode((IBasicDescriptor)key, Children.LEAF, lookup);
+                        return dn;
+                    } catch (IntrospectionException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
                 }
                 return Node.EMPTY;
             }
