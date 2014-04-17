@@ -29,15 +29,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CommentDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Comment;
 
 
-public class CommentsContainer extends MetaDataContainer<CommentDescriptor>{
+public class CommentsContainer extends BasicMzTabMetaDataContainer<CommentDescriptor>{
 
     public static CommentsContainer create(Collection<Comment> c) {
         CommentsContainer cc = new CommentsContainer();
+        cc.setLevel(1);
         cc.setName("comments");
         cc.setDisplayName("Comments");
         for(Comment comment:c) {

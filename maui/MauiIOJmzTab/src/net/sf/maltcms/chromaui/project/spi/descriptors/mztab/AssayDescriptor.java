@@ -55,7 +55,8 @@ public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescripto
         Assay old = this.assay;
         this.assay = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getReference());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_ASSAY, old, element);
     }
     

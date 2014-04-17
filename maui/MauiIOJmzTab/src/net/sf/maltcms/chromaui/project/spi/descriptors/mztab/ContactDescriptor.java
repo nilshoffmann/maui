@@ -48,8 +48,8 @@ public class ContactDescriptor extends ABasicDescriptor implements IMzTabDescrip
         activate(ActivationPurpose.WRITE);
         Contact old = this.contact;
         this.contact = element;
-        setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getName());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_CONTACT, old, element);
     }
 
@@ -61,11 +61,11 @@ public class ContactDescriptor extends ABasicDescriptor implements IMzTabDescrip
         getContact().setId(id);
     }
 
-    public String getName() {
+    public String getElementName() {
         return getContact().getName();
     }
 
-    public void setName(String name) {
+    public void setElementName(String name) {
         getContact().setName(name);
     }
 

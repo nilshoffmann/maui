@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.StudyVariableDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.StudyVariable;
 
-public class StudyVariableContainer extends MetaDataContainer<StudyVariableDescriptor> {
+public class StudyVariableContainer extends BasicMzTabMetaDataContainer<StudyVariableDescriptor> {
 
     public static StudyVariableContainer create(Metadata metadata) {
         StudyVariableContainer c = new StudyVariableContainer();
+        c.setLevel(2);
         c.setName("studyVariables");
         c.setDisplayName("Study Variables");
         SortedMap<Integer, StudyVariable> map = metadata.getStudyVariableMap();

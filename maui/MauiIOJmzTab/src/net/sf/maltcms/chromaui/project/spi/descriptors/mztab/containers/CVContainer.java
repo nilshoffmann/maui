@@ -29,16 +29,16 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CVDescriptor;
 import uk.ac.ebi.pride.jmztab.model.CV;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
 
-public class CVContainer extends MetaDataContainer<CVDescriptor>{
+public class CVContainer extends BasicMzTabMetaDataContainer<CVDescriptor>{
 
     public static CVContainer create(Metadata metadata) {
         CVContainer c = new CVContainer();
+        c.setLevel(2);
         c.setName("cvParams");
         c.setDisplayName("CV Params");
         SortedMap<Integer,CV> map = metadata.getCvMap();

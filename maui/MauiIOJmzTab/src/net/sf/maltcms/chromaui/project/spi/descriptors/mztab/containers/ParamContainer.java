@@ -29,16 +29,16 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.List;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ParamDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.Param;
 
 
-public class ParamContainer extends MetaDataContainer<ParamDescriptor>{
+public class ParamContainer extends BasicMzTabMetaDataContainer<ParamDescriptor>{
 
     public static ParamContainer create(Metadata metadata) {
         ParamContainer c = new ParamContainer();
+        c.setLevel(2);
         c.setName("params");
         c.setDisplayName("User Params");
         List<Param> map = metadata.getCustomList();

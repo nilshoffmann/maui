@@ -29,16 +29,16 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.AssayDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Assay;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
 
-public class AssayContainer extends MetaDataContainer<AssayDescriptor>{
+public class AssayContainer extends BasicMzTabMetaDataContainer<AssayDescriptor>{
 
     public static AssayContainer create(Metadata metadata) {
         AssayContainer c = new AssayContainer();
+        c.setLevel(2);
         c.setName("assays");
         c.setDisplayName("Assays");
         SortedMap<Integer,Assay> map = metadata.getAssayMap();

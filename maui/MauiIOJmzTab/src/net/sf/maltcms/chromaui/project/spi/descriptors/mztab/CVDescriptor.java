@@ -49,7 +49,8 @@ public class CVDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
         CV old = this.cv;
         this.cv = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getFullName());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_CV, old, element);
     }
 

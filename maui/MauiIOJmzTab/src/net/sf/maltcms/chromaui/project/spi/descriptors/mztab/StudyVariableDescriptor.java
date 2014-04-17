@@ -52,7 +52,8 @@ public class StudyVariableDescriptor extends ABasicDescriptor implements IMzTabD
         StudyVariable old = this.studyVariable;
         this.studyVariable = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.toString());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_STUDYVARIABLE, old, element);
     }
 

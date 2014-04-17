@@ -49,6 +49,7 @@ public class ParamDescriptor extends ABasicDescriptor implements IMzTabDescripto
         this.param = element;
         setName(element.getClass().getSimpleName() + ": " + element.getName());
         setDisplayName(element.getClass().getSimpleName() + ": " + element.getName());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_PARAM, old, element);
     }
 

@@ -34,6 +34,7 @@ import java.util.Collection;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ContactDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.ContactContainer;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabFileContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabMetaDataContainer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
@@ -58,19 +59,18 @@ public final class AddMzTabMetaData implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        Collection<? extends MzTabMetaDataContainer> c = context.getContainer(MzTabMetaDataContainer.class);
-        if (c.size() >= 1) {
-            throw new ConstraintViolationException("Project must not contain more than one MzTab Meta Data Container!");
-        } else {
-            MzTabMetaDataContainer container = new MzTabMetaDataContainer();
-            ContactContainer cc = new ContactContainer();
-            ContactDescriptor cd = new ContactDescriptor();
-            Contact contact = new Contact(1);
-            cd.setContact(contact);
-            cd.setName(System.getProperty("user.name"));
-            cc.addMembers(cd);
-            container.setContacts(cc);
-            context.addContainer(container);
-        }
+        MzTabFileContainer fileContainer = new MzTabFileContainer();
+        MzTabMetaDataContainer container = new MzTabMetaDataContainer();
+        container.setLevel(1);
+        ContactContainer cc = new ContactContainer();
+        cc.setLevel(2);
+        ContactDescriptor cd = new ContactDescriptor();
+        Contact contact = new Contact(1);
+        cd.setContact(contact);
+        cd.setName(System.getProperty("user.name"));
+        cc.addMembers(cd);
+        container.setContacts(cc);
+        fileContainer.setMetaData(container);
+        context.addContainer(fileContainer);
     }
 }

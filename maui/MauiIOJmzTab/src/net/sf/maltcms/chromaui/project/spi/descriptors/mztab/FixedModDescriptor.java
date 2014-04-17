@@ -50,7 +50,8 @@ public class FixedModDescriptor extends ABasicDescriptor implements IMzTabDescri
         FixedMod old = this.fixedMod;
         this.fixedMod = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getSite());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_FIXEDMOD, old, element);
     }
 

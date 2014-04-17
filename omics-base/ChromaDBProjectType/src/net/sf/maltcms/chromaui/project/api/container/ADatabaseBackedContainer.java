@@ -44,6 +44,37 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> extends ADescriptor
         implements IContainer<T> {
 
+    private int level = 0;
+
+    public static final String PROP_LEVEL = "level";
+
+    /**
+     * Get the value of level
+     *
+     * @return the value of level
+     */
+    @Override
+    public int getLevel() {
+        activate(ActivationPurpose.READ);
+        return level;
+    }
+
+    /**
+     * Set the value of level
+     *
+     * @param level new value of level
+     */
+    @Override
+    public void setLevel(int level) {
+        activate(ActivationPurpose.WRITE);
+        if (level < 0) {
+            throw new IllegalArgumentException("Level must be >= 0!");
+        }
+        int oldLevel = this.level;
+        this.level = level;
+        getPropertyChangeSupport().firePropertyChange(PROP_LEVEL, oldLevel, level);
+    }
+
     private int precedence = 0;
     private List<T> members = new ActivatableArrayList<>();
 
@@ -56,7 +87,9 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         super.setProject(project);
         if (project != null) {
             for (T t : getMembers()) {
-                t.setProject(project);
+                if (t != null) {
+                    t.setProject(project);
+                }
             }
         }
     }

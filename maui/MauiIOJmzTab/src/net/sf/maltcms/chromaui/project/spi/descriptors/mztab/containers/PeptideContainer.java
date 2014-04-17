@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.PeptideDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.Peptide;
 
-public class PeptideContainer extends MetaDataContainer<PeptideDescriptor> {
+public class PeptideContainer extends BasicMzTabMetaDataContainer<PeptideDescriptor> {
     
     public static PeptideContainer create(MZTabFile mzTabFile) {
         PeptideContainer c = new PeptideContainer();
+        c.setLevel(1);
         c.setName("peptides");
         c.setDisplayName("Peptides");
         Collection<Peptide> map = mzTabFile.getPeptides();

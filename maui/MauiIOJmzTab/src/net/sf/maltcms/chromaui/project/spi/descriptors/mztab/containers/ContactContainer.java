@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ContactDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Contact;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
-public class ContactContainer extends MetaDataContainer<ContactDescriptor> {
+public class ContactContainer extends BasicMzTabMetaDataContainer<ContactDescriptor> {
 
     public static ContactContainer create(Metadata metadata) {
         ContactContainer c = new ContactContainer();
+        c.setLevel(2);
         c.setName("contacts");
         c.setDisplayName("Contacts");
         SortedMap<Integer, Contact> map = metadata.getContactMap();

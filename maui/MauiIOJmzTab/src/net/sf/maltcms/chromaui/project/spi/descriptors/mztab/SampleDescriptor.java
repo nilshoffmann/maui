@@ -51,7 +51,8 @@ public class SampleDescriptor extends ABasicDescriptor implements IMzTabDescript
         Sample old = this.sample;
         this.sample = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getDescription());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_SAMPLE, old, element);
     }
 

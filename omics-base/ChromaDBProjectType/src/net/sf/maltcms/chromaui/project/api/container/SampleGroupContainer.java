@@ -43,7 +43,7 @@ import org.openide.util.ImageUtilities;
  */
 public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogramDescriptor>
         implements ISampleGroupDescriptor {
-
+    
     private ISampleGroupDescriptor sampleGroup;
 
     public static String PROP_SAMPLEGROUP = "sampleGroup";

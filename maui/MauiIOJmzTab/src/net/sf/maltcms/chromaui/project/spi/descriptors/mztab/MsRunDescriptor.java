@@ -51,7 +51,8 @@ public class MsRunDescriptor extends ABasicDescriptor implements IMzTabDescripto
         MsRun old = this.msRun;
         this.msRun = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getLocation().toString());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_MSRUN, old, element);
     }
 

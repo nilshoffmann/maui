@@ -31,12 +31,12 @@
                 <package>uk.ac.ebi.pride.jmztab.utils.parser</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/jmztab-modular-util-2.1.6-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmztab-modular-util-2.1.6-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/jmztab-modular-util-2.1.7-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-util-2.1.7-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jmztab-modular-model-2.1.6-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmztab-modular-model-2.1.6-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/jmztab-modular-model-2.1.7-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-model-2.1.7-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

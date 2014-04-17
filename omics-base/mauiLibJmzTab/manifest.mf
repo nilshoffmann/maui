@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 OpenIDE-Module: net.sf.maltcms.chromaui.jmztab/1
 OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/jmztab/Bundle.properties
-OpenIDE-Module-Specification-Version: 2.1.6
+OpenIDE-Module-Specification-Version: 2.1.7
 

@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SampleDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.Sample;
 
-public class SampleContainer extends MetaDataContainer<SampleDescriptor> {
+public class SampleContainer extends BasicMzTabMetaDataContainer<SampleDescriptor> {
 
     public static SampleContainer create(Metadata metadata) {
         SampleContainer c = new SampleContainer();
+        c.setLevel(2);
         SortedMap<Integer, Sample> map = metadata.getSampleMap();
         for (Integer key : map.keySet()) {
             SampleDescriptor d = new SampleDescriptor();

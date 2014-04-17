@@ -30,14 +30,14 @@ package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 import com.db4o.activation.ActivationPurpose;
 import java.util.ArrayList;
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
-public class MzTabMetaDataContainer extends MetaDataContainer<IMetaDataDescriptor> {
+public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDataDescriptor> {
 
     public static MzTabMetaDataContainer create(Metadata metadata) {
         MzTabMetaDataContainer mzt = new MzTabMetaDataContainer();
+        mzt.setLevel(1);
         mzt.setName("metaData");
         mzt.setDisplayName("Meta Data");
         mzt.setAssays(AssayContainer.create(metadata));

@@ -50,7 +50,8 @@ public class AssayQuantificationModDescriptor extends ABasicDescriptor implement
         AssayQuantificationMod old = this.assayQuantificationMod;
         this.assayQuantificationMod = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getSite());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_ASSAYQUANTIFICATIONMOD, old, element);
     }
 

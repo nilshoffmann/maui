@@ -40,6 +40,7 @@ import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.db.api.query.IQuery;
+import org.openide.util.Exceptions;
 
 /**
  * Implementation of ICrudSession for DB4o.
@@ -66,17 +67,22 @@ public final class DB4oCrudSession implements ICrudSession {
     public final void create(Collection<? extends Object> o) {
         authenticate(ic);
         try {
-            for (Object obj : o) {
-                if (obj != null) {
-                    System.out.println("Storing object of type " + obj.getClass().getName());
-                    oc.store(obj);
-                } else {
-                    System.out.println("Skipping null object!");
+            if (!oc.ext().isClosed()) {
+                for (Object obj : o) {
+                    if (obj != null) {
+                        System.out.println("Storing object of type " + obj.getClass().getName());
+                        oc.store(obj);
+                    } else {
+                        System.out.println("Skipping null object!");
+                    }
                 }
+                oc.commit();
             }
-            oc.commit();
         } catch (RuntimeException re) {
-            oc.rollback();
+            if (!oc.ext().isClosed()) {
+                oc.rollback();
+            }
+            Exceptions.printStackTrace(re);
             System.err.println("Caught exception while creating object: " + re);
         }
     }

@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.PsmDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.PSM;
 
-public class PsmContainer extends MetaDataContainer<PsmDescriptor> {
+public class PsmContainer extends BasicMzTabMetaDataContainer<PsmDescriptor> {
 
     public static PsmContainer create(MZTabFile mzTabFile) {
         PsmContainer c = new PsmContainer();
+        c.setLevel(1);
         c.setName("psms");
         c.setDisplayName("PSMs");
         Collection<PSM> map = mzTabFile.getPSMs();

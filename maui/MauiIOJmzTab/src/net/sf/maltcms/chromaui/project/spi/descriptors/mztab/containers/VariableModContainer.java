@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.VariableModDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.VariableMod;
 
-public class VariableModContainer extends MetaDataContainer<VariableModDescriptor> {
+public class VariableModContainer extends BasicMzTabMetaDataContainer<VariableModDescriptor> {
 
     public static VariableModContainer create(Metadata metadata) {
         VariableModContainer c = new VariableModContainer();
+        c.setLevel(2);
         c.setName("variableMods");
         c.setDisplayName("Variable Mods");
         SortedMap<Integer, VariableMod> map = metadata.getVariableModMap();

@@ -50,7 +50,8 @@ public class VariableModDescriptor extends ABasicDescriptor implements IMzTabDes
         VariableMod old = this.variableMod;
         this.variableMod = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getSite());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_VARIABLEMOD, old, element);
     }
 

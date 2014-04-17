@@ -29,16 +29,16 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.FixedModDescriptor;
 import uk.ac.ebi.pride.jmztab.model.FixedMod;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
 
-public class FixedModContainer extends MetaDataContainer<FixedModDescriptor>{
+public class FixedModContainer extends BasicMzTabMetaDataContainer<FixedModDescriptor>{
 
     public static FixedModContainer create(Metadata metadata) {
         FixedModContainer c = new FixedModContainer();
+        c.setLevel(2);
         c.setName("fixedMods");
         c.setDisplayName("Fixed Mods");
         SortedMap<Integer, FixedMod> map = metadata.getFixedModMap();

@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SoftwareDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.Software;
 
-public class SoftwareContainer extends MetaDataContainer<SoftwareDescriptor> {
+public class SoftwareContainer extends BasicMzTabMetaDataContainer<SoftwareDescriptor> {
 
     public static SoftwareContainer create(Metadata metadata) {
         SoftwareContainer c = new SoftwareContainer();
+        c.setLevel(2);
         c.setName("software");
         c.setDisplayName("Software");
         SortedMap<Integer, Software> map = metadata.getSoftwareMap();

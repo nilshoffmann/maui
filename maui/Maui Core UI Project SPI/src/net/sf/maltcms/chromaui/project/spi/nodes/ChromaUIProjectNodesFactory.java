@@ -27,6 +27,7 @@
  */
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
+import com.db4o.query.Predicate;
 import java.awt.Image;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
@@ -35,9 +36,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
@@ -143,8 +147,23 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     protected boolean createKeys(List<Object> list) {
         try {
             //filter the following containers from the primary project view
-            List<IContainer> containers = filter(this.cp.getContainer(
-                    IContainer.class), Peak1DContainer.class, SampleGroupContainer.class);
+//            ICrudSession session = cp.getCrudProvider().createSession();
+//            Collection<IContainer> query = session.newQuery(IContainer.class).retrieve(new Predicate<IContainer>() {
+//
+//                @Override
+//                public boolean match(IContainer et) {
+//                    return et.getLevel()==0;
+//                }
+//            }, new Comparator<IContainer>() {
+//
+//                @Override
+//                public int compare(IContainer o1, IContainer o2) {
+//                    return o1.getPrecedence()-o2.getPrecedence();
+//                }
+//            });
+            
+            
+            List<IContainer> containers = filter(cp.getContainer(IContainer.class), Peak1DContainer.class, SampleGroupContainer.class);
             for (IContainer ic : containers) {
                 if (Thread.interrupted()) {
                     return false;
@@ -177,7 +196,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                     if (Thread.interrupted()) {
                         return false;
                     }
-                    if (ic != null) {
+                    if (ic != null && ic.getLevel()==0) {
                         list.add(ic);
                     }
                 }
@@ -210,7 +229,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                 if (ic != null) {
                     boolean add = true;
                     for (Class<? extends IContainer> contClass : toFilter) {
-                        if (ic.getClass().getName().equals(contClass.getName())) {
+                        if (ic.getClass().getName().equals(contClass.getName()) || ic.getLevel()>0) {
                             add = false;
                         }
                     }

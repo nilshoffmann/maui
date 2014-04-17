@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.InstrumentDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Instrument;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
-public class InstrumentContainer extends MetaDataContainer<InstrumentDescriptor> {
+public class InstrumentContainer extends BasicMzTabMetaDataContainer<InstrumentDescriptor> {
 
     public static InstrumentContainer create(Metadata metadata) {
         InstrumentContainer c = new InstrumentContainer();
+        c.setLevel(2);
         c.setName("instruments");
         c.setDisplayName("Instruments");
         SortedMap<Integer, Instrument> map = metadata.getInstrumentMap();

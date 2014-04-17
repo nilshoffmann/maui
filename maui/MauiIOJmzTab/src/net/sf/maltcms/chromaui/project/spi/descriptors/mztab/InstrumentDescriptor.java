@@ -51,7 +51,8 @@ public class InstrumentDescriptor extends ABasicDescriptor implements IMzTabDesc
         Instrument old = this.instrument;
         this.instrument = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getName().getName());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_INSTRUMENT, old, element);
     }
 

@@ -43,5 +43,5 @@ public class MzTabDataNode extends DataNode {
     public MzTabDataNode(DataObject obj, Children ch) {
         super(obj, ch);
     }
-    
+
 }

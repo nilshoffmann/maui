@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.MsRunDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.MsRun;
 
-public class MsRunContainer extends MetaDataContainer<MsRunDescriptor> {
+public class MsRunContainer extends BasicMzTabMetaDataContainer<MsRunDescriptor> {
 
     public static MsRunContainer create(Metadata metadata) {
         MsRunContainer c = new MsRunContainer();
+        c.setLevel(2);
         c.setName("msRuns");
         c.setDisplayName("MS Runs");
         SortedMap<Integer, MsRun> map = metadata.getMsRunMap();

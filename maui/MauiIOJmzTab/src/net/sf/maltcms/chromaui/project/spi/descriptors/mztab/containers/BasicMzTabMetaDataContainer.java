@@ -25,28 +25,16 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
+package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
-package net.sf.maltcms.chromaui.jmztab.ui.nodes;
+import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
 
-import java.beans.IntrospectionException;
-import org.openide.nodes.BeanNode;
-import org.openide.nodes.Children;
-import org.openide.util.Lookup;
-import uk.ac.ebi.pride.jmztab.model.Metadata;
+/**
+ *
+ * @author Nils Hoffmann
+ */
+public class BasicMzTabMetaDataContainer<T extends IMetaDataDescriptor> extends MetaDataContainer<IMetaDataDescriptor> implements IMetaDataDescriptor {
 
-
-public class MetaDataNode extends BeanNode<Metadata>{
-
-    public MetaDataNode(Metadata bean) throws IntrospectionException {
-        super(bean);
-    }
-
-    public MetaDataNode(Metadata bean, Children children) throws IntrospectionException {
-        super(bean, children);
-    }
-
-    public MetaDataNode(Metadata bean, Children children, Lookup lkp) throws IntrospectionException {
-        super(bean, children, lkp);
-    }
     
 }

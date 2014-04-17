@@ -28,13 +28,9 @@
 package net.sf.maltcms.chromaui.jmztab.ui.api;
 
 import java.awt.Image;
-import java.beans.IntrospectionException;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.maltcms.chromaui.jmztab.ui.nodes.MetaDataChildNodeFactory;
-import net.sf.maltcms.chromaui.jmztab.ui.nodes.MetaDataNode;
 import net.sf.maltcms.chromaui.jmztab.ui.util.MzTabFileToModelBuilder;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabFileContainer;
@@ -43,29 +39,26 @@ import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
+import org.openide.filesystems.FileAttributeEvent;
+import org.openide.filesystems.FileChangeListener;
+import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileRenameEvent;
 import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.BeanNode;
-import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
+import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.WeakListeners;
 import org.openide.windows.TopComponent;
-import uk.ac.ebi.pride.jmztab.model.Comment;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
-import uk.ac.ebi.pride.jmztab.model.PSM;
-import uk.ac.ebi.pride.jmztab.model.Peptide;
-import uk.ac.ebi.pride.jmztab.model.Protein;
-import uk.ac.ebi.pride.jmztab.model.SmallMolecule;
 import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
 
 @Messages({
@@ -142,11 +135,12 @@ import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
             position = 1400
     )
 })
-public class MzTabDataObject extends MultiDataObject {
+public class MzTabDataObject extends MultiDataObject implements FileChangeListener {
 
     public MzTabDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         registerEditor("text/mztab", true);
+        pf.addFileChangeListener(WeakListeners.create(FileChangeListener.class, this, pf));
     }
 
     @Override
@@ -184,28 +178,40 @@ public class MzTabDataObject extends MultiDataObject {
                 for (int i = 0; i < parser.getErrorList().size(); i++) {
                     Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Error {0}:{1}", new Object[]{i, parser.getErrorList().getError(i)});
                 }
-                return new AbstractNode(Children.LEAF) {
+                MzTabDataNode mzt = new MzTabDataNode(this, Children.LEAF);
+                mzt.setDisplayName("Error parsing file " + getPrimaryFile().getNameExt());
+                FilterNode fn = new FilterNode(mzt) {
 
                     @Override
                     public Image getIcon(int type) {
                         return ImageUtilities.createDisabledImage(super.getIcon(type));
                     }
 
-                    @Override
-                    public String getShortDescription() {
-                        StringBuilder sb = new StringBuilder();
-//                        Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Errors encountered while parsing file: {0}", getPrimaryFile().getPath());
-                        for (int i = 0; i < parser.getErrorList().size(); i++) {
-                            sb.append(parser.getErrorList().getError(i)).append("\n");
-                        }
-                        return sb.toString();
-                    }
-
-                    @Override
-                    public String getDisplayName() {
-                        return "Error parsing file " + getPrimaryFile().getNameExt();
-                    }
                 };
+                return fn;
+//                //add the data object to the node's lookup
+//                return new AbstractNode(Children.LEAF, Lookups.fixed(this)) {
+//
+//                    @Override
+//                    public Image getIcon(int type) {
+//                        return ImageUtilities.createDisabledImage(super.getIcon(type));
+//                    }
+//
+//                    @Override
+//                    public String getShortDescription() {
+//                        StringBuilder sb = new StringBuilder();
+////                        Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Errors encountered while parsing file: {0}", getPrimaryFile().getPath());
+//                        for (int i = 0; i < parser.getErrorList().size(); i++) {
+//                            sb.append(parser.getErrorList().getError(i)).append("\n");
+//                        }
+//                        return sb.toString();
+//                    }
+//
+//                    @Override
+//                    public String getDisplayName() {
+//                        return "Error parsing file " + getPrimaryFile().getNameExt();
+//                    }
+//                };
             }
         } catch (IOException ex) {
             Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Failed to parse file: " + getPrimaryFile().getPath(), ex);
@@ -213,263 +219,34 @@ public class MzTabDataObject extends MultiDataObject {
         }
     }
 
-    private static enum Keys {
+    @Override
+    public void fileFolderCreated(FileEvent fe) {
 
-        MetaData, Comment, Protein, Peptide, PSM, SmallMolecule
-    };
+    }
 
-    private static class MzTabChildFactory extends ChildFactory<Keys> {
+    @Override
+    public void fileDataCreated(FileEvent fe) {
+//        FileUtil.refreshFor(FileUtil.toFile(fe.getFile()));
+    }
 
-        private final FileObject fileObject;
-        private final MZTabFile mzTabFile;
+    @Override
+    public void fileChanged(FileEvent fe) {
+        FileUtil.refreshFor(FileUtil.toFile(fe.getFile()));
+    }
 
-        public MzTabChildFactory(FileObject fileObject, MZTabFile mzTabFile) {
-            this.fileObject = fileObject;
-            this.mzTabFile = mzTabFile;
-        }
+    @Override
+    public void fileDeleted(FileEvent fe) {
+//        FileUtil.refreshFor(FileUtil.toFile(fe.getFile()));
+    }
 
-//        private void parseFile(FileObject fobj, boolean refresh) {
-//            if (fobj != null) {
-//                this.fileObject = fobj;
-////                if(refresh) {
-////                    FileUtil.refreshFor(FileUtil.toFile(fobj));
-////                }
-//                DataObject dobj;
-//                try {
-//                    dobj = DataObject.find(fileObject);
-//                    dobj.addPropertyChangeListener(WeakListeners.propertyChange(this, dobj));
-//                } catch (DataObjectNotFoundException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
-//                fileObject.addFileChangeListener(WeakListeners.create(FileChangeListener.class, this, fileObject));
-//                final MZTabFileParser parser;
-//                try {
-//                    parser = new MZTabFileParser(FileUtil.toFile(this.fileObject), System.out);
-//                    if (parser.getErrorList().isEmpty()) {
-//                        mzTabFile = parser.getMZTabFile();
-//                    }
-//                } catch (IOException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
-//            }
-//        }
-        @Override
-        protected boolean createKeys(List<Keys> list) {
-//            if (mzTabFile == null) {
-//                parseFile(fileObject, false);
-//            }
-            list.add(Keys.MetaData);
-            if (!mzTabFile.getComments().isEmpty()) {
-                list.add(Keys.Comment);
-            }
-            if (!mzTabFile.getProteins().isEmpty()) {
-                list.add(Keys.Protein);
-            }
-            if (!mzTabFile.getPeptides().isEmpty()) {
-                list.add(Keys.Peptide);
-            }
-            if (!mzTabFile.getPSMs().isEmpty()) {
-                list.add(Keys.PSM);
-            }
-            if (!mzTabFile.getSmallMolecules().isEmpty()) {
-                list.add(Keys.SmallMolecule);
-            }
-            return true;
-        }
+    @Override
+    public void fileRenamed(FileRenameEvent fre) {
 
-        @Override
-        protected Node createNodeForKey(Keys key) {
-            switch (key) {
-                case MetaData:
-                    try {
-                        MetaDataNode mdn = new MetaDataNode(mzTabFile.getMetadata(), Children.create(new MetaDataChildNodeFactory(mzTabFile.getMetadata()), true));
-                        return mdn;
-                    } catch (IntrospectionException ex) {
-                        return Node.EMPTY;
-                    }
-                case Comment:
-                    AbstractNode bn = new AbstractNode(Children.create(new ChildFactory<Comment>() {
+    }
 
-                        @Override
-                        protected boolean createKeys(List<Comment> list) {
-                            list.addAll(mzTabFile.getComments());
-                            return true;
-                        }
+    @Override
+    public void fileAttributeChanged(FileAttributeEvent fae) {
 
-                        @Override
-                        protected Node createNodeForKey(Comment comment) {
-                            BeanNode<Comment> commentNode;
-                            try {
-                                commentNode = new BeanNode<Comment>(comment);
-                                commentNode.setDisplayName(comment.getMsg());
-                                commentNode.setShortDescription(comment.toString());
-                                return commentNode;
-                            } catch (IntrospectionException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                            return Node.EMPTY;
-                        }
-                    }, true));
-                    bn.setDisplayName("Comments");
-                    bn.setName("Comments");
-                    bn.setShortDescription("List of comments associated to this file.");
-                    return bn;
-                case Protein:
-                    AbstractNode pn = new AbstractNode(Children.create(new ChildFactory<Protein>() {
-
-                        @Override
-                        protected boolean createKeys(List<Protein> list) {
-                            list.addAll(mzTabFile.getProteins());
-                            return true;
-                        }
-
-                        @Override
-                        protected Node createNodeForKey(Protein sm) {
-                            BeanNode<Protein> smNode;
-                            try {
-                                smNode = new BeanNode<Protein>(sm);
-                                smNode.setDisplayName(sm.getAccession());
-                                smNode.setShortDescription(sm.toString());
-                                return smNode;
-                            } catch (IntrospectionException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                            return Node.EMPTY;
-                        }
-                    }, true));
-                    pn.setDisplayName("Proteins");
-                    pn.setName("Proteins");
-                    pn.setShortDescription("List of proteins associated to this file.");
-                    return pn;
-                case Peptide:
-                    AbstractNode ppn = new AbstractNode(Children.create(new ChildFactory<Peptide>() {
-
-                        @Override
-                        protected boolean createKeys(List<Peptide> list) {
-                            list.addAll(mzTabFile.getPeptides());
-                            return true;
-                        }
-
-                        @Override
-                        protected Node createNodeForKey(Peptide sm) {
-                            BeanNode<Peptide> smNode;
-                            try {
-                                smNode = new BeanNode<Peptide>(sm);
-                                smNode.setDisplayName(sm.getAccession());
-                                smNode.setShortDescription(sm.toString());
-                                return smNode;
-                            } catch (IntrospectionException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                            return Node.EMPTY;
-                        }
-                    }, true));
-                    ppn.setDisplayName("Peptides");
-                    ppn.setName("Peptides");
-                    ppn.setShortDescription("List of peptides associated to this file.");
-                    return ppn;
-                case PSM:
-                    AbstractNode psmn = new AbstractNode(Children.create(new ChildFactory<PSM>() {
-
-                        @Override
-                        protected boolean createKeys(List<PSM> list) {
-                            list.addAll(mzTabFile.getPSMs());
-                            return true;
-                        }
-
-                        @Override
-                        protected Node createNodeForKey(PSM sm) {
-                            BeanNode<PSM> smNode;
-                            try {
-                                smNode = new BeanNode<PSM>(sm);
-                                smNode.setDisplayName(sm.getAccession());
-                                smNode.setShortDescription(sm.toString());
-                                return smNode;
-                            } catch (IntrospectionException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                            return Node.EMPTY;
-                        }
-                    }, true));
-                    psmn.setDisplayName("PSMs");
-                    psmn.setName("PSMs");
-                    psmn.setShortDescription("List of PSMs associated to this file.");
-                    return psmn;
-                case SmallMolecule:
-                    AbstractNode smn = new AbstractNode(Children.create(new ChildFactory<SmallMolecule>() {
-
-                        @Override
-                        protected boolean createKeys(List<SmallMolecule> list) {
-                            list.addAll(mzTabFile.getSmallMolecules());
-                            return true;
-                        }
-
-                        @Override
-                        protected Node createNodeForKey(SmallMolecule sm) {
-                            BeanNode<SmallMolecule> smNode;
-                            try {
-                                smNode = new BeanNode<SmallMolecule>(sm);
-                                smNode.setDisplayName(sm.getDescription());
-                                smNode.setShortDescription(sm.toString());
-                                return smNode;
-                            } catch (IntrospectionException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                            return Node.EMPTY;
-                        }
-                    }, true));
-                    smn.setDisplayName("Small Molecules");
-                    smn.setName("Small Molecules");
-                    smn.setShortDescription("List of small molecules associated to this file.");
-                    return smn;
-
-                default:
-                    throw new IllegalStateException("Unhandled state in switch: " + key.name());
-            }
-        }
-
-//        @Override
-//        public void fileFolderCreated(FileEvent fe) {
-//
-//        }
-//
-//        @Override
-//        public void fileDataCreated(FileEvent fe) {
-//            parseFile(fe.getFile(), true);
-//            refresh(true);
-//        }
-//
-//        @Override
-//        public void fileChanged(FileEvent fe) {
-//            parseFile(fe.getFile(), true);
-//            refresh(true);
-//        }
-//
-//        @Override
-//        public void fileDeleted(FileEvent fe) {
-//            parseFile(fe.getFile(), true);
-//            refresh(true);
-//        }
-//
-//        @Override
-//        public void fileRenamed(FileRenameEvent fre) {
-//            parseFile(fre.getFile(), true);
-//            refresh(true);
-//        }
-//
-//        @Override
-//        public void fileAttributeChanged(FileAttributeEvent fae) {
-//            parseFile(fae.getFile(), true);
-//            refresh(true);
-//        }
-//
-//        @Override
-//        public void propertyChange(PropertyChangeEvent evt) {
-//            if (evt.getPropertyName().equals(DataObject.PROP_MODIFIED)) {
-//                parseFile(fileObject, true);
-//                refresh(true);
-//            }
-//        }
     }
 
 }

@@ -48,7 +48,8 @@ public class CommentDescriptor extends ABasicDescriptor implements IMzTabDescrip
         Comment old = this.comment;
         this.comment = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.getMsg());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_COMMENT, old, element);
     }
 

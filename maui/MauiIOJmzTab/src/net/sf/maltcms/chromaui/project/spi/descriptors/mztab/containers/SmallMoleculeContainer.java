@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SmallMoleculeDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.SmallMolecule;
 
-public class SmallMoleculeContainer extends MetaDataContainer<SmallMoleculeDescriptor> {
+public class SmallMoleculeContainer extends BasicMzTabMetaDataContainer<SmallMoleculeDescriptor> {
 
     public static SmallMoleculeContainer create(MZTabFile mzTabFile) {
         SmallMoleculeContainer c = new SmallMoleculeContainer();
+        c.setLevel(1);
         c.setName("smallMolecules");
         c.setDisplayName("Small Molecules");
         Collection<SmallMolecule> map = mzTabFile.getSmallMolecules();

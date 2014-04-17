@@ -51,7 +51,8 @@ public class PublicationDescriptor extends ABasicDescriptor implements IMzTabDes
         Publication old = this.publication;
         this.publication = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName(element.getClass().getSimpleName());
+        setDisplayName(element.toString());
+        setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_PUBLICATION, old, element);
     }
 

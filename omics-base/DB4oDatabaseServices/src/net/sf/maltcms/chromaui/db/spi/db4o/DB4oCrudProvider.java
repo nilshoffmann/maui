@@ -105,6 +105,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
             updateDatabaseSize = false;
             if (obj.equals(NotifyDescriptor.OK_OPTION)) {
                 try {
+                    Files.delete(projectDBLocation.toPath());
                     Files.copy(backupFile.toPath(), projectDBLocation.toPath());
                 } catch (IOException ex1) {
                     Exceptions.printStackTrace(ex1);
@@ -120,7 +121,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
             Object obj = DialogDisplayer.getDefault().notify(ndd);
             if (obj.equals(NotifyDescriptor.OK_OPTION)) {
                 Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Updating database size for {0}", projectDBLocation.getAbsolutePath());
-                int blockSize = Math.max(1, Math.min(254, Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2));
+                int blockSize = Math.max(1, Math.min(254, NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2);
                 ProgressHandle ph = ProgressHandleFactory.createHandle("Defragmentation of " + projectDBLocation);
                 ph.start();
                 try {
@@ -244,7 +245,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
         ec.common().bTreeNodeSize(2048);
         ec.common().weakReferences(true);
 //        ec.common().add(new UuidSupport());
-        ec.file().asynchronousSync(true);
+//        ec.file().asynchronousSync(true);
         ec.file().generateUUIDs(ConfigScope.GLOBALLY);
         ec.file().generateCommitTimestamps(true);
         if (isVerboseDiagnostics()) {

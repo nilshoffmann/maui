@@ -28,15 +28,15 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.Collection;
-import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ProteinDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.Protein;
 
-public class ProteinContainer extends MetaDataContainer<ProteinDescriptor> {
+public class ProteinContainer extends BasicMzTabMetaDataContainer<ProteinDescriptor> {
 
     public static ProteinContainer create(MZTabFile mzTabFile) {
         ProteinContainer c = new ProteinContainer();
+        c.setLevel(1);
         c.setName("proteins");
         c.setDisplayName("Proteins");
         Collection<Protein> map = mzTabFile.getProteins();
