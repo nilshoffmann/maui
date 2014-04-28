@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.jmztab.ui.util;
 
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SoftwareDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.CommentsContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabFileContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabMetaDataContainer;
@@ -35,15 +36,19 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.PeptideC
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.ProteinContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.PsmContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.SmallMoleculeContainer;
-import org.openide.util.NotImplementedException;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.SoftwareContainer;
+import uk.ac.ebi.pride.jmztab.model.CVParam;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
+import uk.ac.ebi.pride.jmztab.model.Param;
+import uk.ac.ebi.pride.jmztab.model.Software;
+import uk.ac.ebi.pride.jmztab.model.UserParam;
 
 /**
  *
  * @author Nils Hoffmann
  */
 public class MzTabFileToModelBuilder {
-
+    
     public MzTabFileContainer createFromFile(MZTabFile file) {
         MzTabFileContainer container = new MzTabFileContainer();
         container.setComments(CommentsContainer.create(file.getComments()));
@@ -56,7 +61,22 @@ public class MzTabFileToModelBuilder {
     }
 
     public MzTabFileContainer createFromProject(IChromAUIProject project) {
-        throw new NotImplementedException();
+        MzTabFileContainer container = new MzTabFileContainer();
+        container.setComments(new CommentsContainer());
+        container.setMetaData(new MzTabMetaDataContainer());
+        container.getMetaData().setSoftwares(new SoftwareContainer());
+        SoftwareDescriptor sd = new SoftwareDescriptor();
+        Software s = new Software(1);
+        sd.setSoftware(s);
+        Param p = new UserParam("","");
+//        s.setParam(p);
+//        s.addSetting(new CVParam("MS", "", null, null));
+//        container.getMetaData().getSoftwares().
+//        container.setPsms(PsmContainer.create(file));
+//        container.setProteins(ProteinContainer.create(file));
+//        container.setPeptides(PeptideContainer.create(file));
+        container.setSmallMolecules(new SmallMoleculeContainer());
+        return container;
     }
 
 }

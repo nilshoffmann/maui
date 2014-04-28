@@ -48,11 +48,13 @@ import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
@@ -163,60 +165,39 @@ public class MzTabDataObject extends MultiDataObject implements FileChangeListen
 
     @Override
     protected Node createNodeDelegate() {
-        try {
-            final MZTabFileParser parser = new MZTabFileParser(FileUtil.toFile(getPrimaryFile()), System.out);
-            MZTabFile file = parser.getMZTabFile();
-            if (parser.getErrorList().isEmpty()) {
-                MzTabFileToModelBuilder mfmb = new MzTabFileToModelBuilder();
-                MzTabFileContainer container = mfmb.createFromFile(file);
-                Children c = Lookup.getDefault().lookup(INodeFactory.class).createContainerChildren(container, Lookup.EMPTY);
-                MzTabDataNode dataNode = new MzTabDataNode(this, c);
-                return dataNode;
-            } else {
-                //TODO change to display parsing errors in IDE Log directly
-                Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Errors encountered while parsing file: {0}", getPrimaryFile().getPath());
-                for (int i = 0; i < parser.getErrorList().size(); i++) {
-                    Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Error {0}:{1}", new Object[]{i, parser.getErrorList().getError(i)});
-                }
-                MzTabDataNode mzt = new MzTabDataNode(this, Children.LEAF);
-                mzt.setDisplayName("Error parsing file " + getPrimaryFile().getNameExt());
-                FilterNode fn = new FilterNode(mzt) {
-
-                    @Override
-                    public Image getIcon(int type) {
-                        return ImageUtilities.createDisabledImage(super.getIcon(type));
-                    }
-
-                };
-                return fn;
-//                //add the data object to the node's lookup
-//                return new AbstractNode(Children.LEAF, Lookups.fixed(this)) {
+        MzTabDataNode mzt = new MzTabDataNode(this, Children.LEAF);
+        return mzt;
+//        try {
+//            final MZTabFileParser parser = new MZTabFileParser(FileUtil.toFile(getPrimaryFile()), System.out);
+//            MZTabFile file = parser.getMZTabFile();
+//            if (parser.getErrorList().isEmpty()) {
+//                MzTabFileToModelBuilder mfmb = new MzTabFileToModelBuilder();
+//                MzTabFileContainer container = mfmb.createFromFile(file);
+//                Children c = Lookup.getDefault().lookup(INodeFactory.class).createContainerChildren(container, Lookup.EMPTY);
+//                MzTabDataNode dataNode = new MzTabDataNode(this, c);
+//                return dataNode;
+//            } else {
+//                //TODO change to display parsing errors in IDE Log directly
+//                Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Errors encountered while parsing file: {0}", getPrimaryFile().getPath());
+//                for (int i = 0; i < parser.getErrorList().size(); i++) {
+//                    Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Error {0}:{1}", new Object[]{i, parser.getErrorList().getError(i)});
+//                }
+//                MzTabDataNode mzt = new MzTabDataNode(this, Children.LEAF);
+//                mzt.setDisplayName("Error parsing file " + getPrimaryFile().getNameExt());
+//                FilterNode fn = new FilterNode(mzt) {
 //
 //                    @Override
 //                    public Image getIcon(int type) {
 //                        return ImageUtilities.createDisabledImage(super.getIcon(type));
 //                    }
 //
-//                    @Override
-//                    public String getShortDescription() {
-//                        StringBuilder sb = new StringBuilder();
-////                        Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Errors encountered while parsing file: {0}", getPrimaryFile().getPath());
-//                        for (int i = 0; i < parser.getErrorList().size(); i++) {
-//                            sb.append(parser.getErrorList().getError(i)).append("\n");
-//                        }
-//                        return sb.toString();
-//                    }
-//
-//                    @Override
-//                    public String getDisplayName() {
-//                        return "Error parsing file " + getPrimaryFile().getNameExt();
-//                    }
 //                };
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Failed to parse file: " + getPrimaryFile().getPath(), ex);
-            return Node.EMPTY;
-        }
+//                return fn;
+//            }
+//        } catch (IOException ex) {
+//            Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Failed to parse file: " + getPrimaryFile().getPath(), ex);
+//            return Node.EMPTY;
+//        }
     }
 
     @Override

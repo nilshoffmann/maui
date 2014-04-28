@@ -29,6 +29,8 @@ package net.sf.maltcms.chromaui.jmztab.ui.validation;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
@@ -37,18 +39,27 @@ import javax.swing.JComponent;
 import javax.swing.JToolBar;
 import javax.swing.text.DefaultEditorKit;
 import net.sf.maltcms.chromaui.jmztab.ui.api.MzTabDataObject;
+import net.sf.maltcms.chromaui.jmztab.ui.validation.annotations.ErrorAnnotation;
+import net.sf.maltcms.chromaui.jmztab.ui.validation.annotations.WarningAnnotation;
 import net.sf.maltcms.chromaui.jmztab.ui.validation.nodes.ErrorNodeChildFactory;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
+import org.netbeans.editor.AnnotationType;
+import org.netbeans.editor.AnnotationTypes;
 import org.openide.awt.UndoRedo;
+import org.openide.cookies.LineCookie;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.text.Annotation;
+import org.openide.text.Line;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
@@ -56,6 +67,7 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.TopComponent;
 import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
+import uk.ac.ebi.pride.jmztab.utils.errors.MZTabError;
 import uk.ac.ebi.pride.jmztab.utils.errors.MZTabErrorList;
 import uk.ac.ebi.pride.jmztab.utils.errors.MZTabErrorType.Level;
 
@@ -76,6 +88,7 @@ public final class MzTabValidationElement extends TopComponent implements MultiV
     private DefaultComboBoxModel<Level> dcbm;
     private OutlineView view = null;
     private transient ExplorerManager manager = new ExplorerManager();
+    private AtomicBoolean validationInProgress = new AtomicBoolean();
 
     public MzTabValidationElement(Lookup lkp) {
         obj = lkp.lookup(MzTabDataObject.class);
@@ -84,7 +97,7 @@ public final class MzTabValidationElement extends TopComponent implements MultiV
         view = new OutlineView();
         view.setQuickSearchAllowed(true);
         view.setTreeSortable(true);
-        view.setPropertyColumns("message", "Message", "type", "Error Type");
+        view.setPropertyColumns("message", "Message");
         view.getOutline().setRootVisible(false);
         add(view, BorderLayout.CENTER);
         ActionMap map = this.getActionMap();
@@ -158,18 +171,9 @@ public final class MzTabValidationElement extends TopComponent implements MultiV
     }// </editor-fold>//GEN-END:initComponents
 
     private void validateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateActionPerformed
-        final MZTabFileParser parser;
-        try {
-            InputOutput io = IOProvider.getDefault().getIO("MzTab Validation", false);
-            io.getOut().reset();
-            try (WriterOutputStream wos = new WriterOutputStream(io.getOut())) {
-                parser = new MZTabFileParser(FileUtil.toFile(obj.getPrimaryFile()), wos, getSelectedErrorLevel(), 1000);
-                MZTabErrorList mztel = parser.getErrorList();
-                AbstractNode rootNode = new AbstractNode(Children.create(new ErrorNodeChildFactory(mztel), true));
-                manager.setRootContext(rootNode);
-            }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+        if (validationInProgress.compareAndSet(false, true)) {
+            ValidationRunnable vr = new ValidationRunnable();
+            ValidationRunnable.createAndRun("Validating mzTab file...", vr);
         }
     }//GEN-LAST:event_validateActionPerformed
 
@@ -253,4 +257,68 @@ public final class MzTabValidationElement extends TopComponent implements MultiV
         return manager;
     }
 
+    private final class ValidationRunnable extends AProgressAwareRunnable {
+
+        @Override
+        public void run() {
+            try {
+                getProgressHandle().setDisplayName("Validating mzTab file...");
+                getProgressHandle().start();
+                getProgressHandle().progress("Parsing...");
+
+                final MZTabFileParser parser;
+                try {
+                    InputOutput io = IOProvider.getDefault().getIO("MzTab Validation", false);
+                    io.getOut().reset();
+                    try (WriterOutputStream wos = new WriterOutputStream(io.getOut())) {
+                        parser = new MZTabFileParser(FileUtil.toFile(obj.getPrimaryFile()), wos, getSelectedErrorLevel(), 1000);
+                        getProgressHandle().progress("Retrieving error list...");
+                        MZTabErrorList mztel = parser.getErrorList();
+                        //FIXME currently deactivated due to unresolved NullPointerException
+//                        DataObject objWithError = DataObject.find(obj.getPrimaryFile());
+//                        LineCookie cookie = (LineCookie) objWithError.getLookup().lookup(LineCookie.class);
+//                        Line.Set lineSet = cookie.getLineSet();
+//                        for (int i = 0; i < mztel.size(); i++) {
+//                            MZTabError error = mztel.getError(i);
+//                            final Line line = lineSet.getOriginal(error.getLineNumber());
+//                            if (line != null) {
+//                                Annotation ann = null;
+//                                switch (error.getType().getLevel()) {
+//                                    case Error:
+//                                        ann = new ErrorAnnotation(error.getMessage());
+//                                        break;
+//                                    case Warn:
+//                                        ann = new WarningAnnotation(error.getMessage());
+//                                        break;
+//                                    case Info:
+//                                        ann = new WarningAnnotation(error.getMessage());
+//                                        break;
+//                                    default:
+//                                        throw new IllegalStateException("Unhandled enum value: " + error.getType().getLevel());
+//                                }
+//                                if (ann != null) {
+//                                    try {
+//                                        ann.attach(line);
+//                                    } catch (NullPointerException npe) {
+//
+//                                    }
+//                                }
+//                            } else {
+//                                Logger.getLogger(MzTabValidationElement.class.getName()).warning("Could not retrieve line number for error: " + error.toString());
+//                            }
+//                        }
+                        AbstractNode rootNode = new AbstractNode(Children.create(new ErrorNodeChildFactory(mztel), true));
+                        manager.setRootContext(rootNode);
+                        getProgressHandle().progress("Setting results...");
+                    }
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            } finally {
+                getProgressHandle().finish();
+                validationInProgress.compareAndSet(true, false);
+            }
+        }
+
+    };
 }
