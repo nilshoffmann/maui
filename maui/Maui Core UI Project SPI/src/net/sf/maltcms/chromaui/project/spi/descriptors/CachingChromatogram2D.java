@@ -52,6 +52,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IExperiment2D;
@@ -60,6 +61,7 @@ import maltcms.datastructures.ms.Scan2D;
 import maltcms.tools.MaltcmsTools;
 import org.apache.commons.configuration.Configuration;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayShort;
 import ucar.ma2.MAMath;
 
 /**
@@ -105,9 +107,9 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public CachingChromatogram2D(final IFileFragment e) {
         this.parent = e;
         String id = e.getUri().toString() + "-2D";
-        whm = CacheFactory.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this, 10, 20);
+        whm = CacheFactory.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this, 60, 120);
     }
-    
+
     public void setPrefetchSize(int numberOfScansToLoad) {
         this.prefetchSize = numberOfScansToLoad;
     }
@@ -173,6 +175,11 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
                 msScanMap = new TreeMap<Short, List<Integer>>();
                 for (int i = 0; i < msLevel.getShape()[0]; i++) {
                     Short msLevelValue = msLevel.getShort(i);
+                    if (msLevelValue == 0) {
+                        System.out.println("Correcting msLevelValue of 0 to 1");
+                        msLevelValue = 1;
+                        msLevel.setShort(i, msLevelValue);
+                    }
                     if (msScanMap.containsKey(msLevelValue)) {
                         List<Integer> scanToScan = msScanMap.get(msLevelValue);
                         scanToScan.add(i);
@@ -184,27 +191,41 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
                 }
             } catch (ResourceNotAvailableException rnae) {
                 System.out.println("Chromatogram has no ms_level variable, assuming all scans are MS1!");
+                msScanMap = new TreeMap<Short, List<Integer>>();
+                msLevel = new ArrayShort.D1(this.scans);
+                List<Integer> scanToScan = new ArrayList<Integer>();
+                for (int i = 0; i < this.scans; i++) {
+                    scanToScan.add(i);
+                    msLevel.setShort(i, (short) 1);
+                }
+                msScanMap.put((short) 1, scanToScan);
             }
             initialized = true;
         }
     }
 
     protected void activateCache(IVariableFragment ivf) {
-        if (ivf instanceof ImmutableVariableFragment2) {
-            System.out.println("Using cached access on variable: " + ivf);
-            ((ImmutableVariableFragment2) ivf).setUseCachedList(true);
-        }
-        if (ivf instanceof VariableFragment) {
-            System.out.println("Using cached access on variable: " + ivf);
-            ((VariableFragment) ivf).setUseCachedList(true);
+        if (ivf.getParent().getName().toLowerCase().endsWith(".mzml") || ivf.getParent().getName().toLowerCase().endsWith(".mzml.xml")) {
+            Logger.getLogger(CachingChromatogram1D.class.getName()).info("Not activating cached list on mzml file!");
+        } else {
+            if (ivf instanceof ImmutableVariableFragment2) {
+                System.out.println("Using cached access on variable: " + ivf);
+                ((ImmutableVariableFragment2) ivf).setUseCachedList(true);
+            }
+            if (ivf instanceof VariableFragment) {
+                System.out.println("Using cached access on variable: " + ivf);
+                ((VariableFragment) ivf).setUseCachedList(true);
+            }
         }
     }
 
     protected Scan2D acquireFromCache(final int i) {
         try {
             init();
-            if (whm.get(i) == null) {
-                whm.put(Integer.valueOf(i), provide(i));
+            SerializableScan2D scan = whm.get(i);
+            if (scan == null) {
+                scan = provide(i);
+                whm.put(i, scan);
                 if (!loading.get()) {
                     Runnable r = new Runnable() {
                         @Override
@@ -220,7 +241,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
                     prefetchLoader.submit(r);
                 }
             }
-            return whm.get(Integer.valueOf(i)).getScan();
+            return scan.getScan();
         } catch (java.lang.IndexOutOfBoundsException ex) {
             System.err.println("Warning: Could not access scan at index " + i);
             return null;
@@ -474,14 +495,14 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public Point getPointFor(int i) {
         init();
         IScan2D scan2d = getScan(i);
-        return new Point(scan2d.getFirstColumnScanIndex(),scan2d.getSecondColumnScanIndex());
+        return new Point(scan2d.getFirstColumnScanIndex(), scan2d.getSecondColumnScanIndex());
     }
 
     @Override
     public Point getPointFor(double d) {
         init();
         IScan2D scan2d = getScan(getIndexFor(d));
-        return new Point(scan2d.getFirstColumnScanIndex(),scan2d.getSecondColumnScanIndex());
+        return new Point(scan2d.getFirstColumnScanIndex(), scan2d.getSecondColumnScanIndex());
     }
 
     public RtProvider getRtProvider() {
@@ -551,10 +572,10 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     @Override
     public int getNumberOfScansForMsLevel(short msLevelValue) {
         init();
-        if (msLevelValue == (short) 1 && msScanMap == null) {
-            return getNumberOfScans();
+        if (msScanMap.containsKey(msLevelValue)) {
+            return msScanMap.get(msLevelValue).size();
         }
-        return msScanMap.get(msLevelValue).size();
+        return 0;
     }
 
     @Override
@@ -571,10 +592,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     @Override
     public Collection<Short> getMsLevels() {
         init();
-        if (msScanMap == null) {
-            return Arrays.asList(Short.valueOf((short) 1));
-        }
-        List<Short> l = new ArrayList<Short>(msScanMap.keySet());
+        List<Short> l = new ArrayList<>(msScanMap.keySet());
         Collections.sort(l);
         return l;
     }
@@ -582,30 +600,21 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     @Override
     public IScan2D getScanForMsLevel(int i, short level) {
         init();
-        if (level == (short) 1 && msScanMap == null) {
-            return getScan(i);
+        if (msScanMap.containsKey(level)) {
+            return getScan(msScanMap.get(level).get(i));
+        } else {
+            throw new ResourceNotAvailableException("No mass spectra available for fragmentation level " + level + " in chromatogram " + getParent().getUri());
         }
-        if (msScanMap == null) {
-            throw new ResourceNotAvailableException("No ms fragmentation level available for chromatogram " + getParent().getName());
-        }
-        return getScan(msScanMap.get(level).get(i));
     }
 
     @Override
     public List<Integer> getIndicesOfScansForMsLevel(short level) {
         init();
-        if (level == (short) 1 && msScanMap == null) {
-            int scans = getNumberOfScansForMsLevel((short) 1);
-            ArrayList<Integer> indices = new ArrayList<Integer>(scans);
-            for (int i = 0; i < scans; i++) {
-                indices.add(i);
-            }
-            return indices;
+        if (msScanMap.containsKey(level)) {
+            return Collections.unmodifiableList(msScanMap.get(Short.valueOf(level)));
+        } else {
+            throw new ResourceNotAvailableException("No mass spectra available for fragmentation level " + level + " in chromatogram " + getParent().getUri());
         }
-        if (msScanMap == null) {
-            throw new ResourceNotAvailableException("No ms fragmentation level available for chromatogram " + getParent().getName());
-        }
-        return Collections.unmodifiableList(msScanMap.get(Short.valueOf(level)));
     }
 
     private class Scan2DIterator implements Iterator<IScan2D> {
