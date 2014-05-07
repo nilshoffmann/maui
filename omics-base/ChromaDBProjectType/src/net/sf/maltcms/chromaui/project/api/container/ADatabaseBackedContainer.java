@@ -31,6 +31,7 @@ import com.db4o.activation.ActivationPurpose;
 import com.db4o.collections.ActivatableArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
@@ -193,6 +194,11 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
 //            sb.append(igd.getLocation()+"\n");
         //}
         return sb.toString();
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return getMembers().iterator();
     }
 
 }

@@ -33,8 +33,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 /**
  *
  * @author Nils Hoffmann
+ * @param <T> the specific generic type held by this container
  */
-public interface IGenericContainer<T extends IBasicDescriptor> extends IBasicDescriptor {
+public interface IGenericContainer<T extends IBasicDescriptor> extends IBasicDescriptor, Iterable<T> {
 
     final String PROP_MEMBERS = "members";
 

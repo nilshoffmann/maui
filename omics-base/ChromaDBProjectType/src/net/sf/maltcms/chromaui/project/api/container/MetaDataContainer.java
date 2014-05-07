@@ -37,7 +37,7 @@ import org.openide.util.ImageUtilities;
  * @author Nils Hoffmann
  * @param <T> The real type of the contained IMetaDataDescriptors.
  */
-public abstract class MetaDataContainer<T extends IMetaDataDescriptor> extends ADatabaseBackedContainer<IMetaDataDescriptor> implements IMetaDataDescriptor {
+public abstract class MetaDataContainer<T extends IMetaDataDescriptor> extends ADatabaseBackedContainer<T> implements IMetaDataDescriptor {
 
     @Override
     public Image getIcon(int type) {

@@ -53,8 +53,8 @@ public class DB4oCrudProviderTest extends NbTestCase {
         private String second;
 
         public IntStringTuple(Integer itg, String str) {
-            this.first = first;
-            this.second = second;
+            this.first = itg;
+            this.second = str;
         }
 
         public Integer getFirst() {
