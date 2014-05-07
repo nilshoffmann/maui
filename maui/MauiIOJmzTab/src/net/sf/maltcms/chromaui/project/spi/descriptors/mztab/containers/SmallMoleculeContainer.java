@@ -27,13 +27,23 @@
  */
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SmallMoleculeDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.SmallMolecule;
 
 public class SmallMoleculeContainer extends BasicMzTabMetaDataContainer<SmallMoleculeDescriptor> {
 
+    public static List<SmallMolecule> toSmallMolecules(SmallMoleculeContainer smc) {
+        List<SmallMolecule> l = new ArrayList<SmallMolecule>();
+        for(SmallMoleculeDescriptor smd:smc.getMembers()) {
+            l.add(smd.getRecord());
+        }
+        return l;
+    }
+    
     public static SmallMoleculeContainer create(MZTabFile mzTabFile) {
         SmallMoleculeContainer c = new SmallMoleculeContainer();
         c.setLevel(1);

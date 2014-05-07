@@ -31,12 +31,74 @@ import com.db4o.activation.ActivationPurpose;
 import java.util.ArrayList;
 import java.util.Collection;
 import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.AssayDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CVDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ContactDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.FixedModDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.InstrumentDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.MsRunDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ParamDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SampleDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SoftwareDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.StudyVariableDescriptor;
+import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.VariableModDescriptor;
+import uk.ac.ebi.pride.jmztab.model.MZTabDescription;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
 public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDataDescriptor> {
 
+    public static Metadata toMetaData(MzTabMetaDataContainer metaDataContainer) {
+        MZTabDescription descr = new MZTabDescription(metaDataContainer.getMzTabVersion(), metaDataContainer.getMzTabMode(), metaDataContainer.getMzTabType());
+        Metadata m = new Metadata(descr);
+        for (AssayDescriptor ad : metaDataContainer.getAssays()) {
+            m.addAssay(ad.getAssay());
+        }
+        for (ContactDescriptor cd : metaDataContainer.getContacts()) {
+            m.addContact(cd.getContact());
+        }
+        for (ParamDescriptor pd : metaDataContainer.getParams()) {
+            m.addCustom(pd.getParam());
+        }
+        for (CVDescriptor cvd : metaDataContainer.getCvs()) {
+            m.addCV(cvd.getCv());
+        }
+
+//        metadata.getFalseDiscoveryRate();
+//        
+//        metadata.getPeptideColUnitList();
+//        metadata.getProteinColUnitList();
+//        metadata.getPsmColUnitList();
+//        metadata.getSmallMoleculeColUnitList();
+        for (SampleDescriptor sd : metaDataContainer.getSamples()) {
+            m.addSample(sd.getSample());
+        }
+        for (FixedModDescriptor fmd : metaDataContainer.getFixedMods()) {
+            m.addFixedMod(fmd.getFixedMod());
+        }
+        for (InstrumentDescriptor id : metaDataContainer.getInstruments()) {
+            m.addInstrument(id.getInstrument());
+        }
+        for (MsRunDescriptor mrd : metaDataContainer.getMsRuns()) {
+            m.addMsRun(mrd.getMsRun());
+        }
+        for (SoftwareDescriptor sd : metaDataContainer.getSoftwares()) {
+            m.addSoftware(sd.getSoftware());
+        }
+        for (StudyVariableDescriptor svd : metaDataContainer.getStudyVariables()) {
+            m.addStudyVariable(svd.getStudyVariable());
+        }
+        for (VariableModDescriptor vmd : metaDataContainer.getVariableMods()) {
+            m.addVariableMod(vmd.getVariableMod());
+        }
+        return m;
+    }
+
     public static MzTabMetaDataContainer create(Metadata metadata) {
         MzTabMetaDataContainer mzt = new MzTabMetaDataContainer();
+        mzt.setMzTabVersion(metadata.getMZTabVersion());
+        mzt.setMzTabMode(metadata.getMZTabMode());
+        mzt.setMzTabType(metadata.getMZTabType());
+        mzt.setMzTabId(metadata.getMZTabID());
         mzt.setLevel(1);
         mzt.setName("metaData");
         mzt.setDisplayName("Meta Data");
@@ -407,5 +469,108 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
         getPropertyChangeSupport().firePropertyChange(PROP_VARIABLEMODS, oldVariableMods, variableMods);
     }
 
-////        metadata.getVariableModMap();
+    private String mzTabVersion;
+
+    public static final String PROP_MZTABVERSION = "mzTabVersion";
+
+    /**
+     * Get the value of mzTabVersion
+     *
+     * @return the value of mzTabVersion
+     */
+    public String getMzTabVersion() {
+        activate(ActivationPurpose.READ);
+        return mzTabVersion;
+    }
+
+    /**
+     * Set the value of mzTabVersion
+     *
+     * @param mzTabVersion new value of mzTabVersion
+     */
+    public void setMzTabVersion(String mzTabVersion) {
+        activate(ActivationPurpose.WRITE);
+        String oldVersion = this.mzTabVersion;
+        this.mzTabVersion = mzTabVersion;
+        getPropertyChangeSupport().firePropertyChange(PROP_MZTABVERSION, oldVersion, mzTabVersion);
+    }
+
+    private MZTabDescription.Mode mzTabMode = MZTabDescription.Mode.Summary;
+
+    public static final String PROP_MZTABMODE = "mzTabMode";
+
+    /**
+     * Get the value of mzTabMode
+     *
+     * @return the value of mzTabMode
+     */
+    public MZTabDescription.Mode getMzTabMode() {
+        activate(ActivationPurpose.READ);
+        return mzTabMode;
+    }
+
+    /**
+     * Set the value of mzTabMode
+     *
+     * @param mzTabMode new value of mzTabMode
+     */
+    public void setMzTabMode(MZTabDescription.Mode mzTabMode) {
+        activate(ActivationPurpose.WRITE);
+        MZTabDescription.Mode oldMode = this.mzTabMode;
+        this.mzTabMode = mzTabMode;
+        getPropertyChangeSupport().firePropertyChange(PROP_MZTABMODE, oldMode, mzTabMode);
+    }
+
+    private MZTabDescription.Type mzTabType = MZTabDescription.Type.Identification;
+
+    public static final String PROP_MZTABTYPE = "mzTabType";
+
+    /**
+     * Get the value of mzTabType
+     *
+     * @return the value of mzTabType
+     */
+    public MZTabDescription.Type getMzTabType() {
+        activate(ActivationPurpose.READ);
+        return mzTabType;
+    }
+
+    /**
+     * Set the value of mzTabType
+     *
+     * @param mzTabType new value of mzTabType
+     */
+    public void setMzTabType(MZTabDescription.Type mzTabType) {
+        activate(ActivationPurpose.WRITE);
+        MZTabDescription.Type oldType = this.mzTabType;
+        this.mzTabType = mzTabType;
+        getPropertyChangeSupport().firePropertyChange(PROP_MZTABTYPE, oldType, mzTabType);
+    }
+
+    private String mzTabId = null;
+
+    public static final String PROP_MZTABID = "mzTabId";
+
+    /**
+     * Get the value of mzTabId
+     *
+     * @return the value of mzTabId
+     */
+    public String getMzTabId() {
+        activate(ActivationPurpose.READ);
+        return mzTabId;
+    }
+
+    /**
+     * Set the value of mzTabId
+     *
+     * @param mzTabId new value of mzTabId
+     */
+    public void setMzTabId(String mzTabId) {
+        activate(ActivationPurpose.WRITE);
+        String oldMzTabId = this.mzTabId;
+        this.mzTabId = mzTabId;
+        getPropertyChangeSupport().firePropertyChange(PROP_MZTABID, oldMzTabId, mzTabId);
+    }
+
 }

@@ -73,7 +73,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
     @Override
     protected boolean createKeys(List<T> list) {
         try {
-			//if the parent is a TreatmentGroupContainer, insert
+            //if the parent is a TreatmentGroupContainer, insert
             //appropriate SampleGroupContainers, if there are any
             if (cp instanceof TreatmentGroupContainer) {
                 Collection c = lkp.lookup(IChromAUIProject.class).getSampleGroupsForTreatmentGroup((TreatmentGroupContainer) cp);
@@ -100,6 +100,9 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 @Override
                 public int compare(IBasicDescriptor t,
                         IBasicDescriptor t1) {
+                    if (t instanceof IContainer && t1 instanceof IContainer) {
+                        return ((IContainer) t).getPrecedence() - ((IContainer) t1).getPrecedence();
+                    }
                     if (t.getClass().equals(t1.getClass())) {
                         return t.compareTo(t1);
                     }
@@ -150,11 +153,7 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
                 cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
                 key.setProject(lkp.lookup(IChromAUIProject.class));
                 return cn;
-            } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IllegalArgumentException ex) {
+            } catch (DataObjectNotFoundException | IllegalArgumentException ex) {
                 Exceptions.printStackTrace(ex);
             }
         } else {

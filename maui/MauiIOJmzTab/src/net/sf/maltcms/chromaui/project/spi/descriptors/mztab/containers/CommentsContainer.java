@@ -28,13 +28,23 @@
 
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CommentDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Comment;
 
 
 public class CommentsContainer extends BasicMzTabMetaDataContainer<CommentDescriptor>{
 
+    public static List<Comment> toComments(CommentsContainer smc) {
+        List<Comment> l = new ArrayList<Comment>();
+        for(CommentDescriptor smd:smc.getMembers()) {
+            l.add(smd.getComment());
+        }
+        return l;
+    }
+    
     public static CommentsContainer create(Collection<Comment> c) {
         CommentsContainer cc = new CommentsContainer();
         cc.setLevel(1);

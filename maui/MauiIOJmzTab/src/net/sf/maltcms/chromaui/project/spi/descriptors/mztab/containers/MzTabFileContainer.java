@@ -28,13 +28,64 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import com.db4o.activation.ActivationPurpose;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
+import org.openide.util.Exceptions;
+import uk.ac.ebi.pride.jmztab.model.Comment;
+import uk.ac.ebi.pride.jmztab.model.MZTabColumnFactory;
+import uk.ac.ebi.pride.jmztab.model.MZTabFile;
+import uk.ac.ebi.pride.jmztab.model.Section;
+import uk.ac.ebi.pride.jmztab.model.SmallMolecule;
+import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
 
 public class MzTabFileContainer extends MetaDataContainer<IMetaDataDescriptor> {
 
+    public static MzTabFileContainer fromMzTabFile(File mzTabFile) {
+        try {
+            MZTabFileParser mzfp = new MZTabFileParser(mzTabFile, System.out);
+            MZTabFile file = mzfp.getMZTabFile();
+            MzTabFileContainer container = new MzTabFileContainer();
+            MzTabMetaDataContainer mdc = MzTabMetaDataContainer.create(file.getMetadata());
+            container.setMetaData(mdc);
+            container.setName(mzTabFile.getName());
+            container.setDisplayName(file.getMetadata().getMZTabID());
+            container.setShortDescription("MzTab Version: "+file.getMetadata().getMZTabVersion()+" Mode: "+file.getMetadata().getMZTabMode()+" Type: "+file.getMetadata().getMZTabType()+" Description: "+file.getMetadata().getDescription());
+            CommentsContainer cc = CommentsContainer.create(file.getComments());
+            container.setComments(cc);
+            PeptideContainer pc = PeptideContainer.create(file);
+            container.setPeptides(pc);
+            ProteinContainer proc = ProteinContainer.create(file);
+            container.setProteins(proc);
+            PsmContainer psmc = PsmContainer.create(file);
+            container.setPsms(psmc);
+            SmallMoleculeContainer smc = SmallMoleculeContainer.create(file);
+            container.setSmallMolecules(smc);
+            return container;
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+    
+    public static MZTabFile toMzTabFile(MzTabFileContainer container) {
+        MZTabFile file = new MZTabFile(MzTabMetaDataContainer.toMetaData(container.getMetaData()));
+        file.setSmallMoleculeColumnFactory(MZTabColumnFactory.getInstance(Section.Small_Molecule));
+        for(Comment c:CommentsContainer.toComments(container.getComments())) {
+            //FIXME: Comment does not support retrieval of original line number
+//            file.addComment(c., c);
+            Logger.getLogger(MzTabFileContainer.class.getName()).warning("Currently skipping output of comments due to missing line numbers!");
+        }
+        for(SmallMolecule sm:SmallMoleculeContainer.toSmallMolecules(container.getSmallMolecules())) {
+            file.addSmallMolecule(sm);
+        }
+        return file;
+    }
+    
     @Override
     public void removeMembers(IMetaDataDescriptor... f) {
         throw new UnsupportedOperationException("MzTabFileContainer does not support generic member access!");
