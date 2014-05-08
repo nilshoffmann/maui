@@ -29,7 +29,6 @@ package net.sf.maltcms.chromaui.charts.overlay;
 
 import cross.tools.StringTools;
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
@@ -75,8 +74,8 @@ import static net.sf.maltcms.common.charts.api.selection.ISelection.Type.HOVER;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
@@ -148,33 +147,33 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         }
         if (shapes == null) {
             shapes = generatePeakShapes(peakAnnotations, newDataset);
-            plot.clearAnnotations();
-            Color annotationFillColor = new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 64);
-            for (int i = 0; i < shapes.size(); i++) {
-                VisualPeakAnnotation x = shapes.get(i);
-                switch (x.getPeakAnnotationType()) {
-                    case OUTLINE:
-                        plot.addAnnotation(new XYShapeAnnotation(x, new BasicStroke(1.0f), new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 128), annotationFillColor), false);
-//						drawEntity(s, g2, fillColor, Color.DARK_GRAY, chartPanel, true, 0.25f);
-                        break;
-                }
-            }
+//            plot.clearAnnotations();
+//            Color annotationFillColor = new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 64);
+//            for (int i = 0; i < shapes.size(); i++) {
+//                VisualPeakAnnotation x = shapes.get(i);
+//                switch (x.getPeakAnnotationType()) {
+//                    case OUTLINE:
+//                        plot.addAnnotation(new XYShapeAnnotation(x, new BasicStroke(1.0f), new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 128), annotationFillColor), false);
+////						drawEntity(s, g2, fillColor, Color.DARK_GRAY, chartPanel, true, 0.25f);
+//                        break;
+//                }
+//            }
             this.dataset = newDataset;
         } else {
             XYDataset xyds = plot.getDataset();
             if (xyds != dataset || drawOutlines) {
-                plot.clearAnnotations();
+//                plot.clearAnnotations();
                 shapes = generatePeakShapes(peakAnnotations, newDataset);
-                plot.clearAnnotations();
-                for (int i = 0; i < shapes.size(); i++) {
-                    VisualPeakAnnotation x = shapes.get(i);
-                    switch (x.getPeakAnnotationType()) {
-                        case OUTLINE:
-                            plot.addAnnotation(new XYShapeAnnotation(x, new BasicStroke(1.0f), new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 128), new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 64)), false);
-//						drawEntity(s, g2, fillColor, Color.DARK_GRAY, chartPanel, true, 0.25f);
-                            break;
-                    }
-                }
+//                plot.clearAnnotations();
+//                for (int i = 0; i < shapes.size(); i++) {
+//                    VisualPeakAnnotation x = shapes.get(i);
+//                    switch (x.getPeakAnnotationType()) {
+//                        case OUTLINE:
+//                            plot.addAnnotation(new XYShapeAnnotation(x, new BasicStroke(1.0f), new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 128), new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 64)), false);
+////						drawEntity(s, g2, fillColor, Color.DARK_GRAY, chartPanel, true, 0.25f);
+//                            break;
+//                    }
+//                }
                 this.dataset = newDataset;
             }
         }
@@ -203,7 +202,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
                         break;
                     case OUTLINE:
 //						plot.addAnnotation(new XYShapeAnnotation(x, new BasicStroke(1.0f), new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 64), new Color(254, 254, 254, 254)), false);
-//						drawEntity(s, g2, fillColor, Color.DARK_GRAY, chartPanel, true, 0.25f);
+                        drawOutline(s, g2, fillColor, Color.DARK_GRAY, chartPanel, false, 0.25f);
                         break;
                     case TRIANGLE:
                         drawEntity(s, g2, fillColor, Color.DARK_GRAY, chartPanel, false, 0.25f);
@@ -221,7 +220,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
                         break;
                     case OUTLINE:
 //						plot.addAnnotation(new XYShapeAnnotation(x, new BasicStroke(1.0f), new Color(fillColor.getRed(),fillColor.getGreen(),fillColor.getBlue(),64), new Color(254,254,254,254)), false);
-//						drawEntity(s, g2, fillColor, Color.BLACK, chartPanel, true, 1f);
+                        drawOutline(s, g2, fillColor, Color.BLACK, chartPanel, false, 1f);
                         break;
                     case TRIANGLE:
                         drawEntity(s, g2, fillColor, Color.BLACK, chartPanel, false, 1f);
@@ -339,6 +338,70 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         path.closePath();
         Rectangle2D r = path.getBounds2D();
         return new VisualPeakAnnotation(path, new Point2D.Double(r.getCenterX(), r.getMaxY()), PeakAnnotationType.TRIANGLE);
+    }
+
+    private void drawOutline(Shape entity, Graphics2D g2, Color fill, Color stroke, ChartPanel chartPanel, boolean scale, float alpha) {
+        if (entity != null) {
+            //System.out.println("Drawing entity with bbox: "+entity.getBounds2D());
+            Shape savedClip = g2.getClip();
+            Rectangle2D dataArea = chartPanel.getScreenDataArea();
+            Color c = g2.getColor();
+            Composite comp = g2.getComposite();
+            g2.clip(dataArea);
+            g2.setColor(fill);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            JFreeChart chart = chartPanel.getChart();
+            XYPlot plot = (XYPlot) chart.getPlot();
+            ValueAxis xAxis = plot.getDomainAxis();
+            ValueAxis yAxis = plot.getRangeAxis();
+            RectangleEdge xAxisEdge = plot.getDomainAxisEdge();
+            RectangleEdge yAxisEdge = plot.getRangeAxisEdge();
+            Rectangle2D entityBounds = entity.getBounds2D();
+            double viewX = xAxis.valueToJava2D(entityBounds.getCenterX(), dataArea, xAxisEdge);
+            double viewY = yAxis.valueToJava2D(entityBounds.getCenterY(), dataArea, yAxisEdge);
+            double viewW = xAxis.lengthToJava2D(entityBounds.getWidth(), dataArea, xAxisEdge);
+            double viewH = yAxis.lengthToJava2D(entityBounds.getHeight(), dataArea, yAxisEdge);
+            PlotOrientation orientation = plot.getOrientation();
+            
+            //transform model to origin (0,0) in model coordinates
+            AffineTransform toOrigin = AffineTransform.getTranslateInstance(-entityBounds.getCenterX(), -entityBounds.getCenterY());
+            //transform from origin (0,0) to model location
+            AffineTransform toModelLocation = AffineTransform.getTranslateInstance(entityBounds.getCenterX(), entityBounds.getCenterY());
+            //transform from model scale to view scale
+            double scaleX = viewW/entityBounds.getWidth();
+            double scaleY = viewH/entityBounds.getHeight();
+            System.out.println("Scale x: "+scaleX+" Scale y: "+scaleY);
+            AffineTransform toViewScale = AffineTransform.getScaleInstance(scaleX, scaleY);
+            AffineTransform toViewLocation = AffineTransform.getTranslateInstance(viewX, viewY);
+            AffineTransform flipTransform = AffineTransform.getScaleInstance(1.0f, -1.0f);
+            AffineTransform modelToView = new AffineTransform(toOrigin);
+            modelToView.preConcatenate(flipTransform);
+            modelToView.preConcatenate(toViewScale);
+            modelToView.preConcatenate(toViewLocation);
+//            
+//            if (orientation == PlotOrientation.HORIZONTAL) {
+//                entity = ShapeUtilities.createTranslatedShape(entity, viewY,
+//                        viewX);
+//            } else if (orientation == PlotOrientation.VERTICAL) {
+//                entity = ShapeUtilities.createTranslatedShape(entity, viewX,
+//                        viewY);
+//            }
+            FlatteningPathIterator iter = new FlatteningPathIterator(modelToView.createTransformedShape(entity).getPathIterator(AffineTransform.getTranslateInstance(0, 0)), 5);
+            Path2D.Float path = new Path2D.Float();
+            path.append(iter, false);
+
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            g2.fill(path);
+            if (stroke != null) {
+                g2.setColor(stroke);
+                g2.draw(path);
+            }
+            g2.setComposite(comp);
+            g2.setColor(c);
+            g2.setClip(savedClip);
+        } else {
+            System.out.println("Entity is null!");
+        }
     }
 
     private void drawEntity(Shape entity, Graphics2D g2, Color fill, Color stroke, ChartPanel chartPanel, boolean scale, float alpha) {

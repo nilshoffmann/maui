@@ -77,7 +77,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
     private List<BarChartBar<String>> barChartBars = new ArrayList<BarChartBar<String>>();
     private ViewportMapper mapper = null;
     private Rectangle roi = null;
-    private int sampling = 5;
+    private int sampling = 1;
     private AtomicBoolean updatingScene = new AtomicBoolean(false);
 
     public HeatmapViewerTopComponent() {

@@ -170,7 +170,7 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         Set<Action> counted = new HashSet<Action>();
         // components to be added (separators are null)
         List<Component> components = new ArrayList<Component>();
-        System.err.println("Processing " + actions.length + " actions!");
+        Logger.getLogger(ContextAwareChartPanel.class.getName()).log(Level.FINE, "Processing {0} actions!", actions.length);
         for (Action action : actions) {
             if (action != null && counted.add(action)) {
                 // switch to replacement action if there is some
@@ -212,7 +212,7 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
                 components.add(null);
             }
         }
-        System.err.println("Added " + components.size() + " menu items!");
+        Logger.getLogger(ContextAwareChartPanel.class.getName()).log(Level.FINE, "Added {0} menu items!", components.size());
         return components;
     }
 
@@ -249,7 +249,7 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
                 result.addSeparator();
             }
         } else {
-            System.err.println("Popup menu provider is null!");
+            Logger.getLogger(ContextAwareChartPanel.class.getName()).log(Level.WARNING, "Popup menu provider is null!");
         }
 
         if (properties) {
@@ -487,6 +487,7 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         String command = event.getActionCommand();
 
         if (command.equals("SAVE_AS_SVG")) {
+            System.out.println("This is a message");
             saveAsSvg();
         }
 
@@ -499,6 +500,7 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
             @Override
             public void run() {
                 setPopupMenu(createPopupMenu(true, true, true, true, true));
+                System.err.println("This is an error");
             }
 
         };

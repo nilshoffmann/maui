@@ -71,7 +71,6 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
 
-
 public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
         Lookup.Provider, AxisChangeListener, KeyListener {
 
@@ -88,12 +87,12 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 
     @Override
     public void keyTyped(KeyEvent e) {
-        
+
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.isShiftDown()) {
+        if (e.isShiftDown()) {
             selectionHandler.setMode(InstanceContentSelectionHandler.Mode.ON_HOVER);
         }
     }
@@ -107,7 +106,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
 
         @Override
         public Action[] getActions() {
-            Logger.getLogger(ActionProvider.class.getName()).log(Level.INFO, "Retrieved actions {0}", Utilities.actionsForPath("Actions/Chromatogram1DViewer"));
+            Logger.getLogger(ActionProvider.class.getName()).log(Level.FINE, "Retrieved actions {0}", Utilities.actionsForPath("Actions/Chromatogram1DViewer"));
             return Utilities.actionsForPath("Actions/Chromatogram1DViewer").toArray(new Action[0]);
         }
 
@@ -336,14 +335,14 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
     public void setViewport(Rectangle2D viewport) {
         //ignore viewport changes if we have the focus
         if (hasFocus()) {
-            System.out.println("Ignoring viewport update since we have the focus!");
+            Logger.getLogger(Chromatogram1DViewPanel.class.getName()).log(Level.FINE, "Ignoring viewport update since we have the focus!");
         } else {
             //otherwise, clear our own viewport and set to new value
             if (this.viewport != null) {
                 this.content.remove(this.viewport);
             }
             this.viewport = new ChromatogramViewViewport(viewport);
-            System.out.println("Setting viewport!");
+            Logger.getLogger(Chromatogram1DViewPanel.class.getName()).log(Level.FINE, "Setting viewport to: {0}", viewport);
             removeAxisListener();
             this.plot.getDomainAxis().setLowerBound(viewport.getMinX());
             this.plot.getDomainAxis().setUpperBound(viewport.getMaxX());

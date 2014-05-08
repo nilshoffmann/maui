@@ -30,6 +30,7 @@ package net.sf.maltcms.common.charts.api.selection;
 import java.beans.IntrospectionException;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection.Type;
 import net.sf.maltcms.common.charts.overlay.nodes.SelectionOverlayNode;
@@ -128,7 +129,7 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
             Type type = ce.getSelection().getType();
             switch (type) {
                 case CLEAR:
-                    System.out.println("Clearing instance content!");
+                    Logger.getLogger(this.getClass().getName()).info("Clearing instance content!");
                     clear();
                     break;
                 case CLICK:
