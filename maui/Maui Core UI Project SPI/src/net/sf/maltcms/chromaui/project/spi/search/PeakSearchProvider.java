@@ -55,11 +55,9 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
+ * Provider for searching peak annotations across projects.
  *
  * @author Nils Hoffmann
- */
-/**
- * Provider for searching recently modified files.
  */
 @ServiceProvider(service = SearchProvider.class)
 public class PeakSearchProvider extends SearchProvider {
@@ -221,10 +219,7 @@ public class PeakSearchProvider extends SearchProvider {
                 @Override
                 public boolean isRelevantNode(Node node) {
                     IPeakAnnotationDescriptor ipad = node.getLookup().lookup(IPeakAnnotationDescriptor.class);
-                    if (ipad != null) {
-                        return true;
-                    }
-                    return false;
+                    return ipad != null;
                 }
 
                 @Override

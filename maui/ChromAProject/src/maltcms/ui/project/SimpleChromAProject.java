@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ActionProvider;
@@ -62,8 +64,8 @@ public class SimpleChromAProject implements Project {
     }
 
     public FileObject getWorkflowDir() {
-        FileObject result =
-                projectDir.getFileObject(SimpleChromAProjectFactory.WORKFLOW_FILE).getParent();
+        FileObject result
+                = projectDir.getFileObject(SimpleChromAProjectFactory.WORKFLOW_FILE).getParent();
         return result;
     }
 
@@ -73,8 +75,8 @@ public class SimpleChromAProject implements Project {
     }
 
     FileObject getTextFolder(boolean create) {
-        FileObject result =
-                projectDir.getFileObject(SimpleChromAProjectFactory.PROJECT_DIR);
+        FileObject result
+                = projectDir.getFileObject(SimpleChromAProjectFactory.PROJECT_DIR);
         if (result == null && create) {
             try {
                 result = projectDir.createFolder(SimpleChromAProjectFactory.PROJECT_DIR);
@@ -89,28 +91,28 @@ public class SimpleChromAProject implements Project {
     @Override
     public Lookup getLookup() {
         if (lkp == null) {
-			IChromAUIProject parentProject = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
-			Object[] obj = new Object[]{
+            IChromAUIProject parentProject = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+            Object[] obj = new Object[]{
                 state, //allow outside code to mark the project as needing saving
                 new ActionProviderImpl(), //Provides standard actions like Build and Clean
-				new DemoDeleteOperation(),
-				new DemoCopyOperation(this),
-				new SimpleChromAProjectInformation(this), //Project information implementation
-				new SimpleChromAProjectLogicalView(this), //Logical view of project implementation
-			};
-			if(parentProject!=null) {
-				System.out.println("Exposing parent project in lookup!");
-				lkp = new ProxyLookup(Lookups.fixed(obj), parentProject.getLookup());
-			}else{ 
-				lkp = new ProxyLookup(Lookups.fixed(obj));
-			}
+                new DemoDeleteOperation(),
+                new DemoCopyOperation(this),
+                new SimpleChromAProjectInformation(this), //Project information implementation
+                new SimpleChromAProjectLogicalView(this), //Logical view of project implementation
+            };
+            if (parentProject != null) {
+                Logger.getLogger(SimpleChromAProject.class.getName()).log(Level.FINE, "Exposing parent project in lookup!");
+                lkp = new ProxyLookup(Lookups.fixed(obj), parentProject.getLookup());
+            } else {
+                lkp = new ProxyLookup(Lookups.fixed(obj));
+            }
         }
         return lkp;
     }
 
     private final class ActionProviderImpl implements ActionProvider {
 
-        private String[] supported = new String[]{
+        private final String[] supported = new String[]{
             ActionProvider.COMMAND_DELETE,
             ActionProvider.COMMAND_COPY,};
 

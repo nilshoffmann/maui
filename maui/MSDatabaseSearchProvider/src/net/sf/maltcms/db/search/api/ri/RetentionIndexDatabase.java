@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
@@ -39,7 +40,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.db.search.api.DBConnectionManager;
 import net.sf.maltcms.db.search.api.IRetentionIndexDatabase;
-import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 
 /**
  *
@@ -76,8 +76,8 @@ public class RetentionIndexDatabase implements IRetentionIndexDatabase {
                             getRetentionTime());
                 }
             });
-            System.out.println("The following metabolites are used as retention indices:");
-            System.out.println(Arrays.deepToString(metArray));
+            Logger.getLogger(RetentionIndexDatabase.class.getName()).fine("The following metabolites are used as retention indices:");
+            Logger.getLogger(RetentionIndexDatabase.class.getName()).fine(Arrays.deepToString(metArray));
             ric = new RetentionIndexCalculator(metArray);
             session.close();
             oc.close();

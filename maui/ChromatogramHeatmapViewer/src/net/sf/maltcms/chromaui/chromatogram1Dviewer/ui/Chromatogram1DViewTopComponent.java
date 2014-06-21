@@ -43,6 +43,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
@@ -185,7 +186,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
                                         getResourceLocation());
                                 seriesComboBox.setModel(dcbm);
                                 remove(box);
-                                add(jp, BorderLayout.CENTER);
+                                add(new JScrollPane(jp, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
                                 load();
                             }
                         });
@@ -406,7 +407,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
     }
 
     void writeProperties(java.util.Properties p) {
-		// better to version settings since initial version as advocated at
+        // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
         // TODO store your settings

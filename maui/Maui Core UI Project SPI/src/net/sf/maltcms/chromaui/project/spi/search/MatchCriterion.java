@@ -36,69 +36,72 @@ import java.util.List;
  * @author Nils Hoffmann
  */
 public abstract class MatchCriterion {
-	abstract Query apply(Query q);
-	
-	public static final MatchCriterion Void = new MatchCriterion() {
-		@Override
-		Query apply(Query q) {
-			return q;
-		}
-	};
-	
-	public static class NumericRange extends MatchCriterion {
-		private final String attribute;
-		private final double minValue;
-		private final double maxValue;
 
-		public NumericRange(String attribute, double minValue, double maxValue) {
-			this.attribute = attribute;
-			this.minValue = minValue;
-			this.maxValue = maxValue;
-		}
-		
-		@Override
-		Query apply(Query q) {
-			q.descend(attribute).constrain(minValue).greater().and(q.descend(attribute).constrain(maxValue).smaller());
-			return q;
-		}
-	}
-	
-	public static class ApproximateStringMatch extends MatchCriterion{
-		private final String attribute;
-		private final String pattern;
+    abstract Query apply(Query q);
 
-		public ApproximateStringMatch(String attribute, String pattern) {
-			this.attribute = attribute;
-			this.pattern = pattern;
-		}
-		
-		@Override
-		Query apply(Query q) {
-			q.descend(attribute).constrain(pattern).like();
-			return q;
-		}
-	}
-	
-	public static class CompositeMatch extends MatchCriterion {
-		
-		private final List<MatchCriterion> criteria;
+    public static final MatchCriterion Void = new MatchCriterion() {
+        @Override
+        Query apply(Query q) {
+            return q;
+        }
+    };
 
-		public CompositeMatch(MatchCriterion...mc) {
-			criteria = Arrays.asList(mc);
-		}
-		
-		public CompositeMatch add(MatchCriterion m) {
-			criteria.add(m);
-			return this;
-		}
-		
-		@Override
-		Query apply(Query q) {
-			Query query = q;
-			for(MatchCriterion mc:criteria) {
-				query = mc.apply(q);
-			}
-			return query;
-		}
-	}
+    public static class NumericRange extends MatchCriterion {
+
+        private final String attribute;
+        private final double minValue;
+        private final double maxValue;
+
+        public NumericRange(String attribute, double minValue, double maxValue) {
+            this.attribute = attribute;
+            this.minValue = minValue;
+            this.maxValue = maxValue;
+        }
+
+        @Override
+        Query apply(Query q) {
+            q.descend(attribute).constrain(minValue).greater().and(q.descend(attribute).constrain(maxValue).smaller());
+            return q;
+        }
+    }
+
+    public static class ApproximateStringMatch extends MatchCriterion {
+
+        private final String attribute;
+        private final String pattern;
+
+        public ApproximateStringMatch(String attribute, String pattern) {
+            this.attribute = attribute;
+            this.pattern = pattern;
+        }
+
+        @Override
+        Query apply(Query q) {
+            q.descend(attribute).constrain(pattern).like();
+            return q;
+        }
+    }
+
+    public static class CompositeMatch extends MatchCriterion {
+
+        private final List<MatchCriterion> criteria;
+
+        public CompositeMatch(MatchCriterion... mc) {
+            criteria = Arrays.asList(mc);
+        }
+
+        public CompositeMatch add(MatchCriterion m) {
+            criteria.add(m);
+            return this;
+        }
+
+        @Override
+        Query apply(Query q) {
+            Query query = q;
+            for (MatchCriterion mc : criteria) {
+                query = mc.apply(q);
+            }
+            return query;
+        }
+    }
 }

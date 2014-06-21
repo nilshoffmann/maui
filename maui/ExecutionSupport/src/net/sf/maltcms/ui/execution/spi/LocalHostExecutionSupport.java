@@ -29,6 +29,8 @@ package net.sf.maltcms.ui.execution.spi;
 
 import java.io.File;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.ui.execution.api.IExecutionSupport;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
@@ -40,7 +42,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author nilshoffmann
  */
 @ServiceProvider(service=IExecutionSupport.class)
-public class LocalHostExecutionSupport implements IExecutionSupport{
+public class LocalHostExecutionSupport implements IExecutionSupport {
 
     private File workingDirectory;
     private String commandLine;
@@ -52,7 +54,7 @@ public class LocalHostExecutionSupport implements IExecutionSupport{
 
     @Override
     public void initialize(String displayName, String commandLine, File workingDirectory) {
-        System.out.println("Using working dir "+workingDirectory.getAbsolutePath());
+        Logger.getLogger(LocalHostExecutionSupport.class.getName()).log(Level.FINE, "Using working dir {0}", workingDirectory.getAbsolutePath());
         this.workingDirectory = workingDirectory;
         this.displayName = displayName;
         this.ed = new ExecutionDescriptor();
@@ -63,7 +65,10 @@ public class LocalHostExecutionSupport implements IExecutionSupport{
     public Callable<Process> getProcessCallable() {
         if(this.pb == null) {
             this.pb = new ExternalProcessBuilder(this.commandLine);
-            this.pb.workingDirectory(this.workingDirectory);
+            this.pb = this.pb.workingDirectory(this.workingDirectory);
+            if(this.pb==null) {
+                throw new NullPointerException("Could not initialize ExternalProcessBuilder!");
+            }
         }
         return this.pb;
     }

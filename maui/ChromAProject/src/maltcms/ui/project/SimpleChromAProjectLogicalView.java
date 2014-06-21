@@ -40,13 +40,12 @@ import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
 

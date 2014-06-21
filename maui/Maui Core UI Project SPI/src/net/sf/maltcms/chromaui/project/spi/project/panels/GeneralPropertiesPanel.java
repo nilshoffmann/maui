@@ -31,6 +31,7 @@ import java.awt.BorderLayout;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer.Category;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
@@ -53,7 +54,7 @@ public class GeneralPropertiesPanel extends javax.swing.JPanel implements Explor
         initComponents();
         this.category = category;
         this.manager = new ExplorerManager();
-        add(new BeanTreeView(), BorderLayout.CENTER);
+        add(new JScrollPane(new BeanTreeView()), BorderLayout.CENTER);
         this.manager.setRootContext(new AbstractNode(Children.create(new ProjectContainerFactory(lkp), true)) {
 
             @Override

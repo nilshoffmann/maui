@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.netbeans.validation.api
+OpenIDE-Module-Localizing-Bundle: org/netbeans/validation/api/Bundle.properties
+OpenIDE-Module-Specification-Version: 0.9
+

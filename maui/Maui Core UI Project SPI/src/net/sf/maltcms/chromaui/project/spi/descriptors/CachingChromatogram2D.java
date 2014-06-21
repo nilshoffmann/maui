@@ -29,7 +29,6 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import cross.Factory;
 import cross.annotations.Configurable;
-import cross.cache.CacheFactory;
 import cross.cache.ICacheDelegate;
 import cross.cache.ICacheElementProvider;
 import cross.datastructures.fragments.IFileFragment;
@@ -59,6 +58,7 @@ import maltcms.datastructures.ms.IExperiment2D;
 import maltcms.datastructures.ms.IScan2D;
 import maltcms.datastructures.ms.Scan2D;
 import maltcms.tools.MaltcmsTools;
+import net.sf.maltcms.chromaui.project.spi.caching.ChromatogramScanCache;
 import org.apache.commons.configuration.Configuration;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayShort;
@@ -66,9 +66,8 @@ import ucar.ma2.MAMath;
 
 /**
  *
- * Use
+ * Implementation of 2D chromatogram backed by a cache for mass spectra.
  *
- * @see maltcms.datastructures.ms.Chromatogram1D instead!
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 @Slf4j
@@ -78,17 +77,17 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     private final String scanAcquisitionTimeUnit = "seconds";
     @Configurable(name = "var.scan_acquisition_time")
     private String scan_acquisition_time_var = "scan_acquisition_time";
-    private String first_column_elution_time_var = "first_column_elution_time";
-    private String second_column_elution_time_var = "second_column_elution_time";
+//    private String first_column_elution_time_var = "first_column_elution_time";
+//    private String second_column_elution_time_var = "second_column_elution_time";
     private List<Array> massValues;
     private List<Array> intensityValues;
-    private Array firstColumnElutionTimeArray;
-    private Array secondColumnElutionTimeArray;
+//    private Array firstColumnElutionTimeArray;
+//    private Array secondColumnElutionTimeArray;
     private IVariableFragment scanAcquisitionTimeVariable;
     private ICacheDelegate<Integer, SerializableScan2D> whm;
     private int scans;
     private boolean initialized = false;
-    private double satOffset = 0;
+//    private double satOffset = 0;
     private double modulationTime = -1;
     private double scanRate = 0.0;
     private RtProvider rtProvider = null;
@@ -107,7 +106,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public CachingChromatogram2D(final IFileFragment e) {
         this.parent = e;
         String id = e.getUri().toString() + "-2D";
-        whm = CacheFactory.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this, 60, 120);
+        whm = ChromatogramScanCache.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this);
     }
 
     public void setPrefetchSize(int numberOfScansToLoad) {
@@ -132,8 +131,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
             iV.setIndex(index);
             activateCache(iV);
             intensityValues = iV.getIndexedArray();
-            this.satOffset = parent.getChild("scan_acquisition_time").getArray().
-                    getDouble(0);
+//            this.satOffset = parent.getChild("scan_acquisition_time").getArray().
+//                    getDouble(0);
             modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
             try {
                 scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
@@ -256,8 +255,8 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public void configure(final Configuration cfg) {
         this.scan_acquisition_time_var = cfg.getString(
                 "var.scan_acquisition_time", "scan_acquisition_time");
-        this.first_column_elution_time_var = cfg.getString("var.first_column_elution_time");
-        this.second_column_elution_time_var = cfg.getString("var.second_column_elution_time");
+//        this.first_column_elution_time_var = cfg.getString("var.first_column_elution_time");
+//        this.second_column_elution_time_var = cfg.getString("var.second_column_elution_time");
     }
 
     @Override
@@ -517,24 +516,16 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     public class UniformModulationRtProvider extends RtProvider {
 
-        private final String rtVariable;
-        private final IFileFragment resource;
         private final double satOffset;
         private final double modulationTime;
         private final double scanRate;
-        private final double spm;
         private final double scanDuration;
-        private final Array satArray;
 
         public UniformModulationRtProvider(String rtVariable, IFileFragment resource) {
-            this.rtVariable = rtVariable;
-            this.resource = resource;
             this.satOffset = resource.getChild(rtVariable).getArray().
                     getDouble(0);
             modulationTime = resource.getChild("modulation_time").getArray().getDouble(0);
             this.scanRate = resource.getChild("scan_rate").getArray().getDouble(0);
-            spm = modulationTime * scanRate;
-            this.satArray = resource.getChild(rtVariable).getArray();
             this.scanDuration = 1.0d / this.scanRate;
         }
 
@@ -550,15 +541,9 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     public class ArbitraryModulationRtProvider extends RtProvider {
 
-        private final String rt1Variable;
-        private final String rt2Variable;
-        private final IFileFragment resource;
         private final Array rt1, rt2;
 
         public ArbitraryModulationRtProvider(String rt1Variable, String rt2Variable, IFileFragment resource) {
-            this.rt1Variable = rt1Variable;
-            this.rt2Variable = rt2Variable;
-            this.resource = resource;
             this.rt1 = resource.getChild(rt1Variable).getArray();
             this.rt2 = resource.getChild(rt2Variable).getArray();
         }

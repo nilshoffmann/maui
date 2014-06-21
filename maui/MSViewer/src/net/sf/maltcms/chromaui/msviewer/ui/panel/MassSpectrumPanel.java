@@ -80,6 +80,7 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -816,10 +817,16 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                     }
 
                 } else {
-                    seriesToScan.clear();
-                    sc.removeAllSeries();
+                    List<XYSeries> seriesToRemove = new ArrayList<XYSeries>();
+                    for(int i = 0;i<sc.getSeriesCount();i++) {
+                        seriesToRemove.add(sc.getSeries(i));
+                        seriesToScan.remove((MSSeries)sc.getSeries(i));
+                    }
                     sc.addSeries(s);
                     seriesToScan.put(s, scan);
+                    for(XYSeries toRemove:seriesToRemove) {
+                        sc.removeSeries(toRemove);
+                    }
                 }
                 updateActiveMassSpectrum();
                 activeMS = seriesToScan.size() - 1;

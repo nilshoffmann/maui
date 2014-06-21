@@ -29,7 +29,6 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import cross.Factory;
 import cross.annotations.Configurable;
-import cross.cache.CacheFactory;
 import cross.cache.ICacheDelegate;
 import cross.cache.ICacheElementProvider;
 import cross.datastructures.fragments.IFileFragment;
@@ -59,6 +58,7 @@ import maltcms.datastructures.ms.IExperiment1D;
 import maltcms.datastructures.ms.IScan1D;
 import maltcms.datastructures.ms.Scan1D;
 import maltcms.tools.MaltcmsTools;
+import net.sf.maltcms.chromaui.project.spi.caching.ChromatogramScanCache;
 import org.apache.commons.configuration.Configuration;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayShort;
@@ -66,9 +66,8 @@ import ucar.ma2.MAMath;
 
 /**
  *
- * Use
+ * Implementation of 1D chromatogram backed by a cache for mass spectra.
  *
- * @see maltcms.datastructures.ms.Chromatogram1D instead!
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 @Slf4j
@@ -100,7 +99,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     public CachingChromatogram1D(final IFileFragment e) {
         this.parent = e;
         String id = e.getUri().toString() + "-1D";
-        whm = CacheFactory.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this, 60, 120);
+        whm = ChromatogramScanCache.createVolatileAutoRetrievalCache(UUID.nameUUIDFromBytes(id.getBytes()).toString(), this);
     }
 
     public void setPrefetchSize(int numberOfScansToLoad) {
