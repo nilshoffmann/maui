@@ -39,7 +39,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "DescriptorNodeActions/IDatabaseDescriptor",
-id = "net.sf.maltcms.chromaui.metabolitedb.spi.actions.MetaboliteDatabaseViewerOpenAction")
+        id = "net.sf.maltcms.chromaui.metabolitedb.spi.actions.MetaboliteDatabaseViewerOpenAction")
 @ActionRegistration(displayName = "#CTL_MetaboliteDatabaseViewerOpenAction")
 @ActionReferences({})
 @Messages("CTL_MetaboliteDatabaseViewerOpenAction=Open Database")
@@ -54,6 +54,6 @@ public final class MetaboliteDatabaseViewerOpenAction implements ActionListener 
     @Override
     public void actionPerformed(ActionEvent ev) {
         MetaboliteDatabaseViewerOpenRunner r = new MetaboliteDatabaseViewerOpenRunner(context);
-		MetaboliteDatabaseViewerOpenRunner.createAndRun("Opening Database", r);
+        MetaboliteDatabaseViewerOpenRunner.createAndRun("Opening Database", r);
     }
 }

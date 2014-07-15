@@ -55,7 +55,7 @@ import org.openide.windows.Mode;
  * Top component which displays something.
  */
 @ConvertAsProperties(dtd = "-//maltcms.ui.nb.pipelineRunner.ui//PipelineRunner//EN",
-autostore = false)
+        autostore = false)
 public final class PipelineRunnerTopComponent extends CloneableTopComponent implements ListSelectionListener {
 
     private static PipelineRunnerTopComponent instance;
@@ -114,12 +114,12 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
             processList.setSelectedIndex(dlm.size() - 1);
         }
     }
-    
+
     public void removeProcess(MaltcmsLocalHostExecution p) {
         if (dlm != null) {
             dlm.removeElement(p);
         }
-        if (dlm2 !=null) {
+        if (dlm2 != null) {
             dlm2.removeElement(p);
         }
     }
@@ -507,7 +507,8 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files
      * only, i.e. deserialization routines; otherwise you could get a
-     * non-deserialized instance. To obtain the singleton instance, use {@link #findInstance}.
+     * non-deserialized instance. To obtain the singleton instance, use
+     * {@link #findInstance}.
      */
     public static synchronized PipelineRunnerTopComponent getDefault() {
         if (instance == null) {
@@ -532,14 +533,13 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
             System.err.println(e.getLocalizedMessage());
         }
 
-
         ccfg.addConfiguration(new SystemConfiguration());
         return ccfg;
     }
 
     /**
-     * Obtain the PipelineRunnerTopComponent instance. Never call {@link #getDefault}
-     * directly!
+     * Obtain the PipelineRunnerTopComponent instance. Never call
+     * {@link #getDefault} directly!
      */
     public static synchronized PipelineRunnerTopComponent findInstance() {
         TopComponent win = WindowManager.getDefault().findTopComponent(

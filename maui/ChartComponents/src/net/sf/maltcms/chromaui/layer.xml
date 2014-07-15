@@ -46,7 +46,7 @@ for details.
         </folder>
     </folder>
     <folder name="Windows2">
-<!--        <folder name="Components">
+        <!--        <folder name="Components">
             <file name="AnnotationManagerTopComponent.settings" url="net/sf/maltcms/chromaui/ui/AnnotationManagerTopComponentSettings.xml"/>
         </folder>
         <folder name="Modes">

@@ -33,7 +33,7 @@ import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.Peptide;
 
 public class PeptideContainer extends BasicMzTabMetaDataContainer<PeptideDescriptor> {
-    
+
     public static PeptideContainer create(MZTabFile mzTabFile) {
         PeptideContainer c = new PeptideContainer();
         c.setLevel(1);

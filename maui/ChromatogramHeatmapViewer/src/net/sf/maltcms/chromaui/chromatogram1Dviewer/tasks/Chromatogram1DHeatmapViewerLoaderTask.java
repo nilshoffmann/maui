@@ -77,7 +77,7 @@ public class Chromatogram1DHeatmapViewerLoaderTask extends AProgressAwareRunnabl
             onEdt(new Runnable() {
                 @Override
                 public void run() {
-                    final Chromatogram1DHeatmapViewTopComponent jtc = new Chromatogram1DHeatmapViewTopComponent(dobj,ds);
+                    final Chromatogram1DHeatmapViewTopComponent jtc = new Chromatogram1DHeatmapViewTopComponent(dobj, ds);
                     jtc.open();
                     jtc.requestActive();
                 }

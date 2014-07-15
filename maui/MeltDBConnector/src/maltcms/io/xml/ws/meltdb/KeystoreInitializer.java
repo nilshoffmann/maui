@@ -36,12 +36,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.modules.OnStart;
 
-
 /**
  *
  * @author Nils Hoffmann
  */
-
 @OnStart
 public class KeystoreInitializer implements Runnable {
 
@@ -66,5 +64,5 @@ public class KeystoreInitializer implements Runnable {
             Logger.getLogger(WebServiceClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }

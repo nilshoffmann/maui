@@ -26,6 +26,7 @@
  * for details.
  */
 package net.sf.maltcms.chromaui.project.spi.project.panels;
+
 import javax.swing.JComponent;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer.Category;
@@ -41,7 +42,7 @@ public class MetaDataProperties implements ProjectCustomizer.CompositeCategoryPr
     private static final String METADATA = "MetaData";
 
     @ProjectCustomizer.CompositeCategoryProvider.Registration(
-        projectType = "net-sf-maltcms-chromaui-project-api-ichromauiproject", position = 10)
+            projectType = "net-sf-maltcms-chromaui-project-api-ichromauiproject", position = 10)
     public static MetaDataProperties createGeneralProperties() {
         return new MetaDataProperties();
     }
@@ -50,9 +51,9 @@ public class MetaDataProperties implements ProjectCustomizer.CompositeCategoryPr
     @Override
     public Category createCategory(Lookup lkp) {
         return ProjectCustomizer.Category.create(
-            METADATA,
-            Bundle.LBL_Config_MetaData(),
-            null);
+                METADATA,
+                Bundle.LBL_Config_MetaData(),
+                null);
     }
 
     @Override

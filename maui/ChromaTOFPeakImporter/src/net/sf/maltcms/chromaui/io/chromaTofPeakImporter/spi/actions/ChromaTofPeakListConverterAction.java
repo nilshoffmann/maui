@@ -43,7 +43,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Tools",
-id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListConverter")
+        id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListConverter")
 @ActionRegistration(displayName = "#CTL_ChromaTofPeakListConverter")
 @ActionReferences({
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks", position = 1413)

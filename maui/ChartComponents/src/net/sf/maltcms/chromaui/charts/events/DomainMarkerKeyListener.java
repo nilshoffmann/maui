@@ -39,7 +39,7 @@ import org.jfree.chart.plot.XYPlot;
  *
  * @author nilshoffmann
  */
-public class DomainMarkerKeyListener implements KeyListener, XYItemEntityEventSource{
+public class DomainMarkerKeyListener implements KeyListener, XYItemEntityEventSource {
 
     private XYPlot xyp;
 
@@ -48,20 +48,20 @@ public class DomainMarkerKeyListener implements KeyListener, XYItemEntityEventSo
     public DomainMarkerKeyListener(XYPlot xyp) {
         this.xyp = xyp;
     }
-    
+
     public void setPlot(XYPlot plot) {
         this.xyp = plot;
     }
 
     public void keyTyped(KeyEvent e) {
         double oldPos = xyp.getDomainCrosshairValue();
-        if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             xyp.setDomainCrosshairValue(oldPos++);
 //            xyp.getDataset().get
 //            final IEvent<XYItemEntity> v = new XYItemEntityClickedEvent();
 //            fireEvent(v);
         }
-        if(e.getKeyCode()==KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             xyp.setDomainCrosshairValue(oldPos--);
         }
     }

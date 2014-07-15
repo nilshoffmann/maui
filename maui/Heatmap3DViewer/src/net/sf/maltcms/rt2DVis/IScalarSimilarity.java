@@ -40,7 +40,7 @@ import java.io.Serializable;
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public interface IScalarSimilarity extends Serializable{
+public interface IScalarSimilarity extends Serializable {
 
     public double apply(double a, double b);
 }

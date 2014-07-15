@@ -69,9 +69,9 @@ public class FoldChangeElementProvider implements INamedElementProvider<Statisti
                             descr.getPvalues()[0]
                     );
                     double foldChange = element.getFoldChange();
-                    if(Double.isInfinite(foldChange) || Double.isNaN(foldChange)) {
+                    if (Double.isInfinite(foldChange) || Double.isNaN(foldChange)) {
 //                        System.err.println("Fold change is not a number or infinite, removing item from dataset!");
-                    }else{
+                    } else {
                         this.foldChangeElements.add(element);
                         i++;
                     }

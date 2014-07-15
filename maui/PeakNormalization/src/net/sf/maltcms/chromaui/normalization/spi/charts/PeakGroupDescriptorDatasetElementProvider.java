@@ -36,47 +36,47 @@ import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
  *
  * @author Nils Hoffmann
  */
-public class PeakGroupDescriptorDatasetElementProvider implements INamedElementProvider<IPeakGroupDescriptor, IPeakAnnotationDescriptor>{
+public class PeakGroupDescriptorDatasetElementProvider implements INamedElementProvider<IPeakGroupDescriptor, IPeakAnnotationDescriptor> {
 
-	private final IPeakGroupDescriptor peakGroup;
-	
-	public PeakGroupDescriptorDatasetElementProvider(IPeakGroupDescriptor peakGroup) {
-		this.peakGroup = peakGroup;
-	}
-	
-	@Override
-	public IPeakGroupDescriptor getSource() {
-		return this.peakGroup;
-	}
+    private final IPeakGroupDescriptor peakGroup;
 
-	@Override
-	public Comparable<?> getKey() {
-		return this.peakGroup.getMajorityDisplayName();
-	}
+    public PeakGroupDescriptorDatasetElementProvider(IPeakGroupDescriptor peakGroup) {
+        this.peakGroup = peakGroup;
+    }
 
-	@Override
-	public void setKey(Comparable<?> key) {
-		System.err.println("setKey() not implemented for class "+PeakGroupDescriptorDatasetElementProvider.class.getName());
-	}
+    @Override
+    public IPeakGroupDescriptor getSource() {
+        return this.peakGroup;
+    }
 
-	@Override
-	public int size() {
-		return this.peakGroup.getPeakAnnotationDescriptors().size();
-	}
+    @Override
+    public Comparable<?> getKey() {
+        return this.peakGroup.getMajorityDisplayName();
+    }
 
-	@Override
-	public IPeakAnnotationDescriptor get(int i) {
-		return this.peakGroup.getPeakAnnotationDescriptors().get(i);
-	}
+    @Override
+    public void setKey(Comparable<?> key) {
+        System.err.println("setKey() not implemented for class " + PeakGroupDescriptorDatasetElementProvider.class.getName());
+    }
 
-	@Override
-	public List<IPeakAnnotationDescriptor> get(int start, int stop) {
-		return this.peakGroup.getPeakAnnotationDescriptors().subList(start, stop);
-	}
+    @Override
+    public int size() {
+        return this.peakGroup.getPeakAnnotationDescriptors().size();
+    }
 
-	@Override
-	public void reset() {
-		System.err.println("reset() not implemented for class "+PeakGroupDescriptorDatasetElementProvider.class.getName());
-	}
-	
+    @Override
+    public IPeakAnnotationDescriptor get(int i) {
+        return this.peakGroup.getPeakAnnotationDescriptors().get(i);
+    }
+
+    @Override
+    public List<IPeakAnnotationDescriptor> get(int start, int stop) {
+        return this.peakGroup.getPeakAnnotationDescriptors().subList(start, stop);
+    }
+
+    @Override
+    public void reset() {
+        System.err.println("reset() not implemented for class " + PeakGroupDescriptorDatasetElementProvider.class.getName());
+    }
+
 }

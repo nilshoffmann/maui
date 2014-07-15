@@ -43,10 +43,10 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportPeakGroups")
+        id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportPeakGroups")
 @ActionRegistration(displayName = "#CTL_ImportPeakGroups")
 @ActionReferences({
-//    @ActionReference(path = "Menu/File", position = 1420),
+    //    @ActionReference(path = "Menu/File", position = 1420),
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks")
 })
 @Messages("CTL_ImportPeakGroups=Import Multiple Peak Alignment")
@@ -80,9 +80,9 @@ public final class ImportPeakGroups implements ActionListener {
         int value = jfc.showOpenDialog(null);
         if (value == JFileChooser.APPROVE_OPTION) {
             File f = jfc.getSelectedFile();
-            PeakAlignmentImporter tc = new PeakAlignmentImporter(context,f);
+            PeakAlignmentImporter tc = new PeakAlignmentImporter(context, f);
             PeakAlignmentImporter.createAndRun("Peak alignment import", tc);
         }
     }
-    
+
 }

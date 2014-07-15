@@ -76,7 +76,7 @@ public class JTableCustomizer {
         table.setRowSorter(rowSorter);
         for (int i = 0; i < table.getColumnCount(); i++) {
             Class<?> c = table.getColumnClass(i);
-            if(c.equals(Long.class)) {
+            if (c.equals(Long.class)) {
                 rowSorter.setComparator(i, new Comparator<Long>() {
 
                     @Override
@@ -84,7 +84,7 @@ public class JTableCustomizer {
                         return s1.compareTo(s2);
                     }
                 });
-            }else if(c.equals(Integer.class)) {
+            } else if (c.equals(Integer.class)) {
                 rowSorter.setComparator(i, new Comparator<Integer>() {
 
                     @Override
@@ -92,7 +92,7 @@ public class JTableCustomizer {
                         return s1.compareTo(s2);
                     }
                 });
-            }else if(c.equals(Double.class)) {
+            } else if (c.equals(Double.class)) {
                 rowSorter.setComparator(i, new Comparator<Double>() {
 
                     @Override
@@ -100,7 +100,7 @@ public class JTableCustomizer {
                         return s1.compareTo(s2);
                     }
                 });
-            }else if(c.equals(Float.class)) {
+            } else if (c.equals(Float.class)) {
                 rowSorter.setComparator(i, new Comparator<Float>() {
 
                     @Override
@@ -108,7 +108,7 @@ public class JTableCustomizer {
                         return s1.compareTo(s2);
                     }
                 });
-            }else{
+            } else {
                 rowSorter.setComparator(i, new Comparator<Object>() {
 
                     @Override
@@ -157,9 +157,9 @@ public class JTableCustomizer {
             for (int i = 0; i < rows; i++) {
                 renderer = table.getCellRenderer(i, modelIndex);
                 Object valueAt = table.getValueAt(i, modelIndex);
-                component =
-                        renderer.getTableCellRendererComponent(table, valueAt, false, false,
-                        i, modelIndex);
+                component
+                        = renderer.getTableCellRendererComponent(table, valueAt, false, false,
+                                i, modelIndex);
                 colContentWidth = Math.max(colContentWidth,
                         component.getPreferredSize().width
                         + table.getIntercellSpacing().width);
@@ -173,4 +173,3 @@ public class JTableCustomizer {
         }
     }
 }
-

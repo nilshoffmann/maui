@@ -109,7 +109,7 @@ public class SeriesPaintComboBoxRenderer implements ListCellRenderer {
                     XYItemRenderer xyi = xyp.getRenderer(j);
                     for (int i = 0; i < seriesCount; i++) {
                         Comparable s = xyp.getDataset(j).getSeriesKey(i);
-                        if(s.equals(this.c)) {
+                        if (s.equals(this.c)) {
                             xyi.setSeriesPaint(i, this.p);
                         }
                     }

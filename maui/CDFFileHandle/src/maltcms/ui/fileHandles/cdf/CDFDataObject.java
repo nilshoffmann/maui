@@ -63,7 +63,7 @@ public class CDFDataObject extends MultiDataObject implements
 
     @Override
     public Lookup getLookup() {
-        return new ProxyLookup(getCookieSet().getLookup(),lookup);
+        return new ProxyLookup(getCookieSet().getLookup(), lookup);
     }
 
     @Override

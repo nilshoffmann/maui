@@ -40,177 +40,177 @@ import org.openide.util.Lookup;
  *
  * @author Nils Hoffmann
  */
-public class TopViewDataset<SOURCE, TARGET> extends ADataset1D<SOURCE,TARGET> implements XYZDataset {
+public class TopViewDataset<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements XYZDataset {
 
-	private final ADataset1D<SOURCE, TARGET> delegate;
+    private final ADataset1D<SOURCE, TARGET> delegate;
 
-	public TopViewDataset(ADataset1D<SOURCE, TARGET> delegate) {
-		super(delegate);
-		this.delegate = delegate;
-	}
-	
-	public ADataset1D<SOURCE,TARGET> getDelegate() {
-		return this.delegate;
-	}
+    public TopViewDataset(ADataset1D<SOURCE, TARGET> delegate) {
+        super(delegate);
+        this.delegate = delegate;
+    }
 
-	@Override
-	public DomainOrder getDomainOrder() {
-		return delegate.getDomainOrder();
-	}
+    public ADataset1D<SOURCE, TARGET> getDelegate() {
+        return this.delegate;
+    }
 
-	@Override
-	public Lookup getLookup() {
-		return delegate.getLookup();
-	}
+    @Override
+    public DomainOrder getDomainOrder() {
+        return delegate.getDomainOrder();
+    }
 
-	@Override
-	public TARGET getTarget(int seriesIndex, int itemIndex) {
-		return delegate.getTarget(seriesIndex, itemIndex);
-	}
+    @Override
+    public Lookup getLookup() {
+        return delegate.getLookup();
+    }
 
-	@Override
-	public SOURCE getSource(int seriesIndex) {
-		return delegate.getSource(seriesIndex);
-	}
+    @Override
+    public TARGET getTarget(int seriesIndex, int itemIndex) {
+        return delegate.getTarget(seriesIndex, itemIndex);
+    }
 
-	@Override
-	public int getSeriesCount() {
-		return delegate.getSeriesCount();
-	}
+    @Override
+    public SOURCE getSource(int seriesIndex) {
+        return delegate.getSource(seriesIndex);
+    }
 
-	@Override
-	public Comparable getSeriesKey(int i) {
-		return delegate.getSeriesKey(i);
-	}
+    @Override
+    public int getSeriesCount() {
+        return delegate.getSeriesCount();
+    }
 
-	@Override
-	public int getItemCount(int i) {
-		return delegate.getItemCount(i);
-	}
+    @Override
+    public Comparable getSeriesKey(int i) {
+        return delegate.getSeriesKey(i);
+    }
 
-	@Override
-	public String getDescription() {
-		return delegate.getDescription();
-	}
+    @Override
+    public int getItemCount(int i) {
+        return delegate.getItemCount(i);
+    }
 
-	@Override
-	public String getDisplayName() {
-		return delegate.getDisplayName();
-	}
+    @Override
+    public String getDescription() {
+        return delegate.getDescription();
+    }
 
-	public double getMinX() {
-		return delegate.getMinX();
-	}
+    @Override
+    public String getDisplayName() {
+        return delegate.getDisplayName();
+    }
 
-	public double getMaxX() {
-		return delegate.getMaxX();
-	}
+    public double getMinX() {
+        return delegate.getMinX();
+    }
 
-	public double getMinY() {
-		return delegate.getMinY();
-	}
+    public double getMaxX() {
+        return delegate.getMaxX();
+    }
 
-	public double getMaxY() {
-		return delegate.getMaxY();
-	}
+    public double getMinY() {
+        return delegate.getMinY();
+    }
 
-	@Override
-	public double getXValue(int series, int item) {
-		return delegate.getXValue(series, item);
-	}
+    public double getMaxY() {
+        return delegate.getMaxY();
+    }
 
-	@Override
-	public Number getX(int i, int i1) {
-		return delegate.getX(i, i1);
-	}
+    @Override
+    public double getXValue(int series, int item) {
+        return delegate.getXValue(series, item);
+    }
 
-	@Override
-	public Number getY(int i, int i1) {
-		return i;
-	}
+    @Override
+    public Number getX(int i, int i1) {
+        return delegate.getX(i, i1);
+    }
 
-	@Override
-	public double getYValue(int series, int item) {
-		return series;
-	}
+    @Override
+    public Number getY(int i, int i1) {
+        return i;
+    }
 
-	@Override
-	public int[][] getRanks() {
-		return delegate.getRanks();
-	}
+    @Override
+    public double getYValue(int series, int item) {
+        return series;
+    }
 
-	@Override
-	public Number getZ(int i, int i1) {
-		return delegate.getY(i, i1);
-	}
+    @Override
+    public int[][] getRanks() {
+        return delegate.getRanks();
+    }
 
-	@Override
-	public double getZValue(int i, int i1) {
-		return delegate.getYValue(i, i1);
-	}
+    @Override
+    public Number getZ(int i, int i1) {
+        return delegate.getY(i, i1);
+    }
 
-	@Override
-	public void addChangeListener(DatasetChangeListener dl) {
-		delegate.addChangeListener(dl);
-	}
+    @Override
+    public double getZValue(int i, int i1) {
+        return delegate.getYValue(i, i1);
+    }
 
-	@Override
-	public void removeChangeListener(DatasetChangeListener dl) {
-		delegate.removeChangeListener(dl);
-	}
+    @Override
+    public void addChangeListener(DatasetChangeListener dl) {
+        delegate.addChangeListener(dl);
+    }
 
-	@Override
-	public DatasetGroup getGroup() {
-		return delegate.getGroup();
-	}
+    @Override
+    public void removeChangeListener(DatasetChangeListener dl) {
+        delegate.removeChangeListener(dl);
+    }
 
-	@Override
-	public void setGroup(DatasetGroup dg) {
-		delegate.setGroup(dg);
-	}
+    @Override
+    public DatasetGroup getGroup() {
+        return delegate.getGroup();
+    }
 
-	@Override
-	public List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider() {
-		return delegate.getNamedElementProvider();
-	}
+    @Override
+    public void setGroup(DatasetGroup dg) {
+        delegate.setGroup(dg);
+    }
 
-	@Override
-	public Number getStartX(int i, int i1) {
-		return delegate.getStartX(i, i1);
-	}
+    @Override
+    public List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider() {
+        return delegate.getNamedElementProvider();
+    }
 
-	@Override
-	public double getStartXValue(int i, int i1) {
-		return delegate.getStartXValue(i, i1);
-	}
+    @Override
+    public Number getStartX(int i, int i1) {
+        return delegate.getStartX(i, i1);
+    }
 
-	@Override
-	public Number getEndX(int i, int i1) {
-		return delegate.getEndX(i, i1);
-	}
+    @Override
+    public double getStartXValue(int i, int i1) {
+        return delegate.getStartXValue(i, i1);
+    }
 
-	@Override
-	public double getEndXValue(int i, int i1) {
-		return delegate.getEndXValue(i, i1);
-	}
+    @Override
+    public Number getEndX(int i, int i1) {
+        return delegate.getEndX(i, i1);
+    }
 
-	@Override
-	public Number getStartY(int i, int i1) {
-		return delegate.getStartY(i, i1);
-	}
+    @Override
+    public double getEndXValue(int i, int i1) {
+        return delegate.getEndXValue(i, i1);
+    }
 
-	@Override
-	public double getStartYValue(int i, int i1) {
-		return delegate.getStartYValue(i, i1);
-	}
+    @Override
+    public Number getStartY(int i, int i1) {
+        return delegate.getStartY(i, i1);
+    }
 
-	@Override
-	public Number getEndY(int i, int i1) {
-		return delegate.getEndY(i, i1);
-	}
+    @Override
+    public double getStartYValue(int i, int i1) {
+        return delegate.getStartYValue(i, i1);
+    }
 
-	@Override
-	public double getEndYValue(int i, int i1) {
-		return delegate.getEndYValue(i, i1);
-	}
+    @Override
+    public Number getEndY(int i, int i1) {
+        return delegate.getEndY(i, i1);
+    }
+
+    @Override
+    public double getEndYValue(int i, int i1) {
+        return delegate.getEndYValue(i, i1);
+    }
 }

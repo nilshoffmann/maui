@@ -35,7 +35,7 @@ for details.
         <ext name="TXT"/>
         <resolver mime="text/mztab"/>
     </file>
-<!--    <file>
+    <!--    <file>
         <name name=".mztab-xml" substring="true" ignorecase="true"/>
         <ext name="txt"/>
         <ext name="TXT"/>

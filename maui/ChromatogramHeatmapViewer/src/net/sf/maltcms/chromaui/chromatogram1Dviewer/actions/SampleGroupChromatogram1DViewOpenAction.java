@@ -52,7 +52,7 @@ import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.Lookups;
 
 @ActionID(category = "ContainerNodeActions/SampleGroupContainer",
-id = "maltcms.ui.SampleGroupChromatogram1DViewOpenAction")
+        id = "maltcms.ui.SampleGroupChromatogram1DViewOpenAction")
 @ActionRegistration(displayName = "#CTL_SampleGroupChromatogram1DViewOpenAction")
 @Messages("CTL_SampleGroupChromatogram1DViewOpenAction=Open in Chromatogram Viewer")
 public final class SampleGroupChromatogram1DViewOpenAction implements ActionListener {

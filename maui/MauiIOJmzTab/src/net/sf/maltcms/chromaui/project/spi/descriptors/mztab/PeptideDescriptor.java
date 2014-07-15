@@ -271,6 +271,5 @@ public class PeptideDescriptor extends AMzTabRecordDescriptor<Peptide> {
     public String toString() {
         return getRecord().toString();
     }
-    
 
 }

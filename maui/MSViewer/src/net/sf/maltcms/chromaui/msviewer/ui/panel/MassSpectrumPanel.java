@@ -818,13 +818,13 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
                 } else {
                     List<XYSeries> seriesToRemove = new ArrayList<XYSeries>();
-                    for(int i = 0;i<sc.getSeriesCount();i++) {
+                    for (int i = 0; i < sc.getSeriesCount(); i++) {
                         seriesToRemove.add(sc.getSeries(i));
-                        seriesToScan.remove((MSSeries)sc.getSeries(i));
+                        seriesToScan.remove((MSSeries) sc.getSeries(i));
                     }
                     sc.addSeries(s);
                     seriesToScan.put(s, scan);
-                    for(XYSeries toRemove:seriesToRemove) {
+                    for (XYSeries toRemove : seriesToRemove) {
                         sc.removeSeries(toRemove);
                     }
                 }

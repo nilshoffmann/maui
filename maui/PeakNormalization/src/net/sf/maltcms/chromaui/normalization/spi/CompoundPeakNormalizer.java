@@ -44,11 +44,11 @@ public class CompoundPeakNormalizer implements IPeakNormalizer {
     @Override
     public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor) {
         IPeakAnnotationDescriptor referencePeak = referenceGroup.getPeakForSample(descriptor.getChromatogramDescriptor());
-        if(referencePeak==null) {
-            System.out.println("Reference peak "+referenceGroup.getMajorityName()+" not contained in chromatogram "+descriptor.getChromatogramDescriptor().getResourceLocation());
+        if (referencePeak == null) {
+            System.out.println("Reference peak " + referenceGroup.getMajorityName() + " not contained in chromatogram " + descriptor.getChromatogramDescriptor().getResourceLocation());
             return 0.0d;
         }
-        return 1.0d/referencePeak.getArea();
+        return 1.0d / referencePeak.getArea();
     }
-    
+
 }

@@ -45,74 +45,74 @@ import org.jzy3d.maths.Rectangle;
  */
 public class QuadTreeMapper<T extends Number> extends ViewportMapper {
 
-	private final QuadTree<T> qt;
-	private final Rectangle2D maxViewPort;
-	private final double radiusx;
-	private final double radiusy;
+    private final QuadTree<T> qt;
+    private final Rectangle2D maxViewPort;
+    private final double radiusx;
+    private final double radiusy;
 
-	public QuadTreeMapper(QuadTree<T> qt, Rectangle2D dataArea, double radiusx, double radiusy) {
-		this.qt = qt;
-		maxViewPort = dataArea;
-		this.radiusx = radiusx;
-		this.radiusy = radiusy;
-	}
+    public QuadTreeMapper(QuadTree<T> qt, Rectangle2D dataArea, double radiusx, double radiusy) {
+        this.qt = qt;
+        maxViewPort = dataArea;
+        this.radiusx = radiusx;
+        this.radiusy = radiusy;
+    }
 
-	@Override
-	public double f(double x, double y) {
-		Point2D.Double p = new Point2D.Double(x, y);
-		Rectangle2D bounds = qt.getDataBounds();
-		Line2D hsearchLine = new Line2D.Double(bounds.getMinX()-1,y,bounds.getMaxX()+1,y);
-		Line2D vsearchLine = new Line2D.Double(x,bounds.getMinY()-1,x,bounds.getMaxY()+1);
-		List<Tuple2D<Point2D, T>> h = qt.getClosestPerpendicularToLine(hsearchLine, radiusx);
-		List<Tuple2D<Point2D, T>> v = qt.getClosestPerpendicularToLine(vsearchLine, radiusy);
-		Set<Point2D> points = new HashSet<Point2D>();
-		List<Tuple2D<Point2D, T>> results = new ArrayList<Tuple2D<Point2D, T>>();
-		for(Tuple2D<Point2D, T> t:h) {
-			if(!points.contains(t.getFirst())) {
-				points.add(t.getFirst());
-				results.add(t);
-			}
-		}
-		for(Tuple2D<Point2D, T> t:v) {
-			if(!points.contains(t.getFirst())) {
-				points.add(t.getFirst());
-				results.add(t);
-			}
-		}
-		return weightedInterpolation(p, results, radiusx, radiusy);
-	}
+    @Override
+    public double f(double x, double y) {
+        Point2D.Double p = new Point2D.Double(x, y);
+        Rectangle2D bounds = qt.getDataBounds();
+        Line2D hsearchLine = new Line2D.Double(bounds.getMinX() - 1, y, bounds.getMaxX() + 1, y);
+        Line2D vsearchLine = new Line2D.Double(x, bounds.getMinY() - 1, x, bounds.getMaxY() + 1);
+        List<Tuple2D<Point2D, T>> h = qt.getClosestPerpendicularToLine(hsearchLine, radiusx);
+        List<Tuple2D<Point2D, T>> v = qt.getClosestPerpendicularToLine(vsearchLine, radiusy);
+        Set<Point2D> points = new HashSet<Point2D>();
+        List<Tuple2D<Point2D, T>> results = new ArrayList<Tuple2D<Point2D, T>>();
+        for (Tuple2D<Point2D, T> t : h) {
+            if (!points.contains(t.getFirst())) {
+                points.add(t.getFirst());
+                results.add(t);
+            }
+        }
+        for (Tuple2D<Point2D, T> t : v) {
+            if (!points.contains(t.getFirst())) {
+                points.add(t.getFirst());
+                results.add(t);
+            }
+        }
+        return weightedInterpolation(p, results, radiusx, radiusy);
+    }
 
-	public double weightedInterpolation(Point2D p, Collection<Tuple2D<Point2D, T>> h, double radiusx, double radiusy) {
-		double sumOfWeights = 0.0d;
-		double value = 0.0d;
-		double[] weights = new double[h.size()];
-		int i = 0;
-		for (Tuple2D<Point2D, T> t : h) {
-			weights[i] = weight(p, t.getFirst(), radiusx, radiusy);
-			sumOfWeights += weights[i];
-			i++;
-		}
-		i = 0;
-		for (Tuple2D<Point2D, T> t : h) {
-			value += ((weights[i] * t.getSecond().doubleValue()) / sumOfWeights);
-			i++;
-		}
-		return value;
-	}
+    public double weightedInterpolation(Point2D p, Collection<Tuple2D<Point2D, T>> h, double radiusx, double radiusy) {
+        double sumOfWeights = 0.0d;
+        double value = 0.0d;
+        double[] weights = new double[h.size()];
+        int i = 0;
+        for (Tuple2D<Point2D, T> t : h) {
+            weights[i] = weight(p, t.getFirst(), radiusx, radiusy);
+            sumOfWeights += weights[i];
+            i++;
+        }
+        i = 0;
+        for (Tuple2D<Point2D, T> t : h) {
+            value += ((weights[i] * t.getSecond().doubleValue()) / sumOfWeights);
+            i++;
+        }
+        return value;
+    }
 
-	public double weight(Point2D p, Point2D q, double radiusx, double radiusy) {
-		double d = p.distance(q);
-		return (radiusx-d)/(radiusx*d) * (radiusy-d)/(radiusy*d);
-		//return Math.pow(((radius - d) / (radius * d)), 2) 
-	}
+    public double weight(Point2D p, Point2D q, double radiusx, double radiusy) {
+        double d = p.distance(q);
+        return (radiusx - d) / (radiusx * d) * (radiusy - d) / (radiusy * d);
+        //return Math.pow(((radius - d) / (radius * d)), 2) 
+    }
 
-	@Override
-	public Rectangle getViewport() {
-		return toRectangle(this.maxViewPort);
-	}
+    @Override
+    public Rectangle getViewport() {
+        return toRectangle(this.maxViewPort);
+    }
 
-	@Override
-	public Rectangle getClippedViewport(Rectangle roi) {
-		return toRectangle(this.maxViewPort.createIntersection(toRectangle2D(roi)));
-	}
+    @Override
+    public Rectangle getClippedViewport(Rectangle roi) {
+        return toRectangle(this.maxViewPort.createIntersection(toRectangle2D(roi)));
+    }
 }

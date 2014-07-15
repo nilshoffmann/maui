@@ -104,7 +104,6 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         addChild(mainLayer);
 
         //root = (PipelineInputWidget) addNode(INPUT_WIDGET);
-
         connectionLayer = new LayerWidget(this);
         addChild(connectionLayer);
         addChild(interractionLayer);

@@ -56,72 +56,72 @@ import ucar.ma2.MAMath;
 @Data
 public class DBAddPeaksTask extends AProgressAwareRunnable {
 
-	private final IChromAUIProject project;
-	private final IDatabaseDescriptor databaseDescriptor;
-	private final List<IPeakAnnotationDescriptor> peaks;
-	private boolean cancelled = false;
+    private final IChromAUIProject project;
+    private final IDatabaseDescriptor databaseDescriptor;
+    private final List<IPeakAnnotationDescriptor> peaks;
+    private boolean cancelled = false;
 
-	@Override
-	public void run() {
-		getProgressHandle().start();
-		getProgressHandle().setDisplayName("Adding peaks to database " + databaseDescriptor.getDisplayName());
-		getProgressHandle().switchToIndeterminate();
-		try {
-			ICrudProvider provider = CrudProvider.getProviderFor(new File(databaseDescriptor.getResourceLocation()).toURI().toURL());
-			try {
-				provider.open();
-				List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
-				ICrudSession session = provider.createSession();
-				Collection<IMetabolite> known = session.retrieve(IMetabolite.class);
-				int databaseId = 1 + known.size();
-				for (IPeakAnnotationDescriptor pad : peaks) {
-					ArrayDouble.D1 masses = (ArrayDouble.D1) Array.factory(pad.getMassValues());
-					ArrayInt.D1 intensities = (ArrayInt.D1) Array.factory(pad.getIntensityValues());
-					Metabolite m = new Metabolite(
-						pad.getName(),
-						pad.getChromatogramDescriptor().getDisplayName() + "-IDX_" + pad.getChromatogramDescriptor().getChromatogram().getIndexFor(pad.getApexTime()) + "-RT_" + pad.getApexTime(),
-						"maui-user-annotation",
-						databaseId,
-						pad.getShortDescription(),
-						pad.getFormula(),
-						SimpleDateFormat.getDateTimeInstance().format(pad.getDate()),
-						pad.getRetentionIndex(),
-						pad.getApexTime(),
-						"s",
-						(int) pad.getUniqueMass(),
-						"",
-						pad.getDisplayName(),
-						masses,
-						intensities
-					);
-					MAMath.MinMax minMaxIntens = MAMath.getMinMax(intensities);
-					MAMath.MinMax minMaxMasses = MAMath.getMinMax(masses);
-					m.setMinIntensity(minMaxIntens.min);
-					m.setMaxIntensity(minMaxIntens.max);
-					m.setMinMass(minMaxMasses.min);
-					m.setMaxMass(minMaxMasses.max);
-					m.setScanIndex(pad.getChromatogramDescriptor().getChromatogram().getIndexFor(pad.getApexTime()));
-					m.setMw(pad.getUniqueMass());
-					metabolites.add(m);
-					databaseId++;
-				}
-				session.create(metabolites);
-				session.close();
-			} catch (Exception e) {
-				Exceptions.printStackTrace(e);
-			} finally {
-				provider.close();
-			}
-		} catch (IOException ex) {
-			Exceptions.printStackTrace(ex);
-		} finally {
-			getProgressHandle().finish();
-		}
-	}
+    @Override
+    public void run() {
+        getProgressHandle().start();
+        getProgressHandle().setDisplayName("Adding peaks to database " + databaseDescriptor.getDisplayName());
+        getProgressHandle().switchToIndeterminate();
+        try {
+            ICrudProvider provider = CrudProvider.getProviderFor(new File(databaseDescriptor.getResourceLocation()).toURI().toURL());
+            try {
+                provider.open();
+                List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
+                ICrudSession session = provider.createSession();
+                Collection<IMetabolite> known = session.retrieve(IMetabolite.class);
+                int databaseId = 1 + known.size();
+                for (IPeakAnnotationDescriptor pad : peaks) {
+                    ArrayDouble.D1 masses = (ArrayDouble.D1) Array.factory(pad.getMassValues());
+                    ArrayInt.D1 intensities = (ArrayInt.D1) Array.factory(pad.getIntensityValues());
+                    Metabolite m = new Metabolite(
+                            pad.getName(),
+                            pad.getChromatogramDescriptor().getDisplayName() + "-IDX_" + pad.getChromatogramDescriptor().getChromatogram().getIndexFor(pad.getApexTime()) + "-RT_" + pad.getApexTime(),
+                            "maui-user-annotation",
+                            databaseId,
+                            pad.getShortDescription(),
+                            pad.getFormula(),
+                            SimpleDateFormat.getDateTimeInstance().format(pad.getDate()),
+                            pad.getRetentionIndex(),
+                            pad.getApexTime(),
+                            "s",
+                            (int) pad.getUniqueMass(),
+                            "",
+                            pad.getDisplayName(),
+                            masses,
+                            intensities
+                    );
+                    MAMath.MinMax minMaxIntens = MAMath.getMinMax(intensities);
+                    MAMath.MinMax minMaxMasses = MAMath.getMinMax(masses);
+                    m.setMinIntensity(minMaxIntens.min);
+                    m.setMaxIntensity(minMaxIntens.max);
+                    m.setMinMass(minMaxMasses.min);
+                    m.setMaxMass(minMaxMasses.max);
+                    m.setScanIndex(pad.getChromatogramDescriptor().getChromatogram().getIndexFor(pad.getApexTime()));
+                    m.setMw(pad.getUniqueMass());
+                    metabolites.add(m);
+                    databaseId++;
+                }
+                session.create(metabolites);
+                session.close();
+            } catch (Exception e) {
+                Exceptions.printStackTrace(e);
+            } finally {
+                provider.close();
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            getProgressHandle().finish();
+        }
+    }
 
-	@Override
-	public boolean cancel() {
-		this.cancelled = true;
-		return this.cancelled;
-	}
+    @Override
+    public boolean cancel() {
+        this.cancelled = true;
+        return this.cancelled;
+    }
 }

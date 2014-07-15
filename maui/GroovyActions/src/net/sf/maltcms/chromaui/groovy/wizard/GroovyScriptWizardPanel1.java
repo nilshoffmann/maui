@@ -31,8 +31,6 @@ import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
-
-
 public class GroovyScriptWizardPanel1 implements WizardDescriptor.Panel<WizardDescriptor> {
 
     /**

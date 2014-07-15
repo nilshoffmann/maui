@@ -31,8 +31,6 @@ package org.jzy3d.demos.histogram.barchart;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -56,19 +54,20 @@ public class SVGKeyboardSaver extends KeyAdapter {
         this.chart = chart;
     }
 
-	@Override
+    @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) {
             JFileChooser jfc = new JFileChooser(".");
             jfc.setFileFilter(new FileNameExtensionFilter("PNG file", new String[]{".png"}));
             jfc.showSaveDialog(e.getComponent());
-            
-            if(jfc.getSelectedFile()!=null){
-		if(!jfc.getSelectedFile().getParentFile().exists())
-			jfc.getSelectedFile().mkdirs();
+
+            if (jfc.getSelectedFile() != null) {
+                if (!jfc.getSelectedFile().getParentFile().exists()) {
+                    jfc.getSelectedFile().mkdirs();
+                }
                 try {
-					File temp = new File(jfc.getSelectedFile().toString()+".png");
-					chart.screenshot(temp);
+                    File temp = new File(jfc.getSelectedFile().toString() + ".png");
+                    chart.screenshot(temp);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(e.getComponent(), "Error saving file.");
                     Logger.getLogger(SVGKeyboardSaver.class.getName()).log(Level.SEVERE, null, ex);

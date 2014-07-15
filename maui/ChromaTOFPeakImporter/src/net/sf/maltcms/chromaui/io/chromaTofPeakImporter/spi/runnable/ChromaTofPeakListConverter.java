@@ -64,8 +64,8 @@ public class ChromaTofPeakListConverter extends AProgressAwareRunnable {
             progressHandle.progress("Converting " + files.length + " Peak Lists");
             Utils.defaultLocale = locale;
             LinkedHashMap<String, File> reports = new LinkedHashMap<String, File>();
-            for (File chrom: files) {
-                reports.put(StringTools.removeFileExt(chrom.getName()),chrom);
+            for (File chrom : files) {
+                reports.put(StringTools.removeFileExt(chrom.getName()), chrom);
             }
 //            Map<String,Set<String>> whitelists = parseWhiteList(whiteListFile);
             for (String chromName : reports.keySet()) {

@@ -31,8 +31,6 @@ package maltcms.io.xml.ws.meltdb.ui;
  *
  * @author Nils Hoffmann
  */
-
-
 public class CredentialsPanel extends javax.swing.JPanel {
 
     /**
@@ -105,15 +103,15 @@ public class CredentialsPanel extends javax.swing.JPanel {
     public String getUserName() {
         return nameField.getText();
     }
-    
+
     public void setUserName(String userName) {
         nameField.setText(userName);
     }
-    
+
     public char[] getPassword() {
         return passwordField.getPassword();
     }
-    
+
     public void setPassword(char[] c) {
         passwordField.setText(String.valueOf(c));
     }
@@ -121,11 +119,11 @@ public class CredentialsPanel extends javax.swing.JPanel {
     public boolean isStoreInKeyring() {
         return storeInKeyring.isSelected();
     }
-    
+
     public void setStoreInKeyring(boolean b) {
         storeInKeyring.setSelected(b);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

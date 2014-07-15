@@ -43,11 +43,11 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction")
+        id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseAction")
 @ActionRegistration(displayName = "#CTL_ImportDatabaseAction")
 @ActionReferences({
     @ActionReference(path = "Menu/File", position = 1414),
-    @ActionReference(path="Actions/ChromAUIProjectLogicalView/Database")
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Database")
 })
 @Messages("CTL_ImportDatabaseAction=Import Database")
 public final class ImportDatabaseAction implements ActionListener {
@@ -71,7 +71,7 @@ public final class ImportDatabaseAction implements ActionListener {
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {

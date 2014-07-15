@@ -41,26 +41,24 @@ import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Shape;
 
-/** The {@link OrthonormalTesselator} checks that coordinates are lying on an orthormal grid,
- * and is able to provide a {@link AbstractComposite} made of {@link Polygon}s built according to this grid
+/**
+ * The {@link OrthonormalTesselator} checks that coordinates are lying on an
+ * orthormal grid, and is able to provide a {@link AbstractComposite} made of
+ * {@link Polygon}s built according to this grid
  *
- * On this model, one input coordinate is represented by one {@link Polygon}, for which each point is
- * a mean point between two grid ticks:
+ * On this model, one input coordinate is represented by one {@link Polygon},
+ * for which each point is a mean point between two grid ticks:
  *
- *  ^                           ^
- *  |                           |
- *  -   +   +   +               -   +   +   +
- *  |                           |     *---*
- *  -   +   o   +        >>     -   + | o | +
- *  |                           |     *---*
- *  -   +   +   +               -   +   +   +
- *  |                           |
- *  |---|---|---|-->            |---|---|---|-->
+ * ^ ^
+ * | |
+ * - + + + - + + +
+ * | | *---* - + o + >> - + | o | + | | *---* - + + + - + + + | |
+ * |---|---|---|--> |---|---|---|-->
  *
  *
- *  In this figure, the representation of a coordinate ("o" on the left) is a polygon
- *  made of mean points ("*" on the right) that require the existence of four surrounding
- *  points (the "o" and the three "+")
+ * In this figure, the representation of a coordinate ("o" on the left) is a
+ * polygon made of mean points ("*" on the right) that require the existence of
+ * four surrounding points (the "o" and the three "+")
  *
  * @author Martin Pernollet
  *
@@ -75,25 +73,28 @@ public class FastOrthonormalTessellator extends Tessellator {
         return s;
     }
 
-    /************************************************************************************************/
-    /** Set the array of data. X,Y, and Z are arrays that must implicitely
+    /**
+     * *********************************************************************************************
+     */
+    /**
+     * Set the array of data. X,Y, and Z are arrays that must implicitely
      * represent an orthonormal grid.
      *
-     * If some data are missing for representing this grid, missing data
-     * will be considered as NaN. The actual management of missing values
-     * is thus left to the object that loads these data.
+     * If some data are missing for representing this grid, missing data will be
+     * considered as NaN. The actual management of missing values is thus left
+     * to the object that loads these data.
      *
      * In the following example, the o represent a NaN Z value, meaning that
      * there was no (x[i],y[i],z[i]) triplet for representing it correctly:
      * <br>
      * <code>
      * 11111111 y<br>
-     * 11111111  <br>
-     * 11o11111  <br>
-     * 11111111  <br>
-     * &nbsp;    <br>
-     * x         <br>
-     *           <br>
+     * 11111111 <br>
+     * 11o11111 <br>
+     * 11111111 <br>
+     * &nbsp; <br>
+     * x <br>
+     * <br>
      * <code>
      * <br>
      *
@@ -101,7 +102,8 @@ public class FastOrthonormalTessellator extends Tessellator {
      * @param y list of y coordinates
      * @param z list of z coordinates
      *
-     * @throws an IllegalArgumentException if x, y , and z have not the same size
+     * @throws an IllegalArgumentException if x, y , and z have not the same
+     * size
      */
     protected void setData(float x[], float y[], float z[]) {
         if (x.length != y.length || x.length != z.length) {
@@ -130,11 +132,14 @@ public class FastOrthonormalTessellator extends Tessellator {
         }
     }
 
-    /** Compute a sorted array from input, with a unique occurrence of each value.
-     * Note: any NaN value will be ignored and won't appear in the output array.
+    /**
+     * Compute a sorted array from input, with a unique occurrence of each
+     * value. Note: any NaN value will be ignored and won't appear in the output
+     * array.
      *
      * @param data input array.
-     * @return a sorted array containing only one occurrence of each input value.
+     * @return a sorted array containing only one occurrence of each input
+     * value.
      */
     protected float[] unique(float[] data) {
         float[] copy = Array.clone(data);
@@ -168,10 +173,11 @@ public class FastOrthonormalTessellator extends Tessellator {
         return result;
     }
 
-    /** Search in a couple of array a combination of values vx and vy.
-     * Positions xi and yi are returned by reference.
-     * Function returns true if the couple of data may be retrieved,
-     * false otherwise (in this case, xi and yj remain unchanged).
+    /**
+     * Search in a couple of array a combination of values vx and vy. Positions
+     * xi and yi are returned by reference. Function returns true if the couple
+     * of data may be retrieved, false otherwise (in this case, xi and yj remain
+     * unchanged).
      *
      * NOTE: Changed from quadratic complexity to linear by Nils Hoffmann
      */
@@ -195,10 +201,11 @@ public class FastOrthonormalTessellator extends Tessellator {
         return false;
     }
 
-    /**************************************************************************************/
+    /**
+     * ***********************************************************************************
+     */
     public List<Polygon> getSquarePolygonsOnCoordinates() {
         return getSquarePolygonsOnCoordinates(null, null);
-
 
     }
 
@@ -208,7 +215,6 @@ public class FastOrthonormalTessellator extends Tessellator {
 
     public List<Polygon> getSquarePolygonsAroundCoordinates() {
         return getSquarePolygonsAroundCoordinates(null, null);
-
 
     }
 
@@ -260,7 +266,7 @@ public class FastOrthonormalTessellator extends Tessellator {
                     continue; // ignore non valid set of points
                 }
 
-                for(Point point:p) {
+                for (Point point : p) {
                     points.add(point);
                 }
 
@@ -284,7 +290,7 @@ public class FastOrthonormalTessellator extends Tessellator {
 //                polygons.add(quad);
             }
         }
-        for(int i = 0;i<points.size();i++) {
+        for (int i = 0; i < points.size(); i++) {
             poly.add(points.get(i));
         }
         polygons.add(poly);
@@ -326,10 +332,11 @@ public class FastOrthonormalTessellator extends Tessellator {
         }
         return polygons;
 
-
     }
 
-    /*****************************************************************************************/
+    /**
+     * **************************************************************************************
+     */
     protected Point[] getRealQuadStandingOnPoint(int xi, int yi) {
         Point p[] = new Point[4];
 
@@ -362,14 +369,15 @@ public class FastOrthonormalTessellator extends Tessellator {
     protected boolean validZ(Point p) {
         return !Float.isNaN(p.xyz.z);
 
-
     }
 
     protected Point getPoint(float x, float y, float z) {
-        return new Point(new Coord3d(x,y,z));
+        return new Point(new Coord3d(x, y, z));
     }
 
-    /*****************************************************************************************/
+    /**
+     * **************************************************************************************
+     */
     protected float x[];
     protected float y[];
     protected float z[][];

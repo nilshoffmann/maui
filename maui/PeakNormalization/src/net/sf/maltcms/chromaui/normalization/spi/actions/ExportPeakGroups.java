@@ -60,7 +60,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.project.spi.actions.ExportPeakGroups")
+        id = "net.sf.maltcms.chromaui.project.spi.actions.ExportPeakGroups")
 @ActionRegistration(displayName = "#CTL_ExportPeakGroups")
 @ActionReferences({
     @ActionReference(path = "Actions/ContainerNodeActions/PeakGroupContainer")
@@ -77,14 +77,14 @@ public final class ExportPeakGroups implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-		System.out.println("Exporting peak groups!");
-		IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
-		File exportDir = new File(FileUtil.toFile(project.getLocation()), "export/peakGroups/" + sdf.format(new Date()));
-		exportDir.mkdirs();
-		File exportFile = new File(exportDir, "peakGroupExport.csv");
-		ExportRunnable er = new ExportRunnable(project, context, exportFile);
-		ExportRunnable.createAndRun("Peak Group Export", er);
+        System.out.println("Exporting peak groups!");
+        IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
+        File exportDir = new File(FileUtil.toFile(project.getLocation()), "export/peakGroups/" + sdf.format(new Date()));
+        exportDir.mkdirs();
+        File exportFile = new File(exportDir, "peakGroupExport.csv");
+        ExportRunnable er = new ExportRunnable(project, context, exportFile);
+        ExportRunnable.createAndRun("Peak Group Export", er);
     }
 
     class ExportRunnable extends AProgressAwareRunnable {
@@ -119,10 +119,10 @@ public final class ExportPeakGroups implements ActionListener {
                     StringBuilder header = new StringBuilder();
                     List<String> headerStrings = new ArrayList<String>();
                     headerStrings.add("PutativeIdentification");
-					headerStrings.add("PutativeIdentificationCoverage");
-					headerStrings.add("DatabaseId");
-					headerStrings.add("RetentionTimeAvg");
-					headerStrings.add("RetentionTimeStdev");
+                    headerStrings.add("PutativeIdentificationCoverage");
+                    headerStrings.add("DatabaseId");
+                    headerStrings.add("RetentionTimeAvg");
+                    headerStrings.add("RetentionTimeStdev");
                     headerStrings.addAll(Arrays.asList(new String[]{"Name", "PeakGroupId"}));
                     headerStrings.addAll(chromatogramNames);
                     for (String head : headerStrings) {
@@ -144,10 +144,10 @@ public final class ExportPeakGroups implements ActionListener {
                             }
                         }
                         sb.append(peakGroup.getMajorityDisplayName()).append("\t");
-						sb.append(peakGroup.getMajorityNamePercentage()).append("\t");
-						sb.append(peakGroup.getMajorityNativeDatabaseId()).append("\t");
-						sb.append(peakGroup.getMeanApexTime()).append("\t");
-						sb.append(peakGroup.getApexTimeStdDev()).append("\t");
+                        sb.append(peakGroup.getMajorityNamePercentage()).append("\t");
+                        sb.append(peakGroup.getMajorityNativeDatabaseId()).append("\t");
+                        sb.append(peakGroup.getMeanApexTime()).append("\t");
+                        sb.append(peakGroup.getApexTimeStdDev()).append("\t");
                         sb.append(peakGroup.getName()).append("\t");
                         sb.append(peakGroup.getId()).append("\t");
                         String[] peaks = new String[chromatogramNames.size()];
@@ -162,7 +162,7 @@ public final class ExportPeakGroups implements ActionListener {
                             }
                             peaks[chromToIndex.get(peakChrom.getId())] = value + "";
                         }
-						System.out.println("Row: " + Arrays.toString(peaks));
+                        System.out.println("Row: " + Arrays.toString(peaks));
                         for (int j = 0; j < peaks.length; j++) {
                             if (peaks[j] == null) {
                                 sb.append("0");
@@ -187,8 +187,7 @@ public final class ExportPeakGroups implements ActionListener {
                 }
             } finally {
                 ph.finish();
-				
-				
+
             }
         }
     }

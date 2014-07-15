@@ -37,19 +37,18 @@ import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class Chromatogram2DElementProvider implements INamedElementProvider<IChromatogram2D,IScan2D> {
+public class Chromatogram2DElementProvider implements INamedElementProvider<IChromatogram2D, IScan2D> {
 
     private final IChromatogram2D chrom;
-    
+
     private Comparable name;
-    
+
 //    private IChromAUIProject project;
-    
     public Chromatogram2DElementProvider(Comparable key, IChromatogram2D chrom) {
-       this.chrom = chrom;
-       this.name = key;
+        this.chrom = chrom;
+        this.name = key;
     }
-    
+
     @Override
     public Comparable getKey() {
         return name;
@@ -62,35 +61,35 @@ public class Chromatogram2DElementProvider implements INamedElementProvider<IChr
 
     @Override
     public int size() {
-        return chrom.getNumberOfScansForMsLevel((short)1);
+        return chrom.getNumberOfScansForMsLevel((short) 1);
     }
 
     @Override
     public IScan2D get(int i) {
 //        System.out.println("Retrieving scan "+i+" from "+getClass().getName()+" "+getKey());
-        IScan2D scan = chrom.getScanForMsLevel(i,(short)1);
+        IScan2D scan = chrom.getScanForMsLevel(i, (short) 1);
 //        System.out.println("Retrieved scan "+i+" from "+getClass().getName());
         return scan;
     }
 
     @Override
     public List<IScan2D> get(int i, int i1) {
-        int nscans = i1-i;
+        int nscans = i1 - i;
         ArrayList<IScan2D> al = new ArrayList<IScan2D>(nscans);
-        for(int j = 0;j<i1;j++) {
-            al.add(chrom.getScanForMsLevel(i+j,(short)1));
+        for (int j = 0; j < i1; j++) {
+            al.add(chrom.getScanForMsLevel(i + j, (short) 1));
         }
         return al;
     }
 
     @Override
     public void reset() {
-        
+
     }
 
     @Override
     public IChromatogram2D getSource() {
         return chrom;
     }
-    
+
 }

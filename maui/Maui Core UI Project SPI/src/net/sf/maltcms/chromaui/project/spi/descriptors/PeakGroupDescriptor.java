@@ -526,7 +526,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
             displayName = createDisplayName(getPeakAnnotationDescriptors()).toString();
             groupToDisplayNameCache.put(getId(), displayName);
         }
-        return displayName.replaceAll("\\<.*?>","");
+        return displayName.replaceAll("\\<.*?>", "");
     }
 
     @Override

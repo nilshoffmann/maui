@@ -38,7 +38,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
-    
+
     private double[] pValues;
     private int groupSize = -1;
 
@@ -184,7 +184,7 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
         activate(ActivationPurpose.READ);
         return this.pvalueAdjustmentMethod;
     }
-    
+
     @Override
     public void setGroupSize(int size) {
         activate(ActivationPurpose.WRITE);
@@ -193,11 +193,11 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
         firePropertyChange(PROP_GROUPSIZE, old,
                 this.groupSize);
     }
-    
+
     @Override
     public int getGroupSize() {
         activate(ActivationPurpose.READ);
-        if(this.groupSize==-1) {
+        if (this.groupSize == -1) {
             setGroupSize(getPeakGroupDescriptor().getPeakAnnotationDescriptors().size());
         }
         return this.groupSize;
@@ -205,18 +205,18 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
 
     @Override
     public int compareTo(IBasicDescriptor t) {
-        if(t instanceof IAnovaDescriptor) {
+        if (t instanceof IAnovaDescriptor) {
             double[] pvalues1 = getPvalues();
-            double[] pvalues2 = ((IAnovaDescriptor)t).getPvalues();
-            for(int i = 0;i<pvalues1.length;i++) {
-                if(pvalues1[i]<pvalues2[i]) {
+            double[] pvalues2 = ((IAnovaDescriptor) t).getPvalues();
+            for (int i = 0; i < pvalues1.length; i++) {
+                if (pvalues1[i] < pvalues2[i]) {
                     return -1;
-                }else if(pvalues1[i]<pvalues2[i]) {
+                } else if (pvalues1[i] < pvalues2[i]) {
                     return 1;
                 }
             }
         }
-        
+
         return getDisplayName().compareTo(t.getDisplayName());
     }
 }

@@ -29,7 +29,7 @@ for details.
 
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-	<tocitem text="Maui Ext Groovy Actions">
-		<tocitem text="About Maui Ext Groovy Actions" target="net.sf.maltcms.chromaui.groovy.about"/>
-	</tocitem>
+    <tocitem text="Maui Ext Groovy Actions">
+        <tocitem text="About Maui Ext Groovy Actions" target="net.sf.maltcms.chromaui.groovy.about"/>
+    </tocitem>
 </toc>

@@ -52,7 +52,6 @@ import org.jfree.ui.RectangleEdge;
 import org.openide.nodes.Node;
 import org.openide.util.WeakListeners;
 
-
 public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
 
     private final Peak1DContainer peakAnnotations;

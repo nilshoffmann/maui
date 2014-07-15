@@ -38,12 +38,12 @@ public class SmallMoleculeContainer extends BasicMzTabMetaDataContainer<SmallMol
 
     public static List<SmallMolecule> toSmallMolecules(SmallMoleculeContainer smc) {
         List<SmallMolecule> l = new ArrayList<SmallMolecule>();
-        for(SmallMoleculeDescriptor smd:smc.getMembers()) {
+        for (SmallMoleculeDescriptor smd : smc.getMembers()) {
             l.add(smd.getRecord());
         }
         return l;
     }
-    
+
     public static SmallMoleculeContainer create(MZTabFile mzTabFile) {
         SmallMoleculeContainer c = new SmallMoleculeContainer();
         c.setLevel(1);

@@ -362,15 +362,15 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
             double viewW = xAxis.lengthToJava2D(entityBounds.getWidth(), dataArea, xAxisEdge);
             double viewH = yAxis.lengthToJava2D(entityBounds.getHeight(), dataArea, yAxisEdge);
             PlotOrientation orientation = plot.getOrientation();
-            
+
             //transform model to origin (0,0) in model coordinates
             AffineTransform toOrigin = AffineTransform.getTranslateInstance(-entityBounds.getCenterX(), -entityBounds.getCenterY());
             //transform from origin (0,0) to model location
             AffineTransform toModelLocation = AffineTransform.getTranslateInstance(entityBounds.getCenterX(), entityBounds.getCenterY());
             //transform from model scale to view scale
-            double scaleX = viewW/entityBounds.getWidth();
-            double scaleY = viewH/entityBounds.getHeight();
-            System.out.println("Scale x: "+scaleX+" Scale y: "+scaleY);
+            double scaleX = viewW / entityBounds.getWidth();
+            double scaleY = viewH / entityBounds.getHeight();
+            System.out.println("Scale x: " + scaleX + " Scale y: " + scaleY);
             AffineTransform toViewScale = AffineTransform.getScaleInstance(scaleX, scaleY);
             AffineTransform toViewLocation = AffineTransform.getTranslateInstance(viewX, viewY);
             AffineTransform flipTransform = AffineTransform.getScaleInstance(1.0f, -1.0f);

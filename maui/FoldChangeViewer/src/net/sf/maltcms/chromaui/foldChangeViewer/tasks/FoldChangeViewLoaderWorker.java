@@ -89,13 +89,13 @@ public class FoldChangeViewLoaderWorker implements Runnable {
                 protected Paint getPaint(XYDataset dataset, int series, int item) {
                     double x = dataset.getXValue(series, item);
                     double y = dataset.getXValue(series, item);
-                    if(Math.abs(x)<1.0) {
+                    if (Math.abs(x) < 1.0) {
                         Paint p = super.getPaint(dataset, series, item);
-                        if(p instanceof Color) {
-                            Color color = (Color)p;
+                        if (p instanceof Color) {
+                            Color color = (Color) p;
                             float[] values = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), new float[3]);
-                            Color hsb = new Color(Color.HSBtoRGB(values[0], (float)Math.max(0.1, values[1]-0.9), values[2]));
-                            return new Color(hsb.getRed(),hsb.getGreen(),hsb.getBlue(),64);
+                            Color hsb = new Color(Color.HSBtoRGB(values[0], (float) Math.max(0.1, values[1] - 0.9), values[2]));
+                            return new Color(hsb.getRed(), hsb.getGreen(), hsb.getBlue(), 64);
                         }
                     }
                     return super.getPaint(dataset, series, item);
@@ -184,7 +184,7 @@ public class FoldChangeViewLoaderWorker implements Runnable {
             }
             if (valueRange != null) {
                 System.out.println("Setting previous value range!");
- }
+            }
             handle.progress("Adding plot to panel", 5);
             final XYPlot targetPlot = plot;
             SwingUtilities.invokeLater(new Runnable() {

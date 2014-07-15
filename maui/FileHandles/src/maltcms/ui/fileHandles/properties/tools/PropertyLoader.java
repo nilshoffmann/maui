@@ -84,8 +84,9 @@ public class PropertyLoader {
     }
 
     /**
-     * Keeps only service providers, whose package name
-     * starts with any of the Strings contained in names.
+     * Keeps only service providers, whose package name starts with any of the
+     * Strings contained in names.
+     *
      * @param sps
      * @return
      */
@@ -116,7 +117,7 @@ public class PropertyLoader {
     }
 
     /**
-     * @param optionValues 
+     * @param optionValues
      */
     public static Tuple2D<Configuration, Configuration> handleShowProperties(Object optionValues, Class loader) {
         PropertiesConfiguration ret = new PropertiesConfiguration();
@@ -178,7 +179,7 @@ public class PropertyLoader {
         System.out.println("Returning empty configuration!");
         return new PropertiesConfiguration();
     }
-    
+
     public static Map<String, Object> asHash(Configuration cfg) {
         Map<String, Object> hash = new HashMap<String, Object>();
         Iterator i = cfg.getKeys();
@@ -190,7 +191,7 @@ public class PropertyLoader {
         }
         return hash;
     }
-    
+
     public static TableModel getModel(String filename, Class<?> c) {
         System.out.println("Getting model for: " + filename);
         Vector<String> header = new Vector<String>();

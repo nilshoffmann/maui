@@ -32,7 +32,7 @@ package net.sf.maltcms.chromaui.charts.units;
  * @author nilshoffmann
  */
 public enum RTUnit {
-    
+
     MILLISECONDS,
     SECONDS,
     MINUTES,

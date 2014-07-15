@@ -63,85 +63,84 @@ import org.openide.windows.CloneableTopComponent;
  * Top component which displays something.
  */
 @ConvertAsProperties(dtd = "-//de.chromA.pipelineEditor//PipelineEditor//EN",
-		autostore = false)
+        autostore = false)
 public final class PipelineEditorTopComponent extends CloneableTopComponent {
 
-	private static PipelineEditorTopComponent instance;
-	/**
-	 * path to the icon used by the component and its open action
-	 */
+    private static PipelineEditorTopComponent instance;
+    /**
+     * path to the icon used by the component and its open action
+     */
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
-	private static final String PREFERRED_ID = "PipelineEditorTopComponent";
-	private SceneLayout layout;
-	private PipelineGraphScene scene;
-	private SceneValidator sceneValidator;
-	private FileObject baseFile;
-	protected JComponent view;
-	private double zoomSteps = 0.2d;
-	private final InstanceContent content;
-	private boolean hasChanges = false;
-	private final PipelineSavable savable;
+    private static final String PREFERRED_ID = "PipelineEditorTopComponent";
+    private SceneLayout layout;
+    private PipelineGraphScene scene;
+    private SceneValidator sceneValidator;
+    private FileObject baseFile;
+    protected JComponent view;
+    private double zoomSteps = 0.2d;
+    private final InstanceContent content;
+    private boolean hasChanges = false;
+    private final PipelineSavable savable;
 
-	public PipelineEditorTopComponent() {
-		content = new InstanceContent();
-		associateLookup(new AbstractLookup(content));
-		this.savable = new PipelineSavable();
-		this.scene = new PipelineGraphScene();
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
-		this.view = this.scene.createView();
+    public PipelineEditorTopComponent() {
+        content = new InstanceContent();
+        associateLookup(new AbstractLookup(content));
+        this.savable = new PipelineSavable();
+        this.scene = new PipelineGraphScene();
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+        this.view = this.scene.createView();
 
-		initComponents();
+        initComponents();
 
-		layout = new SceneLayout(this.scene) {
-			@Override
-			protected void performLayout() {
-				if (scene.getChildren().size() > 0) {
-					Rectangle rectangle = new Rectangle(0, 0, 1, 1);
-					for (Widget widget : scene.getChildren()) {
-						rectangle = rectangle.union(widget.convertLocalToScene(widget.getBounds()));
-					}
-					Dimension dim = rectangle.getSize();
-					Dimension viewDim = jScrollPane1.getViewportBorderBounds().getSize();
-					scene.setZoomFactor(Math.min((float) viewDim.width / dim.width, (float) viewDim.height / dim.height));
-				}
-			}
-		};
-		this.scene.setLayout(layout);
+        layout = new SceneLayout(this.scene) {
+            @Override
+            protected void performLayout() {
+                if (scene.getChildren().size() > 0) {
+                    Rectangle rectangle = new Rectangle(0, 0, 1, 1);
+                    for (Widget widget : scene.getChildren()) {
+                        rectangle = rectangle.union(widget.convertLocalToScene(widget.getBounds()));
+                    }
+                    Dimension dim = rectangle.getSize();
+                    Dimension viewDim = jScrollPane1.getViewportBorderBounds().getSize();
+                    scene.setZoomFactor(Math.min((float) viewDim.width / dim.width, (float) viewDim.height / dim.height));
+                }
+            }
+        };
+        this.scene.setLayout(layout);
 
-		//add(this.view, java.awt.BorderLayout.CENTER);
-
-		setName(NbBundle.getMessage(PipelineEditorTopComponent.class, "CTL_PipelineEditorTopComponent"));
-		setToolTipText(NbBundle.getMessage(PipelineEditorTopComponent.class, "HINT_PipelineEditorTopComponent"));
+        //add(this.view, java.awt.BorderLayout.CENTER);
+        setName(NbBundle.getMessage(PipelineEditorTopComponent.class, "CTL_PipelineEditorTopComponent"));
+        setToolTipText(NbBundle.getMessage(PipelineEditorTopComponent.class, "HINT_PipelineEditorTopComponent"));
 //        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
 
-		this.sceneValidator = new SceneValidator(this.scene);
-	}
+        this.sceneValidator = new SceneValidator(this.scene);
+    }
 
-	public void setPipelineGraphScene(PipelineGraphScene scene) {
-		this.scene = scene;
-	}
+    public void setPipelineGraphScene(PipelineGraphScene scene) {
+        this.scene = scene;
+    }
 
-	public PipelineGraphScene getPipelineGraphScene() {
-		return this.scene;
-	}
+    public PipelineGraphScene getPipelineGraphScene() {
+        return this.scene;
+    }
 
-	public void setBaseFile(FileObject baseFile) {
-		if (this.baseFile != null && !this.baseFile.getPath().equals(baseFile.getPath())) {
-			SceneExporter.showSaveDialog(this.scene);
-			content.remove(this.baseFile);
-		}
-		this.baseFile = baseFile;
-		this.scene.setBaseFile(this.baseFile);
-		content.add(this.baseFile);
-		setChanged(true);
-	}
+    public void setBaseFile(FileObject baseFile) {
+        if (this.baseFile != null && !this.baseFile.getPath().equals(baseFile.getPath())) {
+            SceneExporter.showSaveDialog(this.scene);
+            content.remove(this.baseFile);
+        }
+        this.baseFile = baseFile;
+        this.scene.setBaseFile(this.baseFile);
+        content.add(this.baseFile);
+        setChanged(true);
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -306,69 +305,69 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void GridsToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GridsToggleButtonActionPerformed
-		if (GridsToggleButton.isSelected()) {
-			this.scene.initGrids();
-		} else {
-			this.scene.setBackground(Color.WHITE);
-			this.scene.validate();
-		}
+        if (GridsToggleButton.isSelected()) {
+            this.scene.initGrids();
+        } else {
+            this.scene.setBackground(Color.WHITE);
+            this.scene.validate();
+        }
 }//GEN-LAST:event_GridsToggleButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-		double cz = this.scene.getZoomFactor();
-		if (cz - this.zoomSteps > 0) {
-			this.scene.setZoomFactor(this.scene.getZoomFactor() - this.zoomSteps);
-			this.scene.validate();
-		}
+        double cz = this.scene.getZoomFactor();
+        if (cz - this.zoomSteps > 0) {
+            this.scene.setZoomFactor(this.scene.getZoomFactor() - this.zoomSteps);
+            this.scene.validate();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-		double cz = this.scene.getZoomFactor();
-		if (cz + this.zoomSteps < 5) {
-			this.scene.setZoomFactor(this.scene.getZoomFactor() + this.zoomSteps);
-			this.scene.validate();
-		}
+        double cz = this.scene.getZoomFactor();
+        if (cz + this.zoomSteps < 5) {
+            this.scene.setZoomFactor(this.scene.getZoomFactor() + this.zoomSteps);
+            this.scene.validate();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-		this.layout.invokeLayout();
-		this.scene.validate();
+        this.layout.invokeLayout();
+        this.scene.validate();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-		SceneLayouter.layoutHorizontal(this.scene);
+        SceneLayouter.layoutHorizontal(this.scene);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-		SceneLayouter.layoutVertical(this.scene);
+        SceneLayouter.layoutVertical(this.scene);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-		String message = this.sceneValidator.validate();
-		JOptionPane.showMessageDialog(this, message,
-				"Validation message", 1);
+        String message = this.sceneValidator.validate();
+        JOptionPane.showMessageDialog(this, message,
+                "Validation message", 1);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-		this.scene.setShortLabelActive(this.jToggleButton1.isSelected());
-		this.scene.validate();
+        this.scene.setShortLabelActive(this.jToggleButton1.isSelected());
+        this.scene.validate();
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-		SceneExporter.showSaveDialog(this.scene);
+        SceneExporter.showSaveDialog(this.scene);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-		SceneLayouter.layoutDiagonal(this.scene);
+        SceneLayouter.layoutDiagonal(this.scene);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
-		if (this.jToggleButton2.isSelected()) {
-			this.scene.setActiveTool(SceneMainMenu.CONNECTION_MODE);
-		} else {
-			this.scene.setActiveTool(SceneMainMenu.MOVE_MODE);
-		}
-		// TODO add your handling code here:
+        if (this.jToggleButton2.isSelected()) {
+            this.scene.setActiveTool(SceneMainMenu.CONNECTION_MODE);
+        } else {
+            this.scene.setActiveTool(SceneMainMenu.MOVE_MODE);
+        }
+        // TODO add your handling code here:
     }//GEN-LAST:event_jToggleButton2ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton GridsToggleButton;
@@ -392,110 +391,110 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 
-	/**
-	 * Gets default instance. Do not use directly: reserved for *.settings files
-	 * only, i.e. deserialization routines; otherwise you could get a
-	 * non-deserialized instance. To obtain the singleton instance, use
-	 * {@link #findInstance}.
-	 */
-	public static synchronized PipelineEditorTopComponent getDefault() {
-		if (instance == null) {
-			instance = new PipelineEditorTopComponent();
-		}
-		return instance;
-	}
+    /**
+     * Gets default instance. Do not use directly: reserved for *.settings files
+     * only, i.e. deserialization routines; otherwise you could get a
+     * non-deserialized instance. To obtain the singleton instance, use
+     * {@link #findInstance}.
+     */
+    public static synchronized PipelineEditorTopComponent getDefault() {
+        if (instance == null) {
+            instance = new PipelineEditorTopComponent();
+        }
+        return instance;
+    }
 
-	/**
-	 * Obtain the PipelineEditorTopComponent instance. Never call
-	 * {@link #getDefault} directly!
-	 */
-	public static synchronized PipelineEditorTopComponent findInstance() {
-		TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
-		if (win == null) {
-			Logger.getLogger(PipelineEditorTopComponent.class.getName()).warning(
-					"Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
-			return getDefault();
-		}
-		if (win instanceof PipelineEditorTopComponent) {
-			return (PipelineEditorTopComponent) win;
-		}
-		Logger.getLogger(PipelineEditorTopComponent.class.getName()).warning(
-				"There seem to be multiple components with the '" + PREFERRED_ID
-				+ "' ID. That is a potential source of errors and unexpected behavior.");
-		return getDefault();
-	}
+    /**
+     * Obtain the PipelineEditorTopComponent instance. Never call
+     * {@link #getDefault} directly!
+     */
+    public static synchronized PipelineEditorTopComponent findInstance() {
+        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+        if (win == null) {
+            Logger.getLogger(PipelineEditorTopComponent.class.getName()).warning(
+                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
+            return getDefault();
+        }
+        if (win instanceof PipelineEditorTopComponent) {
+            return (PipelineEditorTopComponent) win;
+        }
+        Logger.getLogger(PipelineEditorTopComponent.class.getName()).warning(
+                "There seem to be multiple components with the '" + PREFERRED_ID
+                + "' ID. That is a potential source of errors and unexpected behavior.");
+        return getDefault();
+    }
 
-	@Override
-	public int getPersistenceType() {
-		return TopComponent.PERSISTENCE_ONLY_OPENED;
-	}
+    @Override
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_ONLY_OPENED;
+    }
 
-	@Override
-	public void componentOpened() {
-		// TODO add custom code on component opening
-	}
+    @Override
+    public void componentOpened() {
+        // TODO add custom code on component opening
+    }
 
-	@Override
-	public void componentClosed() {
-		// TODO add custom code on component closing
-	}
+    @Override
+    public void componentClosed() {
+        // TODO add custom code on component closing
+    }
 
-	void writeProperties(java.util.Properties p) {
-		// better to version settings since initial version as advocated at
-		// http://wiki.apidesign.org/wiki/PropertyFiles
-		p.setProperty("version", "1.0");
-		p.setProperty("activeFile", this.baseFile.getPath());
-		// TODO store your settings
-	}
+    void writeProperties(java.util.Properties p) {
+        // better to version settings since initial version as advocated at
+        // http://wiki.apidesign.org/wiki/PropertyFiles
+        p.setProperty("version", "1.0");
+        p.setProperty("activeFile", this.baseFile.getPath());
+        // TODO store your settings
+    }
 
-	Object readProperties(java.util.Properties p) {
-		if (instance == null) {
-			instance = this;
-		}
-		instance.readPropertiesImpl(p);
-		return instance;
-	}
+    Object readProperties(java.util.Properties p) {
+        if (instance == null) {
+            instance = this;
+        }
+        instance.readPropertiesImpl(p);
+        return instance;
+    }
 
-	private void readPropertiesImpl(java.util.Properties p) {
-		String version = p.getProperty("version");
-		if (version.equals("1.0")) {
-			try {
-				setBaseFile(FileUtil.createData(new File(p.getProperty("activeFile"))));
-			} catch (IOException ex) {
-				Exceptions.printStackTrace(ex);
-			}
-		}
-		// TODO read your settings according to their version
-	}
+    private void readPropertiesImpl(java.util.Properties p) {
+        String version = p.getProperty("version");
+        if (version.equals("1.0")) {
+            try {
+                setBaseFile(FileUtil.createData(new File(p.getProperty("activeFile"))));
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        // TODO read your settings according to their version
+    }
 
-	public void setChanged(boolean b) {
-		if (this.hasChanges && !b) {
-			content.add(savable);
-		} else if (b) {
-			this.hasChanges = b;
-			content.add(savable);
-		} else {
-			content.remove(savable);
-		}
-	}
+    public void setChanged(boolean b) {
+        if (this.hasChanges && !b) {
+            content.add(savable);
+        } else if (b) {
+            this.hasChanges = b;
+            content.add(savable);
+        } else {
+            content.remove(savable);
+        }
+    }
 
-	private class PipelineSavable implements Savable {
+    private class PipelineSavable implements Savable {
 
-		@Override
-		public void save() throws IOException {
-			Confirmation msg = new NotifyDescriptor.Confirmation(
-					"Save the pipeline configuration?",
-					NotifyDescriptor.OK_CANCEL_OPTION,
-					NotifyDescriptor.QUESTION_MESSAGE);
-			if(DialogDisplayer.getDefault().notify(msg)==NotifyDescriptor.OK_OPTION) {
-				System.out.println("Faking save action!");
-				setChanged(false);
-			}
-		}
-	}
+        @Override
+        public void save() throws IOException {
+            Confirmation msg = new NotifyDescriptor.Confirmation(
+                    "Save the pipeline configuration?",
+                    NotifyDescriptor.OK_CANCEL_OPTION,
+                    NotifyDescriptor.QUESTION_MESSAGE);
+            if (DialogDisplayer.getDefault().notify(msg) == NotifyDescriptor.OK_OPTION) {
+                System.out.println("Faking save action!");
+                setChanged(false);
+            }
+        }
+    }
 
-	@Override
-	protected String preferredID() {
-		return PREFERRED_ID;
-	}
+    @Override
+    protected String preferredID() {
+        return PREFERRED_ID;
+    }
 }

@@ -85,7 +85,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
     private Lookup.Result<IFileFragmentDataObject> result = null;
     private SelectionListener selectionListener;
     private Lookup lookup = null;
-    
+
     public CDFViewTopComponent() {
         initComponents();
         this.beanTreeView = new BeanTreeView();
@@ -97,29 +97,29 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
         selectionListener = new SelectionListener(IVariableFragment.class, Utilities.actionsGlobalContext());
         selectionListener.register(Utilities.actionsGlobalContext());
     }
-    
+
     @Override
     public ExplorerManager getExplorerManager() {
         return this.em;
     }
-    
+
     @Override
     public void resultChanged(LookupEvent le) {
         System.out.println("Received resultChanged!");
         Collection<? extends IFileFragmentDataObject> files = result.allInstances();
         updateView(files);
     }
-    
+
     private class SelectionListener extends AbstractLookupResultListener<IVariableFragment> {
-        
+
         public SelectionListener(Class<? extends IVariableFragment> typeToListenFor) {
             super(typeToListenFor);
         }
-        
+
         public SelectionListener(Class<? extends IVariableFragment> typeToListenFor, Lookup contentProviderLookup) {
             super(typeToListenFor, contentProviderLookup);
         }
-        
+
         @Override
         public void resultChanged(LookupEvent le) {
             variableMetadata.setText("");
@@ -137,7 +137,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
                 if (dimensions == null || dimensions.length == 0) {
                     sb.append("\n");
                 }
-                
+
                 Range[] ranges = ivf.getRange();
                 sb.append("Ranges:\n");
                 if (ranges != null) {
@@ -166,7 +166,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             }
         }
     }
-    
+
     protected void updateView(Collection<? extends IFileFragmentDataObject> files) {
         if (!files.isEmpty()) {
 //			selectionListener.deregister();
@@ -174,7 +174,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             List<Node> l = new ArrayList<Node>();
             for (IFileFragmentDataObject f : hs) {
                 System.out.println("File: " + f.getFragment());
-                
+
                 Node n;
                 try {
                     n = new FilterNode(DataObject.find(FileUtil.toFileObject(new File(f.getFragment().getAbsolutePath()))).getNodeDelegate(), Children.create(new DataFileFactory(f.getFragment()), true));
@@ -182,7 +182,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
                 } catch (DataObjectNotFoundException ex) {
                     Exceptions.printStackTrace(ex);
                 }
-                
+
             }
 //			System.out.println("Nodes: " + l);
             Children.Array ca = new Children.Array();//new FilterNode.Children.Array();
@@ -196,27 +196,27 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             this.em.setRootContext(Node.EMPTY);
         }
     }
-    
+
     @Override
     public Lookup getLookup() {
         return this.lookup;
     }
-    
+
     @Override
     public String getDisplayName() {
         return NbBundle.getMessage(CDFViewTopComponent.class, "CTL_CDFViewTopComponent");
     }
-    
+
     @Override
     public String getDisplayHint() {
         return NbBundle.getMessage(CDFViewTopComponent.class, "HINT_CDFViewTopComponent");
     }
-    
+
     @Override
     public JComponent getComponent() {
         return this;
     }
-    
+
     @Override
     public void panelActivated(Lookup lkp) {
         System.out.println("panelActivated");
@@ -229,7 +229,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             ExplorerUtils.activateActions(em, true);
         }
     }
-    
+
     @Override
     public void panelDeactivated() {
         ExplorerUtils.activateActions(em, false);
@@ -238,19 +238,19 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
         result = null;
 //        this.lookup = null;
     }
-    
+
     public void setFile(CDFDataObject cdo) {
         updateView(Arrays.asList(cdo));
     }
-    
+
     class DataFileFactory extends ChildFactory<IFragment> {
-        
+
         private final IFileFragment ff;
-        
+
         public DataFileFactory(IFileFragment ff) {
             this.ff = ff;
         }
-        
+
         @Override
         protected boolean createKeys(List<IFragment> list) {
             List<IVariableFragment> l = FragmentTools.getChildren(ff);
@@ -280,7 +280,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             }
             return true;
         }
-        
+
         @Override
         protected Node[] createNodesForKey(IFragment key) {
             if (key == null) {
@@ -321,7 +321,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
     protected void componentActivated() {
         ExplorerUtils.activateActions(em, true);
     }
-    
+
     protected void componentDeactivated() {
         ExplorerUtils.activateActions(em, false);
     }
@@ -357,19 +357,19 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
     // End of variables declaration//GEN-END:variables
 
     private class FileNotFoundNode extends AbstractNode {
-        
+
         public FileNotFoundNode(Children children) {
             super(children);
         }
-        
+
         public FileNotFoundNode(Children children, Lookup lookup) {
             super(children, lookup);
         }
-        
+
         @Override
         public Action[] getActions(boolean context) {
             return new Action[]{new AbstractAction("Locate missing source file") {
-                
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     IFileFragment child = lookup.lookup(IFileFragment.class);
@@ -385,5 +385,5 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             }};
         }
     }
-    
+
 }

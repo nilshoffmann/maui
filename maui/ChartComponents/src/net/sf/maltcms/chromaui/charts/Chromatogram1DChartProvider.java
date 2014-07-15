@@ -214,7 +214,7 @@ public class Chromatogram1DChartProvider {
             cd.addSeries(f.getName(), values);
         }
 
-		// ArrayDouble.D1 a = new ArrayDouble.D1(npoints);
+        // ArrayDouble.D1 a = new ArrayDouble.D1(npoints);
         // int offset = 0;
         // for (IFileFragment f : t) {
         // Array tic = f.getChild(ticvar).getArray();

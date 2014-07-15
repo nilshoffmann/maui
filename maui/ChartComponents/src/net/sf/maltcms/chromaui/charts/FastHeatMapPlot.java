@@ -91,35 +91,63 @@ import org.jfree.util.PaintUtilities;
 public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         Zoomable, Cloneable, Serializable {
 
-    /** For serialization. */
+    /**
+     * For serialization.
+     */
     private static final long serialVersionUID = 7871545897358563521L;
-    /** The default grid line stroke. */
+    /**
+     * The default grid line stroke.
+     */
     public static final Stroke DEFAULT_GRIDLINE_STROKE = new BasicStroke(0.5f,
             BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0f, new float[]{
                 2.0f, 2.0f}, 0.0f);
-    /** The default grid line paint. */
+    /**
+     * The default grid line paint.
+     */
     public static final Paint DEFAULT_GRIDLINE_PAINT = Color.lightGray;
-    /** The x data range. */
+    /**
+     * The x data range.
+     */
     private Range xDataRange;
-    /** The y data range. */
+    /**
+     * The y data range.
+     */
     private Range yDataRange;
-    /** The domain axis (used for the x-values). */
+    /**
+     * The domain axis (used for the x-values).
+     */
     private ValueAxis domainAxis;
-    /** The range axis (used for the y-values). */
+    /**
+     * The range axis (used for the y-values).
+     */
     private ValueAxis rangeAxis;
-    /** The paint used to plot data points. */
+    /**
+     * The paint used to plot data points.
+     */
     private transient Paint paint;
-    /** A flag that controls whether the domain grid-lines are visible. */
+    /**
+     * A flag that controls whether the domain grid-lines are visible.
+     */
     private boolean domainGridlinesVisible;
-    /** The stroke used to draw the domain grid-lines. */
+    /**
+     * The stroke used to draw the domain grid-lines.
+     */
     private transient Stroke domainGridlineStroke;
-    /** The paint used to draw the domain grid-lines. */
+    /**
+     * The paint used to draw the domain grid-lines.
+     */
     private transient Paint domainGridlinePaint;
-    /** A flag that controls whether the range grid-lines are visible. */
+    /**
+     * A flag that controls whether the range grid-lines are visible.
+     */
     private boolean rangeGridlinesVisible;
-    /** The stroke used to draw the range grid-lines. */
+    /**
+     * The stroke used to draw the range grid-lines.
+     */
     private transient Stroke rangeGridlineStroke;
-    /** The paint used to draw the range grid-lines. */
+    /**
+     * The paint used to draw the range grid-lines.
+     */
     private transient Paint rangeGridlinePaint;
     private transient BufferedImage dataImage;
     private transient VolatileImage offscreenBuffer;
@@ -139,7 +167,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @since 1.0.13
      */
     private boolean rangePannable;
-    /** The resourceBundle for the localization. */
+    /**
+     * The resourceBundle for the localization.
+     */
     protected static ResourceBundle localizationResources = ResourceBundleWrapper.getBundle("org.jfree.chart.plot.LocalizationBundle");
 
     /**
@@ -204,7 +234,6 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
 //                break;
 //            }
 //        }
-
         // System.out.println("Using Threshold: " + threshold);
         int height = bi.getHeight();
         //final WritableRaster wr = bi.getRaster();
@@ -339,12 +368,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * <p>
      * The data is an array of x, y values: data[0][i] = x, data[1][i] = y.
      *
-     * @param data
-     *            the data (<code>null</code> permitted).
-     * @param domainAxis
-     *            the domain (x) axis (<code>null</code> not permitted).
-     * @param rangeAxis
-     *            the range (y) axis (<code>null</code> not permitted).
+     * @param data the data (<code>null</code> permitted).
+     * @param domainAxis the domain (x) axis (<code>null</code> not permitted).
+     * @param rangeAxis the range (y) axis (<code>null</code> not permitted).
      */
     public FastHeatMapPlot(ValueAxis domainAxis, ValueAxis rangeAxis) {
 
@@ -418,8 +444,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the domain axis and sends a {@link PlotChangeEvent} to all
      * registered listeners.
      *
-     * @param axis
-     *            the axis (<code>null</code> not permitted).
+     * @param axis the axis (<code>null</code> not permitted).
      *
      * @since 1.0.3
      *
@@ -448,8 +473,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the range axis and sends a {@link PlotChangeEvent} to all registered
      * listeners.
      *
-     * @param axis
-     *            the axis (<code>null</code> not permitted).
+     * @param axis the axis (<code>null</code> not permitted).
      *
      * @since 1.0.3
      *
@@ -479,8 +503,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the color for the data points and sends a {@link PlotChangeEvent} to
      * all registered listeners.
      *
-     * @param paint
-     *            the paint (<code>null</code> not permitted).
+     * @param paint the paint (<code>null</code> not permitted).
      *
      * @see #getPaint()
      */
@@ -493,8 +516,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     }
 
     /**
-     * Returns <code>true</code> if the domain gridlines are visible, and
-     * <code>false<code> otherwise.
+     * Returns <code>true</code> if the domain gridlines are visible, and      <code>false<code> otherwise.
      *
      * @return <code>true</code> or <code>false</code>.
      *
@@ -510,8 +532,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * visible. If the flag value is changed, a {@link PlotChangeEvent} is sent
      * to all registered listeners.
      *
-     * @param visible
-     *            the new value of the flag.
+     * @param visible the new value of the flag.
      *
      * @see #getDomainGridlinePaint()
      */
@@ -538,8 +559,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the stroke for the grid lines plotted against the domain axis and
      * sends a {@link PlotChangeEvent} to all registered listeners.
      *
-     * @param stroke
-     *            the stroke (<code>null</code> not permitted).
+     * @param stroke the stroke (<code>null</code> not permitted).
      *
      * @see #getDomainGridlineStroke()
      */
@@ -567,8 +587,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the paint for the grid lines plotted against the domain axis and
      * sends a {@link PlotChangeEvent} to all registered listeners.
      *
-     * @param paint
-     *            the paint (<code>null</code> not permitted).
+     * @param paint the paint (<code>null</code> not permitted).
      *
      * @see #getDomainGridlinePaint()
      */
@@ -581,8 +600,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     }
 
     /**
-     * Returns <code>true</code> if the range axis grid is visible, and
-     * <code>false<code> otherwise.
+     * Returns <code>true</code> if the range axis grid is visible, and      <code>false<code> otherwise.
      *
      * @return <code>true</code> or <code>false</code>.
      *
@@ -597,8 +615,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * visible. If the flag value is changed, a {@link PlotChangeEvent} is sent
      * to all registered listeners.
      *
-     * @param visible
-     *            the new value of the flag.
+     * @param visible the new value of the flag.
      *
      * @see #isRangeGridlinesVisible()
      */
@@ -625,8 +642,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the stroke for the grid lines plotted against the range axis and
      * sends a {@link PlotChangeEvent} to all registered listeners.
      *
-     * @param stroke
-     *            the stroke (<code>null</code> permitted).
+     * @param stroke the stroke (<code>null</code> permitted).
      *
      * @see #getRangeGridlineStroke()
      */
@@ -654,8 +670,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the paint for the grid lines plotted against the range axis and
      * sends a {@link PlotChangeEvent} to all registered listeners.
      *
-     * @param paint
-     *            the paint (<code>null</code> not permitted).
+     * @param paint the paint (<code>null</code> not permitted).
      *
      * @see #getRangeGridlinePaint()
      */
@@ -671,18 +686,13 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Draws the fast scatter plot on a Java 2D graphics device (such as the
      * screen or a printer).
      *
-     * @param g2
-     *            the graphics device.
-     * @param area
-     *            the area within which the plot (including axis labels) should
-     *            be drawn.
-     * @param anchor
-     *            the anchor point (<code>null</code> permitted).
-     * @param parentState
-     *            the state from the parent plot (ignored).
-     * @param info
-     *            collects chart drawing information (<code>null</code>
-     *            permitted).
+     * @param g2 the graphics device.
+     * @param area the area within which the plot (including axis labels) should
+     * be drawn.
+     * @param anchor the anchor point (<code>null</code> permitted).
+     * @param parentState the state from the parent plot (ignored).
+     * @param info collects chart drawing information (<code>null</code>
+     * permitted).
      */
     public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor,
             PlotState parentState, PlotRenderingInfo info) {
@@ -767,14 +777,11 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * <code>info</code> and <code>crosshairState</code> arguments may be
      * <code>null</code>.
      *
-     * @param g2
-     *            the graphics device.
-     * @param dataArea
-     *            the region in which the data is to be drawn.
-     * @param info
-     *            an optional object for collection dimension information.
-     * @param crosshairState
-     *            collects crosshair information (<code>null</code> permitted).
+     * @param g2 the graphics device.
+     * @param dataArea the region in which the data is to be drawn.
+     * @param info an optional object for collection dimension information.
+     * @param crosshairState collects crosshair information (<code>null</code>
+     * permitted).
      */
     public void render(Graphics2D g2, Rectangle2D dataArea,
             PlotRenderingInfo info, CrosshairState crosshairState) {
@@ -820,7 +827,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             double ylow = this.rangeAxis.valueToJava2D(this.rangeAxis.getLowerBound(), dataArea, RectangleEdge.LEFT);
             double xhigh = this.domainAxis.valueToJava2D(this.domainAxis.getUpperBound(), dataArea, RectangleEdge.TOP);
             double yhigh = this.rangeAxis.valueToJava2D(this.rangeAxis.getUpperBound(), dataArea, RectangleEdge.RIGHT);
-            
+
             drawFromOffscreenBuffer(g2, this.dataImage, sourceCoordinates.getBounds(), dataArea.getBounds());
             renderCrosshairs(dataArea, g2);
         } else {
@@ -881,12 +888,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Draws the gridlines for the plot, if they are visible.
      *
-     * @param g2
-     *            the graphics device.
-     * @param dataArea
-     *            the data area.
-     * @param ticks
-     *            the ticks.
+     * @param g2 the graphics device.
+     * @param dataArea the data area.
+     * @param ticks the ticks.
      */
     protected void drawDomainGridlines(Graphics2D g2, Rectangle2D dataArea,
             List ticks) {
@@ -910,12 +914,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Draws the gridlines for the plot, if they are visible.
      *
-     * @param g2
-     *            the graphics device.
-     * @param dataArea
-     *            the data area.
-     * @param ticks
-     *            the ticks.
+     * @param g2 the graphics device.
+     * @param dataArea the data area.
+     * @param ticks the ticks.
      */
     protected void drawRangeGridlines(Graphics2D g2, Rectangle2D dataArea,
             List ticks) {
@@ -941,8 +942,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * <code>null</code> if the specified axis isn't the domain axis or the
      * range axis for the plot.
      *
-     * @param axis
-     *            the axis (<code>null</code> permitted).
+     * @param axis the axis (<code>null</code> permitted).
      *
      * @return The range (possibly <code>null</code>).
      */
@@ -959,8 +959,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Calculates the X data range.
      *
-     * @param data
-     *            the data (<code>null</code> permitted).
+     * @param data the data (<code>null</code> permitted).
      *
      * @return The range.
      */
@@ -992,8 +991,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Calculates the Y data range.
      *
-     * @param data
-     *            the data (<code>null</code> permitted).
+     * @param data the data (<code>null</code> permitted).
      *
      * @return The range.
      */
@@ -1023,12 +1021,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Multiplies the range on the domain axis by the specified factor.
      *
-     * @param factor
-     *            the zoom factor.
-     * @param info
-     *            the plot rendering info.
-     * @param source
-     *            the source point.
+     * @param factor the zoom factor.
+     * @param info the plot rendering info.
+     * @param source the source point.
      */
     public void zoomDomainAxes(double factor, PlotRenderingInfo info,
             Point2D source) {
@@ -1038,14 +1033,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Multiplies the range on the domain axis by the specified factor.
      *
-     * @param factor
-     *            the zoom factor.
-     * @param info
-     *            the plot rendering info.
-     * @param source
-     *            the source point (in Java2D space).
-     * @param useAnchor
-     *            use source point as zoom anchor?
+     * @param factor the zoom factor.
+     * @param info the plot rendering info.
+     * @param source the source point (in Java2D space).
+     * @param useAnchor use source point as zoom anchor?
      *
      * @see #zoomRangeAxes(double, PlotRenderingInfo, Point2D, boolean)
      *
@@ -1068,14 +1059,12 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Zooms in on the domain axes.
      *
-     * @param lowerPercent
-     *            the new lower bound as a percentage of the current range.
-     * @param upperPercent
-     *            the new upper bound as a percentage of the current range.
-     * @param info
-     *            the plot rendering info.
-     * @param source
-     *            the source point.
+     * @param lowerPercent the new lower bound as a percentage of the current
+     * range.
+     * @param upperPercent the new upper bound as a percentage of the current
+     * range.
+     * @param info the plot rendering info.
+     * @param source the source point.
      */
     public void zoomDomainAxes(double lowerPercent, double upperPercent,
             PlotRenderingInfo info, Point2D source) {
@@ -1085,12 +1074,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Multiplies the range on the range axis/axes by the specified factor.
      *
-     * @param factor
-     *            the zoom factor.
-     * @param info
-     *            the plot rendering info.
-     * @param source
-     *            the source point.
+     * @param factor the zoom factor.
+     * @param info the plot rendering info.
+     * @param source the source point.
      */
     public void zoomRangeAxes(double factor, PlotRenderingInfo info,
             Point2D source) {
@@ -1100,14 +1086,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Multiplies the range on the range axis by the specified factor.
      *
-     * @param factor
-     *            the zoom factor.
-     * @param info
-     *            the plot rendering info.
-     * @param source
-     *            the source point (in Java2D space).
-     * @param useAnchor
-     *            use source point as zoom anchor?
+     * @param factor the zoom factor.
+     * @param info the plot rendering info.
+     * @param source the source point (in Java2D space).
+     * @param useAnchor use source point as zoom anchor?
      *
      * @see #zoomDomainAxes(double, PlotRenderingInfo, Point2D, boolean)
      *
@@ -1130,14 +1112,12 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Zooms in on the range axes.
      *
-     * @param lowerPercent
-     *            the new lower bound as a percentage of the current range.
-     * @param upperPercent
-     *            the new upper bound as a percentage of the current range.
-     * @param info
-     *            the plot rendering info.
-     * @param source
-     *            the source point.
+     * @param lowerPercent the new lower bound as a percentage of the current
+     * range.
+     * @param upperPercent the new upper bound as a percentage of the current
+     * range.
+     * @param info the plot rendering info.
+     * @param source the source point.
      */
     public void zoomRangeAxes(double lowerPercent, double upperPercent,
             PlotRenderingInfo info, Point2D source) {
@@ -1178,8 +1158,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the flag that enables or disables panning of the plot along the
      * domain axes.
      *
-     * @param pannable
-     *            the new flag value.
+     * @param pannable the new flag value.
      *
      * @since 1.0.13
      */
@@ -1203,8 +1182,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * Sets the flag that enables or disables panning of the plot along the
      * range axes.
      *
-     * @param pannable
-     *            the new flag value.
+     * @param pannable the new flag value.
      *
      * @since 1.0.13
      */
@@ -1221,12 +1199,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Pans the domain axes by the specified percentage.
      *
-     * @param percent
-     *            the distance to pan (as a percentage of the axis length).
-     * @param info
-     *            the plot info
-     * @param source
-     *            the source point where the pan action started.
+     * @param percent the distance to pan (as a percentage of the axis length).
+     * @param info the plot info
+     * @param source the source point where the pan action started.
      *
      * @since 1.0.13
      */
@@ -1247,12 +1222,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Pans the range axes by the specified percentage.
      *
-     * @param percent
-     *            the distance to pan (as a percentage of the axis length).
-     * @param info
-     *            the plot info
-     * @param source
-     *            the source point where the pan action started.
+     * @param percent the distance to pan (as a percentage of the axis length).
+     * @param info the plot info
+     * @param source the source point where the pan action started.
      *
      * @since 1.0.13
      */
@@ -1275,8 +1247,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * <code>FastHeatmapPlot</code> carries its data around with it (rather than
      * referencing a dataset), and the data is included in the equality test.
      *
-     * @param obj
-     *            the object (<code>null</code> permitted).
+     * @param obj the object (<code>null</code> permitted).
      *
      * @return A boolean.
      */
@@ -1339,8 +1310,8 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @return A clone.
      *
-     * @throws CloneNotSupportedException
-     *             if some component of the plot does not support cloning.
+     * @throws CloneNotSupportedException if some component of the plot does not
+     * support cloning.
      */
     public Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
@@ -1365,11 +1336,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Provides serialization support.
      *
-     * @param stream
-     *            the output stream.
+     * @param stream the output stream.
      *
-     * @throws IOException
-     *             if there is an I/O error.
+     * @throws IOException if there is an I/O error.
      */
     private void writeObject(ObjectOutputStream stream) throws IOException {
         stream.defaultWriteObject();
@@ -1385,13 +1354,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
     /**
      * Provides serialization support.
      *
-     * @param stream
-     *            the input stream.
+     * @param stream the input stream.
      *
-     * @throws IOException
-     *             if there is an I/O error.
-     * @throws ClassNotFoundException
-     *             if there is a classpath problem.
+     * @throws IOException if there is an I/O error.
+     * @throws ClassNotFoundException if there is a classpath problem.
      */
     private void readObject(ObjectInputStream stream) throws IOException,
             ClassNotFoundException {

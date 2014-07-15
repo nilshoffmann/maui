@@ -40,90 +40,90 @@ import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
  */
 public class PeakGroupDescriptorDataset extends ADataset1D<IPeakGroupDescriptor, IPeakAnnotationDescriptor> {
 
-	public PeakGroupDescriptorDataset(List<INamedElementProvider<? extends IPeakGroupDescriptor, ? extends IPeakAnnotationDescriptor>> l, IDisplayPropertiesProvider provider) {
-		super(l, provider);
-	}
+    public PeakGroupDescriptorDataset(List<INamedElementProvider<? extends IPeakGroupDescriptor, ? extends IPeakAnnotationDescriptor>> l, IDisplayPropertiesProvider provider) {
+        super(l, provider);
+    }
 
-	public PeakGroupDescriptorDataset(List<INamedElementProvider<? extends IPeakGroupDescriptor, ? extends IPeakAnnotationDescriptor>> l) {
-		super(l);
-	}
+    public PeakGroupDescriptorDataset(List<INamedElementProvider<? extends IPeakGroupDescriptor, ? extends IPeakAnnotationDescriptor>> l) {
+        super(l);
+    }
 
-	public PeakGroupDescriptorDataset(ADataset1D<IPeakGroupDescriptor, IPeakAnnotationDescriptor> delegate) {
-		super(delegate);
-	}
-	
-	@Override
-	public double getMinX() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    public PeakGroupDescriptorDataset(ADataset1D<IPeakGroupDescriptor, IPeakAnnotationDescriptor> delegate) {
+        super(delegate);
+    }
 
-	@Override
-	public double getMaxX() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public double getMinX() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public double getMinY() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public double getMaxX() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public double getMaxY() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public double getMinY() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public Number getX(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public double getMaxY() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public Number getY(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public Number getX(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public int[][] getRanks() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public Number getY(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public Number getStartX(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public int[][] getRanks() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public double getStartXValue(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public Number getStartX(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public Number getEndX(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public double getStartXValue(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public double getEndXValue(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public Number getEndX(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public Number getStartY(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public double getEndXValue(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public double getStartYValue(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public Number getStartY(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public Number getEndY(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public double getStartYValue(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public double getEndYValue(int i, int i1) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public Number getEndY(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getEndYValue(int i, int i1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

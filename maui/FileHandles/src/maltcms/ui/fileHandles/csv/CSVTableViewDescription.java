@@ -40,7 +40,7 @@ import org.openide.windows.TopComponent;
  *
  * @author nilshoffmann
  */
-public class CSVTableViewDescription implements MultiViewDescription, Serializable{
+public class CSVTableViewDescription implements MultiViewDescription, Serializable {
 
     private TableModel dtm = null;
     private JFCView chartTarget = null;
@@ -81,7 +81,7 @@ public class CSVTableViewDescription implements MultiViewDescription, Serializab
 
     @Override
     public MultiViewElement createElement() {
-        if(csvtv == null) {
+        if (csvtv == null) {
             csvtv = new CSVTableView();
         }
         csvtv.setTableModel(this.dtm);

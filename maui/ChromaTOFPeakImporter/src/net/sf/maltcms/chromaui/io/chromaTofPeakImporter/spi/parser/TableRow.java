@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
  *
  * @author Nils Hoffmann
  */
-public class TableRow extends LinkedHashMap<String,String> {
+public class TableRow extends LinkedHashMap<String, String> {
 
-    
 }

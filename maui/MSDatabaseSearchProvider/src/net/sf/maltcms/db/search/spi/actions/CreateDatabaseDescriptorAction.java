@@ -42,33 +42,33 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-		id = "net.sf.maltcms.db.search.spi.actions.CreateDatabaseDescriptorAction")
+        id = "net.sf.maltcms.db.search.spi.actions.CreateDatabaseDescriptorAction")
 @ActionRegistration(displayName = "#CTL_CreateDatabaseDescriptorAction")
 @ActionReferences({
-	//    @ActionReference(path = "Menu/File", position = 1413),
-	@ActionReference(path = "Actions/ContainerNodeActions/DatabaseContainer")
+    //    @ActionReference(path = "Menu/File", position = 1413),
+    @ActionReference(path = "Actions/ContainerNodeActions/DatabaseContainer")
 })
 @Messages("CTL_CreateDatabaseDescriptorAction=Create Database")
 public final class CreateDatabaseDescriptorAction implements ActionListener {
 
-	private final DatabaseContainer context;
+    private final DatabaseContainer context;
 
-	public CreateDatabaseDescriptorAction(DatabaseContainer context) {
-		this.context = context;
-	}
+    public CreateDatabaseDescriptorAction(DatabaseContainer context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		DatabaseCreatePanel dcp = new DatabaseCreatePanel();
-		// Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
-		NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dcp,"Create empty Database",
-				NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
-				NotifyDescriptor.PLAIN_MESSAGE);
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        DatabaseCreatePanel dcp = new DatabaseCreatePanel();
+        // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
+        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dcp, "Create empty Database",
+                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                NotifyDescriptor.PLAIN_MESSAGE);
 
-		// let's display the dialog now...
-		if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-			DBCreateTask cdt = new DBCreateTask(context.getProject(), context, dcp.getDatabaseDescriptorName(),dcp.getDatabaseType(),dcp.getMaskedMasses());
-			DBCreateTask.createAndRun("Adding database descriptor", cdt);
-		}
-	}	
+        // let's display the dialog now...
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            DBCreateTask cdt = new DBCreateTask(context.getProject(), context, dcp.getDatabaseDescriptorName(), dcp.getDatabaseType(), dcp.getMaskedMasses());
+            DBCreateTask.createAndRun("Adding database descriptor", cdt);
+        }
+    }
 }

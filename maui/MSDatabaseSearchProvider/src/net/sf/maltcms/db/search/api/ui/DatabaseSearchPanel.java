@@ -119,7 +119,7 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
         for (AMetabolitePredicate p : predicates) {
             if (p.getClass().getName().equals("net.sf.maltcms.db.search.spi.similarities.Cosine")) {
                 whiteListed.add(p);
-            }else if(p.getClass().getName().equals("net.sf.maltcms.db.search.spi.similarities2.SteinAndScott")) {
+            } else if (p.getClass().getName().equals("net.sf.maltcms.db.search.spi.similarities2.SteinAndScott")) {
                 whiteListed.add(p);
             }
         }

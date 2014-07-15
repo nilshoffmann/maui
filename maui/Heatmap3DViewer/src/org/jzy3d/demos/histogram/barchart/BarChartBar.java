@@ -145,7 +145,7 @@ public class BarChartBar<ITEM> extends HistogramBar implements Pickable {
             float height, Color color) {
         shape = getBar(
                 new Coord3d((compUnit) * (wx + wy),
-                feature * (wx + wy + BarChartBar.BAR_FEAT_BUFFER_RADIUS) * 2, 0),
+                        feature * (wx + wy + BarChartBar.BAR_FEAT_BUFFER_RADIUS) * 2, 0),
                 wx, wy, height, color);
         this.height = height;
         add(shape);

@@ -50,7 +50,7 @@ import org.openide.util.actions.SystemAction;
 @NbBundle.Messages("CTL_ChromatogramNodePopupAction=Open")
 public final class ChromatogramNodePopupAction extends SystemAction implements Presenter.Menu, Presenter.Popup, ContextAwareAction {
 
-    private final NodePopupMenuAction action = new NodePopupMenuAction(false, "Open","Open", "Actions/ContainerNodeActions/ChromatogramNode/Open");
+    private final NodePopupMenuAction action = new NodePopupMenuAction(false, "Open", "Open", "Actions/ContainerNodeActions/ChromatogramNode/Open");
 
     @Override
     public void actionPerformed(ActionEvent ev) {

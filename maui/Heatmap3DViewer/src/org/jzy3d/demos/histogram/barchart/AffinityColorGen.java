@@ -31,8 +31,6 @@ package org.jzy3d.demos.histogram.barchart;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.colormaps.ColorMapRedAndGreen;
 
@@ -42,11 +40,11 @@ import org.jzy3d.colors.colormaps.ColorMapRedAndGreen;
  */
 public class AffinityColorGen extends ColorMapRedAndGreen {
 
-	@Override
-	public Color getColor(double x, double y, double z, double zMin, double zMax) {
-		if (z > 2) {
+    @Override
+    public Color getColor(double x, double y, double z, double zMin, double zMax) {
+        if (z > 2) {
             return Color.GREEN;
         }
-        return new Color((float)(1f - z / 2.1f),(float) (0.001f + z / 2.1f), 0.1f);
-	}
+        return new Color((float) (1f - z / 2.1f), (float) (0.001f + z / 2.1f), 0.1f);
+    }
 }

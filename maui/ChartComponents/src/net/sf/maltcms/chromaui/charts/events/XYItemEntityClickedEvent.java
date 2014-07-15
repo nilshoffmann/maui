@@ -37,12 +37,12 @@ import org.jfree.chart.entity.XYItemEntity;
  */
 public class XYItemEntityClickedEvent extends AEvent<XYItemEntity> {
 
-        /**
-         * @param v
-         * @param ies
-         */
-        public XYItemEntityClickedEvent(XYItemEntity v,
-                IEventSource<XYItemEntity> ies) {
-            super(v, ies, "XYITEMENTITY_CLICKED");
-        }
+    /**
+     * @param v
+     * @param ies
+     */
+    public XYItemEntityClickedEvent(XYItemEntity v,
+            IEventSource<XYItemEntity> ies) {
+        super(v, ies, "XYITEMENTITY_CLICKED");
     }
+}

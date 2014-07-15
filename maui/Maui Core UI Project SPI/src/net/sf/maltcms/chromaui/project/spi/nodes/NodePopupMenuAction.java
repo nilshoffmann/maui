@@ -58,11 +58,11 @@ public class NodePopupMenuAction extends AbstractAction implements Presenter.Men
     private final String mnemonic;
     private final String actionPath;
 
-    public static NodePopupMenuAction create(String label, String mnemonic,  String actionPath) {
+    public static NodePopupMenuAction create(String label, String mnemonic, String actionPath) {
         return new NodePopupMenuAction(true, label, mnemonic, actionPath);
     }
 
-    public static JMenu createMenu(String label, String mnemonic,  String actionPath) {
+    public static JMenu createMenu(String label, String mnemonic, String actionPath) {
         NodePopupMenuAction action = new NodePopupMenuAction(true, label, mnemonic, actionPath);
         return (JMenu) action.getMenuPresenter();
     }

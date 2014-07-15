@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.jmztab.ui.api;
 
 import java.io.File;
@@ -37,5 +36,5 @@ import java.util.concurrent.Callable;
  * @author Nils Hoffmann
  */
 public interface IMzTabExporter extends Callable<File>, Serializable {
-    
+
 }

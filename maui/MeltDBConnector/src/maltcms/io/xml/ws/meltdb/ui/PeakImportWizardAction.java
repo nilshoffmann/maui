@@ -60,17 +60,17 @@ public final class PeakImportWizardAction extends CallableSystemAction {
     }
 
     /**
-     * Initialize panels representing individual wizard's steps and sets
-     * various properties for them influencing wizard appearance.
+     * Initialize panels representing individual wizard's steps and sets various
+     * properties for them influencing wizard appearance.
      */
     private WizardDescriptor.Panel[] getPanels() {
         if (panels == null) {
             panels = new WizardDescriptor.Panel[]{
-                        new PeakImportWizardPanel1(),
-                        new PeakImportWizardPanel2(),
-                        new PeakImportWizardPanel3(),
-                        new PeakImportWizardPanel4()
-                    };
+                new PeakImportWizardPanel1(),
+                new PeakImportWizardPanel2(),
+                new PeakImportWizardPanel3(),
+                new PeakImportWizardPanel4()
+            };
             String[] steps = new String[panels.length];
             for (int i = 0; i < panels.length; i++) {
                 Component c = panels[i].getComponent();

@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
@@ -33,16 +32,15 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.AssayDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Assay;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
-
-public class AssayContainer extends BasicMzTabMetaDataContainer<AssayDescriptor>{
+public class AssayContainer extends BasicMzTabMetaDataContainer<AssayDescriptor> {
 
     public static AssayContainer create(Metadata metadata) {
         AssayContainer c = new AssayContainer();
         c.setLevel(2);
         c.setName("assays");
         c.setDisplayName("Assays");
-        SortedMap<Integer,Assay> map = metadata.getAssayMap();
-        for(Integer key:map.keySet()) {
+        SortedMap<Integer, Assay> map = metadata.getAssayMap();
+        for (Integer key : map.keySet()) {
             AssayDescriptor d = new AssayDescriptor();
             d.setAssay(map.get(key));
             c.addMembers(d);
@@ -54,5 +52,4 @@ public class AssayContainer extends BasicMzTabMetaDataContainer<AssayDescriptor>
 //    public JPanel createEditor() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-    
 }

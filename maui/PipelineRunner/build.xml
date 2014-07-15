@@ -3,16 +3,16 @@
 <!-- for some information on what you could do (e.g. targets to override). -->
 <!-- If you delete this file and reopen the project it will be recreated. -->
 <project name="maltcms.ui.nb.pipelineRunner" default="netbeans" basedir=".">
-	<description>Builds, tests, and runs the project maltcms.ui.nb.pipelineRunner.</description>
-	<import file="nbproject/build-impl.xml"/>
-	<import file="../../nbproject/custom-nbm.xml"/>
-	<target name="nbm" depends="custom-nbm.nbm">
-		<antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
-	</target>
-	<target name="javadoc">
-		<echo message="Skipping target javadoc"/>
-	</target>
-	<target name="javadoc-nb">
-		<echo message="Skipping target javadoc-nb"/>
-	</target>
+    <description>Builds, tests, and runs the project maltcms.ui.nb.pipelineRunner.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <import file="../../nbproject/custom-nbm.xml"/>
+    <target name="nbm" depends="custom-nbm.nbm">
+        <antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
+    </target>
+    <target name="javadoc">
+        <echo message="Skipping target javadoc"/>
+    </target>
+    <target name="javadoc-nb">
+        <echo message="Skipping target javadoc-nb"/>
+    </target>
 </project>

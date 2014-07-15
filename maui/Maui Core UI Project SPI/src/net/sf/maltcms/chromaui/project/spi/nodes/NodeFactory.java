@@ -156,11 +156,11 @@ public class NodeFactory implements INodeFactory {
             @Override
             protected Node createNodeForKey(Object key) {
                 if (key instanceof IContainer) {
-                    Node cn = createContainerNode((IContainer)key, lookup);
+                    Node cn = createContainerNode((IContainer) key, lookup);
                     return cn;
-                } else if(key instanceof IBasicDescriptor){
+                } else if (key instanceof IBasicDescriptor) {
                     try {
-                        DescriptorNode dn = new DescriptorNode((IBasicDescriptor)key, Children.LEAF, lookup);
+                        DescriptorNode dn = new DescriptorNode((IBasicDescriptor) key, Children.LEAF, lookup);
                         return dn;
                     } catch (IntrospectionException ex) {
                         Exceptions.printStackTrace(ex);

@@ -62,7 +62,7 @@ public class CSV2TableOpenSupport extends OpenSupport implements OpenCookie, Clo
         super(entry);
     }
 
-    public CSV2TableOpenSupport(CSVDataObject.Entry entry, DataObject...auxDataObjects) {
+    public CSV2TableOpenSupport(CSVDataObject.Entry entry, DataObject... auxDataObjects) {
         this(entry);
         addDataObjects(Arrays.asList(auxDataObjects));
     }
@@ -85,7 +85,7 @@ public class CSV2TableOpenSupport extends OpenSupport implements OpenCookie, Clo
         final CSVDataObject dobj = (CSVDataObject) entry.getDataObject();
         final CSVTableViewDescription tc = new CSVTableViewDescription();
         final JFCViewDescription jv = new JFCViewDescription();
-        MultiViewDescription[] dsc = {tc,jv};
+        MultiViewDescription[] dsc = {tc, jv};
 
         final ProgressHandle ph = ProgressHandleFactory.createHandle("Loading file " + dobj.getPrimaryFile().getName());
         final ExecutorService es = Executors.newSingleThreadExecutor();
@@ -106,11 +106,10 @@ public class CSV2TableOpenSupport extends OpenSupport implements OpenCookie, Clo
             Exceptions.printStackTrace(ex);
         }
         ph.finish();
-        tc.setChartTarget((JFCView)jv.createElement());
+        tc.setChartTarget((JFCView) jv.createElement());
         CloneableTopComponent ctc = MultiViewFactory.createCloneableMultiView(dsc, dsc[0]);
         ctc.setDisplayName(dobj.getPrimaryFile().getName());
-        
+
         return ctc;
     }
 }
-

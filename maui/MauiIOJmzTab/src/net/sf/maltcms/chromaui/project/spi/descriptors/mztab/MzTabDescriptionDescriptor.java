@@ -48,7 +48,7 @@ public class MzTabDescriptionDescriptor extends ABasicDescriptor implements IMzT
         MZTabDescription old = this.mzTabDescription;
         this.mzTabDescription = element;
         setName(element.getClass().getSimpleName());
-        setDisplayName("Id: "+element.getId()+" | Version: "+element.getVersion()+" | Type: "+element.getType()+" | Mode: "+element.getMode());
+        setDisplayName("Id: " + element.getId() + " | Version: " + element.getVersion() + " | Type: " + element.getType() + " | Mode: " + element.getMode());
         setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_MZTABDESCRIPTION, old, element);
     }

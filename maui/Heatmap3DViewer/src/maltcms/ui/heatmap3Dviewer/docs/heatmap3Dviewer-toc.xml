@@ -29,9 +29,9 @@ for details.
 
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-	<tocitem text="Views" expand="false">
-		<tocitem text="Chromatograms" expand="false">
-			<tocitem text="2D Chromatogram 3D Heatmap Viewer" target="maltcms.ui.heatmap3Dviewer.about"/>
-		</tocitem>
-	</tocitem>
+    <tocitem text="Views" expand="false">
+        <tocitem text="Chromatograms" expand="false">
+            <tocitem text="2D Chromatogram 3D Heatmap Viewer" target="maltcms.ui.heatmap3Dviewer.about"/>
+        </tocitem>
+    </tocitem>
 </toc>

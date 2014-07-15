@@ -74,89 +74,89 @@ import org.openide.windows.WindowManager;
 @TopComponent.Description(persistenceType = TopComponent.PERSISTENCE_NEVER, preferredID = "Chromatogram1DHeatmapViewTopComponent")
 public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent implements LookupListener {
 
-	private static Chromatogram1DHeatmapViewTopComponent instance;
-	private DataObject file = null;
-	private IChromAUIProject project = null;
-	private InstanceContent content = new InstanceContent();
-	private Chromatogram1DHeatmapViewerPanel hmp;
-	private Lookup.Result<ChromatogramViewViewport> result;
-	private ADataset2D<IChromatogram1D, IScan> ds;
+    private static Chromatogram1DHeatmapViewTopComponent instance;
+    private DataObject file = null;
+    private IChromAUIProject project = null;
+    private InstanceContent content = new InstanceContent();
+    private Chromatogram1DHeatmapViewerPanel hmp;
+    private Lookup.Result<ChromatogramViewViewport> result;
+    private ADataset2D<IChromatogram1D, IScan> ds;
 
-	public Chromatogram1DHeatmapViewTopComponent(DataObject filename, ADataset2D<IChromatogram1D, IScan> ds) {
-		associateLookup(new AbstractLookup(content));
-		init(filename, ds);
-	}
+    public Chromatogram1DHeatmapViewTopComponent(DataObject filename, ADataset2D<IChromatogram1D, IScan> ds) {
+        associateLookup(new AbstractLookup(content));
+        init(filename, ds);
+    }
 
-	private void init(DataObject dobj, ADataset2D<IChromatogram1D, IScan> ds) {
-		this.ds = ds;
-		content.add(ds);
-		IChromAUIProject icp = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
-		IChromatogramDescriptor descriptor = Utilities.actionsGlobalContext().lookup(IChromatogramDescriptor.class);
-		result = Utilities.actionsGlobalContext().lookupResult(ChromatogramViewViewport.class);
-		if (icp != null) {
-			this.project = icp;
-			content.add(this.project);
-		}
-		if (descriptor == null) {
-			descriptor = DescriptorFactory.newChromatogramDescriptor();
-			descriptor.setResourceLocation(dobj.getPrimaryFile().getPath());
-			descriptor.setDetectorType(new TOFMS());
-			descriptor.setSeparationType(new GC());
-			descriptor.setDisplayName(dobj.getPrimaryFile().getName());
-		} else {
-			EvalTools.notNull(descriptor.getChromatogram(), this);
-		}
-		System.out.println("Using project: " + icp + " from active nodes lookup!");
-		System.out.println("Using descriptor: " + descriptor + " from active nodes lookup!");
-		if (dobj != null) {
-			content.add(dobj);
-			setToolTipText(dobj.getPrimaryFile().getPath());
-		} else {
-			setToolTipText(descriptor.getResourceLocation());
-		}
-		setDisplayName("1D Chromatogram Heatmap View of " + new File(descriptor.getResourceLocation()).getName());
-		content.add(descriptor);
-		content.add(descriptor.getChromatogram());
-		content.add(new NavigatorLookupHint() {
-			@Override
-			public String getContentType() {
-				return "application/jfreechart+overlay";
-			}
-		});
-		initComponents();
-		setName(NbBundle.getMessage(Chromatogram1DHeatmapViewTopComponent.class, "CTL_Chromatogram1DHeatmapViewerTopComponent"));
-		setEnabled(false);
-		//project may be null
-		this.hmp = createPanel(descriptor, ds);
-		add(this.hmp, BorderLayout.CENTER);
-		setEnabled(true);
-	}
+    private void init(DataObject dobj, ADataset2D<IChromatogram1D, IScan> ds) {
+        this.ds = ds;
+        content.add(ds);
+        IChromAUIProject icp = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+        IChromatogramDescriptor descriptor = Utilities.actionsGlobalContext().lookup(IChromatogramDescriptor.class);
+        result = Utilities.actionsGlobalContext().lookupResult(ChromatogramViewViewport.class);
+        if (icp != null) {
+            this.project = icp;
+            content.add(this.project);
+        }
+        if (descriptor == null) {
+            descriptor = DescriptorFactory.newChromatogramDescriptor();
+            descriptor.setResourceLocation(dobj.getPrimaryFile().getPath());
+            descriptor.setDetectorType(new TOFMS());
+            descriptor.setSeparationType(new GC());
+            descriptor.setDisplayName(dobj.getPrimaryFile().getName());
+        } else {
+            EvalTools.notNull(descriptor.getChromatogram(), this);
+        }
+        System.out.println("Using project: " + icp + " from active nodes lookup!");
+        System.out.println("Using descriptor: " + descriptor + " from active nodes lookup!");
+        if (dobj != null) {
+            content.add(dobj);
+            setToolTipText(dobj.getPrimaryFile().getPath());
+        } else {
+            setToolTipText(descriptor.getResourceLocation());
+        }
+        setDisplayName("1D Chromatogram Heatmap View of " + new File(descriptor.getResourceLocation()).getName());
+        content.add(descriptor);
+        content.add(descriptor.getChromatogram());
+        content.add(new NavigatorLookupHint() {
+            @Override
+            public String getContentType() {
+                return "application/jfreechart+overlay";
+            }
+        });
+        initComponents();
+        setName(NbBundle.getMessage(Chromatogram1DHeatmapViewTopComponent.class, "CTL_Chromatogram1DHeatmapViewerTopComponent"));
+        setEnabled(false);
+        //project may be null
+        this.hmp = createPanel(descriptor, ds);
+        add(this.hmp, BorderLayout.CENTER);
+        setEnabled(true);
+    }
 
-	private Chromatogram1DHeatmapViewerPanel createPanel(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram1D, IScan> ds) {
-		XYPlot p = createPlot(chromatogram, ds);
-		final PaintScale ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
-		p.setDomainGridlinesVisible(false);
-		p.setRangeGridlinesVisible(false);
-		JFreeChart jfc = new JFreeChart(p);
-		final ChartPanel cp = new ChartPanel(jfc, true);
-		cp.setZoomFillPaint(new Color(192, 192, 192, 96));
-		cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
-		cp.setFillZoomRectangle(false);
-		cp.getChart().getLegend().setVisible(true);
-		Chromatogram1DHeatmapViewerPanel panel = new Chromatogram1DHeatmapViewerPanel(content, getLookup(), ds);
-		if (panel.getBackgroundColor() == null) {
-			panel.setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
-		}
-		cp.addKeyListener(panel);
-		cp.setFocusable(true);
-		cp.setDisplayToolTips(true);
-		cp.setDismissDelay(3000);
-		cp.setInitialDelay(0);
-		cp.setReshowDelay(0);
-		cp.setVisible(true);
-		cp.setRefreshBuffer(true);
-		cp.setMouseWheelEnabled(true);
-		//FIXME fix peak overlay
+    private Chromatogram1DHeatmapViewerPanel createPanel(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram1D, IScan> ds) {
+        XYPlot p = createPlot(chromatogram, ds);
+        final PaintScale ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
+        p.setDomainGridlinesVisible(false);
+        p.setRangeGridlinesVisible(false);
+        JFreeChart jfc = new JFreeChart(p);
+        final ChartPanel cp = new ChartPanel(jfc, true);
+        cp.setZoomFillPaint(new Color(192, 192, 192, 96));
+        cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
+        cp.setFillZoomRectangle(false);
+        cp.getChart().getLegend().setVisible(true);
+        Chromatogram1DHeatmapViewerPanel panel = new Chromatogram1DHeatmapViewerPanel(content, getLookup(), ds);
+        if (panel.getBackgroundColor() == null) {
+            panel.setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
+        }
+        cp.addKeyListener(panel);
+        cp.setFocusable(true);
+        cp.setDisplayToolTips(true);
+        cp.setDismissDelay(3000);
+        cp.setInitialDelay(0);
+        cp.setReshowDelay(0);
+        cp.setVisible(true);
+        cp.setRefreshBuffer(true);
+        cp.setMouseWheelEnabled(true);
+        //FIXME fix peak overlay
 //		if (project != null) {
 //			for (Peak1DContainer peaks : project.getPeaks(chromatogram)) {
 //				Peak1DHeatmapOverlay overlay = new Peak1DHeatmapOverlay(chromatogram, peaks.getName(), peaks.getDisplayName(), peaks.getShortDescription(), true, peaks);
@@ -164,50 +164,50 @@ public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent im
 //				content.add(overlay);
 //			}
 //		}
-		panel.setChartPanel(cp);
-		if (ps != null) {
-			panel.setPaintScale(ps);
-		}
-		panel.setPlot(p);
-		return panel;
-	}
+        panel.setChartPanel(cp);
+        if (ps != null) {
+            panel.setPaintScale(ps);
+        }
+        panel.setPlot(p);
+        return panel;
+    }
 
-	private XYPlot createPlot(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram1D, IScan> ds) {
-		XYBlockRenderer xybr = new XYBlockRenderer();
-		IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
-		ips.setMin(ds.getMinZ());
-		ips.setMax(ds.getMaxZ());
-		PaintScale ps = ips.getPaintScales().get(0);
-		xybr.setPaintScale(ps);
-		xybr.setDefaultEntityRadius(1);
-		xybr.setBlockWidth(0.1);
-		xybr.setBlockAnchor(RectangleAnchor.CENTER);
-		xybr.setBlockHeight(1.0);
-		RTUnit rtUnit = RTUnit.SECONDS;
-		xybr.setToolTipGenerator(new StandardXYZToolTipGenerator("{0}: @({1}, {2}) = {3}", DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance()));
-		NumberAxis rt1 = new NumberAxis("Retention Time [" + rtUnit.name().toLowerCase() + "]");
-		NumberAxis rt2 = new NumberAxis("M/Z");
-		rt1.setAutoRange(false);
-		rt1.setLowerBound(ds.getMinX());
-		rt1.setUpperBound(ds.getMaxX());
-		rt1.setRangeWithMargins(ds.getMinX(), ds.getMaxX());
-		rt2.setFixedAutoRange(ds.getMaxX() - ds.getMinX());
-		rt2.setAutoRange(false);
-		rt2.setLowerBound(ds.getMinY());
-		rt2.setUpperBound(ds.getMaxY());
-		rt2.setFixedAutoRange(ds.getMaxY() - ds.getMinY());
-		rt2.setRangeWithMargins(ds.getMinY(), ds.getMaxY());
-		XYPlot heatmapPlot = new XYPlot(ds, rt1, rt2, xybr);
-		heatmapPlot.setDomainPannable(true);
-		heatmapPlot.setRangePannable(true);
-		return heatmapPlot;
-	}
+    private XYPlot createPlot(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram1D, IScan> ds) {
+        XYBlockRenderer xybr = new XYBlockRenderer();
+        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
+        ips.setMin(ds.getMinZ());
+        ips.setMax(ds.getMaxZ());
+        PaintScale ps = ips.getPaintScales().get(0);
+        xybr.setPaintScale(ps);
+        xybr.setDefaultEntityRadius(1);
+        xybr.setBlockWidth(0.1);
+        xybr.setBlockAnchor(RectangleAnchor.CENTER);
+        xybr.setBlockHeight(1.0);
+        RTUnit rtUnit = RTUnit.SECONDS;
+        xybr.setToolTipGenerator(new StandardXYZToolTipGenerator("{0}: @({1}, {2}) = {3}", DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance(), DecimalFormat.getNumberInstance()));
+        NumberAxis rt1 = new NumberAxis("Retention Time [" + rtUnit.name().toLowerCase() + "]");
+        NumberAxis rt2 = new NumberAxis("M/Z");
+        rt1.setAutoRange(false);
+        rt1.setLowerBound(ds.getMinX());
+        rt1.setUpperBound(ds.getMaxX());
+        rt1.setRangeWithMargins(ds.getMinX(), ds.getMaxX());
+        rt2.setFixedAutoRange(ds.getMaxX() - ds.getMinX());
+        rt2.setAutoRange(false);
+        rt2.setLowerBound(ds.getMinY());
+        rt2.setUpperBound(ds.getMaxY());
+        rt2.setFixedAutoRange(ds.getMaxY() - ds.getMinY());
+        rt2.setRangeWithMargins(ds.getMinY(), ds.getMaxY());
+        XYPlot heatmapPlot = new XYPlot(ds, rt1, rt2, xybr);
+        heatmapPlot.setDomainPannable(true);
+        heatmapPlot.setRangePannable(true);
+        return heatmapPlot;
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -217,63 +217,63 @@ public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent im
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 	@Override
-	public int getPersistenceType() {
-		return TopComponent.PERSISTENCE_NEVER;
-	}
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_NEVER;
+    }
 
-	@Override
-	public void componentOpened() {
-		if (result != null) {
-			result.addLookupListener(this);
-		}
-		TopComponent msView = WindowManager.getDefault().findTopComponent("MassSpectrumViewerTopComponent");
-		if (msView != null) {
-			msView.open();
-		}
-	}
+    @Override
+    public void componentOpened() {
+        if (result != null) {
+            result.addLookupListener(this);
+        }
+        TopComponent msView = WindowManager.getDefault().findTopComponent("MassSpectrumViewerTopComponent");
+        if (msView != null) {
+            msView.open();
+        }
+    }
 
-	@Override
-	protected void componentActivated() {
-		super.componentActivated();
-		requestFocusInWindow();
-		hmp.requestFocusInWindow();
-	}
+    @Override
+    protected void componentActivated() {
+        super.componentActivated();
+        requestFocusInWindow();
+        hmp.requestFocusInWindow();
+    }
 
-	@Override
-	protected void componentDeactivated() {
-		super.componentDeactivated();
-	}
+    @Override
+    protected void componentDeactivated() {
+        super.componentDeactivated();
+    }
 
-	@Override
-	public void componentClosed() {
-		if (result != null) {
-			result.removeLookupListener(this);
-		}
-	}
+    @Override
+    public void componentClosed() {
+        if (result != null) {
+            result.removeLookupListener(this);
+        }
+    }
 
-	void writeProperties(java.util.Properties p) {
-		// better to version settings since initial version as advocated at
-		// http://wiki.apidesign.org/wiki/PropertyFiles
-		p.setProperty("version", "1.0");
+    void writeProperties(java.util.Properties p) {
+        // better to version settings since initial version as advocated at
+        // http://wiki.apidesign.org/wiki/PropertyFiles
+        p.setProperty("version", "1.0");
 //        if (this.project != null) {
 //            p.setProperty("projectLocation", this.project.getLocation().getPath());
 //        }
 //        if (this.file != null) {
 //            p.setProperty("fileLocation", this.file.getPrimaryFile().getPath());
 //        }
-		// TODO store your settings
-	}
+        // TODO store your settings
+    }
 
-	Object readProperties(java.util.Properties p) {
-		if (instance == null) {
-			instance = this;
-		}
-		instance.readPropertiesImpl(p);
-		return instance;
-	}
+    Object readProperties(java.util.Properties p) {
+        if (instance == null) {
+            instance = this;
+        }
+        instance.readPropertiesImpl(p);
+        return instance;
+    }
 
-	private void readPropertiesImpl(java.util.Properties p) {
-		String version = p.getProperty("version");
+    private void readPropertiesImpl(java.util.Properties p) {
+        String version = p.getProperty("version");
 //        String projectLocation = p.getProperty("projectLocation");
 //        if (projectLocation != null) {
 //            FileObject projectToBeOpened = FileUtil.toFileObject(new File(projectLocation));
@@ -299,21 +299,21 @@ public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent im
 //                Exceptions.printStackTrace(ex);
 //            }
 //        }
-		// TODO read your settings according to their version
-	}
+        // TODO read your settings according to their version
+    }
 
-	@Override
-	public void resultChanged(LookupEvent le) {
-		//do not react to ourself
-		if (hasFocus()) {
-			System.out.println("I have focus, not setting viewport!");
-		} else {
-			if (hmp.isSyncViewport()) {
-				Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();
-				if (!viewports.isEmpty()) {
-					this.hmp.setViewport(viewports.iterator().next().getViewPort());
-				}
-			}
-		}
-	}
+    @Override
+    public void resultChanged(LookupEvent le) {
+        //do not react to ourself
+        if (hasFocus()) {
+            System.out.println("I have focus, not setting viewport!");
+        } else {
+            if (hmp.isSyncViewport()) {
+                Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();
+                if (!viewports.isEmpty()) {
+                    this.hmp.setViewport(viewports.iterator().next().getViewPort());
+                }
+            }
+        }
+    }
 }

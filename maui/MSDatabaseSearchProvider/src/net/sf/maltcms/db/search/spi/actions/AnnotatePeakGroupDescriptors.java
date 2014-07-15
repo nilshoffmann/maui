@@ -49,9 +49,10 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeakGroupDescriptors")
+        id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeakGroupDescriptors")
 @ActionRegistration(displayName = "#CTL_AnnotatePeakGroupDescriptors")
-@ActionReferences({@ActionReference(path="Actions/DescriptorNodeActions/IPeakGroupDescriptor")})
+@ActionReferences({
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")})
 @Messages("CTL_AnnotatePeakGroupDescriptors=Search Peaks in DB")
 public final class AnnotatePeakGroupDescriptors implements ActionListener {
 
@@ -78,7 +79,7 @@ public final class AnnotatePeakGroupDescriptors implements ActionListener {
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
         ddp.updateView();
         List<IDatabaseDescriptor> databases;
         RetentionIndexCalculator ricalc;
@@ -105,8 +106,9 @@ public final class AnnotatePeakGroupDescriptors implements ActionListener {
         }
         doSearch(context, project, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
     }
+
     private void doSearch(List<IPeakGroupDescriptor> context, IChromAUIProject project, List<IDatabaseDescriptor> databases, RetentionIndexCalculator ricalc, AMetabolitePredicate predicate, double matchThreshold, int maxNumberOfHits, double riWindow, boolean clearExistingMatches) {
         DBPeakGroupAnnotationTask dbppat = new DBPeakGroupAnnotationTask(context, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
-        DBPeakGroupAnnotationTask.createAndRun("Peak Annotation on "+project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
+        DBPeakGroupAnnotationTask.createAndRun("Peak Annotation on " + project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
     }
 }

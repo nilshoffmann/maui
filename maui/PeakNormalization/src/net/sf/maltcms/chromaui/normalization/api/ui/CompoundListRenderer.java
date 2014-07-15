@@ -60,7 +60,7 @@ public class CompoundListRenderer extends DefaultListCellRenderer {
             } else {
                 setText("@" + String.format("%.2f", ((IPeakGroupDescriptor) value).getMedianApexTime()) + ": " + ((IPeakGroupDescriptor) value).getPeakAnnotationDescriptors().get(0).getDisplayName());
             }
-        }else{
+        } else {
             setText("");
         }
         setFont(list.getFont());

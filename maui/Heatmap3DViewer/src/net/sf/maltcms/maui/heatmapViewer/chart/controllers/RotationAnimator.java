@@ -34,8 +34,9 @@ import org.jzy3d.maths.Utils;
 import org.jzy3d.plot3d.rendering.view.View;
 
 /**
- * A fast rip of {@ChartThreadController} as a standalone
- * Runnable.
+ * A fast rip of {
+ *
+ * @ChartThreadController} as a standalone Runnable.
  * @author Nils Hoffmann
  */
 public class RotationAnimator implements Runnable {
@@ -56,16 +57,16 @@ public class RotationAnimator implements Runnable {
     }
 
     public void increaseSpeed() {
-        this.step+=0.005f;
+        this.step += 0.005f;
     }
 
     public void decreaseSpeed() {
-        this.step-=0.005f;
+        this.step -= 0.005f;
     }
 
     public void run() {
         while (true) {
-            if(isCancelled) {
+            if (isCancelled) {
                 return;
             }
             try {

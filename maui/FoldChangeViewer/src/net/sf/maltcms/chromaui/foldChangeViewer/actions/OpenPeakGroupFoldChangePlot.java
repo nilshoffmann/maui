@@ -132,7 +132,27 @@ public final class OpenPeakGroupFoldChangePlot implements ActionListener {
                 providers.add(provider);
                 ic.add(statisticsContainer);
 
-                final FoldChangeDataset ds = new FoldChangeDataset(providers, lhs.getDisplayName() + " vs " + rhs.getDisplayName(), new AbstractLookup(ic));
+                final FoldChangeDataset ds = new FoldChangeDataset(providers, lhs.getDisplayName() + " vs " + rhs.getDisplayName(), new AbstractLookup(ic)) {
+                    @Override
+                    public String getDescription() {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("<html><p>");
+                        for (INamedElementProvider<?, ?> np : targetProvider) {
+                            sb.append(np.getKey());
+                            if (targetProvider.size() > 1) {
+                                sb.append(", ");
+                            }
+                        }
+                        sb.append("; Normalized by: <br>");
+                        String[] peakNormalizers = peakNormalizer.toString().split(",");
+                        for (String s : peakNormalizers) {
+                            sb.append(s);
+                            sb.append("<br>");
+                        }
+                        sb.append("</p></html>");
+                        return sb.toString();
+                    }
+                };
                 onEdt(new Runnable() {
                     @Override
                     public void run() {

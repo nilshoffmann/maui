@@ -86,105 +86,105 @@ import org.openide.util.lookup.InstanceContent;
  */
 public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.Provider, PaintScaleTarget, KeyListener, AxisChangeListener {
 
-	private int oldTreshold;
-	private int alpha = 0, beta = 1;
-	private PaintScale ps = null;
-	private XYBoxAnnotation box = null;
-	private Point dataPoint = null;
-	private XYBlockRenderer xyb = null;
-	private Color selectionFill = Color.WHITE;
-	private Color selectionOutline = Color.BLACK;
-	private PaintScaleDialogAction psda = null;
-	private InstanceContent content;
-	private IScan activeScan = null;
-	private boolean syncViewport = false;
-	private ChromatogramViewViewport viewport;
-	private Color backgroundColor = null;
-	private SelectionOverlay selectionOverlay;
-	private Crosshair domainCrosshair;
-	private Crosshair rangeCrosshair;
-	private InstanceContentSelectionHandler selectionHandler;
-	private XYMouseSelectionHandler<IScan> mouseSelectionHandler;
-	private ChartPanel chartPanel;
-	private XYPlot plot;
-	private JFreeChart chart;
-	private DomainMarkerKeyListener dmkl;
-	private final Lookup lookup;
+    private int oldTreshold;
+    private int alpha = 0, beta = 1;
+    private PaintScale ps = null;
+    private XYBoxAnnotation box = null;
+    private Point dataPoint = null;
+    private XYBlockRenderer xyb = null;
+    private Color selectionFill = Color.WHITE;
+    private Color selectionOutline = Color.BLACK;
+    private PaintScaleDialogAction psda = null;
+    private InstanceContent content;
+    private IScan activeScan = null;
+    private boolean syncViewport = false;
+    private ChromatogramViewViewport viewport;
+    private Color backgroundColor = null;
+    private SelectionOverlay selectionOverlay;
+    private Crosshair domainCrosshair;
+    private Crosshair rangeCrosshair;
+    private InstanceContentSelectionHandler selectionHandler;
+    private XYMouseSelectionHandler<IScan> mouseSelectionHandler;
+    private ChartPanel chartPanel;
+    private XYPlot plot;
+    private JFreeChart chart;
+    private DomainMarkerKeyListener dmkl;
+    private final Lookup lookup;
 
-	/**
-	 * Creates new form Chromatogram2DViewerPanel
-	 */
-	public Chromatogram1DHeatmapViewerPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset2D<IChromatogram1D, IScan> ds) {
-		initComponents();
-		this.content = topComponentInstanceContent;
-		this.lookup = tcLookup;
-		chart = new JFreeChart(new XYPlot());
-		chartPanel = new ContextAwareChartPanel(chart, true, true, true, true, true);
-		Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
-		chartPanel.setCursor(crosshairCursor);
+    /**
+     * Creates new form Chromatogram2DViewerPanel
+     */
+    public Chromatogram1DHeatmapViewerPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset2D<IChromatogram1D, IScan> ds) {
+        initComponents();
+        this.content = topComponentInstanceContent;
+        this.lookup = tcLookup;
+        chart = new JFreeChart(new XYPlot());
+        chartPanel = new ContextAwareChartPanel(chart, true, true, true, true, true);
+        Cursor crosshairCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+        chartPanel.setCursor(crosshairCursor);
 //        chart.addProgressListener(cdxpanel);
-		chartPanel.setInitialDelay(100);
-		chartPanel.setDismissDelay(30000);
-		chartPanel.setReshowDelay(0);
-		chartPanel.setFocusable(true);
-		jPanel2.add(chartPanel, BorderLayout.CENTER);
-		content.add(chartPanel);
-		addKeyListener(this);
-	}
+        chartPanel.setInitialDelay(100);
+        chartPanel.setDismissDelay(30000);
+        chartPanel.setReshowDelay(0);
+        chartPanel.setFocusable(true);
+        jPanel2.add(chartPanel, BorderLayout.CENTER);
+        content.add(chartPanel);
+        addKeyListener(this);
+    }
 
-	public boolean isSyncViewport() {
-		return syncViewport;
-	}
+    public boolean isSyncViewport() {
+        return syncViewport;
+    }
 
-	@Override
-	public void revalidate() {
-		super.revalidate();
-		if (this.chartPanel != null) {
-			this.chartPanel.requestFocusInWindow();
-		}
-	}
+    @Override
+    public void revalidate() {
+        super.revalidate();
+        if (this.chartPanel != null) {
+            this.chartPanel.requestFocusInWindow();
+        }
+    }
 
-	public void addAxisListener() {
-		if (this.chartPanel != null) {
-			ValueAxis domain = this.chartPanel.getChart().getXYPlot().getDomainAxis();
-			if (domain != null) {
-				domain.addChangeListener(this);
-			}
-			ValueAxis range = this.chartPanel.getChart().getXYPlot().getRangeAxis();
-			if (range != null) {
-				range.addChangeListener(this);
-			}
-		}
-	}
+    public void addAxisListener() {
+        if (this.chartPanel != null) {
+            ValueAxis domain = this.chartPanel.getChart().getXYPlot().getDomainAxis();
+            if (domain != null) {
+                domain.addChangeListener(this);
+            }
+            ValueAxis range = this.chartPanel.getChart().getXYPlot().getRangeAxis();
+            if (range != null) {
+                range.addChangeListener(this);
+            }
+        }
+    }
 
-	public void removeAxisListener() {
-		if (this.chartPanel != null) {
-			ValueAxis domain = this.chartPanel.getChart().getXYPlot().getDomainAxis();
-			if (domain != null) {
-				domain.removeChangeListener(this);
-			}
-			ValueAxis range = this.chartPanel.getChart().getXYPlot().getRangeAxis();
-			if (range != null) {
-				range.removeChangeListener(this);
-			}
-		}
-	}
+    public void removeAxisListener() {
+        if (this.chartPanel != null) {
+            ValueAxis domain = this.chartPanel.getChart().getXYPlot().getDomainAxis();
+            if (domain != null) {
+                domain.removeChangeListener(this);
+            }
+            ValueAxis range = this.chartPanel.getChart().getXYPlot().getRangeAxis();
+            if (range != null) {
+                range.removeChangeListener(this);
+            }
+        }
+    }
 
-	@Override
-	public void axisChanged(AxisChangeEvent ace) {
-		if (hasFocus()) {
-			if (this.viewport != null) {
-				this.content.remove(this.viewport);
-			}
-			double xmin = this.chartPanel.getChart().getXYPlot().getDomainAxis().getLowerBound();
-			double xmax = this.chartPanel.getChart().getXYPlot().getDomainAxis().getUpperBound();
-			double ymin = this.chartPanel.getChart().getXYPlot().getRangeAxis().getLowerBound();
-			double ymax = this.chartPanel.getChart().getXYPlot().getRangeAxis().getUpperBound();
-			this.viewport = new ChromatogramViewViewport(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
-			this.content.add(viewport);
-		} else {
-			//received viewport change from somewhere else
-		}
+    @Override
+    public void axisChanged(AxisChangeEvent ace) {
+        if (hasFocus()) {
+            if (this.viewport != null) {
+                this.content.remove(this.viewport);
+            }
+            double xmin = this.chartPanel.getChart().getXYPlot().getDomainAxis().getLowerBound();
+            double xmax = this.chartPanel.getChart().getXYPlot().getDomainAxis().getUpperBound();
+            double ymin = this.chartPanel.getChart().getXYPlot().getRangeAxis().getLowerBound();
+            double ymax = this.chartPanel.getChart().getXYPlot().getRangeAxis().getUpperBound();
+            this.viewport = new ChromatogramViewViewport(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
+            this.content.add(viewport);
+        } else {
+            //received viewport change from somewhere else
+        }
 //        
 //        if (this.ticplot != null) {
 //            double xmin = this.ticplot.getDomainAxis().getLowerBound();
@@ -197,53 +197,53 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
 //                this.ic.add(viewport);
 //            }
 //        }
-	}
+    }
 
-	public void setViewport(Rectangle2D rect) {
-		//ignore viewport changes if we have the focus
-		if (hasFocus()) {
-			System.out.println("Ignoring viewport update since we have the focus!");
-		} else {
-			//otherwise, clear our own viewport and set to new value
-			if (this.viewport != null) {
-				this.content.remove(this.viewport);
-			}
-			this.viewport = new ChromatogramViewViewport(rect);
-			System.out.println("Setting viewport!");
-			removeAxisListener();
-			this.chartPanel.getChart().getXYPlot().getDomainAxis().setLowerBound(rect.getMinX());
-			this.chartPanel.getChart().getXYPlot().getDomainAxis().setUpperBound(rect.getMaxX());
-			this.chartPanel.getChart().getXYPlot().getRangeAxis().setLowerBound(rect.getMinY());
-			this.chartPanel.getChart().getXYPlot().getRangeAxis().setUpperBound(rect.getMaxY());
-			addAxisListener();
-		}
-	}
+    public void setViewport(Rectangle2D rect) {
+        //ignore viewport changes if we have the focus
+        if (hasFocus()) {
+            System.out.println("Ignoring viewport update since we have the focus!");
+        } else {
+            //otherwise, clear our own viewport and set to new value
+            if (this.viewport != null) {
+                this.content.remove(this.viewport);
+            }
+            this.viewport = new ChromatogramViewViewport(rect);
+            System.out.println("Setting viewport!");
+            removeAxisListener();
+            this.chartPanel.getChart().getXYPlot().getDomainAxis().setLowerBound(rect.getMinX());
+            this.chartPanel.getChart().getXYPlot().getDomainAxis().setUpperBound(rect.getMaxX());
+            this.chartPanel.getChart().getXYPlot().getRangeAxis().setLowerBound(rect.getMinY());
+            this.chartPanel.getChart().getXYPlot().getRangeAxis().setUpperBound(rect.getMaxY());
+            addAxisListener();
+        }
+    }
 
-	public void setBackgroundColor(Color c) {
-		if (chartPanel != null) {
-			this.backgroundColor = c;
-			chartPanel.getChart().getXYPlot().setBackgroundPaint(c);
-		}
-	}
+    public void setBackgroundColor(Color c) {
+        if (chartPanel != null) {
+            this.backgroundColor = c;
+            chartPanel.getChart().getXYPlot().setBackgroundPaint(c);
+        }
+    }
 
-	public Color getBackgroundColor() {
-		return this.backgroundColor;
-	}
+    public Color getBackgroundColor() {
+        return this.backgroundColor;
+    }
 
-	private void setDataPoint(Point p) {
-		this.dataPoint = p;
-	}
+    private void setDataPoint(Point p) {
+        this.dataPoint = p;
+    }
 
-	private Point getDataPoint() {
-		return this.dataPoint;
-	}
+    private Point getDataPoint() {
+        return this.dataPoint;
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -426,113 +426,113 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-		if (psda == null) {
-			psda = new PaintScaleDialogAction("New Paintscale", this.alpha, this.beta, this.ps);
-		}
-		psda.addPaintScaleTarget(this);
-		psda.actionPerformed(evt);
+        if (psda == null) {
+            psda = new PaintScaleDialogAction("New Paintscale", this.alpha, this.beta, this.ps);
+        }
+        psda.addPaintScaleTarget(this);
+        psda.actionPerformed(evt);
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
 
-		handleSliderChange();
+        handleSliderChange();
 
     }//GEN-LAST:event_jSlider1StateChanged
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-		this.syncViewport = jCheckBox1.isSelected();
+        this.syncViewport = jCheckBox1.isSelected();
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
-		if (jCheckBox2.isSelected()) {
-			JColorChooser jcc = new JColorChooser(backgroundColor == null ? (Color) ps.getPaint(ps.getLowerBound()) : backgroundColor);
-			DialogDescriptor dd = new DialogDescriptor(jcc, "Select background color");
-			Object result = DialogDisplayer.getDefault().notify(dd);
-			if (result == NotifyDescriptor.OK_OPTION) {
-				setBackgroundColor(jcc.getColor());
-			}
-		} else {
-			setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
-		}
+        if (jCheckBox2.isSelected()) {
+            JColorChooser jcc = new JColorChooser(backgroundColor == null ? (Color) ps.getPaint(ps.getLowerBound()) : backgroundColor);
+            DialogDescriptor dd = new DialogDescriptor(jcc, "Select background color");
+            Object result = DialogDisplayer.getDefault().notify(dd);
+            if (result == NotifyDescriptor.OK_OPTION) {
+                setBackgroundColor(jcc.getColor());
+            }
+        } else {
+            setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
+        }
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsButtonActionPerformed
-		// TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_settingsButtonActionPerformed
 
     private void modeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_modeSpinnerStateChanged
-		if (selectionHandler != null) {
-			selectionHandler.setMode(InstanceContentSelectionHandler.Mode.valueOf((String) modeSpinner.getValue()));
-		}
+        if (selectionHandler != null) {
+            selectionHandler.setMode(InstanceContentSelectionHandler.Mode.valueOf((String) modeSpinner.getValue()));
+        }
     }//GEN-LAST:event_modeSpinnerStateChanged
 
     private void boxWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_boxWidthSpinnerStateChanged
-		XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
-		if (renderer instanceof XYBlockRenderer) {
-			XYBlockRenderer xyb = (XYBlockRenderer) renderer;
-			xyb.setBlockWidth((Double) boxWidthSpinner.getValue());
-		}
+        XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
+        if (renderer instanceof XYBlockRenderer) {
+            XYBlockRenderer xyb = (XYBlockRenderer) renderer;
+            xyb.setBlockWidth((Double) boxWidthSpinner.getValue());
+        }
     }//GEN-LAST:event_boxWidthSpinnerStateChanged
 
     private void boxHeightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_boxHeightSpinnerStateChanged
-		XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
-		if (renderer instanceof XYBlockRenderer) {
-			XYBlockRenderer xyb = (XYBlockRenderer) renderer;
-			xyb.setBlockHeight((Double) boxHeightSpinner.getValue());
-		}
+        XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
+        if (renderer instanceof XYBlockRenderer) {
+            XYBlockRenderer xyb = (XYBlockRenderer) renderer;
+            xyb.setBlockHeight((Double) boxHeightSpinner.getValue());
+        }
     }//GEN-LAST:event_boxHeightSpinnerStateChanged
 
     private void jSlider2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider2StateChanged
-		setViewPortAround((double) jSlider2.getValue());
+        setViewPortAround((double) jSlider2.getValue());
     }//GEN-LAST:event_jSlider2StateChanged
 
-	private void handleSliderChange() {
-		final int low = this.jSlider1.getValue();
-		final int high = ((RangeSlider) jSlider1).getUpperValue();
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
+    private void handleSliderChange() {
+        final int low = this.jSlider1.getValue();
+        final int high = ((RangeSlider) jSlider1).getUpperValue();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
 
-				if (ps instanceof GradientPaintScale) {
-					GradientPaintScale gps = (GradientPaintScale) ps;
-					double min = gps.getLowerBound();
-					double max = gps.getUpperBound();
-					gps.setLowerBoundThreshold(min + ((max - min) * ((double) low / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
-					gps.setUpperBoundThreshold(max + ((max - min) * ((double) high / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
-				}
-				updateChart();
-			}
-		};
-		SwingUtilities.invokeLater(r);
-	}
+                if (ps instanceof GradientPaintScale) {
+                    GradientPaintScale gps = (GradientPaintScale) ps;
+                    double min = gps.getLowerBound();
+                    double max = gps.getUpperBound();
+                    gps.setLowerBoundThreshold(min + ((max - min) * ((double) low / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
+                    gps.setUpperBoundThreshold(max + ((max - min) * ((double) high / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
+                }
+                updateChart();
+            }
+        };
+        SwingUtilities.invokeLater(r);
+    }
 
-	private void setViewPortAround(final double value) {
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				double value2 = value / 100.0d;
-				System.out.println("ViewPort around " + value2);
-				ValueAxis domainAxis = chartPanel.getChart().getXYPlot().getDomainAxis();
-				double range = domainAxis.getUpperBound() - domainAxis.getLowerBound();
-				System.out.println("Axis range: "+range);
-				double dataValue = value2*range;
-				double lowerBound = Math.max(domainAxis.getLowerBound(), dataValue);
-				double upperBound = Math.min(domainAxis.getUpperBound(), dataValue + (range/10.0d));
-				domainAxis.setRange(lowerBound, upperBound);
-			}
-		};
-		SwingUtilities.invokeLater(r);
-	}
+    private void setViewPortAround(final double value) {
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                double value2 = value / 100.0d;
+                System.out.println("ViewPort around " + value2);
+                ValueAxis domainAxis = chartPanel.getChart().getXYPlot().getDomainAxis();
+                double range = domainAxis.getUpperBound() - domainAxis.getLowerBound();
+                System.out.println("Axis range: " + range);
+                double dataValue = value2 * range;
+                double lowerBound = Math.max(domainAxis.getLowerBound(), dataValue);
+                double upperBound = Math.min(domainAxis.getUpperBound(), dataValue + (range / 10.0d));
+                domainAxis.setRange(lowerBound, upperBound);
+            }
+        };
+        SwingUtilities.invokeLater(r);
+    }
 
-	private void updateChart() {
-		if (xyb != null && xyb instanceof XYNoBlockRenderer) {
-			throw new IllegalArgumentException();
-		}
-		XYPlot plot = ((XYPlot) this.chartPanel.getChart().getPlot());
-		ChartTools.changePaintScale(plot, this.ps);
-		chartPanel.repaint();
-	}
+    private void updateChart() {
+        if (xyb != null && xyb instanceof XYNoBlockRenderer) {
+            throw new IllegalArgumentException();
+        }
+        XYPlot plot = ((XYPlot) this.chartPanel.getChart().getPlot());
+        ChartTools.changePaintScale(plot, this.ps);
+        chartPanel.repaint();
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner boxHeightSpinner;
     private javax.swing.JSpinner boxWidthSpinner;
@@ -559,204 +559,204 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
     private javax.swing.JButton settingsButton;
     // End of variables declaration//GEN-END:variables
 
-	@Override
-	public void setPaintScale(PaintScale ps) {
-		System.out.println("Set paint scale called on HeatmapPanel");
+    @Override
+    public void setPaintScale(PaintScale ps) {
+        System.out.println("Set paint scale called on HeatmapPanel");
 //        if (ps != null && ps instanceof GradientPaintScale) {
-		System.out.println("Paint scale using!");
-		GradientPaintScale sps = (GradientPaintScale) ps;
-		if (this.ps != null) {
-			double lb = this.ps.getLowerBound();
-			double ub = this.ps.getUpperBound();
-			sps.setLowerBound(lb);
-			sps.setUpperBound(ub);
-			//this.jSlider1.setValue(0);
-		}
-		this.alpha = (int) sps.getAlpha();
-		this.beta = (int) sps.getBeta();
-		this.ps = sps;
-		Color c = (Color) sps.getPaint(this.ps.getUpperBound());
-		if (chartPanel != null) {
-			JFreeChart jfc = chartPanel.getChart();
-			if (jfc != null) {
-				XYPlot plot = jfc.getXYPlot();
-				if (!jCheckBox2.isSelected()) {
-					Color bg = (Color) this.ps.getPaint(this.ps.getLowerBound());
-					System.out.println("Background color: " + bg);
-					setBackgroundColor(bg);
-				}
-			}
-		}
-		selectionFill = new Color(c.getRed(), c.getBlue(), c.getGreen(), 192);
-		selectionOutline = new Color(c.getRed(), c.getBlue(), c.getGreen()).darker();
-		this.jSlider1.setMaximum(100);
-		this.jSlider1.setMinimum(0);
-		handleSliderChange();
+        System.out.println("Paint scale using!");
+        GradientPaintScale sps = (GradientPaintScale) ps;
+        if (this.ps != null) {
+            double lb = this.ps.getLowerBound();
+            double ub = this.ps.getUpperBound();
+            sps.setLowerBound(lb);
+            sps.setUpperBound(ub);
+            //this.jSlider1.setValue(0);
+        }
+        this.alpha = (int) sps.getAlpha();
+        this.beta = (int) sps.getBeta();
+        this.ps = sps;
+        Color c = (Color) sps.getPaint(this.ps.getUpperBound());
+        if (chartPanel != null) {
+            JFreeChart jfc = chartPanel.getChart();
+            if (jfc != null) {
+                XYPlot plot = jfc.getXYPlot();
+                if (!jCheckBox2.isSelected()) {
+                    Color bg = (Color) this.ps.getPaint(this.ps.getLowerBound());
+                    System.out.println("Background color: " + bg);
+                    setBackgroundColor(bg);
+                }
+            }
+        }
+        selectionFill = new Color(c.getRed(), c.getBlue(), c.getGreen(), 192);
+        selectionOutline = new Color(c.getRed(), c.getBlue(), c.getGreen()).darker();
+        this.jSlider1.setMaximum(100);
+        this.jSlider1.setMinimum(0);
+        handleSliderChange();
 //        }
-	}
+    }
 
-	@Override
-	public void keyTyped(KeyEvent ke) {
-	}
+    @Override
+    public void keyTyped(KeyEvent ke) {
+    }
 
-	@Override
-	public void keyPressed(KeyEvent ke) {
-		System.out.println("Received key event: " + ke.toString());
-		if (ke.isControlDown()) {
-			modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
-		}
-		if (getDataPoint() != null) {
-			System.out.println("Data point is not null!");
-			Point p = null;
-			if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {
-				p = new Point(getDataPoint());
-				p.translate(1, 0);
-			} else if (ke.getKeyCode() == KeyEvent.VK_LEFT) {
-				p = new Point(getDataPoint());
-				p.translate(-1, 0);
-			} else if (ke.getKeyCode() == KeyEvent.VK_UP) {
-				p = new Point(getDataPoint());
-				p.translate(0, 1);
-			} else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-				p = new Point(getDataPoint());
-				p.translate(0, -1);
-			}
-			setDataPoint(p);
-			if (!ke.isShiftDown()) {
+    @Override
+    public void keyPressed(KeyEvent ke) {
+        System.out.println("Received key event: " + ke.toString());
+        if (ke.isControlDown()) {
+            modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
+        }
+        if (getDataPoint() != null) {
+            System.out.println("Data point is not null!");
+            Point p = null;
+            if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {
+                p = new Point(getDataPoint());
+                p.translate(1, 0);
+            } else if (ke.getKeyCode() == KeyEvent.VK_LEFT) {
+                p = new Point(getDataPoint());
+                p.translate(-1, 0);
+            } else if (ke.getKeyCode() == KeyEvent.VK_UP) {
+                p = new Point(getDataPoint());
+                p.translate(0, 1);
+            } else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
+                p = new Point(getDataPoint());
+                p.translate(0, -1);
+            }
+            setDataPoint(p);
+            if (!ke.isShiftDown()) {
 //                triggerMSUpdate();
-			}
-		}
-	}
+            }
+        }
+    }
 
-	@Override
-	public void keyReleased(KeyEvent ke) {
-		modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_CLICK.toString());
-	}
+    @Override
+    public void keyReleased(KeyEvent ke) {
+        modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_CLICK.toString());
+    }
 
-	public void setChartPanel(ChartPanel cp) {
-		this.chartPanel = cp;
-		jPanel2.removeAll();
-		jPanel2.add(cp);
-		jPanel2.invalidate();
-		jPanel2.validate();
-	}
+    public void setChartPanel(ChartPanel cp) {
+        this.chartPanel = cp;
+        jPanel2.removeAll();
+        jPanel2.add(cp);
+        jPanel2.invalidate();
+        jPanel2.validate();
+    }
 
-	public void setPlot(final XYPlot plot) {
-		removeAxisListener();
-		ADataset1D<?, IScan> dataset = null;
-		if (plot.getDataset() instanceof ADataset1D) {
-			dataset = (ADataset1D<?, IScan>) plot.getDataset();
-		} else {
-			throw new IllegalArgumentException("Requires a plot with ADataset1D!");
-		}
-		this.plot = plot;
-		if (this.selectionOverlay != null) {
-			this.content.remove(selectionOverlay);
-			this.selectionOverlay = null;
-		}
-		if (selectionOverlay == null) {
-			selectionOverlay = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
-			chartPanel.addOverlay(selectionOverlay);
-			selectionOverlay.addChangeListener(chartPanel);
-			this.content.add(selectionOverlay);
-		} else {
-			for (ISelection selection : selectionOverlay.getMouseClickSelection()) {
-				selection.setDataset(dataset);
-			}
+    public void setPlot(final XYPlot plot) {
+        removeAxisListener();
+        ADataset1D<?, IScan> dataset = null;
+        if (plot.getDataset() instanceof ADataset1D) {
+            dataset = (ADataset1D<?, IScan>) plot.getDataset();
+        } else {
+            throw new IllegalArgumentException("Requires a plot with ADataset1D!");
+        }
+        this.plot = plot;
+        if (this.selectionOverlay != null) {
+            this.content.remove(selectionOverlay);
+            this.selectionOverlay = null;
+        }
+        if (selectionOverlay == null) {
+            selectionOverlay = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
+            chartPanel.addOverlay(selectionOverlay);
+            selectionOverlay.addChangeListener(chartPanel);
+            this.content.add(selectionOverlay);
+        } else {
+            for (ISelection selection : selectionOverlay.getMouseClickSelection()) {
+                selection.setDataset(dataset);
+            }
 
-			ISelection selection = selectionOverlay.getMouseHoverSelection();
-			if (selection != null) {
-				selection.setDataset(dataset);
-			}
-		}
-		if (selectionHandler == null) {
-			selectionHandler = new InstanceContentSelectionHandler(this.content, selectionOverlay, InstanceContentSelectionHandler.Mode.valueOf((String) modeSpinner.getValue()), dataset, 1);
-		} else {
-			selectionHandler.setDataset(dataset);
-		}
-		if (mouseSelectionHandler == null) {
-			mouseSelectionHandler = new XYMouseSelectionHandler<IScan>(dataset);
-			mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
-			mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
-			chartPanel.addChartMouseListener(mouseSelectionHandler);
-		} else {
-			mouseSelectionHandler.setDataset(dataset);
-		}
+            ISelection selection = selectionOverlay.getMouseHoverSelection();
+            if (selection != null) {
+                selection.setDataset(dataset);
+            }
+        }
+        if (selectionHandler == null) {
+            selectionHandler = new InstanceContentSelectionHandler(this.content, selectionOverlay, InstanceContentSelectionHandler.Mode.valueOf((String) modeSpinner.getValue()), dataset, 1);
+        } else {
+            selectionHandler.setDataset(dataset);
+        }
+        if (mouseSelectionHandler == null) {
+            mouseSelectionHandler = new XYMouseSelectionHandler<IScan>(dataset);
+            mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
+            mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
+            chartPanel.addChartMouseListener(mouseSelectionHandler);
+        } else {
+            mouseSelectionHandler.setDataset(dataset);
+        }
 
-		XYItemRenderer xyir = plot.getRenderer();
-		if (xyir instanceof XYBlockRenderer) {
-			XYBlockRenderer xybr = (XYBlockRenderer) xyir;
-			boxWidthSpinner.setValue(xybr.getBlockWidth());
-			boxHeightSpinner.setValue(xybr.getBlockHeight());
-		}
+        XYItemRenderer xyir = plot.getRenderer();
+        if (xyir instanceof XYBlockRenderer) {
+            XYBlockRenderer xybr = (XYBlockRenderer) xyir;
+            boxWidthSpinner.setValue(xybr.getBlockWidth());
+            boxHeightSpinner.setValue(xybr.getBlockHeight());
+        }
 
-		AxisChangeListener listener = selectionOverlay;
-		ValueAxis domain = this.plot.getDomainAxis();
-		ValueAxis range = this.plot.getRangeAxis();
-		if (domain != null) {
-			domain.addChangeListener(listener);
-		}
-		if (range != null) {
-			range.addChangeListener(listener);
-		}
+        AxisChangeListener listener = selectionOverlay;
+        ValueAxis domain = this.plot.getDomainAxis();
+        ValueAxis range = this.plot.getRangeAxis();
+        if (domain != null) {
+            domain.addChangeListener(listener);
+        }
+        if (range != null) {
+            range.addChangeListener(listener);
+        }
 
-		this.plot.setNoDataMessage("Loading Data...");
-		chart = new JFreeChart(this.plot);
-		chartPanel.setChart(chart);
-		dmkl = new DomainMarkerKeyListener(
-				this.plot);
-		dmkl.setPlot(this.plot);
-		chartPanel.addKeyListener(dmkl);
-		addAxisListener();
-		//add available chart overlays
-		List<Overlay> overlays = new ArrayList<Overlay>(getLookup().lookupAll(Overlay.class));
-		Collections.sort(overlays, new Comparator<Overlay>() {
-			@Override
-			public int compare(Overlay o1, Overlay o2) {
-				if (o1 instanceof ChartOverlay && o2 instanceof ChartOverlay) {
-					ChartOverlay co1 = (ChartOverlay) o1;
-					ChartOverlay co2 = (ChartOverlay) o2;
-					return Integer.compare(co1.getLayerPosition(), co2.getLayerPosition());
-				} else {
-					return 0;
-				}
-			}
-		});
-		for (Overlay overlay : overlays) {
-			if (!(overlay instanceof SelectionOverlay)) {
-				chartPanel.removeOverlay(overlay);
-				if (overlay instanceof AxisChangeListener) {
-					AxisChangeListener axisChangeListener = (AxisChangeListener) overlay;
-					if (domain != null) {
-						domain.addChangeListener(axisChangeListener);
-					}
-					if (range != null) {
-						range.addChangeListener(axisChangeListener);
-					}
-				}
-				if (overlay instanceof ISelectionChangeListener) {
-					ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
-					mouseSelectionHandler.addSelectionChangeListener(isl);
-					mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
-					selectionOverlay.addChangeListener(chartPanel);
-				}
-				chartPanel.addOverlay(overlay);
-				overlay.addChangeListener(chartPanel);
-			}
-		}
-		//add selection overlay last
-		chartPanel.removeOverlay(selectionOverlay);
-		chartPanel.addOverlay(selectionOverlay);
-		setViewPortAround((double) jSlider2.getValue());
-		double rangeValue = chartPanel.getChart().getXYPlot().getDomainAxis().getAutoRangeMinimumSize();
-		((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setAutoRange(false);
-		chartPanel.getChart().getXYPlot().getDomainAxis().setFixedDimension(rangeValue / 10.0d);
-		((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setAutoRangeIncludesZero(false);
-		((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setRangeType(RangeType.POSITIVE);
-	}
+        this.plot.setNoDataMessage("Loading Data...");
+        chart = new JFreeChart(this.plot);
+        chartPanel.setChart(chart);
+        dmkl = new DomainMarkerKeyListener(
+                this.plot);
+        dmkl.setPlot(this.plot);
+        chartPanel.addKeyListener(dmkl);
+        addAxisListener();
+        //add available chart overlays
+        List<Overlay> overlays = new ArrayList<Overlay>(getLookup().lookupAll(Overlay.class));
+        Collections.sort(overlays, new Comparator<Overlay>() {
+            @Override
+            public int compare(Overlay o1, Overlay o2) {
+                if (o1 instanceof ChartOverlay && o2 instanceof ChartOverlay) {
+                    ChartOverlay co1 = (ChartOverlay) o1;
+                    ChartOverlay co2 = (ChartOverlay) o2;
+                    return Integer.compare(co1.getLayerPosition(), co2.getLayerPosition());
+                } else {
+                    return 0;
+                }
+            }
+        });
+        for (Overlay overlay : overlays) {
+            if (!(overlay instanceof SelectionOverlay)) {
+                chartPanel.removeOverlay(overlay);
+                if (overlay instanceof AxisChangeListener) {
+                    AxisChangeListener axisChangeListener = (AxisChangeListener) overlay;
+                    if (domain != null) {
+                        domain.addChangeListener(axisChangeListener);
+                    }
+                    if (range != null) {
+                        range.addChangeListener(axisChangeListener);
+                    }
+                }
+                if (overlay instanceof ISelectionChangeListener) {
+                    ISelectionChangeListener isl = (ISelectionChangeListener) overlay;
+                    mouseSelectionHandler.addSelectionChangeListener(isl);
+                    mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
+                    selectionOverlay.addChangeListener(chartPanel);
+                }
+                chartPanel.addOverlay(overlay);
+                overlay.addChangeListener(chartPanel);
+            }
+        }
+        //add selection overlay last
+        chartPanel.removeOverlay(selectionOverlay);
+        chartPanel.addOverlay(selectionOverlay);
+        setViewPortAround((double) jSlider2.getValue());
+        double rangeValue = chartPanel.getChart().getXYPlot().getDomainAxis().getAutoRangeMinimumSize();
+        ((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setAutoRange(false);
+        chartPanel.getChart().getXYPlot().getDomainAxis().setFixedDimension(rangeValue / 10.0d);
+        ((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setAutoRangeIncludesZero(false);
+        ((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setRangeType(RangeType.POSITIVE);
+    }
 
-	@Override
-	public Lookup getLookup() {
-		return this.lookup;
-	}
+    @Override
+    public Lookup getLookup() {
+        return this.lookup;
+    }
 }

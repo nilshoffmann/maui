@@ -57,7 +57,7 @@ public class BarChartDemo extends AbstractDemo {
 
     public BarChartDemo() {
 //        Settings.getInstance().setHardwareAccelerated(true);
-        chart = new Chart(Quality.Intermediate,"awt");
+        chart = new Chart(Quality.Intermediate, "awt");
         setupTitle();
         setupAxes();
 //        cab.setAxe(chart.getView().getBounds());
@@ -95,8 +95,6 @@ public class BarChartDemo extends AbstractDemo {
 //        cab.setTextRenderer(chart.getCanvas());
 //        chart.getView().setAxe(cab);
 //        cab.setView(chart.getView());
-
-
         if (chart.getCanvas() instanceof CanvasSwing) {
             fr = new FrameSwing(chart, new Rectangle(0, 0, 400, 400), "Feature complexity view 3d");
         } else {
@@ -146,8 +144,6 @@ public class BarChartDemo extends AbstractDemo {
 //        chart.getAxeLayout().setZTickRenderer( new ScientificNotationTickRenderer(2) );
 //                float[] ticks = {0f, 0.5f, 1f};
 //                chart.getAxeLayout().setZTickProvider(new StaticTickProvider(ticks));
-
-
 
         chart.getView().setViewPositionMode(ViewPositionMode.FREE);
 //        chart.getView().setAxeSquared(false);

@@ -44,10 +44,10 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportMaltcmsPeaks")
+        id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportMaltcmsPeaks")
 @ActionRegistration(displayName = "#CTL_ImportMaltcmsPeaks")
 @ActionReferences({
-//    @ActionReference(path = "Menu/File", position = 1420),
+    //    @ActionReference(path = "Menu/File", position = 1420),
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks")
 })
 @Messages("CTL_ImportMaltcmsPeaks=Import Maltcms Peaks")
@@ -61,7 +61,7 @@ public final class ImportMaltcmsPeaks implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        JFileChooser jfc = new JFileChooser(new File(FileUtil.toFile(context.getProjectDirectory()),"output"));
+        JFileChooser jfc = new JFileChooser(new File(FileUtil.toFile(context.getProjectDirectory()), "output"));
         jfc.setFileFilter(new FileFilter() {
 
             @Override
@@ -85,13 +85,13 @@ public final class ImportMaltcmsPeaks implements ActionListener {
             //output directory
             File[] peakFiles = f.listFiles(new java.io.FileFilter() {
 
-				@Override
-				public boolean accept(File f) {
-					if(f.getName().toLowerCase().endsWith(".cdf")) {
-						return true;
-					}
-					return false;
-				}
+                @Override
+                public boolean accept(File f) {
+                    if (f.getName().toLowerCase().endsWith(".cdf")) {
+                        return true;
+                    }
+                    return false;
+                }
             });
             MaltcmsPeakFinderImporter tc = new MaltcmsPeakFinderImporter(context, peakFiles);
             MaltcmsPeakFinderImporter.createAndRun("Maltcms peak import", tc);

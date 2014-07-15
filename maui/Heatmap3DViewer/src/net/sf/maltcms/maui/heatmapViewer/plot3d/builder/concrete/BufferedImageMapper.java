@@ -32,9 +32,9 @@ import java.awt.image.BufferedImage;
 import org.jzy3d.maths.Rectangle;
 
 /**
- * Mapper which reads height information from the grayscale
- * values of a BufferedImage, normalized to range [0..1].
- * 
+ * Mapper which reads height information from the grayscale values of a
+ * BufferedImage, normalized to range [0..1].
+ *
  * @author Nils Hoffmann
  */
 public class BufferedImageMapper extends ViewportMapper {
@@ -51,9 +51,10 @@ public class BufferedImageMapper extends ViewportMapper {
     }
 
     /**
-     * Returns the intersection of this BufferedImage's dimensions
-     * with those passed in in Rectangle roi, if there is one. Otherwise,
-     * the returned rectangle may be empty.
+     * Returns the intersection of this BufferedImage's dimensions with those
+     * passed in in Rectangle roi, if there is one. Otherwise, the returned
+     * rectangle may be empty.
+     *
      * @param roi
      * @return
      */
@@ -61,8 +62,8 @@ public class BufferedImageMapper extends ViewportMapper {
     public Rectangle getClippedViewport(Rectangle roi) {
         return toRectangle(this.maxViewPort.createIntersection(toRectangle2D(roi)));
     }
-	
-	@Override
+
+    @Override
     public Rectangle getViewport() {
         return toRectangle(this.maxViewPort);
     }

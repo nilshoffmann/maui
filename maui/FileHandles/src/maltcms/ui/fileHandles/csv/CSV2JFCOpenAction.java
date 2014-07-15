@@ -44,7 +44,7 @@ public final class CSV2JFCOpenAction implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         boolean collate = false;
         if (collate) {
-            
+
         } else {
             for (DataObject dataObject : context) {
                 //FIXME vorher gucken, ob es nicht schon offen ist!

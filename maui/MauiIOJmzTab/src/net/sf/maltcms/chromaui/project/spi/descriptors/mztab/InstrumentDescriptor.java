@@ -34,7 +34,6 @@ import uk.ac.ebi.pride.jmztab.model.Instrument;
 import uk.ac.ebi.pride.jmztab.model.MetadataElement;
 import uk.ac.ebi.pride.jmztab.model.Param;
 
-
 public class InstrumentDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
     public final static String PROP_INSTRUMENT = "instrument";
@@ -107,6 +106,5 @@ public class InstrumentDescriptor extends ABasicDescriptor implements IMzTabDesc
     public String getReference() {
         return getInstrument().getReference();
     }
-    
 
 }

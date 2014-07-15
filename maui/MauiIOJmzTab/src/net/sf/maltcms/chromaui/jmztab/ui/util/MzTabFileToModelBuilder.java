@@ -51,7 +51,7 @@ import uk.ac.ebi.pride.jmztab.model.StudyVariable;
  * @author Nils Hoffmann
  */
 public class MzTabFileToModelBuilder {
-    
+
     public MzTabFileContainer createFromFile(MZTabFile file) {
         MzTabFileContainer container = new MzTabFileContainer();
         container.setComments(CommentsContainer.create(file.getComments()));
@@ -65,8 +65,8 @@ public class MzTabFileToModelBuilder {
 
     public MzTabFileContainer createFromProject(PeakGroupContainer pgc) {
         IChromAUIProject project = pgc.getProject();
-        
-                // Setting version, mode, and type in MZTabDescription 
+
+        // Setting version, mode, and type in MZTabDescription 
 //        MZTabDescription tabDescription = new MZTabDescription(MZTabDescription.Mode.Summary, MZTabDescription.Type.Identification);
 //        tabDescription.setId("PRIDE_1234");
 //        Metadata mtd = new Metadata(tabDescription);
@@ -191,7 +191,6 @@ public class MzTabFileToModelBuilder {
 //
 //        mtd.addPSMColUnit(PSMColumn.RETENTION_TIME, new CVParam("UO", "UO:0000031", "minute", null));
 //        mtd.addSmallMoleculeColUnit(SmallMoleculeColumn.RETENTION_TIME, new CVParam("UO", "UO:0000031", "minute", null));
-        
         MsRun msRun1 = new MsRun(1);
         msRun1.setLocation(null);
         Assay assay1 = new Assay(1);
@@ -300,9 +299,9 @@ public class MzTabFileToModelBuilder {
 //        return container;
         throw new NotImplementedException();
     }
-    
+
     public static String getInChIKey(String inchi) {
-        if(inchi==null) {
+        if (inchi == null) {
             return null;
         }
         return DigestUtils.sha256Hex(inchi);

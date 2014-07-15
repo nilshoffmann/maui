@@ -36,10 +36,10 @@ import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
  * @author nilshoffmann
  */
 @Data
-public class QueryInput<T> implements IQueryInput<T>{
+public class QueryInput<T> implements IQueryInput<T> {
 
     private final T scan;
-    
+
     private final RetentionIndexCalculator retentionIndexCalculator;
-    
+
 }

@@ -47,27 +47,27 @@ import org.openide.util.Utilities;
  * @author Nils Hoffmann
  */
 @ActionID(category = "Maui",
-		id = "net.sf.maltcms.chromaui.normalization.spi.actions.MergePeaks")
+        id = "net.sf.maltcms.chromaui.normalization.spi.actions.MergePeaks")
 @ActionRegistration(displayName = "#CTL_MergePeaks")
 @ActionReferences({
-	@ActionReference(path = "Menu/View", position = 0),
-	@ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")
+    @ActionReference(path = "Menu/View", position = 0),
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")
 })
 @NbBundle.Messages("CTL_MergePeaks=Merge Peak Groups")
 public final class MergePeaks implements ActionListener {
 
-	private final List<Peak1DContainer> context;
+    private final List<Peak1DContainer> context;
 
-	public MergePeaks(List<Peak1DContainer> context) {
-		this.context = context;
-	}
+    public MergePeaks(List<Peak1DContainer> context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		IChromAUIProject project = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        IChromAUIProject project = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
         if (project != null && !context.isEmpty()) {
-			MergePeaksRunnable runnable = new MergePeaksRunnable(project, context);
-			MergePeaksRunnable.createAndRun("Merging Peak Annotations", runnable);
-		}
-	}
+            MergePeaksRunnable runnable = new MergePeaksRunnable(project, context);
+            MergePeaksRunnable.createAndRun("Merging Peak Annotations", runnable);
+        }
+    }
 }

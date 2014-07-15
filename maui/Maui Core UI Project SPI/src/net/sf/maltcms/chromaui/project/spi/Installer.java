@@ -89,9 +89,9 @@ public class Installer extends ModuleInstall {
         PropertyEditorManager.registerEditor(IDescriptor.class, GenericDescriptorPropertyEditor.class);
         //configure cached list
         String keyPrefetchOnMiss = CachedList.class.getName()
-            + ".prefetchOnMiss";
-        String keyCacheSize = CachedList.class.getName()+".cacheSize";
-        String keyUseCachedList = ImmutableVariableFragment2.class.getName()+".useCachedList";
+                + ".prefetchOnMiss";
+        String keyCacheSize = CachedList.class.getName() + ".cacheSize";
+        String keyUseCachedList = ImmutableVariableFragment2.class.getName() + ".useCachedList";
         boolean useCachedList = NbPreferences.forModule(Installer.class).node("cross").getBoolean(keyUseCachedList, false);
         boolean prefetchOnMiss = NbPreferences.forModule(Installer.class).node("cross").getBoolean(keyPrefetchOnMiss, false);
         int cacheSize = NbPreferences.forModule(Installer.class).node("cross").getInt(keyCacheSize, 1024);

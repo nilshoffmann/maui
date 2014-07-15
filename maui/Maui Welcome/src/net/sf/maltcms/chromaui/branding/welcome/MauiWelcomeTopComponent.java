@@ -79,6 +79,10 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         initComponents();
         setName(Bundle.CTL_MauiWelcomeTopComponent());
         setToolTipText(Bundle.HINT_MauiWelcomeTopComponent());
+        searchAndIdentify.setVisible(false);
+        quantify.setVisible(false);
+        statistics.setVisible(false);
+        maltcmsIntegration.setVisible(false);
     }
 
     private String readText(URL u) {
@@ -147,6 +151,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         quantify = new javax.swing.JButton();
@@ -377,6 +382,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
     }//GEN-LAST:event_maltcmsIntegrationActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton customPipelines;
     private javax.swing.JPanel display;
     private javax.swing.JEditorPane editorPane;

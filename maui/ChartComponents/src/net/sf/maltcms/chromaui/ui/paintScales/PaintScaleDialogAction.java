@@ -84,19 +84,16 @@ public class PaintScaleDialogAction extends AbstractAction {
     }
 
     public PaintScale showPaintScaleDialog() {
-        if(this.psp==null) {
-            this.psp = new PaintScalePanel(this.ps,this.alpha, this.beta);
+        if (this.psp == null) {
+            this.psp = new PaintScalePanel(this.ps, this.alpha, this.beta);
         }
-        int val = JOptionPane.showConfirmDialog(this.parent, psp, "Select Color Scale",JOptionPane.OK_CANCEL_OPTION);
+        int val = JOptionPane.showConfirmDialog(this.parent, psp, "Select Color Scale", JOptionPane.OK_CANCEL_OPTION);
         if (val == JOptionPane.OK_OPTION) {
             this.ps = psp.getPaintScale();
         }
-        if(this.ps==null) {
+        if (this.ps == null) {
             this.ps = psp.getDefaultPaintScale();
         }
         return this.ps;
     }
 }
-
-
-

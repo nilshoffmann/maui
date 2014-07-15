@@ -56,7 +56,7 @@ public class QueryFactory implements
             List<IDatabaseDescriptor> descriptors,
             RetentionIndexCalculator retentionIndexCalculator,
             AMetabolitePredicate predicate,
-            double matchThreshold, int maxHits,double riWindow, IScan... scans) {
+            double matchThreshold, int maxHits, double riWindow, IScan... scans) {
         return new ScanDatabaseQuery(descriptors, retentionIndexCalculator,
                 predicate, scans,
                 matchThreshold, maxHits);
@@ -77,7 +77,7 @@ public class QueryFactory implements
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
@@ -101,7 +101,7 @@ public class QueryFactory implements
     @Override
     public IQuery<IPeakAnnotationDescriptor> createQuery(IChromAUIProject project,
             List<IPeakAnnotationDescriptor> peakAnnotationDescriptors, double riWindow) {
-        System.out.println("Using "+peakAnnotationDescriptors.size()+" peak annotation descriptors!");
+        System.out.println("Using " + peakAnnotationDescriptors.size() + " peak annotation descriptors!");
         DatabaseSearchPanel ddp = new DatabaseSearchPanel(project);
         // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
         NotifyDescriptor nd = new NotifyDescriptor(
@@ -113,7 +113,7 @@ public class QueryFactory implements
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
         ddp.updateView();
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {

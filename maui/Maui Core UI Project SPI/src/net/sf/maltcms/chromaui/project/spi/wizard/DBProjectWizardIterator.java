@@ -63,13 +63,13 @@ public class DBProjectWizardIterator implements WizardDescriptor.ProgressInstant
         final GenericWizardPanel gwp2 = new GenericWizardPanel(new DBProjectVisualPanel2());
         final GenericWizardPanel gwp3 = new GenericWizardPanel(new DBProjectVisualPanel3());
         return new WizardDescriptor.Panel[]{
-                    gwp1,gwp2,gwp3};
+            gwp1, gwp2, gwp3};
     }
 
     private String[] createSteps() {
         return new String[]{
-                    NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_CreateProjectStep"), NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_AssignGroupStep"), NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_AssignNormalizationStep")
-                };
+            NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_CreateProjectStep"), NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_AssignGroupStep"), NbBundle.getMessage(DBProjectWizardIterator.class, "LBL_AssignNormalizationStep")
+        };
     }
 
     @Override
@@ -84,8 +84,8 @@ public class DBProjectWizardIterator implements WizardDescriptor.ProgressInstant
     }
 
     /**
-     * Initialize panels representing individual wizard's steps and sets
-     * various properties for them influencing wizard appearance.
+     * Initialize panels representing individual wizard's steps and sets various
+     * properties for them influencing wizard appearance.
      */
     private WizardDescriptor.Panel[] getPanels() {
         if (panels == null) {

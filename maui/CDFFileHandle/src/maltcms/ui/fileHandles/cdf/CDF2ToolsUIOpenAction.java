@@ -33,15 +33,15 @@ import org.openide.loaders.DataObject;
 
 public final class CDF2ToolsUIOpenAction implements ActionListener {
 
-	private final DataObject context;
+    private final DataObject context;
 
-	public CDF2ToolsUIOpenAction(DataObject context) {
-		this.context = context;
-	}
+    public CDF2ToolsUIOpenAction(DataObject context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		CDFOpenSupport ms = new CDFOpenSupport(((CDFDataObject) context).getPrimaryEntry());
-		ms.open();
-	}
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        CDFOpenSupport ms = new CDFOpenSupport(((CDFDataObject) context).getPrimaryEntry());
+        ms.open();
+    }
 }

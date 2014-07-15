@@ -39,8 +39,8 @@ import maltcms.ui.fileHandles.properties.tools.ModelBuilder;
 public class HashTableModelFactory {
 
     public TableModel create(PipelineElementWidget node, JTable table, boolean simpleMode, Class<?> c) {
-        WidgetTableModel htm =
-                ModelBuilder.getModel(node.getProperties(), c);
+        WidgetTableModel htm
+                = ModelBuilder.getModel(node.getProperties(), c);
         htm.setPipelineElementWidgetNode(node);
         table.setModel(htm);
         htm.setJTable(table);

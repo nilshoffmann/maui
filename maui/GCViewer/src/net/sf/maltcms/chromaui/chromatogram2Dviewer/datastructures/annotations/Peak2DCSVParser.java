@@ -40,8 +40,6 @@ public class Peak2DCSVParser {
 
     public List<Peak2D> wrap(DefaultTableModel dtm) {
 
-
-
         return new ArrayList<Peak2D>();
     }
 }

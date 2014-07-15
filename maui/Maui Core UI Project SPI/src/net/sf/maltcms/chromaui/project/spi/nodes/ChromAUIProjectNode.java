@@ -32,6 +32,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -88,7 +89,12 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
             }
         });
         for (IProjectMenuProvider ipmp : providers) {
-            nodeActions.add(f.createMenuItem(ipmp.getName(), ipmp.getActionPath()));
+            Collection<? extends Action> actions = Utilities.
+                    actionsForPath(ipmp.getActionPath());
+            if (!actions.isEmpty()) {
+                Action projectMenuAction = f.createMenuItem(ipmp.getName(), actions.toArray(new Action[actions.size()]));
+                nodeActions.add(projectMenuAction);
+            }
         }
         nodeActions.add(null);
         nodeActions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));

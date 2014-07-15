@@ -71,27 +71,27 @@ class ${name} implements CSVDataGroovyScript {
     @Override
     public boolean cancel() {
         //implement custom cancellation logic
-    }
+}
     
-    @Override
-    public void run() {
-        File outdir = project.getOutputLocation(this);
-        try {
-            progressHandle.setDisplayName(name)
-            progressHandle.start(dataObjects.length)
-            def i = 1;
-            dataObjects.each{ it ->
-                progressHandle.progress("Processing ${r"${rootFragment.getName()}"}",i)
-                //do something
+@Override
+public void run() {
+File outdir = project.getOutputLocation(this);
+try {
+    progressHandle.setDisplayName(name)
+    progressHandle.start(dataObjects.length)
+    def i = 1;
+    dataObjects.each{ it ->
+        progressHandle.progress("Processing ${r"${rootFragment.getName()}"}",i)
+        //do something
 
-                i++
-            }
-        } finally {
-            progressHandle.finish()
-        }
-        FileObject fo = FileUtil.toFileObject(outdir)
-        fo.refresh()
+        i++
     }
+} finally {
+    progressHandle.finish()
+}
+FileObject fo = FileUtil.toFileObject(outdir)
+fo.refresh()
+}
 	
 }
 

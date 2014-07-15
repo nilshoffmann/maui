@@ -43,7 +43,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Tools",
-id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListImporter")
+        id = "net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions.ChromaTofPeakListImporter")
 @ActionRegistration(displayName = "#CTL_ChromaTofPeakListImporter")
 @ActionReferences({
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks", position = 1414)
@@ -78,7 +78,7 @@ public final class ChromaTofPeakListImporterAction implements ActionListener {
         int result = jfc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             ChromaTofPeakListImporter plir = new ChromaTofPeakListImporter(context,
-                    jfc.getSelectedFiles(),context.getImportLocation(ChromaTofPeakListImporter.class));
+                    jfc.getSelectedFiles(), context.getImportLocation(ChromaTofPeakListImporter.class));
             ChromaTofPeakListImporter.createAndRun("ChromaTOF Peak List Import", plir);
         }
     }

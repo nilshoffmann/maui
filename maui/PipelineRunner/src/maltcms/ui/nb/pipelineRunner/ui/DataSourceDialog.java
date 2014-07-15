@@ -78,7 +78,7 @@ public class DataSourceDialog {
             } else if (dataSource.equals(DataSourcePanel.MALTCMS_FILES)) {
                 File maltcmsDir = new File(FileUtil.toFile(
                         context.getLocation()), "output");
-                if(maltcmsDir.exists() && maltcmsDir.isDirectory()) {
+                if (maltcmsDir.exists() && maltcmsDir.isDirectory()) {
                     File baseDir = getUserSelection(maltcmsDir);
                     if (baseDir != null) {
                         File[] inputFiles = getFiles(baseDir);
@@ -86,7 +86,7 @@ public class DataSourceDialog {
                         System.out.println("Using input files from maltcms output directory " + baseDir);
                     }
                 }
-                
+
             }
         }
         return files;

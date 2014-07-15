@@ -42,7 +42,7 @@ public class GeneralProperties implements ProjectCustomizer.CompositeCategoryPro
     private static final String GENERAL = "General";
 
     @ProjectCustomizer.CompositeCategoryProvider.Registration(
-        projectType = "net-sf-maltcms-chromaui-project-api-ichromauiproject", position = 10)
+            projectType = "net-sf-maltcms-chromaui-project-api-ichromauiproject", position = 10)
     public static GeneralProperties createGeneralProperties() {
         return new GeneralProperties();
     }
@@ -51,9 +51,9 @@ public class GeneralProperties implements ProjectCustomizer.CompositeCategoryPro
     @Override
     public Category createCategory(Lookup lkp) {
         return ProjectCustomizer.Category.create(
-            GENERAL,
-            Bundle.LBL_Config_General(),
-            null);
+                GENERAL,
+                Bundle.LBL_Config_General(),
+                null);
     }
 
     @Override

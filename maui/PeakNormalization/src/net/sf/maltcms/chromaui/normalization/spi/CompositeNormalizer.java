@@ -37,13 +37,14 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
  */
 @Data
 public class CompositeNormalizer implements IPeakNormalizer {
+
     private IPeakNormalizer[] normalizer;
 
     @Override
     public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor) {
         double factor = 1.0d;
-        for (int i = 0; i < normalizer.length; i++) {
-            factor*=normalizer[i].getNormalizationFactor(descriptor);
+        for (IPeakNormalizer normalizer1 : normalizer) {
+            factor *= normalizer1.getNormalizationFactor(descriptor);
         }
         return factor;
     }

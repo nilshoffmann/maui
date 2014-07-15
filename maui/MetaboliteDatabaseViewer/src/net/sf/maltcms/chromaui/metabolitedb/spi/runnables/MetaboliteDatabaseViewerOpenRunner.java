@@ -44,29 +44,29 @@ import org.openide.util.Lookup;
 @Data
 public class MetaboliteDatabaseViewerOpenRunner extends AProgressAwareRunnable {
 
-	private final IDatabaseDescriptor context;
+    private final IDatabaseDescriptor context;
 
-	@Override
-	public void run() {
-		try {
-			progressHandle.start();
-			progressHandle.progress("Opening Database");
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					MetaboliteDatabaseViewerTopComponent mdvtp = new MetaboliteDatabaseViewerTopComponent();
-					mdvtp.open();
-					mdvtp.setDatabaseDescriptor(context);
-					IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
-					registry.registerTopComponentFor(context, mdvtp);
-					progressHandle.finish();
-				}
-			};
-			SwingUtilities.invokeLater(r);
+    @Override
+    public void run() {
+        try {
+            progressHandle.start();
+            progressHandle.progress("Opening Database");
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    MetaboliteDatabaseViewerTopComponent mdvtp = new MetaboliteDatabaseViewerTopComponent();
+                    mdvtp.open();
+                    mdvtp.setDatabaseDescriptor(context);
+                    IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
+                    registry.registerTopComponentFor(context, mdvtp);
+                    progressHandle.finish();
+                }
+            };
+            SwingUtilities.invokeLater(r);
 
-		} catch (Exception e) {
-			Exceptions.printStackTrace(e);
-			progressHandle.finish();
-		}
-	}
+        } catch (Exception e) {
+            Exceptions.printStackTrace(e);
+            progressHandle.finish();
+        }
+    }
 }

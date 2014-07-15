@@ -40,5 +40,5 @@ public class IdentityNormalizer implements IPeakNormalizer {
     public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor) {
         return 1.0d;
     }
-    
+
 }

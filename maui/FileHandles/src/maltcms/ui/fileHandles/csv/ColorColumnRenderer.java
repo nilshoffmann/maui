@@ -54,40 +54,40 @@ public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
         colorNormal = Color.WHITE;
         colorFocus = Color.lightGray;
-        colorSelected = new Color(164,164,164);
+        colorSelected = new Color(164, 164, 164);
         colorActive = selected;
         this.selectedRows = selectedRows;
     }
 
     public void setBackground(Color c, int row) {
-        Color color = new Color(c.getRed(),c.getGreen(),c.getBlue());
-        if(row%2==0) {
+        Color color = new Color(c.getRed(), c.getGreen(), c.getBlue());
+        if (row % 2 == 0) {
             setBackground(color);
-        }else{
-            setBackground(reduceBrightness(color,32));
+        } else {
+            setBackground(reduceBrightness(color, 32));
             //setBackground(c.darker());
         }
     }
 
     private Color reduceBrightness(Color c, int amount) {
-        Color ret = new Color(darker(c.getRed(),amount),darker(c.getGreen(),amount),darker(c.getBlue(),amount));
+        Color ret = new Color(darker(c.getRed(), amount), darker(c.getGreen(), amount), darker(c.getBlue(), amount));
 //        System.out.println("Color before: "+c+" color after: "+ret);
         return ret;
     }
 
     private Color increaseBrightness(Color c, int amount) {
-        Color ret = new Color(brighter(c.getRed(),amount),brighter(c.getGreen(),amount),brighter(c.getBlue(),amount));
+        Color ret = new Color(brighter(c.getRed(), amount), brighter(c.getGreen(), amount), brighter(c.getBlue(), amount));
 //        System.out.println("Color before: "+c+" color after: "+ret);
         return ret;
     }
 
     private int darker(int band, int amount) {
 //        System.out.println("Band value: "+band+" amount: "+amount);
-        return Math.max(0,band-amount);
+        return Math.max(0, band - amount);
     }
 
     private int brighter(int band, int amount) {
-        return Math.min(255,band+amount);
+        return Math.min(255, band + amount);
     }
 
     @Override
@@ -97,22 +97,22 @@ public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
         // die normalen Farben
         if (hasFocus) {
             setForeground(Color.BLACK);
-            setBackground(colorFocus,row);
+            setBackground(colorFocus, row);
         } else if (isSelected) {
             setForeground(Color.BLACK);
-            setBackground(colorSelected,row);
+            setBackground(colorSelected, row);
         } else {
-            if(selectedRows.length==0) {
+            if (selectedRows.length == 0) {
                 setForeground(Color.BLACK);
-                setBackground(colorNormal,row);
-            }else{
+                setBackground(colorNormal, row);
+            } else {
                 int idx = Arrays.binarySearch(selectedRows, row);
-                if(idx>=0) {
+                if (idx >= 0) {
                     setForeground(Color.BLACK);
-                    setBackground(colorActive,row);
-                }else{
+                    setBackground(colorActive, row);
+                } else {
                     setForeground(Color.BLACK);
-                    setBackground(colorNormal,row);
+                    setBackground(colorNormal, row);
                 }
             }
         }

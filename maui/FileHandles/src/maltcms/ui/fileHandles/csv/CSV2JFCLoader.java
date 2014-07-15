@@ -122,7 +122,7 @@ public class CSV2JFCLoader implements Runnable {
                 System.out.println("creating chart done");
             } else if (this.mode == CHART.MATRIX) {
                 DefaultXYZDataset cd = new DefaultXYZDataset();
-                System.out.println("Name of column 0: "+dtm.getColumnName(0));
+                System.out.println("Name of column 0: " + dtm.getColumnName(0));
                 if (dtm.getColumnName(0).isEmpty()) {
                     System.out.println("Removing column 0");
                     dtm = removeColumn(dtm, 0);
@@ -131,26 +131,26 @@ public class CSV2JFCLoader implements Runnable {
                     dtm = removeColumn(dtm, dtm.getColumnCount() - 1);
                 }
                 StringBuilder sb = new StringBuilder();
-                for(int i = 0;i<dtm.getRowCount();i++) {
-                    for(int j = 0;j<dtm.getColumnCount();j++) {
-                        sb.append(dtm.getValueAt(i, j)+" ");
+                for (int i = 0; i < dtm.getRowCount(); i++) {
+                    for (int j = 0; j < dtm.getColumnCount(); j++) {
+                        sb.append(dtm.getValueAt(i, j) + " ");
                     }
                     sb.append("\n");
                 }
-                System.out.println("Table before sorting: "+sb.toString());
+                System.out.println("Table before sorting: " + sb.toString());
 //                dtm = sort(dtm);
                 StringBuilder sb2 = new StringBuilder();
-                for(int i = 0;i<dtm.getRowCount();i++) {
-                    for(int j = 0;j<dtm.getColumnCount();j++) {
-                        sb2.append(dtm.getValueAt(i, j)+" ");
+                for (int i = 0; i < dtm.getRowCount(); i++) {
+                    for (int j = 0; j < dtm.getColumnCount(); j++) {
+                        sb2.append(dtm.getValueAt(i, j) + " ");
                     }
                     sb2.append("\n");
                 }
-                System.out.println("Table after sorting: "+sb2.toString());
+                System.out.println("Table after sorting: " + sb2.toString());
                 int rows = dtm.getRowCount();
                 int columns = dtm.getColumnCount();
-                System.out.println("Storing " + columns +" * "+ rows + " elements, "+(rows*columns)+" total!");
-                double[][] data = new double[3][(columns* rows)];
+                System.out.println("Storing " + columns + " * " + rows + " elements, " + (rows * columns) + " total!");
+                double[][] data = new double[3][(columns * rows)];
                 ArrayDouble.D1 dt = new ArrayDouble.D1((columns) * rows);
                 double min = Double.POSITIVE_INFINITY;
                 double max = Double.NEGATIVE_INFINITY;
@@ -200,13 +200,12 @@ public class CSV2JFCLoader implements Runnable {
                         return "[" + colnames[xyd.getX(i, i1).intValue()] + ":" + colnames[xyd.getY(i, i1).intValue()] + "] = " + ((XYZDataset) xyd).getZValue(i, i1) + "";
                     }
                 });
-                
 
                 JFreeChart jfc = new JFreeChart(this.title, xyp);
                 NumberAxis values = new NumberAxis("value");
                 values.setAutoRange(false);
                 values.setRangeWithMargins(min, max);
-                PaintScaleLegend psl = new PaintScaleLegend(ps,values);
+                PaintScaleLegend psl = new PaintScaleLegend(ps, values);
                 psl.setBackgroundPaint(jfc.getBackgroundPaint());
                 jfc.addSubtitle(psl);
                 psl.setStripWidth(50);
@@ -242,7 +241,6 @@ public class CSV2JFCLoader implements Runnable {
             int pc = getPermutationCost(permutation);
 
             //System.out.println("Permutation: "+Arrays.toString(permutation));
-
             //exclude trivial case of identity permutation
             if (pc < minPermCost && pc > 0 && i >= from) {
                 //System.out.println("Cost of permutation: "+pc+ " on column "+i);

@@ -69,9 +69,9 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
             progressHandle.progress("Retrieving Chromatograms");
             progressHandle.progress("Matching Chromatograms");
             LinkedHashMap<String, File> reports = new LinkedHashMap<String, File>();
-            for(File file:files) {
+            for (File file : files) {
                 String chromName = StringTools.removeFileExt(file.getName());
-                reports.put(chromName,file);
+                reports.put(chromName, file);
             }
 
             int peakReportsImported = 0;
@@ -90,7 +90,7 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
                 File created = importPeaks(importDir, peaks, reports, chromName, chromatogram);
                 resultFiles.add(created);
-				peakReportsImported++;
+                peakReportsImported++;
             }
             Utils.defaultLocale = Locale.getDefault();
         } catch (Exception e) {
@@ -107,8 +107,8 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
         chromatogram.setSeparationType(separationType);
         chromatogram.setDetectorType(detectorType);
         chromatogram.setDisplayName(chromName);
-		chromatogram.setName(file.getName());
-		chromatogram.setShortDescription(chromName+": "+separationType+"-"+detectorType);
+        chromatogram.setName(file.getName());
+        chromatogram.setShortDescription(chromName + ": " + separationType + "-" + detectorType);
         ITreatmentGroupDescriptor treatmentGroup = DescriptorFactory.newTreatmentGroupDescriptor("DEFAULT");
         ISampleGroupDescriptor sampleGroup = DescriptorFactory.newSampleGroupDescriptor("DEFAULT");
         INormalizationDescriptor normalization = DescriptorFactory.newNormalizationDescriptor();

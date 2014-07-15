@@ -70,9 +70,9 @@ public class GraphicsSettings {
                 getBackground(), g2.getFont(), g2.getClip());
         return gs;
     }
-    
+
     public static GraphicsSettings clone(GraphicsSettings gs) {
-        GraphicsSettings settings = new GraphicsSettings(gs.getStroke(),gs.getComposite(),gs.getTransform(),gs.getPaint(),gs.getBackground(),gs.getFont(),gs.getClip());
+        GraphicsSettings settings = new GraphicsSettings(gs.getStroke(), gs.getComposite(), gs.getTransform(), gs.getPaint(), gs.getBackground(), gs.getFont(), gs.getClip());
         return settings;
     }
 

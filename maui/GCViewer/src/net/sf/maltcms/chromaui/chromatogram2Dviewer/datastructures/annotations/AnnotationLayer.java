@@ -111,16 +111,16 @@ public class AnnotationLayer extends AbstractXYAnnotation {
         if (editable) {
             this.qt.put(getPointFor(xy), xy);
             this.xya.add(xy);
-        }else{
+        } else {
             throw new UnsupportedOperationException("Add not supported! Layer is not editable!");
         }
     }
 
     public void remove(XYSelectableShapeAnnotation<?> xy) {
-        if(editable) {
-        this.qt.remove(getPointFor(xy));
-        this.xya.remove(xy);
-        }else{
+        if (editable) {
+            this.qt.remove(getPointFor(xy));
+            this.xya.remove(xy);
+        } else {
             throw new UnsupportedOperationException("Remove not supported! Layer is not editable!");
         }
     }

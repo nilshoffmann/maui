@@ -62,7 +62,7 @@ import org.jfree.util.PaintUtilities;
 public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation implements Serializable {
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    
+
     public static final String PROP_ACTIVE = "active";
     private boolean active = false;
     private Paint highlight = new Color(192, 192, 192, 164);
@@ -80,18 +80,18 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         this(x, y, s, label, ta);
         this.t = t;
     }
-    
+
     private XYSelectableShapeAnnotation(double x, double y, Shape s, String label, TextAnchor ta) {
         this.x = x;
         this.y = y;
         this.s = s;
         //this.ch = getCrosshairShape(x, y, s.getBounds2D().getWidth(), s.getBounds2D().getHeight());
         this.label = label;
-        this.xyta = new XYPointerAnnotation(label, x, y,-0.4);
+        this.xyta = new XYPointerAnnotation(label, x, y, -0.4);
         this.xyta.setTipRadius(0.1);
         this.xyta.setTextAnchor(ta);
     }
-    
+
     public Shape getShape() {
         return this.s;
     }
@@ -103,11 +103,11 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     public void setHighlight(Paint highlight) {
         this.highlight = highlight;
     }
-    
+
     public Paint getFill() {
         return fill;
     }
-    
+
     public void setFill(Paint fill) {
         this.fill = fill;
     }
@@ -228,8 +228,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     /**
      * Tests this annotation for equality with an arbitrary object.
      *
-     * @param obj the object (
-     * <code>null</code> permitted).
+     * @param obj the object ( <code>null</code> permitted).
      *
      * @return A boolean.
      */
@@ -334,8 +333,8 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         //x,y-5 to x,y+5
         double x2Points[] = {x - w, x + w, x, x};
         double y2Points[] = {y, y, y - h, y + h};
-        GeneralPath crosshair =
-                new GeneralPath(GeneralPath.WIND_EVEN_ODD, x2Points.length);
+        GeneralPath crosshair
+                = new GeneralPath(GeneralPath.WIND_EVEN_ODD, x2Points.length);
 
         crosshair.moveTo(x2Points[0], y2Points[0]);
         crosshair.lineTo(x2Points[1], y2Points[1]);
@@ -345,19 +344,19 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         return crosshair;
 
     }
-    
+
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
-    
+
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
-    
+
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         pcs.removePropertyChangeListener(pcl);
     }
-    
+
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener pcl) {
         pcs.removePropertyChangeListener(propertyName, pcl);
     }

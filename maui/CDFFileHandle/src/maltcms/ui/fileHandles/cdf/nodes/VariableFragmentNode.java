@@ -49,77 +49,77 @@ import ucar.nc2.Attribute;
  * @author Nils Hoffmann
  */
 public class VariableFragmentNode extends BeanNode<IVariableFragment> {
-	
-	public VariableFragmentNode(IVariableFragment bean) throws IntrospectionException {
-		super(bean, Children.LEAF, Lookups.fixed(bean));
-	}
-	
-	public VariableFragmentNode(IVariableFragment bean, Children children) throws IntrospectionException {
-		super(bean, children);
-	}
-	
-	public VariableFragmentNode(IVariableFragment bean, Children children, Lookup lkp) throws IntrospectionException {
-		super(bean, children, lkp);
-	}
-	
-	@Override
-	protected void createProperties(IVariableFragment bean, BeanInfo info) {
-		//super.createProperties(bean, info); //To change body of generated methods, choose Tools | Templates.
-	}
-	
-	@Override
-	protected Sheet createSheet() {
-		Sheet sheet = Sheet.createDefault();
-		Sheet.Set set = Sheet.createPropertiesSet();
-		Property nameProp = new PropertySupport.ReadOnly<String>("name", String.class, "Name", "The name of this variable") {
-			@Override
-			public String getValue() throws IllegalAccessException, InvocationTargetException {
-				return getBean().getName();
-			}
-		};
-		set.put(nameProp);
-		Property dataTypeProp = new PropertySupport.ReadOnly<String>("dataType", String.class, "DataType", "The data type associated with this variable") {
-			@Override
-			public String getValue() throws IllegalAccessException, InvocationTargetException {
-				return getBean().getDataType().name();
-			}
-		};
-		set.put(dataTypeProp);
-		Property dimProp = new PropertySupport.ReadOnly<String>("dimensions", String.class, "Dimensions", "The Dimensions associated with this variable") {
-			@Override
-			public String getValue() throws IllegalAccessException, InvocationTargetException {
-				return Arrays.deepToString(getBean().getDimensions());
-			}
-		};
-		set.put(dimProp);
-		Property rangeProp = new PropertySupport.ReadOnly<String>("ranges", String.class, "Ranges", "The ranges associated with this variable") {
-			@Override
-			public String getValue() throws IllegalAccessException, InvocationTargetException {
-				return Arrays.deepToString(getBean().getRange());
-			}
-		};
-		set.put(rangeProp);
-		Property attributesProp = new PropertySupport.ReadOnly<String>("attributes", String.class, "Attributes", "The attributes associated with this variable") {
-			@Override
-			public String getValue() throws IllegalAccessException, InvocationTargetException {
-				return Arrays.deepToString(getBean().getAttributes().toArray(new Attribute[getBean().getAttributes().size()]));
-			}
-		};
-		set.put(attributesProp);
-		
-		sheet.put(set);
-		return sheet;
-		
-	}
-	
-	@Override	
-	public Action[] getActions(boolean context) {
-		Action[] superActions = super.getActions(context);
-		ArrayList<Action> finalActions = new ArrayList<Action>();
-		List<? extends Action> actions = Utilities.actionsForPath("Actions/VariableFragmentActions");
-		finalActions.addAll(actions);
-		finalActions.add(null);
-		finalActions.addAll(Arrays.asList(superActions));
-		return finalActions.toArray(new Action[finalActions.size()]);
-	}
+
+    public VariableFragmentNode(IVariableFragment bean) throws IntrospectionException {
+        super(bean, Children.LEAF, Lookups.fixed(bean));
+    }
+
+    public VariableFragmentNode(IVariableFragment bean, Children children) throws IntrospectionException {
+        super(bean, children);
+    }
+
+    public VariableFragmentNode(IVariableFragment bean, Children children, Lookup lkp) throws IntrospectionException {
+        super(bean, children, lkp);
+    }
+
+    @Override
+    protected void createProperties(IVariableFragment bean, BeanInfo info) {
+        //super.createProperties(bean, info); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected Sheet createSheet() {
+        Sheet sheet = Sheet.createDefault();
+        Sheet.Set set = Sheet.createPropertiesSet();
+        Property nameProp = new PropertySupport.ReadOnly<String>("name", String.class, "Name", "The name of this variable") {
+            @Override
+            public String getValue() throws IllegalAccessException, InvocationTargetException {
+                return getBean().getName();
+            }
+        };
+        set.put(nameProp);
+        Property dataTypeProp = new PropertySupport.ReadOnly<String>("dataType", String.class, "DataType", "The data type associated with this variable") {
+            @Override
+            public String getValue() throws IllegalAccessException, InvocationTargetException {
+                return getBean().getDataType().name();
+            }
+        };
+        set.put(dataTypeProp);
+        Property dimProp = new PropertySupport.ReadOnly<String>("dimensions", String.class, "Dimensions", "The Dimensions associated with this variable") {
+            @Override
+            public String getValue() throws IllegalAccessException, InvocationTargetException {
+                return Arrays.deepToString(getBean().getDimensions());
+            }
+        };
+        set.put(dimProp);
+        Property rangeProp = new PropertySupport.ReadOnly<String>("ranges", String.class, "Ranges", "The ranges associated with this variable") {
+            @Override
+            public String getValue() throws IllegalAccessException, InvocationTargetException {
+                return Arrays.deepToString(getBean().getRange());
+            }
+        };
+        set.put(rangeProp);
+        Property attributesProp = new PropertySupport.ReadOnly<String>("attributes", String.class, "Attributes", "The attributes associated with this variable") {
+            @Override
+            public String getValue() throws IllegalAccessException, InvocationTargetException {
+                return Arrays.deepToString(getBean().getAttributes().toArray(new Attribute[getBean().getAttributes().size()]));
+            }
+        };
+        set.put(attributesProp);
+
+        sheet.put(set);
+        return sheet;
+
+    }
+
+    @Override
+    public Action[] getActions(boolean context) {
+        Action[] superActions = super.getActions(context);
+        ArrayList<Action> finalActions = new ArrayList<Action>();
+        List<? extends Action> actions = Utilities.actionsForPath("Actions/VariableFragmentActions");
+        finalActions.addAll(actions);
+        finalActions.add(null);
+        finalActions.addAll(Arrays.asList(superActions));
+        return finalActions.toArray(new Action[finalActions.size()]);
+    }
 }

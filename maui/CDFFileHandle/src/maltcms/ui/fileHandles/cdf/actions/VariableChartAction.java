@@ -38,7 +38,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "netCDFActions",
-id = "maltcms.ui.fileHandles.cdf.VariableChartAction")
+        id = "maltcms.ui.fileHandles.cdf.VariableChartAction")
 @ActionRegistration(displayName = "#CTL_VariableChartAction")
 @ActionReferences({})
 @Messages("CTL_VariableChartAction=Create Chart")

@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab;
 
 import com.db4o.activation.ActivationPurpose;
@@ -37,17 +36,17 @@ import uk.ac.ebi.pride.jmztab.model.MZTabRecord;
 import uk.ac.ebi.pride.jmztab.model.MsRun;
 import uk.ac.ebi.pride.jmztab.model.StudyVariable;
 
-
 public abstract class AMzTabRecordDescriptor<T extends MZTabRecord> extends ABasicDescriptor implements IMzTabDescriptor {
+
     public final static String PROP_RECORD = "record";
-    
+
     private T record;
-    
+
     public T getRecord() {
         activate(ActivationPurpose.READ);
         return record;
     }
-    
+
     public void setRecord(T element) {
         activate(ActivationPurpose.WRITE);
         T old = this.record;
@@ -180,7 +179,5 @@ public abstract class AMzTabRecordDescriptor<T extends MZTabRecord> extends ABas
     public void setOptionColumnValue(CVParam param, Object value) {
         record.setOptionColumnValue(param, value);
     }
-    
-    
-    
+
 }

@@ -47,7 +47,6 @@ public class MissingValueDialog {
         nd.setOptionType(NotifyDescriptor.OK_CANCEL_OPTION);
         Object result = DialogDisplayer.getDefault().notify(nd);
 
-
         if (result.equals(NotifyDescriptor.OK_OPTION)) {
             return nsp.getImputationMode();
         }

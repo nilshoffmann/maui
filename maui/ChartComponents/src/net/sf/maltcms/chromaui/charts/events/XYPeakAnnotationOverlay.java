@@ -33,7 +33,6 @@ import java.awt.geom.Point2D;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 import net.sf.maltcms.chromaui.annotations.XYSelectableShapeAnnotation;
 
 import org.jfree.chart.annotations.XYAnnotation;
@@ -79,7 +78,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
     private final ChartPanel cp;
 
     public XYPeakAnnotationOverlay(String name, boolean visible, Point2D min, Point2D max, ChartPanel cp) {
-        this.qt = new QuadTree<XYSelectableShapeAnnotation<Peak2D>>(min.getX(),min.getY(),max.getX()-min.getX(), max.getY()-min.getY(), 3);
+        this.qt = new QuadTree<XYSelectableShapeAnnotation<Peak2D>>(min.getX(), min.getY(), max.getX() - min.getX(), max.getY() - min.getY(), 3);
         this.cp = cp;
         this.name = name;
         this.visible = visible;
@@ -93,18 +92,18 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
      * Receives a property change event (typically a change in one of the
      * crosshairs).
      *
-     * @param e  the event.
+     * @param e the event.
      */
     public void propertyChange(PropertyChangeEvent e) {
         fireOverlayChanged();
     }
 
     protected void paint(Graphics g, XYPlot xyp, Rectangle2D dataArea, ValueAxis domainAxis, ValueAxis rangeAxis, RectangleEdge domainEdge, RectangleEdge rangeEdge, ChartPanel cp) {
-            //System.out.println("Painting " + this.xyaa.getPeakAnnotations().size() + " annotations");
-            for (XYSelectableShapeAnnotation<Peak2D> xypa : getPeakAnnotations()) {
-                //Peak2D peak = xypa.getPeak();
-                //Point seed = peak.getPeakArea().getSeedPoint();
-                //if(roi.contains(seed)) {
+        //System.out.println("Painting " + this.xyaa.getPeakAnnotations().size() + " annotations");
+        for (XYSelectableShapeAnnotation<Peak2D> xypa : getPeakAnnotations()) {
+            //Peak2D peak = xypa.getPeak();
+            //Point seed = peak.getPeakArea().getSeedPoint();
+            //if(roi.contains(seed)) {
 //                    if (xypa.isActive()) {
 //                        g.setColor(new Color(0xFF0000CC));
 //                    } else {
@@ -120,14 +119,14 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
 //                    Line2D.Double lr = new Line2D.Double(xlow-5,ylow,xlow+5,ylow);
 //                    g2.draw(ud);
 //                    g2.draw(lr);
-                xypa.draw((Graphics2D)g, xyp, dataArea, domainAxis, rangeAxis, 0, cp.getChartRenderingInfo().getPlotInfo());
-                //}
-            }
+            xypa.draw((Graphics2D) g, xyp, dataArea, domainAxis, rangeAxis, 0, cp.getChartRenderingInfo().getPlotInfo());
+            //}
+        }
     }
 
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
-        if(visible) {
+        if (visible) {
             Shape savedClip = g2.getClip();
             Rectangle2D dataArea = chartPanel.getScreenDataArea();
             g2.clip(dataArea);
@@ -151,7 +150,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
     /**
      * Tests this overlay for equality with an arbitrary object.
      *
-     * @param obj  the object (<code>null</code> permitted).
+     * @param obj the object (<code>null</code> permitted).
      *
      * @return A boolean.
      */
@@ -160,13 +159,13 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
         return super.equals(obj);
     }
 
-     /**
+    /**
      * Returns a clone of this instance.
      *
      * @return A clone of this instance.
      *
      * @throws java.lang.CloneNotSupportedException if there is some problem
-     *     with the cloning.
+     * with the cloning.
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -204,7 +203,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
 
     public Point2D getCenter(Shape s) {
         Rectangle2D r2 = s.getBounds2D();
-        Point2D.Double p = new Point2D.Double(r2.getCenterX(),r2.getCenterY());
+        Point2D.Double p = new Point2D.Double(r2.getCenterX(), r2.getCenterY());
         return p;
     }
 
@@ -219,13 +218,13 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
         //System.out.println("Adding XY Peak Annotation");
         Peak2D peak = (p == null ? new Peak2D() : p);
         PeakArea2D pa = peak.getPeakArea();
-        if(pa==null) {
-            pa = new PeakArea2D(new Point((int)xd,(int)yd), new ArrayDouble.D1(1), -1, -1, -1);
+        if (pa == null) {
+            pa = new PeakArea2D(new Point((int) xd, (int) yd), new ArrayDouble.D1(1), -1, -1, -1);
             peak.setPeakArea(pa);
-        }else{
+        } else {
             Point s = pa.getSeedPoint();
-            if(s==null) {
-                s = new Point((int)xd,(int)yd);
+            if (s == null) {
+                s = new Point((int) xd, (int) yd);
                 pa.setSeedPoint(s);
             }
         }
@@ -256,7 +255,7 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
                 @Override
                 public void run() {
                     Point2D p = getPoint(v);
-                    System.out.println("Adding annotation at: "+p);
+                    System.out.println("Adding annotation at: " + p);
                     addAnnotation(p);
                 }
             };
@@ -340,8 +339,8 @@ public class XYPeakAnnotationOverlay extends AbstractOverlay implements Overlay,
         //x,y-5 to x,y+5
         double x2Points[] = {x - w, x + w, x, x};
         double y2Points[] = {y, y, y - h, y + h};
-        GeneralPath crosshair =
-                new GeneralPath(GeneralPath.WIND_EVEN_ODD, x2Points.length);
+        GeneralPath crosshair
+                = new GeneralPath(GeneralPath.WIND_EVEN_ODD, x2Points.length);
 
         crosshair.moveTo(x2Points[0], y2Points[0]);
         crosshair.lineTo(x2Points[1], y2Points[1]);

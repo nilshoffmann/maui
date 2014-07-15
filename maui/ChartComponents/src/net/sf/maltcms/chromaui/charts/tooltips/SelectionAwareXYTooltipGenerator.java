@@ -37,25 +37,25 @@ import org.jfree.data.xy.XYDataset;
  */
 public abstract class SelectionAwareXYTooltipGenerator implements XYToolTipGenerator {
 
-	private XYToolTipGenerator xytg = new StandardXYToolTipGenerator();
+    private XYToolTipGenerator xytg = new StandardXYToolTipGenerator();
 
-	public SelectionAwareXYTooltipGenerator(XYToolTipGenerator tooltipGenerator) {
-		this.xytg = tooltipGenerator;
-	}
-	
-	public void setXYToolTipGenerator(XYToolTipGenerator generator) {
-		this.xytg = generator;
-	}
+    public SelectionAwareXYTooltipGenerator(XYToolTipGenerator tooltipGenerator) {
+        this.xytg = tooltipGenerator;
+    }
 
-	@Override
-	public String generateToolTip(XYDataset xyd, int i, int i1) {
-		String str = createSelectionAwareTooltip(xyd, i, i1);
-		if(str==null) {
-			return xytg.generateToolTip(xyd, i, i1);
-		}
-		return str;
-	}
+    public void setXYToolTipGenerator(XYToolTipGenerator generator) {
+        this.xytg = generator;
+    }
 
-	public abstract String createSelectionAwareTooltip(XYDataset xyd, int i, int i1);
+    @Override
+    public String generateToolTip(XYDataset xyd, int i, int i1) {
+        String str = createSelectionAwareTooltip(xyd, i, i1);
+        if (str == null) {
+            return xytg.generateToolTip(xyd, i, i1);
+        }
+        return str;
+    }
+
+    public abstract String createSelectionAwareTooltip(XYDataset xyd, int i, int i1);
 
 }

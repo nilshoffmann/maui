@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.jmztab.ui.validation.annotations;
 
 import org.openide.text.Annotation;
@@ -37,10 +36,13 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Nils Hoffmann
  */
 public class WarningAnnotation extends Annotation {
+
     private final String warning;
+
     public WarningAnnotation(String warning) {
         this.warning = warning;
     }
+
     @Override
     public String getAnnotationType() {
         return "net-sf-maltcms-chromaui-mztab-warningAnnotation";
@@ -50,5 +52,5 @@ public class WarningAnnotation extends Annotation {
     public String getShortDescription() {
         return warning;
     }
-    
+
 }

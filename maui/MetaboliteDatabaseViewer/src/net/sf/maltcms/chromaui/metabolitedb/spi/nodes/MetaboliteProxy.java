@@ -292,21 +292,20 @@ public class MetaboliteProxy implements IMetabolite {
     public void setId(String id) {
         setID(id);
     }
-    
+
     public final String PROP_ORIGIN = "origin";
-    
+
     private String origin = "Unspecified";
-    
-    public String getOrigin(){
+
+    public String getOrigin() {
         return this.origin;
     }
-    
+
     public void setOrigin(String origin) {
         String old = this.origin;
         this.origin = origin;
         pcs.firePropertyChange(PROP_ORIGIN, old, this.origin);
     }
-    
 
     @Override
     public int compareTo(IAnchor t) {
@@ -320,21 +319,21 @@ public class MetaboliteProxy implements IMetabolite {
 
     @Override
     public void setMw(double d) {
-        setMW((int)d);
+        setMW((int) d);
     }
 
-	public static final String PROP_LINK = "link";
-	
-	@Override
-	public URI getLink() {
-		return metabolite.getLink();
-	}
+    public static final String PROP_LINK = "link";
 
-	@Override
-	public void setLink(URI uri) {
-		URI old = metabolite.getLink();
-		metabolite.setLink(uri);
-		pcs.firePropertyChange(PROP_LINK, old, uri);
-	}
+    @Override
+    public URI getLink() {
+        return metabolite.getLink();
+    }
+
+    @Override
+    public void setLink(URI uri) {
+        URI old = metabolite.getLink();
+        metabolite.setLink(uri);
+        pcs.firePropertyChange(PROP_LINK, old, uri);
+    }
 
 }

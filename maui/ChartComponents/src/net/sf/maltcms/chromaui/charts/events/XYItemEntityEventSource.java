@@ -34,6 +34,6 @@ import org.jfree.chart.entity.XYItemEntity;
  *
  * @author nilshoffmann
  */
-public interface XYItemEntityEventSource extends IEventSource<XYItemEntity>{
+public interface XYItemEntityEventSource extends IEventSource<XYItemEntity> {
 
 }

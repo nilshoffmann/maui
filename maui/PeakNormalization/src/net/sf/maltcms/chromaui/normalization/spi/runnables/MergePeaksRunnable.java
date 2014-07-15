@@ -39,23 +39,23 @@ import org.openide.util.Exceptions;
  */
 public class MergePeaksRunnable extends AProgressAwareRunnable {
 
-	private final List<Peak1DContainer> context;
-	private final IChromAUIProject project;
+    private final List<Peak1DContainer> context;
+    private final IChromAUIProject project;
 
-	public MergePeaksRunnable(IChromAUIProject project, List<Peak1DContainer> context) {
-		this.project = project;
-		this.context = context;
-	}
+    public MergePeaksRunnable(IChromAUIProject project, List<Peak1DContainer> context) {
+        this.project = project;
+        this.context = context;
+    }
 
-	@Override
-	public void run() {
-		try {
-			progressHandle.start(3);
-			progressHandle.progress("Retrieving Tool Descriptors", 1);
-		} catch (Exception e) {
-			Exceptions.printStackTrace(e);
-		} finally {
-			progressHandle.finish();
-		}
-	}
+    @Override
+    public void run() {
+        try {
+            progressHandle.start(3);
+            progressHandle.progress("Retrieving Tool Descriptors", 1);
+        } catch (Exception e) {
+            Exceptions.printStackTrace(e);
+        } finally {
+            progressHandle.finish();
+        }
+    }
 }

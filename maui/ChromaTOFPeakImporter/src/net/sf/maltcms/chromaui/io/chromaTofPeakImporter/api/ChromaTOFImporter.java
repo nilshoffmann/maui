@@ -40,14 +40,14 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
  * @author Nils Hoffmann
  */
 public final class ChromaTOFImporter {
-    
-    public static AProgressAwareRunnable importAsPeakDescriptors(IChromAUIProject project, File...reports) {
+
+    public static AProgressAwareRunnable importAsPeakDescriptors(IChromAUIProject project, File... reports) {
         File importDir = project.getImportLocation(ChromaTofPeakListImporter.class);
         return new ChromaTofPeakListImporter(project, reports, importDir);
     }
-    
-    public static AProgressAwareCallable<List<File>> importAsVirtualChromatograms(File importDir, File...reports) {
+
+    public static AProgressAwareCallable<List<File>> importAsVirtualChromatograms(File importDir, File... reports) {
         return new ChromatogramFromPeakListImporter(importDir, reports);
     }
-    
+
 }

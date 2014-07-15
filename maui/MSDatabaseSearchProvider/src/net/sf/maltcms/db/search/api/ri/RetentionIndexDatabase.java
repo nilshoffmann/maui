@@ -84,12 +84,12 @@ public class RetentionIndexDatabase implements IRetentionIndexDatabase {
         } catch (MalformedURLException ex) {
             throw new RuntimeException(ex);
         } catch (Exception e) {
-            if(oc!=null) {
+            if (oc != null) {
                 oc.close();
             }
             throw new RuntimeException(e);
         } finally {
-            if(oc!=null){
+            if (oc != null) {
                 oc.close();
             }
         }

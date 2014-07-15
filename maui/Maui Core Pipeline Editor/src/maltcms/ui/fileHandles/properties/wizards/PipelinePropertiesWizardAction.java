@@ -82,21 +82,21 @@ public final class PipelinePropertiesWizardAction extends CallableSystemAction {
     }
 
     /**
-     * Initialize panels representing individual wizard's steps and sets
-     * various properties for them influencing wizard appearance.
+     * Initialize panels representing individual wizard's steps and sets various
+     * properties for them influencing wizard appearance.
      */
     private WizardDescriptor.Panel[] getPanels() {
 //        if (panels == null) {
 
         if (this.node instanceof PipelineGeneralConfigWidget) {
             panels = new WizardDescriptor.Panel[]{
-                        new PipelinePropertiesWizardPanel2(this.node)
-                    };
+                new PipelinePropertiesWizardPanel2(this.node)
+            };
         }
         if (this.node instanceof PipelineElementWidget) {
             panels = new WizardDescriptor.Panel[]{
-                        new PipelinePropertiesWizardPanel1((PipelineElementWidget) this.node)
-                    };
+                new PipelinePropertiesWizardPanel1((PipelineElementWidget) this.node)
+            };
         }
 
         String[] steps = new String[panels.length];

@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Actions",
-id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupPca")
+        id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupPca")
 @ActionRegistration(displayName = "#CTL_PeakGroupPca")
 @ActionReferences({
     @ActionReference(path = "Menu/View", position = 0),
@@ -64,12 +64,12 @@ public final class PeakGroupPca implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         IPeakNormalizer normalizer = NormalizationDialog.getPeakNormalizer(context);
-        if(normalizer==null) {
+        if (normalizer == null) {
             return;
         }
         ImputationMode imputationMode = MissingValueDialog.getImputationMode();
-        DataTable dt = new DataTable(context,normalizer,"peakTable",imputationMode);
-        PeakGroupPcaRunnable tc = new PeakGroupPcaRunnable(context,Utilities.actionsGlobalContext().lookup(IChromAUIProject.class),dt,false,false);
+        DataTable dt = new DataTable(context, normalizer, "peakTable", imputationMode);
+        PeakGroupPcaRunnable tc = new PeakGroupPcaRunnable(context, Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), dt, false, false);
         PeakGroupPcaRunnable.createAndRun("Peak group pca", tc);
     }
 }

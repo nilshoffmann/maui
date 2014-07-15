@@ -51,14 +51,14 @@ public class ShortArrayPropertyEditor extends PropertyEditorSupport {
 
         try {
             String tmp = string.substring(1);
-            tmp = tmp.substring(0,tmp.length()-1);
+            tmp = tmp.substring(0, tmp.length() - 1);
             String[] values = tmp.split(",");
             d = new short[values.length];
             for (int i = 0; i < values.length; i++) {
                 d[i] = Short.parseShort(values[i].trim());
             }
 //            System.out.println(Arrays.toString(d));
-            setValue((short[])d);
+            setValue((short[]) d);
         } catch (Exception pe) {
             throw new IllegalArgumentException(pe);
         }

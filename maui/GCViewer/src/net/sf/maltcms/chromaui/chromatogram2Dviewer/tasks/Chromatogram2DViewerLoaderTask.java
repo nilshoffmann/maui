@@ -77,7 +77,7 @@ public class Chromatogram2DViewerLoaderTask extends AProgressAwareRunnable {
             onEdt(new Runnable() {
                 @Override
                 public void run() {
-                    final Chromatogram2DViewTopComponent jtc = new Chromatogram2DViewTopComponent(dobj,ds);
+                    final Chromatogram2DViewTopComponent jtc = new Chromatogram2DViewTopComponent(dobj, ds);
                     jtc.open();
                     jtc.requestActive();
                 }

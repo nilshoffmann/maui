@@ -35,6 +35,6 @@ import org.jfree.chart.annotations.XYAnnotation;
  *
  * @author nilshoffmann
  */
-public interface XYAnnotationEventListener extends IListener<IEvent<XYAnnotation>>{
+public interface XYAnnotationEventListener extends IListener<IEvent<XYAnnotation>> {
 
 }

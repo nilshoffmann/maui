@@ -37,7 +37,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Tools",
-id = "maltcms.ui.heatmap3Dviewer.TestJzy3D")
+        id = "maltcms.ui.heatmap3Dviewer.TestJzy3D")
 @ActionRegistration(displayName = "#CTL_TestJzy3D")
 @ActionReferences({
     @ActionReference(path = "Menu/Tools", position = 1250, separatorBefore = 1225)

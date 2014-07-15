@@ -80,8 +80,8 @@ public final class SaveToMzTabFile implements ActionListener {
                 Exceptions.printStackTrace(ex);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
-            }finally{
-                if(osw!=null) {
+            } finally {
+                if (osw != null) {
                     try {
                         osw.close();
                     } catch (IOException ex) {

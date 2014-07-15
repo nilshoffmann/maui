@@ -31,8 +31,6 @@ package org.jzy3d.demos.histogram.barchart;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.awt.Graphics;
 import java.awt.Image;
 import org.jzy3d.chart.Chart;

@@ -82,7 +82,7 @@ for details.
                 <file name="DBProjectWizard">
                     <attr name="displayName" bundlevalue="net.sf.maltcms.chromaui.project.spi.wizard.Bundle#Templates/Project/Maui/DBProjectWizard"/>
                     <!--<attr name="delegate" newvalue="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectWizardAction"/>-->
-                <!--<attr name="iconBase" stringvalue="org/demo/wizard/icon.png"/>-->
+                    <!--<attr name="iconBase" stringvalue="org/demo/wizard/icon.png"/>-->
                     <!--<attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>-->
                     <!--<attr name="noIconInMenu" stringvalue="true"/>-->
                     <attr name="instantiatingIterator" methodvalue="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectWizardIterator.createIterator"/>

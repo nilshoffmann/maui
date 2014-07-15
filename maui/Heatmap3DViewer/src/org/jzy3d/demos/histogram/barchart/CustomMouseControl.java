@@ -52,9 +52,9 @@ public class CustomMouseControl extends NewtCameraMouseController {
         this.chart = chart;
     }
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		Coord2d mouse = new Coord2d(e.getX(), e.getY());
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        Coord2d mouse = new Coord2d(e.getX(), e.getY());
 
         // Rotate
         if (NewtMouseUtilities.isLeftDown(e)) {
@@ -71,17 +71,17 @@ public class CustomMouseControl extends NewtCameraMouseController {
             }
         }
         prevMouse = mouse;
-	}
+    }
 
-	@Override
-	public void mouseWheelMoved(MouseEvent e) {
-		if (threadController != null) {
+    @Override
+    public void mouseWheelMoved(MouseEvent e) {
+        if (threadController != null) {
             threadController.stop();
         }
 
         float factor = 1 + (e.getRotation()[0] / 20.0f);
         zoomAll(factor);
-	}
+    }
 
     protected void zoomAll(final float factor) {
         for (Chart c : targets) {

@@ -36,7 +36,7 @@ import lombok.Data;
  */
 @Data
 public class ChromatogramViewViewport {
-    
+
     private final Rectangle2D viewPort;
-    
+
 }

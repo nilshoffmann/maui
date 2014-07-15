@@ -34,9 +34,9 @@ import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
  * @author nilshoffmann
  */
 public interface IQueryInput<T> {
-    
+
     public T getScan();
-    
+
     public RetentionIndexCalculator getRetentionIndexCalculator();
-    
+
 }

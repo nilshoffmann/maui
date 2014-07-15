@@ -109,10 +109,10 @@ public class JFCView implements MultiViewElement {
 //        }
         return new Action[]{new AbstractAction() {
 
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                }
-            }};
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+            }
+        }};
     }
 
     @Override

@@ -55,7 +55,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.normalization.spi.OpenPeakGroupBoxPlot")
+        id = "net.sf.maltcms.chromaui.normalization.spi.OpenPeakGroupBoxPlot")
 @ActionRegistration(displayName = "#CTL_OpenPeakGroupBoxPlot")
 @ActionReferences({
     @ActionReference(path = "Menu/View", position = 0),
@@ -92,12 +92,12 @@ public final class OpenPeakGroupBoxPlot implements ActionListener {
             JScrollPane jsp = new JScrollPane(bg);
             pgbpt.add(jsp, BorderLayout.CENTER);
             IRegistry registry = Lookup.getDefault().lookup(IRegistryFactory.class).getDefault();
-			for(IPeakGroupDescriptor pgd:context) {
-				registry.registerTopComponentFor(pgd, pgbpt);
-			}
-			pgbpt.open();
+            for (IPeakGroupDescriptor pgd : context) {
+                registry.registerTopComponentFor(pgd, pgbpt);
+            }
+            pgbpt.open();
             pgbpt.requestActive();
-        }else{
+        } else {
             System.err.println("No IChromAUI project is in lookup!");
         }
     }

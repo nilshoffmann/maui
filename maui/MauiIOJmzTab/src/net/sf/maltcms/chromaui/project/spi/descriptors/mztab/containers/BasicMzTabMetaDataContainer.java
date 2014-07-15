@@ -37,5 +37,4 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
  */
 public class BasicMzTabMetaDataContainer<T extends IMetaDataDescriptor> extends MetaDataContainer<T> implements IMetaDataDescriptor {
 
-    
 }

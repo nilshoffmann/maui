@@ -42,11 +42,11 @@ public class XYPlotRendererListCellRenderer extends JLabel implements ListCellRe
     public XYPlotRendererListCellRenderer() {
         setOpaque(true);
     }
-    
+
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int i,
             boolean isSelected, boolean hasFocus) {
-         //Get the selected index. (The index param isn't
+        //Get the selected index. (The index param isn't
         //always valid, so just use the value.)
 //        int selectedIndex = ((Integer)value).intValue();
 
@@ -58,14 +58,14 @@ public class XYPlotRendererListCellRenderer extends JLabel implements ListCellRe
             setForeground(list.getForeground());
         }
 
-        if(value instanceof XYItemRenderer) {
-            String className = ((XYItemRenderer)value).getClass().getSimpleName();
+        if (value instanceof XYItemRenderer) {
+            String className = ((XYItemRenderer) value).getClass().getSimpleName();
             className = className.replaceFirst("XY", "");
-            className = className.replaceFirst("Renderer","");
+            className = className.replaceFirst("Renderer", "");
             setText(className);
         }
 
         return this;
     }
-    
+
 }

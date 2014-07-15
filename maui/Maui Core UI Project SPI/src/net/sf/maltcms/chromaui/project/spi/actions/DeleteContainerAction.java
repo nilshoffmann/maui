@@ -41,7 +41,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteContainerAction")
+        id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteContainerAction")
 @ActionRegistration(displayName = "#CTL_DeleteContainerAction")
 @ActionReferences({
     @ActionReference(path = "Actions/ContainerNodeActions/DefaultActions")})

@@ -45,10 +45,10 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
-    category = "File",
-id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction")
+        category = "File",
+        id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction")
 @ActionRegistration(
-    displayName = "#CTL_SynchronizeWithMeltDBAction")
+        displayName = "#CTL_SynchronizeWithMeltDBAction")
 @ActionReference(path = "Menu/File", position = 1423, separatorAfter = 1424)
 @Messages("CTL_SynchronizeWithMeltDBAction=Synchronize With MeltDB")
 public final class SynchronizeWithMeltDBAction implements ActionListener {

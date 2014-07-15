@@ -44,10 +44,10 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseIntoContainerAction")
+        id = "net.sf.maltcms.db.search.spi.actions.ImportDatabaseIntoContainerAction")
 @ActionRegistration(displayName = "#CTL_ImportDatabaseIntoContainerAction")
 @ActionReferences({
-    @ActionReference(path="Actions/ContainerNodeActions/DatabaseContainer")
+    @ActionReference(path = "Actions/ContainerNodeActions/DatabaseContainer")
 })
 @Messages("CTL_ImportDatabaseIntoContainerAction=Import Database")
 public final class ImportDatabaseIntoContainerAction implements ActionListener {
@@ -61,9 +61,9 @@ public final class ImportDatabaseIntoContainerAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
         DatabaseDefinitionPanel ddp = new DatabaseDefinitionPanel();
-		ddp.getDatabaseContainerName().setText(context.getDisplayName());
-		ddp.getDatabaseContainerName().setEditable(false);
-		
+        ddp.getDatabaseContainerName().setText(context.getDisplayName());
+        ddp.getDatabaseContainerName().setEditable(false);
+
         // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
         NotifyDescriptor nd = new NotifyDescriptor(
                 ddp, // instance of your panel
@@ -74,7 +74,7 @@ public final class ImportDatabaseIntoContainerAction implements ActionListener {
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {

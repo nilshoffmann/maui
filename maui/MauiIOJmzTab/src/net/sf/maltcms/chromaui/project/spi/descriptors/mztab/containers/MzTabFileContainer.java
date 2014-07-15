@@ -54,7 +54,7 @@ public class MzTabFileContainer extends MetaDataContainer<IMetaDataDescriptor> {
             container.setMetaData(mdc);
             container.setName(mzTabFile.getName());
             container.setDisplayName(file.getMetadata().getMZTabID());
-            container.setShortDescription("MzTab Version: "+file.getMetadata().getMZTabVersion()+" Mode: "+file.getMetadata().getMZTabMode()+" Type: "+file.getMetadata().getMZTabType()+" Description: "+file.getMetadata().getDescription());
+            container.setShortDescription("MzTab Version: " + file.getMetadata().getMZTabVersion() + " Mode: " + file.getMetadata().getMZTabMode() + " Type: " + file.getMetadata().getMZTabType() + " Description: " + file.getMetadata().getDescription());
             CommentsContainer cc = CommentsContainer.create(file.getComments());
             container.setComments(cc);
             PeptideContainer pc = PeptideContainer.create(file);
@@ -71,21 +71,21 @@ public class MzTabFileContainer extends MetaDataContainer<IMetaDataDescriptor> {
         }
         return null;
     }
-    
+
     public static MZTabFile toMzTabFile(MzTabFileContainer container) {
         MZTabFile file = new MZTabFile(MzTabMetaDataContainer.toMetaData(container.getMetaData()));
         file.setSmallMoleculeColumnFactory(MZTabColumnFactory.getInstance(Section.Small_Molecule));
-        for(Comment c:CommentsContainer.toComments(container.getComments())) {
+        for (Comment c : CommentsContainer.toComments(container.getComments())) {
             //FIXME: Comment does not support retrieval of original line number
 //            file.addComment(c., c);
             Logger.getLogger(MzTabFileContainer.class.getName()).warning("Currently skipping output of comments due to missing line numbers!");
         }
-        for(SmallMolecule sm:SmallMoleculeContainer.toSmallMolecules(container.getSmallMolecules())) {
+        for (SmallMolecule sm : SmallMoleculeContainer.toSmallMolecules(container.getSmallMolecules())) {
             file.addSmallMolecule(sm);
         }
         return file;
     }
-    
+
     @Override
     public void removeMembers(IMetaDataDescriptor... f) {
         throw new UnsupportedOperationException("MzTabFileContainer does not support generic member access!");

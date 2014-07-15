@@ -43,7 +43,7 @@ public final class CSV2TableOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        CSV2TableOpenSupport ms = new CSV2TableOpenSupport(((CSVDataObject) context.get(0)).getPrimaryEntry(),context);
+        CSV2TableOpenSupport ms = new CSV2TableOpenSupport(((CSVDataObject) context.get(0)).getPrimaryEntry(), context);
         ms.open();
     }
 }

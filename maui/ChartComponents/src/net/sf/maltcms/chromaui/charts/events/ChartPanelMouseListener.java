@@ -34,8 +34,6 @@ import java.awt.geom.Point2D;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -79,7 +77,7 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
     public ChartPanelMouseListener(ADataset1D<SOURCE, TARGET> ds) {
         this.dataset = ds;
     }
-    
+
     public void setChartPanel(ChartPanel cp) {
         this.cp = cp;
     }
@@ -104,7 +102,7 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
             if (cme.getEntity() instanceof XYItemEntity) {
                 XYItemEntity xyie = (XYItemEntity) cme.getEntity();
                 XYDataset ds = xyie.getDataset();
-                System.out.println("Series Index of item: "+xyie.getSeriesIndex()+" item number: "+xyie.getItem());
+                System.out.println("Series Index of item: " + xyie.getSeriesIndex() + " item number: " + xyie.getItem());
                 TARGET target = this.dataset.getTarget(xyie.getSeriesIndex(), xyie.getItem());
                 if (lastTarget != null) {
                     ic.remove(lastTarget);
@@ -171,7 +169,7 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
                         }
                         xyir.setSeriesVisible(seriesIndex,
                                 !xyir.isSeriesVisible(
-                                seriesIndex));
+                                        seriesIndex));
                         xyir.setSeriesVisibleInLegend(seriesIndex, Boolean.TRUE);
                     }
                 }

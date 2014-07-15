@@ -41,7 +41,7 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author nilshoffmann
  */
-@ServiceProvider(service=IExecutionSupport.class)
+@ServiceProvider(service = IExecutionSupport.class)
 public class LocalHostExecutionSupport implements IExecutionSupport {
 
     private File workingDirectory;
@@ -63,10 +63,10 @@ public class LocalHostExecutionSupport implements IExecutionSupport {
 
     @Override
     public Callable<Process> getProcessCallable() {
-        if(this.pb == null) {
+        if (this.pb == null) {
             this.pb = new ExternalProcessBuilder(this.commandLine);
             this.pb = this.pb.workingDirectory(this.workingDirectory);
-            if(this.pb==null) {
+            if (this.pb == null) {
                 throw new NullPointerException("Could not initialize ExternalProcessBuilder!");
             }
         }
@@ -85,7 +85,7 @@ public class LocalHostExecutionSupport implements IExecutionSupport {
 
     @Override
     public ExecutionService createExecutionService() {
-        if(service==null) {
+        if (service == null) {
             service = ExecutionService.newService(getProcessCallable(), getExecutionDescriptor(), getDisplayName());
         }
         return service;

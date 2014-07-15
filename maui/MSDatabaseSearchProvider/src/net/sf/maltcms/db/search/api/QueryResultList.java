@@ -34,6 +34,6 @@ import java.util.ArrayList;
  *
  * @author nilshoffmann
  */
-public class QueryResultList<T> extends ArrayList<IQueryResult<T>> implements Serializable{
-    
+public class QueryResultList<T> extends ArrayList<IQueryResult<T>> implements Serializable {
+
 }

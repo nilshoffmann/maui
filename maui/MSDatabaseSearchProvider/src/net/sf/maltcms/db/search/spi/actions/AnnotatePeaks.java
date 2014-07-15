@@ -49,9 +49,10 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaks")
+        id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaks")
 @ActionRegistration(displayName = "#CTL_AnnotatePeaks")
-@ActionReferences({@ActionReference(path="Actions/ContainerNodeActions/Peak1DContainer")})
+@ActionReferences({
+    @ActionReference(path = "Actions/ContainerNodeActions/Peak1DContainer")})
 @Messages("CTL_AnnotatePeaks=Search Peaks in DB")
 public final class AnnotatePeaks implements ActionListener {
 
@@ -78,7 +79,7 @@ public final class AnnotatePeaks implements ActionListener {
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
         ddp.updateView();
         List<IDatabaseDescriptor> databases;
         RetentionIndexCalculator ricalc;
@@ -105,8 +106,9 @@ public final class AnnotatePeaks implements ActionListener {
         }
         doSearch(context, project, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
     }
+
     private void doSearch(List<Peak1DContainer> context, IChromAUIProject project, List<IDatabaseDescriptor> databases, RetentionIndexCalculator ricalc, AMetabolitePredicate predicate, double matchThreshold, int maxNumberOfHits, double riWindow, boolean clearExistingMatches) {
         DBPeakContainerAnnotationTask dbppat = new DBPeakContainerAnnotationTask(context, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
-        DBPeakContainerAnnotationTask.createAndRun("Peak Annotation on "+project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
+        DBPeakContainerAnnotationTask.createAndRun("Peak Annotation on " + project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
     }
 }

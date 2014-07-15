@@ -101,7 +101,7 @@ public class SceneParser {
                 if (w1 == w2) {
                     e = true;
                 }
-                
+
             }
             if (!e) {
                 ret.add(w1);
@@ -113,7 +113,7 @@ public class SceneParser {
     private static List<PipelineElementWidget> getPipeline(Widget connectionLayer, Widget pipelinesLayer) {
         List<PipelineElementWidget> pipeline = new ArrayList<PipelineElementWidget>();
         List<Widget> connectionWidgetList = new ArrayList<Widget>();
-        if(connectionLayer!=null) {
+        if (connectionLayer != null) {
             connectionWidgetList.addAll(connectionLayer.getChildren());
         }
 
@@ -133,19 +133,18 @@ public class SceneParser {
         }
 
         Set<Widget> nodes = new HashSet<Widget>();
-        for(Widget cw : connectionWidgetList) {
-            if(cw instanceof ConnectionWidget) {
-                Widget source = ((ConnectionWidget)cw).getSourceAnchor().getRelatedWidget();
+        for (Widget cw : connectionWidgetList) {
+            if (cw instanceof ConnectionWidget) {
+                Widget source = ((ConnectionWidget) cw).getSourceAnchor().getRelatedWidget();
                 nodes.add(source);
-                Widget target = ((ConnectionWidget)cw).getTargetAnchor().getRelatedWidget();
-                if(nodes.contains(target)) {
-                    throw new IllegalArgumentException("Cycle detected on component: "+target);
+                Widget target = ((ConnectionWidget) cw).getTargetAnchor().getRelatedWidget();
+                if (nodes.contains(target)) {
+                    throw new IllegalArgumentException("Cycle detected on component: " + target);
                 }
             }
         }
 
 //        System.out.println("Following Connections to get pipeline direction");
-        
         ConnectionWidget cw = null;
         while (connectionWidgetList.size() > 0) {
 //            System.out.println("WIDGET: " + ((PipelineElementWidget) startingW).getLabelWidget().getLabel());
@@ -158,7 +157,7 @@ public class SceneParser {
                 if (pipelinesLayer.getChildren().size() - 1 == pipeline.size()) {
                     return pipeline;
                 }
-                
+
                 System.out.println("ERROR");
                 break;
             }
@@ -212,26 +211,28 @@ public class SceneParser {
         }
         return getConnectionWidgetWhereTargetEquals(getConnectionLayer(scene).getChildren(), w) != null;
     }
-    
+
     public static void parseIntoScene(String filename, PipelineGraphScene scene) {
         parseIntoScene(filename, PropertyLoader.getHash(filename), scene);
     }
 
     /**
-     * Supports both absolute and relative paths and also arbitrary combinations of the two.
-     * In case of relative paths, the location of the file containing the pipeline
-     * configuration is used as basedir to resolve the relative path.
+     * Supports both absolute and relative paths and also arbitrary combinations
+     * of the two. In case of relative paths, the location of the file
+     * containing the pipeline configuration is used as basedir to resolve the
+     * relative path.
      *
      * Example for relative path:
      * <pre>pipelines.properties = fragmentCommands/myClassName.properties</pre>
      * Example for absolute path:
      * <pre>pipelines.properties = /home/juser/myFunkyDir/myClassName.properties</pre>
      *
-     * <pre>pipeline.properties</pre> accepts multiple entries, separated by a ',' (comma) character.
-     * Example:
+     * <pre>pipeline.properties</pre> accepts multiple entries, separated by a
+     * ',' (comma) character. Example:
      * <pre>pipeline.properties = fragmentCommands/myClassName.properties,/home/juser/myFunkyDir/myClassName.properties</pre>
      *
-     * @param filename the filename of the base configuration, which contains the pipeline= and pipeline.properties keys.
+     * @param filename the filename of the base configuration, which contains
+     * the pipeline= and pipeline.properties keys.
      * @param cfg the configuration object resembling the content of filename.
      * @param scene the graph scene into which to load the configuration.
      */
@@ -240,30 +241,30 @@ public class SceneParser {
         System.out.println("Creating graph scene from file");
         File f = new File(filename);
         //Get pipeline from configuration
-		cfg.addProperty("config.basedir", f.getParentFile().getAbsoluteFile().toURI().getPath());
-		String pipelineXml = cfg.getString("pipeline.xml");
-		FileSystemXmlApplicationContext fsxmac = new FileSystemXmlApplicationContext(new String[]{pipelineXml}, true);
-		ICommandSequence commandSequence = fsxmac.getBean("commandPipeline", cross.datastructures.pipeline.CommandPipeline.class);
+        cfg.addProperty("config.basedir", f.getParentFile().getAbsoluteFile().toURI().getPath());
+        String pipelineXml = cfg.getString("pipeline.xml");
+        FileSystemXmlApplicationContext fsxmac = new FileSystemXmlApplicationContext(new String[]{pipelineXml}, true);
+        ICommandSequence commandSequence = fsxmac.getBean("commandPipeline", cross.datastructures.pipeline.CommandPipeline.class);
 //        String[] pipes = pipeline.toArray(new String[]{});
-        System.out.println("Pipeline elements: "+commandSequence.getCommands());
-		PipelineGeneralConfigWidget pgcw = (PipelineGeneralConfigWidget)scene.createGeneralWidget();
-		pgcw.setProperties(cfg);
+        System.out.println("Pipeline elements: " + commandSequence.getCommands());
+        PipelineGeneralConfigWidget pgcw = (PipelineGeneralConfigWidget) scene.createGeneralWidget();
+        pgcw.setProperties(cfg);
         String lastNode = null;
         String edge;
         int edgeCounter = 0;
-		int nodeCounter = 0;
+        int nodeCounter = 0;
         Configuration pipeHash = new PropertiesConfiguration();
-        for (IFragmentCommand command:commandSequence.getCommands()) {
+        for (IFragmentCommand command : commandSequence.getCommands()) {
             Collection<String> configKeys = cross.annotations.AnnotationInspector.getRequiredConfigKeys(command.getClass());
 //        for (String pipe : pipes) {
-			String nodeId = command.getClass().getCanonicalName()+""+nodeCounter;
+            String nodeId = command.getClass().getCanonicalName() + "" + nodeCounter;
             PipelineElementWidget node = (PipelineElementWidget) scene.addNode(nodeId);
 //            node.setPropertyFile();
             scene.validate();
 
 //            System.out.println("Parsing pipeline element " + pipeCfg.getAbsolutePath());
             node.setClassName(command.getClass().getCanonicalName());
-			node.setLabel(command.getClass().getSimpleName());
+            node.setLabel(command.getClass().getSimpleName());
             node.setCurrentClassProperties();
             Configuration prop = node.getProperties();
 //            pipeHash = PropertyLoader.getHash(pipeCfg.getAbsolutePath());
@@ -278,7 +279,7 @@ public class SceneParser {
             if (lastNode != null) {
                 edge = "Ledge" + edgeCounter++;
                 scene.addEdge(edge);
-				System.out.println("Adding edge between lastNode "+lastNode+" and "+nodeId);
+                System.out.println("Adding edge between lastNode " + lastNode + " and " + nodeId);
                 scene.setEdgeSource(edge, lastNode);
                 scene.setEdgeTarget(edge, nodeId);
                 scene.validate();
@@ -286,7 +287,7 @@ public class SceneParser {
 //                x += dx;
 //                y += dy;
             lastNode = nodeId;
-			nodeCounter++;
+            nodeCounter++;
         }
 
         scene.validate();

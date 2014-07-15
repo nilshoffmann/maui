@@ -46,7 +46,7 @@ public class LogicalProjectNodeChildren<T extends IContainer> extends ChildFacto
 
     private final IChromAUIProject project;
     private final Class<? extends T> containerClazz;
-    
+
     public LogicalProjectNodeChildren(IChromAUIProject project, Class<? extends T> containerClazz) {
         this.project = project;
         this.containerClazz = containerClazz;

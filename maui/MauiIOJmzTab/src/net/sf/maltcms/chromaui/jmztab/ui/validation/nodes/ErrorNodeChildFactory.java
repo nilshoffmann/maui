@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.jmztab.ui.validation.nodes;
 
 import java.awt.Image;
@@ -42,15 +41,14 @@ import uk.ac.ebi.pride.jmztab.utils.errors.MZTabError;
 import uk.ac.ebi.pride.jmztab.utils.errors.MZTabErrorList;
 import uk.ac.ebi.pride.jmztab.utils.errors.MZTabErrorType;
 
-
-public class ErrorNodeChildFactory extends ChildFactory<MZTabError>{
+public class ErrorNodeChildFactory extends ChildFactory<MZTabError> {
 
     private final MZTabErrorList errorList;
-    
+
     public ErrorNodeChildFactory(MZTabErrorList errorList) {
         this.errorList = errorList;
     }
-    
+
     private class VoidErrorType extends MZTabErrorType {
 
         @Override
@@ -77,20 +75,20 @@ public class ErrorNodeChildFactory extends ChildFactory<MZTabError>{
         public Integer getCode() {
             return 0;
         }
-        
+
     }
-    
+
     private class VoidError extends MZTabError {
 
         public VoidError(VoidErrorType type, int lineNumber, String... values) {
             super(type, lineNumber, "Validation passed without errors!");
         }
-        
+
     }
-    
+
     @Override
     protected boolean createKeys(List<MZTabError> list) {
-        if(errorList.isEmpty()) {
+        if (errorList.isEmpty()) {
             list.add(new VoidError(new VoidErrorType(), -1));
             return true;
         }
@@ -102,14 +100,14 @@ public class ErrorNodeChildFactory extends ChildFactory<MZTabError>{
 
     @Override
     protected Node createNodeForKey(final MZTabError key) {
-        if(key instanceof VoidError) {
+        if (key instanceof VoidError) {
             AbstractNode node = new AbstractNode(Children.LEAF) {
 
                 @Override
                 public Image getIcon(int type) {
                     return ImageUtilities.loadImage("net/sf/maltcms/chromaui/jmztab/resources/MzTabInfo.png");
                 }
-                
+
             };
             node.setDisplayName("No validation messages at current error level!");
             return node;
@@ -119,7 +117,7 @@ public class ErrorNodeChildFactory extends ChildFactory<MZTabError>{
 
                 @Override
                 public Image getIcon(int type) {
-                    switch(key.getType().getLevel()) {
+                    switch (key.getType().getLevel()) {
                         case Info:
                             return ImageUtilities.loadImage("net/sf/maltcms/chromaui/jmztab/resources/MzTabInfo.png");
                         case Warn:
@@ -129,7 +127,7 @@ public class ErrorNodeChildFactory extends ChildFactory<MZTabError>{
                     }
                     return super.getIcon(type);
                 }
-                
+
             };
             errorNode.setDisplayName(key.getType().getLevel().toString());
             errorNode.setShortDescription(key.getMessage());

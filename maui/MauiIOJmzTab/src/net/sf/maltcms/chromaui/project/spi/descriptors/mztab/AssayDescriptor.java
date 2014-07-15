@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab;
 
 import com.db4o.activation.ActivationPurpose;
@@ -39,17 +38,17 @@ import uk.ac.ebi.pride.jmztab.model.MsRun;
 import uk.ac.ebi.pride.jmztab.model.Param;
 import uk.ac.ebi.pride.jmztab.model.Sample;
 
-
 public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
+
     public final static String PROP_ASSAY = "assay";
-    
+
     private Assay assay;
-    
+
     public Assay getAssay() {
         activate(ActivationPurpose.READ);
         return assay;
     }
-    
+
     public void setAssay(Assay element) {
         activate(ActivationPurpose.WRITE);
         Assay old = this.assay;
@@ -59,11 +58,11 @@ public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescripto
         setShortDescription(element.toString());
         getPropertyChangeSupport().firePropertyChange(PROP_ASSAY, old, element);
     }
-    
+
     public Integer getElementId() {
         return getAssay().getId();
     }
-    
+
     public void setElementId(Integer id) {
         getAssay().setId(id);
     }
@@ -124,5 +123,5 @@ public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescripto
     public String getReference() {
         return getAssay().getReference();
     }
-    
+
 }

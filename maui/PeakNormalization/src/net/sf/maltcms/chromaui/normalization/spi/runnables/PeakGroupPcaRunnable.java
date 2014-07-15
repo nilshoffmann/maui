@@ -61,142 +61,142 @@ import ucar.ma2.ArrayDouble;
 @Data
 public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
 
-	private final PeakGroupContainer container;
-	private final IChromAUIProject project;
-	private final DataTable dataTable;
-	private final boolean centerData;
-	private final boolean scaleToUnitVariance;
+    private final PeakGroupContainer container;
+    private final IChromAUIProject project;
+    private final DataTable dataTable;
+    private final boolean centerData;
+    private final boolean scaleToUnitVariance;
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 //        try {
-		progressHandle.start();
-		try {
-			RConnection c = RserveConnectionFactory.getDefaultConnection();
-			try {
-				StatisticsContainer pcaDescriptor = new StatisticsContainer();
-				pcaDescriptor.setName("pca");
-				pcaDescriptor.setMethod("Pca");
-				pcaDescriptor.setDisplayName("Principal Components Analysis");
+        progressHandle.start();
+        try {
+            RConnection c = RserveConnectionFactory.getDefaultConnection();
+            try {
+                StatisticsContainer pcaDescriptor = new StatisticsContainer();
+                pcaDescriptor.setName("pca");
+                pcaDescriptor.setMethod("Pca");
+                pcaDescriptor.setDisplayName("Principal Components Analysis");
 
-				File outputDir = project.getOutputLocation(this);
-				System.out.println("DataTable has "+dataTable.getGroupToValues().keySet().size()+" peak groups and "+dataTable.getRowNames().size()+" chromatograms!");
-				c.assign(dataTable.getName(), dataTable.toDataFrame());
-				c.assign("rowNames", dataTable.getRowNamesREXP());
-				c.eval("row.names(" + dataTable.getName() + ") <- rowNames");
-				c.eval("write.table(" + dataTable.getName() + ",file=\"" + new File(outputDir, "dataTable.csv").getAbsolutePath() + "\")");
-				StringBuilder expression = new StringBuilder();
-				expression.append("result <- prcomp(");
-				expression.append(dataTable.getName());
-				expression.append(",na.action=na.omit");
-				if (centerData) {
-					expression.append(",center=T");
-				}
-				if (scaleToUnitVariance) {
-					expression.append(",scale=T");
-				}
-				//return the projected input values
-				expression.append(")");
-				String rcall = expression.toString();
-				System.out.println("Expression: " + rcall);
-				REXP rresult = c.parseAndEval(rcall);
-				String device = "png"; // device we'll call (this would work with pretty much any bitmap device)
-				//projected data
-				REXP x = c.parseAndEval("x<-as.matrix(result$x)");
-				c.eval("write.table(x,file=\"" + new File(outputDir, "x.csv").getAbsolutePath() + "\")");
-				double[][] xm = x.asDoubleMatrix();
-				ArrayDouble.D2 am = new ArrayDouble.D2(xm.length, xm[0].length);
-				for (int i = 0; i < xm.length; i++) {
-					for (int j = 0; j < xm[0].length; j++) {
-						am.set(i, j, xm[i][j]);
-					}
-				}
-				REXP rownames = c.parseAndEval("x.rownames <- row.names(x)");
-				String[] rownameStrings = rownames.asStrings();
-				List<IChromatogramDescriptor> chromatograms = new ArrayList<IChromatogramDescriptor>();
-				for(IChromatogramDescriptor descr:dataTable.getRowNames()) {
-					for(String str:rownameStrings) {
-						if(descr.getId().toString().equals(str)) {
-							System.out.println("Adding matching row "+descr.getId());
-							chromatograms.add(descr);
-						}
-					}
-				}
-				//vector for pcs
-				REXP sdev = c.parseAndEval("s<-as.matrix(result$sdev)");
-				double[] sdevm = sdev.asDoubles();
-				ArrayDouble.D1 sm = (ArrayDouble.D1) Array.factory(sdevm);
-				//vector for variables
-				REXP center = c.parseAndEval("c<-as.matrix(result$center)");
-				double[] centerm = center.asDoubles();
-				ArrayDouble.D1 cm = (ArrayDouble.D1) Array.factory(centerm);
-				//boolean
-				REXP scale = c.parseAndEval("sc<-result$scale");
-				boolean scalem = Boolean.valueOf(scale.asString().toLowerCase());
-				//rotation matrix
-				REXP rotation = c.parseAndEval("rot<-as.matrix(result$rotation)");
-				c.eval("write.table(rot,file=\"" + new File(outputDir, "loadings.csv").getAbsolutePath() + "\")");
-				double[][] rotationm = rotation.asDoubleMatrix();
-				ArrayDouble.D2 rm = new ArrayDouble.D2(rotationm.length, rotationm[0].length);
-				for (int i = 0; i < rotationm.length; i++) {
-					for (int j = 0; j < rotationm[0].length; j++) {
-						rm.set(i, j, rotationm[i][j]);
-					}
+                File outputDir = project.getOutputLocation(this);
+                System.out.println("DataTable has " + dataTable.getGroupToValues().keySet().size() + " peak groups and " + dataTable.getRowNames().size() + " chromatograms!");
+                c.assign(dataTable.getName(), dataTable.toDataFrame());
+                c.assign("rowNames", dataTable.getRowNamesREXP());
+                c.eval("row.names(" + dataTable.getName() + ") <- rowNames");
+                c.eval("write.table(" + dataTable.getName() + ",file=\"" + new File(outputDir, "dataTable.csv").getAbsolutePath() + "\")");
+                StringBuilder expression = new StringBuilder();
+                expression.append("result <- prcomp(");
+                expression.append(dataTable.getName());
+                expression.append(",na.action=na.omit");
+                if (centerData) {
+                    expression.append(",center=T");
+                }
+                if (scaleToUnitVariance) {
+                    expression.append(",scale=T");
+                }
+                //return the projected input values
+                expression.append(")");
+                String rcall = expression.toString();
+                System.out.println("Expression: " + rcall);
+                REXP rresult = c.parseAndEval(rcall);
+                String device = "png"; // device we'll call (this would work with pretty much any bitmap device)
+                //projected data
+                REXP x = c.parseAndEval("x<-as.matrix(result$x)");
+                c.eval("write.table(x,file=\"" + new File(outputDir, "x.csv").getAbsolutePath() + "\")");
+                double[][] xm = x.asDoubleMatrix();
+                ArrayDouble.D2 am = new ArrayDouble.D2(xm.length, xm[0].length);
+                for (int i = 0; i < xm.length; i++) {
+                    for (int j = 0; j < xm[0].length; j++) {
+                        am.set(i, j, xm[i][j]);
+                    }
+                }
+                REXP rownames = c.parseAndEval("x.rownames <- row.names(x)");
+                String[] rownameStrings = rownames.asStrings();
+                List<IChromatogramDescriptor> chromatograms = new ArrayList<IChromatogramDescriptor>();
+                for (IChromatogramDescriptor descr : dataTable.getRowNames()) {
+                    for (String str : rownameStrings) {
+                        if (descr.getId().toString().equals(str)) {
+                            System.out.println("Adding matching row " + descr.getId());
+                            chromatograms.add(descr);
+                        }
+                    }
+                }
+                //vector for pcs
+                REXP sdev = c.parseAndEval("s<-as.matrix(result$sdev)");
+                double[] sdevm = sdev.asDoubles();
+                ArrayDouble.D1 sm = (ArrayDouble.D1) Array.factory(sdevm);
+                //vector for variables
+                REXP center = c.parseAndEval("c<-as.matrix(result$center)");
+                double[] centerm = center.asDoubles();
+                ArrayDouble.D1 cm = (ArrayDouble.D1) Array.factory(centerm);
+                //boolean
+                REXP scale = c.parseAndEval("sc<-result$scale");
+                boolean scalem = Boolean.valueOf(scale.asString().toLowerCase());
+                //rotation matrix
+                REXP rotation = c.parseAndEval("rot<-as.matrix(result$rotation)");
+                c.eval("write.table(rot,file=\"" + new File(outputDir, "loadings.csv").getAbsolutePath() + "\")");
+                double[][] rotationm = rotation.asDoubleMatrix();
+                ArrayDouble.D2 rm = new ArrayDouble.D2(rotationm.length, rotationm[0].length);
+                for (int i = 0; i < rotationm.length; i++) {
+                    for (int j = 0; j < rotationm[0].length; j++) {
+                        rm.set(i, j, rotationm[i][j]);
+                    }
 
-				}
-				List<IPeakGroupDescriptor> peakGroups = new ArrayList<IPeakGroupDescriptor>();
-				REXP rotrownames = c.parseAndEval("rot.rownames <- row.names(rot)");
-				String[] rotRownameStrings = rotrownames.asStrings();
-				for(IPeakGroupDescriptor ipgd:dataTable.getVariables()) {
-					for(String str:rotRownameStrings) {
-						if(ipgd.getId().toString().equals(str)) {
-							System.out.println("Adding matching peak group "+ipgd.getMajorityDisplayName());
-							peakGroups.add(ipgd);
-						}
-					}
-				}
-				//cleanup
-				c.eval("rm(result,x,s,c,sc,rot,x.rownames,rot.rownames)");
+                }
+                List<IPeakGroupDescriptor> peakGroups = new ArrayList<IPeakGroupDescriptor>();
+                REXP rotrownames = c.parseAndEval("rot.rownames <- row.names(rot)");
+                String[] rotRownameStrings = rotrownames.asStrings();
+                for (IPeakGroupDescriptor ipgd : dataTable.getVariables()) {
+                    for (String str : rotRownameStrings) {
+                        if (ipgd.getId().toString().equals(str)) {
+                            System.out.println("Adding matching peak group " + ipgd.getMajorityDisplayName());
+                            peakGroups.add(ipgd);
+                        }
+                    }
+                }
+                //cleanup
+                c.eval("rm(result,x,s,c,sc,rot,x.rownames,rot.rownames)");
 
-				List<StatisticsContainer> statContainers = container.getStatisticsContainers();
-				if (statContainers == null) {
-					statContainers = new ActivatableArrayList<StatisticsContainer>();
-				}
-				IPcaDescriptor pcadescr = DescriptorFactory.newPcaDescriptor();
-				pcadescr.setName(rcall);
-				pcadescr.setDisplayName(rcall);
-				pcadescr.setRotation(rm);
-				pcadescr.setSdev(sm);
-				pcadescr.setCenter(cm);
-				pcadescr.setScale(scalem);
-				pcadescr.setX(am);
-				pcadescr.setCases(chromatograms);
-				pcadescr.setVariables(peakGroups);
-				pcaDescriptor.addMembers(pcadescr);
-				statContainers.add(pcaDescriptor);
-				container.setStatisticsContainers(statContainers);
-				project.updateContainer(container);
-				// close RConnection, we're done
-				//c.close();
-			} catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
-				System.out.println(rse);
-				Exceptions.printStackTrace(rse);
-			} catch (REXPMismatchException mme) { // REXP mismatch exception (we got something we didn't think we getMembers)
-				System.out.println(mme);
-				Exceptions.printStackTrace(mme);
-			} catch (Exception e) { // something else
-				System.out.println("Something went wrong, but it's not the Rserve: "
-						+ e.getMessage());
-				Exceptions.printStackTrace(e);
-			}
+                List<StatisticsContainer> statContainers = container.getStatisticsContainers();
+                if (statContainers == null) {
+                    statContainers = new ActivatableArrayList<StatisticsContainer>();
+                }
+                IPcaDescriptor pcadescr = DescriptorFactory.newPcaDescriptor();
+                pcadescr.setName(rcall);
+                pcadescr.setDisplayName(rcall);
+                pcadescr.setRotation(rm);
+                pcadescr.setSdev(sm);
+                pcadescr.setCenter(cm);
+                pcadescr.setScale(scalem);
+                pcadescr.setX(am);
+                pcadescr.setCases(chromatograms);
+                pcadescr.setVariables(peakGroups);
+                pcaDescriptor.addMembers(pcadescr);
+                statContainers.add(pcaDescriptor);
+                container.setStatisticsContainers(statContainers);
+                project.updateContainer(container);
+                // close RConnection, we're done
+                //c.close();
+            } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
+                System.out.println(rse);
+                Exceptions.printStackTrace(rse);
+            } catch (REXPMismatchException mme) { // REXP mismatch exception (we got something we didn't think we getMembers)
+                System.out.println(mme);
+                Exceptions.printStackTrace(mme);
+            } catch (Exception e) { // something else
+                System.out.println("Something went wrong, but it's not the Rserve: "
+                        + e.getMessage());
+                Exceptions.printStackTrace(e);
+            }
 //            } catch (RserveException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }
-		} catch (Exception e) {
-			Exceptions.printStackTrace(e);
-		} finally {
-			progressHandle.finish();
+        } catch (Exception e) {
+            Exceptions.printStackTrace(e);
+        } finally {
+            progressHandle.finish();
 
-		}
-	}
+        }
+    }
 }

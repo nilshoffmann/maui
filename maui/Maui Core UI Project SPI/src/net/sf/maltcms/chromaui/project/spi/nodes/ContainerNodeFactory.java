@@ -139,11 +139,11 @@ public class ContainerNodeFactory<T extends IBasicDescriptor> extends ChildFacto
 
             DataObject dobj;
             try {
-                if(cd.getResourceLocation()==null) {
+                if (cd.getResourceLocation() == null) {
                     return Node.EMPTY;
                 }
                 File resourceFile = new File(cd.getResourceLocation());
-                if(!resourceFile.exists()) {
+                if (!resourceFile.exists()) {
                     return Node.EMPTY;
                 }
                 dobj = DataObject.find(FileUtil.toFileObject(resourceFile));

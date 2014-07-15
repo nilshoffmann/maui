@@ -31,8 +31,6 @@ package maltcms.ui.fileHandles.properties;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -49,7 +47,7 @@ public final class Properties2ListOpenAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         for (DataObject dataObject : context) {
-            if(!dataObject.getPrimaryFile().isFolder()) {
+            if (!dataObject.getPrimaryFile().isFolder()) {
                 System.out.println(dataObject.getPrimaryFile().getPath());
                 Properties2ListOpenSupport ms = new Properties2ListOpenSupport(((PropertiesDataObject) dataObject).getPrimaryEntry());
                 ms.open();

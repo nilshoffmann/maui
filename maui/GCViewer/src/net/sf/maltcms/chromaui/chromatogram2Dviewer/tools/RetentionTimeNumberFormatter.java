@@ -35,7 +35,7 @@ import java.text.NumberFormat;
  *
  * @author nilshoffmann
  */
-class RetentionTimeNumberFormatter extends DecimalFormat{
+class RetentionTimeNumberFormatter extends DecimalFormat {
 
     private NumberFormat nf;
 
@@ -49,7 +49,7 @@ class RetentionTimeNumberFormatter extends DecimalFormat{
 
     @Override
     public StringBuffer format(double d, StringBuffer sb, FieldPosition fp) {
-        double v = (d*scanrate) + offset;
+        double v = (d * scanrate) + offset;
         sb.append(nf.format(v));
         return sb;
     }

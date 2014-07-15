@@ -39,6 +39,7 @@ import org.openide.util.NotImplementedException;
  * @author Nils Hoffmann
  */
 public class HashTableModel implements TableModel {
+
     protected Class<?> c = null;
     protected boolean editable = true;
     protected Vector<String> header;
@@ -160,5 +161,5 @@ public class HashTableModel implements TableModel {
             }
         }
     }
-    
+
 }

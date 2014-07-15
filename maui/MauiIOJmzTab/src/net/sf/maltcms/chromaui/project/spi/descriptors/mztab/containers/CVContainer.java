@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
@@ -33,26 +32,24 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CVDescriptor;
 import uk.ac.ebi.pride.jmztab.model.CV;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
-
-public class CVContainer extends BasicMzTabMetaDataContainer<CVDescriptor>{
+public class CVContainer extends BasicMzTabMetaDataContainer<CVDescriptor> {
 
     public static CVContainer create(Metadata metadata) {
         CVContainer c = new CVContainer();
         c.setLevel(2);
         c.setName("cvParams");
         c.setDisplayName("CV Params");
-        SortedMap<Integer,CV> map = metadata.getCvMap();
-        for(Integer key:map.keySet()) {
+        SortedMap<Integer, CV> map = metadata.getCvMap();
+        for (Integer key : map.keySet()) {
             CVDescriptor d = new CVDescriptor();
             d.setCv(map.get(key));
             c.addMembers(d);
         }
         return c;
     }
-    
+
 //    @Override
 //    public JPanel createEditor() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-    
 }

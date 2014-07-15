@@ -37,12 +37,12 @@ import org.jfree.chart.entity.XYItemEntity;
  */
 public class XYItemEntityRemovedEvent extends AEvent<XYItemEntity> {
 
-        /**
-         * @param v
-         * @param ies
-         */
-        public XYItemEntityRemovedEvent(XYItemEntity v,
-                IEventSource<XYItemEntity> ies) {
-            super(v, ies, "XYITEMENTITY_REMOVED");
-        }
+    /**
+     * @param v
+     * @param ies
+     */
+    public XYItemEntityRemovedEvent(XYItemEntity v,
+            IEventSource<XYItemEntity> ies) {
+        super(v, ies, "XYITEMENTITY_REMOVED");
     }
+}

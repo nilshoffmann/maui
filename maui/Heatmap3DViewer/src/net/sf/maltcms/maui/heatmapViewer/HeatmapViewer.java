@@ -58,13 +58,13 @@ import org.jzy3d.plot3d.rendering.legends.colorbars.AWTColorbarLegend;
  * @author Nils Hoffmann
  */
 public class HeatmapViewer {
-    
+
     public static void main(String[] args) {
         ViewportMapper mapper = null;
         CompileableComposite cc = null;
         Rectangle roi = null;
         SurfaceFactory sf = new SurfaceFactory();
-        
+
         try {
             Chart chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.newt);
             if (mapper == null) {
@@ -78,8 +78,8 @@ public class HeatmapViewer {
                 roi = new Rectangle(0, 0, bi.getWidth(), bi.getHeight());
                 boolean fastTesselation = true;
                 cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
-                        fastTesselation, (int) bi.getWidth()/4, (int) bi.getHeight()/4);
-                System.out.println("Tesselating "+(int) bi.getWidth()/4+"x"+(int) bi.getHeight()/4);
+                        fastTesselation, (int) bi.getWidth() / 4, (int) bi.getHeight() / 4);
+                System.out.println("Tesselating " + (int) bi.getWidth() / 4 + "x" + (int) bi.getHeight() / 4);
                 chart.getScene().getGraph().add(cc);
                 cc.setLegend(new AWTColorbarLegend(cc, chart.getView().getAxe().getLayout()));
                 cc.setLegendDisplayed(true);
@@ -87,7 +87,7 @@ public class HeatmapViewer {
             if (roi == null) {
                 throw new IllegalArgumentException("Could not create surface image!");
             }
-            
+
             PickingSupport pickingSupport = new PickingSupport();
             for (int i = 0; i < 10; i++) {
                 int xpos = (int) (roi.x + (int) (Math.random() * (roi.width)));
@@ -117,7 +117,7 @@ public class HeatmapViewer {
                 public void controllerEventFired(ControllerEvent e) {
                     if (e.getType() == ControllerType.PAN) {
                         System.out.println("Mouse[PAN]: " + e.getValue());
-                        
+
                     } else if (e.getType() == ControllerType.SHIFT) {
                         System.out.println("Mouse[SHIFT]: " + e.getValue());
                     } else if (e.getType() == ControllerType.ZOOM) {
@@ -136,9 +136,9 @@ public class HeatmapViewer {
                     null, ex);
         }
     }
-    
+
     public static void openFrame(final Chart chart, final Rectangle rect) {
         ChartLauncher.frame(chart, rect, "SurfaceViewerPanel");
-        
+
     }
 }

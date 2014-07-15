@@ -64,165 +64,165 @@ import org.openide.util.Exceptions;
 @Data
 public class DBImportIntoContainerTask extends AProgressAwareRunnable {
 
-	private File[] selectedDatabases;
-	private DatabaseContainer databaseContainer;
-	private DatabaseType databaseType;
-	private Locale locale;
-	private List<Double> maskedMasses;
-	private IChromAUIProject project;
-	private boolean cancelled = false;
+    private File[] selectedDatabases;
+    private DatabaseContainer databaseContainer;
+    private DatabaseType databaseType;
+    private Locale locale;
+    private List<Double> maskedMasses;
+    private IChromAUIProject project;
+    private boolean cancelled = false;
 
-	private boolean overwriteFile(File fo) {
-		if (fo.exists()) {
-			NotifyDescriptor.Confirmation ndc = new NotifyDescriptor.Confirmation(
-					"Can not import database! File with the same name already exists at: " + fo.getPath() + " Delete?", "Database exists", NotifyDescriptor.YES_NO_OPTION,
-					NotifyDescriptor.WARNING_MESSAGE);
-			Object o = DialogDisplayer.getDefault().notify(ndc);
-			if (o.equals(NotifyDescriptor.OK_OPTION)) {
-				return true;
-			}
-			return false;
-		}
-		return true;
-	}
+    private boolean overwriteFile(File fo) {
+        if (fo.exists()) {
+            NotifyDescriptor.Confirmation ndc = new NotifyDescriptor.Confirmation(
+                    "Can not import database! File with the same name already exists at: " + fo.getPath() + " Delete?", "Database exists", NotifyDescriptor.YES_NO_OPTION,
+                    NotifyDescriptor.WARNING_MESSAGE);
+            Object o = DialogDisplayer.getDefault().notify(ndc);
+            if (o.equals(NotifyDescriptor.OK_OPTION)) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public void run() {
-		getProgressHandle().setDisplayName("Importing " + databaseType + " database");
-		getProgressHandle().start(selectedDatabases.length);
-		List<FileObject> createdFiles = new LinkedList<FileObject>();
-		IDatabaseDescriptor descriptor = null;
-		try {
-			FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
-					"databases");
+    @Override
+    public void run() {
+        getProgressHandle().setDisplayName("Importing " + databaseType + " database");
+        getProgressHandle().start(selectedDatabases.length);
+        List<FileObject> createdFiles = new LinkedList<FileObject>();
+        IDatabaseDescriptor descriptor = null;
+        try {
+            FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
+                    "databases");
 //			int unit = 0;
-			for (File file : selectedDatabases) {
-				if (cancelled) {
-					return;
-				}
-				getProgressHandle().switchToIndeterminate();
-				getProgressHandle().progress("Importing database " + file.getName());
-				String name = StringTools.removeFileExt(file.getName());
+            for (File file : selectedDatabases) {
+                if (cancelled) {
+                    return;
+                }
+                getProgressHandle().switchToIndeterminate();
+                getProgressHandle().progress("Importing database " + file.getName());
+                String name = StringTools.removeFileExt(file.getName());
 
-				if (file.getName().toLowerCase().endsWith("msp")||file.getName().toLowerCase().endsWith("txt")) {
-					File dbFile1 = new File(FileUtil.toFile(baseDir),
-							name + ".db4o");
-					if (overwriteFile(dbFile1)) {
-						FileObject dbFile = FileUtil.createData(dbFile1);
-						createdFiles.add(dbFile);
+                if (file.getName().toLowerCase().endsWith("msp") || file.getName().toLowerCase().endsWith("txt")) {
+                    File dbFile1 = new File(FileUtil.toFile(baseDir),
+                            name + ".db4o");
+                    if (overwriteFile(dbFile1)) {
+                        FileObject dbFile = FileUtil.createData(dbFile1);
+                        createdFiles.add(dbFile);
 //						getProgressHandle().progress("Parsing msp");
-						MSPFormatMetaboliteParser3 mfmp = new MSPFormatMetaboliteParser3();
-						mfmp.setLocale(locale);
-						BufferedReader br = null;
-						List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
-						try {
-							br = new BufferedReader(new FileReader(file));
-							String line = "";
-							while ((line = br.readLine()) != null) {
-								IMetabolite met = mfmp.handleLine(line);
-								if (met != null) {
-									metabolites.add(met);
-								}
-							}
-							// System.out.println("Found "+nnpeaks+" mass spectra!");
-							// System.exit(-1);
-							// handleLine("\r");
-						} catch (FileNotFoundException e) {
-							System.err.println(e.getLocalizedMessage());
-							Exceptions.printStackTrace(e);
-						} catch (IOException e) {
-							System.err.println(e.getLocalizedMessage());
-							Exceptions.printStackTrace(e);
-						} finally {
-							if (br != null) {
-								try {
-									br.close();
-								} catch (IOException ex) {
-									Exceptions.printStackTrace(ex);
-								}
-							}
-						}
+                        MSPFormatMetaboliteParser3 mfmp = new MSPFormatMetaboliteParser3();
+                        mfmp.setLocale(locale);
+                        BufferedReader br = null;
+                        List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
+                        try {
+                            br = new BufferedReader(new FileReader(file));
+                            String line = "";
+                            while ((line = br.readLine()) != null) {
+                                IMetabolite met = mfmp.handleLine(line);
+                                if (met != null) {
+                                    metabolites.add(met);
+                                }
+                            }
+                            // System.out.println("Found "+nnpeaks+" mass spectra!");
+                            // System.exit(-1);
+                            // handleLine("\r");
+                        } catch (FileNotFoundException e) {
+                            System.err.println(e.getLocalizedMessage());
+                            Exceptions.printStackTrace(e);
+                        } catch (IOException e) {
+                            System.err.println(e.getLocalizedMessage());
+                            Exceptions.printStackTrace(e);
+                        } finally {
+                            if (br != null) {
+                                try {
+                                    br.close();
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                            }
+                        }
 //                        Collection<IMetabolite> metabolites = mfmp.parse(file);
-						if (metabolites.isEmpty()) {
-							DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
-									"Database import failed, please check output for details!",
-									NotifyDescriptor.WARNING_MESSAGE));
+                        if (metabolites.isEmpty()) {
+                            DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
+                                    "Database import failed, please check output for details!",
+                                    NotifyDescriptor.WARNING_MESSAGE));
 //                            eoc.close();
-							cancelled = true;
-						} else {
-							ICrudProvider provider = CrudProvider.getProviderFor(
-									FileUtil.toFile(dbFile).toURI().toURL());
-							try {
-								provider.open();
-								ICrudSession session = provider.createSession();
-								if (Logger.getLogger(DBImportTask.class.getName()).isLoggable(Level.FINE)) {
-									for (IMetabolite im : metabolites) {
+                            cancelled = true;
+                        } else {
+                            ICrudProvider provider = CrudProvider.getProviderFor(
+                                    FileUtil.toFile(dbFile).toURI().toURL());
+                            try {
+                                provider.open();
+                                ICrudSession session = provider.createSession();
+                                if (Logger.getLogger(DBImportTask.class.getName()).isLoggable(Level.FINE)) {
+                                    for (IMetabolite im : metabolites) {
 //									System.out.println("Adding metabolite " + im);
-										Logger.getLogger(DBImportTask.class.getName()).log(Level.FINE, "Adding metabolite {0}", im);
-									}
-								}
-								session.create(metabolites);
+                                        Logger.getLogger(DBImportTask.class.getName()).log(Level.FINE, "Adding metabolite {0}", im);
+                                    }
+                                }
+                                session.create(metabolites);
 
-								descriptor = DescriptorFactory.newDatabaseDescriptor(
-										FileUtil.toFile(dbFile).getAbsolutePath(),
-										databaseType);
-								descriptor.setMaskedMasses(maskedMasses);
-								databaseContainer.addMembers(descriptor);
+                                descriptor = DescriptorFactory.newDatabaseDescriptor(
+                                        FileUtil.toFile(dbFile).getAbsolutePath(),
+                                        databaseType);
+                                descriptor.setMaskedMasses(maskedMasses);
+                                databaseContainer.addMembers(descriptor);
 //								project.addContainer(dbContainer);
-							} catch (Exception e) {
-								Exceptions.printStackTrace(e);
-							} finally {
-								provider.close();
-							}
-						}
-					}
-				} else if (file.getName().toLowerCase().endsWith("db4o")) {
+                            } catch (Exception e) {
+                                Exceptions.printStackTrace(e);
+                            } finally {
+                                provider.close();
+                            }
+                        }
+                    }
+                } else if (file.getName().toLowerCase().endsWith("db4o")) {
 
-					File dbFile = new File(FileUtil.toFile(baseDir),
-							name + ".db4o");
-					if (overwriteFile(dbFile)) {
-						getProgressHandle().progress("Copying db4o file");
-						createdFiles.add(FileUtil.createData(dbFile));
-						FileTools.copyFile(file, dbFile);
-						descriptor = DescriptorFactory.newDatabaseDescriptor(
-								dbFile.getAbsolutePath(),
-								databaseType);
-						descriptor.setMaskedMasses(maskedMasses);
-						databaseContainer.addMembers(descriptor);
+                    File dbFile = new File(FileUtil.toFile(baseDir),
+                            name + ".db4o");
+                    if (overwriteFile(dbFile)) {
+                        getProgressHandle().progress("Copying db4o file");
+                        createdFiles.add(FileUtil.createData(dbFile));
+                        FileTools.copyFile(file, dbFile);
+                        descriptor = DescriptorFactory.newDatabaseDescriptor(
+                                dbFile.getAbsolutePath(),
+                                databaseType);
+                        descriptor.setMaskedMasses(maskedMasses);
+                        databaseContainer.addMembers(descriptor);
 //						project.addContainer(dbContainer);
-					}
+                    }
 
-				}
+                }
 //				unit++;
-			}
-			if (cancelled) {
-				for (FileObject file : createdFiles) {
-					file.delete();
-				}
-				return;
-			}
-		} catch (IOException ex) {
-			Exceptions.printStackTrace(ex);
-			
-			//undo actions
-			if(descriptor!=null) {
-				databaseContainer.removeMembers(descriptor);
-			}
-			for (FileObject file : createdFiles) {
-				try {
-					file.delete();
-				} catch (IOException ex1) {
-					Exceptions.printStackTrace(ex1);
-				}
-			}
-		} finally {
-			getProgressHandle().finish();
-		}
-	}
+            }
+            if (cancelled) {
+                for (FileObject file : createdFiles) {
+                    file.delete();
+                }
+                return;
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
 
-	@Override
-	public boolean cancel() {
-		this.cancelled = true;
-		return this.cancelled;
-	}
+            //undo actions
+            if (descriptor != null) {
+                databaseContainer.removeMembers(descriptor);
+            }
+            for (FileObject file : createdFiles) {
+                try {
+                    file.delete();
+                } catch (IOException ex1) {
+                    Exceptions.printStackTrace(ex1);
+                }
+            }
+        } finally {
+            getProgressHandle().finish();
+        }
+    }
+
+    @Override
+    public boolean cancel() {
+        this.cancelled = true;
+        return this.cancelled;
+    }
 }

@@ -50,7 +50,7 @@ public class GaussianDifferenceSimilarity implements
         // similarity
         final double weight = ((time1 == -1) || (time2 == -1)) ? 1.0d
                 : Math.exp(
-                -((time1 - time2) * (time1 - time2) / (2.0d * this.tolerance * this.tolerance)));
+                        -((time1 - time2) * (time1 - time2) / (2.0d * this.tolerance * this.tolerance)));
         // 1 for perfect time correspondence, 0 for really bad time
         // correspondence (towards infinity)
         if (weight - this.threshold < 0) {
@@ -59,20 +59,20 @@ public class GaussianDifferenceSimilarity implements
         return weight;
     }
 
-	public double getTolerance() {
-		return tolerance;
-	}
+    public double getTolerance() {
+        return tolerance;
+    }
 
-	public void setTolerance(double tolerance) {
-		this.tolerance = tolerance;
-	}
+    public void setTolerance(double tolerance) {
+        this.tolerance = tolerance;
+    }
 
-	public double getThreshold() {
-		return threshold;
-	}
+    public double getThreshold() {
+        return threshold;
+    }
 
-	public void setThreshold(double threshold) {
-		this.threshold = threshold;
-	}
+    public void setThreshold(double threshold) {
+        this.threshold = threshold;
+    }
 
 }

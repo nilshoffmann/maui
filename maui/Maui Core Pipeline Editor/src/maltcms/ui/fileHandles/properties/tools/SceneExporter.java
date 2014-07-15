@@ -93,15 +93,9 @@ public class SceneExporter {
     }
 
     /**
-     * Layout:
-     * NAME/
-     *  NAME.properties
-     *  NAME-general.properties (optional)
-     *  fragmentCommands/
-     *      00_CLASSNAME/
-     *          CLASSNAME.properties
-     *      01_CLASSNAME/
-     *          CLASSNAME.properties
+     * Layout: NAME/ NAME.properties NAME-general.properties (optional)
+     * fragmentCommands/ 00_CLASSNAME/ CLASSNAME.properties 01_CLASSNAME/
+     * CLASSNAME.properties
      *
      * @param pipeline
      * @param general
@@ -117,7 +111,7 @@ public class SceneExporter {
             PropertiesConfiguration baseConfig = new PropertiesConfiguration();
 
             //create subdir "fragmentCommands"
-            File subDir = new File(f.getParent(),"xml");
+            File subDir = new File(f.getParent(), "xml");
             FileUtil.createFolder(subDir);
 //            subDir.mkdirs();
 //            lock(subDir, fls);
@@ -156,13 +150,13 @@ public class SceneExporter {
                 String cname = tmp[tmp.length - 1];
                 //create numbered subdir with name (gives a better hint to contents,
                 //than just the number
-                File pipeElementSubDir = new File(subDir,String.format("%0" + digits + "d", cnt++)
+                File pipeElementSubDir = new File(subDir, String.format("%0" + digits + "d", cnt++)
                         + "_" + cname);
                 FileObject pipeDirFo = FileUtil.createFolder(pipeElementSubDir);
 //                pipeElementSubDir.mkdirs();
 //                lock(pipeElementSubDir, fls);
                 //create file object for pipeline element specific configuration
-                File cfgf = new File(pipeElementSubDir,cname + ".properties");
+                File cfgf = new File(pipeElementSubDir, cname + ".properties");
                 FileObject cfgFo = FileUtil.createData(cfgf);
                 //write configuration to that file
                 PropertiesConfiguration pc = new PropertiesConfiguration();

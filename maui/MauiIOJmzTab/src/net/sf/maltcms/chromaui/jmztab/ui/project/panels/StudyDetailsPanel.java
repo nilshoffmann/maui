@@ -236,7 +236,6 @@ public class StudyDetailsPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_removeContactActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addContact;
     private javax.swing.JList contactsList;

@@ -37,13 +37,13 @@ import ucar.ma2.Array;
  *
  * @author nilshoffmann
  */
-@ServiceProvider(service=IFeatureMapper.class)
+@ServiceProvider(service = IFeatureMapper.class)
 public class ScalarDoubleFeatureMapper implements IFeatureMapper<Double> {
 
     @Override
     public Double map(IFeatureVector featureVector, String feature) {
         Array a = featureVector.getFeature(feature);
-        EvalTools.leq(1, a.getRank(),this);
+        EvalTools.leq(1, a.getRank(), this);
         return a.getDouble(0);
     }
 
@@ -51,5 +51,5 @@ public class ScalarDoubleFeatureMapper implements IFeatureMapper<Double> {
     public Class<? extends Double> getTargetType() {
         return Double.class;
     }
-    
+
 }

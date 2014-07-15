@@ -36,11 +36,11 @@ import javax.swing.DefaultComboBoxModel;
  *
  * @author nilshoffmann
  */
-public class SeriesPaintComboBoxModel extends DefaultComboBoxModel{
-    
+public class SeriesPaintComboBoxModel extends DefaultComboBoxModel {
+
     public SeriesPaintComboBoxModel(List<Comparable> keys, List<Paint> colors) {
-        for(int i = 0;i<keys.size();i++) {
-            addElement(new Tuple2D<Comparable,Paint>(keys.get(i),colors.get(i)));
+        for (int i = 0; i < keys.size(); i++) {
+            addElement(new Tuple2D<Comparable, Paint>(keys.get(i), colors.get(i)));
         }
     }
 

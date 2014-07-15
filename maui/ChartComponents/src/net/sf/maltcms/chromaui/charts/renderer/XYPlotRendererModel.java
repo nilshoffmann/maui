@@ -41,10 +41,10 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 public class XYPlotRendererModel extends DefaultComboBoxModel {
 
     public XYPlotRendererModel() {
-        XYLineAndShapeRenderer l = new XYLineAndShapeRenderer(true,false);
+        XYLineAndShapeRenderer l = new XYLineAndShapeRenderer(true, false);
         l.setDrawSeriesLineAsPath(false);
         addElement(l);
-		XYAreaRenderer xya = new XYAreaRenderer(XYAreaRenderer.AREA);
+        XYAreaRenderer xya = new XYAreaRenderer(XYAreaRenderer.AREA);
         addElement(xya);
         addElement(new SamplingXYLineRenderer());
         XYBarRenderer xyb = new XYBarRenderer(0.0d);
@@ -56,5 +56,5 @@ public class XYPlotRendererModel extends DefaultComboBoxModel {
         addElement(xyb);
         //addElement(new XYSplineRenderer(5));
     }
-    
+
 }

@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.ArrayList;
@@ -34,33 +33,31 @@ import java.util.List;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CommentDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Comment;
 
-
-public class CommentsContainer extends BasicMzTabMetaDataContainer<CommentDescriptor>{
+public class CommentsContainer extends BasicMzTabMetaDataContainer<CommentDescriptor> {
 
     public static List<Comment> toComments(CommentsContainer smc) {
         List<Comment> l = new ArrayList<Comment>();
-        for(CommentDescriptor smd:smc.getMembers()) {
+        for (CommentDescriptor smd : smc.getMembers()) {
             l.add(smd.getComment());
         }
         return l;
     }
-    
+
     public static CommentsContainer create(Collection<Comment> c) {
         CommentsContainer cc = new CommentsContainer();
         cc.setLevel(1);
         cc.setName("comments");
         cc.setDisplayName("Comments");
-        for(Comment comment:c) {
+        for (Comment comment : c) {
             CommentDescriptor cd = new CommentDescriptor();
             cd.setComment(comment);
             cc.addMembers(cd);
         }
         return cc;
     }
-    
+
 //    @Override
 //    public JPanel createEditor() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-    
 }

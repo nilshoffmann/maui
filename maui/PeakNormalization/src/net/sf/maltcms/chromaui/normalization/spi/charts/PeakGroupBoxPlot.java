@@ -92,7 +92,7 @@ public class PeakGroupBoxPlot {
             List<Color> colors = new LinkedList<Color>();
             for (ITreatmentGroupDescriptor tgd : map.keySet()) {
                 String name = getPeakName(pgd);
-                baw.add(createBoxAndWhiskerItem(map.get(tgd)), tgd.getName()+" ("+map.get(tgd).size()+")",
+                baw.add(createBoxAndWhiskerItem(map.get(tgd)), tgd.getName() + " (" + map.get(tgd).size() + ")",
                         name);
                 colors.add(tgd.getColor());
             }
@@ -100,21 +100,21 @@ public class PeakGroupBoxPlot {
             renderer.setFillBox(true);
             renderer.setMeanVisible(false);
             renderer.setMedianVisible(true);
-            renderer.setArtifactPaint(new Color(0,0,0,128));
+            renderer.setArtifactPaint(new Color(0, 0, 0, 128));
             renderer.setMaximumBarWidth(0.1);
-			renderer.setUseOutlinePaintForWhiskers(false);
+            renderer.setUseOutlinePaintForWhiskers(false);
 //            renderer.setAutoPopulateSeriesFillPaint(true);
 //            renderer.setAutoPopulateSeriesPaint(true);
 //            renderer.setAutoPopulateSeriesOutlinePaint(true);
             CategoryPlot cp = new CategoryPlot(baw, new CategoryAxis(
                     "Treatment Groups"), new NumberAxis("Normalized Peak Area"),
                     renderer);
-            System.out.println("Setting "+colors.size()+" colors!");
+            System.out.println("Setting " + colors.size() + " colors!");
             ChartCustomizer.setSeriesColors(cp, 0.6f, colors);
 //            ChartCustomizer.setSeriesColors(cp, 0.9f,colors);
             plots.add(cp);
             JFreeChart chart = new JFreeChart(cp);
-            chart.setTitle("Peak group "+pgd.getDisplayName()+" size: "+pgd.getPeakAnnotationDescriptors().size());
+            chart.setTitle("Peak group " + pgd.getDisplayName() + " size: " + pgd.getPeakAnnotationDescriptors().size());
             charts.add(chart);
         }
 //        CategoryAxis ca = new CategoryAxis("Treatment Groups");
@@ -130,31 +130,31 @@ public class PeakGroupBoxPlot {
     }
 
     protected String getPeakName(IPeakGroupDescriptor pgd) {
-        String rt = "mean area: "+String.format("%.2f",pgd.getMeanArea(normalizer))+"+/-"+String.format("%.2f",pgd.getAreaStdDev(normalizer))+"; median area: "+String.format("%.2f",pgd.getMedianArea(normalizer))+": ";
-        LinkedHashMap<String,Integer> names = new LinkedHashMap<String,Integer>();
-        if(!pgd.getDisplayName().equals(pgd.getName())) {
-            return rt+pgd.getDisplayName();
+        String rt = "mean area: " + String.format("%.2f", pgd.getMeanArea(normalizer)) + "+/-" + String.format("%.2f", pgd.getAreaStdDev(normalizer)) + "; median area: " + String.format("%.2f", pgd.getMedianArea(normalizer)) + ": ";
+        LinkedHashMap<String, Integer> names = new LinkedHashMap<String, Integer>();
+        if (!pgd.getDisplayName().equals(pgd.getName())) {
+            return rt + pgd.getDisplayName();
         }
         for (IPeakAnnotationDescriptor ipad : pgd.getPeakAnnotationDescriptors()) {
-            if(names.containsKey(ipad.getName())) {
-                names.put(ipad.getName(), names.get(ipad.getName())+1);
-            }else{
-                names.put(ipad.getName(),1);
+            if (names.containsKey(ipad.getName())) {
+                names.put(ipad.getName(), names.get(ipad.getName()) + 1);
+            } else {
+                names.put(ipad.getName(), 1);
             }
         }
         if (names.isEmpty()) {
-            return rt+"<NA>";
+            return rt + "<NA>";
         }
         if (names.size() > 1) {
             StringBuilder sb = new StringBuilder();
-            for(String key:names.keySet()) {
+            for (String key : names.keySet()) {
                 sb.append(key);
-                sb.append(" ("+names.get(key)+")");
+                sb.append(" (" + names.get(key) + ")");
                 sb.append(" | ");
             }
-            return rt+sb.replace(sb.length()-1, sb.length()-1, "").toString();
+            return rt + sb.replace(sb.length() - 1, sb.length() - 1, "").toString();
         } else {
-            return rt+names.keySet().toArray(new String[0])[0];
+            return rt + names.keySet().toArray(new String[0])[0];
         }
     }
 
@@ -164,9 +164,9 @@ public class PeakGroupBoxPlot {
         for (IPeakAnnotationDescriptor ipad : descriptors) {
             double factor = normalizer.getNormalizationFactor(ipad);
             if (showAreas) {
-                values.add(factor*ipad.getArea());
+                values.add(factor * ipad.getArea());
             } else {
-                values.add(factor*ipad.getApexIntensity());
+                values.add(factor * ipad.getApexIntensity());
             }
         }
 

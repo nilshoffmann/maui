@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.jmztab.ui.project.panels;
 
 /**
@@ -33,7 +32,7 @@ package net.sf.maltcms.chromaui.jmztab.ui.project.panels;
  * @author Nils Hoffmann
  */
 public class ContactPanel extends javax.swing.JPanel {
-    
+
     /**
      * Creates new form ContactPanel
      */
@@ -43,13 +42,12 @@ public class ContactPanel extends javax.swing.JPanel {
         affiliation.setName("Affiliation");
         email.setName("Email");
     }
-    
+
 //    public void setupValidation(ValidationGroup validationGroup) {
 //        validationGroup.add(name, StringValidators.REQUIRE_NON_EMPTY_STRING);
 //        validationGroup.add(affiliation, StringValidators.REQUIRE_NON_EMPTY_STRING);
 //        validationGroup.add(email, StringValidators.EMAIL_ADDRESS, StringValidators.REQUIRE_NON_EMPTY_STRING);
 //    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -126,11 +124,11 @@ public class ContactPanel extends javax.swing.JPanel {
     public String getContactEmail() {
         return email.getText();
     }
-    
+
     public String getContactAffiliation() {
         return affiliation.getText();
     }
-    
+
     public String getContactName() {
         return name.getText();
     }

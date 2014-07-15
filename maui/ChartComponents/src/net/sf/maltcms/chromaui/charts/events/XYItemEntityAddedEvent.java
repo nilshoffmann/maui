@@ -35,14 +35,14 @@ import org.jfree.chart.entity.XYItemEntity;
  *
  * @author nilshoffmann
  */
-public class XYItemEntityAddedEvent  extends AEvent<XYItemEntity> {
+public class XYItemEntityAddedEvent extends AEvent<XYItemEntity> {
 
-        /**
-         * @param v
-         * @param ies
-         */
-        public XYItemEntityAddedEvent(XYItemEntity v,
-                IEventSource<XYItemEntity> ies) {
-            super(v, ies, "XYITEMENTITY_ADDED");
-        }
+    /**
+     * @param v
+     * @param ies
+     */
+    public XYItemEntityAddedEvent(XYItemEntity v,
+            IEventSource<XYItemEntity> ies) {
+        super(v, ies, "XYITEMENTITY_ADDED");
     }
+}

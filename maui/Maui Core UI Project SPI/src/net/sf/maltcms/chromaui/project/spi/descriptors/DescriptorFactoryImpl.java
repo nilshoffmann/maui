@@ -73,8 +73,9 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Nils Hoffmann
  */
-@ServiceProvider(service=IDescriptorFactory.class)
+@ServiceProvider(service = IDescriptorFactory.class)
 public class DescriptorFactoryImpl implements IDescriptorFactory {
+
     @Override
     public DataObject getDataObject(IResourceDescriptor id) throws DataObjectNotFoundException, IOException {
         return DataObject.find(FileUtil.createData(new File(id.getResourceLocation())));
@@ -156,9 +157,10 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
     }
 
     /**
-     * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a 
+     * Returns a NormalizationDescriptor with NormalizationType.DRYWEIGHT and a
      * normalization value of 1.0;
-     * @return 
+     *
+     * @return
      */
     @Override
     public INormalizationDescriptor newNormalizationDescriptor() {
@@ -197,7 +199,7 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
         pad.setApexIntensity(intensity);
         return pad;
     }
-    
+
     @Override
     public IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
@@ -234,7 +236,7 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
     public IAnovaDescriptor newAnovaDescriptor() {
         return new AnovaDescriptor();
     }
-    
+
     @Override
     public IPcaDescriptor newPcaDescriptor() {
         return new PcaDescriptor();
@@ -255,7 +257,7 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
 
     @Override
     public Image getImage(IBasicDescriptor descriptor) {
-        try{
+        try {
             if (descriptor instanceof IPeakAnnotationDescriptor) {
                 return ImageUtilities.loadImage(
                         "net/sf/maltcms/chromaui/project/resources/Peak.png");
@@ -264,12 +266,12 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
                         "net/sf/maltcms/chromaui/project/resources/DBDescriptor.png");
             } else if (descriptor instanceof IToolDescriptor) {
                 return ImageUtilities.loadImage(
-                    "net/sf/maltcms/chromaui/project/resources/Tool.png");
+                        "net/sf/maltcms/chromaui/project/resources/Tool.png");
             } else if (descriptor instanceof IPeakGroupDescriptor) {
                 return ImageUtilities.loadImage(
-                    "net/sf/maltcms/chromaui/project/resources/PeakGroup.png");
+                        "net/sf/maltcms/chromaui/project/resources/PeakGroup.png");
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             Exceptions.printStackTrace(e);
         }
         return ImageUtilities.loadImage(
@@ -280,19 +282,19 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
     public ITreatmentGroupDescriptor newTreatmentGroupDescriptor() {
         return new TreatmentGroupDescriptor();
     }
-    
+
     @Override
     public IScanSelectionDescriptor newScanSelectionDescriptor() {
         return new ScanSelectionDescriptor();
     }
 
-	@Override
-	public IChromatogram1D newChromatogram1D(IFileFragment descr) {
-		return new CachingChromatogram1D(descr);
-	}
+    @Override
+    public IChromatogram1D newChromatogram1D(IFileFragment descr) {
+        return new CachingChromatogram1D(descr);
+    }
 
-	@Override
-	public IChromatogram2D newChromatogram2D(IFileFragment chromDescr) {
-		return new CachingChromatogram2D(chromDescr);
-	}
+    @Override
+    public IChromatogram2D newChromatogram2D(IFileFragment chromDescr) {
+        return new CachingChromatogram2D(chromDescr);
+    }
 }

@@ -34,14 +34,14 @@ import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
 
 /**
- * Implementation of @see{ProjectFactory} service provider.
- * Will look for a file <code>chromaUIProject.xml</code> in directories
- * and accept those as project directories.
+ * Implementation of @see{ProjectFactory} service provider. Will look for a file
+ * <code>chromaUIProject.xml</code> in directories and accept those as project
+ * directories.
  *
  * @author Nils Hoffmann
  *
  */
-@org.openide.util.lookup.ServiceProvider(service=ProjectFactory.class)
+@org.openide.util.lookup.ServiceProvider(service = ProjectFactory.class)
 public class ChromAUIProjectFactory implements ProjectFactory {
 
     @Override
@@ -53,13 +53,13 @@ public class ChromAUIProjectFactory implements ProjectFactory {
     @Override
     public org.netbeans.api.project.Project loadProject(FileObject fo, ProjectState ps) throws IOException {
 
-        if(isProject(fo)) {
-            System.out.println("Loading project from "+fo.getPath());
+        if (isProject(fo)) {
+            System.out.println("Loading project from " + fo.getPath());
             ChromAUIProject cp = new ChromAUIProject();
             cp.setState(ps);
             cp.activate(fo.getFileObject(DBProjectFactory.PROJECT_FILE).toURI().toURL());
             return cp;
-        }else{
+        } else {
             return null;
         }
     }
@@ -71,4 +71,3 @@ public class ChromAUIProjectFactory implements ProjectFactory {
     }
 
 }
-

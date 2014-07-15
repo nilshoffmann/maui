@@ -26,10 +26,12 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
 for details.
 -->
-
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Actions">
+        <folder name="ChromAUIProjectLogicalView">
+            <file name="MetaData_hidden"/>
+        </folder>
         <folder name="ContainerNodeActions">
             <folder name="ChromatogramNode">
                 <folder name="Open">

@@ -44,12 +44,11 @@ public class FeatureTable implements IFeatureTable {
     private String[] variableNames;
 
     /**
-     * factors-> number of rows
-     * variables-> number of columns
-     * 
-     * @param factors 
+     * factors-> number of rows variables-> number of columns
+     *
+     * @param factors
      * @param variables
-     * 
+     *
      */
     public FeatureTable(int factors, int variables) {
         this.featureMatrix = MatrixUtils.createRealMatrix(factors,
@@ -79,7 +78,7 @@ public class FeatureTable implements IFeatureTable {
     }
 
     public static RealMatrix normalize(RealMatrix sourceMatrix) {
-        return FeatureTable.normalize(sourceMatrix,true, true);
+        return FeatureTable.normalize(sourceMatrix, true, true);
     }
 
     public static RealMatrix normalize(RealMatrix sourceMatrix, boolean center, boolean normalize) {
@@ -101,9 +100,9 @@ public class FeatureTable implements IFeatureTable {
 
     @Override
     public void setFactorName(int factor, String name) {
-        this.factorNames[factor]=name;
+        this.factorNames[factor] = name;
     }
-    
+
     @Override
     public String getFactorName(int factor) {
         return this.factorNames[factor];

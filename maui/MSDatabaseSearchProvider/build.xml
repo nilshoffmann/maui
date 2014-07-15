@@ -5,8 +5,8 @@
 <project name="net.sf.maltcms.db.search" default="netbeans" basedir=".">
     <description>Builds, tests, and runs the project net.sf.maltcms.db.search.</description>
     <import file="nbproject/build-impl.xml"/>
-	<import file="../../nbproject/custom-nbm.xml"/>
-	<target name="nbm" depends="custom-nbm.nbm">
-		<antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
-	</target>
+    <import file="../../nbproject/custom-nbm.xml"/>
+    <target name="nbm" depends="custom-nbm.nbm">
+        <antcall target="projectized-common.nbm" inheritall="false" inheritrefs="false"/>
+    </target>
 </project>

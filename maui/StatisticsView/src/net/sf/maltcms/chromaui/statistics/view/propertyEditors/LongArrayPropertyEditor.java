@@ -55,7 +55,7 @@ public class LongArrayPropertyEditor extends PropertyEditorSupport {
             String[] values = tmp.split(",");
             d = new long[values.length];
             for (int i = 0; i < values.length; i++) {
-                d[i] = (long)Long.parseLong(values[i].trim());
+                d[i] = (long) Long.parseLong(values[i].trim());
             }
 //            System.out.println(Arrays.toString(d));
             setValue((long[]) d);

@@ -75,7 +75,7 @@ public class Peak2DXMLAnnotationProvider implements AnnotationProvider<Peak2D> {
         MaltcmsAnnotation ma = maf.createNewMaltcmsAnnotationType(f.toURI());
         for (XYAnnotation xya : l) {
             if (xya instanceof XYSelectableShapeAnnotation) {
-                if (((XYSelectableShapeAnnotation<?>)xya).getT() instanceof Peak2D) {
+                if (((XYSelectableShapeAnnotation<?>) xya).getT() instanceof Peak2D) {
                     XYSelectableShapeAnnotation<Peak2D> xyp = (XYSelectableShapeAnnotation<Peak2D>) xya;
                     Peak2D p2 = xyp.getT();
                     maf.addPeakAnnotation(ma, getClass().getName(), p2);
@@ -91,12 +91,11 @@ public class Peak2DXMLAnnotationProvider implements AnnotationProvider<Peak2D> {
 //        PeakArea2D pa2D = t.getPeakArea();
         Shape s = null;
 //        if(pa2D==null) {
-            s = new Rectangle2D.Double(seed.x - 1, seed.y - 1, 3, 3);
+        s = new Rectangle2D.Double(seed.x - 1, seed.y - 1, 3, 3);
 //        }else{
-            //List<Point> l = pa2D.getBoundaryPoints();
+        //List<Point> l = pa2D.getBoundaryPoints();
 
 //        }
-        
         XYSelectableShapeAnnotation<Peak2D> xypa = new XYSelectableShapeAnnotation<Peak2D>(seed.x, seed.y, s, t.getName(), TextAnchor.BASELINE_LEFT, t);
         return xypa;
     }

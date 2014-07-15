@@ -46,25 +46,25 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-		id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction")
+        id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteDescriptorAction")
 @ActionRegistration(displayName = "#CTL_DeleteDescriptorAction")
 @ActionReferences({
-	@ActionReference(path = "Actions/DescriptorNodeActions/DefaultActions")})
+    @ActionReference(path = "Actions/DescriptorNodeActions/DefaultActions")})
 @Messages("CTL_DeleteDescriptorAction=Remove")
 public final class DeleteDescriptorAction implements ActionListener {
 
-	private final List<IBasicDescriptor> context;
+    private final List<IBasicDescriptor> context;
 
-	public DeleteDescriptorAction(List<IBasicDescriptor> context) {
-		this.context = context;
-	}
+    public DeleteDescriptorAction(List<IBasicDescriptor> context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		IChromAUIProject icap = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
-		if (icap != null) {
-			icap.removeDescriptor(context.toArray(new IBasicDescriptor[context.size()]));
-			icap.refresh();
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        IChromAUIProject icap = LookupUtils.ensureSingle(Utilities.actionsGlobalContext(), IChromAUIProject.class);
+        if (icap != null) {
+            icap.removeDescriptor(context.toArray(new IBasicDescriptor[context.size()]));
+            icap.refresh();
+        }
+    }
 }

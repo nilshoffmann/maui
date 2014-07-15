@@ -25,14 +25,12 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.jmztab.ui.api;
 
 import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
-
 
 public class MzTabDataNode extends DataNode {
 

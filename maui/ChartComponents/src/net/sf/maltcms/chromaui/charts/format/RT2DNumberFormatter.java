@@ -35,7 +35,7 @@ import java.text.NumberFormat;
  *
  * @author nilshoffmann
  */
-public class RT2DNumberFormatter extends DecimalFormat{
+public class RT2DNumberFormatter extends DecimalFormat {
 
     private NumberFormat nf;
 
@@ -49,7 +49,7 @@ public class RT2DNumberFormatter extends DecimalFormat{
 
     @Override
     public StringBuffer format(double d, StringBuffer sb, FieldPosition fp) {
-        double v = (d*scanrate) + offset;
+        double v = (d * scanrate) + offset;
         sb.append(nf.format(v));
         return sb;
     }

@@ -42,7 +42,7 @@ import maltcms.ui.fileHandles.serialized.JFCView;
  *
  * @author nilshoffmann
  */
-public class JFCViewDescription implements MultiViewDescription, Serializable{
+public class JFCViewDescription implements MultiViewDescription, Serializable {
 
     private JFCView jfc = null;
 
@@ -75,7 +75,7 @@ public class JFCViewDescription implements MultiViewDescription, Serializable{
 
     @Override
     public MultiViewElement createElement() {
-        if(this.jfc==null) {
+        if (this.jfc == null) {
             jfc = new JFCView();
         }
         return jfc;

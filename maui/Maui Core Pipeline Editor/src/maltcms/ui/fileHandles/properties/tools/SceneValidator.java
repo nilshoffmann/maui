@@ -94,14 +94,14 @@ public class SceneValidator {
                 return ex.getMessage();
             }
         }
-		if(cs.validate()) {
+        if (cs.validate()) {
 
 //        Factory.getInstance().configure(cfg);
 //        ICommandSequence cs = Factory.getInstance().getObjectFactory().instantiate(CommandPipeline.class);
 //        cs.setInput(null);
-			return "Everything looks fine";
-		}else{
-			return "Validation failed!";
-		}
+            return "Everything looks fine";
+        } else {
+            return "Validation failed!";
+        }
     }
 }

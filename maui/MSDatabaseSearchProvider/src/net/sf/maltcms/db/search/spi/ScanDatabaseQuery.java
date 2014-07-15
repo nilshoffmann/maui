@@ -60,10 +60,10 @@ public class ScanDatabaseQuery implements IQuery<IScan> {
     public List<QueryResultList<IScan>> call() throws Exception {
         MpaxsCompletionService<QueryResultList<IScan>> mcs = new MpaxsCompletionService<QueryResultList<IScan>>(
                 Executors.newFixedThreadPool(Math.min(1, Runtime.getRuntime().
-                availableProcessors() - 1)), 30, TimeUnit.MINUTES, false);
+                                availableProcessors() - 1)), 30, TimeUnit.MINUTES, false);
         for (IDatabaseDescriptor descr : databaseDescriptors) {
-            DBScanQueryTask q = new DBScanQueryTask(descr, buildInput(queryScans,retentionIndexCalculator), predicate, matchThreshold, maxHits);
-            DBScanQueryTask.createAndRun("Querying DB "+descr.getDisplayName(), q, mcs);
+            DBScanQueryTask q = new DBScanQueryTask(descr, buildInput(queryScans, retentionIndexCalculator), predicate, matchThreshold, maxHits);
+            DBScanQueryTask.createAndRun("Querying DB " + descr.getDisplayName(), q, mcs);
         }
         List<QueryResultList<IScan>> results = mcs.call();
         return results;

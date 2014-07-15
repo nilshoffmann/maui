@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.api.ui;
 
+import java.awt.Component;
+import java.awt.KeyboardFocusManager;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -82,11 +84,13 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
             }
         }
         initComponents();
+        updating.compareAndSet(false, true);
         if (previousSelection != null) {
             updateModel(previousSelection.getMajorityDisplayName());
         } else {
             updateModel("");
         }
+        updating.set(false);
     }
 
     public final void selectPreviousPeakAnnotation() {
@@ -118,8 +122,15 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
 
             @Override
             public void run() {
-                internalNormalizationCompound.setModel(model);
-                selectPreviousPeakAnnotation();
+                if (updating.get() == true) {
+                    Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+                    if (!internalNormalizationCompound.isFocusOwner()) {
+                        internalNormalizationCompound.requestFocusInWindow();
+                    }
+                    internalNormalizationCompound.setModel(model);
+                    selectPreviousPeakAnnotation();
+                    focusOwner.requestFocusInWindow();
+                }
             }
         });
     }
@@ -252,32 +263,40 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
 
         @Override
         public void run() {
-            getProgressHandle().start();
-            getProgressHandle().progress("Disabling components");
             try {
-                SwingUtilities.invokeAndWait(new Runnable() {
+                getProgressHandle().start();
+                getProgressHandle().progress("Disabling components");
+                try {
+                    SwingUtilities.invokeAndWait(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        internalNormalizationCompound.setEnabled(false);
-                    }
-                });
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (InvocationTargetException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            try {
-                updateModel(peakGroupNameSearchField.getText().trim());
+                        @Override
+                        public void run() {
+                            if (updating.get() == true) {
+                                internalNormalizationCompound.setEnabled(false);
+                            }
+                        }
+                    });
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (InvocationTargetException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                try {
+                    updateModel(peakGroupNameSearchField.getText().trim());
+                } finally {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (updating.get() == true) {
+                                internalNormalizationCompound.setEnabled(true);
+                                updating.compareAndSet(true, false);
+                            }
+                        }
+                    });
+                }
             } finally {
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        internalNormalizationCompound.setEnabled(true);
-                    }
-                });
-                updating.compareAndSet(true, false);
+                getProgressHandle().finish();
             }
         }
 

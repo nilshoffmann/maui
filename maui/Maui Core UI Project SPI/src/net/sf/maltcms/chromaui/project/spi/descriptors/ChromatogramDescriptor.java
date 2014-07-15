@@ -67,7 +67,7 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
 
     public void setPeakAnnotations(List<Peak1DContainer> peakAnnotations) {
         activate(ActivationPurpose.WRITE);
-        for(Peak1DContainer peaks:peakAnnotations) {
+        for (Peak1DContainer peaks : peakAnnotations) {
             peaks.setProject(getProject());
         }
         List<Peak1DContainer> oldValue = this.peakAnnotations;

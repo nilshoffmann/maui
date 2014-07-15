@@ -29,8 +29,6 @@ package net.sf.maltcms.chromaui.groovy.wizard;
 
 import javax.swing.JPanel;
 
-
-
 public final class GroovyScriptVisualPanel1 extends JPanel {
 
     /**

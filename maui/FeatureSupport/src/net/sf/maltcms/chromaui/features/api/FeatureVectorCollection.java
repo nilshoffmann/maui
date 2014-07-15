@@ -37,12 +37,12 @@ import maltcms.datastructures.array.IFeatureVector;
  *
  * @author nilshoffmann
  */
-public class FeatureVectorCollection implements Iterable<IFeatureVector>{
-    
+public class FeatureVectorCollection implements Iterable<IFeatureVector> {
+
     private IFileFragment fragment;
-    
+
     private List<String> groups;
-    
+
     private List<IFeatureVector> featureVectors;
 
     public FeatureVectorCollection(IFileFragment fragment,
@@ -55,15 +55,16 @@ public class FeatureVectorCollection implements Iterable<IFeatureVector>{
 
     /**
      * Returns an unmodifiable iterator.
-     * @return 
+     *
+     * @return
      */
     @Override
     public Iterator<IFeatureVector> iterator() {
         return Collections.unmodifiableList(featureVectors).iterator();
     }
-    
+
     public int size() {
         return this.featureVectors.size();
     }
-    
+
 }

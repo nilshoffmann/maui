@@ -43,9 +43,9 @@ public final class Heatmap3DOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        for(MultiDataObject dob:context) {
-                Heatmap3DOpenSupport hmos = new Heatmap3DOpenSupport(dob.getPrimaryEntry());
-                hmos.open();
+        for (MultiDataObject dob : context) {
+            Heatmap3DOpenSupport hmos = new Heatmap3DOpenSupport(dob.getPrimaryEntry());
+            hmos.open();
         }
     }
 }

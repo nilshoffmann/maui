@@ -51,14 +51,14 @@ public class CharArrayPropertyEditor extends PropertyEditorSupport {
 
         try {
             String tmp = string.substring(1);
-            tmp = tmp.substring(0,tmp.length()-1);
+            tmp = tmp.substring(0, tmp.length() - 1);
             String[] values = tmp.split(",");
             d = new char[values.length];
             for (int i = 0; i < values.length; i++) {
                 d[i] = values[i].trim().charAt(0);
             }
 //            System.out.println(Arrays.toString(d));
-            setValue((char[])d);
+            setValue((char[]) d);
         } catch (Exception pe) {
             throw new IllegalArgumentException(pe);
         }

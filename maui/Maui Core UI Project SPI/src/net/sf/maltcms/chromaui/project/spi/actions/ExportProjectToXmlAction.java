@@ -68,18 +68,18 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Menu/File", position = 1415)})
 @Messages("CTL_ExportProjectToXmlAction=Export to XML")
 public final class ExportProjectToXmlAction implements ActionListener {
-    
+
     private final IChromAUIProject context;
-    
+
     public ExportProjectToXmlAction(IChromAUIProject context) {
         this.context = context;
     }
-    
+
     @RequiredArgsConstructor
     private class XMLExportTask extends AProgressAwareRunnable {
-        
+
         private final IChromAUIProject context;
-        
+
         @Override
         public void run() {
             try {
@@ -157,17 +157,17 @@ public final class ExportProjectToXmlAction implements ActionListener {
             }
         }
     }
-    
+
     @Getter
     @Setter
     public class ChromAUIProjectAdapter {
-        
+
         private Collection<IContainer> containers;
         private File outputDirectory;
         private File importDirectory;
         private String name;
         private String displayName;
-        
+
         public ChromAUIProjectAdapter(IChromAUIProject project) {
             setContainers(project.getContainer(IContainer.class));
             setOutputDirectory(project.getOutputDirectory());
@@ -176,7 +176,7 @@ public final class ExportProjectToXmlAction implements ActionListener {
             setDisplayName(ProjectUtils.getInformation(project).getDisplayName());
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (context != null) {

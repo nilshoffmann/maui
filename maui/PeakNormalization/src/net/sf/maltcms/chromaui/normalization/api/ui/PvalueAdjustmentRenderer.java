@@ -37,6 +37,7 @@ import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 public class PvalueAdjustmentRenderer extends DefaultListCellRenderer {
+
     private static final long serialVersionUID = 1L;
 
     @Override

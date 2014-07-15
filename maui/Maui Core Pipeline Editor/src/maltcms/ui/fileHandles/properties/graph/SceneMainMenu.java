@@ -70,12 +70,10 @@ public class SceneMainMenu implements PopupMenuProvider, ActionListener {
 //        item.setActionCommand(ADD_NEW_INPUT_ACTION);
 //        item.addActionListener(this);
 //        menu.add(item);
-
 //        item = new JMenuItem("Add General Pipeline Config Node");
 //        item.setActionCommand(ADD_NEW_GENERAL_ACTION);
 //        item.addActionListener(this);
 //        menu.add(item);
-
         menu.addSeparator();
 
         item = new JMenuItem("Export Scene");

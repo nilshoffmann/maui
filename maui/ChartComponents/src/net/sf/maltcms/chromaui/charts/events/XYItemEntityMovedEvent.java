@@ -35,14 +35,14 @@ import org.jfree.chart.entity.XYItemEntity;
  *
  * @author nilshoffmann
  */
-public class XYItemEntityMovedEvent  extends AEvent<XYItemEntity> {
+public class XYItemEntityMovedEvent extends AEvent<XYItemEntity> {
 
-        /**
-         * @param v
-         * @param ies
-         */
-        public XYItemEntityMovedEvent(XYItemEntity v,
-                IEventSource<XYItemEntity> ies) {
-            super(v, ies, "XYITEMENTITY_MOVED");
-        }
+    /**
+     * @param v
+     * @param ies
+     */
+    public XYItemEntityMovedEvent(XYItemEntity v,
+            IEventSource<XYItemEntity> ies) {
+        super(v, ies, "XYITEMENTITY_MOVED");
     }
+}

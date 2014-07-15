@@ -86,27 +86,27 @@ public class PipelinePropertiesWizardPanel2 implements WizardDescriptor.Panel {
     public final void removeChangeListener(ChangeListener l) {
     }
     /*
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
-    public final void addChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.add(l);
-    }
-    }
-    public final void removeChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.remove(l);
-    }
-    }
-    protected final void fireChangeEvent() {
-    Iterator<ChangeListener> it;
-    synchronized (listeners) {
-    it = new HashSet<ChangeListener>(listeners).iterator();
-    }
-    ChangeEvent ev = new ChangeEvent(this);
-    while (it.hasNext()) {
-    it.next().stateChanged(ev);
-    }
-    }
+     private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+     public final void addChangeListener(ChangeListener l) {
+     synchronized (listeners) {
+     listeners.add(l);
+     }
+     }
+     public final void removeChangeListener(ChangeListener l) {
+     synchronized (listeners) {
+     listeners.remove(l);
+     }
+     }
+     protected final void fireChangeEvent() {
+     Iterator<ChangeListener> it;
+     synchronized (listeners) {
+     it = new HashSet<ChangeListener>(listeners).iterator();
+     }
+     ChangeEvent ev = new ChangeEvent(this);
+     while (it.hasNext()) {
+     it.next().stateChanged(ev);
+     }
+     }
      */
 
     // You can use a settings object to keep track of state. Normally the
@@ -123,7 +123,6 @@ public class PipelinePropertiesWizardPanel2 implements WizardDescriptor.Panel {
     public void storeSettings(Object settings) {
 //        System.out.println("MUH");
 //        System.out.println(settings.getClass().getName());
-		
+
     }
 }
-

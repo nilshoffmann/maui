@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.List;
@@ -33,8 +32,7 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ParamDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.Param;
 
-
-public class ParamContainer extends BasicMzTabMetaDataContainer<ParamDescriptor>{
+public class ParamContainer extends BasicMzTabMetaDataContainer<ParamDescriptor> {
 
     public static ParamContainer create(Metadata metadata) {
         ParamContainer c = new ParamContainer();
@@ -49,10 +47,9 @@ public class ParamContainer extends BasicMzTabMetaDataContainer<ParamDescriptor>
         }
         return c;
     }
-    
+
 //    @Override
 //    public JPanel createEditor() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-    
 }

@@ -58,7 +58,6 @@ import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
-
 public class DescriptorNode extends BeanNode<IBasicDescriptor> implements PropertyChangeListener {
 
     public DescriptorNode(IBasicDescriptor bean, Children children, Lookup lkp) throws IntrospectionException {

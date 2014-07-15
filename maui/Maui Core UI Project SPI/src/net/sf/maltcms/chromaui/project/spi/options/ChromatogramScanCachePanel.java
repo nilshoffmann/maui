@@ -415,9 +415,9 @@ final class ChromatogramScanCachePanel extends javax.swing.JPanel {
             notificationLabel.setText("<html><font color=red>Number of scans to preload must be positive!</font></html>");
             return false;
         }
-        if(needsSave()) {
+        if (needsSave()) {
             notificationLabel.setText("<html><font color=blue>Projects will be saved and reopened!</font></html>");
-        }else{
+        } else {
             notificationLabel.setText("");
         }
 

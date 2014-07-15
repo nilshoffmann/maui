@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.jmztab.ui.api;
 
 import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
@@ -35,5 +34,5 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
  * @author Nils Hoffmann
  */
 public interface IMzTabDescriptor extends IMetaDataDescriptor {
-    
+
 }

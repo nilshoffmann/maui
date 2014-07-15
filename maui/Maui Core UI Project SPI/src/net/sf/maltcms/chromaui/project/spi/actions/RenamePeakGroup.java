@@ -43,9 +43,10 @@ import org.openide.awt.ActionReference;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.project.spi.actions.RenamePeakGroup")
+        id = "net.sf.maltcms.chromaui.project.spi.actions.RenamePeakGroup")
 @ActionRegistration(displayName = "#CTL_RenamePeakGroup")
-@ActionReferences({@ActionReference(path="Actions/DescriptorNodeActions/IPeakGroupDescriptor")})
+@ActionReferences({
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakGroupDescriptor")})
 @Messages("CTL_RenamePeakGroup=Rename")
 public final class RenamePeakGroup implements ActionListener {
 
@@ -57,49 +58,49 @@ public final class RenamePeakGroup implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine("Peak Group Name","Rename");
+        NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine("Peak Group Name", "Rename");
         nd.setInputText(context.getName());
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             String newName = nd.getInputText().trim();
-            RenameRunnable rr = new RenameRunnable(newName,context);
+            RenameRunnable rr = new RenameRunnable(newName, context);
             RenameRunnable.createAndRun(newName, rr);
-        } 
+        }
     }
-    
+
     class RenameRunnable extends AProgressAwareRunnable {
 
         private final String newName;
         private final IPeakGroupDescriptor context;
-        
+
         public RenameRunnable(String newName, IPeakGroupDescriptor context) {
             this.newName = newName;
             this.context = context;
         }
-        
+
         @Override
         public void run() {
             ProgressHandle ph = getProgressHandle();
             ph.start(context.getPeakAnnotationDescriptors().size());
             int i = 1;
-            try{
+            try {
                 ph.progress("Renaming peaks...");
-                for(IPeakAnnotationDescriptor peak:context.getPeakAnnotationDescriptors()) {
+                for (IPeakAnnotationDescriptor peak : context.getPeakAnnotationDescriptors()) {
                     ph.progress(i++);
-                    peak.setName(newName+" ");
-                    peak.setDisplayName(newName+" (User Defined)");
+                    peak.setName(newName + " ");
+                    peak.setDisplayName(newName + " (User Defined)");
                     peak.setCas("");
                     peak.setFormula("");
                     peak.setLibrary("User Defined");
                     peak.setSimilarity(Double.NaN);
                     peak.setMethod("Manual Annotation");
                 }
-                context.setDisplayName(newName+" (User Defined)");
+                context.setDisplayName(newName + " (User Defined)");
                 context.setName(newName);
                 context.setShortDescription(context.createDisplayName(context.getPeakAnnotationDescriptors()).toString());
-            }finally{
+            } finally {
                 ph.finish();
             }
-        }    
+        }
     }
 }

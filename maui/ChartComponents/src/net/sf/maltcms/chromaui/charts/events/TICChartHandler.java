@@ -152,7 +152,7 @@ public class TICChartHandler implements XYItemEntityEventListener {
                             xypl.getRenderer().setBasePaint(Color.GRAY);
                             xypl.getRenderer().setBaseOutlinePaint(Color.DARK_GRAY);
                             xypl.setDomainCrosshairLockedOnData(true);
-                            xypl.setDomainCrosshairValue(x,true);
+                            xypl.setDomainCrosshairValue(x, true);
                             if (valueAxisFixed) {
                                 xypl.getRangeAxis().setAutoRange(false);
                                 xypl.getRangeAxis().setLowerBound(valueAxisMin);

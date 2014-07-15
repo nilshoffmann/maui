@@ -148,7 +148,7 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
                                     }
                                 }
                             }
-                           //jointClique.add
+                            //jointClique.add
                         }
                     }
 
@@ -175,11 +175,10 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
             progressHandle.finish();
         }
     }
-    
+
 //    private static boolean areCliquesCompatible(Clique<PeakFeatureVector> c1, Clique<PeakFeatureVector> c2) {
 //        
 //    }
-
     private void saveHistogramChart(HistogramDataset dataset, File f) {
         String plotTitle = "Histogram";
         String xaxis = "similarity";

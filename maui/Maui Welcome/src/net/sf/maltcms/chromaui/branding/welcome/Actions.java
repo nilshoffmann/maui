@@ -48,7 +48,7 @@ public class Actions {
         if (act != null && act.isEnabled()) {
             act.actionPerformed(e);
         } else {
-            System.err.println("Failed to invoke action for path: "+path);
+            System.err.println("Failed to invoke action for path: " + path);
         }
     }
 

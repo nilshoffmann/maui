@@ -302,7 +302,5 @@ public class SmallMoleculeDescriptor extends AMzTabRecordDescriptor<SmallMolecul
     public String toString() {
         return getRecord().toString();
     }
-    
-    
 
 }

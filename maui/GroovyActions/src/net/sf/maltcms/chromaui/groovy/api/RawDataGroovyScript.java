@@ -34,6 +34,6 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
  *
  * @author Nils Hoffmann
  */
-public interface RawDataGroovyScript extends GroovyProjectDataObjectScript<IChromAUIProject,CDFDataObject> {
-    
+public interface RawDataGroovyScript extends GroovyProjectDataObjectScript<IChromAUIProject, CDFDataObject> {
+
 }

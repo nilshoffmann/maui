@@ -56,7 +56,7 @@ public class MaltcmsClassPathProvider implements ClassPathProvider, PreferenceCh
 
     @Override
     public ClassPath findClassPath(FileObject fo, String string) {
-        System.out.println("Trying to find classpath of type "+string+" for "+fo);
+        System.out.println("Trying to find classpath of type " + string + " for " + fo);
         return ClassPathSupport.createProxyClassPath(classPaths.toArray(new ClassPath[classPaths.size()]));
     }
 

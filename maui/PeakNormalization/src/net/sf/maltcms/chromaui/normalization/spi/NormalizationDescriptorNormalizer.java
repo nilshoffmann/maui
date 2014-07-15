@@ -42,5 +42,5 @@ public class NormalizationDescriptorNormalizer implements IPeakNormalizer {
     public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor) {
         return descriptor.getChromatogramDescriptor().getNormalizationDescriptor().getValue();
     }
-    
+
 }

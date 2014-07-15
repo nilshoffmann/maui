@@ -31,8 +31,6 @@ package maltcms.ui.fileHandles.properties;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import maltcms.ui.fileHandles.csv.CSVTableViewDescription;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import org.netbeans.core.spi.multiview.MultiViewDescription;

@@ -63,8 +63,8 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
             FileObject text = project.getWorkflowDir();
 
             //Get the DataObject that represents it
-            DataFolder textDataObject =
-                    DataFolder.findFolder(text);
+            DataFolder textDataObject
+                    = DataFolder.findFolder(text);
 
             //Get its default node-we'll wrap our node around it to change the
             //display name, icon, etc
@@ -88,7 +88,9 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
         return null;
     }
 
-    /** This is the node you actually see in the project tab for the project */
+    /**
+     * This is the node you actually see in the project tab for the project
+     */
     private static final class MaltcmsProjectNode extends FilterNode {
 
         final SimpleChromAProject project;
@@ -99,7 +101,7 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
                     //NewAction and friends want the original Node's lookup.
                     //Make a merge of both
                     new ProxyLookup(Lookups.singleton(project),
-                        node.getLookup()
+                            node.getLookup()
                     ));
             this.project = project;
         }

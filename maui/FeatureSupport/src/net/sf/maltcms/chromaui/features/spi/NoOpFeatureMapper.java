@@ -36,7 +36,7 @@ import ucar.ma2.Array;
  *
  * @author nilshoffmann
  */
-@ServiceProvider(service=IFeatureMapper.class)
+@ServiceProvider(service = IFeatureMapper.class)
 public class NoOpFeatureMapper implements IFeatureMapper<Array> {
 
     @Override
@@ -48,5 +48,5 @@ public class NoOpFeatureMapper implements IFeatureMapper<Array> {
     public Class<? extends Array> getTargetType() {
         return Array.class;
     }
-    
+
 }

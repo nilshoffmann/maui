@@ -56,80 +56,80 @@ import org.openide.util.Lookup;
  */
 @Data
 public class DBPeakContainerAnnotationTask extends AProgressAwareRunnable implements
-		Serializable {
+        Serializable {
 
-	private final List<Peak1DContainer> context;
-	private final List<IDatabaseDescriptor> databases;
-	private final RetentionIndexCalculator ricalc;
-	private final AMetabolitePredicate predicate;
-	private final double matchThreshold;
-	private final int maxNumberOfHits;
-	private final double riWindow;
-	private final boolean clearExistingMatches;
+    private final List<Peak1DContainer> context;
+    private final List<IDatabaseDescriptor> databases;
+    private final RetentionIndexCalculator ricalc;
+    private final AMetabolitePredicate predicate;
+    private final double matchThreshold;
+    private final int maxNumberOfHits;
+    private final double riWindow;
+    private final boolean clearExistingMatches;
 
-	@Override
-	public void run() {
-		getProgressHandle().start(context.size());
-		int cnt = 1;
-		try {
-			for (Peak1DContainer container : context) {
-				if (isCancel()) {
-					return;
-				}
-				getProgressHandle().progress("Annotating peaks on container " + container.getDisplayName(),cnt++);
-				if (clearExistingMatches) {
-					System.out.println("Resetting peak match information!");
-					for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
-						if (isCancel()) {
-							return;
-						}
-						ipad.setSimilarity(Double.NaN);
-						ipad.setNativeDatabaseId("NA");
-						ipad.setName("Unknown Compound");
-						ipad.setFormula("NA");
-						ipad.setDisplayName("Unknown Compound");
-						ipad.setLibrary("custom");
-						ipad.setRetentionIndex(Double.NaN);
-					}
-				}
-				IQuery<IPeakAnnotationDescriptor> query = Lookup.getDefault().lookup(
-						IQueryFactory.class).createQuery(databases, ricalc, predicate, matchThreshold, maxNumberOfHits,
-						new ArrayList<IPeakAnnotationDescriptor>(container.getMembers()), riWindow);
-				System.out.println("Created query for container: " + container.getDisplayName());
-				try {
-					System.out.println("Running query on container: " + container.getDisplayName());
-					List<QueryResultList<IPeakAnnotationDescriptor>> results = query.call();
+    @Override
+    public void run() {
+        getProgressHandle().start(context.size());
+        int cnt = 1;
+        try {
+            for (Peak1DContainer container : context) {
+                if (isCancel()) {
+                    return;
+                }
+                getProgressHandle().progress("Annotating peaks on container " + container.getDisplayName(), cnt++);
+                if (clearExistingMatches) {
+                    System.out.println("Resetting peak match information!");
+                    for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
+                        if (isCancel()) {
+                            return;
+                        }
+                        ipad.setSimilarity(Double.NaN);
+                        ipad.setNativeDatabaseId("NA");
+                        ipad.setName("Unknown Compound");
+                        ipad.setFormula("NA");
+                        ipad.setDisplayName("Unknown Compound");
+                        ipad.setLibrary("custom");
+                        ipad.setRetentionIndex(Double.NaN);
+                    }
+                }
+                IQuery<IPeakAnnotationDescriptor> query = Lookup.getDefault().lookup(
+                        IQueryFactory.class).createQuery(databases, ricalc, predicate, matchThreshold, maxNumberOfHits,
+                                new ArrayList<IPeakAnnotationDescriptor>(container.getMembers()), riWindow);
+                System.out.println("Created query for container: " + container.getDisplayName());
+                try {
+                    System.out.println("Running query on container: " + container.getDisplayName());
+                    List<QueryResultList<IPeakAnnotationDescriptor>> results = query.call();
 
-					for (QueryResultList<IPeakAnnotationDescriptor> resultList : results) {
-						if (isCancel()) {
-							return;
-						}
-						for (final IQueryResult<IPeakAnnotationDescriptor> result : resultList) {
-							if (isCancel()) {
-								return;
-							}
+                    for (QueryResultList<IPeakAnnotationDescriptor> resultList : results) {
+                        if (isCancel()) {
+                            return;
+                        }
+                        for (final IQueryResult<IPeakAnnotationDescriptor> result : resultList) {
+                            if (isCancel()) {
+                                return;
+                            }
 //								IChromatogramDescriptor icd = result.getScan().getChromatogramDescriptor();
-							IPeakAnnotationDescriptor ipad = result.getScan();
-							if (result.getMetabolites().size() > 0) {
-								System.out.println("Found " + result.getMetabolites().size() + " matches above threshold!");
-								IMetabolite bestHit = result.getMetabolites().get(0);
-								ipad.setNativeDatabaseId(bestHit.getID());
-								ipad.setSimilarity(result.getScoreFor(bestHit));
-								ipad.setName(bestHit.getName());
-								ipad.setFormula(bestHit.getFormula());
-								ipad.setDisplayName(bestHit.getName());
-								ipad.setLibrary(result.getDatabaseDescriptor().getName());
-								ipad.setRetentionIndex(result.getRetentionIndex());
-							}
-						}
-					}
-				} catch (Exception ex) {
-					Exceptions.printStackTrace(ex);
-				}
+                            IPeakAnnotationDescriptor ipad = result.getScan();
+                            if (result.getMetabolites().size() > 0) {
+                                System.out.println("Found " + result.getMetabolites().size() + " matches above threshold!");
+                                IMetabolite bestHit = result.getMetabolites().get(0);
+                                ipad.setNativeDatabaseId(bestHit.getID());
+                                ipad.setSimilarity(result.getScoreFor(bestHit));
+                                ipad.setName(bestHit.getName());
+                                ipad.setFormula(bestHit.getFormula());
+                                ipad.setDisplayName(bestHit.getName());
+                                ipad.setLibrary(result.getDatabaseDescriptor().getName());
+                                ipad.setRetentionIndex(result.getRetentionIndex());
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    Exceptions.printStackTrace(ex);
+                }
 
-			}
-		} finally {
-			getProgressHandle().finish();
-		}
-	}
+            }
+        } finally {
+            getProgressHandle().finish();
+        }
+    }
 }

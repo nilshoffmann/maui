@@ -456,7 +456,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
             if (STEP_SIZE < 1) {
                 STEP_SIZE = 1;
             }
-            translate(-(width/STEP_SIZE) / 2, -(height/STEP_SIZE) / 2, ZZ);
+            translate(-(width / STEP_SIZE) / 2, -(height / STEP_SIZE) / 2, ZZ);
             int maxx = 0;
             int maxy = 0;
             for (X = 0; X < (values.length - STEP_SIZE); X += STEP_SIZE) {
@@ -467,7 +467,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
                     z = getHeightFor(values, X, Y);
                     // Set The Color Value Of The Current Vertex
                     setVertexColor(values, x, y);
-                    vertex(x*xscale, y*yscale, z);// Send This Vertex To OpenGL To Be Rendered
+                    vertex(x * xscale, y * yscale, z);// Send This Vertex To OpenGL To Be Rendered
 
                     // Get The (X, Y, Z) Value For The Top Left Vertex
                     x = X;
@@ -475,7 +475,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
                     z = getHeightFor(values, X, Y + STEP_SIZE);
                     // Set The Color Value Of The Current Vertex
                     setVertexColor(values, x, y);
-                    vertex(x*xscale, y*yscale, z);// Send This Vertex To OpenGL To Be Rendered
+                    vertex(x * xscale, y * yscale, z);// Send This Vertex To OpenGL To Be Rendered
 
                     // Get The (X, Y, Z) Value For The Top Right Vertex
                     x = X + STEP_SIZE;
@@ -483,7 +483,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
                     z = getHeightFor(values, X + STEP_SIZE, Y + STEP_SIZE);
                     // Set The Color Value Of The Current Vertex
                     setVertexColor(values, x, y);
-                    vertex(x*xscale, y*yscale, z);// Send This Vertex To OpenGL To Be Rendered
+                    vertex(x * xscale, y * yscale, z);// Send This Vertex To OpenGL To Be Rendered
 
                     // Get The (X, Y, Z) Value For The Bottom Right Vertex
                     x = X + STEP_SIZE;
@@ -491,7 +491,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
                     z = getHeightFor(values, X + STEP_SIZE, Y);
                     // Set The Color Value Of The Current Vertex
                     setVertexColor(values, x, y);
-                    vertex(x*xscale, y*yscale, z);// Send This Vertex To OpenGL To Be Rendered
+                    vertex(x * xscale, y * yscale, z);// Send This Vertex To OpenGL To Be Rendered
                     maxx = max(maxx, X + STEP_SIZE);
                     maxy = max(maxy, Y + STEP_SIZE);
                 }
@@ -523,8 +523,8 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 JPEGEncodeParam p = new JPEGEncodeParam();
-				p.setQuality(0.5f);
-                JPEGImageEncoder encoder = new JPEGImageEncoder(out,p);
+                p.setQuality(0.5f);
+                JPEGImageEncoder encoder = new JPEGImageEncoder(out, p);
                 encoder.setParam(p);
                 encoder.encode(img);
                 FileOutputStream fo = new FileOutputStream(output);

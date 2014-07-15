@@ -43,56 +43,56 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-		id = "net.sf.maltcms.db.search.spi.actions.CreateDatabaseContainerAction")
+        id = "net.sf.maltcms.db.search.spi.actions.CreateDatabaseContainerAction")
 @ActionRegistration(displayName = "#CTL_CreateDatabaseContainerAction")
 @ActionReferences({
-	//    @ActionReference(path = "Menu/File", position = 1413),
-	@ActionReference(path = "Actions/ChromAUIProjectLogicalView/Database")
+    //    @ActionReference(path = "Menu/File", position = 1413),
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Database")
 })
 @Messages("CTL_CreateDatabaseContainerAction=Create Database Group")
 public final class CreateDatabaseContainerAction implements ActionListener {
 
-	private final IChromAUIProject context;
+    private final IChromAUIProject context;
 
-	public CreateDatabaseContainerAction(IChromAUIProject context) {
-		this.context = context;
-	}
+    public CreateDatabaseContainerAction(IChromAUIProject context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		// Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
-		NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine("Database Group Name:", "Enter a Database Group Name",
-				NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
-				NotifyDescriptor.PLAIN_MESSAGE);
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
+        NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine("Database Group Name:", "Enter a Database Group Name",
+                NotifyDescriptor.OK_CANCEL_OPTION, // it is Yes/No dialog ...
+                NotifyDescriptor.PLAIN_MESSAGE);
 
-		// let's display the dialog now...
-		if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-			CreateDatabaseTask cdt = new CreateDatabaseTask(context, nd.getInputText());
-			CreateDatabaseTask.createAndRun("Adding database container", cdt);
-		}
-	}
-	
-	@Data
-	private final class CreateDatabaseTask extends AProgressAwareRunnable {
-		
-		private final IChromAUIProject project;
-		private final String containerName;
-		
-		@Override
-		public void run() {
-			try{
-				progressHandle.start();
-				progressHandle.switchToIndeterminate();
-				progressHandle.progress("Adding database container "+containerName);
-				DatabaseContainer dbContainer = new DatabaseContainer();
-				dbContainer.setName(containerName);
-				dbContainer.setDisplayName(containerName);
-				dbContainer.setShortDescription(containerName);
-				project.addContainer(dbContainer);
-			}finally{
-				progressHandle.finish();
-			}
-		}
-		
-	}
+        // let's display the dialog now...
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            CreateDatabaseTask cdt = new CreateDatabaseTask(context, nd.getInputText());
+            CreateDatabaseTask.createAndRun("Adding database container", cdt);
+        }
+    }
+
+    @Data
+    private final class CreateDatabaseTask extends AProgressAwareRunnable {
+
+        private final IChromAUIProject project;
+        private final String containerName;
+
+        @Override
+        public void run() {
+            try {
+                progressHandle.start();
+                progressHandle.switchToIndeterminate();
+                progressHandle.progress("Adding database container " + containerName);
+                DatabaseContainer dbContainer = new DatabaseContainer();
+                dbContainer.setName(containerName);
+                dbContainer.setDisplayName(containerName);
+                dbContainer.setShortDescription(containerName);
+                project.addContainer(dbContainer);
+            } finally {
+                progressHandle.finish();
+            }
+        }
+
+    }
 }

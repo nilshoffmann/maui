@@ -52,7 +52,7 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 
 @ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
-id = "maltcms.ui.Chromatogram1DViewMultiOpenAction")
+        id = "maltcms.ui.Chromatogram1DViewMultiOpenAction")
 @ActionRegistration(displayName = "#CTL_Chromatogram1DViewMultiOpenAction")
 @Messages("CTL_Chromatogram1DViewMultiOpenAction=Open in Chromatogram Viewer (separate)")
 public final class Chromatogram1DViewMultiOpenAction implements ActionListener {
@@ -99,7 +99,7 @@ public final class Chromatogram1DViewMultiOpenAction implements ActionListener {
                         System.out.println("Creating 1D data providers and dataset.");
                         List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(1);
                         providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
-                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(descr,Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
+                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(descr, Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
                         onEdt(new Runnable() {
                             @Override
                             public void run() {
@@ -117,7 +117,7 @@ public final class Chromatogram1DViewMultiOpenAction implements ActionListener {
                         progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
                         List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
                         providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
-                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(descr,Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
+                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(descr, Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
                         onEdt(new Runnable() {
                             @Override
                             public void run() {

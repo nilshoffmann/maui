@@ -121,6 +121,6 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
 
     @Override
     public void clear() {
-        
+
     }
 }

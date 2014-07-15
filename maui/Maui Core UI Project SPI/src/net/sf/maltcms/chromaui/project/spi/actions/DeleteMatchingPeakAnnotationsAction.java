@@ -43,9 +43,10 @@ import org.openide.awt.ActionReferences;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteMatchingPeakAnnotationsAction")
+        id = "net.sf.maltcms.chromaui.project.spi.actions.DeleteMatchingPeakAnnotationsAction")
 @ActionRegistration(displayName = "#CTL_DeleteMatchingPeakAnnotationsAction")
-@ActionReferences({@ActionReference(path="Actions/ChromAUIProjectLogicalView/Peaks")})
+@ActionReferences({
+    @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Peaks")})
 @Messages("CTL_DeleteMatchingPeakAnnotationsAction=Remove All Peak Annotations")
 public final class DeleteMatchingPeakAnnotationsAction implements ActionListener {
 
@@ -58,8 +59,8 @@ public final class DeleteMatchingPeakAnnotationsAction implements ActionListener
     @Override
     public void actionPerformed(ActionEvent ev) {
         List<Peak1DContainer> peakContainers = new ArrayList<Peak1DContainer>();
-        for(IChromatogramDescriptor chrom:context.getChromatograms()) {
-            for(Peak1DContainer container:context.getPeaks(chrom)) {
+        for (IChromatogramDescriptor chrom : context.getChromatograms()) {
+            for (Peak1DContainer container : context.getPeaks(chrom)) {
                 peakContainers.add(container);
                 //context.removeContainer(container);
             }

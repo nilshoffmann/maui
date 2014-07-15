@@ -50,41 +50,41 @@ import org.openide.util.lookup.Lookups;
  */
 public final class Peak1DOverlayChildFactory extends ChildFactory<IPeakAnnotationDescriptor> implements OverlayChangeListener, PropertyChangeListener {
 
-	private final Peak1DOverlay peakOverlay;
-	private final IChromAUIProject project;
+    private final Peak1DOverlay peakOverlay;
+    private final IChromAUIProject project;
 
-	public Peak1DOverlayChildFactory(Peak1DOverlay peakOverlay) {
-		this.peakOverlay = peakOverlay;
-		this.project = peakOverlay.getLookup().lookup(IChromAUIProject.class);
-		WeakListeners.propertyChange(this, peakOverlay.getLookup().lookup(Peak1DContainer.class));
-		peakOverlay.addChangeListener(this);
-	}
+    public Peak1DOverlayChildFactory(Peak1DOverlay peakOverlay) {
+        this.peakOverlay = peakOverlay;
+        this.project = peakOverlay.getLookup().lookup(IChromAUIProject.class);
+        WeakListeners.propertyChange(this, peakOverlay.getLookup().lookup(Peak1DContainer.class));
+        peakOverlay.addChangeListener(this);
+    }
 
-	@Override
-	protected boolean createKeys(List<IPeakAnnotationDescriptor> list) {
-		for (IPeakAnnotationDescriptor pad : peakOverlay.getActiveSelection()) {
-			if (Thread.interrupted()) {
-				return true;
-			}
-			list.add(pad);
-		}
-		return true;
-	}
+    @Override
+    protected boolean createKeys(List<IPeakAnnotationDescriptor> list) {
+        for (IPeakAnnotationDescriptor pad : peakOverlay.getActiveSelection()) {
+            if (Thread.interrupted()) {
+                return true;
+            }
+            list.add(pad);
+        }
+        return true;
+    }
 
-	@Override
-	protected Node createNodeForKey(IPeakAnnotationDescriptor key) {
-		Node n = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Lookups.fixed(project));
-		n.addPropertyChangeListener(WeakListeners.propertyChange(this, n));
-		return n;
-	}
+    @Override
+    protected Node createNodeForKey(IPeakAnnotationDescriptor key) {
+        Node n = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Lookups.fixed(project));
+        n.addPropertyChangeListener(WeakListeners.propertyChange(this, n));
+        return n;
+    }
 
-	@Override
-	public void overlayChanged(OverlayChangeEvent oce) {
-		refresh(true);
-	}
+    @Override
+    public void overlayChanged(OverlayChangeEvent oce) {
+        refresh(true);
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		refresh(true);
-	}
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        refresh(true);
+    }
 }

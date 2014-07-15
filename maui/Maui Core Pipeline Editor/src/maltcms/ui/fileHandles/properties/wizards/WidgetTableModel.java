@@ -42,6 +42,7 @@ import org.openide.util.NotImplementedException;
  * @author mw
  */
 public class WidgetTableModel extends HashTableModel {
+
     private PipelineElementWidget w = null;
 
     public WidgetTableModel(Vector<String> header, Map<String, Object> property, Class<?> c) {
@@ -52,7 +53,7 @@ public class WidgetTableModel extends HashTableModel {
     public void setPipelineElementWidgetNode(PipelineElementWidget w) {
         this.w = w;
     }
-    
+
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == 0) {

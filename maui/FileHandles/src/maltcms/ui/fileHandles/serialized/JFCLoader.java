@@ -57,7 +57,7 @@ public class JFCLoader implements Callable<JFreeChart> {
             ph.progress("Opening file", 33);
             final ObjectInputStream ois = new ObjectInputStream(
                     new BufferedInputStream(new FileInputStream(
-                    filename)));
+                                    filename)));
             ph.progress("Reading object", 66);
             chart = (JFreeChart) ois.readObject();
             ois.close();

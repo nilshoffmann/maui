@@ -64,18 +64,18 @@ public class XYNoBlockRenderer extends XYBlockRenderer {
     /**
      * Draws the block representing the specified item.
      *
-     * @param g2  the graphics device.
-     * @param state  the state.
-     * @param dataArea  the data area.
-     * @param info  the plot rendering info.
-     * @param plot  the plot.
-     * @param domainAxis  the x-axis.
-     * @param rangeAxis  the y-axis.
-     * @param dataset  the dataset.
-     * @param series  the series index.
-     * @param item  the item index.
-     * @param crosshairState  the crosshair state.
-     * @param pass  the pass index.
+     * @param g2 the graphics device.
+     * @param state the state.
+     * @param dataArea the data area.
+     * @param info the plot rendering info.
+     * @param plot the plot.
+     * @param domainAxis the x-axis.
+     * @param rangeAxis the y-axis.
+     * @param dataset the dataset.
+     * @param series the series index.
+     * @param item the item index.
+     * @param crosshairState the crosshair state.
+     * @param pass the pass index.
      */
     @Override
     public void drawItem(Graphics2D g2, XYItemRendererState state,
@@ -157,15 +157,15 @@ public class XYNoBlockRenderer extends XYBlockRenderer {
 
     /**
      * Tests this <code>XYNoBlockRenderer</code> for equality with an arbitrary
-     * object.  This method returns <code>true</code> if and only if:
+     * object. This method returns <code>true</code> if and only if:
      * <ul>
-     * <li><code>obj</code> is an instance of <code>XYNoBlockRenderer</code> (not
-     *     <code>null</code>);</li>
+     * <li><code>obj</code> is an instance of <code>XYNoBlockRenderer</code>
+     * (not <code>null</code>);</li>
      * <li><code>obj</code> has the same field values as this
-     *     <code>XYNoBlockRenderer</code>;</li>
+     * <code>XYNoBlockRenderer</code>;</li>
      * </ul>
      *
-     * @param obj  the object (<code>null</code> permitted).
+     * @param obj the object (<code>null</code> permitted).
      *
      * @return A boolean.
      */
@@ -180,7 +180,7 @@ public class XYNoBlockRenderer extends XYBlockRenderer {
      * @return A clone of this renderer.
      *
      * @throws CloneNotSupportedException if there is a problem creating the
-     *     clone.
+     * clone.
      */
     @Override
     public Object clone() throws CloneNotSupportedException {

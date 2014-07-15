@@ -50,5 +50,5 @@ public class StandaloneWizard {
 //        jdialog.pack();
 //        SwingUtilities.updateComponentTreeUI(jdialog);
     }
-    
+
 }

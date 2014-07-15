@@ -38,9 +38,9 @@ import net.sf.maltcms.chromaui.normalization.api.IStatisticalTest;
  *
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
-public class PeakGroupStatistics implements Map<String,IStatisticalTest>{
-    
-    private HashMap<String,IStatisticalTest> map = new HashMap<String,IStatisticalTest>();
+public class PeakGroupStatistics implements Map<String, IStatisticalTest> {
+
+    private HashMap<String, IStatisticalTest> map = new HashMap<String, IStatisticalTest>();
 
     @Override
     public String toString() {

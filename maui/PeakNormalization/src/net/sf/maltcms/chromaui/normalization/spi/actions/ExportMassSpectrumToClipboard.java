@@ -40,42 +40,42 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
-		category = "Maui",
-		id = "net.sf.maltcms.chromaui.normalization.spi.actions.ExportMassSpectrumToClipboard")
+        category = "Maui",
+        id = "net.sf.maltcms.chromaui.normalization.spi.actions.ExportMassSpectrumToClipboard")
 @ActionRegistration(
-		displayName = "#CTL_ExportMassSpectrumToClipboard",asynchronous = true)
+        displayName = "#CTL_ExportMassSpectrumToClipboard", asynchronous = true)
 @ActionReferences({
     @ActionReference(path = "Actions/DescriptorNodeActions/IPeakAnnotationDescriptor")
 })
 @Messages("CTL_ExportMassSpectrumToClipboard=Copy Mass Spectrum to Clipboard")
 public final class ExportMassSpectrumToClipboard implements ActionListener {
 
-	private final IPeakAnnotationDescriptor context;
+    private final IPeakAnnotationDescriptor context;
 
-	public ExportMassSpectrumToClipboard(IPeakAnnotationDescriptor context) {
-		this.context = context;
-	}
+    public ExportMassSpectrumToClipboard(IPeakAnnotationDescriptor context) {
+        this.context = context;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ev) {
-		double[] massValues = context.getMassValues();
-		int[] intensityValues = context.getIntensityValues();
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < intensityValues.length; i++) {
-			if(intensityValues[i]>0) {
-				if(i==0) {
-					sb.append(massValues[i]).append(" ").append(intensityValues[i]);
-				}else{
-					if(sb.length()==0) {
-						sb.append(massValues[i]).append(" ").append(intensityValues[i]);
-					}else{
-						sb.append(" ").append(massValues[i]).append(" ").append(intensityValues[i]);
-					}
-				}
-			}
-		}
-		StringSelection stringSelection = new StringSelection (sb.toString());
-		Clipboard clipboard = Toolkit.getDefaultToolkit ().getSystemClipboard();
-		clipboard.setContents (stringSelection, null);
-	}
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        double[] massValues = context.getMassValues();
+        int[] intensityValues = context.getIntensityValues();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < intensityValues.length; i++) {
+            if (intensityValues[i] > 0) {
+                if (i == 0) {
+                    sb.append(massValues[i]).append(" ").append(intensityValues[i]);
+                } else {
+                    if (sb.length() == 0) {
+                        sb.append(massValues[i]).append(" ").append(intensityValues[i]);
+                    } else {
+                        sb.append(" ").append(massValues[i]).append(" ").append(intensityValues[i]);
+                    }
+                }
+            }
+        }
+        StringSelection stringSelection = new StringSelection(sb.toString());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
 }

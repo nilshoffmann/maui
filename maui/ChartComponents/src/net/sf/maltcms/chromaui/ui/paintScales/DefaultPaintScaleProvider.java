@@ -40,21 +40,21 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author nilshoffmann
  */
-@ServiceProvider(service=IPaintScaleProvider.class)
+@ServiceProvider(service = IPaintScaleProvider.class)
 public class DefaultPaintScaleProvider implements IPaintScaleProvider {
 
     private int numberOfSamples = 2048;
 
-	@Override
+    @Override
     public int getNumberOfSamples() {
         return numberOfSamples;
     }
 
-	@Override
+    @Override
     public void setNumberOfSamples(int numberOfSamples) {
         this.numberOfSamples = numberOfSamples;
     }
-    
+
     @Override
     public List<PaintScale> getPaintScales() {
         String[] s = new String[]{"res/colorRamps/bcgyr.csv", "res/colorRamps/bgr.csv", "res/colorRamps/bw.csv", "res/colorRamps/br.csv", "res/colorRamps/bgrw.csv", "res/colorRamps/rgbr.csv"};
@@ -68,7 +68,7 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
     }
 
     private double min = 0.0d;
-    
+
     @Override
     public double getMin() {
         return min;
@@ -80,7 +80,7 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
     }
 
     private double max = 1.0d;
-    
+
     @Override
     public double getMax() {
         return this.max;
@@ -90,5 +90,5 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
     public void setMax(double max) {
         this.max = max;
     }
-    
+
 }

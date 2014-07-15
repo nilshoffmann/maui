@@ -37,13 +37,13 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service = IStatisticsDescriptorComparator.class)
 public class DisplayNameComparator implements
-		IStatisticsDescriptorComparator {
+        IStatisticsDescriptorComparator {
 
-	@Override
-	public int compare(IStatisticsDescriptor t, IStatisticsDescriptor t1) {
-		if (t.getClass().equals(t1.getClass())) {
-			return t.compareTo(t1);
-		}
-		return t.getDisplayName().compareTo(t1.getDisplayName());
-	}
+    @Override
+    public int compare(IStatisticsDescriptor t, IStatisticsDescriptor t1) {
+        if (t.getClass().equals(t1.getClass())) {
+            return t.compareTo(t1);
+        }
+        return t.getDisplayName().compareTo(t1.getDisplayName());
+    }
 }

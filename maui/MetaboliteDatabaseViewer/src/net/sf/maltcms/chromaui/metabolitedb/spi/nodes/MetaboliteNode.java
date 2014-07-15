@@ -42,5 +42,5 @@ public class MetaboliteNode extends BeanNode<IMetabolite> {
     public MetaboliteNode(IMetabolite bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children, lkp);
     }
-    
+
 }

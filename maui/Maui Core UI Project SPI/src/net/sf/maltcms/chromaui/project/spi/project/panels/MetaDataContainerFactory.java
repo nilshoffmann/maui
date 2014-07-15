@@ -26,6 +26,7 @@
  * for details.
  */
 package net.sf.maltcms.chromaui.project.spi.project.panels;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -44,7 +45,7 @@ import org.openide.util.WeakListeners;
  * @author hoffmann
  */
 class MetaDataContainerFactory extends ChildFactory<MetaDataContainer> implements
-    PropertyChangeListener {
+        PropertyChangeListener {
 
     private Lookup lookup;
 

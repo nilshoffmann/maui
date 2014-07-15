@@ -65,93 +65,93 @@ import org.openide.util.Exceptions;
 @Data
 public class DBCreateTask extends AProgressAwareRunnable {
 
-	private final IChromAUIProject project;
-	private final DatabaseContainer databaseContainer;
-	private final String databaseName;
-	private final DatabaseType databaseType;
-	private final List<Double> maskedMasses;
-	private boolean cancelled = false;
+    private final IChromAUIProject project;
+    private final DatabaseContainer databaseContainer;
+    private final String databaseName;
+    private final DatabaseType databaseType;
+    private final List<Double> maskedMasses;
+    private boolean cancelled = false;
 
-	private boolean overwriteFile(File fo) {
-		if (fo.exists()) {
-			NotifyDescriptor.Confirmation ndc = new NotifyDescriptor.Confirmation(
-					"Can not import database! File with the same name already exists at: " + fo.getPath() + " Delete?", "Database exists", NotifyDescriptor.YES_NO_OPTION,
-					NotifyDescriptor.WARNING_MESSAGE);
-			Object o = DialogDisplayer.getDefault().notify(ndc);
-			if (o.equals(NotifyDescriptor.OK_OPTION)) {
-				return true;
-			}
-			return false;
-		}
-		return true;
-	}
+    private boolean overwriteFile(File fo) {
+        if (fo.exists()) {
+            NotifyDescriptor.Confirmation ndc = new NotifyDescriptor.Confirmation(
+                    "Can not import database! File with the same name already exists at: " + fo.getPath() + " Delete?", "Database exists", NotifyDescriptor.YES_NO_OPTION,
+                    NotifyDescriptor.WARNING_MESSAGE);
+            Object o = DialogDisplayer.getDefault().notify(ndc);
+            if (o.equals(NotifyDescriptor.OK_OPTION)) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public void run() {
-		getProgressHandle().setDisplayName("Creating " + databaseType + " database " + databaseName);
-		getProgressHandle().switchToIndeterminate();
-		List<FileObject> createdFiles = new LinkedList<FileObject>();
-		IDatabaseDescriptor databaseDescriptor = null;
-		try {
-			FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
-					"databases");
-			String name = StringTools.deBlank(databaseName, "_");
-			File dbFile1 = new File(FileUtil.toFile(baseDir), name + ".db4o");
+    @Override
+    public void run() {
+        getProgressHandle().setDisplayName("Creating " + databaseType + " database " + databaseName);
+        getProgressHandle().switchToIndeterminate();
+        List<FileObject> createdFiles = new LinkedList<FileObject>();
+        IDatabaseDescriptor databaseDescriptor = null;
+        try {
+            FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
+                    "databases");
+            String name = StringTools.deBlank(databaseName, "_");
+            File dbFile1 = new File(FileUtil.toFile(baseDir), name + ".db4o");
 //			int unit = 0;
-			if (cancelled) {
-				return;
-			}
+            if (cancelled) {
+                return;
+            }
 
-			if (overwriteFile(dbFile1)) {
-				FileObject dbFile = FileUtil.createData(dbFile1);
-				createdFiles.add(dbFile);
+            if (overwriteFile(dbFile1)) {
+                FileObject dbFile = FileUtil.createData(dbFile1);
+                createdFiles.add(dbFile);
 
-				ICrudProvider provider = CrudProvider.getProviderFor(
-						FileUtil.toFile(dbFile).toURI().toURL());
-				try {
-					provider.open();
-					databaseDescriptor = DescriptorFactory.newDatabaseDescriptor(
-							FileUtil.toFile(dbFile).getAbsolutePath(),
-							databaseType);
-					databaseDescriptor.setMaskedMasses(maskedMasses);
-					databaseContainer.addMembers(databaseDescriptor);
-				} catch (Exception e) {
-					Exceptions.printStackTrace(e);
-				} finally {
-					provider.close();
-				}
-			}
+                ICrudProvider provider = CrudProvider.getProviderFor(
+                        FileUtil.toFile(dbFile).toURI().toURL());
+                try {
+                    provider.open();
+                    databaseDescriptor = DescriptorFactory.newDatabaseDescriptor(
+                            FileUtil.toFile(dbFile).getAbsolutePath(),
+                            databaseType);
+                    databaseDescriptor.setMaskedMasses(maskedMasses);
+                    databaseContainer.addMembers(databaseDescriptor);
+                } catch (Exception e) {
+                    Exceptions.printStackTrace(e);
+                } finally {
+                    provider.close();
+                }
+            }
 
-			if (cancelled) {
-				if (databaseDescriptor != null) {
-					databaseContainer.removeMembers(databaseDescriptor);
-				}
-				for (FileObject file : createdFiles) {
-					file.delete();
-				}
-			}
-		} catch (IOException ex) {
-			Exceptions.printStackTrace(ex);
+            if (cancelled) {
+                if (databaseDescriptor != null) {
+                    databaseContainer.removeMembers(databaseDescriptor);
+                }
+                for (FileObject file : createdFiles) {
+                    file.delete();
+                }
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
 
-			//undo actions
-			if (databaseDescriptor != null) {
-				databaseContainer.removeMembers(databaseDescriptor);
-			}
-			for (FileObject file : createdFiles) {
-				try {
-					file.delete();
-				} catch (IOException ex1) {
-					Exceptions.printStackTrace(ex1);
-				}
-			}
-		} finally {
-			getProgressHandle().finish();
-		}
-	}
+            //undo actions
+            if (databaseDescriptor != null) {
+                databaseContainer.removeMembers(databaseDescriptor);
+            }
+            for (FileObject file : createdFiles) {
+                try {
+                    file.delete();
+                } catch (IOException ex1) {
+                    Exceptions.printStackTrace(ex1);
+                }
+            }
+        } finally {
+            getProgressHandle().finish();
+        }
+    }
 
-	@Override
-	public boolean cancel() {
-		this.cancelled = true;
-		return this.cancelled;
-	}
+    @Override
+    public boolean cancel() {
+        this.cancelled = true;
+        return this.cancelled;
+    }
 }

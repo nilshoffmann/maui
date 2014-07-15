@@ -48,11 +48,11 @@ import org.rosuda.REngine.REXP;
  */
 public class DataTableTest {
 
-	private DataTable testDataTable;
-	
+    private DataTable testDataTable;
+
     @Before
     public void setUp() {
-		this.testDataTable = createTestDataTable();
+        this.testDataTable = createTestDataTable();
     }
 
     public DataTable createTestDataTable() {
@@ -66,30 +66,30 @@ public class DataTableTest {
 
         List<IChromatogramDescriptor> chromatograms = new LinkedList<IChromatogramDescriptor>();
         for (int k = 0; k < N; k++) {
-			int groupIdx = k % 3;
+            int groupIdx = k % 3;
             IChromatogramDescriptor chromDesc = DescriptorFactory.newChromatogramDescriptor("chrom-" + k, treatmentGroups[groupIdx], null, DescriptorFactory.newNormalizationDescriptor());
             chromatograms.add(chromDesc);
         }
         IPeakNormalizer pn = new IdentityNormalizer();
         PeakGroupContainer pgc = new PeakGroupContainer();
         for (int i = 0; i < M; i++) {
-            IPeakGroupDescriptor ipgd = DescriptorFactory.newPeakGroupDescriptor("testPeakGroup"+i);
+            IPeakGroupDescriptor ipgd = DescriptorFactory.newPeakGroupDescriptor("testPeakGroup" + i);
             ipgd.setPeakGroupContainer(pgc);
             ipgd.setIndex(i);
             ipgd.setName(i + "");
             ipgd.setDisplayName(ipgd.getName());
-            int k = (int) Math.rint(Math.random()*N);
+            int k = (int) Math.rint(Math.random() * N);
             System.out.println("Adding " + k + " peaks to group " + i);
             List<IPeakAnnotationDescriptor> peakAnnotations = new LinkedList<IPeakAnnotationDescriptor>();
             for (int j = 0; j < k; j++) {
-                IPeakAnnotationDescriptor pad = DescriptorFactory.newPeakAnnotationDescriptor(chromatograms.get(j), "peak"+j+" in row "+i, 0, new double[0], Double.NaN, Double.NaN, Double.NaN, Double.NaN, "", "", "", "", Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
+                IPeakAnnotationDescriptor pad = DescriptorFactory.newPeakAnnotationDescriptor(chromatograms.get(j), "peak" + j + " in row " + i, 0, new double[0], Double.NaN, Double.NaN, Double.NaN, Double.NaN, "", "", "", "", Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
                 peakAnnotations.add(pad);
             }
             ipgd.setPeakAnnotationDescriptors(peakAnnotations);
             pgc.addMembers(ipgd);
         }
-        DataTable dt = new DataTable(pgc,pn,"TestDataTable", DataTable.ImputationMode.ZERO);
-		return dt;
+        DataTable dt = new DataTable(pgc, pn, "TestDataTable", DataTable.ImputationMode.ZERO);
+        return dt;
     }
 
     /**
@@ -99,6 +99,6 @@ public class DataTableTest {
     public void testToDataFrame() throws Exception {
         DataTable instance = createTestDataTable();
         REXP result = instance.toDataFrame();
-		assertNotNull(result);
+        assertNotNull(result);
     }
 }

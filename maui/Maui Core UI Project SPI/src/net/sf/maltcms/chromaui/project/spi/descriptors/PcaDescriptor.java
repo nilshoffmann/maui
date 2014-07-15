@@ -167,7 +167,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
     @Override
     public void setCases(List<IChromatogramDescriptor> chromatograms) {
         activate(ActivationPurpose.WRITE);
-        for(IChromatogramDescriptor descr:chromatograms) {
+        for (IChromatogramDescriptor descr : chromatograms) {
             descr.setProject(getProject());
         }
         List<IChromatogramDescriptor> old = this.cases;
@@ -185,7 +185,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
     @Override
     public void setVariables(List<IPeakGroupDescriptor> peakGroup) {
         activate(ActivationPurpose.WRITE);
-        for(IPeakGroupDescriptor peakGroups:peakGroup) {
+        for (IPeakGroupDescriptor peakGroups : peakGroup) {
             peakGroups.setProject(getProject());
         }
         List<IPeakGroupDescriptor> old = this.variables;

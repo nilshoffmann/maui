@@ -56,7 +56,6 @@ import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
-
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -88,11 +87,11 @@ public class FoldChangeElement implements IPeakGroupDescriptor {
                     IPeakGroupDescriptor ipgd2 = factory.newPeakGroupDescriptor(ipgd.getPeaksForTreatmentGroup(numeratorGroup), tool);
 //                    System.out.println("Numerator group has "+ipgd2.getPeakAnnotationDescriptors().size());
                     double numMeanArea = ipgd2.getMeanArea(peakAreaNormalizer);
-                    numeratorValue += Double.isNaN(numMeanArea)?0:numMeanArea;
+                    numeratorValue += Double.isNaN(numMeanArea) ? 0 : numMeanArea;
                     IPeakGroupDescriptor ipgd3 = factory.newPeakGroupDescriptor(ipgd.getPeaksForTreatmentGroup(denominatorGroup), tool);
 //                    System.out.println("Denominator group has "+ipgd3.getPeakAnnotationDescriptors().size());
                     double denomMeanArea = ipgd3.getMeanArea(peakAreaNormalizer);
-                    denominatorValue += Double.isNaN(denomMeanArea)?0:denomMeanArea;
+                    denominatorValue += Double.isNaN(denomMeanArea) ? 0 : denomMeanArea;
 //                    System.out.println("Numerator value: "+numeratorValue);
 //                    System.out.println("Denominator value: "+denominatorValue);
                 } else {
@@ -106,10 +105,10 @@ public class FoldChangeElement implements IPeakGroupDescriptor {
                     }
                     IPeakGroupDescriptor ipgd2 = factory.newPeakGroupDescriptor(ipgd.getPeaksForTreatmentGroup(numeratorGroup), tool);
                     double numMeanArea = ipgd2.getMeanArea(peakAreaNormalizer);
-                    numeratorValue += Double.isNaN(numMeanArea)?0:numMeanArea;
+                    numeratorValue += Double.isNaN(numMeanArea) ? 0 : numMeanArea;
                     IPeakGroupDescriptor ipgd3 = factory.newPeakGroupDescriptor(ipgd.getPeaksForTreatmentGroup(denominatorGroup), tool);
                     double denomMeanArea = ipgd3.getMeanArea(peakAreaNormalizer);
-                    denominatorValue += Double.isNaN(denomMeanArea)?0:denomMeanArea;
+                    denominatorValue += Double.isNaN(denomMeanArea) ? 0 : denomMeanArea;
                 }
             }
             this.foldChange = (Math.log10(numeratorValue) / Math.log10(2)) - (Math.log10(denominatorValue) / Math.log10(2));

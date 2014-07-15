@@ -43,7 +43,7 @@ import org.openide.util.Utilities;
  * @author nilshoffmann
  */
 @ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
-id = "net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Chromatogram1DHeatmapOpenAction")
+        id = "net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Chromatogram1DHeatmapOpenAction")
 @ActionRegistration(displayName = "#CTL_Chromatogram1DHeatmapOpenAction")
 @NbBundle.Messages("CTL_Chromatogram1DHeatmapOpenAction=Open in 1D Chromatogram Heatmap Viewer")
 public final class Chromatogram1DHeatmapOpenAction implements ActionListener {
@@ -53,17 +53,17 @@ public final class Chromatogram1DHeatmapOpenAction implements ActionListener {
     public Chromatogram1DHeatmapOpenAction(IChromatogramDescriptor context) {
         this.context = context;
     }
- 
+
     @Override
     public void actionPerformed(ActionEvent e) {
         IChromatogramDescriptor descr = context;
-		if(descr.getSeparationType().getFeatureDimensions()==1) {
-			IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
-			Chromatogram1DHeatmapViewerLoaderTask t = new Chromatogram1DHeatmapViewerLoaderTask(project, null, descr);
-			Chromatogram1DHeatmapViewerLoaderTask.createAndRun("1D Chromatogram Heatmap TopComponent Loader", t);
-		} else {
-			NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with "+descr.getSeparationType().getFeatureDimensions()+" separation dimension(s)!",NotifyDescriptor.Message.INFORMATION_MESSAGE);
-			DialogDisplayer.getDefault().notify(nd);
-		}
+        if (descr.getSeparationType().getFeatureDimensions() == 1) {
+            IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+            Chromatogram1DHeatmapViewerLoaderTask t = new Chromatogram1DHeatmapViewerLoaderTask(project, null, descr);
+            Chromatogram1DHeatmapViewerLoaderTask.createAndRun("1D Chromatogram Heatmap TopComponent Loader", t);
+        } else {
+            NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + descr.getSeparationType().getFeatureDimensions() + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
+            DialogDisplayer.getDefault().notify(nd);
+        }
     }
 }

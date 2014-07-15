@@ -43,7 +43,7 @@ public class PsmContainer extends BasicMzTabMetaDataContainer<PsmDescriptor> {
         for (PSM p : map) {
             PsmDescriptor d = new PsmDescriptor();
             d.setRecord(p);
-            d.setDisplayName(p.getAccession()==null?"NA":p.getAccession());
+            d.setDisplayName(p.getAccession() == null ? "NA" : p.getAccession());
             c.addMembers(d);
         }
         return c;

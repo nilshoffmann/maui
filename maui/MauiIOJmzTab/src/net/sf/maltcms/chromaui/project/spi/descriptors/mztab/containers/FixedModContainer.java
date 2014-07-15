@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers;
 
 import java.util.SortedMap;
@@ -33,8 +32,7 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.FixedModDescriptor;
 import uk.ac.ebi.pride.jmztab.model.FixedMod;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
-
-public class FixedModContainer extends BasicMzTabMetaDataContainer<FixedModDescriptor>{
+public class FixedModContainer extends BasicMzTabMetaDataContainer<FixedModDescriptor> {
 
     public static FixedModContainer create(Metadata metadata) {
         FixedModContainer c = new FixedModContainer();
@@ -49,10 +47,9 @@ public class FixedModContainer extends BasicMzTabMetaDataContainer<FixedModDescr
         }
         return c;
     }
-    
+
 //    @Override
 //    public JPanel createEditor() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-    
 }

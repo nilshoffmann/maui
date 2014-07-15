@@ -143,7 +143,7 @@ public class ChromAUIProject implements IChromAUIProject {
 
     public ChromAUIProject() {
         lkp = LookupProviderSupport.createCompositeLookup(new AbstractLookup(
-                ic),"Projects/net-sf-maltcms-chromaui-project/Lookup");
+                ic), "Projects/net-sf-maltcms-chromaui-project/Lookup");
         if (state != null) {
             ic.add(state);
         }
@@ -488,7 +488,7 @@ public class ChromAUIProject implements IChromAUIProject {
                 if (chrom != null) {
                     String chromName = chrom.getDisplayName();
                     String descrName = descriptor.getDisplayName();
-                    if (chromName !=null && descrName != null) {
+                    if (chromName != null && descrName != null) {
                         if (chromName.equals(descrName)) {
                             peaks.add(container);
                         }

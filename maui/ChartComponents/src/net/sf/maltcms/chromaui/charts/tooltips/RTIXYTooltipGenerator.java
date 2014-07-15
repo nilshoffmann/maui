@@ -53,7 +53,7 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
         this.modulationTime = (float) modulationTime;
         this.scansPerModulation = scansPerModulation;
         this.lookup = new float[modulations];
-        float time = (float)rtOffset;
+        float time = (float) rtOffset;
         for (int i = 0; i < modulations; i++) {
             this.lookup[i] = time;
             time += (modulationTime);
@@ -64,7 +64,7 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
 
     @Override
     public String generateToolTip(XYDataset xyd, int i, int i1) {
-        Point p = new Point(i,i1);
+        Point p = new Point(i, i1);
         if (hm.containsKey(p)) {
             SoftReference<String> sr = hm.get(p);
             if (sr.get() != null) {
@@ -85,7 +85,7 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
                 sb.append(" at [ RT1: ");
                 sb.append(lookup[x]);
                 sb.append(" s, RT2: ");
-                float off = (this.modulationTime * ((float)y/(float)(this.scansPerModulation)));
+                float off = (this.modulationTime * ((float) y / (float) (this.scansPerModulation)));
                 sb.append(lookup[x] + off);
                 sb.append("s ]");
                 if (xyd instanceof XYZDataset) {
@@ -100,16 +100,16 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
             return "";
         }
         return null;
-        
+
     }
 
     @Override
     public String generateToolTip(XYZDataset xyzd, int i, int i1) {
-        return generateToolTip((XYDataset)xyzd,i,i1);
+        return generateToolTip((XYDataset) xyzd, i, i1);
     }
 
     @Override
     public String generateLabel(XYDataset xyd, int i, int i1) {
-        return generateToolTip(xyd,i,i1);
+        return generateToolTip(xyd, i, i1);
     }
 }

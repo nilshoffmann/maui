@@ -32,14 +32,14 @@ package net.sf.maltcms.chromaui.project.spi.project;
  * @author nilshoffmann
  */
 public class Species {
-    
+
     private String pubmedId = "12393";
     private String ontology = "Arafa adeno";
-    
+
     public String getPubmedId() {
         return pubmedId;
     }
-    
+
     public String getOntology() {
         return ontology;
     }
@@ -51,7 +51,5 @@ public class Species {
     public void setPubmedId(String pubmedId) {
         this.pubmedId = pubmedId;
     }
-    
-    
-    
+
 }

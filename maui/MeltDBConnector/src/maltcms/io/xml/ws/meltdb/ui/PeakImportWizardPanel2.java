@@ -77,27 +77,27 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyC
     public final void removeChangeListener(ChangeListener l) {
     }
     /*
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
-    public final void addChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.add(l);
-    }
-    }
-    public final void removeChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.remove(l);
-    }
-    }
-    protected final void fireChangeEvent() {
-    Iterator<ChangeListener> it;
-    synchronized (listeners) {
-    it = new HashSet<ChangeListener>(listeners).iterator();
-    }
-    ChangeEvent ev = new ChangeEvent(this);
-    while (it.hasNext()) {
-    it.next().stateChanged(ev);
-    }
-    }
+     private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+     public final void addChangeListener(ChangeListener l) {
+     synchronized (listeners) {
+     listeners.add(l);
+     }
+     }
+     public final void removeChangeListener(ChangeListener l) {
+     synchronized (listeners) {
+     listeners.remove(l);
+     }
+     }
+     protected final void fireChangeEvent() {
+     Iterator<ChangeListener> it;
+     synchronized (listeners) {
+     it = new HashSet<ChangeListener>(listeners).iterator();
+     }
+     ChangeEvent ev = new ChangeEvent(this);
+     while (it.hasNext()) {
+     it.next().stateChanged(ev);
+     }
+     }
      */
 
     // You can use a settings object to keep track of state. Normally the
@@ -109,9 +109,9 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyC
 //            ((PeakImportVisualPanel1) getComponent()).setNameField(((WizardDescriptor) settings).getProperty(PeakImportVisualPanel1.PROP_USERNAME));
             getComponent().addPropertyChangeListener(this);
             this.model = ((WizardDescriptor) settings);
-            if(this.component!=null) {
-                this.component.setUserName((String)this.model.getProperty(PeakImportVisualPanel1.PROP_USERNAME));
-                this.component.setPassword((char[])this.model.getProperty(PeakImportVisualPanel1.PROP_PASSWORD));
+            if (this.component != null) {
+                this.component.setUserName((String) this.model.getProperty(PeakImportVisualPanel1.PROP_USERNAME));
+                this.component.setPassword((char[]) this.model.getProperty(PeakImportVisualPanel1.PROP_PASSWORD));
             }
         }
     }

@@ -36,8 +36,7 @@ import org.apache.commons.configuration.Configuration;
  * @author Nils Hoffmann
  */
 public class ModelBuilder {
-     
-    
+
     public static WidgetTableModel getModel(Configuration properties, Class<?> c) {
 
         Vector<String> header = new Vector<String>();

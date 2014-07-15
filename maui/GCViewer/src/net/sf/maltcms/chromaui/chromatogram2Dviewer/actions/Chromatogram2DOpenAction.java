@@ -43,7 +43,7 @@ import org.openide.util.Utilities;
  * @author nilshoffmann
  */
 @ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
-id = "net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Chromatogram2DOpenAction")
+        id = "net.sf.maltcms.chromaui.chromatogram2Dviewer.actions.Chromatogram2DOpenAction")
 @ActionRegistration(displayName = "#CTL_Chromatogram2DOpenAction")
 @NbBundle.Messages("CTL_Chromatogram2DOpenAction=Open in 2D Chromatogram Viewer")
 public final class Chromatogram2DOpenAction implements ActionListener {
@@ -53,17 +53,17 @@ public final class Chromatogram2DOpenAction implements ActionListener {
     public Chromatogram2DOpenAction(IChromatogramDescriptor context) {
         this.context = context;
     }
- 
+
     @Override
     public void actionPerformed(ActionEvent e) {
         IChromatogramDescriptor descr = context;
-		if(descr.getSeparationType().getFeatureDimensions()==2) {
-			IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
-			Chromatogram2DViewerLoaderTask t = new Chromatogram2DViewerLoaderTask(project, null, descr);
-			Chromatogram2DViewerLoaderTask.createAndRun("2D Chromatogram TopComponent Loader", t);
-		} else {
-			NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with "+descr.getSeparationType().getFeatureDimensions()+" separation dimension(s)!",NotifyDescriptor.Message.INFORMATION_MESSAGE);
-			DialogDisplayer.getDefault().notify(nd);
-		}
+        if (descr.getSeparationType().getFeatureDimensions() == 2) {
+            IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
+            Chromatogram2DViewerLoaderTask t = new Chromatogram2DViewerLoaderTask(project, null, descr);
+            Chromatogram2DViewerLoaderTask.createAndRun("2D Chromatogram TopComponent Loader", t);
+        } else {
+            NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + descr.getSeparationType().getFeatureDimensions() + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
+            DialogDisplayer.getDefault().notify(nd);
+        }
     }
 }

@@ -50,9 +50,10 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.CreateUserLibraryFromPeakDescriptorsAction")
+        id = "net.sf.maltcms.db.search.spi.actions.CreateUserLibraryFromPeakDescriptorsAction")
 @ActionRegistration(displayName = "#CTL_CreateUserLibraryFromPeakDescriptorsAction")
-@ActionReferences({@ActionReference(path="Actions/DescriptorNodeActions/IPeakAnnotationDescriptor")})
+@ActionReferences({
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakAnnotationDescriptor")})
 @Messages("CTL_CreateUserLibraryFromPeakDescriptorsAction=Add Peaks to DB")
 public final class AddPeakDescriptorsToDatabaseAction implements ActionListener {
 
@@ -79,12 +80,12 @@ public final class AddPeakDescriptorsToDatabaseAction implements ActionListener 
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
         ddp.updateView();
         IDatabaseDescriptor database;
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            if (ddp.getSelectedDatabase()==null) {
+            if (ddp.getSelectedDatabase() == null) {
                 System.out.println("No database selected!");
                 return;
             }
@@ -92,7 +93,7 @@ public final class AddPeakDescriptorsToDatabaseAction implements ActionListener 
         } else {
             return;
         }
-		DBAddPeaksTask dapt = new DBAddPeaksTask(project, database, context);
+        DBAddPeaksTask dapt = new DBAddPeaksTask(project, database, context);
         DBAddPeaksTask.createAndRun("Adding peak descriptors to database", dapt);
     }
 }

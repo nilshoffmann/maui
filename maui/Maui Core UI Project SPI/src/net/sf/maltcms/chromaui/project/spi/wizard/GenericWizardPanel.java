@@ -117,8 +117,8 @@ public class GenericWizardPanel implements
 //    }
     @Override
     public void validate() throws WizardValidationException {
-        if(!isValid()) {
-            throw new WizardValidationException((JComponent)component, "Validation Failed", "Validation of this wizard page failed. Please check hints!");
+        if (!isValid()) {
+            throw new WizardValidationException((JComponent) component, "Validation Failed", "Validation of this wizard page failed. Please check hints!");
         }
     }
 

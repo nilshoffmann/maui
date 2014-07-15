@@ -49,9 +49,10 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeakDescriptors")
+        id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeakDescriptors")
 @ActionRegistration(displayName = "#CTL_AnnotatePeakDescriptors")
-@ActionReferences({@ActionReference(path="Actions/DescriptorNodeActions/IPeakAnnotationDescriptor")})
+@ActionReferences({
+    @ActionReference(path = "Actions/DescriptorNodeActions/IPeakAnnotationDescriptor")})
 @Messages("CTL_AnnotatePeakDescriptors=Search Peaks in DB")
 public final class AnnotatePeakDescriptors implements ActionListener {
 
@@ -78,7 +79,7 @@ public final class AnnotatePeakDescriptors implements ActionListener {
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
         ddp.updateView();
         List<IDatabaseDescriptor> databases;
         RetentionIndexCalculator ricalc;
@@ -105,8 +106,9 @@ public final class AnnotatePeakDescriptors implements ActionListener {
         }
         doSearch(context, project, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
     }
+
     private void doSearch(List<IPeakAnnotationDescriptor> context, IChromAUIProject project, List<IDatabaseDescriptor> databases, RetentionIndexCalculator ricalc, AMetabolitePredicate predicate, double matchThreshold, int maxNumberOfHits, double riWindow, boolean clearExistingMatches) {
         DBPeakAnnotationTask dbppat = new DBPeakAnnotationTask(context, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
-        DBPeakAnnotationTask.createAndRun("Peak Annotation on "+project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
+        DBPeakAnnotationTask.createAndRun("Peak Annotation on " + project.getProjectDirectory().getName(), dbppat, Executors.newSingleThreadExecutor());
     }
 }

@@ -66,135 +66,135 @@ import ucar.ma2.Array;
 @Slf4j
 @Data
 public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResultList<IPeakAnnotationDescriptor>> implements
-		Serializable {
+        Serializable {
 
-	private final IDatabaseDescriptor databaseDescriptor;
-	private final List<IQueryInput<IPeakAnnotationDescriptor>> metaboliteDatabaseQueryInputs;
-	private final AMetabolitePredicate predicate;
-	private final double matchThreshold;
-	private final int maxHits;
-	private final double riWindow;
+    private final IDatabaseDescriptor databaseDescriptor;
+    private final List<IQueryInput<IPeakAnnotationDescriptor>> metaboliteDatabaseQueryInputs;
+    private final AMetabolitePredicate predicate;
+    private final double matchThreshold;
+    private final int maxHits;
+    private final double riWindow;
 
-	@Override
-	public QueryResultList<IPeakAnnotationDescriptor> call() throws Exception {
-		Map<URL, ICrudProvider> dbMap = new HashMap<URL, ICrudProvider>();
-		try {
-			getProgressHandle().start(metaboliteDatabaseQueryInputs.size());
-			int counter = 1;
-			QueryResultList<IPeakAnnotationDescriptor> result = new QueryResultList<IPeakAnnotationDescriptor>();
-			List<Double> maskedMasses = databaseDescriptor.getMaskedMasses();
-			for (IQueryInput<IPeakAnnotationDescriptor> metaboliteDatabaseQueryInput : metaboliteDatabaseQueryInputs) {
-				//System.out.println("Processing query input "+counter+"/"+metaboliteDatabaseQueryInputs.size());
-				if (isCancel()) {
-					return new QueryResultList<IPeakAnnotationDescriptor>();
-				}
-				EvalTools.notNull(metaboliteDatabaseQueryInput, this);
-				EvalTools.notNull(metaboliteDatabaseQueryInput.getScan(), this);
-				EvalTools.notNull(metaboliteDatabaseQueryInput.getScan().getChromatogramDescriptor(), this);
-				IPeakAnnotationDescriptor descr = metaboliteDatabaseQueryInput.getScan();
-				String peakString = "Peak at " + String.format("%.2f", metaboliteDatabaseQueryInput.getScan().getApexTime()) + " child of " + descr.getChromatogramDescriptor().getDisplayName();
-				System.out.println(peakString);
-				getProgressHandle().progress(peakString, counter++);
-				//System.out.println("Processing peak "+descr.getDisplayName());
-				AMetabolitePredicate amp = predicate.copy();
-				amp.setMaxHits(maxHits);
-				//System.out.println("Match threshold is " + matchThreshold + ", returning at most " + maxHits);
-				amp.setScoreThreshold(matchThreshold);
-				IScan scan = new Scan1D(Array.factory(descr.getMassValues()), Array.factory(descr.getIntensityValues()), descr.getIndex(), descr.getApexTime());
-				amp.setScan(scan);
-				amp.setMaskedMasses(maskedMasses);
-				RetentionIndexCalculator ridb = metaboliteDatabaseQueryInput.getRetentionIndexCalculator();
-				AMetabolitePredicate queryPredicate = amp;
-				//System.out.println(queryPredicate.getClass().getName()+" "+queryPredicate);
-				//System.out.println(queryPredicate.getScan().getIntensities());
-				double ri = Double.NaN;
-				//use ri for query
-				if (ridb != null) {
-					ri = ridb.getTemperatureProgrammedKovatsIndex(scan.getScanAcquisitionTime());
-					System.out.println("RI database given! Searching in RI window from " + (ri - riWindow) + " to " + (ri + riWindow));
-				} else {
-					System.out.println("No RI database given!");
-				}
-				final double riValue = ri;
-				ICrudProvider oc = null;
-				URL dbURL = new File(databaseDescriptor.getResourceLocation()).toURI().toURL();
-				if (dbMap.containsKey(dbURL)) {
-					oc = dbMap.get(dbURL);
-				} else {
-					oc = DBConnectionManager.getInMemoryContainer(dbURL);
-					dbMap.put(dbURL, oc);
-				}
-				ICrudSession session = oc.createSession();
-				session.open();
-				Collection<IMetabolite> candidates = Collections.emptyList();
-				if (!Double.isNaN(riValue)) {
-					Query query = session.getSODAQuery();
-					query.constrain(IMetabolite.class);
-					query.descend("ri").constrain(ri + riWindow).smaller().and(query.descend("ri").constrain(ri - riWindow).greater());
-					candidates = query.execute();
-				} else {
-					System.out.println("Using complete query!");
-					candidates = session.retrieve(IMetabolite.class);
-				}
-				System.out.println("Received " + candidates.size() + " for query!");
-				for (IMetabolite met : candidates) {
-					if (isCancel()) {
-						return new QueryResultList<IPeakAnnotationDescriptor>();
-					}
-					queryPredicate.match(met);
-				}
-				Map<IMetabolite, Double> resultMap = new LinkedHashMap<IMetabolite, Double>();
-				List<Tuple2D<Double, IMetabolite>> c = new LinkedList<Tuple2D<Double, IMetabolite>>(queryPredicate.getMetabolites());
-				if (!Double.isNaN(riValue)) {
-					Collections.sort(c, new Comparator<Tuple2D<Double, IMetabolite>>() {
-						@Override
-						public int compare(Tuple2D<Double, IMetabolite> t, Tuple2D<Double, IMetabolite> t1) {
-							//check for equality
-							int value = Double.compare(t.getFirst().doubleValue(),t1.getFirst().doubleValue());
-							if(value==0) {
-								//if equal, compare by absolute ri deviation, ascending order in this case is okay, since we want to sort by the smallest ri deviation
-								return Double.compare(Math.abs(t.getSecond().getRetentionIndex() - riValue), Math.abs(t1.getSecond().getRetentionIndex() - riValue));
-							}
-							//otherwise compare by similarites (invert with - to get descending order from highest to lowest)
-							return -value;
-						}
-					});
-				}
-				for (Tuple2D<Double, IMetabolite> tpl : c) {
-					if (isCancel()) {
-						return new QueryResultList<IPeakAnnotationDescriptor>();
-					}
+    @Override
+    public QueryResultList<IPeakAnnotationDescriptor> call() throws Exception {
+        Map<URL, ICrudProvider> dbMap = new HashMap<URL, ICrudProvider>();
+        try {
+            getProgressHandle().start(metaboliteDatabaseQueryInputs.size());
+            int counter = 1;
+            QueryResultList<IPeakAnnotationDescriptor> result = new QueryResultList<IPeakAnnotationDescriptor>();
+            List<Double> maskedMasses = databaseDescriptor.getMaskedMasses();
+            for (IQueryInput<IPeakAnnotationDescriptor> metaboliteDatabaseQueryInput : metaboliteDatabaseQueryInputs) {
+                //System.out.println("Processing query input "+counter+"/"+metaboliteDatabaseQueryInputs.size());
+                if (isCancel()) {
+                    return new QueryResultList<IPeakAnnotationDescriptor>();
+                }
+                EvalTools.notNull(metaboliteDatabaseQueryInput, this);
+                EvalTools.notNull(metaboliteDatabaseQueryInput.getScan(), this);
+                EvalTools.notNull(metaboliteDatabaseQueryInput.getScan().getChromatogramDescriptor(), this);
+                IPeakAnnotationDescriptor descr = metaboliteDatabaseQueryInput.getScan();
+                String peakString = "Peak at " + String.format("%.2f", metaboliteDatabaseQueryInput.getScan().getApexTime()) + " child of " + descr.getChromatogramDescriptor().getDisplayName();
+                System.out.println(peakString);
+                getProgressHandle().progress(peakString, counter++);
+                //System.out.println("Processing peak "+descr.getDisplayName());
+                AMetabolitePredicate amp = predicate.copy();
+                amp.setMaxHits(maxHits);
+                //System.out.println("Match threshold is " + matchThreshold + ", returning at most " + maxHits);
+                amp.setScoreThreshold(matchThreshold);
+                IScan scan = new Scan1D(Array.factory(descr.getMassValues()), Array.factory(descr.getIntensityValues()), descr.getIndex(), descr.getApexTime());
+                amp.setScan(scan);
+                amp.setMaskedMasses(maskedMasses);
+                RetentionIndexCalculator ridb = metaboliteDatabaseQueryInput.getRetentionIndexCalculator();
+                AMetabolitePredicate queryPredicate = amp;
+                //System.out.println(queryPredicate.getClass().getName()+" "+queryPredicate);
+                //System.out.println(queryPredicate.getScan().getIntensities());
+                double ri = Double.NaN;
+                //use ri for query
+                if (ridb != null) {
+                    ri = ridb.getTemperatureProgrammedKovatsIndex(scan.getScanAcquisitionTime());
+                    System.out.println("RI database given! Searching in RI window from " + (ri - riWindow) + " to " + (ri + riWindow));
+                } else {
+                    System.out.println("No RI database given!");
+                }
+                final double riValue = ri;
+                ICrudProvider oc = null;
+                URL dbURL = new File(databaseDescriptor.getResourceLocation()).toURI().toURL();
+                if (dbMap.containsKey(dbURL)) {
+                    oc = dbMap.get(dbURL);
+                } else {
+                    oc = DBConnectionManager.getInMemoryContainer(dbURL);
+                    dbMap.put(dbURL, oc);
+                }
+                ICrudSession session = oc.createSession();
+                session.open();
+                Collection<IMetabolite> candidates = Collections.emptyList();
+                if (!Double.isNaN(riValue)) {
+                    Query query = session.getSODAQuery();
+                    query.constrain(IMetabolite.class);
+                    query.descend("ri").constrain(ri + riWindow).smaller().and(query.descend("ri").constrain(ri - riWindow).greater());
+                    candidates = query.execute();
+                } else {
+                    System.out.println("Using complete query!");
+                    candidates = session.retrieve(IMetabolite.class);
+                }
+                System.out.println("Received " + candidates.size() + " for query!");
+                for (IMetabolite met : candidates) {
+                    if (isCancel()) {
+                        return new QueryResultList<IPeakAnnotationDescriptor>();
+                    }
+                    queryPredicate.match(met);
+                }
+                Map<IMetabolite, Double> resultMap = new LinkedHashMap<IMetabolite, Double>();
+                List<Tuple2D<Double, IMetabolite>> c = new LinkedList<Tuple2D<Double, IMetabolite>>(queryPredicate.getMetabolites());
+                if (!Double.isNaN(riValue)) {
+                    Collections.sort(c, new Comparator<Tuple2D<Double, IMetabolite>>() {
+                        @Override
+                        public int compare(Tuple2D<Double, IMetabolite> t, Tuple2D<Double, IMetabolite> t1) {
+                            //check for equality
+                            int value = Double.compare(t.getFirst().doubleValue(), t1.getFirst().doubleValue());
+                            if (value == 0) {
+                                //if equal, compare by absolute ri deviation, ascending order in this case is okay, since we want to sort by the smallest ri deviation
+                                return Double.compare(Math.abs(t.getSecond().getRetentionIndex() - riValue), Math.abs(t1.getSecond().getRetentionIndex() - riValue));
+                            }
+                            //otherwise compare by similarites (invert with - to get descending order from highest to lowest)
+                            return -value;
+                        }
+                    });
+                }
+                for (Tuple2D<Double, IMetabolite> tpl : c) {
+                    if (isCancel()) {
+                        return new QueryResultList<IPeakAnnotationDescriptor>();
+                    }
 //                    if (tpl.getFirst() >= matchThreshold) {
-					resultMap.put(tpl.getSecond(), tpl.getFirst());
+                    resultMap.put(tpl.getSecond(), tpl.getFirst());
 //                    }
-				}
-				Map<IMetabolite, Double> riMap = new LinkedHashMap<IMetabolite, Double>();
-				for (Tuple2D<Double, IMetabolite> tpl : c) {
-					if (isCancel()) {
-						return new QueryResultList<IPeakAnnotationDescriptor>();
-					}
+                }
+                Map<IMetabolite, Double> riMap = new LinkedHashMap<IMetabolite, Double>();
+                for (Tuple2D<Double, IMetabolite> tpl : c) {
+                    if (isCancel()) {
+                        return new QueryResultList<IPeakAnnotationDescriptor>();
+                    }
 //                    if (tpl.getFirst() >= matchThreshold) {
-					riMap.put(tpl.getSecond(), tpl.getSecond().
-							getRetentionIndex());
+                    riMap.put(tpl.getSecond(), tpl.getSecond().
+                            getRetentionIndex());
 //                    }
 
-				}
-				System.out.println("Retaining " + resultMap.size() + " results with score of at least: " + matchThreshold);
-				result.add(new QueryResult<IPeakAnnotationDescriptor>(descr, ri,
-						resultMap, riMap,
-						databaseDescriptor));
-				session.close();
+                }
+                System.out.println("Retaining " + resultMap.size() + " results with score of at least: " + matchThreshold);
+                result.add(new QueryResult<IPeakAnnotationDescriptor>(descr, ri,
+                        resultMap, riMap,
+                        databaseDescriptor));
+                session.close();
 
-			}
+            }
 
-			return result;
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			for (URL dbURL : dbMap.keySet()) {
-				dbMap.remove(dbURL).close();
-			}
-			getProgressHandle().finish();
-		}
-	}
+            return result;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            for (URL dbURL : dbMap.keySet()) {
+                dbMap.remove(dbURL).close();
+            }
+            getProgressHandle().finish();
+        }
+    }
 }

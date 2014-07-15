@@ -42,9 +42,9 @@ public final class Properties2PipelineEditorOpenAction implements ActionListener
     @Override
     public void actionPerformed(ActionEvent ev) {
 //        for (MaltcmsPipelineFormatDataObject dataObject : context) {
-            //FIXME
-            PipelineEditorOpenSupport ms = new PipelineEditorOpenSupport(((MaltcmsPipelineFormatDataObject) context).getPrimaryEntry());
-            ms.open();
+        //FIXME
+        PipelineEditorOpenSupport ms = new PipelineEditorOpenSupport(((MaltcmsPipelineFormatDataObject) context).getPrimaryEntry());
+        ms.open();
 //        }
     }
 }

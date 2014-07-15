@@ -81,7 +81,7 @@ public final class SynchronizeWithMeltDBAction2 implements ActionListener {
                     c[i] = 0;
                 }
                 cp.setPassword(new char[0]);
-                MeltDBSession session = new MeltDBSession(user, Keyring.read(user+"@meltdb"));
+                MeltDBSession session = new MeltDBSession(user, Keyring.read(user + "@meltdb"));
                 WebServiceClient mw = new WebServiceClient(session);
                 Dialog d = DialogDisplayer.getDefault().createDialog(new DialogDescriptor(mw.getPanel(), "MeltDB Synchronization", true, null));
                 d.setVisible(true);

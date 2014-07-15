@@ -44,37 +44,37 @@ import org.openide.util.WeakListeners;
  */
 public class ChartOverlayChildFactory extends ChildFactory<ChartOverlay> implements OverlayChangeListener, PropertyChangeListener {
 
-	private List<ChartOverlay> overlays;
+    private List<ChartOverlay> overlays;
 
-	public ChartOverlayChildFactory(List<ChartOverlay> overlays) {
-		this.overlays = overlays;
-		for(ChartOverlay overlay:overlays) {
-			overlay.addChangeListener(this);
-		}
-	}
+    public ChartOverlayChildFactory(List<ChartOverlay> overlays) {
+        this.overlays = overlays;
+        for (ChartOverlay overlay : overlays) {
+            overlay.addChangeListener(this);
+        }
+    }
 
-	@Override
-	protected boolean createKeys(List<ChartOverlay> list) {
-		for (ChartOverlay overlay : overlays) {
-			list.add(overlay);
-		}
-		return true;
-	}
+    @Override
+    protected boolean createKeys(List<ChartOverlay> list) {
+        for (ChartOverlay overlay : overlays) {
+            list.add(overlay);
+        }
+        return true;
+    }
 
-	@Override
-	protected Node createNodeForKey(ChartOverlay key) {
-		Node n = key.createNodeDelegate();
-		n.addPropertyChangeListener(WeakListeners.propertyChange(this, n));
-		return n;
-	}
+    @Override
+    protected Node createNodeForKey(ChartOverlay key) {
+        Node n = key.createNodeDelegate();
+        n.addPropertyChangeListener(WeakListeners.propertyChange(this, n));
+        return n;
+    }
 
-	@Override
-	public void overlayChanged(OverlayChangeEvent oce) {
-		refresh(true);
-	}
+    @Override
+    public void overlayChanged(OverlayChangeEvent oce) {
+        refresh(true);
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		refresh(true);
-	}
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        refresh(true);
+    }
 }

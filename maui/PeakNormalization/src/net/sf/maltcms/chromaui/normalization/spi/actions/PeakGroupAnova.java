@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupAnova")
+        id = "net.sf.maltcms.chromaui.normalization.spi.PeakGroupAnova")
 @ActionRegistration(displayName = "#CTL_PeakGroupAnova")
 @ActionReferences({
     @ActionReference(path = "Menu/View", position = 0),
@@ -65,11 +65,11 @@ public final class PeakGroupAnova implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         IPeakNormalizer normalizer = NormalizationDialog.getPeakNormalizer(context);
-        if(normalizer==null) {
+        if (normalizer == null) {
             return;
         }
         PvalueAdjustment pvalueAdjustment = PvalueAdjustmentDialog.getPvalueAdjustment(context.getProject());
-        if(pvalueAdjustment==null) {
+        if (pvalueAdjustment == null) {
             return;
         }
         PeakGroupAnovaRunnable tc = new PeakGroupAnovaRunnable(normalizer, context, Utilities.actionsGlobalContext().lookup(IChromAUIProject.class),

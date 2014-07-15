@@ -46,7 +46,7 @@ import org.openide.awt.ActionReference;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Maui",
-id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject")
+        id = "net.sf.maltcms.db.search.spi.actions.AnnotatePeaksOnProject")
 @ActionRegistration(displayName = "#CTL_AnnotatePeaksOnProject")
 @ActionReferences({
     @ActionReference(path = "Actions/ChromAUIProjectLogicalView/Database")})
@@ -76,7 +76,7 @@ public final class AnnotatePeaksOnProject implements ActionListener {
                 // otherwise specify options as:
                 //     new Object[] { NotifyDescriptor.YES_OPTION, ... etc. },
                 NotifyDescriptor.OK_OPTION // default option is "Yes"
-                );
+        );
         ddp.updateView();
         List<IDatabaseDescriptor> databases;
         RetentionIndexCalculator ricalc;
@@ -106,6 +106,6 @@ public final class AnnotatePeaksOnProject implements ActionListener {
 
     private void doSearch(List<IDatabaseDescriptor> databases, RetentionIndexCalculator ricalc, AMetabolitePredicate predicate, double matchThreshold, int maxNumberOfHits, double riWindow, boolean clearExistingMatches) {
         DBProjectPeaksAnnotationTask dbppat = new DBProjectPeaksAnnotationTask(context, databases, ricalc, predicate, matchThreshold, maxNumberOfHits, riWindow, clearExistingMatches);
-        DBProjectPeaksAnnotationTask.createAndRun("Peak Annotation on "+context.getProjectDirectory().getName(), dbppat);
+        DBProjectPeaksAnnotationTask.createAndRun("Peak Annotation on " + context.getProjectDirectory().getName(), dbppat);
     }
 }

@@ -39,44 +39,44 @@ import javax.swing.ListCellRenderer;
  */
 public class VisibilityComboBoxRenderer extends JLabel implements ListCellRenderer {
 
-	public VisibilityComboBoxRenderer() {
-		setOpaque(true);
-		setHorizontalAlignment(JLabel.CENTER);
-		setVerticalAlignment(JLabel.CENTER);
-	}
+    public VisibilityComboBoxRenderer() {
+        setOpaque(true);
+        setHorizontalAlignment(JLabel.CENTER);
+        setVerticalAlignment(JLabel.CENTER);
+    }
 
-	@Override
-	public Component getListCellRendererComponent(
-			JList list,
-			Object value,
-			int index,
-			boolean isSelected,
-			boolean cellHasFocus) {
+    @Override
+    public Component getListCellRendererComponent(
+            JList list,
+            Object value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus) {
 
-		SeriesItem si = (SeriesItem)value;
-		if (isSelected) {
-			setBackground(list.getSelectionBackground());
-			if (si!=null && si.isVisible()) {
-				setForeground(list.getSelectionForeground());
-			} else {
-				setForeground(Color.GRAY);
-			}
-		} else {
-			if (si!=null && si.isVisible()) {
-				setBackground(list.getBackground());
-				setForeground(list.getForeground());
-			} else {
-				setBackground(Color.LIGHT_GRAY);
-				setForeground(Color.GRAY);
-			}
-		}
+        SeriesItem si = (SeriesItem) value;
+        if (isSelected) {
+            setBackground(list.getSelectionBackground());
+            if (si != null && si.isVisible()) {
+                setForeground(list.getSelectionForeground());
+            } else {
+                setForeground(Color.GRAY);
+            }
+        } else {
+            if (si != null && si.isVisible()) {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            } else {
+                setBackground(Color.LIGHT_GRAY);
+                setForeground(Color.GRAY);
+            }
+        }
 
-		if(si!=null) {
-			setText(si.toString());
-		}
-		setFont(list.getFont());
-		list.invalidate();
-		list.revalidate();
-		return this;
-	}
+        if (si != null) {
+            setText(si.toString());
+        }
+        setFont(list.getFont());
+        list.invalidate();
+        list.revalidate();
+        return this;
+    }
 }

@@ -70,7 +70,7 @@ public class NormalizationDescriptor extends ADescriptor implements INormalizati
         this.value = value;
         firePropertyChange("value", old, this.value);
     }
-    
+
     @Override
     public String toString() {
         return getDisplayName();

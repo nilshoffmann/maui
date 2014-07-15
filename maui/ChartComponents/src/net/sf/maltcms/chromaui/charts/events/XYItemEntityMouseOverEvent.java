@@ -37,12 +37,12 @@ import org.jfree.chart.entity.XYItemEntity;
  */
 public class XYItemEntityMouseOverEvent extends AEvent<XYItemEntity> {
 
-        /**
-         * @param v
-         * @param ies
-         */
-        public XYItemEntityMouseOverEvent(XYItemEntity v,
-                IEventSource<XYItemEntity> ies) {
-            super(v, ies, "XYITEMENTITY_MOUSEOVER");
-        }
+    /**
+     * @param v
+     * @param ies
+     */
+    public XYItemEntityMouseOverEvent(XYItemEntity v,
+            IEventSource<XYItemEntity> ies) {
+        super(v, ies, "XYITEMENTITY_MOUSEOVER");
     }
+}

@@ -81,7 +81,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
     public ChromaUIProjectNodesFactory(IChromAUIProject cp) {
         this.cp = cp;
         this.cp.addPropertyChangeListener(WeakListeners.propertyChange(this, cp));
-        FileChangeListener fcl = (FileChangeListener)WeakListeners.create(FileChangeListener.class, new FileChangeListener() {
+        FileChangeListener fcl = (FileChangeListener) WeakListeners.create(FileChangeListener.class, new FileChangeListener() {
 
             @Override
             public void fileFolderCreated(FileEvent fe) {
@@ -161,8 +161,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 //                    return o1.getPrecedence()-o2.getPrecedence();
 //                }
 //            });
-            
-            
+
             List<IContainer> containers = filter(cp.getContainer(IContainer.class), Peak1DContainer.class, SampleGroupContainer.class);
             for (IContainer ic : containers) {
                 if (Thread.interrupted()) {
@@ -196,7 +195,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                     if (Thread.interrupted()) {
                         return false;
                     }
-                    if (ic != null && ic.getLevel()==0) {
+                    if (ic != null && ic.getLevel() == 0) {
                         list.add(ic);
                     }
                 }
@@ -229,7 +228,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
                 if (ic != null) {
                     boolean add = true;
                     for (Class<? extends IContainer> contClass : toFilter) {
-                        if (ic.getClass().getName().equals(contClass.getName()) || ic.getLevel()>0) {
+                        if (ic.getClass().getName().equals(contClass.getName()) || ic.getLevel() > 0) {
                             add = false;
                         }
                     }

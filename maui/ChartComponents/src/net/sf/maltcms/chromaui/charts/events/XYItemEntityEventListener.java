@@ -35,6 +35,6 @@ import org.jfree.chart.entity.XYItemEntity;
  *
  * @author nilshoffmann
  */
-public interface XYItemEntityEventListener extends IListener<IEvent<XYItemEntity>>{
+public interface XYItemEntityEventListener extends IListener<IEvent<XYItemEntity>> {
 
 }

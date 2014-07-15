@@ -59,12 +59,12 @@ public class PeakAnnotationDatabaseQuery implements IQuery<IPeakAnnotationDescri
     public List<QueryResultList<IPeakAnnotationDescriptor>> call() throws Exception {
         List<Future<QueryResultList<IPeakAnnotationDescriptor>>> l = new ArrayList<Future<QueryResultList<IPeakAnnotationDescriptor>>>();
         for (IDatabaseDescriptor descr : databaseDescriptors) {
-            DBPeakAnnotationQueryTask q = new DBPeakAnnotationQueryTask(descr, buildInput(queryScans, retentionIndexCalculator), predicate, matchThreshold, maxHits,riWindow);
+            DBPeakAnnotationQueryTask q = new DBPeakAnnotationQueryTask(descr, buildInput(queryScans, retentionIndexCalculator), predicate, matchThreshold, maxHits, riWindow);
             l.add(DBPeakAnnotationQueryTask.createAndRun("Querying DB " + descr.getDisplayName(), q));//, mcs);
         }
-        
+
         List<QueryResultList<IPeakAnnotationDescriptor>> results = new ArrayList<QueryResultList<IPeakAnnotationDescriptor>>();
-        for(Future<QueryResultList<IPeakAnnotationDescriptor>> f:l) {
+        for (Future<QueryResultList<IPeakAnnotationDescriptor>> f : l) {
             results.add(f.get());
         }
         return results;

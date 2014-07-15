@@ -34,10 +34,10 @@ import org.jzy3d.plot3d.builder.Mapper;
  *
  * @author Nils Hoffmann
  */
-public abstract class ViewportMapper extends Mapper{
+public abstract class ViewportMapper extends Mapper {
 
     public abstract Rectangle2D getClippedViewport(Rectangle2D roi);
-	
-	public abstract Rectangle2D getViewport();
-    
+
+    public abstract Rectangle2D getViewport();
+
 }

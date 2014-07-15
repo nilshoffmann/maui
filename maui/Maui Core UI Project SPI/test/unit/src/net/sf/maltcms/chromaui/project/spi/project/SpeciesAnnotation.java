@@ -41,7 +41,7 @@ public class SpeciesAnnotation extends ADescriptor implements IAnnotation<Specie
 
     private Species species;
     public final String PROP_SPECIES = "species";
-    
+
     @Override
     public Species getAnnotation() {
         activate(ActivationPurpose.READ);
@@ -55,5 +55,5 @@ public class SpeciesAnnotation extends ADescriptor implements IAnnotation<Specie
         this.species = species;
         firePropertyChange(PROP_SPECIES, old, species);
     }
-    
+
 }

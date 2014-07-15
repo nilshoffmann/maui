@@ -29,7 +29,7 @@ for details.
 
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-	<tocitem text="Maui Core MassSpec Database Search">
-		<tocitem text="About Maui Core MassSpec Database Search" target="net.sf.maltcms.db.search.about"/>
-	</tocitem>
+    <tocitem text="Maui Core MassSpec Database Search">
+        <tocitem text="About Maui Core MassSpec Database Search" target="net.sf.maltcms.db.search.about"/>
+    </tocitem>
 </toc>
