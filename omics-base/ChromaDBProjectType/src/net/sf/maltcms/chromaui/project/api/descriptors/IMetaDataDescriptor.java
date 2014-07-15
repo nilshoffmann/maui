@@ -33,5 +33,5 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  * @author Nils Hoffmann
  */
 public interface IMetaDataDescriptor extends IBasicDescriptor {
-    
+
 }

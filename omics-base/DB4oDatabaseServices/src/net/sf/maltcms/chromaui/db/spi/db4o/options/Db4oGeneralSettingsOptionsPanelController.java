@@ -81,7 +81,7 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
                     System.err.println("Update already in progress!");
                 }
             }
-        }else{
+        } else {
             changed();
         }
     }

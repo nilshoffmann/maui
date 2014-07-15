@@ -87,6 +87,6 @@ public class TreatmentGroupContainer extends ADatabaseBackedContainer<IChromatog
     public void setColor(Color color) {
         Color old = getTreatmentGroup().getColor();
         getTreatmentGroup().setColor(color);
-        firePropertyChange(IColorizableDescriptor.PROP_COLOR, old , color);
+        firePropertyChange(IColorizableDescriptor.PROP_COLOR, old, color);
     }
 }

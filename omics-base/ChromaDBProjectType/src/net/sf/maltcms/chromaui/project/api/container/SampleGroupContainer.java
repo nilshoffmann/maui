@@ -43,7 +43,7 @@ import org.openide.util.ImageUtilities;
  */
 public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogramDescriptor>
         implements ISampleGroupDescriptor {
-    
+
     private ISampleGroupDescriptor sampleGroup;
 
     public static String PROP_SAMPLEGROUP = "sampleGroup";
@@ -87,6 +87,6 @@ public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogram
     public void setColor(Color color) {
         Color old = getSampleGroup().getColor();
         getSampleGroup().setColor(color);
-        firePropertyChange(IColorizableDescriptor.PROP_COLOR, old , color);
+        firePropertyChange(IColorizableDescriptor.PROP_COLOR, old, color);
     }
 }

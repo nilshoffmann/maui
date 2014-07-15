@@ -3,12 +3,12 @@
 <!-- for some information on what you could do (e.g. targets to override). -->
 <!-- If you delete this file and reopen the project it will be recreated. -->
 <project name="net.sf.maltcms.chromaui.java3d" default="netbeans" basedir=".">
-	<description>Builds, tests, and runs the project net.sf.maltcms.chromaui.java3d.</description>
-	<import file="nbproject/build-impl.xml"/>
-	<target name="javadoc">
-		<echo message="Skipping target javadoc"/>
-	</target>
-	<target name="javadoc-nb">
-		<echo message="Skipping target javadoc-nb"/>
-	</target>
+    <description>Builds, tests, and runs the project net.sf.maltcms.chromaui.java3d.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <target name="javadoc">
+        <echo message="Skipping target javadoc"/>
+    </target>
+    <target name="javadoc-nb">
+        <echo message="Skipping target javadoc-nb"/>
+    </target>
 </project>

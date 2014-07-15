@@ -95,7 +95,7 @@ public final class SvgScreenshot implements ActionListener {
         outputDir.mkdirs();
         Date d = new Date();
         File file = new File(outputDir, new SimpleDateFormat().format(d) + ".svg");
-        try(Writer out = new OutputStreamWriter(new FileOutputStream(file))) {
+        try (Writer out = new OutputStreamWriter(new FileOutputStream(file))) {
             g2d.stream(out, true);
             g2d.dispose();
             Logger.getLogger(SvgScreenshot.class.getName()).log(Level.INFO, "Saving screenshot to {0}", file);

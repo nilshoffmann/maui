@@ -44,6 +44,5 @@ public abstract class MetaDataContainer<T extends IMetaDataDescriptor> extends A
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/ProjectMetadata.png");
     }
-    
 
 }

@@ -25,7 +25,6 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-
 package net.sf.maltcms.chromaui.db.spi.db4o;
 
 import com.db4o.ObjectSet;
@@ -34,7 +33,6 @@ import com.db4o.query.Constraints;
 import com.db4o.query.Query;
 import com.db4o.query.QueryComparator;
 import java.util.Comparator;
-
 
 public class VoidQuery implements Query {
 
@@ -77,5 +75,5 @@ public class VoidQuery implements Query {
     public Query sortBy(Comparator cmprtr) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

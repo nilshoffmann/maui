@@ -32,5 +32,6 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  * @author Nils Hoffmann
  */
 public enum Factor {
+
     NOMINAL, ORDINAL, INTERVAL, RATIO;
 }

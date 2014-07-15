@@ -405,7 +405,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
     }
 
     public void set_z_color(Color c) {
-        this.zColor = c;    
+        this.zColor = c;
         updateView();
     }
 

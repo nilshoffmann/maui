@@ -41,7 +41,7 @@ import org.openide.util.ImageUtilities;
  * @author Nils Hoffmann
  */
 public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDescriptor> implements IColorizableDescriptor {
-    
+
     public final String PROP_CHROMATOGRAM = "chromatogram";
 
     @Indexed

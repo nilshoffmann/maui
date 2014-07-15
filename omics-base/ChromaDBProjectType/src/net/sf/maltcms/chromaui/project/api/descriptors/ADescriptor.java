@@ -53,7 +53,7 @@ public class ADescriptor extends ABasicDescriptor implements IDescriptor {
     public void setTool(IToolDescriptor tool) {
         activate(ActivationPurpose.WRITE);
         IToolDescriptor old = this.tool;
-        if(tool!=null) {
+        if (tool != null) {
             tool.setProject(getProject());
         }
         this.tool = tool;

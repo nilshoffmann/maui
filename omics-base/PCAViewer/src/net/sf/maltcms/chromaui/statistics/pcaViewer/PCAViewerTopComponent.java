@@ -308,7 +308,7 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
     }//GEN-LAST:event_thirdPrincipleComponentComboBoxActionPerformed
 
     private void yButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yButtonActionPerformed
-        if(scene!=null) {
+        if (scene != null) {
             Color c = JColorChooser.showDialog(this, "Select Y-Axis color", scene.get_y_color());
             scene.set_y_color(c);
             yButton.setBackground(c);
@@ -316,7 +316,7 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
     }//GEN-LAST:event_yButtonActionPerformed
 
     private void xButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xButtonActionPerformed
-        if(scene!=null) {
+        if (scene != null) {
             Color c = JColorChooser.showDialog(this, "Select X-Axis color", scene.get_x_color());
             scene.set_x_color(c);
             xButton.setBackground(c);
@@ -324,7 +324,7 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
     }//GEN-LAST:event_xButtonActionPerformed
 
     private void zButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zButtonActionPerformed
-        if(scene!=null) {
+        if (scene != null) {
             Color c = JColorChooser.showDialog(this, "Select Z-Axis color", scene.get_z_color());
             scene.set_z_color(c);
             zButton.setBackground(c);
@@ -349,7 +349,7 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
                     if (updatingView.get()) {
                         String name = "MeltDB 3D Viewer";
                         final StandardGUI gui = new StandardGUI(name, ParserUtilities.group_data(new PcaDescriptorAdapter().parse_data(pcaDescriptor, component0, component1, component2)));
-                        if(oldGui!=null) {
+                        if (oldGui != null) {
                             gui.set_x_color(oldGui.get_x_color());
                             gui.set_y_color(oldGui.get_y_color());
                             gui.set_z_color(oldGui.get_z_color());

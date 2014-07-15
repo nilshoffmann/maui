@@ -43,9 +43,9 @@ public interface IContainer<T extends IBasicDescriptor> extends IGenericContaine
     void setPrecedence(int i);
 
     Image getIcon(int type);
-    
+
     int getLevel();
-    
+
     void setLevel(int level);
 
 }

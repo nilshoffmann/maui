@@ -87,7 +87,7 @@ public class GroupPanel extends JPanel {
     }
 
     public void set_coords(DataModel da) {
-        this.label.setText("Selected: "+get40CharString(da.getLabel()));
+        this.label.setText("Selected: " + get40CharString(da.getLabel()));
         this.label.setToolTipText("<html><p>" + da.getLabel() + "</p></html>");
     }
 

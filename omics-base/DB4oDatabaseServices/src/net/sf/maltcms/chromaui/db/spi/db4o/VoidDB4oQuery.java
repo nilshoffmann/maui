@@ -41,7 +41,7 @@ import net.sf.maltcms.chromaui.db.api.query.IQuery;
 public final class VoidDB4oQuery<T> implements IQuery<T> {
 
     public VoidDB4oQuery() {
-        
+
     }
 
     @Override
