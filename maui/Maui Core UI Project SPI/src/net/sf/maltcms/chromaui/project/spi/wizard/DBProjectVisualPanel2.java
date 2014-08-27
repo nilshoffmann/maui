@@ -241,9 +241,9 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         groupTextField.setToolTipText(org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.groupTextField.toolTipText")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(addTreatmentGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.addTreatmentGroupButton.text")); // NOI18N
-        addTreatmentGroupButton.setMaximumSize(new java.awt.Dimension(40, 29));
-        addTreatmentGroupButton.setMinimumSize(new java.awt.Dimension(40, 29));
-        addTreatmentGroupButton.setPreferredSize(new java.awt.Dimension(40, 29));
+        addTreatmentGroupButton.setMaximumSize(new java.awt.Dimension(90, 29));
+        addTreatmentGroupButton.setMinimumSize(new java.awt.Dimension(90, 29));
+        addTreatmentGroupButton.setPreferredSize(new java.awt.Dimension(90, 29));
         addTreatmentGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addTreatmentGroupButtonActionPerformed(evt);
@@ -251,9 +251,9 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(removeTreatmentGroupButton, org.openide.util.NbBundle.getMessage(DBProjectVisualPanel2.class, "DBProjectVisualPanel2.removeTreatmentGroupButton.text")); // NOI18N
-        removeTreatmentGroupButton.setMaximumSize(new java.awt.Dimension(70, 29));
-        removeTreatmentGroupButton.setMinimumSize(new java.awt.Dimension(70, 29));
-        removeTreatmentGroupButton.setPreferredSize(new java.awt.Dimension(70, 29));
+        removeTreatmentGroupButton.setMaximumSize(new java.awt.Dimension(90, 29));
+        removeTreatmentGroupButton.setMinimumSize(new java.awt.Dimension(90, 29));
+        removeTreatmentGroupButton.setPreferredSize(new java.awt.Dimension(90, 29));
         removeTreatmentGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeTreatmentGroupButtonActionPerformed(evt);
@@ -271,7 +271,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
                     .addGroup(treatmentGroupPanelLayout.createSequentialGroup()
                         .addComponent(addTreatmentGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeTreatmentGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(removeTreatmentGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(groupTextField))
                 .addContainerGap())
@@ -283,7 +283,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
             treatmentGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(treatmentGroupPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
