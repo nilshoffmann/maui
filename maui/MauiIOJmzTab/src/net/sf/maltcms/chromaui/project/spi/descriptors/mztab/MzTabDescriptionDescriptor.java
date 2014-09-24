@@ -32,17 +32,33 @@ import net.sf.maltcms.chromaui.jmztab.ui.api.IMzTabDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabDescription;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class MzTabDescriptionDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_MZTABDESCRIPTION = "mzTabDescription";
+    private static final long serialVersionUID = -4442274420999719046L;
 
     private MZTabDescription mzTabDescription;
 
+    /**
+     *
+     * @return
+     */
     public MZTabDescription getMzTabDescription() {
         activate(ActivationPurpose.READ);
         return mzTabDescription;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setMzTabDescription(MZTabDescription element) {
         activate(ActivationPurpose.WRITE);
         MZTabDescription old = this.mzTabDescription;
@@ -53,42 +69,84 @@ public class MzTabDescriptionDescriptor extends ABasicDescriptor implements IMzT
         getPropertyChangeSupport().firePropertyChange(PROP_MZTABDESCRIPTION, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getVersion() {
         return getMzTabDescription().getVersion();
     }
 
+    /**
+     *
+     * @param version
+     */
     public void setVersion(String version) {
         getMzTabDescription().setVersion(version);
     }
 
+    /**
+     *
+     * @return
+     */
     public MZTabDescription.Mode getMode() {
         return getMzTabDescription().getMode();
     }
 
+    /**
+     *
+     * @param mode
+     */
     public void setMode(MZTabDescription.Mode mode) {
         getMzTabDescription().setMode(mode);
     }
 
+    /**
+     *
+     * @param modelLabel
+     * @return
+     */
     public MZTabDescription.Mode findMode(String modelLabel) {
         return getMzTabDescription().findMode(modelLabel);
     }
 
+    /**
+     *
+     * @return
+     */
     public MZTabDescription.Type getType() {
         return getMzTabDescription().getType();
     }
 
+    /**
+     *
+     * @param type
+     */
     public void setType(MZTabDescription.Type type) {
         getMzTabDescription().setType(type);
     }
 
+    /**
+     *
+     * @param typeLabel
+     * @return
+     */
     public MZTabDescription.Type findType(String typeLabel) {
         return getMzTabDescription().findType(typeLabel);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getElementId() {
         return getMzTabDescription().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(String id) {
         getMzTabDescription().setId(id);
     }

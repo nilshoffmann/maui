@@ -36,12 +36,16 @@ import java.awt.geom.*;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 public class PersistentShape implements Shape, Activatable {
 
     private transient Activator activator;
 
+    /**
+     *
+     * @param activator
+     */
     @Override
     public void bind(Activator activator) {
         if (this.activator == activator) {
@@ -54,6 +58,10 @@ public class PersistentShape implements Shape, Activatable {
         this.activator = activator;
     }
 
+    /**
+     *
+     * @param activationPurpose
+     */
     @Override
     public void activate(ActivationPurpose activationPurpose) {
         if (null != activator) {
@@ -66,10 +74,18 @@ public class PersistentShape implements Shape, Activatable {
     private int segmentCount = 0;
     private transient Shape cache = null;
 
+    /**
+     *
+     * @param shape
+     */
     public PersistentShape(Shape shape) {
         this(new Path2D.Float(shape));
     }
 
+    /**
+     *
+     * @param path
+     */
     public PersistentShape(Path2D path) {
         this.windingRule = path.getWindingRule();
         PathIterator pathIterator1 = path.getPathIterator(new AffineTransform());
@@ -90,41 +106,73 @@ public class PersistentShape implements Shape, Activatable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getSegmentCount() {
         activate(ActivationPurpose.READ);
         return segmentCount;
     }
 
+    /**
+     *
+     * @param segmentCount
+     */
     public void setSegmentCount(int segmentCount) {
         activate(ActivationPurpose.WRITE);
         this.segmentCount = segmentCount;
     }
 
+    /**
+     *
+     * @return
+     */
     public int[] getSegmentTypes() {
         activate(ActivationPurpose.READ);
         return segmentTypes;
     }
 
+    /**
+     *
+     * @param segmentTypes
+     */
     public void setSegmentTypes(int[] segmentTypes) {
         activate(ActivationPurpose.WRITE);
         this.segmentTypes = segmentTypes;
     }
 
+    /**
+     *
+     * @return
+     */
     public float[][] getSegmentValues() {
         activate(ActivationPurpose.READ);
         return segmentValues;
     }
 
+    /**
+     *
+     * @param segmentValues
+     */
     public void setSegmentValues(float[][] segmentValues) {
         activate(ActivationPurpose.WRITE);
         this.segmentValues = segmentValues;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getWindingRule() {
         activate(ActivationPurpose.READ);
         return windingRule;
     }
 
+    /**
+     *
+     * @param windingRule
+     */
     public void setWindingRule(int windingRule) {
         activate(ActivationPurpose.WRITE);
         this.windingRule = windingRule;

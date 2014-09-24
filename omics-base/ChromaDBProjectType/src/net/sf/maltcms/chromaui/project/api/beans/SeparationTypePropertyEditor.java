@@ -36,6 +36,9 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  */
 public class SeparationTypePropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public SeparationTypePropertyEditor() {
     }
 

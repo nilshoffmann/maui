@@ -36,18 +36,46 @@ import org.jfree.chart.renderer.PaintScale;
  */
 public interface IPaintScaleProvider {
 
+    /**
+     *
+     * @return
+     */
     public List<PaintScale> getPaintScales();
 
+    /**
+     *
+     * @return
+     */
     public int getNumberOfSamples();
 
+    /**
+     *
+     * @param samples
+     */
     public void setNumberOfSamples(int samples);
 
+    /**
+     *
+     * @return
+     */
     public double getMin();
 
+    /**
+     *
+     * @param min
+     */
     public void setMin(double min);
 
+    /**
+     *
+     * @return
+     */
     public double getMax();
 
+    /**
+     *
+     * @param max
+     */
     public void setMax(double max);
 
 }

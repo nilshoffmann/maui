@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram1D;
@@ -77,11 +79,11 @@ public class ChromatogramViewLoaderWorker implements Runnable {
         try {
             handle.setDisplayName("Loading " + files.size() + " chromatograms");//+new File(this.files.getResourceLocation()).getName());
             handle.start(5);
-            System.out.println("Running Chromatogram open action!");
+            Logger.getLogger(getClass().getName()).info("Running Chromatogram open action!");
 
-            System.out.println("Storing current viewport!");
+            Logger.getLogger(getClass().getName()).info("Storing current viewport!");
 
-            System.out.println("Retrieving settings from panel");
+            Logger.getLogger(getClass().getName()).info("Retrieving settings from panel");
             handle.progress("Reading settings", 1);
             double massResolution = Double.parseDouble(sp.getProperty(
                     "massResolution", "1.0"));
@@ -114,7 +116,7 @@ public class ChromatogramViewLoaderWorker implements Runnable {
 //            c1p.setPeakData(filePeakMap);
 //        c1p.setScanRange(file.getIndexFor(Math.max(mm.min, minRT)),file.getIndexFor(Math.min(mm.max, maxRT)));
             XYPlot plot = null;
-            System.out.println("Plot mode is " + plotMode);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Plot mode is {0}", plotMode);
             SelectionAwareXYTooltipGenerator tooltipGenerator = cvtc.getLookup().lookup(SelectionAwareXYTooltipGenerator.class);
             if (tooltipGenerator == null) {
                 tooltipGenerator = new SelectionAwareXYTooltipGenerator(tooltipGenerator) {
@@ -127,18 +129,18 @@ public class ChromatogramViewLoaderWorker implements Runnable {
             handle.progress("Building plot", 3);
             switch (plotMode) {
                 case "TIC":
-                    System.out.println("Loading TIC");
+                    Logger.getLogger(getClass().getName()).info("Loading TIC");
                     switch (plotType) {
                         case "SIDE":
                             plot = c1p.provide1DPlot(dataset, tooltipGenerator);
                             break;
                         case "TOP":
-                            plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(dataset), tooltipGenerator, dataset.getMinY(), dataset.getMaxY(), true);
+                            plot = c1p.provide1DCoPlot(new TopViewDataset<>(dataset), tooltipGenerator, dataset.getMinY(), dataset.getMaxY(), true);
                             break;
                     }
                     break;
                 case "EIC-SUM": {
-                    System.out.println("Loading EIC-SUM");
+                    Logger.getLogger(getClass().getName()).info("Loading EIC-SUM");
                     EIC1DDataset ds = new EIC1DDataset(dataset.getNamedElementProvider(), masses, massResolution, EIC1DDataset.TYPE.SUM, new ProxyLookup(dataset.getLookup()));
                     switch (plotType) {
                         case "SIDE":
@@ -147,13 +149,13 @@ public class ChromatogramViewLoaderWorker implements Runnable {
                                     massResolution, true);
                             break;
                         case "TOP":
-                            plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(ds), tooltipGenerator, ds.getMinY(), ds.getMaxY(), true);
+                            plot = c1p.provide1DCoPlot(new TopViewDataset<>(ds), tooltipGenerator, ds.getMinY(), ds.getMaxY(), true);
                             break;
                     }
                     break;
                 }
                 case "EIC-COPLOT": {
-                    System.out.println("Loading EIC-COPLOT");
+                    Logger.getLogger(getClass().getName()).info("Loading EIC-COPLOT");
                     EIC1DDataset ds = new EIC1DDataset(dataset.getNamedElementProvider(), masses, massResolution, EIC1DDataset.TYPE.CO, new ProxyLookup(dataset.getLookup()));
                     switch (plotType) {
                         case "SIDE":
@@ -162,7 +164,7 @@ public class ChromatogramViewLoaderWorker implements Runnable {
                                     massResolution, true);
                             break;
                         case "TOP":
-                            plot = c1p.provide1DCoPlot(new TopViewDataset<IChromatogram1D, IScan>(ds), tooltipGenerator, ds.getMinY(), ds.getMaxY(), true);
+                            plot = c1p.provide1DCoPlot(new TopViewDataset<>(ds), tooltipGenerator, ds.getMinY(), ds.getMaxY(), true);
                             break;
                     }
                     break;
@@ -187,11 +189,11 @@ public class ChromatogramViewLoaderWorker implements Runnable {
             }
 
             if (domainRange != null) {
-                System.out.println("Setting previous domain range!");
+                Logger.getLogger(getClass().getName()).info("Setting previous domain range!");
                 plot.getDomainAxis().setRange(domainRange);
             }
             if (valueRange != null) {
-                System.out.println("Setting previous value range!");
+                Logger.getLogger(getClass().getName()).info("Setting previous value range!");
                 plot.getRangeAxis().setRange(valueRange);
             }
             handle.progress("Adding plot to panel", 5);
@@ -212,7 +214,7 @@ public class ChromatogramViewLoaderWorker implements Runnable {
 
     public List<IFileFragment> buildFileFragments(
             Collection<? extends IChromatogramDescriptor> c) {
-        ArrayList<IFileFragment> al = new ArrayList<IFileFragment>(c.size());
+        ArrayList<IFileFragment> al = new ArrayList<>(c.size());
         for (IChromatogramDescriptor descr : c) {
             al.add(descr.getChromatogram().getParent());
         }
@@ -229,7 +231,7 @@ public class ChromatogramViewLoaderWorker implements Runnable {
         domainAxis.setAutoRangeIncludesZero(false);
         ((NumberAxis) plot.getRangeAxis()).setAutoRange(true);
         ((NumberAxis) plot.getRangeAxis()).setAutoRangeIncludesZero(true);
-        System.out.println("Adding chart");
+        Logger.getLogger(getClass().getName()).info("Adding chart");
         plot.setBackgroundPaint(Color.WHITE);
     }
 }

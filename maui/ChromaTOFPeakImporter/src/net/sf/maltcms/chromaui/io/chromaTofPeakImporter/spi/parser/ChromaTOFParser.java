@@ -62,7 +62,7 @@ public class ChromaTOFParser {
 
     public static HashMap<String, String> getFilenameToGroupMap(File f) {
         List<String> header = null;
-        HashMap<String, String> filenameToGroupMap = new LinkedHashMap<String, String>();
+        HashMap<String, String> filenameToGroupMap = new LinkedHashMap<>();
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(f));
@@ -109,18 +109,18 @@ public class ChromaTOFParser {
     public static Tuple2D<double[], int[]> convertMassSpectrum(
             String massSpectrum) {
         if (massSpectrum == null) {
-            System.err.println("Warning: mass spectral data was null!");
-            return new Tuple2D<double[], int[]>(new double[0], new int[0]);
+            Logger.getLogger(ChromaTOFParser.class.getName()).warning("Warning: mass spectral data was null!");
+            return new Tuple2D<>(new double[0], new int[0]);
         }
         String[] mziTuples = massSpectrum.split(" ");
-        TreeMap<Float, Integer> tm = new TreeMap<Float, Integer>();
+        TreeMap<Float, Integer> tm = new TreeMap<>();
         for (String tuple : mziTuples) {
             if (tuple.contains(":")) {
                 String[] tplArray = tuple.split(":");
                 tm.put(Float.valueOf(tplArray[0]), Integer.valueOf(tplArray[1]));
             } else {
-                System.err.println(
-                        "Warning: encountered strange tuple: " + tuple + " within ms: " + massSpectrum);
+                Logger.getLogger(ChromaTOFParser.class.getName()).log(
+                        Level.WARNING, "Warning: encountered strange tuple: {0} within ms: {1}", new Object[]{tuple, massSpectrum});
             }
         }
         double[] masses = new double[tm.keySet().size()];
@@ -131,11 +131,11 @@ public class ChromaTOFParser {
             intensities[i] = tm.get(key);
             i++;
         }
-        return new Tuple2D<double[], int[]>(masses, intensities);
+        return new Tuple2D<>(masses, intensities);
     }
 
     public static LinkedHashSet<String> getHeader(File f, boolean normalizeColumnNames) {
-        LinkedHashSet<String> globalHeader = new LinkedHashSet<String>();
+        LinkedHashSet<String> globalHeader = new LinkedHashSet<>();
         ArrayList<String> header = null;
         String fileName = f.getName().substring(0, f.getName().lastIndexOf(
                 "."));
@@ -155,7 +155,7 @@ public class ChromaTOFParser {
                                         replaceAll(" ", "_");
                             }
                         }
-                        header = new ArrayList<String>(Arrays.asList(
+                        header = new ArrayList<>(Arrays.asList(
                                 lineArray));
                         break;
                     }
@@ -182,30 +182,29 @@ public class ChromaTOFParser {
     public static final String msPattern = "";
 
     public static String[] splitLine(String line, String fieldSeparator, String quoteSymbol) {
-        if (fieldSeparator.equals(",")) {
-            Pattern p = Pattern.compile("((\")([^\"]*)(\"))");
-            Matcher m = p.matcher(line);
-            List<String> results = new LinkedList<String>();
-            int match = 1;
-            while (m.find()) {
-                results.add(m.group(3).trim());
-            }
-            Pattern endPattern = Pattern.compile(",([\"]{0,1}([^\"]*)[^\"]{0,1}$)");
-            Matcher m2 = endPattern.matcher(line);
-            while (m2.find()) {
-                results.add(m2.group(1).trim());
-            }
-            return results.toArray(new String[results.size()]);
-        } else if (fieldSeparator.equals("\t")) {
-            return line.replaceAll("\"", "").split("\t");
-        } else {
-            throw new IllegalArgumentException("Field separator " + fieldSeparator + " is not supported, only ',' and '\t' are valid!");
+        switch (fieldSeparator) {
+            case ",":
+                Pattern p = Pattern.compile("((\")([^\"]*)(\"))");
+                Matcher m = p.matcher(line);
+                List<String> results = new LinkedList<>();
+                int match = 1;
+                while (m.find()) {
+                    results.add(m.group(3).trim());
+                }   Pattern endPattern = Pattern.compile(",([\"]{0,1}([^\"]*)[^\"]{0,1}$)");
+                Matcher m2 = endPattern.matcher(line);
+                while (m2.find()) {
+                    results.add(m2.group(1).trim());
+                }   return results.toArray(new String[results.size()]);
+            case "\t":
+                return line.replaceAll("\"", "").split("\t");
+            default:
+                throw new IllegalArgumentException("Field separator " + fieldSeparator + " is not supported, only ',' and '\t' are valid!");
         }
     }
 
     public static List<TableRow> parseBody(LinkedHashSet<String> globalHeader,
             File f, boolean normalizeColumnNames) {
-        List<TableRow> body = new ArrayList<TableRow>();
+        List<TableRow> body = new ArrayList<>();
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(f));
@@ -215,7 +214,7 @@ public class ChromaTOFParser {
             List<String> header = null;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    ArrayList<String> lineList = new ArrayList<String>(Arrays.asList(splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER)));//.split(String.valueOf(FIELD_SEPARATOR))));
+                    ArrayList<String> lineList = new ArrayList<>(Arrays.asList(splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER)));//.split(String.valueOf(FIELD_SEPARATOR))));
                     if (header == null) {
                         if (normalizeColumnNames) {
                             for (int i = 0; i < lineList.size(); i++) {
@@ -223,7 +222,7 @@ public class ChromaTOFParser {
                                         replaceAll(" ", "_"));
                             }
                         }
-                        header = new ArrayList<String>(lineList);
+                        header = new ArrayList<>(lineList);
                     } else {
                         TableRow tr = new TableRow();
                         for (String headerColumn : globalHeader) {
@@ -273,7 +272,7 @@ public class ChromaTOFParser {
         }
         LinkedHashSet<String> header = getHeader(f, normalizeColumnNames);
         List<TableRow> table = parseBody(header, f, normalizeColumnNames);
-        return new Tuple2D<LinkedHashSet<String>, List<TableRow>>(header, table);
+        return new Tuple2D<>(header, table);
     }
 
     public static Peak1D create1DPeak(File peakReport, TableRow tr) {

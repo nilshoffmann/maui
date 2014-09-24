@@ -31,6 +31,7 @@ import java.awt.Point;
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Logger;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.labels.XYZToolTipGenerator;
@@ -47,8 +48,15 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
     private final float scanTime;
     private final int scansPerModulation;
     private final float[] lookup;
-    private final HashMap<Point, SoftReference<String>> hm = new HashMap<Point, SoftReference<String>>();
+    private final HashMap<Point, SoftReference<String>> hm = new HashMap<>();
 
+    /**
+     *
+     * @param rtOffset
+     * @param modulationTime
+     * @param modulations
+     * @param scansPerModulation
+     */
     public RTIXYTooltipGenerator(double rtOffset, double modulationTime, int modulations, int scansPerModulation) {
         this.modulationTime = (float) modulationTime;
         this.scansPerModulation = scansPerModulation;
@@ -58,10 +66,17 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
             this.lookup[i] = time;
             time += (modulationTime);
         }
-        System.out.println(Arrays.toString(this.lookup));
+        Logger.getLogger(getClass().getName()).info(Arrays.toString(this.lookup));
         this.scanTime = this.modulationTime / ((float) scansPerModulation);
     }
 
+    /**
+     *
+     * @param xyd
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public String generateToolTip(XYDataset xyd, int i, int i1) {
         Point p = new Point(i, i1);
@@ -93,7 +108,7 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
                     sb.append(z);
                 }
                 String s = sb.toString();
-                SoftReference<String> sr = new SoftReference<String>(s);
+                SoftReference<String> sr = new SoftReference<>(s);
                 hm.put(p, sr);
                 return s;
             }
@@ -103,11 +118,25 @@ public class RTIXYTooltipGenerator implements XYZToolTipGenerator, XYItemLabelGe
 
     }
 
+    /**
+     *
+     * @param xyzd
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public String generateToolTip(XYZDataset xyzd, int i, int i1) {
         return generateToolTip((XYDataset) xyzd, i, i1);
     }
 
+    /**
+     *
+     * @param xyd
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public String generateLabel(XYDataset xyd, int i, int i1) {
         return generateToolTip(xyd, i, i1);

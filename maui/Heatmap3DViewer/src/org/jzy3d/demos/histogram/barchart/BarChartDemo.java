@@ -30,6 +30,8 @@ package org.jzy3d.demos.histogram.barchart;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jzy3d.bridge.awt.FrameAWT;
 import org.jzy3d.bridge.swing.FrameSwing;
 import org.jzy3d.chart.Chart;
@@ -80,9 +82,9 @@ public class BarChartDemo extends AbstractDemo {
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 5; y++) {
                 float height = (float) Math.random() * (5f / (x + 1) + 7.f / (y + 1));
-                System.out.println("Height: " + height);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Height: {0}", height);
                 BarChartBar bar = addBar(x, y, BarChartBar.BAR_RADIUS, BarChartBar.BAR_RADIUS, height);
-                System.out.println("Bar har height: " + bar.getHeight());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Bar har height: {0}", bar.getHeight());
 //                bar.getShape().getBounds().getZRange();
                 scene.add(bar);
                 pickingSupport.registerDrawableObject(bar, bar.getItem());
@@ -110,6 +112,7 @@ public class BarChartDemo extends AbstractDemo {
     private void setupTitle() {
         Renderer2d messageRenderer = new Renderer2d() {
 
+            @Override
             public void paint(Graphics g) {
                 g.setColor(java.awt.Color.BLUE);
                 g.setFont(g.getFont().deriveFont(Font.BOLD, 16));
@@ -135,6 +138,7 @@ public class BarChartDemo extends AbstractDemo {
         chart.getAxeLayout().setYAxeLabel("Feature");
         chart.getAxeLayout().setYTickRenderer(new ITickRenderer() {
 
+            @Override
             public String format(double value) {
                 return "f" + "\u4E51";//getFeatureIndex(value);
             }
@@ -172,6 +176,7 @@ public class BarChartDemo extends AbstractDemo {
         return bar;
     }
 
+    @Override
     public Chart getChart() {
         return chart;
     }

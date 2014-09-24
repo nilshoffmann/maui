@@ -190,7 +190,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
             selectionHandler.setDataset(dataset);
         }
         if (mouseSelectionHandler == null) {
-            mouseSelectionHandler = new XYMouseSelectionHandler<IScan>(dataset);
+            mouseSelectionHandler = new XYMouseSelectionHandler<>(dataset);
             mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
             mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
             chartPanel.addChartMouseListener(mouseSelectionHandler);
@@ -229,7 +229,7 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
         chartPanel.addKeyListener(dmkl);
         addAxisListener();
         //add available chart overlays
-        List<Overlay> overlays = new ArrayList<Overlay>(getLookup().lookupAll(Overlay.class));
+        List<Overlay> overlays = new ArrayList<>(getLookup().lookupAll(Overlay.class));
         Collections.sort(overlays, new Comparator<Overlay>() {
 
             @Override

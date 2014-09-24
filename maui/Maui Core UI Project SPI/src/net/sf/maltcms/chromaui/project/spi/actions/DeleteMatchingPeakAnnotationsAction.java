@@ -58,7 +58,7 @@ public final class DeleteMatchingPeakAnnotationsAction implements ActionListener
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        List<Peak1DContainer> peakContainers = new ArrayList<Peak1DContainer>();
+        List<Peak1DContainer> peakContainers = new ArrayList<>();
         for (IChromatogramDescriptor chrom : context.getChromatograms()) {
             for (Peak1DContainer container : context.getPeaks(chrom)) {
                 peakContainers.add(container);

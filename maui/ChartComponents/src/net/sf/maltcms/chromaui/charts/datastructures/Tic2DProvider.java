@@ -40,15 +40,21 @@ import ucar.ma2.IndexIterator;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class Tic2DProvider {
 
-    private static Map<IChromatogramDescriptor, Tic2DProvider> statics = new HashMap<IChromatogramDescriptor, Tic2DProvider>();
+    private static Map<IChromatogramDescriptor, Tic2DProvider> statics = new HashMap<>();
     private IFileFragment ff;
     private IVariableFragment tic = null;
     private IVariableFragment vtic = null;
 
+    /**
+     *
+     * @param filename
+     * @return
+     * @throws IOException
+     */
     public static Tic2DProvider getInstance(IChromatogramDescriptor filename) throws IOException {
         if (statics.containsKey(filename)) {
             return statics.get(filename);
@@ -72,34 +78,58 @@ public class Tic2DProvider {
         this.vtic = ff.getChild("v_total_intensity");
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getScanlineTIC(int mod) {
         return getScanlineTICS().get(mod);
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getScanlineVTIC(int mod) {
         return getScanlineVTICS().get(mod);
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getHScanlineTIC(int mod) {
         List<Array> stics = getScanlineTICS();
         Array ret = new ArrayDouble.D1(stics.size());
         IndexIterator iter = ret.getIndexIterator();
-        for (int i = 0; i < stics.size(); i++) {
-            iter.setDoubleNext(((ArrayDouble.D1) stics.get(i)).get(mod));
+        for (Array stic : stics) {
+            iter.setDoubleNext(((ArrayDouble.D1) stic).get(mod));
         }
         return ret;
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getHScanlineVTIC(int mod) {
         List<Array> stics = getScanlineVTICS();
         Array ret = new ArrayDouble.D1(stics.size());
         IndexIterator iter = ret.getIndexIterator();
-        for (int i = 0; i < stics.size(); i++) {
-            iter.setDoubleNext(((ArrayDouble.D1) stics.get(i)).get(mod));
+        for (Array stic : stics) {
+            iter.setDoubleNext(((ArrayDouble.D1) stic).get(mod));
         }
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getTIC() {
         if (this.tic == null) {
             loadTotalIntensity();
@@ -107,6 +137,10 @@ public class Tic2DProvider {
         return this.tic.getArray();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Array> getScanlineTICS() {
         if (this.tic == null) {
             loadTotalIntensity();
@@ -114,6 +148,10 @@ public class Tic2DProvider {
         return this.tic.getIndexedArray();
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getVTIC() {
         if (this.vtic == null) {
             loadVTotalIntensity();
@@ -121,6 +159,10 @@ public class Tic2DProvider {
         return this.vtic.getArray();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Array> getScanlineVTICS() {
         if (this.vtic == null) {
             loadVTotalIntensity();
@@ -128,18 +170,34 @@ public class Tic2DProvider {
         return this.vtic.getIndexedArray();
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getHGlobalTIC() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getVGolbalTIC() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getHGolbalVTIC() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getVGobalVTIC() {
         return null;
     }

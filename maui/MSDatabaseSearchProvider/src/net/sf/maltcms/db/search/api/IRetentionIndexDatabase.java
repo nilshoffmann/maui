@@ -31,11 +31,20 @@ import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public interface IRetentionIndexDatabase {
 
+    /**
+     *
+     * @return
+     */
     public RetentionIndexCalculator getRetentionIndexCalculator();
 
+    /**
+     *
+     * @param rt
+     * @return
+     */
     public double getRi(double rt);
 }

@@ -98,7 +98,7 @@ public class UserDatabaseDescriptor extends ADescriptor implements IDatabaseDesc
         this.type = type;
         firePropertyChange(PROP_TYPE, oldType, type);
     }
-    private Set<ISeparationType> applicableSeparationTypes = new ActivatableHashSet<ISeparationType>();
+    private Set<ISeparationType> applicableSeparationTypes = new ActivatableHashSet<>();
     public static final String PROP_APPLICABLESEPARATIONTYPES = "applicableSeparationTypes";
 
     /**
@@ -122,11 +122,11 @@ public class UserDatabaseDescriptor extends ADescriptor implements IDatabaseDesc
             Set<ISeparationType> applicableSeparationTypes) {
         activate(ActivationPurpose.WRITE);
         Set<ISeparationType> oldApplicableSeparationTypes = this.applicableSeparationTypes;
-        this.applicableSeparationTypes = new ActivatableHashSet<ISeparationType>(applicableSeparationTypes);
+        this.applicableSeparationTypes = new ActivatableHashSet<>(applicableSeparationTypes);
         firePropertyChange(PROP_APPLICABLESEPARATIONTYPES,
                 oldApplicableSeparationTypes, applicableSeparationTypes);
     }
-    private Set<IDetectorType> applicableDetectorTypes = new ActivatableHashSet<IDetectorType>();
+    private Set<IDetectorType> applicableDetectorTypes = new ActivatableHashSet<>();
     public static final String PROP_APPLICABLEDETECTORTYPES = "applicableDetectorTypes";
 
     /**
@@ -150,12 +150,12 @@ public class UserDatabaseDescriptor extends ADescriptor implements IDatabaseDesc
             Set<IDetectorType> applicableDetectorTypes) {
         activate(ActivationPurpose.WRITE);
         Set<IDetectorType> oldApplicableDetectorTypes = this.applicableDetectorTypes;
-        this.applicableDetectorTypes = new ActivatableHashSet<IDetectorType>(applicableDetectorTypes);
+        this.applicableDetectorTypes = new ActivatableHashSet<>(applicableDetectorTypes);
         firePropertyChange(PROP_APPLICABLEDETECTORTYPES,
                 oldApplicableDetectorTypes, applicableDetectorTypes);
     }
 
-    private List<Double> maskedMasses = new ActivatableArrayList<Double>();
+    private List<Double> maskedMasses = new ActivatableArrayList<>();
     public static final String PROP_MASKEDMASSES = "maskedMasses";
 
     @Override
@@ -168,7 +168,7 @@ public class UserDatabaseDescriptor extends ADescriptor implements IDatabaseDesc
     public void setMaskedMasses(List<Double> masses) {
         activate(ActivationPurpose.WRITE);
         List<Double> old = this.maskedMasses;
-        this.maskedMasses = new ActivatableArrayList<Double>(masses);
+        this.maskedMasses = new ActivatableArrayList<>(masses);
         firePropertyChange(PROP_MASKEDMASSES,
                 old, maskedMasses);
     }

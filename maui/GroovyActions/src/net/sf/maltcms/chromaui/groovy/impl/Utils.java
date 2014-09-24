@@ -53,7 +53,7 @@ public class Utils {
     }
 
     public static List<FileObject> getGroovyScripts(List<FileObject> groovyDirs) {
-        List<FileObject> groovyScripts = new ArrayList<FileObject>();
+        List<FileObject> groovyScripts = new ArrayList<>();
         for (FileObject groovyDir : groovyDirs) {
             if (groovyDir.isValid()) {
                 Enumeration<? extends FileObject> enumeration = groovyDir.
@@ -98,7 +98,7 @@ public class Utils {
             String[] scriptLocations = NbPreferences.forModule(
                     GroovyScriptLocationsPanel.class).get("scriptLocations", "").
                     split(",");
-            List<FileObject> scriptDirectories = new LinkedList<FileObject>();
+            List<FileObject> scriptDirectories = new LinkedList<>();
             if (groovyDir != null) {
                 scriptDirectories.add(groovyDir);
             }

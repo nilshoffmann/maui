@@ -44,24 +44,44 @@ public class MSSeries extends XYSeries {
     private boolean normalize = false;
     private double norm = 1.0d;
 
+    /**
+     *
+     * @param key
+     * @param autoSort
+     * @param allowDuplicateXValues
+     */
     public MSSeries(Comparable key, boolean autoSort, boolean allowDuplicateXValues) {
         super(key, autoSort, allowDuplicateXValues);
     }
 
+    /**
+     *
+     * @param key
+     * @param autoSort
+     */
     public MSSeries(Comparable key, boolean autoSort) {
         super(key, autoSort);
     }
 
+    /**
+     *
+     * @param key
+     */
     public MSSeries(Comparable key) {
         super(key);
     }
 
+    /**
+     *
+     * @param other
+     * @return
+     */
     public MSSeries differenceTo(MSSeries other) {
         MSSeries newSeries = new MSSeries("DIFFERENCE", getAutoSort(), getAllowDuplicateXValues());
 //		XYSeriesCollection xyds = new XYSeriesCollection();
 //		xyds.addSeries(this);
 //		xyds.addSeries(other);
-        TreeMap<Number, Number> domainToRange = new TreeMap<Number, Number>();
+        TreeMap<Number, Number> domainToRange = new TreeMap<>();
         for (int i = 0; i < getItemCount(); i++) {
             Number x = getX(i);
             Number y = getY(i);
@@ -83,6 +103,10 @@ public class MSSeries extends XYSeries {
         return newSeries;
     }
 
+    /**
+     *
+     * @return
+     */
     public IScan asScan() {
         Array masses = new ArrayDouble.D1(getItemCount());
         Array intensities = new ArrayInt.D1(getItemCount());
@@ -95,10 +119,18 @@ public class MSSeries extends XYSeries {
         return new Scan1D(masses, intensities, -1, Double.NaN);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isNormalize() {
         return normalize;
     }
 
+    /**
+     *
+     * @param normalize
+     */
     public void setNormalize(boolean normalize) {
         this.normalize = normalize;
         if (this.normalize) {
@@ -106,19 +138,23 @@ public class MSSeries extends XYSeries {
 //            System.out.println("Normalizing series "+getKey()+": "+normalize);
             //normalize
             for (int i = 0; i < getItemCount(); i++) {
-                updateByIndex(i, Double.valueOf(getY(i).doubleValue() / this.norm));
+                updateByIndex(i, getY(i).doubleValue() / this.norm);
             }
         } else {
 //            System.out.println("Normalizing series "+getKey()+": "+normalize);
             //denormalize
             for (int i = 0; i < getItemCount(); i++) {
-                updateByIndex(i, Double.valueOf(getY(i).doubleValue() * this.norm));
+                updateByIndex(i, getY(i).doubleValue() * this.norm);
             }
             this.norm = 1.0d;
         }
         fireSeriesChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public double getNormalizationValue() {
         return getMaxY() - getMinY();
     }

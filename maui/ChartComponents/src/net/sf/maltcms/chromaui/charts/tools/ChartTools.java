@@ -29,6 +29,8 @@ package net.sf.maltcms.chromaui.charts.tools;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.charts.FastHeatMapPlot;
 import org.jfree.chart.axis.AxisLocation;
@@ -46,6 +48,13 @@ import org.jfree.chart.renderer.xy.XYBlockRenderer;
  */
 public class ChartTools {
 
+    /**
+     *
+     * @param plot
+     * @param screenPoint
+     * @param screenDataArea
+     * @return
+     */
     public static Point translatePointToImageCoord(XYPlot plot, final Point screenPoint,
             final Rectangle2D screenDataArea) {
         final ValueAxis da = plot.getDomainAxis();
@@ -56,7 +65,7 @@ public class ChartTools {
         final double y = ra.java2DToValue(screenPoint.getY(), screenDataArea,
                 plot.getRangeAxisEdge());
 
-        System.out.println(x + " - " + y);
+        Logger.getLogger(ChartTools.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{x, y});
 
         if (x > 0 && y > 0) {
             return new Point((int) x, (int) y);
@@ -97,31 +106,47 @@ public class ChartTools {
 //
 //        return (XYPlot) chart.getPlot();
 //    }
-    public static XYPlot getPlot3(XYPlot plot) {
+
+    /**
+     *
+     * @param plot
+     * @return
+     */
+        public static XYPlot getPlot3(XYPlot plot) {
         XYPlot p = new XYPlot(plot.getDataset(), new NumberAxis(plot.getRangeAxis().getLabel()), new NumberAxis(plot.getDomainAxis().getLabel()), plot.getRenderer());
         p.setOrientation(PlotOrientation.HORIZONTAL);
         p.setDomainAxisLocation(AxisLocation.TOP_OR_RIGHT);
-        System.out.println("fixed auto range: " + plot.getRangeAxis().getRange().getUpperBound());
+        Logger.getLogger(ChartTools.class.getName()).log(Level.INFO, "fixed auto range: {0}", plot.getRangeAxis().getRange().getUpperBound());
         p.getDomainAxis().setFixedAutoRange(500);
 
         return p;
     }
 
+    /**
+     *
+     * @param plot
+     * @return
+     */
     public static XYPlot getPlot2(XYPlot plot) {
         plot.setDomainAxisLocation(AxisLocation.TOP_OR_LEFT);
         return plot;
     }
 
+    /**
+     *
+     * @param p
+     * @param sps
+     */
     public static void changePaintScale(final XYPlot p, final PaintScale sps) {
         if (p.getRenderer() instanceof XYBlockRenderer) {
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
                     XYBlockRenderer renderer = (XYBlockRenderer) p.getRenderer();
-                    System.out.println("Setting paintscale");
+                    Logger.getLogger(ChartTools.class.getName()).info("Setting paintscale");
                     renderer.setPaintScale(sps);
                     if (p instanceof FastHeatMapPlot) {
-                        System.out.println("Resetting data image");
+                        Logger.getLogger(ChartTools.class.getName()).info("Resetting data image");
                         FastHeatMapPlot fhp = (FastHeatMapPlot) p;
                         fhp.resetDataImage();
                     }

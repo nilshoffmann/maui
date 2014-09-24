@@ -104,7 +104,7 @@ public class BarChartBar<ITEM> extends HistogramBar implements Pickable {
                 chart.getView().getCurrentGL(),
                 gluObj,
                 getShape().getBounds().getVertices().toArray(new Coord3d[]{}));
-        List<Coord2d> l = new ArrayList<Coord2d>();
+        List<Coord2d> l = new ArrayList<>();
         for (Coord3d c3 : co) {
             l.add(new Coord2d((int) c3.x, (int) chart.flip(c3.y)));
         }
@@ -227,7 +227,7 @@ public class BarChartBar<ITEM> extends HistogramBar implements Pickable {
         Coord3d p6 = position.clone();
         p6.x += radiusx;
 
-        List<Polygon> ps = new LinkedList<Polygon>();
+        List<Polygon> ps = new LinkedList<>();
 
         ps.add(getZQuad(p1, radiusx, radiusy, color));
         ps.add(getZQuad(p2, radiusx, radiusy, color));

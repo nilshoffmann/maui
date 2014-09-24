@@ -59,12 +59,10 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
 
-/**
- *
- * @author nilshoffmann
- */
 public class FoldChangeViewPanel extends javax.swing.JPanel implements
         Lookup.Provider, AxisChangeListener {
+
+    private static final long serialVersionUID = 3982409049178758730L;
 
     private XYPlot plot;
     private ChartPanel chartPanel;
@@ -160,7 +158,11 @@ public class FoldChangeViewPanel extends javax.swing.JPanel implements
             range.addChangeListener(listener);
         }
 
-        this.plot.setNoDataMessage("Loading Data...");
+        if (dataset == null || dataset.getSeriesCount() == 0) {
+            this.plot.setNoDataMessage("<No Data Available>");
+        } else {
+            this.plot.setNoDataMessage("Loading Data...");
+        }
         this.plot.setDomainPannable(true);
         this.plot.setRangePannable(true);
         chart = new JFreeChart(this.plot);

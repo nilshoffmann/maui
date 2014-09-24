@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.rserve.api;
 
 import java.net.InetAddress;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -39,14 +40,41 @@ import org.rosuda.REngine.Rserve.RserveException;
  */
 public class RserveConnection extends Thread {
 
+    /**
+     *
+     */
     public static enum State {
 
-        INITIALIZED, CONNECTED, CLOSED
+        /**
+         *
+         */
+        INITIALIZED, 
+
+        /**
+         *
+         */
+        CONNECTED, 
+
+        /**
+         *
+         */
+        CLOSED
     };
 
+    /**
+     *
+     */
     public static enum Scope {
 
-        LOCAL, REMOTE
+        /**
+         *
+         */
+        LOCAL, 
+
+        /**
+         *
+         */
+        REMOTE
     };
     private static int sessionCounter = 0;
     private final InetAddress hostIp;
@@ -59,10 +87,24 @@ public class RserveConnection extends Thread {
     private final boolean startedLocalRserve;
     private State state = State.INITIALIZED;
 
+    /**
+     *
+     * @param hostIp
+     * @param hostPort
+     * @param startedLocalRserve
+     */
     public RserveConnection(InetAddress hostIp, int hostPort, boolean startedLocalRserve) {
         this(hostIp, hostPort, null, null, startedLocalRserve);
     }
 
+    /**
+     *
+     * @param hostIp
+     * @param hostPort
+     * @param userName
+     * @param password
+     * @param startedLocalRserve
+     */
     public RserveConnection(InetAddress hostIp, int hostPort, String userName, String password, boolean startedLocalRserve) {
         super("RserveSession" + (sessionCounter++));
         if (hostIp == null || hostIp.isLoopbackAddress()) {
@@ -70,7 +112,7 @@ public class RserveConnection extends Thread {
         } else {
             scope = Scope.REMOTE;
         }
-        Logger.getLogger(RserveConnection.class.getName()).info("Session scope: " + scope);
+        Logger.getLogger(RserveConnection.class.getName()).log(Level.INFO, "Session scope: {0}", scope);
         this.hostIp = hostIp;
         this.hostPort = hostPort;
         this.userName = userName;
@@ -79,13 +121,20 @@ public class RserveConnection extends Thread {
         Runtime.getRuntime().addShutdownHook(this);
     }
 
+    /**
+     *
+     * @return
+     * @throws RserveException
+     * @throws IllegalStateException
+     * @throws IllegalArgumentException
+     */
     protected RConnection connect() throws RserveException, IllegalStateException, IllegalArgumentException {
         if (state == State.INITIALIZED) {
             if (hostIp == null || scope == Scope.LOCAL) {
                 Logger.getLogger(RserveConnection.class.getName()).info("Localhost session.");
                 connection = new RConnection();
             } else {
-                Logger.getLogger(RserveConnection.class.getName()).info("Session on: " + hostIp.toString() + " at port " + hostPort);
+                Logger.getLogger(RserveConnection.class.getName()).log(Level.INFO, "Session on: {0} at port {1}", new Object[]{hostIp.toString(), hostPort});
                 connection = new RConnection(hostIp.getHostAddress(), hostPort);
             }
             if (connection.needLogin()) {
@@ -104,6 +153,12 @@ public class RserveConnection extends Thread {
         }
     }
 
+    /**
+     *
+     * @return
+     * @throws IllegalStateException
+     * @throws RserveException
+     */
     public RConnection getConnection() throws IllegalStateException, RserveException {
         switch (state) {
             case CLOSED:
@@ -115,6 +170,9 @@ public class RserveConnection extends Thread {
         return connection;
     }
 
+    /**
+     *
+     */
     public void closeConnection() {
         if (connection != null) {
             switch (state) {

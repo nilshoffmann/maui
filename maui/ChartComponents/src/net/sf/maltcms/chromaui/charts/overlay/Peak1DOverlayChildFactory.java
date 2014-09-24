@@ -53,6 +53,10 @@ public final class Peak1DOverlayChildFactory extends ChildFactory<IPeakAnnotatio
     private final Peak1DOverlay peakOverlay;
     private final IChromAUIProject project;
 
+    /**
+     *
+     * @param peakOverlay
+     */
     public Peak1DOverlayChildFactory(Peak1DOverlay peakOverlay) {
         this.peakOverlay = peakOverlay;
         this.project = peakOverlay.getLookup().lookup(IChromAUIProject.class);
@@ -60,6 +64,11 @@ public final class Peak1DOverlayChildFactory extends ChildFactory<IPeakAnnotatio
         peakOverlay.addChangeListener(this);
     }
 
+    /**
+     *
+     * @param list
+     * @return
+     */
     @Override
     protected boolean createKeys(List<IPeakAnnotationDescriptor> list) {
         for (IPeakAnnotationDescriptor pad : peakOverlay.getActiveSelection()) {
@@ -71,6 +80,11 @@ public final class Peak1DOverlayChildFactory extends ChildFactory<IPeakAnnotatio
         return true;
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     @Override
     protected Node createNodeForKey(IPeakAnnotationDescriptor key) {
         Node n = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(key, Lookups.fixed(project));
@@ -78,6 +92,10 @@ public final class Peak1DOverlayChildFactory extends ChildFactory<IPeakAnnotatio
         return n;
     }
 
+    /**
+     *
+     * @param oce
+     */
     @Override
     public void overlayChanged(OverlayChangeEvent oce) {
         refresh(true);

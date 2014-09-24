@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -47,7 +48,7 @@ public class ImportUtilities {
         HostnameVerifier hv = new HostnameVerifier() {
             @Override
             public boolean verify(String urlHostname, SSLSession s) {
-                System.out.println("WARNING: Hostname is not matched for cert.");
+                Logger.getLogger(getClass().getName()).info("WARNING: Hostname is not matched for cert.");
                 return true;
             }
         };

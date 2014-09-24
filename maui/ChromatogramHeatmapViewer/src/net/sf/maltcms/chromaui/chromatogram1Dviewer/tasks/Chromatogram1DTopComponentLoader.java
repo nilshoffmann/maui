@@ -29,6 +29,7 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import lombok.Data;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram1D;
@@ -45,7 +46,7 @@ import org.openide.util.NotImplementedException;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class Chromatogram1DTopComponentLoader extends AProgressAwareRunnable {
@@ -59,7 +60,7 @@ public class Chromatogram1DTopComponentLoader extends AProgressAwareRunnable {
         try {
             progressHandle.setDisplayName("Creating Chromatogram1D View");
             progressHandle.start();
-            System.out.println("Creating chart for chromatogram 1D view");
+            Logger.getLogger(getClass().getName()).info("Creating chart for chromatogram 1D view");
 
             boolean is1D = true;
             for (IChromatogramDescriptor descr : chromatograms) {
@@ -68,8 +69,8 @@ public class Chromatogram1DTopComponentLoader extends AProgressAwareRunnable {
                 }
             }
             if (is1D) {
-                System.out.println("Creating 1D data providers and dataset.");
-                List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
+                Logger.getLogger(getClass().getName()).info("Creating 1D data providers and dataset.");
+                List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
 
                 for (IChromatogramDescriptor descr : chromatograms) {
                     providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));

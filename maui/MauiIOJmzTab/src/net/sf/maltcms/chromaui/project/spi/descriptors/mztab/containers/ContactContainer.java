@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ContactDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Contact;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class ContactContainer extends BasicMzTabMetaDataContainer<ContactDescriptor> {
+    private static final long serialVersionUID = -1048702604748681888L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static ContactContainer create(Metadata metadata) {
         ContactContainer c = new ContactContainer();
         c.setLevel(2);

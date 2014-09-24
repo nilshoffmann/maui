@@ -35,7 +35,7 @@ import org.openide.util.NbBundle;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 public class MetaDataProperties implements ProjectCustomizer.CompositeCategoryProvider {
 

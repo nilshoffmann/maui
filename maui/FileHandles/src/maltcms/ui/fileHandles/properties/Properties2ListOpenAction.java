@@ -34,6 +34,7 @@ package maltcms.ui.fileHandles.properties;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openide.loaders.DataObject;
 
 public final class Properties2ListOpenAction implements ActionListener {
@@ -48,7 +49,7 @@ public final class Properties2ListOpenAction implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         for (DataObject dataObject : context) {
             if (!dataObject.getPrimaryFile().isFolder()) {
-                System.out.println(dataObject.getPrimaryFile().getPath());
+                Logger.getLogger(getClass().getName()).info(dataObject.getPrimaryFile().getPath());
                 Properties2ListOpenSupport ms = new Properties2ListOpenSupport(((PropertiesDataObject) dataObject).getPrimaryEntry());
                 ms.open();
             }

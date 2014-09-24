@@ -45,6 +45,9 @@ public final class AnnotationManagerTopComponent extends TopComponent {
 //    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
     private static final String PREFERRED_ID = "AnnotationManagerTopComponent";
 
+    /**
+     *
+     */
     public AnnotationManagerTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(AnnotationManagerTopComponent.class, "CTL_AnnotationManagerTopComponent"));
@@ -111,11 +114,17 @@ public final class AnnotationManagerTopComponent extends TopComponent {
         return TopComponent.PERSISTENCE_NEVER;
     }
 
+    /**
+     *
+     */
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening
     }
 
+    /**
+     *
+     */
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
@@ -138,6 +147,10 @@ public final class AnnotationManagerTopComponent extends TopComponent {
         // TODO read your settings according to their version
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String preferredID() {
         return PREFERRED_ID;

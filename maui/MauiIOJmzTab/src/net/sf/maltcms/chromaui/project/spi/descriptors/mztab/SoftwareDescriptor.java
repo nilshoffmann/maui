@@ -35,17 +35,33 @@ import uk.ac.ebi.pride.jmztab.model.MetadataElement;
 import uk.ac.ebi.pride.jmztab.model.Param;
 import uk.ac.ebi.pride.jmztab.model.Software;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class SoftwareDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_SOFTWARE = "software";
+    private static final long serialVersionUID = -3569876134095886178L;
 
     private Software software;
 
+    /**
+     *
+     * @return
+     */
     public Software getSoftware() {
         activate(ActivationPurpose.READ);
         return software;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setSoftware(Software element) {
         activate(ActivationPurpose.WRITE);
         Software old = this.software;
@@ -56,38 +72,71 @@ public class SoftwareDescriptor extends ABasicDescriptor implements IMzTabDescri
         getPropertyChangeSupport().firePropertyChange(PROP_SOFTWARE, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getElementId() {
         return getSoftware().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(Integer id) {
         getSoftware().setId(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public Param getParam() {
         return getSoftware().getParam();
     }
 
+    /**
+     *
+     * @param param
+     */
     public void setParam(Param param) {
         getSoftware().setParam(param);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getSettingList() {
         return getSoftware().getSettingList();
     }
 
+    /**
+     *
+     * @param setting
+     */
     public void addSetting(String setting) {
         getSoftware().addSetting(setting);
     }
 
+    @Override
     public String toString() {
         return getSoftware().toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public MetadataElement getElement() {
         return getSoftware().getElement();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getReference() {
         return getSoftware().getReference();
     }

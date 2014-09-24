@@ -41,6 +41,12 @@ public class RT2DNumberFormatter extends DecimalFormat {
 
     private double scanrate, offset;
 
+    /**
+     *
+     * @param scanrate
+     * @param offset
+     * @param string
+     */
     public RT2DNumberFormatter(double scanrate, double offset, String string) {
         nf = new DecimalFormat(string);
         this.scanrate = scanrate;

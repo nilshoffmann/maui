@@ -30,6 +30,7 @@ package maltcms.ui.viewer.datastructures.tree;
 import cross.datastructures.tuple.Tuple2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.logging.Logger;
 import maltcms.datastructures.quadTree.QuadTree;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,21 +45,38 @@ import static org.junit.Assert.*;
  */
 public class QuadTreeTest {
 
+    /**
+     *
+     */
     public QuadTreeTest() {
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @BeforeClass
     public static void setUpClass() throws Exception {
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
@@ -199,7 +217,7 @@ public class QuadTreeTest {
      */
     @Test
     public void testMain() {
-        System.out.println("main");
+        Logger.getLogger(getClass().getName()).info("main");
         String[] args = null;
 //        try{
         //QuadTree.main(args);

@@ -33,7 +33,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class NormalizationDescriptorNormalizer implements IPeakNormalizer {

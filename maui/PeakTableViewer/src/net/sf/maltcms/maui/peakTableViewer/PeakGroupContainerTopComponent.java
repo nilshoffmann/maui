@@ -30,6 +30,7 @@ package net.sf.maltcms.maui.peakTableViewer;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import java.awt.BorderLayout;
+import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
@@ -173,11 +174,11 @@ public final class PeakGroupContainerTopComponent extends TopComponent implement
         peakGroupContainer = context;
         activeProject = context.getProject();
         setDisplayName(peakGroupContainer.getDisplayName());
-        System.out.println("Setting node factory");
+        Logger.getLogger(getClass().getName()).info("Setting node factory");
         final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupContainer), activeProject.getLookup());
         PeakGroupContainerChildFactory childFactory = new PeakGroupContainerChildFactory(lkp, peakGroupContainer, hideSamples);
         Node rootNode = new AbstractNode(Children.create(childFactory, true), lkp);
-        System.out.println("Setting root context");
+        Logger.getLogger(getClass().getName()).info("Setting root context");
         manager.setRootContext(rootNode);
     }
 }

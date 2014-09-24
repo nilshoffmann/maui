@@ -111,7 +111,7 @@ public class GenericGroovyCSVDataAction extends ContextAction<CSVDataObject> {
         Collection<? extends IChromAUIProject> projects = Projects.getSelectedOpenProject(IChromAUIProject.class, "Please select a project for this action", "Project");
         if (!projects.isEmpty()) {
             IChromAUIProject icap = projects.iterator().next();
-            GroovyScriptSelectionForm<CSVDataGroovyScript> gssf = new GroovyScriptSelectionForm<CSVDataGroovyScript>(Utils.getScriptDirectories(icap), new CsvScriptLoader());
+            GroovyScriptSelectionForm<CSVDataGroovyScript> gssf = new GroovyScriptSelectionForm<>(Utils.getScriptDirectories(icap), new CsvScriptLoader());
             gssf.updateModel();
             DialogDescriptor dd = new DialogDescriptor(gssf,
                     "Please select a script for execution");

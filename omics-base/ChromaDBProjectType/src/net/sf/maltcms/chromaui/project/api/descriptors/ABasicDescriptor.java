@@ -47,6 +47,10 @@ public class ABasicDescriptor implements IBasicDescriptor {
 
     private transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+    /**
+     *
+     * @return
+     */
     protected PropertyChangeSupport getPropertyChangeSupport() {
         if (this.pcs == null) {
             this.pcs = new PropertyChangeSupport(this);
@@ -54,71 +58,146 @@ public class ABasicDescriptor implements IBasicDescriptor {
         return this.pcs;
     }
 
+    /**
+     *
+     * @param string
+     * @param pl
+     */
     @Override
     public synchronized void removePropertyChangeListener(String string, PropertyChangeListener pl) {
         getPropertyChangeSupport().removePropertyChangeListener(string, pl);
     }
 
+    /**
+     *
+     * @param pl
+     */
     @Override
     public synchronized void removePropertyChangeListener(PropertyChangeListener pl) {
         getPropertyChangeSupport().removePropertyChangeListener(pl);
     }
 
+    /**
+     *
+     * @param string
+     * @return
+     */
     @Override
     public synchronized boolean hasListeners(String string) {
         return getPropertyChangeSupport().hasListeners(string);
     }
 
+    /**
+     *
+     * @param string
+     * @return
+     */
     @Override
     public synchronized PropertyChangeListener[] getPropertyChangeListeners(String string) {
         return getPropertyChangeSupport().getPropertyChangeListeners(string);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized PropertyChangeListener[] getPropertyChangeListeners() {
         return getPropertyChangeSupport().getPropertyChangeListeners();
     }
 
+    /**
+     *
+     * @param pce
+     */
     @Override
     public void firePropertyChange(PropertyChangeEvent pce) {
         getPropertyChangeSupport().firePropertyChange(pce);
     }
 
+    /**
+     *
+     * @param string
+     * @param bln
+     * @param bln1
+     */
     @Override
     public void firePropertyChange(String string, boolean bln, boolean bln1) {
         getPropertyChangeSupport().firePropertyChange(string, bln, bln1);
     }
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param i1
+     */
     @Override
     public void firePropertyChange(String string, int i, int i1) {
         getPropertyChangeSupport().firePropertyChange(string, i, i1);
     }
 
+    /**
+     *
+     * @param string
+     * @param o
+     * @param o1
+     */
     @Override
     public void firePropertyChange(String string, Object o, Object o1) {
         getPropertyChangeSupport().firePropertyChange(string, o, o1);
     }
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param bln
+     * @param bln1
+     */
     @Override
     public void fireIndexedPropertyChange(String string, int i, boolean bln, boolean bln1) {
         getPropertyChangeSupport().fireIndexedPropertyChange(string, i, bln, bln1);
     }
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param i1
+     * @param i2
+     */
     @Override
     public void fireIndexedPropertyChange(String string, int i, int i1, int i2) {
         getPropertyChangeSupport().fireIndexedPropertyChange(string, i, i1, i2);
     }
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param o
+     * @param o1
+     */
     @Override
     public void fireIndexedPropertyChange(String string, int i, Object o, Object o1) {
         getPropertyChangeSupport().fireIndexedPropertyChange(string, i, o, o1);
     }
 
+    /**
+     *
+     * @param string
+     * @param pl
+     */
     @Override
     public synchronized void addPropertyChangeListener(String string, PropertyChangeListener pl) {
         getPropertyChangeSupport().addPropertyChangeListener(string, pl);
     }
 
+    /**
+     *
+     * @param pl
+     */
     @Override
     public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
         getPropertyChangeSupport().addPropertyChangeListener(pl);
@@ -126,11 +205,19 @@ public class ABasicDescriptor implements IBasicDescriptor {
 
     private transient IChromAUIProject project;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IChromAUIProject getProject() {
         return project;
     }
 
+    /**
+     *
+     * @param project
+     */
     @Override
     public void setProject(IChromAUIProject project) {
         if (project != null) {
@@ -144,6 +231,10 @@ public class ABasicDescriptor implements IBasicDescriptor {
 
     private transient Activator activator;
 
+    /**
+     *
+     * @param activator
+     */
     @Override
     public void bind(Activator activator) {
         if (this.activator == activator) {
@@ -156,6 +247,10 @@ public class ABasicDescriptor implements IBasicDescriptor {
         this.activator = activator;
     }
 
+    /**
+     *
+     * @param activationPurpose
+     */
     @Override
     public void activate(ActivationPurpose activationPurpose) {
         if (null != activator && null != activationPurpose) {
@@ -222,12 +317,20 @@ public class ABasicDescriptor implements IBasicDescriptor {
     @Indexed
     private Date date = new Date();
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Date getDate() {
         activate(ActivationPurpose.READ);
         return this.date;
     }
 
+    /**
+     *
+     * @param date
+     */
     @Override
     public void setDate(Date date) {
         activate(ActivationPurpose.WRITE);
@@ -239,12 +342,20 @@ public class ABasicDescriptor implements IBasicDescriptor {
     @Indexed
     private final UUID id = UUID.randomUUID();
 
+    /**
+     *
+     * @return
+     */
     @Override
     public UUID getId() {
         activate(ActivationPurpose.READ);
         return this.id;
     }
 
+    /**
+     *
+     * @param id
+     */
     @Override
     public void setId(UUID id) {
 //        activate(ActivationPurpose.WRITE);
@@ -256,12 +367,20 @@ public class ABasicDescriptor implements IBasicDescriptor {
 
     private String shortDescription = "";
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getShortDescription() {
         activate(ActivationPurpose.READ);
         return this.name;
     }
 
+    /**
+     *
+     * @param shortDescription
+     */
     @Override
     public void setShortDescription(String shortDescription) {
         activate(ActivationPurpose.WRITE);
@@ -280,6 +399,10 @@ public class ABasicDescriptor implements IBasicDescriptor {
         return getId().compareTo(t.getId());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public HelpCtx getHelpCtx() {
         return new HelpCtx(getClass());

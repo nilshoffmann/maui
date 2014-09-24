@@ -31,7 +31,7 @@ import org.netbeans.spi.wizard.WizardPage;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class VisualizationPane extends WizardPage {
 

@@ -93,6 +93,7 @@ public class Rt2DVis {
             NewtCameraMouseController mouse = new NewtCameraMouseController();
             chart.addController(mouse);
             mouse.addControllerEventListener(new ControllerEventListener() {
+                @Override
                 public void controllerEventFired(ControllerEvent e) {
                     if (e.getType() == ControllerType.PAN) {
 //						System.out.println("Mouse[PAN]: " + e.getValue());

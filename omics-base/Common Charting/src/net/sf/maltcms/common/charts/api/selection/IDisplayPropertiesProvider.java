@@ -33,22 +33,67 @@ package net.sf.maltcms.common.charts.api.selection;
  */
 public interface IDisplayPropertiesProvider {
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getName(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getDisplayName(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getShortDescription(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getSourceName(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getSourceDisplayName(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getSourceShortDescription(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getTargetName(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getTargetDisplayName(ISelection selection);
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     public String getTargetShortDescription(ISelection selection);
 
 }

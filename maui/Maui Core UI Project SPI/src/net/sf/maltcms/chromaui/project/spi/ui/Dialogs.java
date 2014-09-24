@@ -91,7 +91,7 @@ public class Dialogs {
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             Node[] selectedNodes = dp.getExplorerManager().getSelectedNodes();
-            List<IToolDescriptor> toolDescriptors = new LinkedList<IToolDescriptor>();
+            List<IToolDescriptor> toolDescriptors = new LinkedList<>();
             for (Node n : selectedNodes) {
                 toolDescriptors.addAll(n.getLookup().lookupAll(IToolDescriptor.class));
             }

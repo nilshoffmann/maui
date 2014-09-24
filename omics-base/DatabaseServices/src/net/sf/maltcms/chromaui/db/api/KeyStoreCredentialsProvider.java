@@ -33,16 +33,27 @@ package net.sf.maltcms.chromaui.db.api;
  */
 public class KeyStoreCredentialsProvider implements ICredentialsProvider {
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public char[] getPassword() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     */
     @Override
     public void getCredentials() {
         throw new UnsupportedOperationException("Not supported yet.");

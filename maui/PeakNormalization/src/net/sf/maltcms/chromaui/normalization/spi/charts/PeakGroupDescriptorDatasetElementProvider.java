@@ -28,6 +28,8 @@
 package net.sf.maltcms.chromaui.normalization.spi.charts;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
@@ -56,7 +58,7 @@ public class PeakGroupDescriptorDatasetElementProvider implements INamedElementP
 
     @Override
     public void setKey(Comparable<?> key) {
-        System.err.println("setKey() not implemented for class " + PeakGroupDescriptorDatasetElementProvider.class.getName());
+        Logger.getLogger(getClass().getName()).log(Level.WARNING, "setKey() not implemented for class {0}", PeakGroupDescriptorDatasetElementProvider.class.getName());
     }
 
     @Override
@@ -76,7 +78,7 @@ public class PeakGroupDescriptorDatasetElementProvider implements INamedElementP
 
     @Override
     public void reset() {
-        System.err.println("reset() not implemented for class " + PeakGroupDescriptorDatasetElementProvider.class.getName());
+        Logger.getLogger(getClass().getName()).log(Level.WARNING, "reset() not implemented for class {0}", PeakGroupDescriptorDatasetElementProvider.class.getName());
     }
 
 }

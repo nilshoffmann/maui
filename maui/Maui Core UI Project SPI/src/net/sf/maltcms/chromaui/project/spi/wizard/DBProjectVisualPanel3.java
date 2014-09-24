@@ -38,6 +38,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import net.sf.maltcms.chromaui.project.api.descriptors.INormalizationDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.NormalizationType;
@@ -63,7 +65,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
         ExplorerManager.Provider, Lookup.Provider, PropertyChangeListener {
 
     public static final String PROP_FILE_TO_NORMALIZATION = "fileToNormalization";
-    private Set<FileToNormalizationDescriptor> fileToNormalization = new LinkedHashSet<FileToNormalizationDescriptor>();
+    private Set<FileToNormalizationDescriptor> fileToNormalization = new LinkedHashSet<>();
     private ExplorerManager manager = new ExplorerManager();
     private InstanceContent content = null;
     private Lookup lookup = null;
@@ -154,7 +156,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
                 getProperty(
                         PROP_FILE_TO_NORMALIZATION);
         if (map != null) {
-            Set<FileToNormalizationDescriptor> list = new LinkedHashSet<FileToNormalizationDescriptor>();
+            Set<FileToNormalizationDescriptor> list = new LinkedHashSet<>();
             for (File f : map.keySet()) {
                 FileToNormalizationDescriptor fnd = new FileToNormalizationDescriptor(
                         f, map.get(f));
@@ -168,7 +170,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
 
     private void setFileToNormalizationDescriptors(WizardDescriptor settings,
             Set<FileToNormalizationDescriptor> list) {
-        HashMap<File, INormalizationDescriptor> map = new LinkedHashMap<File, INormalizationDescriptor>();
+        HashMap<File, INormalizationDescriptor> map = new LinkedHashMap<>();
         for (FileToNormalizationDescriptor ftnd : list) {
             map.put(ftnd.getFile(), ftnd.getNormalizationDescriptor());
         }
@@ -280,7 +282,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
         Set<FileToNormalizationDescriptor> descriptors = getFileToNormalizationDescriptors(
                 settings);
         if (descriptors.isEmpty()) {
-            descriptors = new LinkedHashSet<FileToNormalizationDescriptor>();
+            descriptors = new LinkedHashSet<>();
             String inputFiles = ((String) settings.getProperty("input.dataInfo"));
             if (inputFiles != null) {
                 String[] ifs = inputFiles.split(",");
@@ -294,7 +296,7 @@ public class DBProjectVisualPanel3 extends JPanel implements IWizardValidatable,
 //            firePropertyChange("FILES", ui, ui);
             }
         }
-        System.out.println("Normalization Descriptors: " + descriptors);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Normalization Descriptors: {0}", descriptors);
         fileToNormalization = descriptors;
         FileRootNode frn = new FileRootNode(Children.create(new FileNormalizationChildFactory(
                 fileToNormalization), true));

@@ -38,6 +38,10 @@ import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class PeakImportWizardPanel1 implements WizardDescriptor.Panel, PropertyChangeListener {
 
     /**
@@ -52,7 +56,13 @@ public class PeakImportWizardPanel1 implements WizardDescriptor.Panel, PropertyC
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
-    public Component getComponent() {
+
+    /**
+     *
+     * @return
+     */
+    @Override
+        public Component getComponent() {
         if (component == null) {
             component = new PeakImportVisualPanel1();
             component.addPropertyChangeListener(this);
@@ -60,6 +70,11 @@ public class PeakImportWizardPanel1 implements WizardDescriptor.Panel, PropertyC
         return component;
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public HelpCtx getHelp() {
         // Show no Help button for this panel:
         return HelpCtx.DEFAULT_HELP;
@@ -67,6 +82,11 @@ public class PeakImportWizardPanel1 implements WizardDescriptor.Panel, PropertyC
         // return new HelpCtx(SampleWizardPanel1.class);
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public boolean isValid() {
         return isValid;
         // If it depends on some condition (form filled out...), then:
@@ -75,25 +95,41 @@ public class PeakImportWizardPanel1 implements WizardDescriptor.Panel, PropertyC
         // fireChangeEvent();
         // and uncomment the complicated stuff below.
     }
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+    private final Set<ChangeListener> listeners = new HashSet<>(1); // or can use ChangeSupport in NB 6.0
 
+    /**
+     *
+     * @param l
+     */
+    @Override
     public final void addChangeListener(ChangeListener l) {
         synchronized (listeners) {
             listeners.add(l);
         }
     }
 
+    /**
+     *
+     * @param l
+     */
+    @Override
     public final void removeChangeListener(ChangeListener l) {
         synchronized (listeners) {
             listeners.remove(l);
         }
     }
 
+    /**
+     *
+     * @param source
+     * @param oldState
+     * @param newState
+     */
     protected final void fireChangeEvent(Object source, boolean oldState, boolean newState) {
         if (oldState != newState) {
             Iterator<ChangeListener> it;
             synchronized (listeners) {
-                it = new HashSet<ChangeListener>(listeners).iterator();
+                it = new HashSet<>(listeners).iterator();
             }
             ChangeEvent ev = new ChangeEvent(source);
             while (it.hasNext()) {
@@ -106,7 +142,13 @@ public class PeakImportWizardPanel1 implements WizardDescriptor.Panel, PropertyC
     // settings object will be the WizardDescriptor, so you can use
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
-    public void readSettings(Object settings) {
+
+    /**
+     *
+     * @param settings
+     */
+    @Override
+        public void readSettings(Object settings) {
         if (settings instanceof WizardDescriptor) {
             ((PeakImportVisualPanel1) getComponent()).setNameField(((WizardDescriptor) settings).getProperty(PeakImportVisualPanel1.PROP_USERNAME));
             getComponent().addPropertyChangeListener(this);
@@ -115,6 +157,11 @@ public class PeakImportWizardPanel1 implements WizardDescriptor.Panel, PropertyC
 
     }
 
+    /**
+     *
+     * @param settings
+     */
+    @Override
     public void storeSettings(Object settings) {
         if (model != null) {
             model.putProperty(PeakImportVisualPanel1.PROP_USERNAME, ((PeakImportVisualPanel1) getComponent()).getNameField());

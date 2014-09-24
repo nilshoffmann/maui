@@ -31,10 +31,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import org.openide.loaders.DataObject;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class CDF2ToolsUIOpenAction implements ActionListener {
 
     private final DataObject context;
 
+    /**
+     *
+     * @param context
+     */
     public CDF2ToolsUIOpenAction(DataObject context) {
         this.context = context;
     }

@@ -59,7 +59,7 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class DBImportIntoContainerTask extends AProgressAwareRunnable {
@@ -90,7 +90,7 @@ public class DBImportIntoContainerTask extends AProgressAwareRunnable {
     public void run() {
         getProgressHandle().setDisplayName("Importing " + databaseType + " database");
         getProgressHandle().start(selectedDatabases.length);
-        List<FileObject> createdFiles = new LinkedList<FileObject>();
+        List<FileObject> createdFiles = new LinkedList<>();
         IDatabaseDescriptor descriptor = null;
         try {
             FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),
@@ -114,7 +114,7 @@ public class DBImportIntoContainerTask extends AProgressAwareRunnable {
                         MSPFormatMetaboliteParser3 mfmp = new MSPFormatMetaboliteParser3();
                         mfmp.setLocale(locale);
                         BufferedReader br = null;
-                        List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
+                        List<IMetabolite> metabolites = new ArrayList<>();
                         try {
                             br = new BufferedReader(new FileReader(file));
                             String line = "";
@@ -128,10 +128,10 @@ public class DBImportIntoContainerTask extends AProgressAwareRunnable {
                             // System.exit(-1);
                             // handleLine("\r");
                         } catch (FileNotFoundException e) {
-                            System.err.println(e.getLocalizedMessage());
+                            Logger.getLogger(getClass().getName()).warning(e.getLocalizedMessage());
                             Exceptions.printStackTrace(e);
                         } catch (IOException e) {
-                            System.err.println(e.getLocalizedMessage());
+                            Logger.getLogger(getClass().getName()).warning(e.getLocalizedMessage());
                             Exceptions.printStackTrace(e);
                         } finally {
                             if (br != null) {

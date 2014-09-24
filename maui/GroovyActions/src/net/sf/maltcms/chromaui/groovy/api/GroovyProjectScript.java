@@ -38,6 +38,11 @@ import org.openide.util.Cancellable;
  */
 public interface GroovyProjectScript<T extends Project> extends Runnable, Cancellable, GroovyScript {
 
+    /**
+     *
+     * @param project
+     * @param progressHandle
+     */
     public void create(T project, ProgressHandle progressHandle);
 
 }

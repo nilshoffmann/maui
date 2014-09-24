@@ -46,16 +46,28 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
     private final IDisplayPropertiesProvider provider;
     private final ISelectionShapeFactory shapeFactory;
 
+    /**
+     *
+     * @param dataset
+     */
     public CategoryMouseSelectionHandler(ACategoryDataset<?, TARGET> dataset) {
         this(dataset, new DefaultSelectionShapeFactory());
     }
 
+    /**
+     *
+     * @param dataset
+     * @param shapeFactory
+     */
     public CategoryMouseSelectionHandler(ACategoryDataset<?, TARGET> dataset, ISelectionShapeFactory shapeFactory) {
         this.dataset = dataset;
         this.provider = dataset.getLookup().lookup(IDisplayPropertiesProvider.class);
         this.shapeFactory = shapeFactory;
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         selection = null;
@@ -63,6 +75,9 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
         fireSelectionChange();
     }
 
+    /**
+     *
+     */
     protected void fireSelectionChange() {
         final SelectionChangeEvent event = new SelectionChangeEvent(this, selection);
         for (ISelectionChangeListener listener : listenerList.getListeners(ISelectionChangeListener.class)) {
@@ -70,10 +85,18 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
         }
     }
 
+    /**
+     *
+     * @param dataset
+     */
     public void setDataset(ACategoryDataset<?, TARGET> dataset) {
         this.dataset = dataset;
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof CategoryItemEntity) {
@@ -94,6 +117,10 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
         }
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof CategoryItemEntity) {
@@ -118,11 +145,19 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
         }
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void addSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.add(ISelectionChangeListener.class, listener);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void removeSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.remove(ISelectionChangeListener.class, listener);

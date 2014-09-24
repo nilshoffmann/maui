@@ -33,7 +33,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class SceneLayouter {
 

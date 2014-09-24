@@ -40,14 +40,26 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IAnnotation;
 public class SpeciesAnnotation extends ADescriptor implements IAnnotation<Species> {
 
     private Species species;
+
+    /**
+     *
+     */
     public final String PROP_SPECIES = "species";
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Species getAnnotation() {
         activate(ActivationPurpose.READ);
         return species;
     }
 
+    /**
+     *
+     * @param species
+     */
     @Override
     public void setAnnotation(Species species) {
         activate(ActivationPurpose.WRITE);

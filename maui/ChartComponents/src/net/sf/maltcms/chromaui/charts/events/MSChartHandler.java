@@ -39,6 +39,11 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
+/**
+ *
+ * @author Nils Hoffmann
+ * @param <T>
+ */
 public class MSChartHandler<T extends IScan> implements
         XYItemEntityEventListener, Lookup.Provider {
 
@@ -49,6 +54,10 @@ public class MSChartHandler<T extends IScan> implements
     private final ADataset1D<IChromatogram, T> ds;
     private ExecutorService es = Executors.newSingleThreadExecutor();
 
+    /**
+     *
+     * @param ds
+     */
     public MSChartHandler(ADataset1D<IChromatogram, T> ds) {
         this.ds = ds;
     }
@@ -56,6 +65,12 @@ public class MSChartHandler<T extends IScan> implements
     /* (non-Javadoc)
      * @see cross.event.IListener#listen(cross.event.IEvent)
      */
+
+    /**
+     *
+     * @param v
+     */
+    
     @Override
     public void listen(final IEvent<XYItemEntity> v) {
         Runnable r = new Runnable() {
@@ -85,6 +100,10 @@ public class MSChartHandler<T extends IScan> implements
         es.submit(r);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return lookup;

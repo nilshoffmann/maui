@@ -51,22 +51,36 @@ import org.openide.windows.CloneableTopComponent;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  * @author Nils Hoffmann
  */
 public class CSV2TableOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
 
-    private List<CSVDataObject> auxDataObjects = new LinkedList<CSVDataObject>();
+    private List<CSVDataObject> auxDataObjects = new LinkedList<>();
 
+    /**
+     *
+     * @param entry
+     */
     public CSV2TableOpenSupport(CSVDataObject.Entry entry) {
         super(entry);
     }
 
+    /**
+     *
+     * @param entry
+     * @param auxDataObjects
+     */
     public CSV2TableOpenSupport(CSVDataObject.Entry entry, DataObject... auxDataObjects) {
         this(entry);
         addDataObjects(Arrays.asList(auxDataObjects));
     }
 
+    /**
+     *
+     * @param entry
+     * @param auxDataObjects
+     */
     public CSV2TableOpenSupport(CSVDataObject.Entry entry, List<DataObject> auxDataObjects) {
         this(entry);
         addDataObjects(auxDataObjects);
@@ -80,6 +94,10 @@ public class CSV2TableOpenSupport extends OpenSupport implements OpenCookie, Clo
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
         final CSVDataObject dobj = (CSVDataObject) entry.getDataObject();
@@ -100,9 +118,7 @@ public class CSV2TableOpenSupport extends OpenSupport implements OpenCookie, Clo
         final Future<DefaultTableModel> f = es.submit(new CSV2TableLoader(ph, files));
         try {
             tc.setTableModel(f.get());
-        } catch (InterruptedException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             Exceptions.printStackTrace(ex);
         }
         ph.finish();

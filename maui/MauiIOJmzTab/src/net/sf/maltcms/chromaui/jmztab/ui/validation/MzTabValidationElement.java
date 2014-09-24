@@ -112,7 +112,7 @@ public final class MzTabValidationElement extends TopComponent implements MultiV
 
     private ComboBoxModel getErrorLevelModel() {
         if (dcbm == null) {
-            dcbm = new DefaultComboBoxModel<Level>(Level.values());
+            dcbm = new DefaultComboBoxModel<>(Level.values());
         }
         return dcbm;
     }

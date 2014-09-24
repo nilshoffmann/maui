@@ -33,7 +33,7 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class CommonPeakAnnotationFinder extends AProgressAwareRunnable {

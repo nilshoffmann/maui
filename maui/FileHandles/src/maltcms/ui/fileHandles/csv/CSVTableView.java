@@ -68,6 +68,10 @@ import org.openide.util.NbBundle;
 import org.openide.util.lookup.Lookups;
 //import org.openide.util.ImageUtilities;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class CSVTableView extends JPanel implements MultiViewElement, ListSelectionListener, MouseListener {
 
     private static CSVTableView instance;
@@ -80,12 +84,15 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
     private int domainColumn = -1;
     private int labelColumn = -1;
     private int zValueColumn = -1;
-    private Set<Integer> columnsToPlot = new LinkedHashSet<Integer>();
+    private Set<Integer> columnsToPlot = new LinkedHashSet<>();
     private int activeColumn = -1;
     private JToolBar toolbar = new JToolBar();
     private MultiViewElementCallback callback = null;
     private boolean cellSelection = false;
 
+    /**
+     *
+     */
     public CSVTableView() {
         initComponents();
         setName(NbBundle.getMessage(CSVTableView.class, "CTL_CSV2ListTopComponent"));
@@ -106,6 +113,10 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
 
     }
 
+    /**
+     *
+     * @param tm
+     */
     public void setTableModel(TableModel tm) {
         if (tm == null) {
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Received table model was null!");
@@ -147,25 +158,29 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
         });
     }
 
+    /**
+     *
+     * @param jfctc
+     */
     public void setChartTarget(JFCView jfctc) {
         this.jfctc = jfctc;
     }
 
     private JFreeChart buildChart(Collection<Integer> selectedColumns1, int[] selectedRows, int domainColumn) {
         XYSeriesCollection xysc = new XYSeriesCollection();
-        List<Integer> selectedColumns = new LinkedList<Integer>(selectedColumns1);
-        System.out.println("buildChart called");
-        for (int i = 0; i < selectedColumns.size(); i++) {
-            XYSeries xys = new XYSeries(jTable1.getColumnName(selectedColumns.get(i)), true, true);
-            System.out.println("Creating XYSeries: " + jTable1.getColumnName(selectedColumns.get(i)));
+        List<Integer> selectedColumns = new LinkedList<>(selectedColumns1);
+        Logger.getLogger(getClass().getName()).info("buildChart called");
+        for (Integer selectedColumn : selectedColumns) {
+            XYSeries xys = new XYSeries(jTable1.getColumnName(selectedColumn), true, true);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Creating XYSeries: {0}", jTable1.getColumnName(selectedColumn));
             for (int j = 0; j < selectedRows.length; j++) {
                 if (domainColumn != -1) {
-//                    System.out.println("Domain column set");
+                    //                    System.out.println("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
                     boolean skipMissing = false;
-                    Number domainValue = Double.valueOf(0);
-                    Number rangeValue = Double.valueOf(0);
-//                    System.out.println("Class of object: " + o.getClass().getName());
+                    Number domainValue = (double) 0;
+                    Number rangeValue = (double) 0;
+                    //                    System.out.println("Class of object: " + o.getClass().getName());
                     if (o instanceof Number) {
 //                        System.out.println("domain instanceof Number");
                         domainValue = (Number) o;
@@ -178,7 +193,7 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                             domainValue = Double.parseDouble((String) o);
                         }
                     }
-                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumn);
                     if (val instanceof Number) {
 //                        System.out.println("instanceof Number");
                         rangeValue = (Number) val;
@@ -195,8 +210,8 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                         xys.add(domainValue, rangeValue);
                     }
                 } else {
-                    System.out.println("No domain column set");
-                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    Logger.getLogger(getClass().getName()).info("No domain column set");
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumn);
                     if (val instanceof Number) {
 //                        System.out.println("instanceof Number");
                         Number rangeValue = (Number) val;
@@ -311,33 +326,49 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
         return instance;
     }
 
+    /**
+     *
+     * @param j
+     * @param base
+     */
     public void logTransformColumn(int j, double base) {
         for (int i = 0; i < jTable1.getRowCount(); i++) {
             Object o = jTable1.getValueAt(i, j);
             if (o instanceof Double) {
-                jTable1.setValueAt(Double.valueOf(Math.log10(((Double) o).doubleValue()) / Math.log10(base)), i, j);
+                jTable1.setValueAt(Math.log10((Double) o) / Math.log10(base), i, j);
             } else if (o instanceof Float) {
-                jTable1.setValueAt(Double.valueOf(Math.log10(((Double) o).doubleValue()) / Math.log10(base)).floatValue(), i, j);
+                jTable1.setValueAt(Double.valueOf(Math.log10(((Double) o)) / Math.log10(base)).floatValue(), i, j);
             }
         }
     }
 
+    /**
+     *
+     * @param j
+     * @param base
+     */
     public void inverseLogTransformColumn(int j, double base) {
         for (int i = 0; i < jTable1.getRowCount(); i++) {
             Object o = jTable1.getValueAt(i, j);
             if (o instanceof Double) {
-                jTable1.setValueAt(Double.valueOf(Math.pow(base, ((Double) o).doubleValue())), i, j);
+                jTable1.setValueAt(Math.pow(base, ((Double) o)), i, j);
             } else if (o instanceof Float) {
-                jTable1.setValueAt(Double.valueOf(Math.pow(base, ((Double) o).doubleValue())).floatValue(), i, j);
+                jTable1.setValueAt(Double.valueOf(Math.pow(base, ((Double) o))).floatValue(), i, j);
             }
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening
     }
 
+    /**
+     *
+     */
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
@@ -369,13 +400,13 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                 });
                 //selected rows
                 for (final int col : jTable1.getSelectedColumns()) {
-                    if (columnsToPlot.contains(Integer.valueOf(col))) {
+                    if (columnsToPlot.contains(col)) {
                         jpm.add(new AbstractAction("Remove y-values from chart") {
 
                             @Override
                             public void actionPerformed(ActionEvent ae) {
-                                jTable1.getColumnModel().getColumn(Integer.valueOf(col)).setCellRenderer(new ColorColumnRenderer(Color.WHITE, jTable1.getSelectedRows()));
-                                columnsToPlot.remove(Integer.valueOf(col));
+                                jTable1.getColumnModel().getColumn(col).setCellRenderer(new ColorColumnRenderer(Color.WHITE, jTable1.getSelectedRows()));
+                                columnsToPlot.remove(col);
                                 jfctc.setChart(buildChart(labelColumn, domainColumn, columnsToPlot, jTable1.getSelectedRows()));
                             }
                         });
@@ -466,10 +497,27 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
         createAndShowPopupMenu(me);
     }
 
+    /**
+     *
+     * @param labelColumn
+     * @param domainColumn
+     * @param selectedColumns1
+     * @param selectedRows
+     * @return
+     */
     public JFreeChart buildChart(int labelColumn, int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
         return buildChart(labelColumn, domainColumn, -1, selectedColumns1, selectedRows);
     }
 
+    /**
+     *
+     * @param labelColumn
+     * @param domainColumn
+     * @param zValuesColumn
+     * @param selectedColumns1
+     * @param selectedRows
+     * @return
+     */
     public JFreeChart buildChart(int labelColumn, int domainColumn, int zValuesColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
         if (labelColumn != -1 && zValuesColumn == -1) {
             return buildChartWithLabels(labelColumn, domainColumn, selectedColumns1, selectedRows);
@@ -480,46 +528,54 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
         return buildChart(selectedColumns1, selectedRows, domainColumn);
     }
 
+    /**
+     *
+     * @param labelColumn
+     * @param zValuesColumn
+     * @param domainColumn
+     * @param selectedColumns1
+     * @param selectedRows
+     * @return
+     */
     public JFreeChart buildBubbleChartWithLabels(int labelColumn, int zValuesColumn, int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
         XYSeriesCollection xysc = new XYSeriesCollection();
-        List<Integer> selectedColumns = new LinkedList<Integer>();
+        List<Integer> selectedColumns = new LinkedList<>();
         selectedColumns.addAll(selectedColumns1);
         //if an additional label column is defined, we use this to further partition
         //the table by group labels
         HashMap<String, Integer> labelToIndex = getLabelToIndex(jTable1, labelColumn);
 
         //TODO use file label and group label
-        for (int i = 0; i < selectedColumns.size(); i++) {
+        for (Integer selectedColumn : selectedColumns) {
             for (String label : labelToIndex.keySet()) {
-                xysc.addSeries(new XYSeries(label + "-" + jTable1.getColumnName(selectedColumns.get(i)), true, true));
+                xysc.addSeries(new XYSeries(label + "-" + jTable1.getColumnName(selectedColumn), true, true));
             }
             for (int j = 0; j < selectedRows.length; j++) {
-                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString() + "-" + jTable1.getColumnName(selectedColumns.get(i)));
+                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString() + "-" + jTable1.getColumnName(selectedColumn));
                 if (domainColumn != -1) {
-                    System.out.println("Domain column set");
+                    Logger.getLogger(getClass().getName()).info("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
-                    Number domainValue = Double.valueOf(0);
-                    System.out.println("Class of object: " + o.getClass().getName());
+                    Number domainValue = (double) 0;
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Class of object: {0}", o.getClass().getName());
                     if (o instanceof Number) {
-                        System.out.println("domain instanceof Number");
+                        Logger.getLogger(getClass().getName()).info("domain instanceof Number");
                         domainValue = ((Number) o);
                     }
-                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumn);
                     if (val instanceof Number) {
-                        System.out.println("instanceof Number");
+                        Logger.getLogger(getClass().getName()).info("instanceof Number");
                         Number rangeValue = ((Number) val);
                         xys.add(domainValue, rangeValue);
                     }
                 } else {
-                    System.out.println("No domain column set");
-                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    Logger.getLogger(getClass().getName()).info("No domain column set");
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumn);
                     if (val instanceof Number) {
-                        System.out.println("instanceof Number");
+                        Logger.getLogger(getClass().getName()).info("instanceof Number");
                         Number rangeValue = ((Number) val);
                         xys.add(j, rangeValue);
                     }
                 }
-
             }
         }
         String xaxisLabel = domainColumn == -1 ? "row" : jTable1.getModel().getColumnName(domainColumn);
@@ -542,61 +598,69 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
     }
 
     private HashMap<String, Integer> getLabelToIndex(JTable jt, int labelColumn) {
-        HashSet<String> hm = new LinkedHashSet<String>();
+        HashSet<String> hm = new LinkedHashSet<>();
         for (int i = 0; i < jt.getRowCount(); i++) {
             hm.add(String.valueOf(jt.getModel().getValueAt(i, labelColumn)));
         }
-        HashMap<String, Integer> placeMap = new LinkedHashMap<String, Integer>();
+        HashMap<String, Integer> placeMap = new LinkedHashMap<>();
         int cnt = 0;
         for (String s : hm) {
-            System.out.println("Label: " + s);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Label: {0}", s);
             placeMap.put(s, cnt++);
         }
         return placeMap;
     }
 
+    /**
+     *
+     * @param labelColumn
+     * @param domainColumn
+     * @param selectedColumns1
+     * @param selectedRows
+     * @return
+     */
     public JFreeChart buildChartWithLabels(int labelColumn, int domainColumn, Collection<Integer> selectedColumns1, int[] selectedRows) {
         XYSeriesCollection xysc = new XYSeriesCollection();
-        List<Integer> selectedColumns = new LinkedList<Integer>();
+        List<Integer> selectedColumns = new LinkedList<>();
         selectedColumns.addAll(selectedColumns1);
         //if an additional label column is defined, we use this to further partition
         //the table by group labels
         HashMap<String, Integer> labelToIndex = getLabelToIndex(jTable1, labelColumn);
 
-        for (int i = 0; i < selectedColumns.size(); i++) {
+        for (Integer selectedColumn : selectedColumns) {
             for (String label : labelToIndex.keySet()) {
-                xysc.addSeries(new XYSeries(label + "-" + jTable1.getColumnName(selectedColumns.get(i)), true, true));
+                xysc.addSeries(new XYSeries(label + "-" + jTable1.getColumnName(selectedColumn), true, true));
             }
             for (int j = 0; j < selectedRows.length; j++) {
-                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString() + "-" + jTable1.getColumnName(selectedColumns.get(i)));
+                XYSeries xys = xysc.getSeries(jTable1.getModel().getValueAt(selectedRows[j], labelColumn).toString() + "-" + jTable1.getColumnName(selectedColumn));
                 if (domainColumn != -1) {
-                    System.out.println("Domain column set");
+                    Logger.getLogger(getClass().getName()).info("Domain column set");
                     Object o = jTable1.getModel().getValueAt(selectedRows[j], domainColumn);
-                    Number domainValue = Double.valueOf(0);
-                    Number rangeValue = Double.valueOf(0);
-                    System.out.println("Class of object: " + o.getClass().getName());
+                    Number domainValue = (double) 0;
+                    Number rangeValue = (double) 0;
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Class of object: {0}", o.getClass().getName());
                     boolean skipMissing = false;
                     if (o instanceof Number) {
-                        System.out.println("domain instanceof Number");
+                        Logger.getLogger(getClass().getName()).info("domain instanceof Number");
                         domainValue = ((Number) o);
                     } else if (o instanceof String) {
-                        System.out.println("domain instanceof String");
+                        Logger.getLogger(getClass().getName()).info("domain instanceof String");
                         String value = (String) o;
-                        if (value.equals("-") || value.equals("NA")) {
+                        if (value.equals("-") || value.equals("NA") || value.equalsIgnoreCase("null") || value.isEmpty()) {
                             skipMissing = true;
                         } else {
                             domainValue = Double.parseDouble((String) o);
                         }
                     }
-                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumn);
                     if (val instanceof Number) {
-                        System.out.println("instanceof Number");
+                        Logger.getLogger(getClass().getName()).info("instanceof Number");
                         rangeValue = ((Number) val);
 
                     } else if (val instanceof String) {
-                        System.out.println("value instanceof String");
+                        Logger.getLogger(getClass().getName()).info("value instanceof String");
                         String value = (String) val;
-                        if (value.equals("-") || value.equals("NA")) {
+                        if (value.equals("-") || value.equals("NA") || value.equalsIgnoreCase("null") || value.isEmpty()) {
                             skipMissing = true;
                         } else {
                             rangeValue = Double.parseDouble((String) val);
@@ -606,17 +670,17 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                         xys.add(domainValue, rangeValue);
                     }
                 } else {
-                    System.out.println("No domain column set");
-                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumns.get(i));
-                    Number rangeValue = Double.valueOf(0);
+                    Logger.getLogger(getClass().getName()).info("No domain column set");
+                    Object val = jTable1.getModel().getValueAt(selectedRows[j], selectedColumn);
+                    Number rangeValue = (double) 0;
                     boolean skipMissing = false;
                     if (val instanceof Number) {
-                        System.out.println("instanceof Number");
+                        Logger.getLogger(getClass().getName()).info("instanceof Number");
                         rangeValue = ((Number) val);
                     } else if (val instanceof String) {
-                        System.out.println("instance of String");
+                        Logger.getLogger(getClass().getName()).info("instance of String");
                         String value = (String) val;
-                        if (value.equals("-") || value.equals("NA")) {
+                        if (value.equals("-") || value.equals("NA") || value.equalsIgnoreCase("null") || value.isEmpty()) {
                             skipMissing = true;
                         } else {
                             rangeValue = Double.parseDouble((String) val);
@@ -626,7 +690,6 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
                         xys.add(j, rangeValue);
                     }
                 }
-
             }
         }
         String xaxisLabel = domainColumn == -1 ? "row" : jTable1.getModel().getColumnName(domainColumn);
@@ -668,26 +731,46 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
     public void mouseExited(MouseEvent me) {
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public JComponent getVisualRepresentation() {
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public JComponent getToolbarRepresentation() {
         return this.toolbar;
     }
 
+    /**
+     *
+     * @param mvec
+     */
     @Override
     public void setMultiViewCallback(MultiViewElementCallback mvec) {
         this.callback = mvec;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public CloseOperationState canCloseElement() {
         return CloseOperationState.STATE_OK;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Action[] getActions() {
 //        if(callback!=null) {
@@ -703,11 +786,18 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
         }};
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return Lookups.singleton(this);
     }
 
+    /**
+     *
+     */
     @Override
     public void componentShowing() {
         if (callback != null) {
@@ -715,10 +805,16 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void componentHidden() {
     }
 
+    /**
+     *
+     */
     @Override
     public void componentActivated() {
         if (callback != null) {
@@ -726,10 +822,17 @@ public final class CSVTableView extends JPanel implements MultiViewElement, List
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void componentDeactivated() {
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public UndoRedo getUndoRedo() {
         return UndoRedo.NONE;

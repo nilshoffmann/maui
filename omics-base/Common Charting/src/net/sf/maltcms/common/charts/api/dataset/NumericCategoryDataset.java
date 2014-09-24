@@ -37,6 +37,10 @@ import net.sf.maltcms.common.charts.api.selection.ISelection;
  */
 public class NumericCategoryDataset extends ACategoryDataset<List<Double>, Double> {
 
+    /**
+     *
+     * @param l
+     */
     public NumericCategoryDataset(List<INamedElementProvider<? extends List<Double>, ? extends Double>> l) {
         super(l, new IDisplayPropertiesProvider() {
 

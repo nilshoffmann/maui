@@ -39,14 +39,29 @@ public abstract class SelectionAwareXYTooltipGenerator implements XYToolTipGener
 
     private XYToolTipGenerator xytg = new StandardXYToolTipGenerator();
 
+    /**
+     *
+     * @param tooltipGenerator
+     */
     public SelectionAwareXYTooltipGenerator(XYToolTipGenerator tooltipGenerator) {
         this.xytg = tooltipGenerator;
     }
 
+    /**
+     *
+     * @param generator
+     */
     public void setXYToolTipGenerator(XYToolTipGenerator generator) {
         this.xytg = generator;
     }
 
+    /**
+     *
+     * @param xyd
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public String generateToolTip(XYDataset xyd, int i, int i1) {
         String str = createSelectionAwareTooltip(xyd, i, i1);
@@ -56,6 +71,13 @@ public abstract class SelectionAwareXYTooltipGenerator implements XYToolTipGener
         return str;
     }
 
+    /**
+     *
+     * @param xyd
+     * @param i
+     * @param i1
+     * @return
+     */
     public abstract String createSelectionAwareTooltip(XYDataset xyd, int i, int i1);
 
 }

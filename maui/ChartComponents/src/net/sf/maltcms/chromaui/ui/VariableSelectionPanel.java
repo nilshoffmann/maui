@@ -45,11 +45,19 @@ public class VariableSelectionPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    /**
+     *
+     * @param s
+     */
     public void setAvailableVariables(String[] s) {
         this.jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(s));
         this.jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(s));
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSelectedDomainVariable() {
         if (this.jComboBox1.isEnabled()) {
             return (String) this.jComboBox1.getSelectedItem();
@@ -57,6 +65,10 @@ public class VariableSelectionPanel extends javax.swing.JPanel {
         return "";
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSelectedValuesVariable() {
         return (String) this.jComboBox3.getSelectedItem();
     }

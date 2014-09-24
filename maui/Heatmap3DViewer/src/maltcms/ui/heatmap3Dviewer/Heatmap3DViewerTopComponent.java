@@ -65,6 +65,10 @@ public final class Heatmap3DViewerTopComponent extends CloneableTopComponent {
 
     private URL url = null;
 
+    /**
+     *
+     * @param u
+     */
     public void setFile(URL u) {
         this.url = u;
         setupHeatmap3DViewer(this.url);
@@ -90,6 +94,9 @@ public final class Heatmap3DViewerTopComponent extends CloneableTopComponent {
 //        }
     }
 
+    /**
+     *
+     */
     public Heatmap3DViewerTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(Heatmap3DViewerTopComponent.class, "CTL_Heatmap3DViewerTopComponent"));
@@ -141,16 +148,26 @@ public final class Heatmap3DViewerTopComponent extends CloneableTopComponent {
         return getDefault();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
 
+    /**
+     *
+     */
     @Override
     public void componentOpened() {
 
     }
 
+    /**
+     *
+     */
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
@@ -177,6 +194,10 @@ public final class Heatmap3DViewerTopComponent extends CloneableTopComponent {
 
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String preferredID() {
         return PREFERRED_ID;

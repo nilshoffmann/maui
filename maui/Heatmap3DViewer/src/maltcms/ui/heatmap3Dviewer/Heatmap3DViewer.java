@@ -43,6 +43,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -51,6 +53,10 @@ import javax.swing.JToolBar;
 import org.openide.util.Exceptions;
 import processing.core.*;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class Heatmap3DViewer extends PApplet implements ComponentListener {
 
     /**
@@ -83,6 +89,10 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
     Component parentComp;
     private int startWidth = 400, startHeight = 300;
 
+    /**
+     *
+     * @param parentComp
+     */
     public Heatmap3DViewer(Component parentComp) {
         this.parentComp = parentComp;
 //        startWidth = width;
@@ -90,11 +100,18 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
 //        setup();
     }
 
+    /**
+     *
+     * @param s
+     */
     public void setSurfaceFile(String s) {
         this.file = s;
         setSurface();
     }
 
+    /**
+     *
+     */
     public void showFileChooser() {
         if (animate) {
             noLoop();
@@ -114,6 +131,9 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void setup() {
         try {
@@ -136,6 +156,9 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
         redraw();
     }
 
+    /**
+     *
+     */
     @Override
     public void draw() {
         background(0);
@@ -176,7 +199,7 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
             fill(255, 255, 255);
             float w = 0.9f * width - 2 * 10;
             float h = 0.9f * height - 2 * 10;
-            System.out.println("width: " + w + " height: " + h);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "width: {0} height: {1}", new Object[]{w, h});
             rectMode(CORNER);
             text(buildHelpString(), (width / 2) - (0.9f * width / 2) + 10, (height / 2) - (0.9f * height / 2) + 10 + textAscent(), w, h);
             hint(ENABLE_DEPTH_TEST);
@@ -249,6 +272,9 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
         phi += phiIncr;
     }
 
+    /**
+     *
+     */
     @Override
     public void keyPressed() {
         if (key == 'i' || key == 'o') {
@@ -325,6 +351,9 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
     }
 //
 
+    /**
+     *
+     */
     @Override
     public void mouseReleased() {
         if (mouseButton == RIGHT) {
@@ -503,6 +532,10 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
         }
     }
 
+    /**
+     *
+     * @param output
+     */
     public void saveImage(File output) {
         if (output.exists()) {
             Object[] opts = {"Yes", "Cancel"};
@@ -518,36 +551,40 @@ public class Heatmap3DViewer extends PApplet implements ComponentListener {
         loadPixels();
         img.setRGB(0, 0, width, height, g.pixels, 0, width);
         String extn = output.getName().substring(output.getName().lastIndexOf('.') + 1).toLowerCase();
-        if (extn.equals("jpg")) {
-
-            try {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                JPEGEncodeParam p = new JPEGEncodeParam();
-                p.setQuality(0.5f);
-                JPEGImageEncoder encoder = new JPEGImageEncoder(out, p);
-                encoder.setParam(p);
-                encoder.encode(img);
-                FileOutputStream fo = new FileOutputStream(output);
-                out.writeTo(fo);
-            } catch (FileNotFoundException e) {
-                Exceptions.printStackTrace(e);
-            } catch (IOException ioe) {
-                Exceptions.printStackTrace(ioe);
-            }
-
-        } else if (extn.equals("png")) { // add here as needed
-
-            try {
-                javax.imageio.ImageIO.write(img, extn, output);
-            } catch (Exception e) {
-                Exceptions.printStackTrace(e);
-            }
-
-        } else {
-            super.saveFrame(output.getName());
+        switch (extn) {
+            case "jpg":
+                try {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    JPEGEncodeParam p = new JPEGEncodeParam();
+                    p.setQuality(0.5f);
+                    JPEGImageEncoder encoder = new JPEGImageEncoder(out, p);
+                    encoder.setParam(p);
+                    encoder.encode(img);
+                    FileOutputStream fo = new FileOutputStream(output);
+                    out.writeTo(fo);
+                } catch (FileNotFoundException e) {
+                    Exceptions.printStackTrace(e);
+                } catch (IOException ioe) {
+                    Exceptions.printStackTrace(ioe);
+                }   break;
+            case "png":
+                // add here as needed
+                
+                try {
+                    javax.imageio.ImageIO.write(img, extn, output);
+                } catch (Exception e) {
+                    Exceptions.printStackTrace(e);
+                }   break;
+            default:
+                super.saveFrame(output.getName());
+                break;
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         //PApplet.main(new String[]{"--bgcolor=#FFFFFF", "maltcms.ui.heatmap3Dviewer.Heatmap3DViewer"});
         final JFrame jf = new JFrame();

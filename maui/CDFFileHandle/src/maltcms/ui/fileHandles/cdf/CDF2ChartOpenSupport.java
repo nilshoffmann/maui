@@ -55,16 +55,30 @@ import org.openide.windows.CloneableTopComponent;
  */
 public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
 
+    /**
+     *
+     * @param entry
+     */
     public CDF2ChartOpenSupport(CDFDataObject.Entry entry) {
         super(entry);
     }
-    private List<CDFDataObject> auxDataObjects = new LinkedList<CDFDataObject>();
+    private List<CDFDataObject> auxDataObjects = new LinkedList<>();
 
+    /**
+     *
+     * @param entry
+     * @param auxDataObjects
+     */
     public CDF2ChartOpenSupport(CDFDataObject.Entry entry, DataObject... auxDataObjects) {
         this(entry);
         addDataObjects(Arrays.asList(auxDataObjects));
     }
 
+    /**
+     *
+     * @param entry
+     * @param auxDataObjects
+     */
     public CDF2ChartOpenSupport(CDFDataObject.Entry entry, List<DataObject> auxDataObjects) {
         this(entry);
         addDataObjects(auxDataObjects);
@@ -78,16 +92,20 @@ public class CDF2ChartOpenSupport extends OpenSupport implements OpenCookie, Clo
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
-        final HashSet<IFileFragment> fragments = new LinkedHashSet<IFileFragment>();
+        final HashSet<IFileFragment> fragments = new LinkedHashSet<>();
         for (CDFDataObject dataObject : auxDataObjects) {
             fragments.add(new FileFragment(dataObject.getPrimaryFile().toURI()));
         }
 
         Chromatogram1DChartProvider c1d = new Chromatogram1DChartProvider();
         JFCTopComponent jtc = new JFCTopComponent();
-        JFreeChart jfc = c1d.provideChart(new LinkedList<IFileFragment>(fragments));
+        JFreeChart jfc = c1d.provideChart(new LinkedList<>(fragments));
         if (jfc == null) {
             return null;
         }

@@ -28,6 +28,8 @@
 package net.sf.maltcms.db.search.spi;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IScan;
 import maltcms.datastructures.ms.Scan1D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -101,7 +103,7 @@ public class QueryFactory implements
     @Override
     public IQuery<IPeakAnnotationDescriptor> createQuery(IChromAUIProject project,
             List<IPeakAnnotationDescriptor> peakAnnotationDescriptors, double riWindow) {
-        System.out.println("Using " + peakAnnotationDescriptors.size() + " peak annotation descriptors!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using {0} peak annotation descriptors!", peakAnnotationDescriptors.size());
         DatabaseSearchPanel ddp = new DatabaseSearchPanel(project);
         // Create a custom NotifyDescriptor, specify the panel instance as a parameter + other params
         NotifyDescriptor nd = new NotifyDescriptor(
@@ -118,7 +120,7 @@ public class QueryFactory implements
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             if (ddp.getSelectedDatabases().isEmpty()) {
-                System.out.println("No databases selected!");
+                Logger.getLogger(getClass().getName()).info("No databases selected!");
                 return null;
             }
             IQuery<IPeakAnnotationDescriptor> query = createQuery(

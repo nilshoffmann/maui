@@ -28,6 +28,8 @@
 package maltcms.ui.fileHandles.properties.tools;
 
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.ui.fileHandles.properties.wizards.WidgetTableModel;
 import org.apache.commons.configuration.Configuration;
 
@@ -39,10 +41,10 @@ public class ModelBuilder {
 
     public static WidgetTableModel getModel(Configuration properties, Class<?> c) {
 
-        Vector<String> header = new Vector<String>();
+        Vector<String> header = new Vector<>();
         header.add("Key");
         header.add("Value");
-        System.out.println("properties: " + properties);
+        Logger.getLogger(ModelBuilder.class.getName()).log(Level.INFO, "properties: {0}", properties);
 
         return new WidgetTableModel(header, PropertyLoader.asHash(properties), c);
     }

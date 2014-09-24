@@ -59,10 +59,18 @@ import org.jfree.ui.TextAnchor;
 import org.jfree.util.ObjectUtilities;
 import org.jfree.util.PaintUtilities;
 
+/**
+ *
+ * @author Nils Hoffmann
+ * @param <T>
+ */
 public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation implements Serializable {
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+    /**
+     *
+     */
     public static final String PROP_ACTIVE = "active";
     private boolean active = false;
     private Paint highlight = new Color(192, 192, 192, 164);
@@ -76,6 +84,15 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
     private T t;
 //    private Shape ch;
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param s
+     * @param label
+     * @param ta
+     * @param t
+     */
     public XYSelectableShapeAnnotation(double x, double y, Shape s, String label, TextAnchor ta, T t) {
         this(x, y, s, label, ta);
         this.t = t;
@@ -92,38 +109,74 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         this.xyta.setTextAnchor(ta);
     }
 
+    /**
+     *
+     * @return
+     */
     public Shape getShape() {
         return this.s;
     }
 
+    /**
+     *
+     * @return
+     */
     public Paint getHighlight() {
         return highlight;
     }
 
+    /**
+     *
+     * @param highlight
+     */
     public void setHighlight(Paint highlight) {
         this.highlight = highlight;
     }
 
+    /**
+     *
+     * @return
+     */
     public Paint getFill() {
         return fill;
     }
 
+    /**
+     *
+     * @param fill
+     */
     public void setFill(Paint fill) {
         this.fill = fill;
     }
 
+    /**
+     *
+     * @return
+     */
     public Paint getOutline() {
         return outline;
     }
 
+    /**
+     *
+     * @param outline
+     */
     public void setOutline(Paint outline) {
         this.outline = outline;
     }
 
+    /**
+     *
+     * @return
+     */
     public Stroke getStroke() {
         return stroke;
     }
 
+    /**
+     *
+     * @param stroke
+     */
     public void setStroke(Stroke stroke) {
         this.stroke = stroke;
     }
@@ -138,16 +191,29 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
 //		this.xyta.setX(x);
 //		this.xyta.setY(y);
 //	}
-    public XYTextAnnotation getTextAnnotation() {
+
+    /**
+     *
+     * @return
+     */
+        public XYTextAnnotation getTextAnnotation() {
         return this.xyta;
     }
 
+    /**
+     *
+     * @param active
+     */
     public void setActive(boolean active) {
         boolean old = this.active;
         this.active = active;
         pcs.firePropertyChange(PROP_ACTIVE, old, active);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isActive() {
         return this.active;
     }
@@ -159,6 +225,16 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
      * org.jfree.chart.plot.PlotRenderingInfo)
      */
 
+    /**
+     *
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @param arg3
+     * @param arg4
+     * @param arg5
+     * @param arg6
+     */
     @Override
     public void draw(Graphics2D arg0, XYPlot arg1, Rectangle2D arg2,
             ValueAxis arg3, ValueAxis arg4, int arg5, PlotRenderingInfo arg6) {
@@ -232,6 +308,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
      *
      * @return A boolean.
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -265,6 +342,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
      *
      * @return A hash code.
      */
+    @Override
     public int hashCode() {
         int result = 193;
         result = 37 * result + this.s.hashCode();
@@ -284,6 +362,7 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
      *
      * @throws CloneNotSupportedException ???.
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
@@ -322,10 +401,22 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
         this.active = stream.readBoolean();
     }
 
+    /**
+     *
+     * @return
+     */
     public T getT() {
         return this.t;
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @return
+     */
     public static Shape getCrosshairShape(double x, double y, double w, double h) {
         // draw GeneralPath (polyline)
         //we draw two lines, one from
@@ -345,18 +436,36 @@ public class XYSelectableShapeAnnotation<T> extends AbstractXYAnnotation impleme
 
     }
 
+    /**
+     *
+     * @param pcl
+     */
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
 
+    /**
+     *
+     * @param propertyName
+     * @param pcl
+     */
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
 
+    /**
+     *
+     * @param pcl
+     */
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         pcs.removePropertyChangeListener(pcl);
     }
 
+    /**
+     *
+     * @param propertyName
+     * @param pcl
+     */
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener pcl) {
         pcs.removePropertyChangeListener(propertyName, pcl);
     }

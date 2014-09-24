@@ -39,26 +39,49 @@ import org.openide.util.Utilities;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class AnovaNode extends BeanNode {
 
+    /**
+     *
+     * @param bean
+     * @param children
+     * @param lkp
+     * @throws IntrospectionException
+     */
     public AnovaNode(Object bean, Children children, Lookup lkp) throws IntrospectionException {
         super(bean, children, lkp);
     }
 
+    /**
+     *
+     * @param bean
+     * @param children
+     * @throws IntrospectionException
+     */
     public AnovaNode(Object bean, Children children) throws IntrospectionException {
         super(bean, children);
     }
 
+    /**
+     *
+     * @param bean
+     * @throws IntrospectionException
+     */
     public AnovaNode(Object bean) throws IntrospectionException {
         super(bean);
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     @Override
     public Action[] getActions(boolean context) {
         Action[] actions = super.getActions(context);
-        List<Action> finalActions = new ArrayList<Action>();
+        List<Action> finalActions = new ArrayList<>();
         List<? extends Action> pathActions = Utilities.actionsForPath(
                 "Actions/DescriptorNodeActions/IPeakGroupDescriptor");
         finalActions.addAll(pathActions);

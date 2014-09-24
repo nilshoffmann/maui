@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ProteinDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.Protein;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class ProteinContainer extends BasicMzTabMetaDataContainer<ProteinDescriptor> {
+    private static final long serialVersionUID = -1652390531065969988L;
 
+    /**
+     *
+     * @param mzTabFile
+     * @return
+     */
     public static ProteinContainer create(MZTabFile mzTabFile) {
         ProteinContainer c = new ProteinContainer();
         c.setLevel(1);

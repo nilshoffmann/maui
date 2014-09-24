@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class BooleanArrayPropertyEditor extends PropertyEditorSupport {
 

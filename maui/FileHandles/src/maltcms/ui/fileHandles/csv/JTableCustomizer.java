@@ -43,9 +43,13 @@ public class JTableCustomizer {
 
     JTable jtable;
 
+    /**
+     *
+     * @param table
+     */
     public static void changeComperatorToDoubleIfPossible(JTable table) {
 
-        TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(table.getModel());
+        TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(table.getModel());
         table.setRowSorter(rowSorter);
         try {
             for (int i = 0; i < table.getColumnCount(); i++) {
@@ -71,8 +75,12 @@ public class JTableCustomizer {
         }
     }
 
+    /**
+     *
+     * @param table
+     */
     public static void changeComparators(JTable table) {
-        TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(table.getModel());
+        TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(table.getModel());
         table.setRowSorter(rowSorter);
         for (int i = 0; i < table.getColumnCount(); i++) {
             Class<?> c = table.getColumnClass(i);
@@ -120,6 +128,10 @@ public class JTableCustomizer {
         }
     }
 
+    /**
+     *
+     * @param table
+     */
     public static void fitAllColumnWidth(JTable table) {
         table.setAutoResizeMode(0);
         int size = table.getColumnCount();
@@ -128,6 +140,11 @@ public class JTableCustomizer {
         }
     }
 
+    /**
+     *
+     * @param table
+     * @param colIndex
+     */
     public static void fitColumnWidth(JTable table, int colIndex) {
         try {
             TableColumn column = table.getColumnModel().getColumn(colIndex);

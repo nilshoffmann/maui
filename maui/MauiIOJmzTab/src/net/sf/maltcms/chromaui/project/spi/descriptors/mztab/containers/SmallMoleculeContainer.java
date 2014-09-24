@@ -34,16 +34,31 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SmallMoleculeDescri
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.SmallMolecule;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class SmallMoleculeContainer extends BasicMzTabMetaDataContainer<SmallMoleculeDescriptor> {
+    private static final long serialVersionUID = -6030991595932627627L;
 
+    /**
+     *
+     * @param smc
+     * @return
+     */
     public static List<SmallMolecule> toSmallMolecules(SmallMoleculeContainer smc) {
-        List<SmallMolecule> l = new ArrayList<SmallMolecule>();
+        List<SmallMolecule> l = new ArrayList<>();
         for (SmallMoleculeDescriptor smd : smc.getMembers()) {
             l.add(smd.getRecord());
         }
         return l;
     }
 
+    /**
+     *
+     * @param mzTabFile
+     * @return
+     */
     public static SmallMoleculeContainer create(MZTabFile mzTabFile) {
         SmallMoleculeContainer c = new SmallMoleculeContainer();
         c.setLevel(1);

@@ -44,11 +44,19 @@ import org.openide.util.lookup.InstanceContent;
  */
 public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset implements ILookupDataset<SOURCE, TARGET>, IntervalXYDataset {
 
+    /**
+     *
+     */
     protected final ArrayList<INamedElementProvider<? extends SOURCE, ? extends TARGET>> targetProvider;
     private final InstanceContent content = new InstanceContent();
     private final Lookup lookup = new AbstractLookup(content);
     private final IDisplayPropertiesProvider displayPropertiesProvider;
 
+    /**
+     *
+     * @param l
+     * @param provider
+     */
     public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
         targetProvider = new ArrayList<>(l);
         for (INamedElementProvider<? extends SOURCE, ? extends TARGET> nep : l) {
@@ -58,58 +66,111 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
         content.add(this.displayPropertiesProvider);
     }
 
+    /**
+     *
+     * @param l
+     */
     public ADataset1D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
         this(l, new DefaultDisplayPropertiesProvider());
     }
 
+    /**
+     *
+     * @param delegate
+     */
     public ADataset1D(ADataset1D<SOURCE, TARGET> delegate) {
         this(delegate.getNamedElementProvider(), delegate.getLookup().lookup(IDisplayPropertiesProvider.class));
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> getNamedElementProvider() {
         return targetProvider;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public DomainOrder getDomainOrder() {
         return DomainOrder.ASCENDING;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return lookup;
     }
 
+    /**
+     *
+     * @param seriesIndex
+     * @param itemIndex
+     * @return
+     */
     @Override
     public TARGET getTarget(int seriesIndex, int itemIndex) {
 //        System.out.println("Retrieving target from series " + seriesIndex + ", item " + itemIndex);
         return targetProvider.get(seriesIndex).get(getRanks()[seriesIndex][itemIndex]);
     }
 
+    /**
+     *
+     * @param seriesIndex
+     * @return
+     */
     @Override
     public SOURCE getSource(int seriesIndex) {
 //        System.out.println("Retrieving source for index: " + seriesIndex);
         return targetProvider.get(seriesIndex).getSource();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getSeriesCount() {
         return targetProvider.size();
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     @Override
     public Comparable<?> getSeriesKey(int i) {
         return targetProvider.get(i).getKey();
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     @Override
     public int getItemCount(int i) {
         return targetProvider.get(i).size();
     }
 
+    /**
+     *
+     * @return
+     */
     public abstract int[][] getRanks();
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDescription() {
         StringBuilder sb = new StringBuilder();
@@ -120,16 +181,36 @@ public abstract class ADataset1D<SOURCE, TARGET> extends AbstractXYDataset imple
         return sb.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayName() {
         return targetProvider.size() + " datasets";
     }
 
+    /**
+     *
+     * @return
+     */
     public abstract double getMinX();
 
+    /**
+     *
+     * @return
+     */
     public abstract double getMaxX();
 
+    /**
+     *
+     * @return
+     */
     public abstract double getMinY();
 
+    /**
+     *
+     * @return
+     */
     public abstract double getMaxY();
 }

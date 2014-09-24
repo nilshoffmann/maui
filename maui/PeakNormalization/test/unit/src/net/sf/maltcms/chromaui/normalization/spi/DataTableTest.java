@@ -29,6 +29,8 @@ package net.sf.maltcms.chromaui.normalization.spi;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
@@ -50,11 +52,18 @@ public class DataTableTest {
 
     private DataTable testDataTable;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         this.testDataTable = createTestDataTable();
     }
 
+    /**
+     *
+     * @return
+     */
     public DataTable createTestDataTable() {
 
         //create treatment groups
@@ -64,7 +73,7 @@ public class DataTableTest {
         ITreatmentGroupDescriptor[] treatmentGroups = {tg1, tg2, tg3};
         int N = 3 * treatmentGroups.length, M = 10;
 
-        List<IChromatogramDescriptor> chromatograms = new LinkedList<IChromatogramDescriptor>();
+        List<IChromatogramDescriptor> chromatograms = new LinkedList<>();
         for (int k = 0; k < N; k++) {
             int groupIdx = k % 3;
             IChromatogramDescriptor chromDesc = DescriptorFactory.newChromatogramDescriptor("chrom-" + k, treatmentGroups[groupIdx], null, DescriptorFactory.newNormalizationDescriptor());
@@ -79,8 +88,8 @@ public class DataTableTest {
             ipgd.setName(i + "");
             ipgd.setDisplayName(ipgd.getName());
             int k = (int) Math.rint(Math.random() * N);
-            System.out.println("Adding " + k + " peaks to group " + i);
-            List<IPeakAnnotationDescriptor> peakAnnotations = new LinkedList<IPeakAnnotationDescriptor>();
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding {0} peaks to group {1}", new Object[]{k, i});
+            List<IPeakAnnotationDescriptor> peakAnnotations = new LinkedList<>();
             for (int j = 0; j < k; j++) {
                 IPeakAnnotationDescriptor pad = DescriptorFactory.newPeakAnnotationDescriptor(chromatograms.get(j), "peak" + j + " in row " + i, 0, new double[0], Double.NaN, Double.NaN, Double.NaN, Double.NaN, "", "", "", "", Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
                 peakAnnotations.add(pad);

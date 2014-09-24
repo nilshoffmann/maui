@@ -40,11 +40,19 @@ public class FID implements IDetectorType {
     private final String longName = "flame ionization detector";
     private final int featureDimensions = 1;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDetectorType() {
         return detectorType;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getLongName() {
         return longName;

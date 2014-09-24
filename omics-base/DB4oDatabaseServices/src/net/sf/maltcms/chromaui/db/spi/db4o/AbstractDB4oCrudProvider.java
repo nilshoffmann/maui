@@ -56,7 +56,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
     protected TimeUnit backupTimeUnit = TimeUnit.MINUTES;
     protected final ClassLoader domainClassLoader;
     protected final ICredentials ic;
-    protected final HashSet<ICrudSession> openSessions = new HashSet<ICrudSession>();
+    protected final HashSet<ICrudSession> openSessions = new HashSet<>();
     protected final File projectDBLocation;
     private boolean verboseDiagnostics = false;
 
@@ -83,9 +83,9 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
         }
         if (isFileTypeSupported(projectDBFile.getAbsolutePath())) {
             this.ic = ic;
-            System.out.println("Using crud provider on database file: " + projectDBFile.getAbsolutePath());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Using crud provider on database file: {0}", projectDBFile.getAbsolutePath());
             projectDBLocation = projectDBFile;
-            System.out.println("Using class loader: " + domainClassLoader);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Using class loader: {0}", domainClassLoader);
             this.domainClassLoader = domainClassLoader;
         } else {
             throw new IllegalArgumentException("Unsupported file type: " + projectDBFile.getName());
@@ -108,7 +108,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
                     try {
                         ics.close();
                     } catch (DatabaseReadOnlyException droe) {
-                        System.out.println("Not committing changes: Read-only database!");
+                        Logger.getLogger(getClass().getName()).info("Not committing changes: Read-only database!");
                     }
                 }
                 eoc.close();

@@ -36,6 +36,14 @@ import org.openide.util.Lookup;
  */
 public class LookupUtils {
 
+    /**
+     *
+     * @param <T>
+     * @param lookup
+     * @param typeClass
+     * @return
+     * @throws IllegalArgumentException
+     */
     public static <T> T ensureSingle(Lookup lookup, Class<? extends T> typeClass) throws IllegalArgumentException {
         Collection<? extends T> c = lookup.lookupAll(typeClass);
         if (c.size() > 1) {
@@ -44,6 +52,15 @@ public class LookupUtils {
         return c.iterator().next();
     }
 
+    /**
+     *
+     * @param <T>
+     * @param lookup
+     * @param typeClass
+     * @param k
+     * @return
+     * @throws IllegalArgumentException
+     */
     public static <T> T ensureK(Lookup lookup, Class<? extends T> typeClass, int k) throws IllegalArgumentException {
         Collection<? extends T> c = lookup.lookupAll(typeClass);
         if (c.size() != k) {

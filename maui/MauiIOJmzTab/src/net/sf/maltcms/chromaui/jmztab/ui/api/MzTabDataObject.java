@@ -63,6 +63,10 @@ import org.openide.windows.TopComponent;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 @Messages({
     "LBL_MzTab_LOADER=Files of MzTab"
 })
@@ -139,17 +143,33 @@ import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
 })
 public class MzTabDataObject extends MultiDataObject implements FileChangeListener {
 
+    /**
+     *
+     * @param pf
+     * @param loader
+     * @throws DataObjectExistsException
+     * @throws IOException
+     */
     public MzTabDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         registerEditor("text/mztab", true);
         pf.addFileChangeListener(WeakListeners.create(FileChangeListener.class, this, pf));
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected int associateLookup() {
         return 1;
     }
 
+    /**
+     *
+     * @param lkp
+     * @return
+     */
     @MultiViewElement.Registration(
             displayName = "#LBL_MzTab_EDITOR",
             iconBase = "net/sf/maltcms/chromaui/jmztab/ui/api/MzTab.png",
@@ -163,6 +183,10 @@ public class MzTabDataObject extends MultiDataObject implements FileChangeListen
         return new MultiViewEditorElement(lkp);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected Node createNodeDelegate() {
         MzTabDataNode mzt = new MzTabDataNode(this, Children.LEAF);
@@ -200,31 +224,55 @@ public class MzTabDataObject extends MultiDataObject implements FileChangeListen
 //        }
     }
 
+    /**
+     *
+     * @param fe
+     */
     @Override
     public void fileFolderCreated(FileEvent fe) {
 
     }
 
+    /**
+     *
+     * @param fe
+     */
     @Override
     public void fileDataCreated(FileEvent fe) {
 //        FileUtil.refreshFor(FileUtil.toFile(fe.getFile()));
     }
 
+    /**
+     *
+     * @param fe
+     */
     @Override
     public void fileChanged(FileEvent fe) {
         FileUtil.refreshFor(FileUtil.toFile(fe.getFile()));
     }
 
+    /**
+     *
+     * @param fe
+     */
     @Override
     public void fileDeleted(FileEvent fe) {
 //        FileUtil.refreshFor(FileUtil.toFile(fe.getFile()));
     }
 
+    /**
+     *
+     * @param fre
+     */
     @Override
     public void fileRenamed(FileRenameEvent fre) {
 
     }
 
+    /**
+     *
+     * @param fae
+     */
     @Override
     public void fileAttributeChanged(FileAttributeEvent fae) {
 

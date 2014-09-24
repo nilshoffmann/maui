@@ -46,6 +46,10 @@ import java.util.Random;
  */
 public class DatasetUtils {
 
+    /**
+     *
+     * @return
+     */
     public static ACategoryDataset<List<Double>, Double> createCategoryDataset() {
         INamedElementProvider<? extends List<Double>, ? extends Double> nep1 = new INamedElementProvider<List<Double>, Double>() {
             private List<Double> points = createSampleDoubles(10);
@@ -129,6 +133,10 @@ public class DatasetUtils {
         return new NumericCategoryDataset(l);
     }
 
+    /**
+     *
+     * @return
+     */
     public static Numeric1DDataset<Point2D> createDataset() {
         INamedElementProvider<? extends List<Point2D>, ? extends Point2D> nep = new INamedElementProvider<List<Point2D>, Point2D>() {
             private List<Point2D> points = createSamplePoints(500);
@@ -173,6 +181,11 @@ public class DatasetUtils {
         return new Numeric1DDataset<>(l);
     }
 
+    /**
+     *
+     * @param n
+     * @return
+     */
     public static List<Point2D> createSamplePoints(int n) {
         Random r = new Random(nanoTime());
         List<Point2D> points = new ArrayList<>();
@@ -187,6 +200,11 @@ public class DatasetUtils {
         return points;
     }
 
+    /**
+     *
+     * @param n
+     * @return
+     */
     public static List<Double> createSampleDoubles(int n) {
         Random r = new Random(nanoTime());
         List<Double> points = new ArrayList<>();
@@ -225,6 +243,12 @@ public class DatasetUtils {
 
     }
 
+    /**
+     *
+     * @param domainValues
+     * @param descending
+     * @return
+     */
     public static int[] ranks(double[] domainValues, boolean descending) {
         SortablePair[] sp = new SortablePair[domainValues.length];
         for (int i = 0; i < domainValues.length; i++) {

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.rosuda.REngine.Rserve.RConnection;
 
 /**
@@ -29,6 +31,7 @@ class StreamHog2 extends Thread {
         return installPath;
     }
 
+    @Override
     public void run() {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -43,10 +46,10 @@ class StreamHog2 extends Thread {
                             s = s.substring(j + 6).trim();
                         }
                         installPath = s;
-                        System.out.println("R InstallPath = " + s);
+                        Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "R InstallPath = {0}", s);
                     }
                 } else {
-                    System.out.println("Rserve>" + line);
+                    Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "Rserve>{0}", line);
                 }
             }
         } catch (IOException e) {
@@ -104,16 +107,16 @@ public class StartRserveOriginal {
                 command = Arrays.toString(commandArgs);
                 p = Runtime.getRuntime().exec(commandArgs);
             }
-            System.out.println("waiting for Rserve to start ... (" + p + ")");
+            Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "waiting for Rserve to start ... ({0})", p);
             // we need to fetch the output - some platforms will die if you don't ...
             StreamHog2 errorHog = new StreamHog2(p.getErrorStream(), false);
             StreamHog2 outputHog = new StreamHog2(p.getInputStream(), false);
             if (!isWindows) /* on Windows the process will never return, so we cannot wait */ {
                 p.waitFor();
             }
-            System.out.println("call terminated, let us try to connect ...");
-        } catch (Exception x) {
-            System.out.println("failed to start Rserve process with " + x.getMessage());
+            Logger.getLogger(StartRserveOriginal.class.getName()).info("call terminated, let us try to connect ...");
+        } catch (IOException | InterruptedException x) {
+            Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "failed to start Rserve process with {0}", x.getMessage());
             return false;
         }
         int attempts = 5; /* try up to 5 times before giving up. We can be conservative here, because at this point the process execution itself was successful and the start up is usually asynchronous */
@@ -121,11 +124,11 @@ public class StartRserveOriginal {
         while (attempts > 0) {
             try {
                 RConnection c = new RConnection();
-                System.out.println("Rserve is running. Launched with command: '" + command + "'");
+                Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "Rserve is running. Launched with command: ''{0}''", command);
                 c.close();
                 return true;
             } catch (Exception e2) {
-                System.out.println("Try failed with: " + e2.getMessage());
+                Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "Try failed with: {0}", e2.getMessage());
             }
             /* a safety sleep just in case the start up is delayed or asynchronous */
             try {
@@ -150,7 +153,7 @@ public class StartRserveOriginal {
         }
         String osname = System.getProperty("os.name");
         if (osname != null && osname.length() >= 7 && osname.substring(0, 7).equals("Windows")) {
-            System.out.println("Windows: query registry to find where R is installed ...");
+            Logger.getLogger(StartRserveOriginal.class.getName()).info("Windows: query registry to find where R is installed ...");
             String installPath = null;
             try {
                 Process rp = Runtime.getRuntime().exec("reg query HKLM\\Software\\R-core\\R");
@@ -158,12 +161,12 @@ public class StartRserveOriginal {
                 rp.waitFor();
                 regHog.join();
                 installPath = regHog.getInstallPath();
-            } catch (Exception rge) {
-                System.out.println("ERROR: unable to run REG to find the location of R: " + rge);
+            } catch (IOException | InterruptedException rge) {
+                Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "ERROR: unable to run REG to find the location of R: {0}", rge);
                 return false;
             }
             if (installPath == null) {
-                System.out.println("ERROR: canot find path to R. Make sure reg is available and R was installed with registry settings.");
+                Logger.getLogger(StartRserveOriginal.class.getName()).info("ERROR: canot find path to R. Make sure reg is available and R was installed with registry settings.");
                 return false;
             }
             return launchRserve(installPath + "\\bin\\R.exe");
@@ -188,11 +191,11 @@ public class StartRserveOriginal {
     public static boolean isRserveRunning() {
         try {
             RConnection c = new RConnection();
-            System.out.println("Rserve is running.");
+            Logger.getLogger(StartRserveOriginal.class.getName()).info("Rserve is running.");
             c.close();
             return true;
         } catch (Exception e) {
-            System.out.println("First connect try failed with: " + e.getMessage());
+            Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "First connect try failed with: {0}", e.getMessage());
         }
         return false;
     }
@@ -201,7 +204,7 @@ public class StartRserveOriginal {
      * just a demo main method which starts Rserve and shuts it down again
      */
     public static void main(String[] args) {
-        System.out.println("result=" + checkLocalRserve());
+        Logger.getLogger(StartRserveOriginal.class.getName()).log(Level.INFO, "result={0}", checkLocalRserve());
         try {
             RConnection c = new RConnection();
             c.shutdown();

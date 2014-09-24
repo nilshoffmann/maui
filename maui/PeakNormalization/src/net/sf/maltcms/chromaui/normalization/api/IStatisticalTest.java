@@ -31,13 +31,24 @@ import org.rosuda.REngine.Rserve.RSession;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public interface IStatisticalTest {
 
+    /**
+     *
+     * @return
+     */
     public String getName();
 
+    /**
+     *
+     */
     public void setName();
 
+    /**
+     *
+     * @param session
+     */
     public void perform(RSession session);
 }

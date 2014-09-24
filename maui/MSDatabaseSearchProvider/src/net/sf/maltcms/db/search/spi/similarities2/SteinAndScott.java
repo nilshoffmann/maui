@@ -33,6 +33,8 @@ import ucar.ma2.ArrayDouble;
 import cross.datastructures.tuple.Tuple2D;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
 import org.openide.util.lookup.ServiceProvider;
 import ucar.ma2.ArrayInt;
@@ -93,7 +95,7 @@ public class SteinAndScott extends AMetabolitePredicate {
 
     protected double similarity(Array massesRef, Array intensitiesRef,
             Array massesQuery, Array intensitiesQuery, double mw) {
-        return iadc.apply(new Tuple2D<Array, Array>(massesRef, intensitiesRef), new Tuple2D<Array, Array>(massesQuery, intensitiesQuery));
+        return iadc.apply(new Tuple2D<>(massesRef, intensitiesRef), new Tuple2D<>(massesQuery, intensitiesQuery));
     }
 
     @Override
@@ -108,9 +110,9 @@ public class SteinAndScott extends AMetabolitePredicate {
         s2 = filterMaskedMasses(m2, s2);
         double sim = similarity(m1, s1, m2, s2,
                 et.getMW());
-        System.out.println("Similarity score: " + sim);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Similarity score: {0}", sim);
         if (sim >= getScoreThreshold()) {
-            Tuple2D<Double, IMetabolite> tple = new Tuple2D<Double, IMetabolite>(
+            Tuple2D<Double, IMetabolite> tple = new Tuple2D<>(
                     sim, et);
             getScoreMap().add(tple);
             return true;

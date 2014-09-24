@@ -45,6 +45,10 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
     private final double minX, maxX, minY, maxY;
     private final int[][] ranks;
 
+    /**
+     *
+     * @param l
+     */
     public Numeric1DDataset(List<INamedElementProvider<? extends List<Point2D>, ? extends TARGET>> l) {
         super(l, new IDisplayPropertiesProvider() {
 
@@ -121,76 +125,156 @@ public class Numeric1DDataset<TARGET> extends ADataset1D<List<Point2D>, TARGET> 
         this.maxY = maxY;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMinX() {
         return minX;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMaxX() {
         return maxX;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMinY() {
         return minY;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMaxY() {
         return maxY;
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getX(int i, int i1) {
         return getSource(i).get(i1).getX();
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getY(int i, int i1) {
         return getSource(i).get(i1).getY();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int[][] getRanks() {
         return ranks;
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getStartX(int i, int i1) {
         return getX(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getStartXValue(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getEndX(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getEndXValue(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getStartY(int i, int i1) {
         return getY(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getStartYValue(int i, int i1) {
         return getYValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getEndY(int i, int i1) {
         return getY(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getEndYValue(int i, int i1) {
         return getYValue(i, i1);

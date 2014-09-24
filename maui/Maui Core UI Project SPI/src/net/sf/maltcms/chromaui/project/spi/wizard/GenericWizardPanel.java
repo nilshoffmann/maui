@@ -32,6 +32,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -73,7 +75,7 @@ public class GenericWizardPanel implements
         }
         return false;
     }
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+    private final Set<ChangeListener> listeners = new HashSet<>(1); // or can use ChangeSupport in NB 6.0
 
     @Override
     public final void addChangeListener(ChangeListener l) {
@@ -92,7 +94,7 @@ public class GenericWizardPanel implements
     protected final void fireChangeEvent() {
         Set<ChangeListener> ls;
         synchronized (listeners) {
-            ls = new HashSet<ChangeListener>(listeners);
+            ls = new HashSet<>(listeners);
         }
         ChangeEvent ev = new ChangeEvent(this);
         for (ChangeListener l : ls) {
@@ -124,7 +126,7 @@ public class GenericWizardPanel implements
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        System.out.println("Received PropertyChangeEvent: " + pce);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Received PropertyChangeEvent: {0}", pce);
         fireChangeEvent();
 //        isValid();
     }

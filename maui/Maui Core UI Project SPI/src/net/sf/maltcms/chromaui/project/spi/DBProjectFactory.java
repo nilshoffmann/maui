@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api.ChromaTOFImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -101,7 +103,7 @@ public class DBProjectFactory {
         File[] f = new File[str.length];
         for (int i = 0; i < str.length; i++) {
             f[i] = new File(str[i]);
-            System.out.println("Adding file: " + f[i].getAbsolutePath());
+            Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Adding file: {0}", f[i].getAbsolutePath());
         }
         return f;
     }
@@ -129,10 +131,10 @@ public class DBProjectFactory {
                 }
                 sb.append("\n");
             }
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo.getOutputStream()));
-            bw.write(sb.toString());
-            bw.flush();
-            bw.close();
+            try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo.getOutputStream()))) {
+                bw.write(sb.toString());
+                bw.flush();
+            }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -158,34 +160,34 @@ public class DBProjectFactory {
                     "groupMapping");
             File[] inputFiles = toFileArray((String) o, ",");
             handle.progress("Importing data", 2);
-            Map<File, File> importFileMap = new LinkedHashMap<File, File>();
+            Map<File, File> importFileMap = new LinkedHashMap<>();
             fileToGroup = importChromatograms(props, projdir, inputFiles, fileToGroup, importFileMap);
-            LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor = new LinkedHashMap<File, IChromatogramDescriptor>();
+            LinkedHashMap<File, IChromatogramDescriptor> fileToDescriptor = new LinkedHashMap<>();
             handle.progress("Initializing chromatograms", 3);
             initChromatograms(props, inputFiles, projdir,
                     separationType, detectorType, fileToDescriptor);
             handle.progress("Adding normalization info", 4);
             addNormalizationDescriptors(props, importFileMap, fileToDescriptor);
             //add treatment groups
-            LinkedHashSet<String> groups = new LinkedHashSet<String>();
-            LinkedHashMap<String, Set<File>> groupToFile = new LinkedHashMap<String, Set<File>>();
+            LinkedHashSet<String> groups = new LinkedHashSet<>();
+            LinkedHashMap<String, Set<File>> groupToFile = new LinkedHashMap<>();
             handle.progress("Initializing treatment groups", 5);
             initGroups(groups, fileToGroup, groupToFile);
-            System.out.println("Group to file: " + groupToFile);
+            Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Group to file: {0}", groupToFile);
             handle.progress("Adding treatment groups", 6);
             addTreatmentGroups(groupToFile, fileToDescriptor, icui);
             //add sample groups
-            LinkedHashSet<String> sampleGroups = new LinkedHashSet<String>();
-            LinkedHashMap<String, Set<File>> sampleGroupToFile = new LinkedHashMap<String, Set<File>>();
+            LinkedHashSet<String> sampleGroups = new LinkedHashSet<>();
+            LinkedHashMap<String, Set<File>> sampleGroupToFile = new LinkedHashMap<>();
             Map<File, String> fileToSampleGroup = (Map<File, String>) props.get(
                     "sampleGroupMapping");
-            System.out.println("File to sample group 1: " + fileToSampleGroup);
+            Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "File to sample group 1: {0}", fileToSampleGroup);
             handle.progress("Mapping input files", 7);
             fileToSampleGroup = remapInputFiles(fileToSampleGroup, importFileMap);
-            System.out.println("File to sample group 2: " + fileToSampleGroup);
+            Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "File to sample group 2: {0}", fileToSampleGroup);
             handle.progress("Initializing sample groups", 8);
             initSampleGroups(sampleGroups, fileToSampleGroup, sampleGroupToFile);
-            System.out.println("Sample group to file: " + sampleGroupToFile);
+            Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Sample group to file: {0}", sampleGroupToFile);
             handle.progress("Adding sample groups", 9);
             addSampleGroups(sampleGroupToFile, fileToDescriptor, icui);
             handle.progress("Creating file layout", 10);
@@ -201,7 +203,7 @@ public class DBProjectFactory {
     }
 
     private static Map<File, String> remapInputFiles(Map<File, String> fileToStringMap, Map<File, File> importFileMap) {
-        Map<File, String> remappedMap = new LinkedHashMap<File, String>();
+        Map<File, String> remappedMap = new LinkedHashMap<>();
         for (File file : fileToStringMap.keySet()) {
             remappedMap.put(importFileMap.get(file), fileToStringMap.get(file));
         }
@@ -304,7 +306,7 @@ public class DBProjectFactory {
                         Set<File> s = groupToFile.get(group);
                         s.add(key);
                     } else {
-                        Set<File> s = new LinkedHashSet<File>();
+                        Set<File> s = new LinkedHashSet<>();
                         s.add(key);
                         groupToFile.put(group, s);
                     }
@@ -325,7 +327,7 @@ public class DBProjectFactory {
                         Set<File> s = groupToFile.get(sampleGroup);
                         s.add(key);
                     } else {
-                        Set<File> s = new LinkedHashSet<File>();
+                        Set<File> s = new LinkedHashSet<>();
                         s.add(key);
                         groupToFile.put(sampleGroup, s);
                     }
@@ -340,8 +342,8 @@ public class DBProjectFactory {
             Map<File, String> fileToGroup, Map<File, File> importFileMap) throws RuntimeException, IOException {
         Boolean copyFiles = (Boolean) props.get("copy.files");
         if (copyFiles) {
-            Map<File, String> newFileToGroup = new LinkedHashMap<File, String>();
-            System.out.println("Copying files to user project directory!");
+            Map<File, String> newFileToGroup = new LinkedHashMap<>();
+            Logger.getLogger(DBProjectFactory.class.getName()).info("Copying files to user project directory!");
             try {
                 File originalData = new File(projdir, "original");
                 FileObject originaldatadir = FileUtil.createFolder(originalData);
@@ -388,16 +390,16 @@ public class DBProjectFactory {
         int i = 0;
         for (File f : inputFiles) {
             IFileFragment ff = getProjectFileForResource(projdir, f);
-            System.out.println("Adding FileFragment: " + ff.getName());
+            Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Adding FileFragment: {0}", ff.getName());
             if (modulationTime != null) {
                 IVariableFragment ivf = new VariableFragment(ff,
                         "modulation_time");
                 ArrayDouble.D0 modTime = new ArrayDouble.D0();
-                modTime.set(modulationTime.doubleValue());
+                modTime.set(modulationTime);
                 ivf.setArray(modTime);
             }
             if (scanRate != null) {
-                System.out.println("Using user-defined scan_rate=" + scanRate);
+                Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Using user-defined scan_rate={0}", scanRate);
                 IVariableFragment sr = new VariableFragment(ff, "scan_rate");
                 ArrayDouble.D0 scanRateArr = new ArrayDouble.D0();
                 scanRateArr.set(scanRate);
@@ -407,7 +409,7 @@ public class DBProjectFactory {
                     try {
                         IVariableFragment scanRateVar = ff.getChild("scan_rate");
                     } catch (ResourceNotAvailableException rnae) {
-                        System.err.println("Variable scan_rate not available in source file: " + ff.getName());
+                        Logger.getLogger(DBProjectFactory.class.getName()).log(Level.WARNING, "Variable scan_rate not available in source file: {0}", ff.getName());
                         throw rnae;
                     }
                 }
@@ -444,10 +446,10 @@ public class DBProjectFactory {
                     importDir = new File(importDir, "DBProjectFactory");
                     FileUtil.createFolder(importDir);
                     List<File> files = AProgressAwareCallable.createAndRun("Importing report " + f.getName(), ChromaTOFImporter.importAsVirtualChromatograms(importDir, f)).get();
-                    System.out.println("Received files: " + files);
+                    Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Received files: {0}", files);
                     fragment = new FileFragment(dataDir, files.get(0).getName());
                     fragment.addSourceFile(new FileFragment(files.get(0)));
-                } catch (Exception ex) {
+                } catch (IOException | InterruptedException | ExecutionException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             } else {
@@ -461,18 +463,16 @@ public class DBProjectFactory {
                         List<File> files = ImportAndiChromFileTask.createAndRun("Importing ANDI-CHROM file " + f.getName(), new ImportAndiChromFileTask(new File(importDir, StringTools.removeFileExt(f.getName())), new File[]{f})).get();
                         fragment = new FileFragment(dataDir, files.get(0).getName());
                         fragment.addSourceFile(new FileFragment(files.get(0)));
-                    } catch (InterruptedException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (ExecutionException ex) {
+                    } catch (InterruptedException | ExecutionException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                 } catch (ResourceNotAvailableException rnae) {
                     fragment = new FileFragment(dataDir, StringTools.removeFileExt(f.getName()) + ".cdf");
-                    System.out.println("Adding data file " + fragment.getName());
+                    Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Adding data file {0}", fragment.getName());
                     fragment.addSourceFile(new FileFragment(f));
                 }
             }
-            System.out.println("Returning fragment: " + fragment.getUri());
+            Logger.getLogger(DBProjectFactory.class.getName()).log(Level.INFO, "Returning fragment: {0}", fragment.getUri());
             return fragment;
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);

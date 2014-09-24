@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ParamDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.Param;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class ParamContainer extends BasicMzTabMetaDataContainer<ParamDescriptor> {
+    private static final long serialVersionUID = -5515080367132654990L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static ParamContainer create(Metadata metadata) {
         ParamContainer c = new ParamContainer();
         c.setLevel(2);

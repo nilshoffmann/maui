@@ -33,10 +33,29 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  */
 public interface IHypothesisTestDescriptor {
 
+    /**
+     *
+     */
     String PROP_DEGREESOFFREEDOM = "degreesOfFreedom";
+
+    /**
+     *
+     */
     String PROP_FACTORS = "factors";
+
+    /**
+     *
+     */
     String PROP_PVALUES = "pvalues";
+
+    /**
+     *
+     */
     String PROP_PVALUEADJUSTMENTMETHOD = "pvalueAdjustmentMethod";
+
+    /**
+     *
+     */
     String PROP_GROUPSIZE = "groupSize";
 
     /**
@@ -96,7 +115,15 @@ public interface IHypothesisTestDescriptor {
      */
     String getPvalueAdjustmentMethod();
 
+    /**
+     *
+     * @param size
+     */
     void setGroupSize(int size);
 
+    /**
+     *
+     * @return
+     */
     int getGroupSize();
 }

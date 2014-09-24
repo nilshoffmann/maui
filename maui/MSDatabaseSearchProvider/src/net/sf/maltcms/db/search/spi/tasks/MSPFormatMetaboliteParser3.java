@@ -45,6 +45,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IMetabolite;
 import maltcms.datastructures.ms.Metabolite;
@@ -53,7 +55,7 @@ import ucar.ma2.ArrayInt;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Slf4j
 public class MSPFormatMetaboliteParser3 {
@@ -147,8 +149,7 @@ public class MSPFormatMetaboliteParser3 {
             this.dbno = metaboliteCounter++;
         }
         if (this.name == null) {
-            System.err.println("Error creating metabolite, name=" + this.name
-                    + "; id=" + this.id);
+            Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.WARNING, "Error creating metabolite, name={0}; id={1}", new Object[]{this.name, this.id});
             throw new RuntimeException("Error creating metabolite, name=" + this.name
                     + "; id=" + this.id);
         }
@@ -158,7 +159,7 @@ public class MSPFormatMetaboliteParser3 {
                 this.masses, this.intensities);
         m.setLink(this.link);
         if (m == null) {
-            System.err.println("Error creating metabolite");
+            Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).warning("Error creating metabolite");
             throw new RuntimeException("Error creating metabolite");
         }
         //this.metabolites.add(m);
@@ -225,7 +226,7 @@ public class MSPFormatMetaboliteParser3 {
         } else if (synon.startsWith("##")) {
             handleSynonNist2Lib(synon.substring(("##").length()));
         } else {
-            System.err.println("Unknown SYNON attribute: " + synon);
+            Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.WARNING, "Unknown SYNON attribute: {0}", synon);
             // System.exit(-1);
         }
     }
@@ -296,7 +297,7 @@ public class MSPFormatMetaboliteParser3 {
     }
 
     public void handleSynonMATCH(String match) {
-        System.out.println("IGNORING ATTRIBUTE MATCH=" + match);
+        Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "IGNORING ATTRIBUTE MATCH={0}", match);
     }
 
     public void handleFormula(String formula) {
@@ -368,7 +369,7 @@ public class MSPFormatMetaboliteParser3 {
             // System.out.println("Parsing msp compatible data!");
             parseMZI(data, ":", " ");
         } else {
-            System.out.println("This is no valid data line! " + data);
+            Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "This is no valid data line! {0}", data);
         }
     }
 
@@ -389,8 +390,7 @@ public class MSPFormatMetaboliteParser3 {
                     this.intensities.set(this.points, parseIntString(pair[1].trim()));
                     this.points++;
                 } else {
-                    System.err.println("Incorrect split result for pair: " + p
-                            + "! Omitting rest!");
+                    Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.WARNING, "Incorrect split result for pair: {0}! Omitting rest!", p);
                     return;
                 }
             }
@@ -410,26 +410,26 @@ public class MSPFormatMetaboliteParser3 {
             this.f = f;
             raf = null;
             try {
-                System.out.println("Opening random access file!");
+                Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).info("Opening random access file!");
                 raf = new RandomAccessFile(f, "r");
                 String line = "";
-                metaboliteStartIndices = new ArrayList<Long>();
+                metaboliteStartIndices = new ArrayList<>();
                 int lineCounter = 0;
                 long offset = 0;
-                System.out.println("RAF file pointer: " + raf.getFilePointer() + ", RAF length: " + raf.length());
+                Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "RAF file pointer: {0}, RAF length: {1}", new Object[]{raf.getFilePointer(), raf.length()});
                 while ((offset = raf.getFilePointer()) < raf.length()) {
                     line = raf.readLine();
                     if (line.startsWith("Name: ")) {
                         records++;
-                        metaboliteStartIndices.add(Long.valueOf(offset));
+                        metaboliteStartIndices.add(offset);
                     }
                     lineCounter++;
                 }
             } catch (FileNotFoundException e) {
-                System.err.println(e.getLocalizedMessage());
+                Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).warning(e.getLocalizedMessage());
                 log.error("File not found: ", e);
             } catch (IOException e) {
-                System.err.println(e.getLocalizedMessage());
+                Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).warning(e.getLocalizedMessage());
                 log.error("IO Exception: ", e);
             } finally {
                 if (raf != null) {
@@ -440,7 +440,7 @@ public class MSPFormatMetaboliteParser3 {
                     }
                 }
             }
-            System.out.println("Found " + records + " metabolites in database file.");
+            Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "Found {0} metabolites in database file.", records);
         }
 
         @Override
@@ -451,7 +451,7 @@ public class MSPFormatMetaboliteParser3 {
         @Override
         public IMetabolite get(int i) {
             try {
-                System.out.println("Retrieving index " + i);
+                Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "Retrieving index {0}", i);
                 raf = new RandomAccessFile(f, "r");
                 raf.seek(metaboliteStartIndices.get(i));
                 long end = raf.length();
@@ -465,7 +465,7 @@ public class MSPFormatMetaboliteParser3 {
                 if (metabolite == null) {
                     throw new RuntimeException("Could not create metabolite for index " + i);
                 }
-                System.out.println("Loaded metabolite " + i);
+                Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "Loaded metabolite {0}", i);
                 return metabolite;
 
             } catch (FileNotFoundException e) {
@@ -486,7 +486,7 @@ public class MSPFormatMetaboliteParser3 {
         @Override
         public List<IMetabolite> get(int i, int i1) {
             if ((i >= 0 && i1 > i) && (i1 < size())) {
-                List<IMetabolite> l = new ArrayList<IMetabolite>(i1 - i);
+                List<IMetabolite> l = new ArrayList<>(i1 - i);
                 for (int j = i; j <= i1; j++) {
                     IMetabolite m = get(i);
                     if (m != null) {
@@ -547,7 +547,7 @@ public class MSPFormatMetaboliteParser3 {
 //                }
 //            }
 //        }
-        CachedLazyList<IMetabolite> cll = new CachedLazyList<IMetabolite>(new MSPFormatMetaboliteParser3.MetaboliteProvider(f));
+        CachedLazyList<IMetabolite> cll = new CachedLazyList<>(new MSPFormatMetaboliteParser3.MetaboliteProvider(f));
 //        this.metabolites = new ArrayList<IMetabolite>();
 
 //        return this.metabolites;
@@ -579,8 +579,7 @@ public class MSPFormatMetaboliteParser3 {
                             return true;
                         }
                     });
-                    System.out.println("DB holding " + numMet.size()
-                            + " metabolites!");
+                    Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "DB holding {0} metabolites!", numMet.size());
                     int i = 0;
                     int size = al.size();
                     for (IMetabolite me : al) {
@@ -602,9 +601,8 @@ public class MSPFormatMetaboliteParser3 {
                         // }
                         // });
                         // if(os.size() == 0) {
-                        System.out.println("Adding metabolite " + (i + 1) + "/"
-                                + size + " :" + me.getName() + " to db!");
-                        System.out.println("ID: " + ID);
+                        Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "Adding metabolite {0}/{1} :{2} to db!", new Object[]{i + 1, size, me.getName()});
+                        Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "ID: {0}", ID);
                         db.store(me);
                         // }else if(os.size()==1) {
                         // System.out.println("Updating metabolite "+(i+1)+"/"+size+" :"+me.getName());
@@ -620,13 +618,11 @@ public class MSPFormatMetaboliteParser3 {
                         i++;
                     }
                     cnt += i;
-                    System.out.println("Committing to database!");
+                    Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).info("Committing to database!");
                     db.commit();
                 }
                 int committed = db.query(IMetabolite.class).size();
-                System.out.println("Processed " + cnt
-                        + " Metabolites, total in database: "
-                        + committed + "!");
+                Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).log(Level.INFO, "Processed {0} Metabolites, total in database: {1}!", new Object[]{cnt, committed});
                 db.close();
 
             } finally {
@@ -634,7 +630,7 @@ public class MSPFormatMetaboliteParser3 {
             }
 
         } else {
-            System.out.println(
+            Logger.getLogger(MSPFormatMetaboliteParser3.class.getName()).info(
                     "Usage: MSPFormatMetaboliteParser <OUTFILE> <INFILE_1> ... <INFILE_N>");
         }
         System.exit(0);

@@ -36,11 +36,9 @@ import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ProxyLookup;
 
-/**
- *
- * @author Nils Hoffmann
- */
+
 public class FoldChangeDataset extends ADataset1D<StatisticsContainer, FoldChangeElement> {
+    private static final long serialVersionUID = -3278023626558503256L;
 
     private final double minX, maxX, minY, maxY;
     private final int[][] ranks;

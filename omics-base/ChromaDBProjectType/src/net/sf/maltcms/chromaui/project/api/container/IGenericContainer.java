@@ -37,16 +37,39 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
  */
 public interface IGenericContainer<T extends IBasicDescriptor> extends IBasicDescriptor, Iterable<T> {
 
+    /**
+     *
+     */
     final String PROP_MEMBERS = "members";
 
+    /**
+     *
+     * @return
+     */
     Collection<T> getMembers();
 
+    /**
+     *
+     * @param members
+     */
     void setMembers(Collection<T> members);
 
+    /**
+     *
+     * @param f
+     */
     void setMembers(T... f);
 
+    /**
+     *
+     * @param f
+     */
     void addMembers(T... f);
 
+    /**
+     *
+     * @param f
+     */
     void removeMembers(T... f);
 
 }

@@ -35,11 +35,11 @@ import org.netbeans.api.visual.widget.general.IconNodeWidget;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class PipelineInputWidget extends IconNodeWidget {
 
-    private List<File> input = new ArrayList<File>();
+    private List<File> input = new ArrayList<>();
 
     public PipelineInputWidget(Scene scene, TextOrientation to) {
         super(scene, to);

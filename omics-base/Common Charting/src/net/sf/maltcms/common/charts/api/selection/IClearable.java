@@ -33,5 +33,8 @@ package net.sf.maltcms.common.charts.api.selection;
  */
 public interface IClearable {
 
+    /**
+     *
+     */
     void clear();
 }

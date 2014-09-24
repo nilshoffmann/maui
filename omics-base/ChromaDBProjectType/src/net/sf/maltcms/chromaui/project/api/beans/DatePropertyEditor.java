@@ -37,6 +37,9 @@ import java.util.Date;
  */
 public class DatePropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public DatePropertyEditor() {
     }
 

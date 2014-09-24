@@ -487,7 +487,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
                     NotifyDescriptor.OK_CANCEL_OPTION,
                     NotifyDescriptor.QUESTION_MESSAGE);
             if (DialogDisplayer.getDefault().notify(msg) == NotifyDescriptor.OK_OPTION) {
-                System.out.println("Faking save action!");
+                Logger.getLogger(getClass().getName()).info("Faking save action!");
                 setChanged(false);
             }
         }

@@ -54,7 +54,7 @@ public class DataSourcePanel extends javax.swing.JPanel {
     public static final String MALTCMS_FILES = "Maltcms Result Files";
 
     public DataSourcePanel(FileObject projectBasedir) {
-        List<String> model = new LinkedList<String>();
+        List<String> model = new LinkedList<>();
         model.add(ORIGINAL_FILES);
         File importDir = new File(FileUtil.toFile(
                 projectBasedir), "import");

@@ -35,6 +35,7 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -52,11 +53,24 @@ import org.jfree.ui.RectangleEdge;
 import org.openide.nodes.Node;
 import org.openide.util.WeakListeners;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
 
     private final Peak1DContainer peakAnnotations;
     private final IChromatogramDescriptor descriptor;
 
+    /**
+     *
+     * @param descriptor
+     * @param name
+     * @param displayName
+     * @param shortDescription
+     * @param visibilityChangeable
+     * @param peakAnnotations
+     */
     public Peak2DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
         super(name, displayName, shortDescription, visibilityChangeable);
         for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
@@ -81,6 +95,11 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 //		this.peakAnnotations = peakAnnotations;
 //	}
 
+    /**
+     *
+     * @param g2
+     * @param chartPanel
+     */
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
         if (isVisible()) {
@@ -96,7 +115,7 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
             Color c = g2.getColor();
             Color fillColor = peakAnnotations.getColor();
             if (fillColor == null || fillColor.equals(Color.WHITE) || fillColor.equals(new Color(255, 255, 255, 0))) {
-                System.out.println("Peak annotation color was null or white, using color from treatment group!");
+                Logger.getLogger(getClass().getName()).info("Peak annotation color was null or white, using color from treatment group!");
                 fillColor = peakAnnotations.getChromatogram().getTreatmentGroup().getColor();
             }
             g2.setColor(ChartCustomizer.withAlpha(fillColor, 0.5f));
@@ -115,6 +134,10 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
         }
     }
 
+    /**
+     *
+     * @param ce
+     */
     @Override
     public void selectionStateChanged(SelectionChangeEvent ce) {
         //TODO implement peak descriptor selection
@@ -153,31 +176,46 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public Peak1DContainer getPeakAnnotations() {
         return peakAnnotations;
     }
 
+    /**
+     *
+     * @return
+     */
     public IChromatogramDescriptor getDescriptor() {
         return descriptor;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Node createNodeDelegate() {
-        System.err.println("Creating node delegate");
+        Logger.getLogger(getClass().getName()).warning("Creating node delegate");
         Node node = null;
         if (nodeReference == null) {
             node = Charts.overlayNode(this);
-            nodeReference = new WeakReference<Node>(node);
+            nodeReference = new WeakReference<>(node);
         } else {
             node = nodeReference.get();
             if (node == null) {
                 node = Charts.overlayNode(this);
-                nodeReference = new WeakReference<Node>(node);
+                nodeReference = new WeakReference<>(node);
             }
         }
         return node;
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

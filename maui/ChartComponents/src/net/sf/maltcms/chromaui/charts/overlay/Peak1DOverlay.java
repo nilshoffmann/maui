@@ -55,6 +55,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
@@ -93,20 +95,40 @@ import org.openide.util.WeakListeners;
  */
 public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener, LookupListener {
 
+    /**
+     *
+     */
     public final String PROP_DRAW_SHAPES = "drawShapes";
+
+    /**
+     *
+     */
     public final String PROP_DRAW_LINES = "drawLines";
+
+    /**
+     *
+     */
     public final String PROP_DRAW_OUTLINES = "drawOutlines";
     private final Peak1DContainer peakAnnotations;
-    private final Set<UUID> peakIds = new HashSet<UUID>();
+    private final Set<UUID> peakIds = new HashSet<>();
     private final Set<IPeakAnnotationDescriptor> activeSelection = Collections.newSetFromMap(new ConcurrentSkipListMap<IPeakAnnotationDescriptor, Boolean>());//new LinkedHashSet<IPeakAnnotationDescriptor>();
-    private List<VisualPeakAnnotation> shapes = new ArrayList<VisualPeakAnnotation>();
-    private List<VisualPeakAnnotation> selectedPeaks = new ArrayList<VisualPeakAnnotation>();
+    private List<VisualPeakAnnotation> shapes = new ArrayList<>();
+    private List<VisualPeakAnnotation> selectedPeaks = new ArrayList<>();
     private boolean drawShapes = true;
     private boolean drawLines = true;
     private boolean drawOutlines = false;
     private ADataset1D<IChromatogram1D, IScan> dataset = null;
     private Result<IPeakAnnotationDescriptor> padResult;
 
+    /**
+     *
+     * @param descriptor
+     * @param name
+     * @param displayName
+     * @param shortDescription
+     * @param visibilityChangeable
+     * @param peakAnnotations
+     */
     public Peak1DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
         super(name, displayName, shortDescription, visibilityChangeable);
         for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
@@ -130,6 +152,11 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         super.content.add(peakAnnotations);
     }
 
+    /**
+     *
+     * @param g2
+     * @param chartPanel
+     */
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
         JFreeChart chart = chartPanel.getChart();
@@ -193,8 +220,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 ////				System.out.println("Peak annotation color was null or white, using color from treatment group!");
 //				fillColor = peakAnnotations.getChromatogram().getTreatmentGroup().getColor();
 //			}
-            for (int i = 0; i < shapes.size(); i++) {
-                VisualPeakAnnotation x = shapes.get(i);
+            for (VisualPeakAnnotation x : shapes) {
                 Shape s = toViewXY(x, chartPanel, x.getCenter());
                 switch (x.getPeakAnnotationType()) {
                     case LINE:
@@ -211,8 +237,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
                         drawEntity(s, g2, fillColor, null, chartPanel, false, 0.1f);
                 }
             }
-            for (int i = 0; i < selectedPeaks.size(); i++) {
-                VisualPeakAnnotation x = selectedPeaks.get(i);
+            for (VisualPeakAnnotation x : selectedPeaks) {
                 Shape s = toViewXY(x, chartPanel, x.getCenter());
                 switch (x.getPeakAnnotationType()) {
                     case LINE:
@@ -311,8 +336,14 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         }
     }
 
+    /**
+     *
+     * @param container
+     * @param dataset
+     * @return
+     */
     public List<VisualPeakAnnotation> generatePeakShapes(Peak1DContainer container, ADataset1D<IChromatogram1D, IScan> dataset) {
-        List<VisualPeakAnnotation> l = new ArrayList<VisualPeakAnnotation>();
+        List<VisualPeakAnnotation> l = new ArrayList<>();
         if (dataset == null) {
             return l;
         }
@@ -325,7 +356,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
                 }
             }
         } else {
-            System.err.println("Could not find match for chromatogram " + chromatogram.getName() + " in dataset!");
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find match for chromatogram {0} in dataset!", chromatogram.getName());
         }
         return l;
     }
@@ -370,7 +401,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
             //transform from model scale to view scale
             double scaleX = viewW / entityBounds.getWidth();
             double scaleY = viewH / entityBounds.getHeight();
-            System.out.println("Scale x: " + scaleX + " Scale y: " + scaleY);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Scale x: {0} Scale y: {1}", new Object[]{scaleX, scaleY});
             AffineTransform toViewScale = AffineTransform.getScaleInstance(scaleX, scaleY);
             AffineTransform toViewLocation = AffineTransform.getTranslateInstance(viewX, viewY);
             AffineTransform flipTransform = AffineTransform.getScaleInstance(1.0f, -1.0f);
@@ -400,7 +431,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
             g2.setColor(c);
             g2.setClip(savedClip);
         } else {
-            System.out.println("Entity is null!");
+            Logger.getLogger(getClass().getName()).info("Entity is null!");
         }
     }
 
@@ -429,7 +460,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
             g2.setColor(c);
             g2.setClip(savedClip);
         } else {
-            System.out.println("Entity is null!");
+            Logger.getLogger(getClass().getName()).info("Entity is null!");
         }
     }
 
@@ -438,6 +469,10 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setDrawShapes(boolean b) {
         boolean old = this.drawShapes;
         this.drawShapes = b;
@@ -446,14 +481,26 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDrawShapes() {
         return this.drawShapes;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDrawLines() {
         return this.drawLines;
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setDrawLines(boolean b) {
         boolean old = this.drawLines;
         this.drawLines = b;
@@ -462,10 +509,18 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDrawOutlines() {
         return this.drawOutlines;
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setDrawOutlines(boolean b) {
         boolean old = this.drawOutlines;
         this.drawOutlines = b;
@@ -474,10 +529,14 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @param le
+     */
     @Override
     public final void resultChanged(LookupEvent le) {
         if (le.getSource() == this) {
-            System.err.println("Skipping lookup event originating from myself");
+            Logger.getLogger(getClass().getName()).warning("Skipping lookup event originating from myself");
         } else {
             if (isVisible() && dataset != null && peakAnnotations != null && selectedPeaks != null) {
                 Collection<? extends IPeakAnnotationDescriptor> pads = padResult.allInstances();
@@ -490,12 +549,12 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
                     }
                     for (IPeakAnnotationDescriptor ipad : unselected) {
                         if (peakIds.contains(ipad.getId())) {
-                            System.err.println("Contained!");
+                            Logger.getLogger(getClass().getName()).warning("Contained!");
                             generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
 //						content.add(ipad);
                             activeSelection.add(ipad);
                         } else {
-                            System.err.println("Not contained!");
+                            Logger.getLogger(getClass().getName()).warning("Not contained!");
                         }
                     }
                     if (!unselected.isEmpty()) {
@@ -540,7 +599,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
     private VisualPeakAnnotation generateOutline(IChromatogramDescriptor chromatogram, IPeakAnnotationDescriptor peakDescr, ADataset1D<IChromatogram1D, IScan> dataset, int seriesIndex) {
         boolean baselineAvailable = false;
         if (!(Double.isNaN(peakDescr.getBaselineStartIntensity()) && Double.isNaN(peakDescr.getBaselineStopIntensity()) && Double.isNaN(peakDescr.getBaselineStartTime()) && Double.isNaN(peakDescr.getBaselineStopTime()))) {
-            System.err.println("Using baseline for peak outline");
+            Logger.getLogger(getClass().getName()).warning("Using baseline for peak outline");
             baselineAvailable = true;
         }
         double sat = peakDescr.getApexTime();
@@ -585,7 +644,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         }
         gp.lineTo(blStopTime, dataset.getYValue(seriesIndex, stopIdx) + blStopVal);
         gp.closePath();
-        System.err.println("Generating peak outline: (" + peakStartTime + ";" + peakStartValue + ")(" + sat + ";" + peakApexValue + ")" + "(" + peakStopTime + ";" + peakStopValue + ")");
+        Logger.getLogger(getClass().getName()).log(Level.WARNING,"Generating peak outline: ({0};{1})({2};{3}" + ")" + "({4};{5})", new Object[]{peakStartTime, peakStartValue, sat, peakApexValue, peakStopTime, peakStopValue});
         VisualPeakAnnotation vpa = new VisualPeakAnnotation(gp, new Point2D.Double(sat, Math.min(peakStartValue, Math.min(peakApexValue, peakStopValue))), PeakAnnotationType.OUTLINE);//generate(peakStartTime, peakStartValue, sat, peakApexValue, peakStopTime, peakStopValue);
         return vpa;
     }
@@ -602,21 +661,29 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         return seriesIndex;
     }
 
+    /**
+     *
+     * @return
+     */
     public ADataset1D<IChromatogram1D, IScan> getDataset() {
         return dataset;
     }
 
+    /**
+     *
+     * @param ce
+     */
     @Override
     public void selectionStateChanged(SelectionChangeEvent ce) {
         if (isVisible() && ce.getSource() != this && ce.getSelection() != null) {
             if (ce.getSelection().getType().equals(ISelection.Type.CLEAR)) {
-                System.err.println("Received clear selection type");
+                Logger.getLogger(getClass().getName()).warning("Received clear selection type");
                 clear();
                 return;
             }
             if (dataset != null) {
                 IScan target = dataset.getTarget(ce.getSelection().getSeriesIndex(), ce.getSelection().getItemIndex());
-                TreeMap<Double, IPeakAnnotationDescriptor> distanceMap = new TreeMap<Double, IPeakAnnotationDescriptor>();
+                TreeMap<Double, IPeakAnnotationDescriptor> distanceMap = new TreeMap<>();
                 for (IPeakAnnotationDescriptor ipad : peakAnnotations.getMembers()) {
                     double absDiff = Math.abs(ipad.getApexTime() - target.getScanAcquisitionTime());
                     if (absDiff < 10.0d) {
@@ -630,7 +697,7 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
 //						activeSelection.clear();
                         switch (ce.getSelection().getType()) {
                             case CLICK:
-                                System.out.println("Click selection received");
+                                Logger.getLogger(getClass().getName()).info("Click selection received");
                                 //							content.add(ipad);
                                 generatePeakShape(peakAnnotations.getChromatogram(), ipad, dataset, getSeriesIndex(dataset, peakAnnotations.getChromatogram()), selectedPeaks);
                                 activeSelection.add(ipad);
@@ -649,30 +716,41 @@ public class Peak1DOverlay extends AbstractChartOverlay implements ChartOverlay,
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public Set<IPeakAnnotationDescriptor> getActiveSelection() {
         return activeSelection;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Node createNodeDelegate() {
-        System.err.println("Creating node delegate");
+        Logger.getLogger(getClass().getName()).warning("Creating node delegate");
         Node node = null;
         if (nodeReference == null) {
             node = Charts.overlayNode(this, Children.create(new Peak1DOverlayChildFactory(this), true), getLookup());
-            nodeReference = new WeakReference<Node>(node);
+            nodeReference = new WeakReference<>(node);
         } else {
             node = nodeReference.get();
             if (node == null) {
                 node = Charts.overlayNode(this, Children.create(new Peak1DOverlayChildFactory(this), true), getLookup());
-                nodeReference = new WeakReference<Node>(node);
+                nodeReference = new WeakReference<>(node);
             }
         }
         return node;
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
-        System.err.println("Clear called on Peak1DOverlay");
+        Logger.getLogger(getClass().getName()).warning("Clear called on Peak1DOverlay");
         selectedPeaks.clear();
         activeSelection.clear();
         fireOverlayChanged();

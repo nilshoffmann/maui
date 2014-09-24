@@ -56,7 +56,7 @@ import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 @NodeFactory.Registration(projectType = "net-sf-maltcms-chromaui-project", position = 20)
 public class MauiSubprojectNodeFactory implements NodeFactory {
@@ -80,9 +80,9 @@ public class MauiSubprojectNodeFactory implements NodeFactory {
 
         @Override
         public List<Project> keys() {
-            List<Project> result = new ArrayList<Project>();
+            List<Project> result = new ArrayList<>();
             Collection<? extends SubprojectProvider> factories = project.getLookup().lookupAll(SubprojectProvider.class);
-            subprojects = new LinkedHashSet<Project>();
+            subprojects = new LinkedHashSet<>();
             for (SubprojectProvider provider : factories) {
 //				addChangeListener(WeakListeners.change(this, provider));
                 Set<? extends Project> s = provider.getSubprojects();

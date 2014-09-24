@@ -90,7 +90,7 @@ public class ChromatogramNode extends FilterNode implements
         if (icd == null) {
             return propSets;
         }
-        List<PropertySet> propertySets = new LinkedList<PropertySet>();
+        List<PropertySet> propertySets = new LinkedList<>();
         propertySets.addAll(Arrays.asList(propSets));
         try {
             BeanInfo beanInfo = Utilities.getBeanInfo(IChromatogramDescriptor.class);
@@ -125,7 +125,7 @@ public class ChromatogramNode extends FilterNode implements
 
     @Override
     public Action[] getActions(boolean context) {
-        ArrayList<Action> actions = new ArrayList<Action>();
+        ArrayList<Action> actions = new ArrayList<>();
         actions.add(ChromatogramNodePopupAction.findObject(ChromatogramNodePopupAction.class, true));
         actions.add(null);
         actions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
@@ -141,8 +141,8 @@ public class ChromatogramNode extends FilterNode implements
      * @return All found actions from the given paths
      */
     protected Action[] createActions(boolean context, String... paths) {
-        ArrayList<Action> subActions = new ArrayList<Action>();
-        Set<Action> actions = new LinkedHashSet<Action>();
+        ArrayList<Action> subActions = new ArrayList<>();
+        Set<Action> actions = new LinkedHashSet<>();
         actions.add(new ChromatogramNodePopupAction());
         List<Action> parent = Arrays.asList(super.getActions(context));
         actions.addAll(parent);
@@ -152,7 +152,7 @@ public class ChromatogramNode extends FilterNode implements
     }
 
     private List<Action> findSubActions(Presenter.Popup subMenu) {
-        List<Action> actions = new ArrayList<Action>();
+        List<Action> actions = new ArrayList<>();
 
         JMenuItem item = subMenu.getPopupPresenter();
         if (item instanceof JMenu) {
@@ -174,7 +174,7 @@ public class ChromatogramNode extends FilterNode implements
     }
 
     private List<Action> findSubMenuActions(Presenter.Menu subMenu) {
-        List<Action> actions = new ArrayList<Action>();
+        List<Action> actions = new ArrayList<>();
         JMenuItem item = subMenu.getMenuPresenter();
         if (item instanceof JMenu) {
             JMenu menu = (JMenu) item;

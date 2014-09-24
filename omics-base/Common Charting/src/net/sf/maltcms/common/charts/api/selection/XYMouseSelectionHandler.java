@@ -46,16 +46,28 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
     private final IDisplayPropertiesProvider provider;
     private final ISelectionShapeFactory shapeFactory;
 
+    /**
+     *
+     * @param dataset
+     */
     public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset) {
         this(dataset, new DefaultSelectionShapeFactory());
     }
 
+    /**
+     *
+     * @param dataset
+     * @param shapeFactory
+     */
     public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset, ISelectionShapeFactory shapeFactory) {
         this.dataset = dataset;
         this.provider = dataset.getLookup().lookup(IDisplayPropertiesProvider.class);
         this.shapeFactory = shapeFactory;
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         selection = null;
@@ -63,6 +75,9 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
         fireSelectionChange();
     }
 
+    /**
+     *
+     */
     protected void fireSelectionChange() {
         final SelectionChangeEvent event = new SelectionChangeEvent(this, selection);
         for (ISelectionChangeListener listener : listenerList.getListeners(ISelectionChangeListener.class)) {
@@ -70,10 +85,18 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
         }
     }
 
+    /**
+     *
+     * @param dataset
+     */
     public void setDataset(ADataset1D<?, TARGET> dataset) {
         this.dataset = dataset;
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
@@ -87,6 +110,10 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
         }
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
@@ -102,11 +129,19 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
         }
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void addSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.add(ISelectionChangeListener.class, listener);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void removeSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.remove(ISelectionChangeListener.class, listener);

@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
@@ -415,9 +416,7 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
                             };
                             SwingUtilities.invokeLater(updater);
                         }
-                    } catch (InterruptedException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (ExecutionException ex) {
+                    } catch (InterruptedException | ExecutionException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                 }
@@ -527,10 +526,9 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
             PropertiesConfiguration defaultConfig = new PropertiesConfiguration(
                     defaultConfigLocation);
             ccfg.addConfiguration(defaultConfig);
-            System.out.println("Using default config location: "
-                    + defaultConfigLocation.toString());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Using default config location: {0}", defaultConfigLocation.toString());
         } catch (Exception e) {
-            System.err.println(e.getLocalizedMessage());
+            Logger.getLogger(getClass().getName()).warning(e.getLocalizedMessage());
         }
 
         ccfg.addConfiguration(new SystemConfiguration());

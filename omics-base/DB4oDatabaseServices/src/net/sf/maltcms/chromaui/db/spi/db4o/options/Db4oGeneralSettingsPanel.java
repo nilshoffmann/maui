@@ -207,9 +207,9 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
     void load() {
         verboseDiagnostics.setSelected(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false));
         createAutomaticBackups.setSelected(NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false));
-        backupInterval.setValue(Long.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10)));
+        backupInterval.setValue((long) NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("backupInterval", 10));
         updateDatabaseSize.setSelected(false);
-        databaseBlockSize.setValue(Integer.valueOf(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)));
+        databaseBlockSize.setValue(NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2));
     }
 
     void store() {
@@ -224,7 +224,7 @@ final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements Valid
         boolean clearIfValid = true;
         if (createAutomaticBackups.isSelected()) {
             Long backupIntervalValue = (Long) backupInterval.getValue();
-            if (backupIntervalValue.longValue() < 1) {
+            if (backupIntervalValue < 1) {
                 validationMessage(new ValidationMessage(backupInterval, ValidationMessage.Type.ERROR, "Backup Interval must not be <1!"));
                 return false;
             }

@@ -138,9 +138,9 @@ public class SceneExporter {
             final int digits = (int) Math.ceil(Math.log10(pipeline.size())) + 1;
 
             //String list for pipeline elements
-            List<String> pipelineElements = new LinkedList<String>();
+            List<String> pipelineElements = new LinkedList<>();
             //String list for pipeline elements configuration locations
-            List<String> pipelinePropertiesElements = new LinkedList<String>();
+            List<String> pipelinePropertiesElements = new LinkedList<>();
             for (PipelineElementWidget pw : pipeline) {
                 //add full class name to pipeline elements
                 pipelineElements.add(pw.getClassName());
@@ -232,9 +232,7 @@ public class SceneExporter {
             try {
 
                 saveScene(scene, new File(scene.getBaseFile().getURL().toURI()));
-            } catch (FileStateInvalidException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (URISyntaxException ex) {
+            } catch (FileStateInvalidException | URISyntaxException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }

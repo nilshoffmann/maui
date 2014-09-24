@@ -35,8 +35,18 @@ import maltcms.datastructures.array.IFeatureVector;
  */
 public interface IFeatureMapper<TARGET> {
 
+    /**
+     *
+     * @param featureVector
+     * @param feature
+     * @return
+     */
     public TARGET map(IFeatureVector featureVector, String feature);
 
+    /**
+     *
+     * @return
+     */
     public Class<? extends TARGET> getTargetType();
 
 }

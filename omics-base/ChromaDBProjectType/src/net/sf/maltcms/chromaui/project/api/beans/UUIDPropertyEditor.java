@@ -36,6 +36,9 @@ import java.util.UUID;
  */
 public class UUIDPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public UUIDPropertyEditor() {
     }
 

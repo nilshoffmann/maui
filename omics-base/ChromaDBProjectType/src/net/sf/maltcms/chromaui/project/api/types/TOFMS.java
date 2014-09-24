@@ -40,11 +40,19 @@ public class TOFMS implements IDetectorType {
     private final String longName = "time-of-flight mass spectrometer";
     private final int featureDimensions = 2;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDetectorType() {
         return detectorType;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getLongName() {
         return longName;

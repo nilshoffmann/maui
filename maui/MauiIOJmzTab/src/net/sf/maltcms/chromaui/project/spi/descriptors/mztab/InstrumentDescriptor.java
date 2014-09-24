@@ -28,23 +28,40 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab;
 
 import com.db4o.activation.ActivationPurpose;
+import java.util.List;
 import net.sf.maltcms.chromaui.jmztab.ui.api.IMzTabDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Instrument;
 import uk.ac.ebi.pride.jmztab.model.MetadataElement;
 import uk.ac.ebi.pride.jmztab.model.Param;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class InstrumentDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_INSTRUMENT = "instrument";
+    private static final long serialVersionUID = -3897134427829554736L;
 
     private Instrument instrument;
 
+    /**
+     *
+     * @return
+     */
     public Instrument getInstrument() {
         activate(ActivationPurpose.READ);
         return instrument;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setInstrument(Instrument element) {
         activate(ActivationPurpose.WRITE);
         Instrument old = this.instrument;
@@ -55,54 +72,104 @@ public class InstrumentDescriptor extends ABasicDescriptor implements IMzTabDesc
         getPropertyChangeSupport().firePropertyChange(PROP_INSTRUMENT, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getElementId() {
         return getInstrument().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(Integer id) {
         getInstrument().setId(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public Param getElementName() {
         return getInstrument().getName();
     }
 
+    /**
+     *
+     * @param name
+     */
     public void setElementName(Param name) {
         getInstrument().setName(name);
     }
 
+    /**
+     *
+     * @return
+     */
     public Param getSource() {
         return getInstrument().getSource();
     }
 
+    /**
+     *
+     * @param source
+     */
     public void setSource(Param source) {
         getInstrument().setSource(source);
     }
 
-    public Param getAnalyzer() {
-        return getInstrument().getAnalyzer();
+    /**
+     *
+     * @return
+     */
+    public List<Param> getAnalyzer() {
+        return getInstrument().getAnalyzerList();
     }
 
-    public void setAnalyzer(Param analyzer) {
-        getInstrument().setAnalyzer(analyzer);
+    /**
+     *
+     * @param analyzer
+     */
+    public void setAnalyzer(List<Param> analyzer) {
+        getInstrument().getAnalyzerList().clear();
+        getInstrument().getAnalyzerList().addAll(analyzer);
     }
 
+    /**
+     *
+     * @return
+     */
     public Param getDetector() {
         return getInstrument().getDetector();
     }
 
+    /**
+     *
+     * @param detector
+     */
     public void setDetector(Param detector) {
         getInstrument().setDetector(detector);
     }
 
+    @Override
     public String toString() {
         return getInstrument().toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public MetadataElement getElement() {
         return getInstrument().getElement();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getReference() {
         return getInstrument().getReference();
     }

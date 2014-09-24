@@ -35,6 +35,8 @@ import java.awt.Color;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
@@ -105,8 +107,8 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         } else {
             EvalTools.notNull(descriptor.getChromatogram(), this);
         }
-        System.out.println("Using project: " + icp + " from active nodes lookup!");
-        System.out.println("Using descriptor: " + descriptor + " from active nodes lookup!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using project: {0} from active nodes lookup!", icp);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using descriptor: {0} from active nodes lookup!", descriptor);
         if (dobj != null) {
             content.add(dobj);
             setToolTipText(dobj.getPrimaryFile().getPath());
@@ -311,7 +313,7 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
     public void resultChanged(LookupEvent le) {
         //do not react to ourself
         if (hasFocus()) {
-            System.out.println("I have focus, not setting viewport!");
+            Logger.getLogger(getClass().getName()).info("I have focus, not setting viewport!");
         } else {
             if (hmp.isSyncViewport()) {
                 Collection<? extends Chromatogram2DViewViewport> viewports = result.allInstances();

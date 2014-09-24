@@ -35,18 +35,48 @@ import java.util.List;
  */
 public interface INamedElementProvider<SOURCE, TARGET> {
 
+    /**
+     *
+     * @return
+     */
     public SOURCE getSource();
 
+    /**
+     *
+     * @return
+     */
     public Comparable<?> getKey();
 
+    /**
+     *
+     * @param key
+     */
     public void setKey(Comparable<?> key);
 
+    /**
+     *
+     * @return
+     */
     int size();
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     TARGET get(int i);
 
+    /**
+     *
+     * @param start
+     * @param stop
+     * @return
+     */
     List<TARGET> get(int start, int stop);
 
+    /**
+     *
+     */
     void reset();
 
 }

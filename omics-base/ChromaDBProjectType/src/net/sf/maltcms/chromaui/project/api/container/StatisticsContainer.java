@@ -40,6 +40,10 @@ import org.openide.util.ImageUtilities;
 public class StatisticsContainer extends ADatabaseBackedContainer<IStatisticsDescriptor> {
 
     private String method;
+
+    /**
+     *
+     */
     public static final String PROP_METHOD = "method";
 
     /**
@@ -64,6 +68,11 @@ public class StatisticsContainer extends ADatabaseBackedContainer<IStatisticsDes
         firePropertyChange(PROP_METHOD, oldMethod, method);
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(

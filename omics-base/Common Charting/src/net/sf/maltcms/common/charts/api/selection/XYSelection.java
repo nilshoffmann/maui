@@ -39,6 +39,9 @@ import org.jfree.data.xy.XYDataset;
  */
 public class XYSelection implements ISelection {
 
+    /**
+     *
+     */
     public static final String PROP_DATASET = "dataset";
     private XYDataset dataset;
     private final int seriesIndex;
@@ -53,6 +56,10 @@ public class XYSelection implements ISelection {
     private String shortDescription;
     private static XYSelection clearSelection = null;
 
+    /**
+     *
+     * @return
+     */
     public static XYSelection clearSelection() {
         if (clearSelection == null) {
             clearSelection = new XYSelection(null, -1, -1, Type.CLEAR, null, null, null);
@@ -63,6 +70,16 @@ public class XYSelection implements ISelection {
         return clearSelection;
     }
 
+    /**
+     *
+     * @param dataset
+     * @param seriesIndex
+     * @param itemIndex
+     * @param type
+     * @param source
+     * @param target
+     * @param selectionShape
+     */
     public XYSelection(XYDataset dataset, int seriesIndex, int itemIndex, Type type, Object source, Object target, Shape selectionShape) {
         this.dataset = dataset;
         this.seriesIndex = seriesIndex;
@@ -80,11 +97,19 @@ public class XYSelection implements ISelection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public XYDataset getDataset() {
         return dataset;
     }
 
+    /**
+     *
+     * @param dataset
+     */
     @Override
     public void setDataset(Dataset dataset) {
         if (!(dataset instanceof XYDataset)) {
@@ -93,47 +118,83 @@ public class XYSelection implements ISelection {
         setDataset((XYDataset) dataset);
     }
 
+    /**
+     *
+     * @param dataset
+     */
     public void setDataset(XYDataset dataset) {
         XYDataset old = dataset;
         this.dataset = dataset;
         pcs.firePropertyChange(PROP_DATASET, old, this.dataset);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getSeriesIndex() {
         return seriesIndex;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getItemIndex() {
         return itemIndex;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Type getType() {
         return type;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Object getSource() {
         return source;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Object getTarget() {
         return target;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Shape getSelectionShape() {
         return selectionShape;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     *
+     * @param b
+     */
     @Override
     public void setVisible(boolean b) {
         boolean old = this.visible;
@@ -141,21 +202,39 @@ public class XYSelection implements ISelection {
         pcs.firePropertyChange(PROP_VISIBLE, old, this.visible);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
+    /**
+     *
+     * @param property
+     * @param listener
+     */
     @Override
     public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(property, listener);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
+    /**
+     *
+     * @param property
+     * @param listener
+     */
     @Override
     public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(property, listener);
@@ -214,21 +293,37 @@ public class XYSelection implements ISelection {
         return "XYSelection{" + "dataset=" + dataset + ", seriesIndex=" + seriesIndex + ", itemIndex=" + itemIndex + ", type=" + type + ", target=" + target + ", source=" + source + ", selectionShape=" + selectionShape + '}';
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getShortDescription() {
         return shortDescription;
     }
 
+    /**
+     *
+     * @param name
+     */
     @Override
     public void setName(String name) {
         String old = this.name;
@@ -236,6 +331,10 @@ public class XYSelection implements ISelection {
         pcs.firePropertyChange(PROP_NAME, old, this.name);
     }
 
+    /**
+     *
+     * @param displayName
+     */
     @Override
     public void setDisplayName(String displayName) {
         String old = this.displayName;
@@ -243,6 +342,10 @@ public class XYSelection implements ISelection {
         pcs.firePropertyChange(PROP_DISPLAY_NAME, old, this.displayName);
     }
 
+    /**
+     *
+     * @param shortDescription
+     */
     @Override
     public void setShortDescription(String shortDescription) {
         String old = this.shortDescription;

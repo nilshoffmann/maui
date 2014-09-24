@@ -44,12 +44,19 @@ import org.jfree.chart.renderer.PaintScale;
  */
 public class PaintScaleDialogAction extends AbstractAction {
 
-    private List<PaintScaleTarget> targets = new LinkedList<PaintScaleTarget>();
+    private List<PaintScaleTarget> targets = new LinkedList<>();
     private Component parent = null;
     private int alpha, beta;
     private PaintScale ps = null;
     private PaintScalePanel psp = null;
 
+    /**
+     *
+     * @param name
+     * @param alpha
+     * @param beta
+     * @param ps
+     */
     public PaintScaleDialogAction(String name, int alpha, int beta, PaintScale ps) {
         super(name);
         this.alpha = alpha;
@@ -57,10 +64,16 @@ public class PaintScaleDialogAction extends AbstractAction {
         this.ps = ps;
     }
 
+    /**
+     *
+     * @param name
+     * @param icon
+     */
     public PaintScaleDialogAction(String name, Icon icon) {
         super(name, icon);
     }
 
+    @Override
     public void actionPerformed(ActionEvent ae) {
         Runnable r = new Runnable() {
 
@@ -75,14 +88,26 @@ public class PaintScaleDialogAction extends AbstractAction {
         SwingUtilities.invokeLater(r);
     }
 
+    /**
+     *
+     * @param c
+     */
     public void setParent(Component c) {
         this.parent = c;
     }
 
+    /**
+     *
+     * @param pst
+     */
     public void addPaintScaleTarget(PaintScaleTarget pst) {
         this.targets.add(pst);
     }
 
+    /**
+     *
+     * @return
+     */
     public PaintScale showPaintScaleDialog() {
         if (this.psp == null) {
             this.psp = new PaintScalePanel(this.ps, this.alpha, this.beta);

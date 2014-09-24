@@ -43,25 +43,48 @@ import org.openide.util.Task;
 public abstract class AProgressAwareRunnable implements Runnable,
         Cancellable {
 
+    /**
+     *
+     */
     protected ProgressHandle progressHandle;
     private boolean cancel = false;
 
+    /**
+     *
+     * @return
+     */
     public boolean isCancel() {
         return cancel;
     }
 
+    /**
+     *
+     * @param cancel
+     */
     public void setCancel(boolean cancel) {
         this.cancel = cancel;
     }
 
+    /**
+     *
+     * @return
+     */
     public ProgressHandle getProgressHandle() {
         return progressHandle;
     }
 
+    /**
+     *
+     * @param progressHandle
+     */
     public void setProgressHandle(ProgressHandle progressHandle) {
         this.progressHandle = progressHandle;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean cancel() {
         cancel = true;
@@ -69,6 +92,12 @@ public abstract class AProgressAwareRunnable implements Runnable,
         return cancel;
     }
 
+    /**
+     *
+     * @param taskName
+     * @param runnable
+     * @return
+     */
     public static Task createAndRun(String taskName,
             AProgressAwareRunnable runnable) {
         final ProgressHandle handle = ProgressHandleFactory.createHandle(
@@ -81,6 +110,13 @@ public abstract class AProgressAwareRunnable implements Runnable,
         return task;
     }
 
+    /**
+     *
+     * @param taskName
+     * @param runnable
+     * @param es
+     * @return
+     */
     public static Future<?> createAndRun(String taskName, AProgressAwareRunnable runnable, ExecutorService es) {
         final ProgressHandle handle = ProgressHandleFactory.createHandle(
                 taskName, runnable);
@@ -88,6 +124,15 @@ public abstract class AProgressAwareRunnable implements Runnable,
         return es.submit(runnable);
     }
 
+    /**
+     *
+     * @param <T>
+     * @param taskName
+     * @param runnable
+     * @param es
+     * @param result
+     * @return
+     */
     public static <T> Future<T> createAndRun(String taskName, AProgressAwareRunnable runnable, ICompletionService<T> es, T result) {
         final ProgressHandle handle = ProgressHandleFactory.createHandle(
                 taskName, runnable);

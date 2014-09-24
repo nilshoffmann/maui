@@ -130,12 +130,16 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     @Override
     protected Widget attachNodeWidget(String node) {
         IconNodeWidget label;
-        if (node.equals(INPUT_WIDGET)) {
-            label = new PipelineInputWidget(this);
-        } else if (node.equals(GENERAL_WIDGET)) {
-            label = new PipelineGeneralConfigWidget(this);
-        } else {
-            label = new PipelineElementWidget(this);
+        switch (node) {
+            case INPUT_WIDGET:
+                label = new PipelineInputWidget(this);
+                break;
+            case GENERAL_WIDGET:
+                label = new PipelineGeneralConfigWidget(this);
+                break;
+            default:
+                label = new PipelineElementWidget(this);
+                break;
         }
         if (this.shortLabel) {
             String[] tmp = node.split("\\.");

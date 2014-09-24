@@ -158,7 +158,7 @@ public final class GroovyScriptLocationsPanel extends javax.swing.JPanel {
         // or:
         // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
         Enumeration<?> e = dlm.elements();
-        LinkedHashSet<Object> lhs = new LinkedHashSet<Object>(Arrays.asList(dlm.
+        LinkedHashSet<Object> lhs = new LinkedHashSet<>(Arrays.asList(dlm.
                 toArray()));
         StringBuilder sb = new StringBuilder();
         for (Object obj : lhs) {

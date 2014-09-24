@@ -37,6 +37,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
  */
 public class GenericDescriptorPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public GenericDescriptorPropertyEditor() {
     }
 

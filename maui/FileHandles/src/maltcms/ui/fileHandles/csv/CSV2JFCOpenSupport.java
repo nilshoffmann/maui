@@ -36,14 +36,22 @@ import org.openide.windows.CloneableTopComponent;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class CSV2JFCOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
 
+    /**
+     *
+     * @param entry
+     */
     public CSV2JFCOpenSupport(CSVDataObject.Entry entry) {
         super(entry);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
         CSVDataObject dobj = (CSVDataObject) entry.getDataObject();

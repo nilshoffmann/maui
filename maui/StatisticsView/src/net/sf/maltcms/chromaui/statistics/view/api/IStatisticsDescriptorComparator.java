@@ -32,7 +32,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public interface IStatisticsDescriptorComparator extends
         Comparator<IStatisticsDescriptor> {

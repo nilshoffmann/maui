@@ -78,9 +78,9 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 
     @Override
     public Action[] getActions(boolean arg0) {
-        Set<Action> nodeActions = new LinkedHashSet<Action>();
+        Set<Action> nodeActions = new LinkedHashSet<>();
         INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
-        List<IProjectMenuProvider> providers = new ArrayList<IProjectMenuProvider>(Lookup.getDefault().lookupAll(IProjectMenuProvider.class));
+        List<IProjectMenuProvider> providers = new ArrayList<>(Lookup.getDefault().lookupAll(IProjectMenuProvider.class));
         Collections.sort(providers, new Comparator<IProjectMenuProvider>() {
 
             @Override

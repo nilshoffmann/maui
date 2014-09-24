@@ -204,15 +204,19 @@ public class SettingsPanel extends javax.swing.JPanel {
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         String value = (String) jComboBox2.getSelectedItem();
-        if ("TIC".equals(value)) {
-            massesToDisplay.setEnabled(false);
-            massResolution.setEnabled(false);
-        } else if ("EIC-SUM".equals(value)) {
-            massesToDisplay.setEnabled(true);
-            massResolution.setEnabled(true);
-        } else if ("EIC-COPLOT".equals(value)) {
-            massesToDisplay.setEnabled(true);
-            massResolution.setEnabled(true);
+        if (null != value) switch (value) {
+            case "TIC":
+                massesToDisplay.setEnabled(false);
+                massResolution.setEnabled(false);
+                break;
+            case "EIC-SUM":
+                massesToDisplay.setEnabled(true);
+                massResolution.setEnabled(true);
+                break;
+            case "EIC-COPLOT":
+                massesToDisplay.setEnabled(true);
+                massResolution.setEnabled(true);
+                break;
         }
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
@@ -245,11 +249,19 @@ public class SettingsPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox plotType;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     *
+     * @return
+     */
     public String getSelectedMasses() {
         String massesToDisplayString = massesToDisplay.getText();
         return massesToDisplayString;
     }
 
+    /**
+     *
+     * @return
+     */
     public XYItemRenderer getRenderer() {
         return (XYItemRenderer) jComboBox3.getSelectedItem();
     }
@@ -265,14 +277,26 @@ public class SettingsPanel extends javax.swing.JPanel {
         return massResolution.getText();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPlotMode() {
         return (String) jComboBox2.getSelectedItem();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getRTAxisTimeUnit() {
         return ((String) jComboBox1.getSelectedItem()).toUpperCase();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPlotType() {
         return ((String) plotType.getSelectedItem()).toUpperCase();
     }

@@ -36,6 +36,7 @@ import com.db4o.foundation.Pair;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -88,7 +89,7 @@ public final class CheckDatabaseConsistency implements ActionListener {
                 io.getOut().close();
                 io.getErr().close();
             } catch (DatabaseFileLockedException dfle) {
-                Logger.getLogger(CheckDatabaseConsistency.class.getName()).warning("Database file " + f + " is locked!");
+                Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Database file {0} is locked!", f);
             }
         }
     }

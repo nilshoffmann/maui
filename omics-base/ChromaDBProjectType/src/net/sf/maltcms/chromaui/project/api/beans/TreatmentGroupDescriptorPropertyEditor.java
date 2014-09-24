@@ -36,6 +36,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor
  */
 public class TreatmentGroupDescriptorPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public TreatmentGroupDescriptorPropertyEditor() {
     }
 

@@ -51,10 +51,18 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
 
     private final SimpleChromAProject project;
 
+    /**
+     *
+     * @param project
+     */
     public SimpleChromAProjectLogicalView(SimpleChromAProject project) {
         this.project = project;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Node createLogicalView() {
         try {
@@ -83,6 +91,12 @@ public class SimpleChromAProjectLogicalView implements LogicalViewProvider {
 
     }
 
+    /**
+     *
+     * @param node
+     * @param o
+     * @return
+     */
     @Override
     public Node findPath(Node node, Object o) {
         return null;

@@ -32,10 +32,13 @@ package net.sf.maltcms.chromaui.rserve.spi;
 //
 // $Id: PlotDemo.java 2767 2007-05-24 16:49:25Z urbanek $
 //
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,12 +77,12 @@ public class PlotDemo extends JLabel {
                     "try(" + device + "('test.png'))");//,quality=90
 
             if (xp.inherits("try-error")) { // if the result is of the class try-error then there was a problem
-                System.err.println("Can't open " + device + " graphics device:\n" + xp.asString());
+                Logger.getLogger(PlotDemo.class.getName()).log(Level.WARNING, "Can''t open {0} graphics device:\n{1}", new Object[]{device, xp.asString()});
                 // this is analogous to 'warnings', but for us it's sufficient to get just the 1st warning
                 REXP w = c.eval(
                         "if (exists('last.warning') && length(last.warning)>0) names(last.warning)[1] else 0");
                 if (w.isString()) {
-                    System.err.println(w.asString());
+                    Logger.getLogger(PlotDemo.class.getName()).warning(w.asString());
                 }
                 return;
             }
@@ -131,10 +134,9 @@ public class PlotDemo extends JLabel {
             DialogDisplayer.getDefault().notify(new NotifyDescriptor.Confirmation("Received Rengine Exception!", "Rengine Exception", NotifyDescriptor.DEFAULT_OPTION, NotifyDescriptor.WARNING_MESSAGE));
             System.out.println(ree);
             ree.printStackTrace();
-        } catch (Exception e) { // something else
+        } catch (HeadlessException e) { // something else
             DialogDisplayer.getDefault().notify(new NotifyDescriptor.Confirmation("Could not connect to Rserve! Please check connection settings!", "Connection failed", NotifyDescriptor.DEFAULT_OPTION, NotifyDescriptor.WARNING_MESSAGE));
-            System.out.println("Something went wrong, but it's not the Rserve: "
-                    + e.getMessage());
+            Logger.getLogger(PlotDemo.class.getName()).log(Level.INFO, "Something went wrong, but it''s not the Rserve: {0}", e.getMessage());
             e.printStackTrace();
         }
     }

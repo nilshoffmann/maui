@@ -30,6 +30,8 @@ package net.sf.maltcms.chromaui.rserve.options;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
 import org.netbeans.api.keyring.Keyring;
 import org.netbeans.api.progress.ProgressHandle;
@@ -238,8 +240,7 @@ final class RServePanel extends javax.swing.JPanel {
             RConnection connection = RserveConnectionFactory.getDefaultConnection();
             REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
             try {
-                System.out.println("Result: "
-                        + Arrays.toString(rexp.asDoubles()));
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Result: {0}", Arrays.toString(rexp.asDoubles()));
                 return true;
             } catch (REXPMismatchException ex) {
                 ex.printStackTrace();
@@ -292,6 +293,7 @@ final class RServePanel extends javax.swing.JPanel {
         Task t = rp.create(r);
         final ProgressHandle ph = ProgressHandleFactory.createHandle("Rserve connection test", t);
         t.addTaskListener(new TaskListener() {
+            @Override
             public void taskFinished(org.openide.util.Task task) {
                 //make sure that we get rid of the ProgressHandle
                 //when the task is finished

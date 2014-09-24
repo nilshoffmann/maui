@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
@@ -70,10 +71,10 @@ public final class DB4oCrudSession implements ICrudSession {
             if (!oc.ext().isClosed()) {
                 for (Object obj : o) {
                     if (obj != null) {
-                        System.out.println("Storing object of type " + obj.getClass().getName());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Storing object of type {0}", obj.getClass().getName());
                         oc.store(obj);
                     } else {
-                        System.out.println("Skipping null object!");
+                        Logger.getLogger(getClass().getName()).info("Skipping null object!");
                     }
                 }
                 oc.commit();
@@ -83,7 +84,7 @@ public final class DB4oCrudSession implements ICrudSession {
                 oc.rollback();
             }
             Exceptions.printStackTrace(re);
-            System.err.println("Caught exception while creating object: " + re);
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Caught exception while creating object: {0}", re);
         }
     }
 
@@ -100,13 +101,13 @@ public final class DB4oCrudSession implements ICrudSession {
                 if (obj == null) {
                     throw new NullPointerException();
                 }
-                System.out.println("Deleting object of type " + obj.getClass().getName());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Deleting object of type {0}", obj.getClass().getName());
                 oc.delete(obj);
             }
             oc.commit();
         } catch (RuntimeException re) {
             oc.rollback();
-            System.err.println("Caught exception while deleting object: " + re);
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Caught exception while deleting object: {0}", re);
         }
     }
 
@@ -121,12 +122,12 @@ public final class DB4oCrudSession implements ICrudSession {
     @Override
     public final <T> Collection<T> retrieve(Class<T> c) {
         if (c == null) {
-            System.err.println("Can not retrieve null!");
+            Logger.getLogger(getClass().getName()).warning("Can not retrieve null!");
             return Collections.emptyList();
         }
         authenticate(ic);
         //oc.ext().configure().activationDepth(10);
-        ArrayList<T> a = new ArrayList<T>();
+        ArrayList<T> a = new ArrayList<>();
         try {
             for (T t : oc.query(c)) {
                 a.add(t);
@@ -150,13 +151,13 @@ public final class DB4oCrudSession implements ICrudSession {
     public final <T> Collection<T> retrieveByExample(T c
     ) {
         if (c == null) {
-            System.err.println("Can not retrieve with null example!");
+            Logger.getLogger(getClass().getName()).warning("Can not retrieve with null example!");
             return Collections.emptyList();
         }
         authenticate(ic);
         //oc.ext().configure().activationDepth(10);
         try {
-            ArrayList<T> a = new ArrayList<T>();
+            ArrayList<T> a = new ArrayList<>();
             for (Object o : oc.queryByExample(c)) {
                 a.add((T) c.getClass().cast(o));
             }
@@ -228,11 +229,11 @@ public final class DB4oCrudSession implements ICrudSession {
     @Override
     public <T> IQuery<T> newQuery(Class<T> c) throws AuthenticationException {
         try {
-            DB4oQuery<T> db4oq = new DB4oQuery<T>(oc.ext().openSession());
+            DB4oQuery<T> db4oq = new DB4oQuery<>(oc.ext().openSession());
             return db4oq;
         } catch (DatabaseClosedException dce) {
             Logger.getLogger(DB4oCrudSession.class.getName()).warning("Database is closing or already closed! Can not execute query!");
-            return new VoidDB4oQuery<T>();
+            return new VoidDB4oQuery<>();
         }
     }
 }

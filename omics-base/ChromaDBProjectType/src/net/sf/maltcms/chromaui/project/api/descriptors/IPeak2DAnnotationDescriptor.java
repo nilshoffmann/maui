@@ -35,20 +35,55 @@ import java.awt.Shape;
  */
 public interface IPeak2DAnnotationDescriptor extends IPeakAnnotationDescriptor {
 
+    /**
+     *
+     */
     public static final String PROP_FIRSTCOLUMNRT = "firstColumnRt";
+
+    /**
+     *
+     */
     public static final String PROP_SECONDCOLUMNRT = "secondColumnRt";
+
+    /**
+     *
+     */
     public static final String PROP_BOUNDS = "bounds";
 
+    /**
+     *
+     * @return
+     */
     public double getFirstColumnRt();
 
+    /**
+     *
+     * @param rt
+     */
     public void setFirstColumnRt(double rt);
 
+    /**
+     *
+     * @return
+     */
     public double getSecondColumnRt();
 
+    /**
+     *
+     * @param rt
+     */
     public void setSecondColumnRt(double rt);
 
+    /**
+     *
+     * @return
+     */
     public Shape getBounds();
 
+    /**
+     *
+     * @param gp
+     */
     public void setBounds(Shape gp);
 
 }

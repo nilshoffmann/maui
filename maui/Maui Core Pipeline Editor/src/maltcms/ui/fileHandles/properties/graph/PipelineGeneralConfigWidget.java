@@ -35,7 +35,7 @@ import org.netbeans.api.visual.widget.general.IconNodeWidget.TextOrientation;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class PipelineGeneralConfigWidget extends IconNodeWidget {
 

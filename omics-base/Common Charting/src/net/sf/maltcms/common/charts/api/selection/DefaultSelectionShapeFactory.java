@@ -39,11 +39,21 @@ import org.jfree.chart.entity.XYItemEntity;
  */
 public class DefaultSelectionShapeFactory implements ISelectionShapeFactory {
 
+    /**
+     *
+     * @param entity
+     * @return
+     */
     @Override
     public Shape createSelectionShape(XYItemEntity entity) {
         return entity.getArea();
     }
 
+    /**
+     *
+     * @param entity
+     * @return
+     */
     @Override
     public Shape createSelectionShape(CategoryItemEntity entity) {
         return entity.getArea();

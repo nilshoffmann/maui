@@ -45,8 +45,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.VariableModDescript
 import uk.ac.ebi.pride.jmztab.model.MZTabDescription;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDataDescriptor> {
+    private static final long serialVersionUID = 670172712907361380L;
 
+    /**
+     *
+     * @param metaDataContainer
+     * @return
+     */
     public static Metadata toMetaData(MzTabMetaDataContainer metaDataContainer) {
         MZTabDescription descr = new MZTabDescription(metaDataContainer.getMzTabVersion(), metaDataContainer.getMzTabMode(), metaDataContainer.getMzTabType());
         Metadata m = new Metadata(descr);
@@ -93,6 +103,11 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
         return m;
     }
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static MzTabMetaDataContainer create(Metadata metadata) {
         MzTabMetaDataContainer mzt = new MzTabMetaDataContainer();
         mzt.setMzTabVersion(metadata.getMZTabVersion());
@@ -128,29 +143,49 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
         return mzt;
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void removeMembers(IMetaDataDescriptor... f) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void addMembers(IMetaDataDescriptor... f) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void setMembers(IMetaDataDescriptor... f) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @param members
+     */
     @Override
     public void setMembers(Collection<IMetaDataDescriptor> members) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Collection<IMetaDataDescriptor> getMembers() {
-        ArrayList<IMetaDataDescriptor> members = new ArrayList<IMetaDataDescriptor>();
+        ArrayList<IMetaDataDescriptor> members = new ArrayList<>();
         members.add(getContacts());
         members.add(getStudyVariables());
         members.add(getInstruments());
@@ -166,6 +201,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 
     private SampleContainer samples;
 
+    /**
+     *
+     */
     public static final String PROP_SAMPLES = "samples";
 
     /**
@@ -192,6 +230,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 
     private AssayContainer assays;
 
+    /**
+     *
+     */
     public static final String PROP_ASSAYS = "assays";
 
     /**
@@ -219,6 +260,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //    ContactContainer cc = ContactContainer.create(metadata);
     private ContactContainer contacts;
 
+    /**
+     *
+     */
     public static final String PROP_CONTACTS = "contacts";
 
     /**
@@ -246,6 +290,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        ParamContainer pc = ParamContainer.create(metadata);
     private ParamContainer params;
 
+    /**
+     *
+     */
     public static final String PROP_PARAMS = "params";
 
     /**
@@ -273,6 +320,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        CVContainer cvc = CVContainer.create(metadata);
     private CVContainer cvs;
 
+    /**
+     *
+     */
     public static final String PROP_CVS = "cvs";
 
     /**
@@ -307,6 +357,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        FixedModContainer fmc = FixedModContainer.create(metadata);
     private FixedModContainer fixedMods;
 
+    /**
+     *
+     */
     public static final String PROP_FIXEDMODS = "fixedMods";
 
     /**
@@ -334,6 +387,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        InstrumentContainer ic = InstrumentContainer.create(metadata);
     private InstrumentContainer instruments;
 
+    /**
+     *
+     */
     public static final String PROP_INSTRUMENTS = "instruments";
 
     /**
@@ -361,6 +417,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        MsRunContainer mrc = MsRunContainer.create(metadata);
     private MsRunContainer msRuns;
 
+    /**
+     *
+     */
     public static final String PROP_MSRUNS = "msRuns";
 
     /**
@@ -388,6 +447,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        SoftwareContainer sc = SoftwareContainer.create(metadata);
     private SoftwareContainer softwares;
 
+    /**
+     *
+     */
     public static final String PROP_SOFTWARES = "softwares";
 
     /**
@@ -415,6 +477,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        StudyVariableContainer svc = StudyVariableContainer.create(metadata);
     private StudyVariableContainer studyVariables;
 
+    /**
+     *
+     */
     public static final String PROP_STUDYVARIABLES = "studyVariables";
 
     /**
@@ -445,6 +510,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 //        VariableModContainer vmc = VariableModContainer.create(metadata);
     private VariableModContainer variableMods;
 
+    /**
+     *
+     */
     public static final String PROP_VARIABLEMODS = "variableMods";
 
     /**
@@ -471,6 +539,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 
     private String mzTabVersion;
 
+    /**
+     *
+     */
     public static final String PROP_MZTABVERSION = "mzTabVersion";
 
     /**
@@ -497,6 +568,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 
     private MZTabDescription.Mode mzTabMode = MZTabDescription.Mode.Summary;
 
+    /**
+     *
+     */
     public static final String PROP_MZTABMODE = "mzTabMode";
 
     /**
@@ -523,6 +597,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 
     private MZTabDescription.Type mzTabType = MZTabDescription.Type.Identification;
 
+    /**
+     *
+     */
     public static final String PROP_MZTABTYPE = "mzTabType";
 
     /**
@@ -549,6 +626,9 @@ public class MzTabMetaDataContainer extends BasicMzTabMetaDataContainer<IMetaDat
 
     private String mzTabId = null;
 
+    /**
+     *
+     */
     public static final String PROP_MZTABID = "mzTabId";
 
     /**

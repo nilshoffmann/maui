@@ -36,16 +36,40 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
  */
 public interface IContainer<T extends IBasicDescriptor> extends IGenericContainer<T> {
 
+    /**
+     *
+     */
     final String PROP_PRECEDENCE = "precedence";
 
+    /**
+     *
+     * @return
+     */
     int getPrecedence();
 
+    /**
+     *
+     * @param i
+     */
     void setPrecedence(int i);
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     Image getIcon(int type);
 
+    /**
+     *
+     * @return
+     */
     int getLevel();
 
+    /**
+     *
+     * @param level
+     */
     void setLevel(int level);
 
 }

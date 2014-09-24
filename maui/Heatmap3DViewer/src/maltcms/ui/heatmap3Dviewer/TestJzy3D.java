@@ -36,6 +36,10 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 @ActionID(category = "Tools",
         id = "maltcms.ui.heatmap3Dviewer.TestJzy3D")
 @ActionRegistration(displayName = "#CTL_TestJzy3D")

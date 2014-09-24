@@ -33,6 +33,12 @@ package net.sf.maltcms.chromaui.charts.units;
  */
 public class RTUnitTransformer {
 
+    /**
+     *
+     * @param seconds
+     * @param targetUnit
+     * @return
+     */
     public static double transform(double seconds, RTUnit targetUnit) {
         switch (targetUnit) {
             case MILLISECONDS:

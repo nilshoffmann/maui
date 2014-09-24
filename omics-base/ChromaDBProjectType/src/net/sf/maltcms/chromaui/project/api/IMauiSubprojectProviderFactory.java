@@ -31,9 +31,14 @@ import org.netbeans.spi.project.SubprojectProvider;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 public interface IMauiSubprojectProviderFactory {
 
+    /**
+     *
+     * @param project
+     * @return
+     */
     public SubprojectProvider provide(IChromAUIProject project);
 }

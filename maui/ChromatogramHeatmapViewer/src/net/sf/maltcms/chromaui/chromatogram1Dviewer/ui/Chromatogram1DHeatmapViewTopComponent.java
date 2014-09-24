@@ -34,6 +34,8 @@ import java.awt.Color;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.overlay.Peak1DHeatmapOverlay;
@@ -106,8 +108,8 @@ public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent im
         } else {
             EvalTools.notNull(descriptor.getChromatogram(), this);
         }
-        System.out.println("Using project: " + icp + " from active nodes lookup!");
-        System.out.println("Using descriptor: " + descriptor + " from active nodes lookup!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using project: {0} from active nodes lookup!", icp);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using descriptor: {0} from active nodes lookup!", descriptor);
         if (dobj != null) {
             content.add(dobj);
             setToolTipText(dobj.getPrimaryFile().getPath());
@@ -306,7 +308,7 @@ public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent im
     public void resultChanged(LookupEvent le) {
         //do not react to ourself
         if (hasFocus()) {
-            System.out.println("I have focus, not setting viewport!");
+            Logger.getLogger(getClass().getName()).info("I have focus, not setting viewport!");
         } else {
             if (hmp.isSyncViewport()) {
                 Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();

@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -53,8 +55,8 @@ import org.openide.util.NbBundle;
 public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable {
 
     public static final String PROP_PROJECT_NAME = "projectName";
-    private Map<File, String> fileToTreatmentGroup = new LinkedHashMap<File, String>();
-    private Map<File, String> fileToSampleGroup = new LinkedHashMap<File, String>();
+    private Map<File, String> fileToTreatmentGroup = new LinkedHashMap<>();
+    private Map<File, String> fileToSampleGroup = new LinkedHashMap<>();
 
     public DBProjectVisualPanel2() {
         initComponents();
@@ -410,7 +412,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
     private void removeTreatmentGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTreatmentGroupButtonActionPerformed
         int idx = groupList.getSelectedIndex();
         String s = (String) groupList.getSelectedValue();
-        System.out.println("Selected value: " + s);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Selected value: {0}", s);
         removeTreatmentGroup(s, idx);
         firePropertyChange("VALIDATE", null, this);
 //        removeGroup(s, idx);
@@ -456,7 +458,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
     private void removeSampleGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeSampleGroupButtonActionPerformed
         int idx = sampleGroupList.getSelectedIndex();
         String s = (String) sampleGroupList.getSelectedValue();
-        System.out.println("Selected value: " + s);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Selected value: {0}", s);
         removeSampleGroup(s, idx);
         firePropertyChange("VALIDATE", null, this);
     }//GEN-LAST:event_removeSampleGroupButtonActionPerformed
@@ -583,7 +585,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         while (e.hasMoreElements()) {
             Object o = e.nextElement();
             if (o instanceof File) {
-                System.out.println("Checking file " + (File) o);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Checking file {0}", (File) o);
                 if (fileToTreatmentGroup.containsKey((File) o)) {
                     if (fileToTreatmentGroup.get((File) o) == null) {
                         wizardDescriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE,
@@ -622,10 +624,10 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         fileToTreatmentGroup = (Map<File, String>) settings.getProperty("groupMapping");
         getTreatmentGroupListModel().clear();
         if (fileToTreatmentGroup == null) {
-            fileToTreatmentGroup = new LinkedHashMap<File, String>();
+            fileToTreatmentGroup = new LinkedHashMap<>();
         } else {
             for (Entry<File, String> e : fileToTreatmentGroup.entrySet()) {
-                System.out.println("Restoring treatment group " + e.getValue());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Restoring treatment group {0}", e.getValue());
                 if (!getTreatmentGroupListModel().contains(e.getValue())) {
                     getTreatmentGroupListModel().addElement(e.getValue());
                 }
@@ -634,10 +636,10 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         fileToSampleGroup = (Map<File, String>) settings.getProperty("sampleGroupMapping");
         getSampleGroupListModel().clear();
         if (fileToSampleGroup == null) {
-            fileToSampleGroup = new LinkedHashMap<File, String>();
+            fileToSampleGroup = new LinkedHashMap<>();
         } else {
             for (Entry<File, String> e : fileToSampleGroup.entrySet()) {
-                System.out.println("Restoring sample group " + e.getValue());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Restoring sample group {0}", e.getValue());
                 if (!getSampleGroupListModel().contains(e.getValue())) {
                     getSampleGroupListModel().addElement(e.getValue());
                 }
@@ -727,7 +729,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         if (!getSampleGroupListModel().isEmpty() && idx > -1) {
             getSampleGroupListModel().removeElementAt(idx);
             Set<Entry<File, String>> es = fileToSampleGroup.entrySet();
-            List<File> toRemove = new LinkedList<File>();
+            List<File> toRemove = new LinkedList<>();
             for (Entry<File, String> e : es) {
                 if (e.getValue().equals(sampleGroup)) {
                     toRemove.add(e.getKey());
@@ -745,7 +747,7 @@ public class DBProjectVisualPanel2 extends JPanel implements IWizardValidatable 
         if (!getTreatmentGroupListModel().isEmpty() && idx > -1) {
             getTreatmentGroupListModel().removeElementAt(idx);
             Set<Entry<File, String>> es = fileToTreatmentGroup.entrySet();
-            List<File> toRemove = new LinkedList<File>();
+            List<File> toRemove = new LinkedList<>();
             for (Entry<File, String> e : es) {
                 if (e.getValue().equals(group)) {
                     toRemove.add(e.getKey());

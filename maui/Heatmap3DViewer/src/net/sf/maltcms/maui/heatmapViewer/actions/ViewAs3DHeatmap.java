@@ -112,7 +112,7 @@ public final class ViewAs3DHeatmap implements ActionListener {
                             int length = fcet.getDimensions()[0].getLength();
                             final Rectangle bounds = new Rectangle((int) fmm.min, (int) smm.min, (int) (fmm.max - fmm.min), (int) (smm.max - smm.min));
                             final Rectangle2D bounds2d = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
-                            QuadTree<Integer> qt = new QuadTree<Integer>(bounds2d);
+                            QuadTree<Integer> qt = new QuadTree<>(bounds2d);
                             for (int i = 0; i < length; i++) {
                                 qt.put(new Point2D.Float(fcetArray.getFloat(i), scetArray.getFloat(i)), ticArray.getInt(i));
                             }

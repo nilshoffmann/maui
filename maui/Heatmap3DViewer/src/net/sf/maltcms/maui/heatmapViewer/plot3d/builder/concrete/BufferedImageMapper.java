@@ -29,6 +29,8 @@ package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jzy3d.maths.Rectangle;
 
 /**
@@ -45,7 +47,7 @@ public class BufferedImageMapper extends ViewportMapper {
 
     public BufferedImageMapper(BufferedImage bi) {
         this.bi = bi;
-        System.out.println("BufferedImage has dimensions: " + new Rectangle(0, 0, bi.getWidth(), bi.getHeight()));
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "BufferedImage has dimensions: {0}", new Rectangle(0, 0, bi.getWidth(), bi.getHeight()));
         this.maxRow = this.bi.getHeight() - 1;
         this.maxViewPort = new Rectangle2D.Double(0, 0, bi.getWidth(), bi.getHeight());
     }

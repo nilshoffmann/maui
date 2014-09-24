@@ -40,11 +40,19 @@ public class GCGC implements ISeparationType {
     private final String longName = "comprehensive two-dimensional gas chromatography";
     private int featureDimensions = 2;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getSeparationType() {
         return this.separationType;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getLongName() {
         return longName;

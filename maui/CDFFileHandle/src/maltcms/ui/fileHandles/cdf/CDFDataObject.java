@@ -44,28 +44,51 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class CDFDataObject extends MultiDataObject implements
         IFileFragmentDataObject {
 
     private InstanceContent ic = new InstanceContent();
     private AbstractLookup lookup = new AbstractLookup(ic);
 
+    /**
+     *
+     * @param pf
+     * @param loader
+     * @throws DataObjectExistsException
+     * @throws IOException
+     */
     public CDFDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         ic.add(new FileFragment(new File(pf.getPath())));
         ic.add(new CDFDataObjectNavigatorLookupHint());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected Node createNodeDelegate() {
         return new DataNode(this, Children.LEAF);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return new ProxyLookup(getCookieSet().getLookup(), lookup);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IFileFragment getFragment() {
         return getLookup().lookup(IFileFragment.class);

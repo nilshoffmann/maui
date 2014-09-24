@@ -65,8 +65,8 @@ public class QuadTreeMapper<T extends Number> extends ViewportMapper {
         Line2D vsearchLine = new Line2D.Double(x, bounds.getMinY() - 1, x, bounds.getMaxY() + 1);
         List<Tuple2D<Point2D, T>> h = qt.getClosestPerpendicularToLine(hsearchLine, radiusx);
         List<Tuple2D<Point2D, T>> v = qt.getClosestPerpendicularToLine(vsearchLine, radiusy);
-        Set<Point2D> points = new HashSet<Point2D>();
-        List<Tuple2D<Point2D, T>> results = new ArrayList<Tuple2D<Point2D, T>>();
+        Set<Point2D> points = new HashSet<>();
+        List<Tuple2D<Point2D, T>> results = new ArrayList<>();
         for (Tuple2D<Point2D, T> t : h) {
             if (!points.contains(t.getFirst())) {
                 points.add(t.getFirst());

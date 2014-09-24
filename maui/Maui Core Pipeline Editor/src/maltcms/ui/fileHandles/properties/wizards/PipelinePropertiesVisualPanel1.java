@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -317,7 +318,7 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
             this.jTextField2.setText(variables.getString(PropertyLoader.OPTIONAL_VARS));
             this.jTextField3.setText(variables.getString(PropertyLoader.PROVIDED_VARS));
         } catch (ClassNotFoundException e) {
-            Logger.getLogger(getClass().getName()).warning("Could not refresh table model for class: " + className);
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not refresh table model for class: {0}", className);
         }
     }
 }

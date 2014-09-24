@@ -35,7 +35,21 @@ import java.net.URL;
  */
 public interface ICrudProviderFactory {
 
+    /**
+     *
+     * @param databaseLocation
+     * @param ic
+     * @param cl
+     * @return
+     */
     public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl);
 
+    /**
+     *
+     * @param databaseLocation
+     * @param ic
+     * @param cl
+     * @return
+     */
     public ICrudProvider getInMemoryCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl);
 }

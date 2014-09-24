@@ -36,6 +36,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
  */
 public class SampleGroupDescriptorPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public SampleGroupDescriptorPropertyEditor() {
     }
 

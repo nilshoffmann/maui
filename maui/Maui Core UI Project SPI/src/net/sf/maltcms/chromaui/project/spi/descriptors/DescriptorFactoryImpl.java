@@ -136,7 +136,7 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
     public IPeakGroupDescriptor newPeakGroupDescriptor(
             Collection<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool) {
         PeakGroupDescriptor pgd = new PeakGroupDescriptor();
-        pgd.setPeakAnnotationDescriptors(new ArrayList<IPeakAnnotationDescriptor>(peaks));
+        pgd.setPeakAnnotationDescriptors(new ArrayList<>(peaks));
         pgd.setTool(tool);
         return pgd;
     }
@@ -147,8 +147,8 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
             ISeparationType separationType, IDetectorType detectorType) {
         UserDatabaseDescriptor udd = new UserDatabaseDescriptor();
         udd.setResourceLocation(location);
-        udd.setApplicableDetectorTypes(new LinkedHashSet<IDetectorType>(Arrays.asList(detectorType)));
-        udd.setApplicableSeparationTypes(new LinkedHashSet<ISeparationType>(Arrays.asList(separationType)));
+        udd.setApplicableDetectorTypes(new LinkedHashSet<>(Arrays.asList(detectorType)));
+        udd.setApplicableSeparationTypes(new LinkedHashSet<>(Arrays.asList(separationType)));
         udd.setType(type);
         String name = new File(location).getName();
         udd.setName(name);

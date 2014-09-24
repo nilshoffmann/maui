@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.PsmDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.PSM;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class PsmContainer extends BasicMzTabMetaDataContainer<PsmDescriptor> {
+    private static final long serialVersionUID = -2105647756348195952L;
 
+    /**
+     *
+     * @param mzTabFile
+     * @return
+     */
     public static PsmContainer create(MZTabFile mzTabFile) {
         PsmContainer c = new PsmContainer();
         c.setLevel(1);

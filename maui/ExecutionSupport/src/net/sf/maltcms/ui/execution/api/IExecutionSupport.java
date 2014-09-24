@@ -38,14 +38,36 @@ import org.netbeans.api.extexecution.ExecutionService;
  */
 public interface IExecutionSupport {
 
+    /**
+     *
+     * @return
+     */
     public Callable<Process> getProcessCallable();
 
+    /**
+     *
+     * @return
+     */
     public ExecutionDescriptor getExecutionDescriptor();
 
+    /**
+     *
+     * @return
+     */
     public String getDisplayName();
 
+    /**
+     *
+     * @return
+     */
     public ExecutionService createExecutionService();
 
+    /**
+     *
+     * @param displayName
+     * @param commandLine
+     * @param workingDirectory
+     */
     public void initialize(String displayName, String commandLine, File workingDirectory);
 
 }

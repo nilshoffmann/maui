@@ -59,6 +59,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.io.csv.ColorRampReader;
@@ -107,6 +109,11 @@ public class Chromatogram1DChartProvider {
 
     private int startScan = -1, stopScan = -1;
 
+    /**
+     *
+     * @param startScan
+     * @param stopScan
+     */
     public void setScanRange(int startScan, int stopScan) {
         this.startScan = startScan;
         this.stopScan = stopScan;
@@ -114,22 +121,47 @@ public class Chromatogram1DChartProvider {
     private XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
     private XYToolTipGenerator toolTipGenerator = new StandardXYToolTipGenerator();
 
+    /**
+     *
+     * @param toolTipGenerator
+     */
     public void setToolTipGenerator(XYToolTipGenerator toolTipGenerator) {
         this.toolTipGenerator = toolTipGenerator;
     }
 
+    /**
+     *
+     * @return
+     */
     public XYToolTipGenerator getToolTipGenerator() {
         return this.toolTipGenerator;
     }
 
+    /**
+     *
+     * @param renderer
+     */
     public void setRenderer(XYItemRenderer renderer) {
         this.renderer = renderer;
     }
 
+    /**
+     *
+     * @return
+     */
     public XYItemRenderer getRenderer() {
         return this.renderer;
     }
 
+    /**
+     *
+     * @param dataset
+     * @param tooltipGenerator
+     * @param minRange
+     * @param maxRange
+     * @param useRT
+     * @return
+     */
     public XYPlot provide1DCoPlot(XYZDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator, double minRange, double maxRange, boolean useRT) {
         XYBlockRenderer xyb = new XYBlockRenderer();
         GradientPaintScale ps = new GradientPaintScale(
@@ -176,6 +208,13 @@ public class Chromatogram1DChartProvider {
         return xyp;
     }
 
+    /**
+     *
+     * @param fragments
+     * @param ticvar
+     * @param useRT
+     * @return
+     */
     public XYPlot provide1DCoPlot(List<IFileFragment> fragments, String ticvar,
             boolean useRT) {
 
@@ -270,13 +309,20 @@ public class Chromatogram1DChartProvider {
         return xyp;
     }
 
+    /**
+     *
+     * @param fragments
+     * @param valueVar
+     * @param useRT
+     * @return
+     */
     public XYPlot provide1DPlot(List<IFileFragment> fragments, String valueVar,
             boolean useRT) {
         String[] labels = new String[fragments.size()];
         Array[] arrays = new Array[fragments.size()];
         Array[] domains = new Array[fragments.size()];
         IFileFragment fragment = null;
-        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        List<XYAnnotation> annotations = new ArrayList<>();
         int i = 0;
         for (IFileFragment file : fragments) {
             fragment = file;
@@ -334,9 +380,15 @@ public class Chromatogram1DChartProvider {
         return xyp;
     }
 
+    /**
+     *
+     * @param dataset
+     * @param tooltipGenerator
+     * @return
+     */
     public XYPlot provide1DPlot(ADataset1D<IChromatogram1D, IScan> dataset, SelectionAwareXYTooltipGenerator tooltipGenerator) {
         String[] labels = new String[dataset.getSeriesCount()];
-        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        List<XYAnnotation> annotations = new ArrayList<>();
         for (int i = 0; i < labels.length; i++) {
             labels[i] = dataset.getSeriesKey(i) + " TIC";
         }
@@ -364,7 +416,17 @@ public class Chromatogram1DChartProvider {
     }
 
     //ADataset1D<IChromatogram1D, IScan> dataset
-    public XYPlot provide1DEICSUMPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator,
+
+    /**
+     *
+     * @param dataset
+     * @param tooltipGenerator
+     * @param masses
+     * @param massResolution
+     * @param useRT
+     * @return
+     */
+        public XYPlot provide1DEICSUMPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator,
             double[] masses, double massResolution, boolean useRT) {
         String[] labels = new String[dataset.getSeriesCount()];
         for (int i = 0; i < labels.length; i++) {
@@ -393,6 +455,15 @@ public class Chromatogram1DChartProvider {
         return plot;
     }
 
+    /**
+     *
+     * @param dataset
+     * @param tooltipGenerator
+     * @param masses
+     * @param massResolution
+     * @param useRT
+     * @return
+     */
     public XYPlot provide1DEICCOPlot(EIC1DDataset dataset, SelectionAwareXYTooltipGenerator tooltipGenerator,
             double[] masses, double massResolution, boolean useRT) {
         String[] labels = new String[dataset.getSeriesCount()];
@@ -422,6 +493,14 @@ public class Chromatogram1DChartProvider {
         return plot;
     }
 
+    /**
+     *
+     * @param fragments
+     * @param masses
+     * @param massResolution
+     * @param useRT
+     * @return
+     */
     public XYPlot provide1DEICSUMPlot(List<IFileFragment> fragments,
             double[] masses, double massResolution, boolean useRT) {
         int i = 0;
@@ -431,7 +510,7 @@ public class Chromatogram1DChartProvider {
         Array[] domains = new Array[fragments.size()];
         double[] massValues = Arrays.copyOf(masses, masses.length);
         Arrays.sort(massValues);
-        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        List<XYAnnotation> annotations = new ArrayList<>();
         for (IFileFragment file : fragments) {
             fragment = file;
             StringBuilder mzRanges = new StringBuilder();
@@ -505,6 +584,14 @@ public class Chromatogram1DChartProvider {
         return xyp;
     }
 
+    /**
+     *
+     * @param fragments
+     * @param masses
+     * @param massResolution
+     * @param useRT
+     * @return
+     */
     public XYPlot provide1DEICCOPlot(List<IFileFragment> fragments,
             double[] masses,
             double massResolution, boolean useRT) {
@@ -515,7 +602,7 @@ public class Chromatogram1DChartProvider {
         Array[] domains = new Array[fragments.size() * masses.length];
         double[] massValues = Arrays.copyOf(masses, masses.length);
         Arrays.sort(massValues);
-        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        List<XYAnnotation> annotations = new ArrayList<>();
         int trace = 0;
         for (IFileFragment file : fragments) {
             fragment = file;
@@ -590,9 +677,9 @@ public class Chromatogram1DChartProvider {
      */
     public static List<IVariableFragment> getAggregatedVariables(
             IFileFragment fragment) {
-        HashMap<String, IVariableFragment> names = new HashMap<String, IVariableFragment>();
-        List<IVariableFragment> allVars = new ArrayList<IVariableFragment>();
-        List<IFileFragment> parentsToExplore = new LinkedList<IFileFragment>();
+        HashMap<String, IVariableFragment> names = new HashMap<>();
+        List<IVariableFragment> allVars = new ArrayList<>();
+        List<IFileFragment> parentsToExplore = new LinkedList<>();
         // System.out.println("Parent files " + parentsToExplore);
         parentsToExplore.add(fragment);
         while (!parentsToExplore.isEmpty()) {
@@ -649,6 +736,11 @@ public class Chromatogram1DChartProvider {
         return allVars;
     }
 
+    /**
+     *
+     * @param fragments
+     * @return
+     */
     public JFreeChart provideChart(List<IFileFragment> fragments) {
         String[] labels = new String[fragments.size()];
         Array[] arrays = new Array[fragments.size()];
@@ -657,7 +749,7 @@ public class Chromatogram1DChartProvider {
 
         VariableSelectionPanel vsp = new VariableSelectionPanel();
         IFileFragment fragment = fragments.get(0);
-        ArrayList<String> vars = new ArrayList<String>();
+        ArrayList<String> vars = new ArrayList<>();
         List<IVariableFragment> variables = getAggregatedVariables(
                 fragment);
 
@@ -702,7 +794,7 @@ public class Chromatogram1DChartProvider {
             arrays = new Array[fragments.size() * minMZ.length];
             domains = new Array[fragments.size() * minMZ.length];
         }
-        List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+        List<XYAnnotation> annotations = new ArrayList<>();
 
         if (createTIC) {
             int i = 0;
@@ -788,20 +880,27 @@ public class Chromatogram1DChartProvider {
         return jfc2;
     }
 
+    /**
+     *
+     * @param f
+     * @param ordinateValues
+     * @param useScanAcquisitionTime
+     * @return
+     */
     public List<XYPointerAnnotation> getCSVPeakAnnotations(IFileFragment f,
             Array ordinateValues, boolean useScanAcquisitionTime) {
-        List<XYPointerAnnotation> l = new ArrayList<XYPointerAnnotation>();
+        List<XYPointerAnnotation> l = new ArrayList<>();
         try {
             String basename = StringTools.removeFileExt(f.getName());
 
             File peakAnnotations = new File(new File(f.getAbsolutePath()).
                     getParentFile(), basename + ".csv");
-            System.out.println("Looking for file " + peakAnnotations);
+            Logger.getLogger(Chromatogram1DChartProvider.class.getName()).log(Level.INFO, "Looking for file {0}", peakAnnotations);
             if (!peakAnnotations.exists()) {
-                System.out.println("File does not exist!");
+                Logger.getLogger(Chromatogram1DChartProvider.class.getName()).info("File does not exist!");
                 return l;
             }
-            System.out.println("File exists!");
+            Logger.getLogger(Chromatogram1DChartProvider.class.getName()).info("File exists!");
             CSVReader csvr = new CSVReader();
             try {
                 Tuple2D<Vector<Vector<String>>, Vector<String>> t = csvr.read(new BufferedInputStream(new FileInputStream(
@@ -829,7 +928,7 @@ public class Chromatogram1DChartProvider {
                     xypa.setBaseRadius(10);
                     xypa.setTextAnchor(TextAnchor.BOTTOM_LEFT);
                     l.add(xypa);
-                    System.out.println("Adding annotation at: " + xypa.getX());
+                    Logger.getLogger(Chromatogram1DChartProvider.class.getName()).log(Level.INFO, "Adding annotation at: {0}", xypa.getX());
                     i++;
                 }
             } catch (FileNotFoundException ex) {
@@ -840,14 +939,27 @@ public class Chromatogram1DChartProvider {
         return l;
     }
 
+    /**
+     *
+     * @param f
+     * @param useScanAcquisitionTime
+     * @return
+     */
     public List<XYPointerAnnotation> getANDIChromPeakAnnotations(IFileFragment f,
             boolean useScanAcquisitionTime) {
         return getANDIChromPeakAnnotations(f, useScanAcquisitionTime, "total_intensity");
     }
 
+    /**
+     *
+     * @param f
+     * @param useScanAcquisitionTime
+     * @param valueVariable
+     * @return
+     */
     public List<XYPointerAnnotation> getANDIChromPeakAnnotations(IFileFragment f,
             boolean useScanAcquisitionTime, String valueVariable) {
-        List<XYPointerAnnotation> l = new ArrayList<XYPointerAnnotation>();
+        List<XYPointerAnnotation> l = new ArrayList<>();
         try {
             IVariableFragment peakNames = f.getChild("peak_name");
             IVariableFragment peakRT = f.getChild("peak_retention_time");
@@ -892,14 +1004,31 @@ public class Chromatogram1DChartProvider {
         return l;
     }
 
+    /**
+     *
+     * @param f
+     * @param useScanAcquisitionTime
+     * @param outline
+     * @param fill
+     * @return
+     */
     public static List<XYAnnotation> generatePeakShapes(IFileFragment f,
             boolean useScanAcquisitionTime, Color outline, Color fill) {
         return generatePeakShapes(f, useScanAcquisitionTime, outline, fill, "total_intensity");
     }
 
+    /**
+     *
+     * @param f
+     * @param useScanAcquisitionTime
+     * @param outline
+     * @param fill
+     * @param valueVar
+     * @return
+     */
     public static List<XYAnnotation> generatePeakShapes(IFileFragment f,
             boolean useScanAcquisitionTime, Color outline, Color fill, String valueVar) {
-        List<XYAnnotation> l = new ArrayList<XYAnnotation>();
+        List<XYAnnotation> l = new ArrayList<>();
         try {
             IVariableFragment peakNames = f.getChild("peak_name");
             IVariableFragment peakRT = f.getChild("peak_retention_time");
@@ -1029,7 +1158,7 @@ public class Chromatogram1DChartProvider {
                 }
             }
         } catch (ResourceNotAvailableException rnae) {
-            System.out.println(rnae.getLocalizedMessage());
+            Logger.getLogger(Chromatogram1DChartProvider.class.getName()).info(rnae.getLocalizedMessage());
         }
         return l;
     }

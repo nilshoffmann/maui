@@ -48,15 +48,28 @@ public abstract class AbstractLookupResultListener<T> implements LookupListener,
 
     private final Lookup contentProviderLookup;
 
+    /**
+     *
+     * @param typeToListenFor
+     */
     public AbstractLookupResultListener(Class<? extends T> typeToListenFor) {
         this(typeToListenFor, Utilities.actionsGlobalContext());
     }
 
+    /**
+     *
+     * @param typeToListenFor
+     * @param contentProviderLookup
+     */
     public AbstractLookupResultListener(Class<? extends T> typeToListenFor, Lookup contentProviderLookup) {
         this.typeToListenFor = typeToListenFor;
         this.contentProviderLookup = contentProviderLookup;
     }
 
+    /**
+     *
+     * @param targetLookup
+     */
     @Override
     public void register(Lookup targetLookup) {
         result = targetLookup.lookupResult(typeToListenFor);
@@ -66,6 +79,9 @@ public abstract class AbstractLookupResultListener<T> implements LookupListener,
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void deregister() {
         if (result != null) {
@@ -74,14 +90,26 @@ public abstract class AbstractLookupResultListener<T> implements LookupListener,
         result = null;
     }
 
+    /**
+     *
+     * @return
+     */
     public Result<? extends T> getResult() {
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     public Lookup getContentProviderLookup() {
         return contentProviderLookup;
     }
 
+    /**
+     *
+     * @return
+     */
     public Class<? extends T> getTypeToListenFor() {
         return typeToListenFor;
     }

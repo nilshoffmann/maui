@@ -33,10 +33,21 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  */
 public interface IDescriptor extends IBasicDescriptor {
 
+    /**
+     *
+     */
     final String PROP_TOOL = "tool";
 
+    /**
+     *
+     * @return
+     */
     public IToolDescriptor getTool();
 
+    /**
+     *
+     * @param toolDescriptor
+     */
     public void setTool(IToolDescriptor toolDescriptor);
 
 }

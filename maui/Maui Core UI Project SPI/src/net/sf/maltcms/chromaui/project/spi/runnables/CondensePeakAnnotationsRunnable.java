@@ -82,7 +82,7 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
         try {
             progressHandle.start(3);
             progressHandle.progress("Retrieving Tool Descriptors", 1);
-            final Set<IToolDescriptor> tools = new LinkedHashSet<IToolDescriptor>();
+            final Set<IToolDescriptor> tools = new LinkedHashSet<>();
             for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                 for (Peak1DContainer container : project.getPeaks(chrom)) {
                     tools.add(container.getTool());
@@ -94,7 +94,7 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
                 tools.addAll(selectedTools);
 
                 progressHandle.progress("Retrieving Peak Containers for " + tools.size() + " Tools", 2);
-                List<Peak1DContainer> peakContainers = new ArrayList<Peak1DContainer>();
+                List<Peak1DContainer> peakContainers = new ArrayList<>();
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                     for (Peak1DContainer container : project.getPeaks(chrom)) {
                         if (tools.contains(container.getTool())) {
@@ -111,10 +111,10 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
                     HistogramDataset hd = new HistogramDataset();
                     ArrayDouble.D2 pwd = new ArrayDouble.D2(container.getMembers().size(), container.getMembers().size());
                     int i = 0, j;
-                    ArrayList<IPeakAnnotationDescriptor> al = new ArrayList<IPeakAnnotationDescriptor>(container.getMembers());
-                    HashMap<PeakFeatureVector, Clique<PeakFeatureVector>> cliques = new LinkedHashMap<PeakFeatureVector, Clique<PeakFeatureVector>>();
+                    ArrayList<IPeakAnnotationDescriptor> al = new ArrayList<>(container.getMembers());
+                    HashMap<PeakFeatureVector, Clique<PeakFeatureVector>> cliques = new LinkedHashMap<>();
                     for (IPeakAnnotationDescriptor ipad1 : al) {
-                        Clique<PeakFeatureVector> c = new Clique<PeakFeatureVector>(new PeakFeatureVectorComparator(), new PeakCliqueRTDiffMemberCriterion(), new PeakCliqueUpdater());
+                        Clique<PeakFeatureVector> c = new Clique<>(new PeakFeatureVectorComparator(), new PeakCliqueRTDiffMemberCriterion(), new PeakCliqueUpdater());
                         PeakFeatureVector pfv = new PeakFeatureVector(ipad1);
                         c.add(pfv);
                         cliques.put(pfv, c);
@@ -123,15 +123,15 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
                     while (!done) {
                         for (Clique<PeakFeatureVector> pfv1 : cliques.values()) {
                             for (Clique<PeakFeatureVector> pfv2 : cliques.values()) {
-                                Clique<PeakFeatureVector> jointClique = new Clique<PeakFeatureVector>(new PeakFeatureVectorComparator(), new PeakCliqueRTDiffMemberCriterion(), new PeakCliqueUpdater());
-                                Set<PeakFeatureVector> vectors = new LinkedHashSet<PeakFeatureVector>();
+                                Clique<PeakFeatureVector> jointClique = new Clique<>(new PeakFeatureVectorComparator(), new PeakCliqueRTDiffMemberCriterion(), new PeakCliqueUpdater());
+                                Set<PeakFeatureVector> vectors = new LinkedHashSet<>();
                             }
                         }
                     }
                     for (Clique<PeakFeatureVector> pfv1 : cliques.values()) {
                         for (Clique<PeakFeatureVector> pfv2 : cliques.values()) {
-                            Clique<PeakFeatureVector> jointClique = new Clique<PeakFeatureVector>(new PeakFeatureVectorComparator(), new PeakCliqueRTDiffMemberCriterion(), new PeakCliqueUpdater());
-                            Set<PeakFeatureVector> vectors = new LinkedHashSet<PeakFeatureVector>();
+                            Clique<PeakFeatureVector> jointClique = new Clique<>(new PeakFeatureVectorComparator(), new PeakCliqueRTDiffMemberCriterion(), new PeakCliqueUpdater());
+                            Set<PeakFeatureVector> vectors = new LinkedHashSet<>();
                             for (PeakFeatureVector p1 : pfv1.getFeatureVectorList()) {
                                 vectors.add(p1);
                                 for (PeakFeatureVector p2 : pfv2.getFeatureVectorList()) {
@@ -154,7 +154,7 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
 
                     System.out.println(stats);
                     double snr = stats.getMean() / stats.getStandardDeviation();
-                    System.out.println("SNR: " + snr);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "SNR: {0}", snr);
 //                    for (int u = 0; u < pwd.getShape()[0]; u++) {
 //                        for (int v = 0; v < pwd.getShape()[1]; v++) {
 //                        }
@@ -169,7 +169,7 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
             } else {
                 Logger.getLogger(CondensePeakAnnotationsRunnable.class.getName()).log(Level.INFO, "IToolDescriptor selection was empty!");
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | IOException e) {
             Exceptions.printStackTrace(e);
         } finally {
             progressHandle.finish();
@@ -278,9 +278,9 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
         private final Ehcache cache = CacheFactory.getCacheFor(getClass().getSimpleName());
 
         public double sim(IPeakAnnotationDescriptor ipad1, IPeakAnnotationDescriptor ipad2) {
-            Tuple2D<IPeakAnnotationDescriptor, IPeakAnnotationDescriptor> key = new Tuple2D<IPeakAnnotationDescriptor, IPeakAnnotationDescriptor>(ipad1, ipad2);
+            Tuple2D<IPeakAnnotationDescriptor, IPeakAnnotationDescriptor> key = new Tuple2D<>(ipad1, ipad2);
             if (cache.isKeyInCache(key)) {
-                return ((Double) cache.get(key).getObjectValue()).doubleValue();
+                return ((Double) cache.get(key).getObjectValue());
             }
             double val = Math.sqrt(Math.pow(ipad1.getApexTime() - ipad2.getApexTime(), 2.0d)
                     + Math.pow(ipad1.getStartTime() - ipad2.getStartTime(), 2.0d)

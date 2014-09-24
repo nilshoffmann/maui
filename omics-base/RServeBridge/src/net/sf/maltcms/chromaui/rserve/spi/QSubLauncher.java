@@ -40,7 +40,7 @@ public class QSubLauncher {
 
     public void launch(List<String> rserveOptions) {
 
-        List<String> qsubCommand = new ArrayList<String>();
+        List<String> qsubCommand = new ArrayList<>();
 
         NbPreferences.forModule(QSubLauncher.class).put("rserveRemoteIp", "");
 

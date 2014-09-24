@@ -47,7 +47,7 @@ import ucar.ma2.MAMath;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D, IScan> {
 
@@ -63,6 +63,11 @@ public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D, IScan> {
 
     private final Lookup lookup;
 
+    /**
+     *
+     * @param l
+     * @param lookup
+     */
     public Chromatogram1DDataset(List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> l, Lookup lookup) {
         super(l, new IDisplayPropertiesProvider() {
 
@@ -160,112 +165,228 @@ public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D, IScan> {
         this.lookup = new ProxyLookup(super.getLookup(), lookup);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return this.lookup;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public DomainOrder getDomainOrder() {
         return DomainOrder.ASCENDING;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDefaultDomainVariable() {
         return defaultDomainVariable;
     }
 
+    /**
+     *
+     * @param defaultDomainVariable
+     */
     public void setDefaultDomainVariable(String defaultDomainVariable) {
         this.defaultDomainVariable = defaultDomainVariable;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDefaultRangeVariable() {
         return defaultRangeVariable;
     }
 
+    /**
+     *
+     * @param defaultRangeVariable
+     */
     public void setDefaultRangeVariable(String defaultRangeVariable) {
         this.defaultRangeVariable = defaultRangeVariable;
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public Number getX(int series, int item) {
         return domainVariableValues[series].getDouble(domainVariableValueRanks[series][item]);//getSource(i).getParent().getChild(defaultDomainVariable).getArray().getDouble(i1);
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public Number getY(int series, int item) {
         return rangeVariableValues[series].getDouble(domainVariableValueRanks[series][item]);//getSource(i).getParent().getChild(defaultRangeVariable).getArray().getDouble(i1);
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public double getXValue(int series, int item) {
         return domainVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public double getYValue(int series, int item) {
         return rangeVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMinX() {
         return domain.min;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMaxX() {
         return domain.max;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMinY() {
         return range.min;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMaxY() {
         return range.max;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int[][] getRanks() {
         return domainVariableValueRanks;
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getStartX(int i, int i1) {
         return getX(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getStartXValue(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getEndX(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getEndXValue(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getStartY(int i, int i1) {
         return getY(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getStartYValue(int i, int i1) {
         return getYValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getEndY(int i, int i1) {
         return getY(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getEndYValue(int i, int i1) {
         return getYValue(i, i1);

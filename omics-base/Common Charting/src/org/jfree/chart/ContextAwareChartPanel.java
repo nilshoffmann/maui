@@ -72,42 +72,109 @@ import org.openide.util.actions.Presenter;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class ContextAwareChartPanel extends ChartPanel implements LookupListener {
 
     private List<Overlay> overlays = new ArrayList<>();
     private IActionProvider popupMenuActionProvider = null;
 
+    /**
+     *
+     * @param chart
+     */
     public ContextAwareChartPanel(JFreeChart chart) {
         super(chart);
     }
 
+    /**
+     *
+     * @param chart
+     * @param useBuffer
+     */
     public ContextAwareChartPanel(JFreeChart chart, boolean useBuffer) {
         super(chart, useBuffer);
     }
 
+    /**
+     *
+     * @param chart
+     * @param properties
+     * @param save
+     * @param print
+     * @param zoom
+     * @param tooltips
+     */
     public ContextAwareChartPanel(JFreeChart chart, boolean properties, boolean save, boolean print, boolean zoom, boolean tooltips) {
         super(chart, properties, save, print, zoom, tooltips);
     }
 
+    /**
+     *
+     * @param chart
+     * @param width
+     * @param height
+     * @param minimumDrawWidth
+     * @param minimumDrawHeight
+     * @param maximumDrawWidth
+     * @param maximumDrawHeight
+     * @param useBuffer
+     * @param properties
+     * @param save
+     * @param print
+     * @param zoom
+     * @param tooltips
+     */
     public ContextAwareChartPanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean save, boolean print, boolean zoom, boolean tooltips) {
         super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer, properties, save, print, zoom, tooltips);
     }
 
+    /**
+     *
+     * @param chart
+     * @param width
+     * @param height
+     * @param minimumDrawWidth
+     * @param minimumDrawHeight
+     * @param maximumDrawWidth
+     * @param maximumDrawHeight
+     * @param useBuffer
+     * @param properties
+     * @param copy
+     * @param save
+     * @param print
+     * @param zoom
+     * @param tooltips
+     */
     public ContextAwareChartPanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean copy, boolean save, boolean print, boolean zoom, boolean tooltips) {
         super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer, properties, copy, save, print, zoom, tooltips);
     }
 
+    /**
+     *
+     * @param actionProvider
+     */
     public void setPopupMenuActionProvider(IActionProvider actionProvider) {
         this.popupMenuActionProvider = actionProvider;
         actionProvider.getLookup().lookupResult(Object.class).addLookupListener(this);
     }
 
+    /**
+     *
+     * @param overlay
+     */
     @Override
     public void addOverlay(Overlay overlay) {
         super.addOverlay(overlay);
         overlays.add(overlay);
     }
 
+    /**
+     *
+     * @param overlay
+     */
     @Override
     public void removeOverlay(Overlay overlay) {
         super.removeOverlay(overlay);
@@ -157,6 +224,10 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         setRefreshBuffer(refreshBuffer);
     }
 
+    /**
+     *
+     * @param g2
+     */
     public void paintChart(Graphics2D g2) {
         getChart().draw(g2, new Rectangle2D.Double(0, 0, getWidth(), getHeight()), getChartRenderingInfo());
         for (Overlay overlay : overlays) {
@@ -167,9 +238,9 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
 
     private List<Component> actionsToPopup(Action[] actions, Lookup lookup) {
         // keeps actions for which was menu item created already (do not add them twice)
-        Set<Action> counted = new HashSet<Action>();
+        Set<Action> counted = new HashSet<>();
         // components to be added (separators are null)
-        List<Component> components = new ArrayList<Component>();
+        List<Component> components = new ArrayList<>();
         Logger.getLogger(ContextAwareChartPanel.class.getName()).log(Level.FINE, "Processing {0} actions!", actions.length);
         for (Action action : actions) {
             if (action != null && counted.add(action)) {
@@ -216,6 +287,15 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         return components;
     }
 
+    /**
+     *
+     * @param properties
+     * @param copy
+     * @param save
+     * @param print
+     * @param zoom
+     * @return
+     */
     @Override
     protected JPopupMenu createPopupMenu(boolean properties,
             boolean copy, boolean save, boolean print, boolean zoom) {
@@ -436,6 +516,9 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         }
     }
 
+    /**
+     *
+     */
     public void saveAsSvg() {
         FileChooserBuilder fcb = new FileChooserBuilder(ContextAwareChartPanel.class);
         JFileChooser fileChooser = fcb.createFileChooser();
@@ -487,12 +570,16 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         String command = event.getActionCommand();
 
         if (command.equals("SAVE_AS_SVG")) {
-            System.out.println("This is a message");
+            Logger.getLogger(getClass().getName()).info("This is a message");
             saveAsSvg();
         }
 
     }
 
+    /**
+     *
+     * @param le
+     */
     @Override
     public void resultChanged(LookupEvent le) {
         Runnable popupMenuCreator = new Runnable() {
@@ -500,7 +587,7 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
             @Override
             public void run() {
                 setPopupMenu(createPopupMenu(true, true, true, true, true));
-                System.err.println("This is an error");
+                Logger.getLogger(getClass().getName()).warning("This is an error");
             }
 
         };

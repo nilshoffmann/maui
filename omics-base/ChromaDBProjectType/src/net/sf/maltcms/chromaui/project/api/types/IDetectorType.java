@@ -33,8 +33,16 @@ package net.sf.maltcms.chromaui.project.api.types;
  */
 public interface IDetectorType {
 
+    /**
+     *
+     * @return
+     */
     String getDetectorType();
 
+    /**
+     *
+     * @return
+     */
     String getLongName();
 
     /**

@@ -64,9 +64,7 @@ public final class ClearSelection implements ActionListener {
             if (obj instanceof IClearable) {
                 ((IClearable) obj).clear();
             }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
     }

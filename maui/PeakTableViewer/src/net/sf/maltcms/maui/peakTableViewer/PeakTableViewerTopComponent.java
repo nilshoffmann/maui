@@ -31,6 +31,7 @@ import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import java.awt.BorderLayout;
 import java.util.Iterator;
+import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
@@ -209,12 +210,12 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
     protected void setPeakGroupDescriptor(IPeakGroupDescriptor newPeakGroupDescriptor, boolean hideChromatogramDescriptor) {
         peakGroupDescriptor = newPeakGroupDescriptor;
         setDisplayName("Peaks for " + newPeakGroupDescriptor.getProject().getLocation().getName() + " - " + peakGroupDescriptor.getName());
-        System.out.println("Setting node factory");
+        Logger.getLogger(getClass().getName()).info("Setting node factory");
         final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupDescriptor), newPeakGroupDescriptor.getProject().getLookup());
         PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(new ProxyLookup(newPeakGroupDescriptor.getProject().getLookup()), peakGroupDescriptor, hideChromatogramDescriptor);
         Node dn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(peakGroupDescriptor, lkp);
         Node rootNode = new FilterNode(dn, Children.create(childFactory, true), lkp);
-        System.out.println("Setting root context");
+        Logger.getLogger(getClass().getName()).info("Setting root context");
         manager.setRootContext(rootNode);
     }
 

@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
@@ -47,28 +49,52 @@ import org.netbeans.junit.NbTestCase;
  */
 public class DB4oCrudProviderTest extends NbTestCase {
 
+    /**
+     *
+     */
     public class IntStringTuple {
 
         private Integer first;
         private String second;
 
+        /**
+         *
+         * @param itg
+         * @param str
+         */
         public IntStringTuple(Integer itg, String str) {
             this.first = itg;
             this.second = str;
         }
 
+        /**
+         *
+         * @return
+         */
         public Integer getFirst() {
             return first;
         }
 
+        /**
+         *
+         * @param first
+         */
         public void setFirst(Integer first) {
             this.first = first;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getSecond() {
             return second;
         }
 
+        /**
+         *
+         * @param second
+         */
         public void setSecond(String second) {
             this.second = second;
         }
@@ -106,13 +132,22 @@ public class DB4oCrudProviderTest extends NbTestCase {
         }
     }
 
+    /**
+     *
+     * @param name
+     */
     public DB4oCrudProviderTest(String name) {
         super(name);
     }
 
 //    public DB4oCrudProviderTest() {
 //    }
-    public static junit.framework.Test suite() {
+
+    /**
+     *
+     * @return
+     */
+        public static junit.framework.Test suite() {
         return NbModuleSuite.create(NbModuleSuite.createConfiguration(DB4oCrudProviderTest.class));
     }
 
@@ -135,7 +170,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
             f.delete();
         }
         //END SETUP
-        System.out.println("Testing project in " + f.getAbsolutePath());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Testing project in {0}", f.getAbsolutePath());
         //Credentials
         ICredentials ic = new NoAuthCredentials();
         //CrudProvider
@@ -145,20 +180,20 @@ public class DB4oCrudProviderTest extends NbTestCase {
             //initialize and open database
             instance.open();
 
-            System.out.println("create");
+            Logger.getLogger(getClass().getName()).info("create");
             //Create a new session
             ICrudSession icr = instance.createSession();
             try {
                 //CREATE
                 icr.create(Arrays.asList(a, b, c));
-                System.out.println("retrieve");
+                Logger.getLogger(getClass().getName()).info("retrieve");
                 Collection<IntStringTuple> expResult = Arrays.asList(a, b, c);
                 //RETRIEVE
                 Collection<IntStringTuple> result = icr.retrieve(
                         IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result),
+                Collections.sort(new ArrayList<>(result),
                         new ComparatorImpl());
                 assertEquals(expResult, result);
                 //UPDATE
@@ -167,7 +202,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
                 result = icr.retrieve(IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result),
+                Collections.sort(new ArrayList<>(result),
                         new ComparatorImpl());
                 assertEquals(expResult, result);
 
@@ -177,7 +212,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
                 result = icr.retrieve(IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result),
+                Collections.sort(new ArrayList<>(result),
                         new ComparatorImpl());
                 assertEquals(expResult, result);
             } finally {

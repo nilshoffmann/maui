@@ -28,6 +28,9 @@
 package net.sf.maltcms.chromaui.rserve.spi;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.rosuda.REngine.Rserve.RConnection;
 
 /**
@@ -79,7 +82,7 @@ public class StartRserve {
              */ {
                 try {
                     String execString = cmd + " CMD Rserve " + rargs;
-                    System.out.println("Starting via " + execString);
+                    Logger.getLogger(StartRserve.class.getName()).log(Level.INFO, "Starting via {0}", execString);
                     p = Runtime.getRuntime().exec(execString);
                     if (!isWindows) /*
                      * on Windows the process will never return, so we cannot wait
@@ -87,10 +90,10 @@ public class StartRserve {
                         p.waitFor();
                     }
                     if (p.exitValue() != 0) {
-                        System.err.println("Something went wrong while trying to start the server!");
+                        Logger.getLogger(StartRserve.class.getName()).warning("Something went wrong while trying to start the server!");
                         throw new RuntimeException("Server startup failed!");
                     }
-                } catch (Exception e) {
+                } catch (IOException | InterruptedException | RuntimeException e) {
 
                     try {
                         String execString = cmd + " CMD /Library/Frameworks/R.framework/Resources/library/Rserve/libs/Rserve-bin.so " + rargs;
@@ -102,10 +105,10 @@ public class StartRserve {
                             p.waitFor();
                         }
                         if (p.exitValue() != 0) {
-                            System.out.println("...failed!");
+                            Logger.getLogger(StartRserve.class.getName()).info("...failed!");
                             throw new RuntimeException("Server startup failed!");
                         }
-                    } catch (Exception e1) {
+                    } catch (IOException | InterruptedException | RuntimeException e1) {
                         try {
                             String execString = cmd + " -e \"library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args='" + rsrvargs + "')\" " + rargs;
                             System.out.print("Starting via " + execString);
@@ -116,13 +119,13 @@ public class StartRserve {
                                 p.waitFor();
                             }
                             if (p.exitValue() != 0) {
-                                System.out.println("...failed!");
+                                Logger.getLogger(StartRserve.class.getName()).info("...failed!");
                                 throw new RuntimeException("Server startup failed!");
                             }
-                        } catch (Exception e2) {
+                        } catch (IOException | InterruptedException | RuntimeException e2) {
                             String execString = "/bin/sh" + " -c"
                                     + " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs;
-                            System.out.println("Starting via " + execString);
+                            Logger.getLogger(StartRserve.class.getName()).log(Level.INFO, "Starting via {0}", execString);
                             p = Runtime.getRuntime().exec(execString);
                             if (!isWindows) /*
                              * on Windows the process will never return, so we cannot wait
@@ -130,7 +133,7 @@ public class StartRserve {
                                 p.waitFor();
                             }
                             if (p.exitValue() != 0) {
-                                System.out.println("...failed!");
+                                Logger.getLogger(StartRserve.class.getName()).info("...failed!");
                                 return false;
                             }
                         }
@@ -142,7 +145,7 @@ public class StartRserve {
 //                            " echo 'library(Rserve);Rserve(" + (debug ? "TRUE" : "FALSE") + ",args=\"" + rsrvargs + "\")' | " + cmd + " " + rargs
 //                        );
             }
-            System.out.println("waiting for Rserve to start ... (" + p + ")");
+            Logger.getLogger(StartRserve.class.getName()).log(Level.INFO, "waiting for Rserve to start ... ({0})", p);
             // we need to fetch the output - some platforms will die if you don't ...
             StreamHog errorHog = new StreamHog("Rserve", p.getErrorStream(), false);
             StreamHog outputHog = new StreamHog("Rserve", p.getInputStream(), false);
@@ -151,9 +154,9 @@ public class StartRserve {
              */ {
                 p.waitFor();
             }
-            System.out.println("call terminated, let us try to connect ...");
-        } catch (Exception x) {
-            System.out.println("failed to start Rserve process with " + x.getMessage());
+            Logger.getLogger(StartRserve.class.getName()).info("call terminated, let us try to connect ...");
+        } catch (IOException | InterruptedException x) {
+            Logger.getLogger(StartRserve.class.getName()).log(Level.INFO, "failed to start Rserve process with {0}", x.getMessage());
             return false;
         }
         int attempts = 5; /*
@@ -165,11 +168,11 @@ public class StartRserve {
         while (attempts > 0) {
             try {
                 RConnection c = new RConnection();
-                System.out.println("Rserve is running.");
+                Logger.getLogger(StartRserve.class.getName()).info("Rserve is running.");
                 c.close();
                 return true;
             } catch (Exception e2) {
-                System.out.println("Try failed with: " + e2.getMessage());
+                Logger.getLogger(StartRserve.class.getName()).log(Level.INFO, "Try failed with: {0}", e2.getMessage());
             }
             /*
              * a safety sleep just in case the start up is delayed or
@@ -198,7 +201,7 @@ public class StartRserve {
         String osname = System.getProperty("os.name");
         if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
                 equals("Windows")) {
-            System.out.println(
+            Logger.getLogger(StartRserve.class.getName()).info(
                     "Windows: query registry to find where R is installed ...");
             String installPath = null;
             try {
@@ -208,14 +211,14 @@ public class StartRserve {
                 rp.waitFor();
                 regHog.join();
                 installPath = regHog.getInstallPath();
-                System.out.println("Using R install path: " + installPath);
-            } catch (Exception rge) {
-                System.out.println(
-                        "ERROR: unable to run REG to find the location of R: " + rge);
+                Logger.getLogger(StartRserve.class.getName()).log(Level.INFO, "Using R install path: {0}", installPath);
+            } catch (IOException | InterruptedException rge) {
+                Logger.getLogger(StartRserve.class.getName()).log(
+                        Level.INFO, "ERROR: unable to run REG to find the location of R: {0}", rge);
                 return false;
             }
             if (installPath == null) {
-                System.out.println(
+                Logger.getLogger(StartRserve.class.getName()).info(
                         "ERROR: canot find path to R. Make sure reg is available and R was installed with registry settings.");
                 return false;
             }
@@ -257,12 +260,12 @@ public class StartRserve {
     public static boolean isRserveRunning() {
         try {
             RConnection c = new RConnection();
-            System.out.println("Rserve is running.");
+            Logger.getLogger(StartRserve.class.getName()).info("Rserve is running.");
             c.close();
             return true;
         } catch (Exception e) {
-            System.out.println(
-                    "First connect try failed with: " + e.getMessage());
+            Logger.getLogger(StartRserve.class.getName()).log(
+                    Level.INFO, "First connect try failed with: {0}", e.getMessage());
         }
         return false;
     }
@@ -271,7 +274,7 @@ public class StartRserve {
      * just a demo main method which starts Rserve and shuts it down again
      */
     public static void main(String[] args) {
-        System.out.println("result=" + checkLocalRserve());
+        Logger.getLogger(StartRserve.class.getName()).log(Level.INFO, "result={0}", checkLocalRserve());
         try {
             RConnection c = new RConnection();
             c.shutdown();

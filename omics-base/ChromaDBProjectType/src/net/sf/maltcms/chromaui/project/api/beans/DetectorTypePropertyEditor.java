@@ -41,6 +41,9 @@ import org.openide.util.Lookup;
  */
 public class DetectorTypePropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public DetectorTypePropertyEditor() {
     }
 

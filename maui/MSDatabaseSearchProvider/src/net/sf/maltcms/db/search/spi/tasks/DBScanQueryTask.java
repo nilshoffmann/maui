@@ -37,6 +37,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IMetabolite;
@@ -73,11 +75,11 @@ public class DBScanQueryTask extends AProgressAwareCallable<QueryResultList<ISca
         try {
             int counter = 1;
             //        IRetentionIndexDataSet irids 
-            QueryResultList<IScan> result = new QueryResultList<IScan>();
+            QueryResultList<IScan> result = new QueryResultList<>();
             List<Double> maskedMasses = databaseDescriptor.getMaskedMasses();
             for (IQueryInput<IScan> metaboliteDatabaseQueryInput : metaboliteDatabaseQueryInputs) {
                 if (isCancel()) {
-                    return new QueryResultList<IScan>();
+                    return new QueryResultList<>();
                 }
                 getProgressHandle().progress(counter++);
                 IScan scan = metaboliteDatabaseQueryInput.getScan();
@@ -96,7 +98,7 @@ public class DBScanQueryTask extends AProgressAwareCallable<QueryResultList<ISca
                     ripredicate.setDelegate(amp);
                     ripredicate.setWindow(50);
                     double ri = ridb.getTemperatureProgrammedKovatsIndex(scan.getScanAcquisitionTime());
-                    System.out.println("RI: " + ri + ", RT: " + scan.getScanAcquisitionTime());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "RI: {0}, RT: {1}", new Object[]{ri, scan.getScanAcquisitionTime()});
                     ripredicate.setRetentionIndex(ri);
                     ICrudProvider oc = null;
                     oc = DBConnectionManager.getContainer(new File(databaseDescriptor.getResourceLocation()).toURI().toURL());
@@ -104,24 +106,24 @@ public class DBScanQueryTask extends AProgressAwareCallable<QueryResultList<ISca
                     session.open();
                     //                MetaboliteSimilarity ms = new MetaboliteSimilarity(scan,this.matchThreshold,maxHits,true);  
                     Collection<IMetabolite> os = session.newQuery(IMetabolite.class).retrieve(ripredicate);
-                    Map<IMetabolite, Double> resultMap = new LinkedHashMap<IMetabolite, Double>();
+                    Map<IMetabolite, Double> resultMap = new LinkedHashMap<>();
                     for (Tuple2D<Double, IMetabolite> tpl : ripredicate.getMetabolites()) {
                         if (isCancel()) {
-                            return new QueryResultList<IScan>();
+                            return new QueryResultList<>();
                         }
                         resultMap.put(tpl.getSecond(), tpl.getFirst());
 
                     }
-                    Map<IMetabolite, Double> riMap = new LinkedHashMap<IMetabolite, Double>();
+                    Map<IMetabolite, Double> riMap = new LinkedHashMap<>();
                     for (Tuple2D<Double, IMetabolite> tpl : ripredicate.getMetabolites()) {
                         if (isCancel()) {
-                            return new QueryResultList<IScan>();
+                            return new QueryResultList<>();
                         }
                         resultMap.put(tpl.getSecond(), tpl.getSecond().
                                 getRetentionIndex());
 
                     }
-                    result.add(new QueryResult<IScan>(scan, ri,
+                    result.add(new QueryResult<>(scan, ri,
                             resultMap, riMap,
                             databaseDescriptor));
                     session.close();
@@ -133,24 +135,24 @@ public class DBScanQueryTask extends AProgressAwareCallable<QueryResultList<ISca
                     session.open();
                     //                MetaboliteSimilarity ms = new MetaboliteSimilarity(scan,this.matchThreshold,maxHits,true);  
                     Collection<IMetabolite> os = session.newQuery(IMetabolite.class).retrieve(amp);
-                    Map<IMetabolite, Double> resultMap = new LinkedHashMap<IMetabolite, Double>();
+                    Map<IMetabolite, Double> resultMap = new LinkedHashMap<>();
                     for (Tuple2D<Double, IMetabolite> tpl : amp.getMetabolites()) {
                         if (isCancel()) {
-                            return new QueryResultList<IScan>();
+                            return new QueryResultList<>();
                         }
                         resultMap.put(tpl.getSecond(), tpl.getFirst());
 
                     }
-                    Map<IMetabolite, Double> riMap = new LinkedHashMap<IMetabolite, Double>();
+                    Map<IMetabolite, Double> riMap = new LinkedHashMap<>();
                     for (Tuple2D<Double, IMetabolite> tpl : amp.getMetabolites()) {
                         if (isCancel()) {
-                            return new QueryResultList<IScan>();
+                            return new QueryResultList<>();
                         }
                         resultMap.put(tpl.getSecond(), tpl.getSecond().
                                 getRetentionIndex());
 
                     }
-                    result.add(new QueryResult<IScan>(scan, Double.NaN,
+                    result.add(new QueryResult<>(scan, Double.NaN,
                             resultMap, riMap,
                             databaseDescriptor));
                     session.close();

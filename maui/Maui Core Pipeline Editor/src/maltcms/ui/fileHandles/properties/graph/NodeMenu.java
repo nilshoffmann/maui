@@ -75,14 +75,17 @@ public class NodeMenu implements PopupMenuProvider, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals(DELETE_NODE_ACTION)) {
-            this.scene.removeNodeWithEdges((String) this.scene.findObject(this.node));
-            this.scene.validate();
-        } else if (e.getActionCommand().equals(EDIT_PROPERTIES_ACTION)) {
-            //Fallunterscheidung zwischen verschiedenen nodes
-            e.setSource(this.node);
-            CallableSystemAction csa = PipelinePropertiesWizardAction.getInstance();
-            csa.actionPerformed(e);
+        switch (e.getActionCommand()) {
+            case DELETE_NODE_ACTION:
+                this.scene.removeNodeWithEdges((String) this.scene.findObject(this.node));
+                this.scene.validate();
+                break;
+            case EDIT_PROPERTIES_ACTION:
+                //Fallunterscheidung zwischen verschiedenen nodes
+                e.setSource(this.node);
+                CallableSystemAction csa = PipelinePropertiesWizardAction.getInstance();
+                csa.actionPerformed(e);
+                break;
         }
     }
 }

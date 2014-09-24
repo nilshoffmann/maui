@@ -29,6 +29,8 @@ package maltcms.ui.fileHandles.properties.tools;
 
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -40,13 +42,42 @@ import org.openide.util.NotImplementedException;
  */
 public class HashTableModel implements TableModel {
 
+    /**
+     *
+     */
     protected Class<?> c = null;
+
+    /**
+     *
+     */
     protected boolean editable = true;
+
+    /**
+     *
+     */
     protected Vector<String> header;
+
+    /**
+     *
+     */
     protected Map<String, Object> property;
+
+    /**
+     *
+     */
     protected boolean simplePropertyStyle = true;
+
+    /**
+     *
+     */
     protected JTable table = null;
 
+    /**
+     *
+     * @param header
+     * @param property
+     * @param c
+     */
     public HashTableModel(Vector<String> header, Map<String, Object> property, Class<?> c) {
         this.header = header;
         this.property = property;
@@ -101,8 +132,8 @@ public class HashTableModel implements TableModel {
         if (columnIndex == 0) {
             String key = this.property.keySet().toArray(new String[]{})[rowIndex];
             if (this.simplePropertyStyle) {
-                System.out.println("Using short property names for class: " + this.c);
-                System.out.println("Key: " + key);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Using short property names for class: {0}", this.c);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Key: {0}", key);
                 if (c != null && key.startsWith(c.getName())) {
                     String[] tmp = key.split("\\.");
                     if (tmp.length > 0) {
@@ -138,14 +169,26 @@ public class HashTableModel implements TableModel {
     public void removeTableModelListener(TableModelListener l) {
     }
 
+    /**
+     *
+     * @param editable
+     */
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
 
+    /**
+     *
+     * @param t
+     */
     public void setJTable(JTable t) {
         this.table = t;
     }
 
+    /**
+     *
+     * @param cut
+     */
     public void setSimplePropertyStyle(boolean cut) {
         this.simplePropertyStyle = cut;
     }

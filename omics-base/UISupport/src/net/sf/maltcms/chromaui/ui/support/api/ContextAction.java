@@ -48,15 +48,26 @@ public abstract class ContextAction<T> extends AbstractAction implements
     Lookup.Result<? extends T> lkpInfo;
     private Class<? extends T> contextType;
 
+    /**
+     *
+     */
     public ContextAction() {
         this(Utilities.actionsGlobalContext());
     }
 
+    /**
+     *
+     * @param contextType
+     */
     public ContextAction(Class<? extends T> contextType) {
         this();
         this.contextType = contextType;
     }
 
+    /**
+     *
+     * @param lkp
+     */
     protected ContextAction(Lookup lkp) {
         this.context = lkp;
     }
@@ -82,6 +93,10 @@ public abstract class ContextAction<T> extends AbstractAction implements
         return super.isEnabled();
     }
 
+    /**
+     *
+     * @param ev
+     */
     @Override
     public void resultChanged(LookupEvent ev) {
         setEnabled(!lkpInfo.allInstances().isEmpty());
@@ -93,10 +108,18 @@ public abstract class ContextAction<T> extends AbstractAction implements
         doAction(lkpInfo.allInstances());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return context;
     }
 
+    /**
+     *
+     * @param instances
+     */
     public abstract void doAction(Collection<? extends T> instances);
 }

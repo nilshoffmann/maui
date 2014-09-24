@@ -60,7 +60,7 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class DBCreateTask extends AProgressAwareRunnable {
@@ -90,7 +90,7 @@ public class DBCreateTask extends AProgressAwareRunnable {
     public void run() {
         getProgressHandle().setDisplayName("Creating " + databaseType + " database " + databaseName);
         getProgressHandle().switchToIndeterminate();
-        List<FileObject> createdFiles = new LinkedList<FileObject>();
+        List<FileObject> createdFiles = new LinkedList<>();
         IDatabaseDescriptor databaseDescriptor = null;
         try {
             FileObject baseDir = FileUtil.createFolder(project.getProjectDirectory(),

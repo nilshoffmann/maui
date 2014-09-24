@@ -32,6 +32,8 @@ import java.awt.Component;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -55,6 +57,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
         IWizardValidatable {
 
     public static final String PROP_PROJECT_NAME = "projectName";
+    private static final long serialVersionUID = 4021356306700151695L;
 
     public DBProjectVisualPanel1() {
         initComponents();
@@ -252,7 +255,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                     String ext = StringTools.getFileExtension(file.getName().toLowerCase());
                     int idx = Arrays.binarySearch(fileExtensions, ext);
                     if (idx >= 0) {
-                        System.out.println("Found matching file extension at index: " + idx + "=" + fileExtensions[idx]);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Found matching file extension at index: {0}={1}", new Object[]{idx, fileExtensions[idx]});
                         return true;
                     }
                     return false;
@@ -272,11 +275,11 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                 if (f.isDirectory()) {
                     Collection<File> l = FileUtils.listFiles(f, fileExtensions, true);
                     for (File file : l) {
-                        System.err.println("Adding file below selected directory: " + file);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding file below selected directory: {0}", file);
                         getListModel().addElement(file);
                     }
                 } else {
-                    System.err.println("Adding selected file: " + f);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding selected file: {0}", f);
                     getListModel().addElement(f);
                 }
             }
@@ -338,8 +341,8 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
             return false; // Display name not specified
         }
         File f = new File(projectLocationTextField.getText());
-        System.out.println("Project location: " + f.getAbsolutePath() + " exists: " + f.
-                exists() + " isDir: " + f.isDirectory());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Project location: {0} exists: {1} isDir: {2}", new Object[]{f.getAbsolutePath(), f.
+                exists(), f.isDirectory()});
         if (!f.isDirectory()) {
             String message = "Project Folder is not a valid path.";
             wizardDescriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE,
@@ -347,7 +350,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
             return false;
         }
         final File destFolder = new File(createdFolderTextField.getText());
-        System.out.println("Dest folder");
+        Logger.getLogger(getClass().getName()).info("Dest folder");
         File projLoc = destFolder;
         while (projLoc != null && !projLoc.exists()) {
             projLoc = projLoc.getParentFile();
@@ -357,7 +360,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
                     "Project Folder cannot be created.");
             return false;
         }
-        System.out.println("Project location");
+        Logger.getLogger(getClass().getName()).info("Project location");
 //        if (proj == null) {
 //            String message = "Project Folder is not a valid path.";
 //            wizardDescriptor.putProperty("WizardPanel_errorMessage", message);
@@ -372,7 +375,7 @@ public class DBProjectVisualPanel1 extends JPanel implements DocumentListener,
             return false;
         }
 
-        System.out.println("valid called, number of elements in list model: " + getListModel().
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "valid called, number of elements in list model: {0}", getListModel().
                 size());
         if (getListModel().isEmpty()) {
             wizardDescriptor.putProperty("WizardPanel_errorMessage",

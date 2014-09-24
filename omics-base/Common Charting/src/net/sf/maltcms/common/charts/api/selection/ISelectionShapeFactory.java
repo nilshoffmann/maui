@@ -37,7 +37,17 @@ import org.jfree.chart.entity.XYItemEntity;
  */
 public interface ISelectionShapeFactory {
 
+    /**
+     *
+     * @param entity
+     * @return
+     */
     public Shape createSelectionShape(XYItemEntity entity);
 
+    /**
+     *
+     * @param entity
+     * @return
+     */
     public Shape createSelectionShape(CategoryItemEntity entity);
 }

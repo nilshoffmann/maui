@@ -55,8 +55,15 @@ public abstract class CancellableRunnable<R> implements Runnable, Cancellable {
 
     private HashSet<ResultListener<R>> listeners = new HashSet<>();
     private boolean updateOnEventDispatchThread = false;
+
+    /**
+     *
+     */
     public ProgressHandle handle;
 
+    /**
+     *
+     */
     public CancellableRunnable() {
     }
 
@@ -69,10 +76,17 @@ public abstract class CancellableRunnable<R> implements Runnable, Cancellable {
         this.updateOnEventDispatchThread = updateOnEventDispatchThread;
     }
 
+    /**
+     *
+     * @param handle
+     */
     public void setHandle(ProgressHandle handle) {
         this.handle = handle;
     }
 
+    /**
+     *
+     */
     public abstract void body();
 
     @Override
@@ -87,12 +101,20 @@ public abstract class CancellableRunnable<R> implements Runnable, Cancellable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean cancel() {
         this.handle.finish();
         return true;
     }
 
+    /**
+     *
+     * @param result
+     */
     public void notifyListeners(final R result) {
         if (updateOnEventDispatchThread) {
             for (final ResultListener<R> listener : this.listeners) {
@@ -112,14 +134,28 @@ public abstract class CancellableRunnable<R> implements Runnable, Cancellable {
         }
     }
 
+    /**
+     *
+     * @param listener
+     */
     public void addResultListener(ResultListener<R> listener) {
         this.listeners.add(listener);
     }
 
+    /**
+     *
+     * @param listener
+     */
     public void removeResultListener(ResultListener<R> listener) {
         this.listeners.remove(listener);
     }
 
+    /**
+     *
+     * @param taskName
+     * @param runnable
+     * @return
+     */
     public static Task createAndRun(String taskName,
             CancellableRunnable runnable) {
         final ProgressHandle ph = ProgressHandleFactory.createHandle(taskName, runnable);
@@ -131,12 +167,28 @@ public abstract class CancellableRunnable<R> implements Runnable, Cancellable {
         return task;
     }
 
+    /**
+     *
+     * @param taskName
+     * @param runnable
+     * @param es
+     * @return
+     */
     public static Future<?> createAndRun(String taskName, CancellableRunnable runnable, ExecutorService es) {
         final ProgressHandle ph = ProgressHandleFactory.createHandle(taskName, runnable);
         runnable.setHandle(ph);
         return es.submit(runnable);
     }
 
+    /**
+     *
+     * @param <T>
+     * @param taskName
+     * @param runnable
+     * @param es
+     * @param result
+     * @return
+     */
     public static <T> Future<T> createAndRun(String taskName, CancellableRunnable runnable, ICompletionService<T> es, T result) {
         final ProgressHandle ph = ProgressHandleFactory.createHandle(taskName, runnable);
         runnable.setHandle(ph);

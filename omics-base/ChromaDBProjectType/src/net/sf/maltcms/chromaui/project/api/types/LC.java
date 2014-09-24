@@ -40,11 +40,19 @@ public class LC implements ISeparationType {
     private final String longName = "liquid chromatography";
     private final int separationDimensions = 1;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getSeparationType() {
         return separationType;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getLongName() {
         return longName;

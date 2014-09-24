@@ -35,21 +35,37 @@ public final class NoAuthCredentials implements ICredentials {
 
     private String name = "Project database";
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return this.name;
     }
 
+    /**
+     *
+     * @param name
+     */
     @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean authenticate() {
         return true;
     }
 
+    /**
+     *
+     * @param icp
+     */
     @Override
     public void provideCredentials(ICredentialsProvider icp) {
 

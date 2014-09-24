@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.MsRunDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.MsRun;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class MsRunContainer extends BasicMzTabMetaDataContainer<MsRunDescriptor> {
+    private static final long serialVersionUID = 2510716752213212689L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static MsRunContainer create(Metadata metadata) {
         MsRunContainer c = new MsRunContainer();
         c.setLevel(2);

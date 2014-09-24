@@ -40,11 +40,19 @@ public class LCLC implements ISeparationType {
     private final String longName = "two-dimensional liquid chromatography";
     private final int separationDimensions = 2;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getSeparationType() {
         return separationType;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getLongName() {
         return longName;

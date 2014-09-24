@@ -44,16 +44,28 @@ public class TopKItemsLabelGenerator implements XYItemLabelGenerator {
     private final Set<Point> topK;
     private final List<Point> sublist;
 
+    /**
+     *
+     * @param sm
+     * @param k
+     */
     public TopKItemsLabelGenerator(List<Point> sm, int k) {
 //		System.out.println("Length of list: " + sm.size());
 //		System.out.println("K=" + k);
         this.sublist = sm.subList(Math.max(0, sm.size() - k), sm.size());
-        topK = new HashSet<Point>();
+        topK = new HashSet<>();
 //		System.out.println("Sublist length: " + this.sublist.size());
         topK.addAll(this.sublist);
 //		System.out.println("Top K: " + topK);
     }
 
+    /**
+     *
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @return
+     */
     @Override
     public String generateLabel(XYDataset arg0, int arg1, int arg2) {
         if (this.topK.contains(new Point(arg1, arg2))) {

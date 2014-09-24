@@ -42,16 +42,27 @@ import org.openide.util.ImageUtilities;
  */
 public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDescriptor> implements IColorizableDescriptor {
 
+    /**
+     *
+     */
     public final String PROP_CHROMATOGRAM = "chromatogram";
 
     @Indexed
     private IChromatogramDescriptor chromatogram;
 
+    /**
+     *
+     * @return
+     */
     public IChromatogramDescriptor getChromatogram() {
         activate(ActivationPurpose.READ);
         return chromatogram;
     }
 
+    /**
+     *
+     * @param chromatogram
+     */
     public void setChromatogram(IChromatogramDescriptor chromatogram) {
         activate(ActivationPurpose.WRITE);
         IChromatogramDescriptor oldDescr = this.chromatogram;
@@ -62,12 +73,20 @@ public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDes
 
     private Color color = new Color(255, 255, 255, 0);
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Color getColor() {
         activate(ActivationPurpose.READ);
         return color;
     }
 
+    /**
+     *
+     * @param color
+     */
     @Override
     public void setColor(Color color) {
         activate(ActivationPurpose.WRITE);
@@ -76,6 +95,11 @@ public class Peak1DContainer extends ADatabaseBackedContainer<IPeakAnnotationDes
         firePropertyChange(IColorizableDescriptor.PROP_COLOR, old, this.color);
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(

@@ -39,6 +39,10 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 @MultiViewElement.Registration(
         displayName = "#LBL_MzTab_VISUAL",
         iconBase = "net/sf/maltcms/chromaui/jmztab/ui/api/MzTab.png",
@@ -54,6 +58,10 @@ public final class MzTabVisualElement extends JPanel implements MultiViewElement
     private JToolBar toolbar = new JToolBar();
     private transient MultiViewElementCallback callback;
 
+    /**
+     *
+     * @param lkp
+     */
     public MzTabVisualElement(Lookup lkp) {
         obj = lkp.lookup(MzTabDataObject.class);
         assert obj != null;
@@ -90,60 +98,107 @@ public final class MzTabVisualElement extends JPanel implements MultiViewElement
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
-    @Override
+
+    /**
+     *
+     * @return
+     */
+        @Override
     public JComponent getVisualRepresentation() {
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public JComponent getToolbarRepresentation() {
         return toolbar;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Action[] getActions() {
         return new Action[0];
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return obj.getLookup();
     }
 
+    /**
+     *
+     */
     @Override
     public void componentOpened() {
     }
 
+    /**
+     *
+     */
     @Override
     public void componentClosed() {
     }
 
+    /**
+     *
+     */
     @Override
     public void componentShowing() {
     }
 
+    /**
+     *
+     */
     @Override
     public void componentHidden() {
     }
 
+    /**
+     *
+     */
     @Override
     public void componentActivated() {
     }
 
+    /**
+     *
+     */
     @Override
     public void componentDeactivated() {
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public UndoRedo getUndoRedo() {
         return UndoRedo.NONE;
     }
 
+    /**
+     *
+     * @param callback
+     */
     @Override
     public void setMultiViewCallback(MultiViewElementCallback callback) {
         this.callback = callback;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public CloseOperationState canCloseElement() {
         return CloseOperationState.STATE_OK;

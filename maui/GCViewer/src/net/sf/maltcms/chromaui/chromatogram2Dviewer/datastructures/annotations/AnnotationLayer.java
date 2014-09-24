@@ -54,48 +54,98 @@ public class AnnotationLayer extends AbstractXYAnnotation {
     private Color color = Color.DARK_GRAY;
     private final QuadTree<XYSelectableShapeAnnotation<?>> qt;
 
+    /**
+     *
+     * @param a
+     * @param b
+     * @param name
+     * @param editable
+     * @param xya
+     */
     public AnnotationLayer(Point a, Point b, final String name, final boolean editable, final List<XYSelectableShapeAnnotation<?>> xya) {
         this.name = name;
         this.editable = editable;
         this.xya = xya;
-        this.qt = new QuadTree<XYSelectableShapeAnnotation<?>>(a.x, a.y, b.x - a.x, b.y - a.y, 5);
+        this.qt = new QuadTree<>(a.x, a.y, b.x - a.x, b.y - a.y, 5);
         for (XYSelectableShapeAnnotation<?> sa : this.xya) {
             qt.put(getPointFor(sa), sa);
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setVisible(boolean b) {
         this.visible = b;
     }
 
+    /**
+     *
+     * @param c
+     */
     public void setColor(Color c) {
         this.color = c;
     }
 
+    /**
+     *
+     * @param f
+     */
     public void setAlpha(float f) {
         this.alpha = f;
     }
 
+    /**
+     *
+     * @return
+     */
     public float getAlpha() {
         return alpha;
     }
 
+    /**
+     *
+     * @return
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isEditable() {
         return editable;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @param gd
+     * @param xyplot
+     * @param rd
+     * @param va
+     * @param va1
+     * @param i
+     * @param pri
+     */
     @Override
     public void draw(Graphics2D gd, XYPlot xyplot, Rectangle2D rd, ValueAxis va, ValueAxis va1, int i, PlotRenderingInfo pri) {
         if (visible) {
@@ -107,6 +157,10 @@ public class AnnotationLayer extends AbstractXYAnnotation {
         }
     }
 
+    /**
+     *
+     * @param xy
+     */
     public void add(XYSelectableShapeAnnotation<?> xy) {
         if (editable) {
             this.qt.put(getPointFor(xy), xy);
@@ -116,6 +170,10 @@ public class AnnotationLayer extends AbstractXYAnnotation {
         }
     }
 
+    /**
+     *
+     * @param xy
+     */
     public void remove(XYSelectableShapeAnnotation<?> xy) {
         if (editable) {
             this.qt.remove(getPointFor(xy));
@@ -129,6 +187,10 @@ public class AnnotationLayer extends AbstractXYAnnotation {
         return new Point2D.Double(sa.getShape().getBounds2D().getCenterX(), sa.getShape().getBounds2D().getCenterY());
     }
 
+    /**
+     *
+     * @return
+     */
     public List<XYSelectableShapeAnnotation<?>> getAnnotations() {
         return this.xya;
     }

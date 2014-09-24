@@ -60,7 +60,7 @@ public class PeakSearchPanel extends javax.swing.JPanel implements LookupListene
     public DefaultComboBoxModel getScopeModel() {
         ProjectGroup selectedProjects = getProjectsInSelection();
         ProjectGroup openProjects = getOpenProjects();
-        DefaultComboBoxModel<ProjectGroup> dcbm = new DefaultComboBoxModel<ProjectGroup>();
+        DefaultComboBoxModel<ProjectGroup> dcbm = new DefaultComboBoxModel<>();
         if (selectedProjects != null) {
             dcbm.addElement(selectedProjects);
         }

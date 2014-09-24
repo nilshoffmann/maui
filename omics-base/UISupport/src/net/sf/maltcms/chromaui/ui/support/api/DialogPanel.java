@@ -45,6 +45,11 @@ public class DialogPanel extends JPanel implements ExplorerManager.Provider {
 
     private ExplorerManager em = new ExplorerManager();
 
+    /**
+     *
+     * @param label
+     * @param singleSelectionOnly
+     */
     public void init(String label, boolean singleSelectionOnly) {
         removeAll();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -63,6 +68,10 @@ public class DialogPanel extends JPanel implements ExplorerManager.Provider {
         add(jsp);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ExplorerManager getExplorerManager() {
         return em;

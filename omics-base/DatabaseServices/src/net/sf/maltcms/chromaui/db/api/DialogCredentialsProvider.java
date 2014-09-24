@@ -35,6 +35,10 @@ public final class DialogCredentialsProvider implements ICredentialsProvider {
 
     private String name = null;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final String getName() {
         if (this.name == null) {
@@ -43,12 +47,19 @@ public final class DialogCredentialsProvider implements ICredentialsProvider {
         return this.name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final char[] getPassword() {
 //        Keyring k;
         return null;
     }
 
+    /**
+     *
+     */
     @Override
     public final void getCredentials() {
 

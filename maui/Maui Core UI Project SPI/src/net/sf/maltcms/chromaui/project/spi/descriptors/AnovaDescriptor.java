@@ -35,7 +35,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
 

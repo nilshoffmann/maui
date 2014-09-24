@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -137,11 +138,11 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
                             ic.add(project);
                         }
                         dataset = ds;
-                        annotations = new ArrayList<XYAnnotation>(0);
+                        annotations = new ArrayList<>(0);
                         final DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
                         for (IChromatogramDescriptor descr : filename) {
                             ic.add(descr);
-                            List<ChartOverlay> overlays = new LinkedList<ChartOverlay>();
+                            List<ChartOverlay> overlays = new LinkedList<>();
                             if (project != null) {
                                 Collection<Peak1DContainer> peaks = project.getPeaks(descr);
                                 for (Peak1DContainer container : peaks) {
@@ -340,10 +341,10 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
                         renderer.setSeriesVisible(i, !isVisible);
                         s.setVisible(!isVisible);
                     } else {
-                        System.out.println("XYItemRenderer is null!");
+                        Logger.getLogger(getClass().getName()).info("XYItemRenderer is null!");
                     }
                 } else {
-                    System.out.println("XYPlot is null!");
+                    Logger.getLogger(getClass().getName()).info("XYPlot is null!");
                 }
             }
         }
@@ -459,14 +460,14 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
     public void resultChanged(LookupEvent le) {
         //do not react to ourself
         if (hasFocus()) {
-            System.out.println("I have focus, not setting viewport!");
+            Logger.getLogger(getClass().getName()).info("I have focus, not setting viewport!");
         } else {
             if (syncViewport) {
                 Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();
                 if (!viewports.isEmpty()) {
                     this.jp.setViewport(viewports.iterator().next().getViewPort());
                 } else {
-                    System.err.println("No viewports received!");
+                    Logger.getLogger(getClass().getName()).warning("No viewports received!");
                 }
             }
         }

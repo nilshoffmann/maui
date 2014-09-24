@@ -36,10 +36,18 @@ import org.openide.util.Lookup;
  */
 public final class TypeFactory {
 
+    /**
+     *
+     * @return
+     */
     public static Collection<? extends ISeparationType> getAvailableSeparationTypes() {
         return Lookup.getDefault().lookupAll(ISeparationType.class);
     }
 
+    /**
+     *
+     * @return
+     */
     public static Collection<? extends IDetectorType> getAvailableDetectorTypes() {
         return Lookup.getDefault().lookupAll(IDetectorType.class);
     }

@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.db.spi.db4o.options;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import javax.swing.JComponent;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
 import net.sf.maltcms.chromaui.db.spi.db4o.runnables.DatabaseResizeRunnable;
@@ -78,7 +79,7 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
                     DatabaseResizeRunnable drr = new DatabaseResizeRunnable(this);
                     DatabaseResizeRunnable.createAndRun("Updating database size", drr);
                 } else {
-                    System.err.println("Update already in progress!");
+                    Logger.getLogger(getClass().getName()).warning("Update already in progress!");
                 }
             }
         } else {

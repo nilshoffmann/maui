@@ -27,6 +27,8 @@
  */
 package maltcms.ui.fileHandles.properties;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.ui.fileHandles.properties.pipeline.MaltcmsPipelineFormatDataObject;
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
@@ -35,7 +37,7 @@ import org.openide.windows.CloneableTopComponent;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class PipelineEditorOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
 
@@ -50,7 +52,7 @@ public class PipelineEditorOpenSupport extends OpenSupport implements OpenCookie
         final PipelineEditorTopComponent tc = new PipelineEditorTopComponent();
         tc.setDisplayName(dobj.getName());
         tc.setBaseFile(entry.getFile());
-        System.out.println("Start parsing file: " + entry.getFile().getPath());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Start parsing file: {0}", entry.getFile().getPath());
 //        PipelineGraphScene scene = tc.getPipelineGraphScene();
 //        PropertyLoader.parseIntoScene(entry.getFile().getPath(), scene);
         //tc.setPipelineGraphScene(PropertyLoader.getScene(entry.getFile().getPath()));

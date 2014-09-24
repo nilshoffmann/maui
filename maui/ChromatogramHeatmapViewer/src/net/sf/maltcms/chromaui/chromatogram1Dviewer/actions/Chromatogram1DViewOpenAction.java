@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 import maltcms.datastructures.ms.IChromatogram1D;
@@ -94,8 +95,8 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
                     }
                 }
                 if (is1D) {
-                    System.out.println("Creating 1D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
+                    Logger.getLogger(getClass().getName()).info("Creating 1D data providers and dataset.");
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
                     InstanceContent ic = new InstanceContent();
                     for (IChromatogramDescriptor descr : chromatograms) {
                         progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
@@ -115,8 +116,8 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
                         }
                     });
                 } else {
-                    System.out.println("Creating 2D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
+                    Logger.getLogger(getClass().getName()).info("Creating 2D data providers and dataset.");
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
                     InstanceContent ic = new InstanceContent();
                     for (IChromatogramDescriptor descr : chromatograms) {
                         progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);

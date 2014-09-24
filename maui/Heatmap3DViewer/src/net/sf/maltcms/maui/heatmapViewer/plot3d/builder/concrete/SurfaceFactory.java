@@ -29,6 +29,8 @@ package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
 import org.jzy3d.colors.colormaps.ColorMapRainbow;
@@ -87,7 +89,7 @@ public class SurfaceFactory {
         final int rows = (int) (r.height - 1);
         Range rangex = new Range(r.x, r.x + columns);
         Range rangey = new Range(r.y, r.y + rows);
-        System.out.println("Building surface for rect: " + r.toString());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Building surface for rect: {0}", r.toString());
         final int sx = stepsx == -1 ? columns : stepsx;
         final int sy = stepsy == -1 ? rows : stepsy;
         CompileableComposite sls = fast ? createSurfaceFast(rangex, sx, rangey, sy, m) : createSurface(rangex, sx, rangey, sy, m);
@@ -105,25 +107,25 @@ public class SurfaceFactory {
     }
 
     public CompileableComposite createSurface(Range rangex, int stepsx, Range rangey, int stepsy, Mapper mapper) {
-        System.out.println("Using regular tesselation for " + (stepsx * stepsy) + " vertices!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using regular tesselation for {0} vertices!", (stepsx * stepsy));
         long start = System.nanoTime();
         Tessellator tesselator = new OrthonormalTessellator();
         Shape s1 = (Shape) tesselator.build(new OrthonormalGrid(rangex, stepsx, rangey, stepsy).apply(mapper));
-        System.out.println("Regular tesselation completed in " + ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f) + " s");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Regular tesselation completed in {0} s", ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f));
         return buildComposite(applyStyling(s1));
     }
 
     public CompileableComposite createSurfaceFast(Range rangex, int stepsx, Range rangey, int stepsy, Mapper mapper) {
-        System.out.println("Using fast tesselation for " + (stepsx * stepsy) + " vertices!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using fast tesselation for {0} vertices!", (stepsx * stepsy));
         long start = System.nanoTime();
         Tessellator tesselator = new FastOrthonormalTessellator();
         Shape s1 = (Shape) tesselator.build(new OrthonormalGrid(rangex, stepsx, rangey, stepsy).apply(mapper));
-        System.out.println("Fast tesselation completed in " + ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f) + " s");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Fast tesselation completed in {0} s", ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f));
         return buildComposite(applyStyling(s1));
     }
 
     public CompileableComposite createImplicitlyGriddedSurface(ArrayDouble.D2 a, Mapper mapper) {
-        List<Coord3d> l = new ArrayList<Coord3d>();
+        List<Coord3d> l = new ArrayList<>();
         for (int i = 0; i < a.getShape()[0]; i++) {
             for (int j = 0; j < a.getShape()[1]; j++) {
                 double d = mapper.f(i, j);
@@ -132,11 +134,11 @@ public class SurfaceFactory {
                 }
             }
         }
-        System.out.println("Using gridless tesselation for " + (l.size()) + " vertices!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using gridless tesselation for {0} vertices!", (l.size()));
         long start = System.nanoTime();
         Tessellator tesselator = new FastOrthonormalTessellator();
         Shape s1 = (Shape) tesselator.build(l);
-        System.out.println("Fast tesselation completed in " + ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f) + " s");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Fast tesselation completed in {0} s", ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f));
         return buildComposite(applyStyling(s1));
     }
 
@@ -158,7 +160,7 @@ public class SurfaceFactory {
         OrthonormalGrid grid = new OrthonormalGrid(new Range(roi.x, roi.x + roi.width), stepsx, new Range(roi.y, roi.y + roi.height), stepsy);
         List<Coord3d> l = grid.apply(m);
         Shape s1 = (Shape) tesselator.build(l);
-        System.out.println("Fast tesselation completed in " + ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f) + " s");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Fast tesselation completed in {0} s", ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f));
         return buildComposite(applyStyling(s1));
     }
 
@@ -189,7 +191,7 @@ public class SurfaceFactory {
     }
 
     public AbstractDrawable createDelaunaySurface(List<Coord3d> coords) {
-        System.out.println("Received " + coords.size() + " coordinates!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Received {0} coordinates!", coords.size());
         DelaunayTessellator tesselator = new DelaunayTessellator();
         return tesselator.build(coords);
     }

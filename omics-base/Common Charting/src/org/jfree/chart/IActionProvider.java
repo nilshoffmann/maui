@@ -36,5 +36,9 @@ import org.openide.util.Lookup;
  */
 public interface IActionProvider extends Lookup.Provider {
 
+    /**
+     *
+     * @return
+     */
     Action[] getActions();
 }

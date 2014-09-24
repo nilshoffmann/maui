@@ -49,6 +49,11 @@ import org.openide.nodes.Node;
  */
 public class Projects {
 
+    /**
+     *
+     * @param projects
+     * @return
+     */
     public static Node[] getNodesFor(Collection<Project> projects) {
         Node[] projectNodes = new Node[projects.size()];
         int i = 0;
@@ -58,6 +63,14 @@ public class Projects {
         return projectNodes;
     }
 
+    /**
+     *
+     * @param <T>
+     * @param projectClass
+     * @param title
+     * @param comboBoxTitle
+     * @return
+     */
     public static <T extends Project> Collection<T> getSelectedOpenProject(Class<T> projectClass, String title, String comboBoxTitle) {
         Collection<Project> openProjects = new ArrayList<>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
         DialogPanel panel = new DialogPanel();
@@ -78,6 +91,14 @@ public class Projects {
         return Collections.emptyList();
     }
 
+    /**
+     *
+     * @param <T>
+     * @param projectClass
+     * @param title
+     * @param comboBoxTitle
+     * @return
+     */
     public static <T extends Project> Collection<T> getSelectedOpenProjects(Class<T> projectClass, String title, String comboBoxTitle) {
         Collection<Project> openProjects = new ArrayList<>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
         DialogPanel panel = new DialogPanel();

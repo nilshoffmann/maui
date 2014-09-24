@@ -30,8 +30,15 @@ package net.sf.maltcms.chromaui.project;
 import java.beans.PropertyEditorManager;
 import org.openide.modules.ModuleInstall;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class Installer extends ModuleInstall {
 
+    /**
+     *
+     */
     @Override
     public void restored() {
         String[] searchPath = PropertyEditorManager.getEditorSearchPath();

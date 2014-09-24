@@ -30,6 +30,8 @@ package maltcms.ui.fileHandles.properties.graph;
 import cross.datastructures.tuple.Tuple2D;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -37,7 +39,7 @@ import org.netbeans.api.visual.widget.Scene;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class PipelineElementWidget extends PipelineGeneralConfigWidget {
 
@@ -62,9 +64,9 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
 
     @Override
     public void setProperty(String key, Object value) {
-        System.out.println("Changing Key " + key);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Changing Key {0}", key);
         if (this.properties.containsKey(key) && key.endsWith(CLASS_NAME)) {
-            System.out.println("Have to remove old properties for " + key + ":" + this.properties.getProperty(key));
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Have to remove old properties for {0}:{1}", new Object[]{key, this.properties.getProperty(key)});
             removeKeysForClassNameKey((String) this.properties.getProperty(key));
         }
         super.setProperty(key, value);
@@ -116,24 +118,24 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
     }
 
     private void checkFurtherClassNames() {
-        System.out.println("Checking further class names");
+        Logger.getLogger(getClass().getName()).info("Checking further class names");
 //        List<String> keyset = new ArrayList<String>();
         Iterator keys = this.properties.getKeys();
         while (keys.hasNext()) {
             String key = (String) keys.next();
             if (key.endsWith(CLASS_NAME)) {
-                System.out.println("Loading Properties for " + key + "(" + this.properties.getProperty(key) + ")");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Loading Properties for {0}({1})", new Object[]{key, this.properties.getProperty(key)});
                 Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(this.properties.getProperty(key), this.getClass());
                 if (v != null) {
                     if (v.getFirst().isEmpty() && v.getSecond().isEmpty()) {
                         //maybe wrong name
-                        System.out.println("Configurations are empty!");
+                        Logger.getLogger(getClass().getName()).info("Configurations are empty!");
                     } else {
                         Iterator firstIter = v.getFirst().getKeys();
                         while (firstIter.hasNext()) {
                             String k1 = (String) firstIter.next();
                             if (!this.properties.containsKey(k1)) {
-                                System.out.println("Adding Key: " + k1 + ", Value: " + v.getFirst().getProperty(k1));
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding Key: {0}, Value: {1}", new Object[]{k1, v.getFirst().getProperty(k1)});
                                 this.properties.setProperty(k1, v.getFirst().getProperty(k1));
                             }
                         }
@@ -150,7 +152,7 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
             Iterator keys = v.getFirst().getKeys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                System.out.println("Removing Key: " + key);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Removing Key: {0}", key);
                 this.properties.clearProperty(key);
             }
             // TODO maybe "classname" has required/optional/provided vars too

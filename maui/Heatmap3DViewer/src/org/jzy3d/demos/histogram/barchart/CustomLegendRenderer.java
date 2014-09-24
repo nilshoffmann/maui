@@ -54,6 +54,7 @@ public class CustomLegendRenderer implements Renderer2d {
         this.c = c;
     }
 
+    @Override
     public void paint(Graphics g) {
         g.drawImage(toImage(100, 100), c.getRendererWidth() - 100, 0, null);
     }
@@ -63,16 +64,19 @@ public class CustomLegendRenderer implements Renderer2d {
                 new ColorMapper(new org.jzy3d.demos.histogram.barchart.AffinityColorGen(), 0f, 2f),
                 new AbstractTickProvider() {
 
+                    @Override
                     public double[] generateTicks(double min, double max, int steps) {
                         return new double[]{0f, 1f, 2f};
                     }
 
+                    @Override
                     public int getDefaultSteps() {
                         return 3;
                     }
                 },
                 new ITickRenderer() {
 
+                    @Override
                     public String format(double value) {
                         switch ((int) value) {
                             case 0:

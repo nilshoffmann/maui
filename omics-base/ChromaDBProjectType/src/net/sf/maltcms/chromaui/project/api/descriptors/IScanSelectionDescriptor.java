@@ -35,15 +35,38 @@ import maltcms.datastructures.ms.IScan;
  */
 public interface IScanSelectionDescriptor extends IBasicDescriptor {
 
+    /**
+     *
+     */
     public static final String PROP_SCAN = "scan";
+
+    /**
+     *
+     */
     public static final String PROP_CHROM_DESCRIPTOR = "chromatogramDescriptor";
 
+    /**
+     *
+     * @return
+     */
     public IScan getScan();
 
+    /**
+     *
+     * @param scan
+     */
     public void setScan(IScan scan);
 
+    /**
+     *
+     * @return
+     */
     public IChromatogramDescriptor getChromatogramDescriptor();
 
+    /**
+     *
+     * @param chromatogramDescriptor
+     */
     public void setChromatogramDescriptor(IChromatogramDescriptor chromatogramDescriptor);
 
 }

@@ -123,10 +123,18 @@ public class ModTimeAndScanRatePanel extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     *
+     * @return
+     */
     public double getModulationTimeValue() {
         return Double.parseDouble(this.jTextField1.getText());
     }
 
+    /**
+     *
+     * @return
+     */
     public double getScanRateValue() {
         return Double.parseDouble(this.jTextField2.getText());
     }

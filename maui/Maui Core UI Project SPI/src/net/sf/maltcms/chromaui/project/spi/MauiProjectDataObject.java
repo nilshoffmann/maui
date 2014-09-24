@@ -60,10 +60,8 @@ public class MauiProjectDataObject extends MultiDataObject {
             } else {
                 return Node.EMPTY;
             }
-        } catch (IOException ex) {
+        } catch (IOException | NullPointerException ex) {
             Exceptions.printStackTrace(ex);
-        } catch (NullPointerException npe) {
-            Exceptions.printStackTrace(npe);
         }
         return Node.EMPTY;
     }

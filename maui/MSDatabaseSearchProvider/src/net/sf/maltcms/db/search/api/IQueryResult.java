@@ -38,16 +38,42 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
  */
 public interface IQueryResult<T> extends Serializable {
 
+    /**
+     *
+     * @return
+     */
     public double getRetentionIndex();
 
+    /**
+     *
+     * @return
+     */
     public List<IMetabolite> getMetabolites();
 
+    /**
+     *
+     * @param metabolite
+     * @return
+     */
     public double getScoreFor(IMetabolite metabolite);
 
+    /**
+     *
+     * @param metabolite
+     * @return
+     */
     public double getRiFor(IMetabolite metabolite);
 
+    /**
+     *
+     * @return
+     */
     public IDatabaseDescriptor getDatabaseDescriptor();
 
+    /**
+     *
+     * @return
+     */
     public T getScan();
 
 }

@@ -97,16 +97,52 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
     private final CrosshairOverlay crosshairOverlay;
     private final ScheduledExecutorService ses = newScheduledThreadPool(1);
     private FlashRunnable flashRunner = null;
+
+    /**
+     *
+     */
     public static final String PROP_SELECTION_FILL_COLOR = "selectionFillColor";
+
+    /**
+     *
+     */
     public static final String PROP_HOVER_FILL_COLOR = "hoverFillColor";
+
+    /**
+     *
+     */
     public static final String PROP_HOVER_SCALE_X = "hoverScaleX";
+
+    /**
+     *
+     */
     public static final String PROP_HOVER_SCALE_Y = "hoverScaleY";
+
+    /**
+     *
+     */
     public static final String PROP_FILL_ALPHA = "fillAlpha";
+
+    /**
+     *
+     */
     public static final String PROP_SELECTION = "selection";
+
+    /**
+     *
+     */
     public static final String PROP_HOVER_SELECTION = "hoverSelection";
     private boolean drawFlashSelection = false;
     private boolean disableFlash = false;
 
+    /**
+     *
+     * @param selectionFillColor
+     * @param hoverFillColor
+     * @param hoverScaleX
+     * @param hoverScaleY
+     * @param fillAlpha
+     */
     public SelectionOverlay(Color selectionFillColor, Color hoverFillColor, float hoverScaleX, float hoverScaleY, float fillAlpha) {
         super("Selection", "Selection", "Overlay for chart item entity selection", true);
         this.selectionFillColor = selectionFillColor;
@@ -129,6 +165,9 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         selectionLookupResult.addLookupListener(this);
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         ISelection oldHover = mouseHoverSelection;
@@ -139,20 +178,36 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public ISelection getMouseHoverSelection() {
         return mouseHoverSelection;
     }
 
+    /**
+     *
+     * @return
+     */
     public Set<ISelection> getMouseClickSelection() {
         synchronized (this.mouseClickSelection) {
             return unmodifiableSet(new LinkedHashSet<>(this.mouseClickSelection));
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public Color getSelectionFillColor() {
         return selectionFillColor;
     }
 
+    /**
+     *
+     * @param selectionFillColor
+     */
     public void setSelectionFillColor(Color selectionFillColor) {
         Color old = this.selectionFillColor;
         this.selectionFillColor = selectionFillColor;
@@ -160,10 +215,18 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public Color getHoverFillColor() {
         return hoverFillColor;
     }
 
+    /**
+     *
+     * @param hoverFillColor
+     */
     public void setHoverFillColor(Color hoverFillColor) {
         Color old = this.hoverFillColor;
         this.hoverFillColor = hoverFillColor;
@@ -171,10 +234,18 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public float getHoverScaleX() {
         return hoverScaleX;
     }
 
+    /**
+     *
+     * @param hoverScaleX
+     */
     public void setHoverScaleX(float hoverScaleX) {
         float old = this.hoverScaleX;
         this.hoverScaleX = hoverScaleX;
@@ -182,10 +253,18 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public float getHoverScaleY() {
         return hoverScaleY;
     }
 
+    /**
+     *
+     * @param hoverScaleY
+     */
     public void setHoverScaleY(float hoverScaleY) {
         float old = this.hoverScaleY;
         this.hoverScaleY = hoverScaleY;
@@ -193,10 +272,18 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public float getFillAlpha() {
         return fillAlpha;
     }
 
+    /**
+     *
+     * @param fillAlpha
+     */
     public void setFillAlpha(float fillAlpha) {
         float old = this.fillAlpha;
         this.fillAlpha = fillAlpha;
@@ -204,6 +291,11 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @param g2
+     * @param chartPanel
+     */
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
         if (chartPanel.getChart().getAntiAlias()) {
@@ -327,6 +419,10 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         }
     }
 
+    /**
+     *
+     * @param ce
+     */
     @Override
     public void selectionStateChanged(SelectionChangeEvent ce) {
         ISelection selection = ce.getSelection();
@@ -366,15 +462,27 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setDrawFlashSelection(boolean b) {
         this.drawFlashSelection = b;
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDrawFlashSelection() {
         return drawFlashSelection;
     }
 
+    /**
+     *
+     * @param le
+     */
     @Override
     public void resultChanged(LookupEvent le) {
         flashSelection.clear();
@@ -433,6 +541,10 @@ public class SelectionOverlay extends AbstractChartOverlay implements ChartOverl
         }
     };
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Node createNodeDelegate() {
         Node node = null;

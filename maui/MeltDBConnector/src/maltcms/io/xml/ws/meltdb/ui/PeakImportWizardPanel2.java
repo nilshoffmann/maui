@@ -34,6 +34,10 @@ import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyChangeListener {
 
     /**
@@ -47,13 +51,24 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyC
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
-    public Component getComponent() {
+
+    /**
+     *
+     * @return
+     */
+    @Override
+        public Component getComponent() {
         if (component == null) {
             component = new PeakImportVisualPanel2();
         }
         return component;
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public HelpCtx getHelp() {
         // Show no Help button for this panel:
         return HelpCtx.DEFAULT_HELP;
@@ -61,6 +76,11 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyC
         // return new HelpCtx(SampleWizardPanel1.class);
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public boolean isValid() {
         // If it is always OK to press Next or Finish, then:
         return true;
@@ -71,9 +91,19 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyC
         // and uncomment the complicated stuff below.
     }
 
+    /**
+     *
+     * @param l
+     */
+    @Override
     public final void addChangeListener(ChangeListener l) {
     }
 
+    /**
+     *
+     * @param l
+     */
+    @Override
     public final void removeChangeListener(ChangeListener l) {
     }
     /*
@@ -104,7 +134,13 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyC
     // settings object will be the WizardDescriptor, so you can use
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
-    public void readSettings(Object settings) {
+
+    /**
+     *
+     * @param settings
+     */
+    @Override
+        public void readSettings(Object settings) {
         if (settings instanceof WizardDescriptor) {
 //            ((PeakImportVisualPanel1) getComponent()).setNameField(((WizardDescriptor) settings).getProperty(PeakImportVisualPanel1.PROP_USERNAME));
             getComponent().addPropertyChangeListener(this);
@@ -116,6 +152,11 @@ public class PeakImportWizardPanel2 implements WizardDescriptor.Panel, PropertyC
         }
     }
 
+    /**
+     *
+     * @param settings
+     */
+    @Override
     public void storeSettings(Object settings) {
 //        if (model != null) {
 //            model.putProperty(PeakImportVisualPanel1.PROP_USERNAME, ((PeakImportVisualPanel1) getComponent()).getNameField());

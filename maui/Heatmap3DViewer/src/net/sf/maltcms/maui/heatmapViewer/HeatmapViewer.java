@@ -79,7 +79,7 @@ public class HeatmapViewer {
                 boolean fastTesselation = true;
                 cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
                         fastTesselation, (int) bi.getWidth() / 4, (int) bi.getHeight() / 4);
-                System.out.println("Tesselating " + (int) bi.getWidth() / 4 + "x" + (int) bi.getHeight() / 4);
+                Logger.getLogger(HeatmapViewer.class.getName()).log(Level.INFO, "Tesselating {0}x{1}", new Object[]{(int) bi.getWidth() / 4, (int) bi.getHeight() / 4});
                 chart.getScene().getGraph().add(cc);
                 cc.setLegend(new AWTColorbarLegend(cc, chart.getView().getAxe().getLayout()));
                 cc.setLegendDisplayed(true);
@@ -93,7 +93,7 @@ public class HeatmapViewer {
                 int xpos = (int) (roi.x + (int) (Math.random() * (roi.width)));
                 int ypos = (int) (roi.y + (int) (Math.random() * (roi.height)));
                 String item = xpos + " " + ypos;
-                BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
+                BarChartBar<String> bcb = new BarChartBar<>(chart, item,
                         item);
                 bcb.setPickingId(i);
                 pickingSupport.registerDrawableObject(bcb, item);
@@ -114,16 +114,17 @@ public class HeatmapViewer {
             NewtCameraMouseController mouse = new NewtCameraMouseController();
             mouse.register(chart);
             mouse.addControllerEventListener(new ControllerEventListener() {
+                @Override
                 public void controllerEventFired(ControllerEvent e) {
                     if (e.getType() == ControllerType.PAN) {
-                        System.out.println("Mouse[PAN]: " + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[PAN]: {0}", e.getValue());
 
                     } else if (e.getType() == ControllerType.SHIFT) {
-                        System.out.println("Mouse[SHIFT]: " + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[SHIFT]: {0}", e.getValue());
                     } else if (e.getType() == ControllerType.ZOOM) {
-                        System.out.println("Mouse[ZOOM]: " + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[ZOOM]: {0}", e.getValue());
                     } else if (e.getType() == ControllerType.ROTATE) {
-                        System.out.println("Mouse[ROTATE]:" + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[ROTATE]:{0}", e.getValue());
                     }
                 }
             });

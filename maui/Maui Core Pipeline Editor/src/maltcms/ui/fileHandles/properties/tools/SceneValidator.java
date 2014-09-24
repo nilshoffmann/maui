@@ -42,7 +42,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class SceneValidator {
 
@@ -75,7 +75,7 @@ public class SceneValidator {
 //        Factory.getInstance().
 
         ICommandSequence cs = new CommandPipeline();
-        List<IFragmentCommand> p = new ArrayList<IFragmentCommand>();
+        List<IFragmentCommand> p = new ArrayList<>();
         for (PipelineElementWidget w : pipeline) {
             try {
                 p.add((IFragmentCommand) Factory.getInstance().getObjectFactory().instantiate(Class.forName(w.getClassName())));

@@ -31,7 +31,7 @@ import org.netbeans.swing.etable.QuickFilter;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class IndexedQuickFilter<T> implements QuickFilter {
 

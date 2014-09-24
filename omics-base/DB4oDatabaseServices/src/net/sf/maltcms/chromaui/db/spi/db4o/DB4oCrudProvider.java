@@ -36,7 +36,10 @@ import com.db4o.defragment.Defragment;
 import com.db4o.defragment.DefragmentConfig;
 import com.db4o.diagnostic.DiagnosticToConsole;
 import com.db4o.ext.DatabaseFileLockedException;
+import com.db4o.ext.DatabaseReadOnlyException;
 import com.db4o.ext.Db4oIOException;
+import com.db4o.ext.IncompatibleFileFormatException;
+import com.db4o.ext.OldFormatException;
 import com.db4o.io.CachingStorage;
 import com.db4o.io.FileStorage;
 import com.db4o.io.Storage;
@@ -138,7 +141,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
                             DialogDisplayer.getDefault().notify(nd);
                             return;
                         }
-                    } catch (Exception e) {
+                    } catch (Db4oIOException | DatabaseFileLockedException | IncompatibleFileFormatException | OldFormatException | DatabaseReadOnlyException e) {
                         Exceptions.printStackTrace(e);
                     } finally {
                         if (c != null) {
@@ -153,7 +156,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
                     config.objectCommitFrequency(10000);
                     config.forceBackupDelete(true);
                     EmbeddedConfiguration configuration = configure();
-                    Logger.getLogger(DB4oCrudProvider.class.getName()).info("Setting maximum database size to " + (blockSize * 2) + " GBytes");
+                    Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Setting maximum database size to {0} GBytes", (blockSize * 2));
                     configuration.file().blockSize(blockSize);
                     config.db4oConfig(configuration);
                     Defragment.defrag(config);
@@ -194,7 +197,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
                 //database file already opened 
                 NotifyDescriptor nd = new NotifyDescriptor.Message("Database file " + projectDBLocation.getAbsolutePath() + " is locked by another process! Please close other programs acessing the database file before retrying!", NotifyDescriptor.ERROR_MESSAGE);
                 DialogDisplayer.getDefault().notify(nd);
-            } catch (Exception e) {
+            } catch (Db4oIOException | IncompatibleFileFormatException | OldFormatException | DatabaseReadOnlyException e) {
                 Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.WARNING, "Caught unhandled exception, closing database {0}", projectDBLocation.getAbsolutePath());
                 if (eoc != null) {
                     eoc.close();

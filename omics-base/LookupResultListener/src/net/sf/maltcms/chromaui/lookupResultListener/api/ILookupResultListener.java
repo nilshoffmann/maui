@@ -37,10 +37,21 @@ import org.openide.util.LookupListener;
  */
 public interface ILookupResultListener extends LookupListener {
 
+    /**
+     *
+     */
     void deregister();
 
+    /**
+     *
+     * @param targetLookup
+     */
     void register(Lookup targetLookup);
 
+    /**
+     *
+     * @param result
+     */
     @Override
     void resultChanged(LookupEvent result);
 

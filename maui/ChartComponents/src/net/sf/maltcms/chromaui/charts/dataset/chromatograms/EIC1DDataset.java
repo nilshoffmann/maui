@@ -34,6 +34,8 @@ import cross.exception.ResourceNotAvailableException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
 import maltcms.tools.MaltcmsTools;
@@ -64,11 +66,30 @@ public class EIC1DDataset extends ADataset1D<IChromatogram1D, IScan> {
     private final MAMath.MinMax domain, range;
     private final Lookup lookup;
 
+    /**
+     *
+     */
     public static enum TYPE {
 
-        SUM, CO
+        /**
+         *
+         */
+        SUM, 
+
+        /**
+         *
+         */
+        CO
     };
 
+    /**
+     *
+     * @param l
+     * @param masses
+     * @param massResolution
+     * @param type
+     * @param lookup
+     */
     public EIC1DDataset(List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> l, double[] masses, double massResolution, TYPE type, Lookup lookup) {
         super(l, new IDisplayPropertiesProvider() {
             @Override
@@ -125,8 +146,8 @@ public class EIC1DDataset extends ADataset1D<IChromatogram1D, IScan> {
                 return getTargetShortDescription(selection);
             }
         });
-        seriesKeys = new LinkedHashMap<Integer, Comparable>();
-        seriesIndexMap = new LinkedHashMap<Integer, Integer>();
+        seriesKeys = new LinkedHashMap<>();
+        seriesIndexMap = new LinkedHashMap<>();
         MAMath.MinMax domainMM = new MAMath.MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MAMath.MinMax rangeMM = new MAMath.MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         int nseries = 0;
@@ -165,7 +186,7 @@ public class EIC1DDataset extends ADataset1D<IChromatogram1D, IScan> {
                         rangeMM = new MAMath.MinMax(Math.min(rangeMM.min, _value1.min), Math.max(rangeMM.max, _value1.max));
                         seriesIndexMap.put(idx, i);
                         String seriesName = fileFragment.getName() + " EICS:" + mzRanges.toString();
-                        System.out.println("Adding series " + seriesName);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding series {0}", seriesName);
                         seriesKeys.put(idx, seriesName);
                         domainVariableValues[idx] = defaultDomainArr;
                         domainVariableValueRanks[idx] = DatasetUtils.ranks((double[]) defaultDomainArr.get1DJavaArray(double.class), false);
@@ -211,145 +232,286 @@ public class EIC1DDataset extends ADataset1D<IChromatogram1D, IScan> {
                 }
                 break;
         }
-        System.out.println("Building chromatogram eic 1d dataset with " + nseries + " series");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Building chromatogram eic 1d dataset with {0} series", nseries);
 
-        System.out.println("Done!");
+        Logger.getLogger(getClass().getName()).info("Done!");
         this.domain = domainMM;
         this.range = rangeMM;
         this.lookup = new ProxyLookup(super.getLookup(), lookup);
     }
 
+    /**
+     *
+     * @param seriesIndex
+     * @param itemIndex
+     * @return
+     */
     @Override
     public IScan getTarget(int seriesIndex, int itemIndex) {
         return super.targetProvider.get(seriesIndexMap.get(seriesIndex)).get(getRanks()[seriesIndex][itemIndex]);
     }
 
+    /**
+     *
+     * @param seriesIndex
+     * @return
+     */
     @Override
     public IChromatogram1D getSource(int seriesIndex) {
         return super.targetProvider.get(seriesIndexMap.get(seriesIndex)).getSource();
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     @Override
     public Comparable<?> getSeriesKey(int i) {
         return seriesKeys.get(i);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return this.lookup;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public DomainOrder getDomainOrder() {
         return DomainOrder.ASCENDING;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDefaultDomainVariable() {
         return defaultDomainVariable;
     }
 
+    /**
+     *
+     * @param defaultDomainVariable
+     */
     public void setDefaultDomainVariable(String defaultDomainVariable) {
         this.defaultDomainVariable = defaultDomainVariable;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDefaultRangeVariable() {
         return defaultRangeVariable;
     }
 
+    /**
+     *
+     * @param defaultRangeVariable
+     */
     public void setDefaultRangeVariable(String defaultRangeVariable) {
         this.defaultRangeVariable = defaultRangeVariable;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getSeriesCount() {
         return seriesKeys.size();
     }
 
+    /**
+     *
+     * @param series
+     * @return
+     */
     @Override
     public int getItemCount(int series) {
         return domainVariableValues[series].getShape()[0];
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public Number getX(int series, int item) {
         return domainVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public Number getY(int series, int item) {
         return rangeVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public double getXValue(int series, int item) {
         return domainVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
+    /**
+     *
+     * @param series
+     * @param item
+     * @return
+     */
     @Override
     public double getYValue(int series, int item) {
         return rangeVariableValues[series].getDouble(domainVariableValueRanks[series][item]);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMinX() {
         return domain.min;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMaxX() {
         return domain.max;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMinY() {
         return range.min;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMaxY() {
         return range.max;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int[][] getRanks() {
         return domainVariableValueRanks;
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getStartX(int i, int i1) {
         return getX(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getStartXValue(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getEndX(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getEndXValue(int i, int i1) {
         return getXValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getStartY(int i, int i1) {
         return getY(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getStartYValue(int i, int i1) {
         return getYValue(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public Number getEndY(int i, int i1) {
         return getY(i, i1);
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public double getEndYValue(int i, int i1) {
         return getYValue(i, i1);

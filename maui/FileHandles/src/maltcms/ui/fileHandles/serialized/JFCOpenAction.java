@@ -32,14 +32,23 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import org.openide.loaders.DataObject;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class JFCOpenAction implements ActionListener {
 
     private final List<DataObject> context;
 
+    /**
+     *
+     * @param context
+     */
     public JFCOpenAction(List<DataObject> context) {
         this.context = context;
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         for (DataObject dataObject : context) {
             //FIXME

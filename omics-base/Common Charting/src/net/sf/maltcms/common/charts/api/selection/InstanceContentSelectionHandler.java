@@ -47,9 +47,25 @@ import org.openide.util.lookup.InstanceContent;
  */
 public class InstanceContentSelectionHandler implements ISelectionChangeListener {
 
+    /**
+     *
+     */
     public enum Mode {
 
-        ON_CLICK, ON_HOVER, ON_KEY
+        /**
+         *
+         */
+        ON_CLICK, 
+
+        /**
+         *
+         */
+        ON_HOVER, 
+
+        /**
+         *
+         */
+        ON_KEY
     };
     private final InstanceContent content;
     private final Deque<ISelection> activeSelection = new LinkedList<>();
@@ -59,11 +75,26 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
     private Lookup.Provider dataset;
     private Node selectionOverlayNode;
 
+    /**
+     *
+     * @param content
+     * @param overlay
+     * @param mode
+     * @param dataset
+     */
     public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, Lookup.Provider dataset) {
         this(content, overlay, mode, dataset, Integer.MAX_VALUE);
         updateNode();
     }
 
+    /**
+     *
+     * @param content
+     * @param overlay
+     * @param mode
+     * @param dataset
+     * @param capacity
+     */
     public InstanceContentSelectionHandler(InstanceContent content, SelectionOverlay overlay, Mode mode, Lookup.Provider dataset, int capacity) {
         this.content = content;
         this.overlay = overlay;
@@ -72,11 +103,19 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         this.capacity = capacity;
     }
 
+    /**
+     *
+     * @param mode
+     */
     public void setMode(Mode mode) {
         clear();
         this.mode = mode;
     }
 
+    /**
+     *
+     * @param dataset
+     */
     public void setDataset(Lookup.Provider dataset) {
         this.dataset = dataset;
         updateNode();
@@ -113,6 +152,9 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         updateNode();
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         for (Object pt : activeSelection) {
@@ -123,6 +165,10 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         updateNode();
     }
 
+    /**
+     *
+     * @param ce
+     */
     @Override
     public void selectionStateChanged(SelectionChangeEvent ce) {
         if (ce.getSelection() != null) {

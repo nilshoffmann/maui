@@ -27,15 +27,13 @@
  */
 package net.sf.maltcms.chromaui.statistics.view.propertyEditors;
 
+import java.awt.Component;
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
 
-/**
- *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
- */
-public class FloatArrayPropertyEditor extends PropertyEditorSupport {
 
+public class FloatArrayPropertyEditor extends PropertyEditorSupport {
+    
     @Override
     public String getAsText() {
         float[] d = (float[]) getValue();

@@ -35,6 +35,10 @@ import cross.datastructures.fragments.IFileFragment;
  */
 public interface IFileFragmentDataObject {
 
+    /**
+     *
+     * @return
+     */
     IFileFragment getFragment();
 
 }

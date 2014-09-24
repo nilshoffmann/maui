@@ -138,7 +138,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 
     protected List<FileObject> getFileChildren() {
         FileObject[] fo = cp.getProjectDirectory().getChildren();
-        List<FileObject> children = new ArrayList<FileObject>(fo.length);
+        List<FileObject> children = new ArrayList<>(fo.length);
         children.addAll(Arrays.asList(fo));
         return children;
     }
@@ -220,7 +220,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 
     protected List<IContainer> filter(Collection<IContainer> l,
             Class<? extends IContainer>... toFilter) {
-        List<IContainer> r = new ArrayList<IContainer>();
+        List<IContainer> r = new ArrayList<>();
         for (IContainer ic : l) {
             if (Thread.interrupted()) {
                 return Collections.emptyList();

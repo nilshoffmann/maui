@@ -49,6 +49,15 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
     private final List<ChartOverlay> overlays;
     private final IChromatogramDescriptor descriptor;
 
+    /**
+     *
+     * @param descriptor
+     * @param name
+     * @param displayName
+     * @param shortDescription
+     * @param visibilityChangeable
+     * @param children
+     */
     public ChromatogramDescriptorOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, List<ChartOverlay> children) {
         super(name, displayName, shortDescription, visibilityChangeable);
         this.descriptor = descriptor;
@@ -56,11 +65,20 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
         super.content.add(descriptor);
     }
 
+    /**
+     *
+     * @param g2
+     * @param chartPanel
+     */
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
 
     }
 
+    /**
+     *
+     * @param b
+     */
     @Override
     public void setVisible(boolean b) {
         boolean old = super.isVisible();
@@ -73,6 +91,10 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @param ce
+     */
     @Override
     public void selectionStateChanged(SelectionChangeEvent ce) {
         //TODO implement peak descriptor selection
@@ -111,14 +133,25 @@ public class ChromatogramDescriptorOverlay extends AbstractChartOverlay implemen
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<ChartOverlay> getOverlays() {
         return overlays;
     }
 
+    /**
+     *
+     * @return
+     */
     public IChromatogramDescriptor getDescriptor() {
         return descriptor;
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
 

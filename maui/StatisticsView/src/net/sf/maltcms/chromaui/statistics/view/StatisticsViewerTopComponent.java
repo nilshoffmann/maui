@@ -168,7 +168,7 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
         } else {
             return;
         }
-        HashSet<String> whiteList = new HashSet<String>(Arrays.asList("groupSize",
+        HashSet<String> whiteList = new HashSet<>(Arrays.asList("groupSize",
                 "pvalueAdjustmentMethod", "pvalues", "factors", "fvalues", "degreesOfFreedom"));
         if (descriptor != null) {
 //        container.addMembers(iter.toArray(new IStatisticsDescriptor[iter.size()]));
@@ -180,7 +180,7 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
                 remove(view);
             }
 
-            HashSet<ColumnDescriptor> columns = new HashSet<ColumnDescriptor>();
+            HashSet<ColumnDescriptor> columns = new HashSet<>();
 
             for (IBasicDescriptor sdesc : descriptor.getMembers()) {
                 try {

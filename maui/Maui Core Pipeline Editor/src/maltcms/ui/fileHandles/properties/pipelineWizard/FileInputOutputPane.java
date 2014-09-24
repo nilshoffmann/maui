@@ -41,10 +41,12 @@ import javax.swing.filechooser.FileFilter;
 import org.netbeans.spi.wizard.WizardPage;
 
 import cross.tools.StringTools;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class FileInputOutputPane extends WizardPage {
 
@@ -92,7 +94,7 @@ public class FileInputOutputPane extends WizardPage {
         // System.out.println("Validate component called");
         // if(component!=null) {
         // System.out.println(" on component: "+component.getName());
-        ArrayList<String> lastMessage = new ArrayList<String>();
+        ArrayList<String> lastMessage = new ArrayList<>();
         // System.out.println("Input file list: " + valueFrom(this.jList1));
         if (this.dlm.getSize() < 2) {
             lastMessage.add("Please select at least two input files!");
@@ -455,8 +457,7 @@ public class FileInputOutputPane extends WizardPage {
                                 this.dlm.addElement(file.getAbsolutePath());
                             }
                         } else {
-                            System.err.println("File " + file.getAbsolutePath()
-                                    + " is not a regular file!");
+                            Logger.getLogger(getClass().getName()).log(Level.WARNING, "File {0} is not a regular file!", file.getAbsolutePath());
                         }
                     }
                     cwd = f[0].getParentFile();

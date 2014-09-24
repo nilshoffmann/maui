@@ -60,7 +60,7 @@ import ucar.ma2.Array;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class PeakAlignmentImporter extends AProgressAwareRunnable {
@@ -75,19 +75,19 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
             progressHandle.progress("Importing alignment file");
             CSVReader csvr = new CSVReader();
             try {
-                LinkedHashSet<IChromatogramDescriptor> chromatograms = new LinkedHashSet<IChromatogramDescriptor>(project.getChromatograms());
+                LinkedHashSet<IChromatogramDescriptor> chromatograms = new LinkedHashSet<>(project.getChromatograms());
                 Tuple2D<Vector<Vector<String>>, Vector<String>> table = csvr.read(alignmentFile.toURI().toURL().openStream());
                 if (table.getFirst().isEmpty()) {
                     DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Could not import multiple alignment! File is empty! ", NotifyDescriptor.WARNING_MESSAGE));
                 }
                 //map chromatograms in output directory of alignmentFile to retrieve scan_acquisition_time for each peak
-                HashMap<String, IChromatogramDescriptor> nameToPeakFileFragments = new HashMap<String, IChromatogramDescriptor>();
+                HashMap<String, IChromatogramDescriptor> nameToPeakFileFragments = new HashMap<>();
 
-                HashMap<Integer, IChromatogramDescriptor> indexToChrom = new HashMap<Integer, IChromatogramDescriptor>();
+                HashMap<Integer, IChromatogramDescriptor> indexToChrom = new HashMap<>();
                 Vector<String> header = table.getSecond();
                 int index = 0;
-                final HashMap<String, IChromatogramDescriptor> nameToChrom = new HashMap<String, IChromatogramDescriptor>();
-                HashMap<IChromatogramDescriptor, Collection<Peak1DContainer>> chromToPeaks = new HashMap<IChromatogramDescriptor, Collection<Peak1DContainer>>();
+                final HashMap<String, IChromatogramDescriptor> nameToChrom = new HashMap<>();
+                HashMap<IChromatogramDescriptor, Collection<Peak1DContainer>> chromToPeaks = new HashMap<>();
                 for (IChromatogramDescriptor descr : project.getChromatograms()) {
                     nameToChrom.put(StringTools.removeFileExt(new File(descr.getResourceLocation()).getName()), descr);
                 }
@@ -126,7 +126,7 @@ public class PeakAlignmentImporter extends AProgressAwareRunnable {
                     pgd.setDisplayName("group-" + (rowIdx + 1));
                     progressHandle.progress("Adding group " + (rowIdx + 1), rowIdx + 1);
                     Logger.getLogger(MaltcmsPeakFinderImporter.class.getName()).log(Level.FINE, "Adding group {0}", pgd.getDisplayName());
-                    List<IPeakAnnotationDescriptor> descriptors = new ArrayList<IPeakAnnotationDescriptor>();
+                    List<IPeakAnnotationDescriptor> descriptors = new ArrayList<>();
                     int colIdx = 0;
                     for (String element : row) {
                         if (!element.trim().equals("-")) {

@@ -29,6 +29,10 @@ package maltcms.io.xml.ws.meltdb.ui;
 
 import javax.swing.JPanel;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class PeakImportVisualPanel4 extends JPanel {
 
     /**

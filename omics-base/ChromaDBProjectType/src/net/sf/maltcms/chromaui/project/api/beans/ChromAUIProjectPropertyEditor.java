@@ -37,6 +37,9 @@ import org.netbeans.api.project.ProjectUtils;
  */
 public class ChromAUIProjectPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public ChromAUIProjectPropertyEditor() {
     }
 

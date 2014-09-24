@@ -68,7 +68,7 @@ public class Chromatogram1DHeatmapViewerLoaderTask extends AProgressAwareRunnabl
         try {
             progressHandle.start();
             progressHandle.progress("Creating dataset");
-            List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>();
+            List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>();
             if (!(chromatogram.getChromatogram() instanceof IChromatogram1D)) {
                 throw new IllegalArgumentException("Action only on 1D chromatograms!");
             }

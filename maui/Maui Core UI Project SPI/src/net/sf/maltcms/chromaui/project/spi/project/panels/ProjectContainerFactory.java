@@ -44,7 +44,7 @@ import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 class ProjectContainerFactory extends ChildFactory<IContainer> implements
         PropertyChangeListener {

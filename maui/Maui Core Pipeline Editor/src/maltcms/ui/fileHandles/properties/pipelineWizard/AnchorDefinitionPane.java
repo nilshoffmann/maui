@@ -40,6 +40,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -55,7 +56,7 @@ import org.openide.util.NotImplementedException;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class AnchorDefinitionPane extends WizardPage implements
         ListDataListener, TableModelListener {
@@ -302,8 +303,7 @@ public class AnchorDefinitionPane extends WizardPage implements
                 // System.out.println("Table model for "+key+" = "+dtm2.getDataVector());
                 // for(int i=0;i<dtm2.getRowCount();i++) {
                 // if(dtm2.getValueAt(i, 0).equals(key)) {
-                dtm2.addRow(new Object[]{"Anchor" + this.anchorID,
-                    new Integer(-1)});
+                dtm2.addRow(new Object[]{"Anchor" + this.anchorID, -1});
                 hasSaved = false;
 				// this.jTable1.setModel(dtm2);
                 // this.jTable1.tableChanged(new
@@ -394,7 +394,7 @@ public class AnchorDefinitionPane extends WizardPage implements
                 };
                 dtm1.addTableModelListener(this);
                 dtm1.setValueAt("Anchor" + this.anchorID, 0, 0);
-                dtm1.setValueAt(new Integer(-1), 0, 1);
+                dtm1.setValueAt(-1, 0, 1);
                 this.fileToAnchorsMap.put(file, dtm1);
                 this.jTable1.setModel(dtm1);
                 this.jTable1.setColumnSelectionInterval(0, dtm1
@@ -431,7 +431,7 @@ public class AnchorDefinitionPane extends WizardPage implements
                 // System.out.println("FirstLine: "+firstLine);
                 s[i++] = firstLine;
             } catch (IOException ex) {
-                System.err.println(ex.getLocalizedMessage());
+                Logger.getLogger(getClass().getName()).warning(ex.getLocalizedMessage());
             }
         }
         return s;
@@ -460,6 +460,7 @@ public class AnchorDefinitionPane extends WizardPage implements
         final HashMap<String, DefaultTableModel> fta = this.fileToAnchorsMap;
         Runnable r = new Runnable() {
 
+            @Override
             public void run() {
                 // if the model has no rows, skip
                 if (jTable1.getModel().getRowCount() > 0) {
@@ -476,7 +477,7 @@ public class AnchorDefinitionPane extends WizardPage implements
                         if (save == JFileChooser.APPROVE_OPTION) {
                             setEnabled(false);
                             File outputDir = jfc.getSelectedFile();
-                            ArrayList<String> anchorFiles = new ArrayList<String>();
+                            ArrayList<String> anchorFiles = new ArrayList<>();
                             for (String key : fls) {
                                 File output = new File(outputDir,
                                         new File(StringTools.removeFileExt(key)
@@ -542,15 +543,15 @@ public class AnchorDefinitionPane extends WizardPage implements
                                 // File(outputDir,fnameNoSuffix+".txt");
                                 cwd = output.getParentFile();
                                 try {
-                                    PrintWriter bw = new PrintWriter(
+                                    try (PrintWriter bw = new PrintWriter(
                                             new BufferedWriter(new FileWriter(
-                                                            output)));
-                                    bw.append(sb.toString());
-                                    bw.flush();
-                                    bw.close();
+                                                    output)))) {
+                                        bw.append(sb.toString());
+                                        bw.flush();
+                                    }
                                     anchorFiles.add(output.getAbsolutePath());
                                 } catch (IOException e) {
-                                    System.err.println(e.getLocalizedMessage());
+                                    Logger.getLogger(getClass().getName()).warning(e.getLocalizedMessage());
                                 }
                                 StringBuffer sb2 = new StringBuffer();
                                 for (int i = 0; i < anchorFiles.size(); i++) {
@@ -563,7 +564,7 @@ public class AnchorDefinitionPane extends WizardPage implements
                                 hasSaved = true;
                                 putWizardData("anchors.location", sb2
                                         .toString());
-                                putWizardData("anchors.use", new Boolean(true));
+                                putWizardData("anchors.use", true);
                             }
 
                             setEnabled(true);
@@ -584,9 +585,9 @@ public class AnchorDefinitionPane extends WizardPage implements
     private boolean checkAnchors(final HashSet<String> fls,
             final HashMap<String, DefaultTableModel> fta) {
         int n = 0;
-        HashSet<String> anchorNames = new HashSet<String>();
+        HashSet<String> anchorNames = new HashSet<>();
         for (String key : fls) {
-            HashSet<String> localNames = new HashSet<String>();
+            HashSet<String> localNames = new HashSet<>();
             DefaultTableModel dtm = fta.get(key);
             int lastIndex = -1;
             if (dtm != null) {
@@ -861,14 +862,14 @@ public class AnchorDefinitionPane extends WizardPage implements
 
     private DefaultTableModel dtm = new DefaultTableModel();
     private String longestString = "";
-    private HashSet<String> files = new HashSet<String>();
+    private HashSet<String> files = new HashSet<>();
     private DefaultComboBoxModel dlm = new DefaultComboBoxModel();
     private String activeFile = null;
     private int anchorID = 1;
     private File cwd = null;
     private boolean hasSaved = true;
     private boolean hasLoaded = false;
-    private HashMap<String, DefaultTableModel> fileToAnchorsMap = new HashMap<String, DefaultTableModel>();
+    private HashMap<String, DefaultTableModel> fileToAnchorsMap = new HashMap<>();
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JButton jButton1;
@@ -882,14 +883,17 @@ public class AnchorDefinitionPane extends WizardPage implements
 	private javax.swing.JTable jTable1;
 
 	// End of variables declaration//GEN-END:variables
+    @Override
     public void intervalAdded(ListDataEvent e) {
         contentsChanged(e);
     }
 
+    @Override
     public void intervalRemoved(ListDataEvent e) {
 
     }
 
+    @Override
     public void contentsChanged(ListDataEvent e) {
         // System.out.println("Model contents changed on "+e.toString());
         // this.hasSaved = false;

@@ -151,6 +151,10 @@ public class XYNoBlockRenderer extends XYBlockRenderer {
 
     }
 
+    /**
+     *
+     * @param t
+     */
     public void setEntityThreshold(double t) {
         this.entityThreshold = t;
     }

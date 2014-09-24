@@ -58,7 +58,7 @@ public class ScanDatabaseQuery implements IQuery<IScan> {
 
     @Override
     public List<QueryResultList<IScan>> call() throws Exception {
-        MpaxsCompletionService<QueryResultList<IScan>> mcs = new MpaxsCompletionService<QueryResultList<IScan>>(
+        MpaxsCompletionService<QueryResultList<IScan>> mcs = new MpaxsCompletionService<>(
                 Executors.newFixedThreadPool(Math.min(1, Runtime.getRuntime().
                                 availableProcessors() - 1)), 30, TimeUnit.MINUTES, false);
         for (IDatabaseDescriptor descr : databaseDescriptors) {
@@ -70,11 +70,11 @@ public class ScanDatabaseQuery implements IQuery<IScan> {
     }
 
     private List<IQueryInput<IScan>> buildInput(IScan[] queryScans, RetentionIndexCalculator retentionIndexCalculator) {
-        List<IQueryInput<IScan>> input = new ArrayList<IQueryInput<IScan>>(
+        List<IQueryInput<IScan>> input = new ArrayList<>(
                 queryScans.length);
         for (IScan scan : queryScans) {
             //FIXME add creation of IRetentionInfo
-            QueryInput<IScan> queryInput = new QueryInput<IScan>(
+            QueryInput<IScan> queryInput = new QueryInput<>(
                     scan, retentionIndexCalculator);
             input.add(queryInput);
         }

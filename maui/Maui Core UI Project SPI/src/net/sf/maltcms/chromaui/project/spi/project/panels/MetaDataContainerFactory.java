@@ -42,7 +42,7 @@ import org.openide.util.WeakListeners;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 class MetaDataContainerFactory extends ChildFactory<MetaDataContainer> implements
         PropertyChangeListener {

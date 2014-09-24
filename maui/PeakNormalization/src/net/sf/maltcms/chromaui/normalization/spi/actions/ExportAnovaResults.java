@@ -40,6 +40,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
@@ -79,13 +81,13 @@ public final class ExportAnovaResults implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (context.getMethod().equalsIgnoreCase("anova")) {
-            System.out.println("Exporting peak tables!");
+            Logger.getLogger(getClass().getName()).info("Exporting peak tables!");
             IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
             SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
             File exportDir = new File(FileUtil.toFile(project.getLocation()), "export/anova/" + sdf.format(new Date()));
             exportDir.mkdirs();
             File exportFile = new File(exportDir, "anovaExport.csv");
-            List<IAnovaDescriptor> anovas = new ArrayList<IAnovaDescriptor>();
+            List<IAnovaDescriptor> anovas = new ArrayList<>();
             for (IStatisticsDescriptor statd : context.getMembers()) {
                 if (statd instanceof IAnovaDescriptor) {
                     anovas.add((IAnovaDescriptor) statd);
@@ -94,7 +96,7 @@ public final class ExportAnovaResults implements ActionListener {
             ExportRunnable er = new ExportRunnable(project, anovas, exportFile);
             ExportRunnable.createAndRun("Anova Peak Group Export", er);
         } else {
-            System.out.println("Not applicable for method " + context.getMethod());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Not applicable for method {0}", context.getMethod());
         }
     }
 
@@ -118,8 +120,8 @@ public final class ExportAnovaResults implements ActionListener {
             try {
                 ph.progress("Exporting Anova Results...");
                 BufferedWriter bw = null;
-                LinkedHashMap<UUID, Integer> chromToIndex = new LinkedHashMap<UUID, Integer>();
-                List<String> chromatogramNames = new ArrayList<String>();
+                LinkedHashMap<UUID, Integer> chromToIndex = new LinkedHashMap<>();
+                List<String> chromatogramNames = new ArrayList<>();
                 int idx = 0;
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                     chromatogramNames.add(chrom.getDisplayName());
@@ -128,7 +130,7 @@ public final class ExportAnovaResults implements ActionListener {
                 try {
                     bw = new BufferedWriter(new FileWriter(output));
                     StringBuilder header = new StringBuilder();
-                    List<String> headerStrings = new ArrayList<String>();
+                    List<String> headerStrings = new ArrayList<>();
                     headerStrings.add("PutativeIdentification");
                     headerStrings.add("DatabaseId");
                     headerStrings.add("RetentionTimeAvg");
@@ -148,7 +150,7 @@ public final class ExportAnovaResults implements ActionListener {
                         if (normalizer == null) {
                             normalizer = NormalizationDialog.getPeakNormalizer(peakGroup.getPeakGroupContainer());
                             if (normalizer == null) {
-                                System.out.println("Normalization cancelled by user!");
+                                Logger.getLogger(getClass().getName()).info("Normalization cancelled by user!");
                                 bw.close();
                                 ph.finish();
                                 return;
@@ -170,15 +172,15 @@ public final class ExportAnovaResults implements ActionListener {
                             }
                             peaks[chromToIndex.get(peakChrom.getId())] = value + "";
                         }
-                        for (int j = 0; j < peaks.length; j++) {
-                            if (peaks[j] == null) {
+                        for (String peak : peaks) {
+                            if (peak == null) {
                                 sb.append("0");
                             } else {
-                                sb.append(peaks[j]);
+                                sb.append(peak);
                             }
                             sb.append("\t");
                         }
-                        System.out.println("Row: " + Arrays.toString(peaks));
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Row: {0}", Arrays.toString(peaks));
                         sb.append(group.getName()).append("\t");
                         sb.append(group.getPeakGroupDescriptor().getId()).append("\t");
                         if (group.getFactors().length == 1) {

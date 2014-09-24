@@ -34,6 +34,10 @@ import com.db4o.config.FileConfiguration;
 import com.db4o.config.QueryEvaluationMode;
 import com.db4o.diagnostic.DiagnosticToConsole;
 import com.db4o.ext.DatabaseFileLockedException;
+import com.db4o.ext.DatabaseReadOnlyException;
+import com.db4o.ext.Db4oIOException;
+import com.db4o.ext.IncompatibleFileFormatException;
+import com.db4o.ext.OldFormatException;
 import com.db4o.io.Bin;
 import com.db4o.io.BinConfiguration;
 import com.db4o.io.FileStorage;
@@ -72,7 +76,7 @@ public final class DB4oInMemoryCrudProvider extends AbstractDB4oCrudProvider {
                 postOpen();
             } catch (DatabaseFileLockedException ex) {
                 //database file already opened 
-            } catch (Exception e) {
+            } catch (Db4oIOException | IncompatibleFileFormatException | OldFormatException | DatabaseReadOnlyException e) {
                 Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.WARNING, "Caught unhandled exception, closing database {0}", projectDBLocation.getAbsolutePath());
                 if (eoc != null) {
                     eoc.close();

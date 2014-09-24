@@ -45,31 +45,57 @@ import org.jfree.data.xy.XYZDataset;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 import cross.event.IEvent;
+import java.util.logging.Logger;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class TICChartHandler implements XYItemEntityEventListener {
 
-    private WeakHashMap<Integer, XYDataset> ticCache = new WeakHashMap<Integer, XYDataset>();
+    private WeakHashMap<Integer, XYDataset> ticCache = new WeakHashMap<>();
     private int topK = 10;
 
+    /**
+     *
+     * @return
+     */
     public int getTopK() {
         return topK;
     }
 
+    /**
+     *
+     * @param topK
+     */
     public void setTopK(int topK) {
         this.topK = topK;
     }
 
+    /**
+     *
+     * @param min
+     * @param max
+     */
     public void setValueAxisRange(double min, double max) {
         this.valueAxisMin = min;
         this.valueAxisMax = max;
         setValueAxisFixed(true);
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setValueAxisFixed(boolean b) {
         this.valueAxisFixed = b;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isValueAxisFixed() {
         return this.valueAxisFixed;
     }
@@ -83,6 +109,13 @@ public class TICChartHandler implements XYItemEntityEventListener {
     private ExecutorService es = Executors.newSingleThreadExecutor();
     private XYItemRenderer xyr = new XYLineAndShapeRenderer(true, false);
 
+    /**
+     *
+     * @param xyp
+     * @param data
+     * @param scanlines
+     * @param scansPerMod
+     */
     public TICChartHandler(XYPlot xyp, Array data, int scanlines, int scansPerMod) {
         this.xypl = xyp;
         this.xypl.setRenderer(this.xyr);
@@ -94,10 +127,16 @@ public class TICChartHandler implements XYItemEntityEventListener {
     /* (non-Javadoc)
      * @see cross.event.IListener#listen(cross.event.IEvent)
      */
+
+    /**
+     *
+     * @param v
+     */
+    
     @Override
     public void listen(final IEvent<XYItemEntity> v) {
         if (!(v.get().getDataset() instanceof XYZDataset)) {
-            System.err.println("Can not handle instances other than XYZDataset!");
+            Logger.getLogger(getClass().getName()).warning("Can not handle instances other than XYZDataset!");
             return;
         }
         final ValueAxis domainAxis = xypl.getDomainAxis();
@@ -126,8 +165,8 @@ public class TICChartHandler implements XYItemEntityEventListener {
                     final int y = (int) xyz.getYValue(seriesIndex, e.getItem());
                     final int x = (int) xyz.getXValue(seriesIndex, e.getItem());
                     XYDataset xydss;
-                    if (ticCache.containsKey(Integer.valueOf(y))) {
-                        xydss = ticCache.get(Integer.valueOf(y));
+                    if (ticCache.containsKey(y)) {
+                        xydss = ticCache.get(y);
                     } else {
                         final DefaultXYDataset xyds = new DefaultXYDataset();
                         double[][] d = new double[2][scanlines];
@@ -140,7 +179,7 @@ public class TICChartHandler implements XYItemEntityEventListener {
                         }
                         xyds.addSeries("TIC@[" + y + "]", d);
                         xydss = xyds;
-                        ticCache.put(Integer.valueOf(y), xyds);
+                        ticCache.put(y, xyds);
                     }
                     final XYDataset fds = xydss;
                     Runnable runnable = new Runnable() {

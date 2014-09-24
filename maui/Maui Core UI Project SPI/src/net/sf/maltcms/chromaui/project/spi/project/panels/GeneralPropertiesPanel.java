@@ -42,7 +42,7 @@ import org.openide.util.Lookup;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 public class GeneralPropertiesPanel extends javax.swing.JPanel implements ExplorerManager.Provider, Lookup.Provider {
 

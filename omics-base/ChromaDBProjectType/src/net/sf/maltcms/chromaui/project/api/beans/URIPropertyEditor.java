@@ -53,6 +53,9 @@ public class URIPropertyEditor extends PropertyEditorSupport implements ExProper
 
     private InplaceEditor ed = null;
 
+    /**
+     *
+     */
     public URIPropertyEditor() {
     }
 
@@ -74,11 +77,20 @@ public class URIPropertyEditor extends PropertyEditorSupport implements ExProper
 //			setValue(URI.create(string));
 //		}
 //	}
-    @Override
+
+    /**
+     *
+     * @param pe
+     */
+        @Override
     public void attachEnv(PropertyEnv pe) {
         pe.registerInplaceEditorFactory(this);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public InplaceEditor getInplaceEditor() {
         if (ed == null) {

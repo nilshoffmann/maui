@@ -39,7 +39,7 @@ import org.openide.util.NotImplementedException;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class WidgetTableModel extends HashTableModel {
 

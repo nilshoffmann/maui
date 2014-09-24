@@ -40,11 +40,19 @@ public class QUADMS implements IDetectorType {
     private final String longName = "quadrupole mass spectrometer";
     private final int featureDimensions = 2;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDetectorType() {
         return detectorType;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getLongName() {
         return longName;

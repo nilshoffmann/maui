@@ -37,53 +37,171 @@ import org.jfree.data.general.Dataset;
  */
 public interface ISelection {
 
+    /**
+     *
+     */
     public enum Type {
 
-        CLEAR, KEYBOARD, HOVER, CLICK
+        /**
+         *
+         */
+        CLEAR, 
+
+        /**
+         *
+         */
+        KEYBOARD, 
+
+        /**
+         *
+         */
+        HOVER, 
+
+        /**
+         *
+         */
+        CLICK
     };
 
+    /**
+     *
+     */
     public final String PROP_NAME = "name";
+
+    /**
+     *
+     */
     public final String PROP_DISPLAY_NAME = "displayName";
+
+    /**
+     *
+     */
     public final String PROP_SHORT_DESCRIPTION = "shortDescription";
+
+    /**
+     *
+     */
     public final String PROP_VISIBLE = "visible";
 
+    /**
+     *
+     * @return
+     */
     Object getSource();
 
+    /**
+     *
+     * @return
+     */
     Object getTarget();
 
+    /**
+     *
+     * @return
+     */
     String getName();
 
+    /**
+     *
+     * @param name
+     */
     void setName(String name);
 
+    /**
+     *
+     * @return
+     */
     Type getType();
 
+    /**
+     *
+     * @return
+     */
     String getDisplayName();
 
+    /**
+     *
+     * @param name
+     */
     void setDisplayName(String name);
 
+    /**
+     *
+     * @return
+     */
     String getShortDescription();
 
+    /**
+     *
+     * @param name
+     */
     void setShortDescription(String name);
 
+    /**
+     *
+     * @return
+     */
     boolean isVisible();
 
+    /**
+     *
+     * @param b
+     */
     void setVisible(boolean b);
 
+    /**
+     *
+     * @return
+     */
     Shape getSelectionShape();
 
+    /**
+     *
+     * @return
+     */
     Dataset getDataset();
 
+    /**
+     *
+     * @param dataset
+     */
     void setDataset(Dataset dataset);
 
+    /**
+     *
+     * @return
+     */
     int getSeriesIndex();
 
+    /**
+     *
+     * @return
+     */
     int getItemIndex();
 
+    /**
+     *
+     * @param listener
+     */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
+    /**
+     *
+     * @param property
+     * @param listener
+     */
     void addPropertyChangeListener(String property, PropertyChangeListener listener);
 
+    /**
+     *
+     * @param listener
+     */
     void removePropertyChangeListener(PropertyChangeListener listener);
 
+    /**
+     *
+     * @param property
+     * @param listener
+     */
     void removePropertyChangeListener(String property, PropertyChangeListener listener);
 }

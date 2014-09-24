@@ -37,7 +37,7 @@ import org.netbeans.api.progress.ProgressHandle;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class JFCLoader implements Callable<JFreeChart> {
 
@@ -55,12 +55,12 @@ public class JFCLoader implements Callable<JFreeChart> {
         JFreeChart chart = null;
         try {
             ph.progress("Opening file", 33);
-            final ObjectInputStream ois = new ObjectInputStream(
+            try (ObjectInputStream ois = new ObjectInputStream(
                     new BufferedInputStream(new FileInputStream(
-                                    filename)));
-            ph.progress("Reading object", 66);
-            chart = (JFreeChart) ois.readObject();
-            ois.close();
+                            filename)))) {
+                ph.progress("Reading object", 66);
+                chart = (JFreeChart) ois.readObject();
+            }
         } catch (final ClassNotFoundException e) {
             ph.progress("ClassNotFoundException", 80);
             e.printStackTrace();

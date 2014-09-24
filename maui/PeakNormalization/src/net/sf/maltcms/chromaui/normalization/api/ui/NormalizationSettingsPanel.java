@@ -62,13 +62,17 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
     private String previousPeakAnnotation = "";
     private AtomicBoolean updating = new AtomicBoolean();
 
+    /**
+     *
+     * @param context
+     */
     public NormalizationSettingsPanel(PeakGroupContainer context) {
         previousPeakAnnotation = NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getPath()).get("peakGroupIdForNormalization", "");
-        this.peakGroups = new ArrayList<IPeakGroupDescriptor>();
+        this.peakGroups = new ArrayList<>();
         peakGroups.add(DescriptorFactory.newPeakGroupDescriptor("No Normalization"));
         IPeakGroupDescriptor previousSelection = null;
         for (IPeakGroupDescriptor peakGroup : context.getMembers()) {
-            HashSet<String> names = new HashSet<String>();
+            HashSet<String> names = new HashSet<>();
             for (IPeakAnnotationDescriptor ipad : peakGroup.
                     getPeakAnnotationDescriptors()) {
                 if (!names.contains(ipad.getName())) {
@@ -93,6 +97,9 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
         updating.set(false);
     }
 
+    /**
+     *
+     */
     public final void selectPreviousPeakAnnotation() {
         for (int i = 0; i < internalNormalizationCompound.getModel().getSize(); i++) {
             IPeakGroupDescriptor peakGroup = (IPeakGroupDescriptor) internalNormalizationCompound.getModel().getElementAt(i);
@@ -104,6 +111,11 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     *
+     * @param searchKey
+     * @return
+     */
     public final List<IPeakGroupDescriptor> getMatchingDescriptors(String searchKey) {
         ArrayList<IPeakGroupDescriptor> subset = new ArrayList<>();
         for (IPeakGroupDescriptor descr : peakGroups) {
@@ -116,6 +128,10 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
         return subset;
     }
 
+    /**
+     *
+     * @param searchKey
+     */
     public final void updateModel(String searchKey) {
         final DefaultComboBoxModel model = buildModel(searchKey);
         SwingUtilities.invokeLater(new Runnable() {
@@ -135,6 +151,11 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
         });
     }
 
+    /**
+     *
+     * @param searchKey
+     * @return
+     */
     public final DefaultComboBoxModel buildModel(String searchKey) {
         if (searchKey.isEmpty()) {
             return new DefaultComboBoxModel(peakGroups.toArray());
@@ -250,11 +271,19 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JTextField peakGroupNameSearchField;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     *
+     * @return
+     */
     public IPeakGroupDescriptor getInternalNormalizationGroup() {
         return (IPeakGroupDescriptor) internalNormalizationCompound.
                 getSelectedItem();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isNormalizeToExternalQuantity() {
         return normalizeToExternalQuantity.isSelected();
     }
@@ -276,9 +305,7 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
                             }
                         }
                     });
-                } catch (InterruptedException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (InvocationTargetException ex) {
+                } catch (InterruptedException | InvocationTargetException ex) {
                     Exceptions.printStackTrace(ex);
                 }
                 try {

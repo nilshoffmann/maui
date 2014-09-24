@@ -35,28 +35,55 @@ import org.openide.filesystems.FileObject;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 @org.openide.util.lookup.ServiceProvider(service = ProjectFactory.class)
 public class SimpleChromAProjectFactory implements ProjectFactory {
 
+    /**
+     *
+     */
     public static final String PROJECT_DIR = "projectProperties";
+
+    /**
+     *
+     */
     public static final String WORKFLOW_FILE = "workflow.xml";
 
     //Specifies when a project is a project, i.e.,
     //if the project directory "texts" is present:
-    @Override
+
+    /**
+     *
+     * @param projectDirectory
+     * @return
+     */
+        @Override
     public boolean isProject(FileObject projectDirectory) {
         return projectDirectory.getFileObject(PROJECT_DIR) != null || projectDirectory.getFileObject(this.WORKFLOW_FILE) != null;
     }
 
     //Specifies when the project will be opened, i.e.,
     //if the project exists:
-    @Override
+
+    /**
+     *
+     * @param dir
+     * @param state
+     * @return
+     * @throws IOException
+     */
+        @Override
     public Project loadProject(FileObject dir, ProjectState state) throws IOException {
         return isProject(dir) ? new SimpleChromAProject(dir, state) : null;
     }
 
+    /**
+     *
+     * @param project
+     * @throws IOException
+     * @throws ClassCastException
+     */
     @Override
     public void saveProject(final Project project) throws IOException, ClassCastException {
         FileObject projectRoot = project.getProjectDirectory();

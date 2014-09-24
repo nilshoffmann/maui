@@ -34,6 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -105,7 +107,7 @@ public class DataTable {
 //        int peaks = 0;
         int lastPosition = 0;
         //create a map from each chromatogram descriptor to a unique index
-        LinkedHashMap<IChromatogramDescriptor, Integer> chromToRowIndex = new LinkedHashMap<IChromatogramDescriptor, Integer>();
+        LinkedHashMap<IChromatogramDescriptor, Integer> chromToRowIndex = new LinkedHashMap<>();
         //loop over all peak groups
         for (IPeakGroupDescriptor ipgd : peakGroupContainer.getMembers()) {
 //			System.out.println("Checking peak group descriptor "+ipgd.getDisplayName());
@@ -115,22 +117,22 @@ public class DataTable {
 //				System.out.println("Checking peak annotation descriptor "+ipad.getDisplayName());
                 //if the current chromatogram is new, add new index for it
                 IChromatogramDescriptor descriptor = ipad.getChromatogramDescriptor();
-                System.out.println("Checking chromatogram: " + descriptor);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Checking chromatogram: {0}", descriptor);
                 if (!chromToRowIndex.containsKey(descriptor)) {
-                    chromToRowIndex.put(descriptor, Integer.valueOf(lastPosition));
+                    chromToRowIndex.put(descriptor, lastPosition);
 //					System.out.println("Adding chromatogram "+descriptor.getDisplayName()+" at row index "+lastPosition+" with id "+descriptor.getId().toString());
                     lastPosition++;
                 }
             }
         }
-        rowNames = new LinkedList<IChromatogramDescriptor>();
+        rowNames = new LinkedList<>();
         for (IChromatogramDescriptor descr : chromToRowIndex.keySet()) {
 //			System.out.println("Chromatogram " + descr.getDisplayName() + " at row " + chromToRowIndex.get(descr)+" with id "+descr.getId().toString());
             rowNames.add(descr);
         }
         int chromatograms = rowNames.size();
-        System.out.println("Added " + chromatograms + " chromatograms to data table!");
-        groupToValues = new LinkedHashMap<IPeakGroupDescriptor, double[]>();
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Added {0} chromatograms to data table!", chromatograms);
+        groupToValues = new LinkedHashMap<>();
         for (IPeakGroupDescriptor ipgd : peakGroupContainer.getMembers()) {
             double[] variableValues = new double[chromatograms];
             for (int i = 0; i < variableValues.length; i++) {
@@ -139,12 +141,12 @@ public class DataTable {
             for (IPeakAnnotationDescriptor ipad : ipgd.getPeakAnnotationDescriptors()) {
                 if (chromToRowIndex.containsKey(ipad.getChromatogramDescriptor())) {
                     Integer index = chromToRowIndex.get(ipad.getChromatogramDescriptor());
-                    variableValues[index.intValue()] = normalizer.getNormalizationFactor(ipad) * ipad.getArea();
+                    variableValues[index] = normalizer.getNormalizationFactor(ipad) * ipad.getArea();
                 }
             }
             groupToValues.put(ipgd, variableValues);
         }
-        System.out.println("Added " + groupToValues.keySet().size() + " peak groups to data table!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Added {0} peak groups to data table!", groupToValues.keySet().size());
 
         this.imputationMode = imputationMode;
         //TODO implement handling of sampleGroupMode
@@ -160,7 +162,7 @@ public class DataTable {
 
     public REXP toDataFrame() {
         RList list = new RList();
-        System.out.println("Iterating over " + groupToValues.size() + " peak groups");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Iterating over {0} peak groups", groupToValues.size());
         for (IPeakGroupDescriptor peakGroup : groupToValues.keySet()) {
 
             Map<ITreatmentGroupDescriptor, Set<IPeakAnnotationDescriptor>> groupMap = peakGroup.getPeaksByTreatmentGroup();
@@ -186,7 +188,7 @@ public class DataTable {
                         }
                     } else {
                         //FIXME add fallback to complete dataset imputation?
-                        System.err.println("Warning: group " + treatmentGroup.getDisplayName() + " had no values, setting to 0!");
+                        Logger.getLogger(getClass().getName()).log(Level.WARNING, "Warning: group {0} had no values, setting to 0!", treatmentGroup.getDisplayName());
                         values[i] = 0;
                     }
 
@@ -221,7 +223,7 @@ public class DataTable {
     }
 
     public List<IPeakGroupDescriptor> getVariables() {
-        return new ArrayList<IPeakGroupDescriptor>(groupToValues.keySet());
+        return new ArrayList<>(groupToValues.keySet());
     }
 
     public static REXP createDataFrameWithRowNames(RList l, REXPString rowNames) throws REXPMismatchException {

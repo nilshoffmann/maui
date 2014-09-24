@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.api.ui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.normalization.spi.CompositeNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.CompoundPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.IdentityNormalizer;
@@ -44,6 +46,11 @@ import org.openide.util.NbPreferences;
  */
 public class NormalizationDialog {
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static IPeakNormalizer getPeakNormalizer(PeakGroupContainer context) {
 
         NormalizationSettingsPanel nsp = new NormalizationSettingsPanel(context);
@@ -56,16 +63,16 @@ public class NormalizationDialog {
         if (result.equals(NotifyDescriptor.OK_OPTION)) {
             IPeakGroupDescriptor normalizationGroup = nsp.getInternalNormalizationGroup();
             if (normalizationGroup != null) {
-                System.out.println("Storing peak group with id as normalization reference for current project: " + normalizationGroup.getId());
+                Logger.getLogger(NormalizationDialog.class.getName()).log(Level.INFO, "Storing peak group with id as normalization reference for current project: {0}", normalizationGroup.getId());
                 NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getPath()).put("peakGroupIdForNormalization", normalizationGroup.getId().toString());
             }
-            System.out.println("Selected normalization group: " + normalizationGroup.getMajorityName());
+            Logger.getLogger(NormalizationDialog.class.getName()).log(Level.INFO, "Selected normalization group: {0}", normalizationGroup.getMajorityName());
             IPeakNormalizer externalNormalizer = null;
             if (nsp.isNormalizeToExternalQuantity()) {
-                System.out.println("Normalizing to external quantity");
+                Logger.getLogger(NormalizationDialog.class.getName()).info("Normalizing to external quantity");
                 externalNormalizer = new NormalizationDescriptorNormalizer();
             } else {
-                System.out.println("Normalizing to identity");
+                Logger.getLogger(NormalizationDialog.class.getName()).info("Normalizing to identity");
                 externalNormalizer = new IdentityNormalizer();
             }
             if (normalizationGroup.getName().equals("No Normalization")) {

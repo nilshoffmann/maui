@@ -33,17 +33,33 @@ import net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor;
 import uk.ac.ebi.pride.jmztab.model.CV;
 import uk.ac.ebi.pride.jmztab.model.MetadataElement;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class CVDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_CV = "cv";
+    private static final long serialVersionUID = 7611809304455928749L;
 
     private CV cv;
 
+    /**
+     *
+     * @return
+     */
     public CV getCv() {
         activate(ActivationPurpose.READ);
         return cv;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setCv(CV element) {
         activate(ActivationPurpose.WRITE);
         CV old = this.cv;
@@ -54,42 +70,82 @@ public class CVDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
         getPropertyChangeSupport().firePropertyChange(PROP_CV, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getElementId() {
         return getCv().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(Integer id) {
         getCv().setId(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLabel() {
         return getCv().getLabel();
     }
 
+    /**
+     *
+     * @param label
+     */
     public void setLabel(String label) {
         getCv().setLabel(label);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFullName() {
         return getCv().getFullName();
     }
 
+    /**
+     *
+     * @param fullName
+     */
     public void setFullName(String fullName) {
         getCv().setFullName(fullName);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getVersion() {
         return getCv().getVersion();
     }
 
+    /**
+     *
+     * @param version
+     */
     public void setVersion(String version) {
         getCv().setVersion(version);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUrl() {
         return getCv().getUrl();
     }
 
+    /**
+     *
+     * @param url
+     */
     public void setUrl(String url) {
         getCv().setUrl(url);
     }
@@ -99,10 +155,18 @@ public class CVDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
         return getCv().toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public MetadataElement getElement() {
         return getCv().getElement();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getReference() {
         return getCv().getReference();
     }

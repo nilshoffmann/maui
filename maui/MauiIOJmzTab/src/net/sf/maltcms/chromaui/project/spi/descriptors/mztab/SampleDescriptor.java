@@ -35,17 +35,33 @@ import uk.ac.ebi.pride.jmztab.model.MetadataElement;
 import uk.ac.ebi.pride.jmztab.model.Param;
 import uk.ac.ebi.pride.jmztab.model.Sample;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class SampleDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_SAMPLE = "sample";
+    private static final long serialVersionUID = -7452766414843916184L;
 
     private Sample sample;
 
+    /**
+     *
+     * @return
+     */
     public Sample getSample() {
         activate(ActivationPurpose.READ);
         return sample;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setSample(Sample element) {
         activate(ActivationPurpose.WRITE);
         Sample old = this.sample;
@@ -56,70 +72,135 @@ public class SampleDescriptor extends ABasicDescriptor implements IMzTabDescript
         getPropertyChangeSupport().firePropertyChange(PROP_SAMPLE, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getElementId() {
         return getSample().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(Integer id) {
         getSample().setId(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Param> getSpeciesList() {
         return getSample().getSpeciesList();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Param> getTissueList() {
         return getSample().getTissueList();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Param> getCellTypeList() {
         return getSample().getCellTypeList();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Param> getDiseaseList() {
         return getSample().getDiseaseList();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Param> getCustomList() {
         return getSample().getCustomList();
     }
 
+    /**
+     *
+     * @param param
+     */
     public void addSpecies(Param param) {
         getSample().addSpecies(param);
     }
 
+    /**
+     *
+     * @param param
+     */
     public void addTissue(Param param) {
         getSample().addTissue(param);
     }
 
+    /**
+     *
+     * @param param
+     */
     public void addCellType(Param param) {
         getSample().addCellType(param);
     }
 
+    /**
+     *
+     * @param param
+     */
     public void addDisease(Param param) {
         getSample().addDisease(param);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDescription() {
         return getSample().getDescription();
     }
 
+    /**
+     *
+     * @param description
+     */
     public void setDescription(String description) {
         getSample().setDescription(description);
     }
 
+    /**
+     *
+     * @param custom
+     */
     public void addCustom(Param custom) {
         getSample().addCustom(custom);
     }
 
+    @Override
     public String toString() {
         return getSample().toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public MetadataElement getElement() {
         return getSample().getElement();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getReference() {
         return getSample().getReference();
     }

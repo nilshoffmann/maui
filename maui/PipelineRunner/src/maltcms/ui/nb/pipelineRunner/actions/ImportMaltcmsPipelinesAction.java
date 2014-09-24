@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
@@ -80,7 +81,7 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
         prefs.addPreferenceChangeListener(this);
         String installationPath = prefs.get("maltcmsInstallationPath", "");
         if (installationPath.isEmpty()) {
-            System.out.println("Installation path is empty, opening settings!");
+            Logger.getLogger(getClass().getName()).info("Installation path is empty, opening settings!");
             boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
         } else {
             importPipelines();
@@ -138,8 +139,8 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
                         Exceptions.printStackTrace(ex);
                     }
                     Collection<File> propertiesFiles = FileUtils.listFiles(projectMaltcmsPipelinesPath, new String[]{"properties"}, true);
-                    Map<File, File> nameToRenamed = new HashMap<File, File>();
-                    List<File> replacementCandidates = new LinkedList<File>();
+                    Map<File, File> nameToRenamed = new HashMap<>();
+                    List<File> replacementCandidates = new LinkedList<>();
                     for (File propertyFile : propertiesFiles) {
                         if (propertyFile.getName().endsWith(".properties")) {
                             try {
@@ -177,9 +178,9 @@ public final class ImportMaltcmsPipelinesAction implements ActionListener, Prefe
                     }
                     context.refresh();
                 } else {
-                    System.out.println("No maltcmsInstallationPath given!");
+                    Logger.getLogger(getClass().getName()).info("No maltcmsInstallationPath given!");
                 }
-            } catch (Exception ex) {
+            } catch (IOException | ConfigurationException ex) {
                 Exceptions.printStackTrace(ex);
             } finally {
                 progressHandle.finish();

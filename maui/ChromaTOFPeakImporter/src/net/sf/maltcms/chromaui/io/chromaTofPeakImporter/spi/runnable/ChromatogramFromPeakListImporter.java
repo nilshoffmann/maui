@@ -34,6 +34,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -63,12 +65,12 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
 
     @Override
     public List<File> call() {
-        List<File> resultFiles = new LinkedList<File>();
+        List<File> resultFiles = new LinkedList<>();
         try {
             progressHandle.start(files.length);
             progressHandle.progress("Retrieving Chromatograms");
             progressHandle.progress("Matching Chromatograms");
-            LinkedHashMap<String, File> reports = new LinkedHashMap<String, File>();
+            LinkedHashMap<String, File> reports = new LinkedHashMap<>();
             for (File file : files) {
                 String chromName = StringTools.removeFileExt(file.getName());
                 reports.put(chromName, file);
@@ -84,10 +86,10 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
                 progressHandle.progress(
                         "Importing " + (peakReportsImported + 1) + "/" + files.length,
                         peakReportsImported);
-                System.out.println("Importing report " + file.getName() + ".");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Importing report {0}.", file.getName());
                 String chromName = StringTools.removeFileExt(file.getName());
                 IChromatogramDescriptor chromatogram = createChromatogramDescriptor(file, new GC(), new TOFMS(), chromName);
-                List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
+                List<IPeakAnnotationDescriptor> peaks = new ArrayList<>();
                 File created = importPeaks(importDir, peaks, reports, chromName, chromatogram);
                 resultFiles.add(created);
                 peakReportsImported++;

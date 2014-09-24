@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -199,14 +201,14 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     public void setViewport(Rectangle2D rect) {
         //ignore viewport changes if we have the focus
         if (hasFocus()) {
-            System.out.println("Ignoring viewport update since we have the focus!");
+            Logger.getLogger(getClass().getName()).info("Ignoring viewport update since we have the focus!");
         } else {
             //otherwise, clear our own viewport and set to new value
             if (this.viewport != null) {
                 this.content.remove(this.viewport);
             }
             this.viewport = new Chromatogram2DViewViewport(rect);
-            System.out.println("Setting viewport!");
+            Logger.getLogger(getClass().getName()).info("Setting viewport!");
             removeAxisListener();
             this.chartPanel.getChart().getXYPlot().getDomainAxis().setLowerBound(rect.getMinX());
             this.chartPanel.getChart().getXYPlot().getDomainAxis().setUpperBound(rect.getMaxX());
@@ -512,9 +514,9 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
     @Override
     public void setPaintScale(PaintScale ps) {
-        System.out.println("Set paint scale called on HeatmapPanel");
+        Logger.getLogger(getClass().getName()).info("Set paint scale called on HeatmapPanel");
 //        if (ps != null && ps instanceof GradientPaintScale) {
-        System.out.println("Paint scale using!");
+        Logger.getLogger(getClass().getName()).info("Paint scale using!");
         GradientPaintScale sps = (GradientPaintScale) ps;
         if (this.ps != null) {
             double lb = this.ps.getLowerBound();
@@ -533,7 +535,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
                 XYPlot plot = jfc.getXYPlot();
                 if (!jCheckBox2.isSelected()) {
                     Color bg = (Color) this.ps.getPaint(this.ps.getLowerBound());
-                    System.out.println("Background color: " + bg);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Background color: {0}", bg);
                     setBackgroundColor(bg);
                 }
             }
@@ -552,12 +554,12 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
     @Override
     public void keyPressed(KeyEvent ke) {
-        System.out.println("Received key event: " + ke.toString());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Received key event: {0}", ke.toString());
         if (ke.isControlDown()) {
             modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
         }
         if (getDataPoint() != null) {
-            System.out.println("Data point is not null!");
+            Logger.getLogger(getClass().getName()).info("Data point is not null!");
             Point p = null;
             if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {
                 p = new Point(getDataPoint());
@@ -626,7 +628,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             selectionHandler.setDataset(dataset);
         }
         if (mouseSelectionHandler == null) {
-            mouseSelectionHandler = new XYMouseSelectionHandler<IScan2D>(dataset);
+            mouseSelectionHandler = new XYMouseSelectionHandler<>(dataset);
             mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
             mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
             chartPanel.addChartMouseListener(mouseSelectionHandler);
@@ -660,7 +662,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         chartPanel.addKeyListener(dmkl);
         addAxisListener();
         //add available chart overlays
-        List<Overlay> overlays = new ArrayList<Overlay>(getLookup().lookupAll(Overlay.class));
+        List<Overlay> overlays = new ArrayList<>(getLookup().lookupAll(Overlay.class));
         Collections.sort(overlays, new Comparator<Overlay>() {
 
             @Override

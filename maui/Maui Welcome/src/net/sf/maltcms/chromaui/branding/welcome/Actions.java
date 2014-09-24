@@ -28,6 +28,9 @@
 package net.sf.maltcms.chromaui.branding.welcome;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Action;
 import org.openide.cookies.InstanceCookie;
 import org.openide.filesystems.FileObject;
@@ -48,7 +51,7 @@ public class Actions {
         if (act != null && act.isEnabled()) {
             act.actionPerformed(e);
         } else {
-            System.err.println("Failed to invoke action for path: " + path);
+            Logger.getLogger(Actions.class.getName()).log(Level.WARNING, "Failed to invoke action for path: {0}", path);
         }
     }
 
@@ -79,14 +82,14 @@ public class Actions {
                     Class<SystemAction> sa = (Class<SystemAction>) ck.instanceClass();
                     act = SystemAction.get(sa);
                 }
-            } catch (Exception ex) {
+            } catch (IOException | ClassNotFoundException ex) {
             }
             if (act == null) {
                 // if its not a SystemAction try creating one
                 Object o = null;
                 try {
                     o = ck.instanceCreate();
-                } catch (Exception ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                 }
                 if (o instanceof Action) {
                     act = (Action) o;

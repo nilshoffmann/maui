@@ -49,15 +49,15 @@ public class KeystoreInitializer implements Runnable {
         File f;
         try {
             f = File.createTempFile("meltdbKeystore", "ks");
-            BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f));
-            System.out.println("Copying keystore data!");
-            int i;
-            while ((i = fis.read()) != -1) {
-                fos.write(i);
+            try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
+                Logger.getLogger(getClass().getName()).info("Copying keystore data!");
+                int i;
+                while ((i = fis.read()) != -1) {
+                    fos.write(i);
+                }
+                fos.flush();
             }
-            fos.flush();
-            fos.close();
-            System.out.println("Setting keystore properties");
+            Logger.getLogger(getClass().getName()).info("Setting keystore properties");
             System.setProperty("javax.net.ssl.trustStore", f.getAbsolutePath());
             System.setProperty("javax.net.ssl.trustStorePassword", "changeit");//"meltdb-cert");
         } catch (IOException ex) {

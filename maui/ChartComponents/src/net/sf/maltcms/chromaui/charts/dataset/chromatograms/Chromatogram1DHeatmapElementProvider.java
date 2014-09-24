@@ -36,7 +36,7 @@ import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class Chromatogram1DHeatmapElementProvider implements INamedElementProvider<IChromatogram1D, IScan1D> {
 
@@ -45,6 +45,11 @@ public class Chromatogram1DHeatmapElementProvider implements INamedElementProvid
     private final int[] scanIndex;
     private final int size;
 
+    /**
+     *
+     * @param key
+     * @param chrom
+     */
     public Chromatogram1DHeatmapElementProvider(Comparable key, IChromatogram1D chrom) {
         this.chrom = chrom;
         this.name = key;
@@ -52,6 +57,11 @@ public class Chromatogram1DHeatmapElementProvider implements INamedElementProvid
         this.size = chrom.getParent().getChild("mass_values", true).getDimensions()[0].getLength();
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     protected int toScanIndex(int i) {
         int idx = Arrays.binarySearch(scanIndex, i);
         if (idx >= 0) {
@@ -66,21 +76,38 @@ public class Chromatogram1DHeatmapElementProvider implements INamedElementProvid
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Comparable getKey() {
         return name;
     }
 
+    /**
+     *
+     * @param key
+     */
     @Override
     public void setKey(Comparable key) {
         this.name = key;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int size() {
         return size;//chrom.getNumberOfScansForMsLevel((short) 1);
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     @Override
     public IScan1D get(int i) {
 //		System.out.println("Retrieving scan " + i + " from " + getClass().getName() + " " + getKey());
@@ -89,22 +116,35 @@ public class Chromatogram1DHeatmapElementProvider implements INamedElementProvid
         return scan;
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public List<IScan1D> get(int i, int i1) {
         int scanIndex1 = toScanIndex(i1);
         int scanIndex0 = toScanIndex(i);
         int nscans = scanIndex1 - scanIndex0;
-        ArrayList<IScan1D> al = new ArrayList<IScan1D>(nscans);
+        ArrayList<IScan1D> al = new ArrayList<>(nscans);
         for (int j = 0; j <= nscans; j++) {
             al.add(chrom.getScanForMsLevel(i + j, (short) 1));
         }
         return al;
     }
 
+    /**
+     *
+     */
     @Override
     public void reset() {
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IChromatogram1D getSource() {
         return chrom;

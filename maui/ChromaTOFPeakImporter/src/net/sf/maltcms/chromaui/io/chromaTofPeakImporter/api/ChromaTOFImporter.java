@@ -41,11 +41,23 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
  */
 public final class ChromaTOFImporter {
 
+    /**
+     *
+     * @param project
+     * @param reports
+     * @return
+     */
     public static AProgressAwareRunnable importAsPeakDescriptors(IChromAUIProject project, File... reports) {
         File importDir = project.getImportLocation(ChromaTofPeakListImporter.class);
         return new ChromaTofPeakListImporter(project, reports, importDir);
     }
 
+    /**
+     *
+     * @param importDir
+     * @param reports
+     * @return
+     */
     public static AProgressAwareCallable<List<File>> importAsVirtualChromatograms(File importDir, File... reports) {
         return new ChromatogramFromPeakListImporter(importDir, reports);
     }

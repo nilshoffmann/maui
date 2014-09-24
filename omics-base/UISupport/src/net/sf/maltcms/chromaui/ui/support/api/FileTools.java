@@ -39,6 +39,12 @@ import java.nio.channels.FileChannel;
  */
 public class FileTools {
 
+    /**
+     *
+     * @param sourceFile
+     * @param destFile
+     * @throws IOException
+     */
     public static void copyFile(File sourceFile, File destFile) throws IOException {
         if (!destFile.exists()) {
             destFile.createNewFile();

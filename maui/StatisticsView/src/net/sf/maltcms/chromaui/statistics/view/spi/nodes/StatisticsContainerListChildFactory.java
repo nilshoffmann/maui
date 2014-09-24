@@ -35,17 +35,15 @@ import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
-import net.sf.maltcms.chromaui.statistics.view.api.IStatisticsDescriptorComparator;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class StatisticsContainerListChildFactory extends ChildFactory<IStatisticsDescriptor> {
 

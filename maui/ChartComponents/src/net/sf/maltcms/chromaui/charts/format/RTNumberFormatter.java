@@ -45,11 +45,20 @@ public class RTNumberFormatter extends DecimalFormat {
             DecimalFormatSymbols.getInstance(Locale.US));
     private RTUnit unit = RTUnit.SECONDS;
 
+    /**
+     *
+     * @param unit
+     */
     public RTNumberFormatter(RTUnit unit) {
         super();
         this.unit = unit;
     }
 
+    /**
+     *
+     * @param unit
+     * @param formatString
+     */
     public RTNumberFormatter(RTUnit unit, String formatString) {
         super();
         this.unit = unit;
@@ -57,6 +66,10 @@ public class RTNumberFormatter extends DecimalFormat {
                 getInstance(Locale.US));
     }
 
+    /**
+     *
+     * @param unit
+     */
     public void setRTUnit(RTUnit unit) {
         this.unit = unit;
     }

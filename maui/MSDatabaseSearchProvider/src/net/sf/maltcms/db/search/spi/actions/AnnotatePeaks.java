@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
@@ -91,7 +92,7 @@ public final class AnnotatePeaks implements ActionListener {
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             if (ddp.getSelectedDatabases().isEmpty()) {
-                System.out.println("No databases selected!");
+                Logger.getLogger(getClass().getName()).info("No databases selected!");
                 return;
             }
             databases = ddp.getSelectedDatabases();

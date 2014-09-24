@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
@@ -74,7 +76,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 
     private Chart chart = null;
     private AbstractDrawable cc;
-    private List<BarChartBar<String>> barChartBars = new ArrayList<BarChartBar<String>>();
+    private List<BarChartBar<String>> barChartBars = new ArrayList<>();
     private ViewportMapper mapper = null;
     private Rectangle roi = null;
     private int sampling = 1;
@@ -220,7 +222,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 //                        cc = sf.createDelaunaySurface(coords);
 //                    }
                 progressHandle.progress("Adding to scene");
-                System.out.println("Adding surface to scene graph");
+                Logger.getLogger(getClass().getName()).info("Adding surface to scene graph");
                 graph.add(cc);
 //                }
 //
@@ -276,16 +278,17 @@ public final class HeatmapViewerTopComponent extends TopComponent {
             AWTCameraMouseController mouse = new AWTCameraMouseController();
             chart.addController(mouse);
             mouse.addControllerEventListener(new ControllerEventListener() {
+                @Override
                 public void controllerEventFired(ControllerEvent e) {
                     if (e.getType() == ControllerType.PAN) {
-                        System.out.println("Mouse[PAN]: " + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[PAN]: {0}", e.getValue());
 
                     } else if (e.getType() == ControllerType.SHIFT) {
-                        System.out.println("Mouse[SHIFT]: " + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[SHIFT]: {0}", e.getValue());
                     } else if (e.getType() == ControllerType.ZOOM) {
-                        System.out.println("Mouse[ZOOM]: " + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[ZOOM]: {0}", e.getValue());
                     } else if (e.getType() == ControllerType.ROTATE) {
-                        System.out.println("Mouse[ROTATE]:" + e.getValue());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[ROTATE]:{0}", e.getValue());
                     }
                 }
             });

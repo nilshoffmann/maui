@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
@@ -94,7 +96,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
             while ((buffer = bis.readLine()) != null) {
                 sb.append(buffer).append("\n");
             }
-            System.out.println(sb.toString());
+            Logger.getLogger(getClass().getName()).info(sb.toString());
             return sb.toString();
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
@@ -428,13 +430,13 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         URL u = he.getURL();
         if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (u.getProtocol().equals("http") || u.getProtocol().equals("https")) {
-                System.out.println(u.getPath());
+                Logger.getLogger(getClass().getName()).info(u.getPath());
                 if (u.getPath().startsWith("/maui/")) {
                     String path = u.getPath().substring("/maui".length());
-                    System.out.println("Path: " + path);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Path: {0}", path);
                     if (path.startsWith("/OptionsDialog")) {
                         String optionsPanelRegistration = path.substring("/OptionsDialog/".length());
-                        System.out.println("Opening options panel: " + optionsPanelRegistration);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Opening options panel: {0}", optionsPanelRegistration);
                         OptionsDisplayer.getDefault().open(optionsPanelRegistration);
                     } else {
                         Actions.execFileSystemAction(path, new ActionEvent(this, 1, u.getPath()));
@@ -448,9 +450,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
                 } else {
                     try {
                         Desktop.getDesktop().browse(u.toURI());
-                    } catch (URISyntaxException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (IOException ex) {
+                    } catch (URISyntaxException | IOException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                 }

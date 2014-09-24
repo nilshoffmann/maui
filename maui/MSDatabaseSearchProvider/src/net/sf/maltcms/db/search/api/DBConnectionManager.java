@@ -37,10 +37,20 @@ import net.sf.maltcms.chromaui.db.api.ICrudProvider;
  */
 public class DBConnectionManager {
 
+    /**
+     *
+     * @param databaseLocation
+     * @return
+     */
     public static ICrudProvider getInMemoryContainer(URL databaseLocation) {
         return CrudProvider.getInMemoryProviderFor(databaseLocation);
     }
 
+    /**
+     *
+     * @param databaseLocation
+     * @return
+     */
     public static ICrudProvider getContainer(URL databaseLocation) {
         return CrudProvider.getProviderFor(databaseLocation);
     }

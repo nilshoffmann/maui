@@ -46,13 +46,25 @@ import maltcms.io.xml.ws.meltdb.MeltDBSession;
 import maltcms.io.xml.ws.meltdb.WebServiceClient;
 import org.openide.util.Exceptions;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class PeakImportVisualPanel2 extends JPanel implements ListSelectionListener {
 
     private String userName;
     private char[] password;
     private JList projectsList;
     private String activeProject;
+
+    /**
+     *
+     */
     public static final String PROP_WEBSERVICECLIENT = "WEBSERVICECLIENT";
+
+    /**
+     *
+     */
     public static final String PROP_ACTIVE_PROJECT = "ACTIVE_PROJECT";
 
     /**
@@ -81,15 +93,7 @@ public final class PeakImportVisualPanel2 extends JPanel implements ListSelectio
             //            SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
             context.init(null, tmf.getTrustManagers(), null);
             SSLContext.setDefault(context);//getSocketFactory();
-        } catch (KeyManagementException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (CertificateException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (KeyStoreException ex) {
+        } catch (KeyManagementException | IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
@@ -99,10 +103,18 @@ public final class PeakImportVisualPanel2 extends JPanel implements ListSelectio
         return "Select Project";
     }
 
+    /**
+     *
+     * @param name
+     */
     public void setUserName(String name) {
         this.userName = name;
     }
 
+    /**
+     *
+     * @param password
+     */
     public void setPassword(char[] password) {
         this.password = password;
         if (this.userName != null) {

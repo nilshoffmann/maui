@@ -51,7 +51,7 @@ import ucar.ma2.ArrayInt;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
@@ -66,7 +66,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
             importDir = project.getImportLocation(this);
             progressHandle.start(files.length);
             progressHandle.progress("Retrieving Chromatograms");
-            LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<String, IChromatogramDescriptor>();
+            LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<>();
             for (IChromatogramDescriptor descriptor : project.getChromatograms()) {
                 String chromName = new File(descriptor.getResourceLocation()).getName();
                 chromName = chromName.substring(0, chromName.lastIndexOf(
@@ -75,7 +75,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
                 Logger.getLogger(MaltcmsPeakFinderImporter.class.getName()).log(Level.INFO, "Added chromatogram {0}: {1}", new Object[]{chromName, descriptor});
             }
             progressHandle.progress("Matching Chromatograms");
-            LinkedHashMap<String, File> reports = new LinkedHashMap<String, File>();
+            LinkedHashMap<String, File> reports = new LinkedHashMap<>();
             for (File file : files) {
                 String chromName = file.getName();
                 chromName = chromName.substring(0, chromName.lastIndexOf(
@@ -140,7 +140,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
     }
 
     private List<IPeakAnnotationDescriptor> createPeaks(File file, IChromatogramDescriptor chromatogram) {
-        List<IPeakAnnotationDescriptor> pads = new ArrayList<IPeakAnnotationDescriptor>();
+        List<IPeakAnnotationDescriptor> pads = new ArrayList<>();
         List<Peak1D> peaks = fromFragment(new FileFragment(file));
         //IChromatogram chrom = chromatogram.getChromatogram();
         FileFragment source = new FileFragment(chromatogram.getChromatogram().getParent().getUri());
@@ -157,7 +157,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
         List<Array> intensityValues = intensityValuesVar.getIndexedArray();
         int index = 0;
         for (Peak1D peak : peaks) {
-            System.out.println("Peak " + peak.getName());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Peak {0}", peak.getName());
             IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
                     chromatogram,
                     peak.getName(),
@@ -257,7 +257,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
         ArrayChar.D2 peakType = (ArrayChar.D2) ff.getChild("peak_type").getArray();
         Array peakDetectionChannel = ff.getChild("peak_detection_channel").getArray();
         ArrayInt.D1 peakPositions = (ArrayInt.D1) peaks.getArray();
-        ArrayList<Peak1D> peaklist = new ArrayList<Peak1D>(peakPositions.getShape()[0]);
+        ArrayList<Peak1D> peaklist = new ArrayList<>(peakPositions.getShape()[0]);
         for (int i = 0; i < peakPositions.getShape()[0]; i++) {
             Peak1D p = new Peak1D();
             p.setNormalizationMethods(normalizationMethods.toArray(new String[normalizationMethods.size()]));

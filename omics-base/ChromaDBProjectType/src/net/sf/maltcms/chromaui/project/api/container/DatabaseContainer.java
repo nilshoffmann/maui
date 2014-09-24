@@ -37,6 +37,11 @@ import org.openide.util.ImageUtilities;
  */
 public class DatabaseContainer extends ADatabaseBackedContainer<IDatabaseDescriptor> {
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(

@@ -46,13 +46,24 @@ public class TreatmentGroupContainer extends ADatabaseBackedContainer<IChromatog
 
     private ITreatmentGroupDescriptor treatmentGroup;
 
+    /**
+     *
+     */
     public static String PROP_TREATMENTGROUP = "treatmentGroup";
 
+    /**
+     *
+     * @return
+     */
     public ITreatmentGroupDescriptor getTreatmentGroup() {
         activate(ActivationPurpose.READ);
         return this.treatmentGroup;
     }
 
+    /**
+     *
+     * @param treatmentGroup
+     */
     public void setTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup) {
         activate(ActivationPurpose.WRITE);
         ITreatmentGroupDescriptor old = this.treatmentGroup;
@@ -62,27 +73,48 @@ public class TreatmentGroupContainer extends ADatabaseBackedContainer<IChromatog
                 old, this.treatmentGroup);
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/Group.png");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getComment() {
         return getTreatmentGroup().getComment();
     }
 
+    /**
+     *
+     * @param comment
+     */
     @Override
     public void setComment(String comment) {
         getTreatmentGroup().setComment(comment);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Color getColor() {
         return getTreatmentGroup().getColor();
     }
 
+    /**
+     *
+     * @param color
+     */
     @Override
     public void setColor(Color color) {
         Color old = getTreatmentGroup().getColor();

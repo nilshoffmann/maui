@@ -48,6 +48,9 @@ public class JFCView implements MultiViewElement {
     private MultiViewElementCallback callback = null;
     private JFCPanel jfcv = null;
 
+    /**
+     *
+     */
     public JFCView() {
         this.jfcv = new JFCPanel();
 
@@ -62,44 +65,78 @@ public class JFCView implements MultiViewElement {
         this.jfcv.getActionMap().put("doNothing", doNothing);
     }
 
+    /**
+     *
+     * @param chart
+     */
     public void setChart(JFreeChart chart) {
         this.jfcv.setChart(chart);
     }
 
+    /**
+     *
+     * @return
+     */
     public JFCPanel getJFCPanel() {
         return this.jfcv;
     }
 
+    /**
+     *
+     */
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening
     }
 
+    /**
+     *
+     */
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public JComponent getVisualRepresentation() {
         return this.jfcv;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public JComponent getToolbarRepresentation() {
         return this.jfcv.getToolBar();
     }
 
+    /**
+     *
+     * @param mvec
+     */
     @Override
     public void setMultiViewCallback(MultiViewElementCallback mvec) {
         this.callback = mvec;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public CloseOperationState canCloseElement() {
         return CloseOperationState.STATE_OK;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Action[] getActions() {
 //        if(callback!=null) {
@@ -115,11 +152,18 @@ public class JFCView implements MultiViewElement {
         }};
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return Lookups.singleton(this);
     }
 
+    /**
+     *
+     */
     @Override
     public void componentShowing() {
         if (callback != null) {
@@ -127,10 +171,16 @@ public class JFCView implements MultiViewElement {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void componentHidden() {
     }
 
+    /**
+     *
+     */
     @Override
     public void componentActivated() {
         if (callback != null) {
@@ -139,10 +189,17 @@ public class JFCView implements MultiViewElement {
 
     }
 
+    /**
+     *
+     */
     @Override
     public void componentDeactivated() {
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public UndoRedo getUndoRedo() {
         return UndoRedo.NONE;

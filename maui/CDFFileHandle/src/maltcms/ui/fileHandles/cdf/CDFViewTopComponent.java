@@ -42,6 +42,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -86,6 +88,9 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
     private SelectionListener selectionListener;
     private Lookup lookup = null;
 
+    /**
+     *
+     */
     public CDFViewTopComponent() {
         initComponents();
         this.beanTreeView = new BeanTreeView();
@@ -98,14 +103,22 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
         selectionListener.register(Utilities.actionsGlobalContext());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ExplorerManager getExplorerManager() {
         return this.em;
     }
 
+    /**
+     *
+     * @param le
+     */
     @Override
     public void resultChanged(LookupEvent le) {
-        System.out.println("Received resultChanged!");
+        Logger.getLogger(getClass().getName()).info("Received resultChanged!");
         Collection<? extends IFileFragmentDataObject> files = result.allInstances();
         updateView(files);
     }
@@ -167,13 +180,17 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
         }
     }
 
+    /**
+     *
+     * @param files
+     */
     protected void updateView(Collection<? extends IFileFragmentDataObject> files) {
         if (!files.isEmpty()) {
 //			selectionListener.deregister();
-            HashSet<IFileFragmentDataObject> hs = new LinkedHashSet<IFileFragmentDataObject>(files);
-            List<Node> l = new ArrayList<Node>();
+            HashSet<IFileFragmentDataObject> hs = new LinkedHashSet<>(files);
+            List<Node> l = new ArrayList<>();
             for (IFileFragmentDataObject f : hs) {
-                System.out.println("File: " + f.getFragment());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "File: {0}", f.getFragment());
 
                 Node n;
                 try {
@@ -197,29 +214,49 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return this.lookup;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayName() {
         return NbBundle.getMessage(CDFViewTopComponent.class, "CTL_CDFViewTopComponent");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayHint() {
         return NbBundle.getMessage(CDFViewTopComponent.class, "HINT_CDFViewTopComponent");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public JComponent getComponent() {
         return this;
     }
 
+    /**
+     *
+     * @param lkp
+     */
     @Override
     public void panelActivated(Lookup lkp) {
-        System.out.println("panelActivated");
+        Logger.getLogger(getClass().getName()).info("panelActivated");
 //        lookup = lkp;
         result = lkp.lookupResult(IFileFragmentDataObject.class);
         result.addLookupListener(this);
@@ -230,6 +267,9 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void panelDeactivated() {
         ExplorerUtils.activateActions(em, false);
@@ -239,6 +279,10 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
 //        this.lookup = null;
     }
 
+    /**
+     *
+     * @param cdo
+     */
     public void setFile(CDFDataObject cdo) {
         updateView(Arrays.asList(cdo));
     }
@@ -261,7 +305,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
                     if (ivf.getName().equals("source_files")) {
 //                        Collection<IFileFragment> sourceFiles = ff.getSourceFiles();
                     } else {
-                        System.out.println("Adding variable: " + ivf);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding variable: {0}", ivf);
                         list.add(ivf);
                     }
                 }
@@ -271,7 +315,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
                     if (Thread.interrupted()) {
                         return false;
                     } else {
-                        System.out.println("Adding source file: " + sourceFile);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding source file: {0}", sourceFile);
                         list.add(sourceFile);
                     }
                 }
@@ -287,7 +331,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
                 return new Node[]{Node.EMPTY};
             } else if (key instanceof IVariableFragment) {
                 try {
-                    System.out.println("Creating VariableFragment node: " + key);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Creating VariableFragment node: {0}", key);
                     return new Node[]{new VariableFragmentNode((IVariableFragment) key)};
                 } catch (IntrospectionException ex) {
                     Exceptions.printStackTrace(ex);
@@ -296,7 +340,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
             } else if (key instanceof IFileFragment) {
                 try {
                     //                try{
-                    System.out.println("Creating FileFragment node: " + key);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Creating FileFragment node: {0}", key);
                     File f = new File(((IFileFragment) key).getUri());
                     if (f.exists() && f.isFile()) {
                         FileObject fo = FileUtil.toFileObject(new File(((IFileFragment) key).getAbsolutePath()));
@@ -318,10 +362,17 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
 
     // It is good idea to switch all listeners on and off when the
     // component is shown or hidden. In the case of TopComponent use:
-    protected void componentActivated() {
+
+    /**
+     *
+     */
+        protected void componentActivated() {
         ExplorerUtils.activateActions(em, true);
     }
 
+    /**
+     *
+     */
     protected void componentDeactivated() {
         ExplorerUtils.activateActions(em, false);
     }

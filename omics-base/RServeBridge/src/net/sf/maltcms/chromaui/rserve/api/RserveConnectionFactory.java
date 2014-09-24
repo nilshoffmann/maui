@@ -53,13 +53,37 @@ import org.rosuda.REngine.Rserve.RserveException;
 public class RserveConnectionFactory implements PreferenceChangeListener {
 
     private static RserveConnectionFactory rcf = new RserveConnectionFactory();
+
+    /**
+     *
+     */
     public static final String KEY_RBINARY_LOCATIONS = "rbinaryLocations";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVE_HOST = "rserveHost";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVE_PORT = "rservePort";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVE_LOCAL = "true";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVE_USER = "rserveUser";
     private boolean isLocalServer = false;
     private RConnection activeConnection = null;
+
+    /**
+     *
+     */
     public static final String defaultUnixRlocations
             = "/Library/Frameworks/R.framework/Resources/bin/R,"
             + "/bin/sh,"
@@ -71,16 +95,56 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
             + "/opt/bin/R,"
             + "/opt/local/bin/R,"
             + "/vol/r-2.13/bin/R";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVECALLS = "rserveCalls";
     ///Library/Frameworks/R.framework/Resources/library/Rserve/libs/Rserve-bin.so,
-    public static final String defaultRserveCalls = "Rserve,INLINEARGUMENT";
+
+    /**
+     *
+     */
+        public static final String defaultRserveCalls = "Rserve,INLINEARGUMENT";
+
+    /**
+     *
+     */
     public static final String KEY_RARGS = "rargs";
+
+    /**
+     *
+     */
     public static final String defaultRargs = "--vanilla --no-save";// --gui-none";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVEARGS = "rserveArgs";
+
+    /**
+     *
+     */
     public static final String defaultRserveArgs = "";
+
+    /**
+     *
+     */
     public static final String KEY_RBINARY_LOCATION = "rBinaryLocation";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVECALL = "rServeCall";
+
+    /**
+     *
+     */
     public static final String KEY_RSERVE_DEBUG = "rServeDebug";
+
+    /**
+     *
+     */
     public static final String defaultRserveDebug = "false";
     private String[] unixRlocations;
     private File rBinaryLocation;
@@ -129,12 +193,21 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         Logger.getLogger(RserveConnectionFactory.class.getName()).info(sb.toString());
     }
 
+    /**
+     *
+     * @return
+     */
     public static RserveConnectionFactory getInstance() {
         return rcf;
     }
 
     //DO NOT CHANGE!!!
-    public static RConnection getDefaultConnection() {
+
+    /**
+     *
+     * @return
+     */
+        public static RConnection getDefaultConnection() {
         RserveConnectionFactory factory = RserveConnectionFactory.getInstance();
         if (factory.isLocalServer) {
             return factory.getLocalConnection();
@@ -151,6 +224,9 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         }
     }
 
+    /**
+     *
+     */
     public synchronized void closeConnection() {
         if (this.activeConnection != null) {
             Logger.getLogger(RserveConnectionFactory.class.getName()).info("Closing connection to Rserve!");
@@ -172,9 +248,13 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isWindows() {
         String osname = System.getProperty("os.name");
-        System.out.println("os.name: " + osname);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "os.name: {0}", osname);
         if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
                 equals("Windows")) {
             return true;
@@ -182,6 +262,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDarwin() {
         String osname = System.getProperty("os.name");
         if (osname != null && osname.equals("Mac OS X")) {
@@ -235,7 +319,12 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
 //
 //        return commandList;
 //    }
-    public synchronized RConnection startLocalAndConnect() {
+
+    /**
+     *
+     * @return
+     */
+        public synchronized RConnection startLocalAndConnect() {
         if (StartRserveOriginal.checkLocalRserve()) {
             try {
                 return new RConnection();
@@ -301,6 +390,12 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
 //    }
     }
 
+    /**
+     *
+     * @param command
+     * @param capture
+     * @return
+     */
     public Process startProcess(List<String> command, boolean capture) {
         boolean isWindows = isWindows();
         try {
@@ -325,6 +420,12 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         return null;
     }
 
+    /**
+     *
+     * @param commandString
+     * @param capture
+     * @return
+     */
     public Process startProcessAndWait(List<String> commandString, boolean capture) {
         boolean isWindows = isWindows();
         Process p = null;
@@ -364,6 +465,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         return p;
     }
 
+    /**
+     *
+     * @return
+     */
     protected synchronized RConnection connectLocal() {
         Logger.getLogger(RserveConnectionFactory.class.getName()).info(
                 "Trying to connect to local Rserve ...");
@@ -379,7 +484,7 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
             setConnection(connection);
             return connection;
         } catch (RserveException ex) {
-            Logger.getLogger(RserveConnectionFactory.class.getName()).severe("Received an Rserve Exception: " + ex.getLocalizedMessage() + " with description: " + ex.getRequestErrorDescription());
+            Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.SEVERE, "Received an Rserve Exception: {0} with description: {1}", new Object[]{ex.getLocalizedMessage(), ex.getRequestErrorDescription()});
             Logger.getLogger(RserveConnectionFactory.class.getName()).info("Failed to connect to local Rserve ... launching new local instance!");
             connection = startLocalAndConnect();
             if (connection != null) {
@@ -394,6 +499,14 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         throw new NullPointerException();
     }
 
+    /**
+     *
+     * @param address
+     * @param port
+     * @param username
+     * @param password
+     * @return
+     */
     protected RConnection connectRemote(InetAddress address, int port, String username, char[] password) {
         Logger.getLogger(RserveConnectionFactory.class.getName()).log(
                 Level.INFO, "Trying to connect to remote Rserve at {0}:{1} ...", new Object[]{address, port});
@@ -405,8 +518,8 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
                 return activeConnection;
             } catch (RserveException ex) {
                 ex.printStackTrace();
-                System.err.println(
-                        "Failed to connect on try " + (1 + i) + "/5");
+                Logger.getLogger(getClass().getName()).log(
+                        Level.WARNING, "Failed to connect on try {0}/5", (1 + i));
             }
             try {
                 Thread.sleep(1000);
@@ -433,6 +546,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         return getRBinaryLocationUnix();
     }
 
+    /**
+     *
+     * @param location
+     */
     public void setRBinaryLocation(File location) {
         if (location.exists()) {
             rBinaryLocation = location;
@@ -441,6 +558,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public File getRBinaryLocationUnix() {
         if (rBinaryLocation != null) {
             return rBinaryLocation;
@@ -453,6 +574,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     public File getRBinaryLocationWindows() {
         String osname = System.getProperty("os.name");
         if (osname != null && osname.length() >= 7 && osname.substring(0, 7).
@@ -467,21 +592,21 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
                 rp.waitFor();
                 regHog.join();
                 installPath = regHog.getInstallPath();
-                Logger.getLogger(RserveConnectionFactory.class.getName()).info("Using R installation location: " + installPath);
-            } catch (Exception rge) {
-                System.out.println(
-                        "ERROR: unable to run REG to find the location of R: " + rge);
+                Logger.getLogger(RserveConnectionFactory.class.getName()).log(Level.INFO, "Using R installation location: {0}", installPath);
+            } catch (IOException | InterruptedException rge) {
+                Logger.getLogger(getClass().getName()).log(
+                        Level.INFO, "ERROR: unable to run REG to find the location of R: {0}", rge);
                 return null;
             }
             if (installPath == null) {
-                System.out.println(
+                Logger.getLogger(getClass().getName()).info(
                         "ERROR: canot find path to R. Make sure reg is available and R was installed with registry settings.");
                 return null;
             }
             if (new File(installPath, "\\bin\\x64\\R.exe").exists()) {
                 return new File(installPath, "\\bin\\x64\\R.exe");
             }
-            System.out.println("Falling back to default 32bit R instance");
+            Logger.getLogger(getClass().getName()).info("Falling back to default 32bit R instance");
             return new File(installPath, "\\bin\\R.exe");
         }
         return null;
@@ -534,6 +659,10 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
         return connectRemote(address, port, username, password);
     }
 
+    /**
+     *
+     * @return
+     */
     public RConnection getRemoteConnection() {
         if (activeConnection != null) {
             if (!activeConnection.isConnected()) {

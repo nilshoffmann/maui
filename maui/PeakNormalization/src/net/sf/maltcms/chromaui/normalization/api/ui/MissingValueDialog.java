@@ -38,6 +38,10 @@ import org.openide.NotifyDescriptor;
  */
 public class MissingValueDialog {
 
+    /**
+     *
+     * @return
+     */
     public static DataTable.ImputationMode getImputationMode() {
 
         MissingValuesSettingsPanel nsp = new MissingValuesSettingsPanel();

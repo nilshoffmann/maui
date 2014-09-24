@@ -34,17 +34,33 @@ import uk.ac.ebi.pride.jmztab.model.MetadataElement;
 import uk.ac.ebi.pride.jmztab.model.Param;
 import uk.ac.ebi.pride.jmztab.model.VariableMod;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class VariableModDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_VARIABLEMOD = "variableMod";
+    private static final long serialVersionUID = -6973215523891707349L;
 
     private VariableMod variableMod;
 
+    /**
+     *
+     * @return
+     */
     public VariableMod getVariableMod() {
         activate(ActivationPurpose.READ);
         return variableMod;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setVariableMod(VariableMod element) {
         activate(ActivationPurpose.WRITE);
         VariableMod old = this.variableMod;
@@ -55,46 +71,87 @@ public class VariableModDescriptor extends ABasicDescriptor implements IMzTabDes
         getPropertyChangeSupport().firePropertyChange(PROP_VARIABLEMOD, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getElementId() {
         return getVariableMod().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(Integer id) {
         getVariableMod().setId(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public Param getParam() {
         return getVariableMod().getParam();
     }
 
+    /**
+     *
+     * @param param
+     */
     public void setParam(Param param) {
         getVariableMod().setParam(param);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSite() {
         return getVariableMod().getSite();
     }
 
+    /**
+     *
+     * @param site
+     */
     public void setSite(String site) {
         getVariableMod().setSite(site);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPosition() {
         return getVariableMod().getPosition();
     }
 
+    /**
+     *
+     * @param position
+     */
     public void setPosition(String position) {
         getVariableMod().setPosition(position);
     }
 
+    @Override
     public String toString() {
         return getVariableMod().toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public MetadataElement getElement() {
         return getVariableMod().getElement();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getReference() {
         return getVariableMod().getReference();
     }

@@ -32,10 +32,18 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import org.openide.loaders.DataObject;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class CDF2ChartOpenAction implements ActionListener {
 
     private final List<DataObject> context;
 
+    /**
+     *
+     * @param context
+     */
     public CDF2ChartOpenAction(List<DataObject> context) {
         this.context = context;
     }

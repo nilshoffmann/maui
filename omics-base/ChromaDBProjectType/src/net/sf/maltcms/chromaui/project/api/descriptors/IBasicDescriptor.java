@@ -40,36 +40,108 @@ import org.openide.util.HelpCtx;
  */
 public interface IBasicDescriptor extends Activatable, Comparable<IBasicDescriptor>, HelpCtx.Provider, IPropertyChangeSupport, Serializable {
 
+    /**
+     *
+     */
     final String PROP_DISPLAYNAME = "displayName";
+
+    /**
+     *
+     */
     final String PROP_NAME = "name";
+
+    /**
+     *
+     */
     final String PROP_DATE = "date";
+
+    /**
+     *
+     */
     final String PROP_ID = "id";
+
+    /**
+     *
+     */
     final String PROP_SHORTDESCRIPTION = "shortDescription";
+
+    /**
+     *
+     */
     final String PROP_PROJECT = "project";
 
+    /**
+     *
+     * @return
+     */
     public IChromAUIProject getProject();
 
+    /**
+     *
+     * @param project
+     */
     public void setProject(IChromAUIProject project);
 
+    /**
+     *
+     * @return
+     */
     public String getDisplayName();
 
+    /**
+     *
+     * @param displayName
+     */
     public void setDisplayName(String displayName);
 
+    /**
+     *
+     * @return
+     */
     public String getName();
 
+    /**
+     *
+     * @param name
+     */
     public void setName(String name);
 
+    /**
+     *
+     * @return
+     */
     public Date getDate();
 
+    /**
+     *
+     * @param date
+     */
     public void setDate(Date date);
 
+    /**
+     *
+     * @return
+     */
     public UUID getId();
 
+    /**
+     *
+     * @param id
+     * @deprecated
+     */
     @Deprecated
     public void setId(UUID id);
 
+    /**
+     *
+     * @return
+     */
     public String getShortDescription();
 
+    /**
+     *
+     * @param shortDescription
+     */
     public void setShortDescription(String shortDescription);
 
 }
