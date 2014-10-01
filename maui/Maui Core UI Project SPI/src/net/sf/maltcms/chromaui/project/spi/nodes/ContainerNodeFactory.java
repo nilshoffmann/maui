@@ -30,7 +30,6 @@ package net.sf.maltcms.chromaui.project.spi.nodes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;

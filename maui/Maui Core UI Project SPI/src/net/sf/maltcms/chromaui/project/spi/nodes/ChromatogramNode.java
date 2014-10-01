@@ -38,14 +38,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import org.openide.actions.PropertiesAction;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.BeanNode.Descriptor;
 import org.openide.nodes.FilterNode;
@@ -58,7 +55,7 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.WeakListeners;
-import org.openide.util.actions.Presenter;
+import org.openide.util.actions.SystemAction;
 
 /**
  *
@@ -125,73 +122,16 @@ public class ChromatogramNode extends FilterNode implements
 
     @Override
     public Action[] getActions(boolean context) {
-        ArrayList<Action> actions = new ArrayList<>();
-        actions.add(ChromatogramNodePopupAction.findObject(ChromatogramNodePopupAction.class, true));
+        ArrayList<Action> actions = new ArrayList<>();        
+        ChromatogramNodePopupAction cnpa = ChromatogramNodePopupAction.findObject(ChromatogramNodePopupAction.class, true);
+        actions.add(cnpa);
+        actions.add(null);
+        actions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/IChromatogramDescriptor/Actions"));
         actions.add(null);
         actions.addAll(Utilities.actionsForPath("Actions/ChromAUIProjectLogicalView/DefaultActions"));
-        actions.addAll(Arrays.asList(super.getActions(context)));
+        actions.add(null);
+        actions.add(SystemAction.get(PropertiesAction.class));
         return actions.toArray(new Action[actions.size()]);
-    }
-
-    /**
-     * Retrieves actions from the given paths.
-     *
-     * @param context Action context sensitivity
-     * @param paths Action paths
-     * @return All found actions from the given paths
-     */
-    protected Action[] createActions(boolean context, String... paths) {
-        ArrayList<Action> subActions = new ArrayList<>();
-        Set<Action> actions = new LinkedHashSet<>();
-        actions.add(new ChromatogramNodePopupAction());
-        List<Action> parent = Arrays.asList(super.getActions(context));
-        actions.addAll(parent);
-        // remove all actions that are already in a submenu
-        actions.removeAll(subActions);
-        return actions.toArray(new Action[actions.size()]);
-    }
-
-    private List<Action> findSubActions(Presenter.Popup subMenu) {
-        List<Action> actions = new ArrayList<>();
-
-        JMenuItem item = subMenu.getPopupPresenter();
-        if (item instanceof JMenu) {
-            JMenu menu = (JMenu) item;
-            for (int i = 0; i < menu.getItemCount(); i++) {
-                Action a = menu.getItem(i).getAction();
-                actions.add(a);
-                if (a instanceof Presenter.Menu) {
-                    actions.addAll(this.findSubMenuActions((Presenter.Menu) a));
-                } else if (a instanceof Presenter.Popup) {
-                    actions.addAll(this.findSubActions((Presenter.Popup) a));
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("Expected JMenu instance, got " + item.getClass().getName());
-        }
-
-        return actions;
-    }
-
-    private List<Action> findSubMenuActions(Presenter.Menu subMenu) {
-        List<Action> actions = new ArrayList<>();
-        JMenuItem item = subMenu.getMenuPresenter();
-        if (item instanceof JMenu) {
-            JMenu menu = (JMenu) item;
-            for (int i = 0; i < menu.getItemCount(); i++) {
-                Action a = menu.getItem(i).getAction();
-                actions.add(a);
-                if (a instanceof Presenter.Menu) {
-                    actions.addAll(this.findSubMenuActions((Presenter.Menu) a));
-                } else if (a instanceof Presenter.Popup) {
-                    actions.addAll(this.findSubActions((Presenter.Popup) a));
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("Expected JMenu instance, got " + item.getClass().getName());
-        }
-
-        return actions;
     }
 
     @Override
