@@ -27,16 +27,21 @@
                 <package>uk.ac.ebi.pride.jmztab.model</package>
                 <package>uk.ac.ebi.pride.jmztab.utils</package>
                 <package>uk.ac.ebi.pride.jmztab.utils.convert</package>
+                <package>uk.ac.ebi.pride.jmztab.utils.convert.utils</package>
                 <package>uk.ac.ebi.pride.jmztab.utils.errors</package>
                 <package>uk.ac.ebi.pride.jmztab.utils.parser</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/jmztab-modular-model-3.0.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmztab-modular-model-3.0.1.jar</binary-origin>
+                <runtime-relative-path>ext/jmztab-modular-model-3.0.2-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-model-3.0.2-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jmztab-modular-util-3.0.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmztab-modular-util-3.0.1.jar</binary-origin>
+                <runtime-relative-path>ext/jmztab-modular-converters-3.0.2-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-converters-3.0.2-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jmztab-modular-util-3.0.2-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-util-3.0.2-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>
