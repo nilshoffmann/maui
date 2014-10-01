@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.container.MetaDataContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
@@ -42,16 +43,16 @@ import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.Section;
 import uk.ac.ebi.pride.jmztab.model.SmallMolecule;
 import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
+import uk.ac.ebi.pride.jmztab.utils.errors.MZTabError;
 
 /**
  *
  * @author Nils Hoffmann
  */
 public class MzTabFileContainer extends MetaDataContainer<IMetaDataDescriptor> {
+
     private static final long serialVersionUID = -5170938846384192737L;
 
-    
-    
     /**
      *
      * @param mzTabFile
@@ -61,30 +62,38 @@ public class MzTabFileContainer extends MetaDataContainer<IMetaDataDescriptor> {
         try {
             MZTabFileParser mzfp = new MZTabFileParser(mzTabFile, System.out);
             MZTabFile file = mzfp.getMZTabFile();
-            MzTabFileContainer container = new MzTabFileContainer();
-            container.setLevel(0);
-            MzTabMetaDataContainer mdc = MzTabMetaDataContainer.create(file.getMetadata());
-            mdc.setLevel(1);
-            container.setMetaData(mdc);
-            container.setName(mzTabFile.getName());
-            container.setDisplayName(file.getMetadata().getMZTabID());
-            container.setShortDescription("MzTab Version: " + file.getMetadata().getMZTabVersion() + " Mode: " + file.getMetadata().getMZTabMode() + " Type: " + file.getMetadata().getMZTabType() + " Description: " + file.getMetadata().getDescription());
-            CommentsContainer cc = CommentsContainer.create(file.getComments());
-            cc.setLevel(1);
-            container.setComments(cc);
-            PeptideContainer pc = PeptideContainer.create(file);
-            pc.setLevel(1);
-            container.setPeptides(pc);
-            ProteinContainer proc = ProteinContainer.create(file);
-            proc.setLevel(1);
-            container.setProteins(proc);
-            PsmContainer psmc = PsmContainer.create(file);
-            psmc.setLevel(1);
-            container.setPsms(psmc);
-            SmallMoleculeContainer smc = SmallMoleculeContainer.create(file);
-            smc.setLevel(1);
-            container.setSmallMolecules(smc);
-            return container;
+            if (file == null) {
+                Logger.getLogger(MzTabFileContainer.class.getName()).log(Level.WARNING, "Could not parse file: {0}", mzTabFile);
+                for (int i = 0; i < mzfp.getErrorList().size(); i++) {
+                    MZTabError mzt = mzfp.getErrorList().getError(i);
+                    Logger.getLogger(MzTabFileContainer.class.getName()).log(Level.WARNING, "Found error: {0}", mzt.toString());
+                }
+            } else {
+                MzTabFileContainer container = new MzTabFileContainer();
+                container.setLevel(0);
+                MzTabMetaDataContainer mdc = MzTabMetaDataContainer.create(file.getMetadata());
+                mdc.setLevel(1);
+                container.setMetaData(mdc);
+                container.setName(mzTabFile.getName());
+                container.setDisplayName(file.getMetadata().getMZTabID());
+                container.setShortDescription("MzTab Version: " + file.getMetadata().getMZTabVersion() + " Mode: " + file.getMetadata().getMZTabMode() + " Type: " + file.getMetadata().getMZTabType() + " Description: " + file.getMetadata().getDescription());
+                CommentsContainer cc = CommentsContainer.create(file.getComments());
+                cc.setLevel(1);
+                container.setComments(cc);
+                PeptideContainer pc = PeptideContainer.create(file);
+                pc.setLevel(1);
+                container.setPeptides(pc);
+                ProteinContainer proc = ProteinContainer.create(file);
+                proc.setLevel(1);
+                container.setProteins(proc);
+                PsmContainer psmc = PsmContainer.create(file);
+                psmc.setLevel(1);
+                container.setPsms(psmc);
+                SmallMoleculeContainer smc = SmallMoleculeContainer.create(file);
+                smc.setLevel(1);
+                container.setSmallMolecules(smc);
+                return container;
+            }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

@@ -27,15 +27,15 @@
  */
 package net.sf.maltcms.chromaui.jmztab.ui.actions;
 
-import com.db4o.constraints.ConstraintViolationException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
+import java.util.Date;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ContactDescriptor;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.ContactContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabFileContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabMetaDataContainer;
+import org.netbeans.api.project.ProjectUtils;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
@@ -60,14 +60,20 @@ public final class AddMzTabMetaData implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         MzTabFileContainer fileContainer = new MzTabFileContainer();
+        Date date = new Date();
+        fileContainer.setDate(date);
+        fileContainer.setDisplayName(ProjectUtils.getInformation(context).getDisplayName()+" mzTab");
+        fileContainer.setShortDescription(fileContainer.getDisplayName());
         MzTabMetaDataContainer container = new MzTabMetaDataContainer();
         container.setLevel(1);
+        container.setDisplayName("Meta Data");
         ContactContainer cc = new ContactContainer();
+        cc.setDisplayName("Contacts");
         cc.setLevel(2);
         ContactDescriptor cd = new ContactDescriptor();
         Contact contact = new Contact(1);
         cd.setContact(contact);
-        cd.setName(System.getProperty("user.name"));
+        cd.setDisplayName(System.getProperty("user.name"));
         cc.addMembers(cd);
         container.setContacts(cc);
         fileContainer.setMetaData(container);

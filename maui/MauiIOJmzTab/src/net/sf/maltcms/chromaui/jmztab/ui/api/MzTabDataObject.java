@@ -27,13 +27,7 @@
  */
 package net.sf.maltcms.chromaui.jmztab.ui.api;
 
-import java.awt.Image;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.sf.maltcms.chromaui.jmztab.ui.util.MzTabFileToModelBuilder;
-import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
-import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabFileContainer;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
@@ -48,20 +42,14 @@ import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
-import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.Children;
-import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
-import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.WeakListeners;
 import org.openide.windows.TopComponent;
-import uk.ac.ebi.pride.jmztab.model.MZTabFile;
-import uk.ac.ebi.pride.jmztab.utils.MZTabFileParser;
 
 /**
  *
