@@ -113,7 +113,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     /**
      * Creates new form Chromatogram2DViewerPanel
      */
-    public Chromatogram2DViewerPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset2D<IChromatogram2D, IScan2D> ds) {
+    public Chromatogram2DViewerPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset2D<IChromatogram2D, IScan2D> ds, PaintScale ps) {
         initComponents();
         this.content = topComponentInstanceContent;
         this.lookup = tcLookup;
@@ -129,6 +129,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jPanel2.add(chartPanel, BorderLayout.CENTER);
         content.add(chartPanel);
         addKeyListener(this);
+        setPaintScale(ps);
     }
 
     public boolean isSyncViewport() {
@@ -249,7 +250,6 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
-        settingsButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jSlider1 = new RangeSlider(0,1000);
@@ -273,17 +273,6 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
         jToolBar2.setFloatable(false);
         jToolBar2.setRollover(true);
-
-        settingsButton.setText(org.openide.util.NbBundle.getMessage(Chromatogram2DViewerPanel.class, "Chromatogram2DViewerPanel.settingsButton.text")); // NOI18N
-        settingsButton.setFocusable(false);
-        settingsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        settingsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        settingsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settingsButtonActionPerformed(evt);
-            }
-        });
-        jToolBar2.add(settingsButton);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/sf/maltcms/chromaui/chromatogram2Dviewer/ui/panel/Bundle"); // NOI18N
         jButton1.setText(bundle.getString("Chromatogram2DViewerPanel.jButton1.text")); // NOI18N
@@ -404,8 +393,8 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (psda == null) {
             psda = new PaintScaleDialogAction("New Paintscale", this.alpha, this.beta, this.ps);
+            psda.addPaintScaleTarget(this);
         }
-        psda.addPaintScaleTarget(this);
         psda.actionPerformed(evt);
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -432,10 +421,6 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
         }
     }//GEN-LAST:event_jCheckBox2ActionPerformed
-
-    private void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_settingsButtonActionPerformed
 
     private void modeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_modeSpinnerStateChanged
         if (selectionHandler != null) {
@@ -466,14 +451,14 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             @Override
             public void run() {
 
-                if (ps instanceof GradientPaintScale) {
+                if (ps!=null && ps instanceof GradientPaintScale) {
                     GradientPaintScale gps = (GradientPaintScale) ps;
                     double min = gps.getLowerBound();
                     double max = gps.getUpperBound();
                     gps.setLowerBoundThreshold(min + ((max - min) * ((double) low / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
                     gps.setUpperBoundThreshold(max + ((max - min) * ((double) high / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
+                    updateChart();
                 }
-                updateChart();
             }
         };
         SwingUtilities.invokeLater(r);
@@ -483,9 +468,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         if (xyb != null && xyb instanceof XYNoBlockRenderer) {
             throw new IllegalArgumentException();
         }
-        XYPlot plot = ((XYPlot) this.chartPanel.getChart().getPlot());
-        ChartTools.changePaintScale(plot, this.ps);
-        chartPanel.repaint();
+        ChartTools.changePaintScale((XYPlot) this.chartPanel.getChart().getPlot(), this.ps);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner boxHeightSpinner;
@@ -509,14 +492,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JSpinner modeSpinner;
-    private javax.swing.JButton settingsButton;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void setPaintScale(PaintScale ps) {
         Logger.getLogger(getClass().getName()).info("Set paint scale called on HeatmapPanel");
-//        if (ps != null && ps instanceof GradientPaintScale) {
-        Logger.getLogger(getClass().getName()).info("Paint scale using!");
         GradientPaintScale sps = (GradientPaintScale) ps;
         if (this.ps != null) {
             double lb = this.ps.getLowerBound();
@@ -529,23 +509,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         this.beta = (int) sps.getBeta();
         this.ps = sps;
         Color c = (Color) sps.getPaint(this.ps.getUpperBound());
-        if (chartPanel != null) {
-            JFreeChart jfc = chartPanel.getChart();
-            if (jfc != null) {
-                XYPlot plot = jfc.getXYPlot();
-                if (!jCheckBox2.isSelected()) {
-                    Color bg = (Color) this.ps.getPaint(this.ps.getLowerBound());
-                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Background color: {0}", bg);
-                    setBackgroundColor(bg);
-                }
-            }
-        }
         selectionFill = new Color(c.getRed(), c.getBlue(), c.getGreen(), 192);
         selectionOutline = new Color(c.getRed(), c.getBlue(), c.getGreen()).darker();
         this.jSlider1.setMaximum(100);
         this.jSlider1.setMinimum(0);
         handleSliderChange();
-//        }
     }
 
     @Override
