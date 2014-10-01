@@ -97,7 +97,7 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 
     private Action[] buildActions(Lookup lookup) {
         final IChromAUIProject project = LookupUtils.ensureSingle(lookup, IChromAUIProject.class);
-        Collection<Action> topLevelActions = new ArrayList<Action>();
+        Collection<Action> topLevelActions = new ArrayList<>();
         File projectPipelinesPath = new File(FileUtil.toFile(project.getLocation()), "pipelines");
         File[] maltcmsVersions = projectPipelinesPath.listFiles(new FileFilter() {
             @Override
@@ -108,10 +108,10 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
         if (maltcmsVersions == null) {
             return new Action[0];
         }
-        System.out.println("Found maltcms versions: " + Arrays.deepToString(maltcmsVersions));
+        Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Found maltcms versions: {0}", Arrays.deepToString(maltcmsVersions));
         for (File maltcmsVersion : maltcmsVersions) {
-            System.out.println("Checking pipelines below " + maltcmsVersion);
-            List<File> c = new ArrayList<File>(FileUtils.listFiles(maltcmsVersion, new String[]{"mpl"}, true));
+            Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Checking pipelines below {0}", maltcmsVersion);
+            List<File> c = new ArrayList<>(FileUtils.listFiles(maltcmsVersion, new String[]{"mpl"}, true));
             Collections.sort(c, new Comparator<File>() {
 
                 @Override
@@ -119,11 +119,11 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            System.out.println("Found " + c.size() + " pipeline definitions!");
-            Collection<Action> actions = new ArrayList<Action>();
+            Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Found {0} pipeline definitions!", c.size());
+            Collection<Action> actions = new ArrayList<>();
             for (File pipelineFile : c) {
                 FileObject fo = FileUtil.toFileObject(pipelineFile);
-                System.out.println("Adding pipeline " + pipelineFile.getName());
+                Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Adding pipeline {0}", pipelineFile.getName());
                 DataObject dobj;
                 try {
                     dobj = DataObject.find(fo);
@@ -136,16 +136,16 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 
                                     @Override
                                     public void run() {
-                                        System.out.println("Creating PipelineRunOpenSupport");
+                                        Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Creating PipelineRunOpenSupport");
                                         PipelineRunOpenSupport pos = new PipelineRunOpenSupport(mpfdo.getPrimaryEntry());
-                                        System.out.println("Calling pos.open()!");
+                                        Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Calling pos.open()!");
                                         pos.open();
-                                        System.out.println("Done!");
+                                        Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Done!");
                                     }
                                 });
                             }
                         };
-                        System.out.println("Adding dataobject action");
+                        Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Adding dataobject action");
                         actions.add(pipelineRunAction);
 //						subMenu.add(new JMenuItem(pipelineRunAction));
                     }
@@ -154,7 +154,7 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
                 }
 
             }
-            System.out.println("Adding " + actions.size() + " Pipeline specific actions!");
+            Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.FINE, "Adding {0} Pipeline specific actions!", actions.size());
             topLevelActions.add(Lookup.getDefault().lookup(INodeFactory.class).createMenuItem(maltcmsVersion.getName(), actions.toArray(new Action[actions.size()])));
         }
         return topLevelActions.toArray(new Action[topLevelActions.size()]);
@@ -212,11 +212,11 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
     }
 
     protected static JMenu actionsToMenu(String menuName, Action[] actions, Lookup context) {
-		//code from Utilities.actionsToPopup
+        //code from Utilities.actionsToPopup
         // keeps actions for which was menu item created already (do not add them twice)
-        Set<Action> counted = new HashSet<Action>();
+        Set<Action> counted = new HashSet<>();
         // components to be added (separators are null)
-        List<Component> components = new ArrayList<Component>();
+        List<Component> components = new ArrayList<>();
 
         for (Action action : actions) {
             if (action != null && counted.add(action)) {
@@ -225,7 +225,7 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 //					System.out.println("Context aware action");
                     Action contextAwareAction = ((ContextAwareAction) action).createContextAwareInstance(context);
                     if (contextAwareAction == null) {
-                        Logger.getLogger(Utilities.class.getName()).log(Level.WARNING, "ContextAwareAction.createContextAwareInstance(context) returns null. That is illegal!" + " action={0}, context={1}", new Object[]{action, context});
+                        Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.WARNING, "ContextAwareAction.createContextAwareInstance(context) returns null. That is illegal!" + " action={0}, context={1}", new Object[]{action, context});
                     } else {
                         action = contextAwareAction;
                     }
@@ -238,7 +238,7 @@ public final class RunMaltcmsPipelinesAction extends AbstractAction implements C
 //					System.out.println("Popup menu");
                     item = ((Presenter.Popup) action).getPopupPresenter();
                     if (item == null) {
-                        Logger.getLogger(Utilities.class.getName()).log(Level.WARNING, "findContextMenuImpl, getPopupPresenter returning null for {0}", action);
+                        Logger.getLogger(RunMaltcmsPipelinesAction.class.getName()).log(Level.WARNING, "findContextMenuImpl, getPopupPresenter returning null for {0}", action);
                         continue;
                     }
                 } else if (action instanceof DynamicMenuContent) {
