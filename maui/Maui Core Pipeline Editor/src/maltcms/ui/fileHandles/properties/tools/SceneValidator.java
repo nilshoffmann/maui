@@ -27,16 +27,8 @@
  */
 package maltcms.ui.fileHandles.properties.tools;
 
-import cross.Factory;
-import cross.commands.fragments.IFragmentCommand;
-import cross.datastructures.fragments.IFileFragment;
-import cross.datastructures.pipeline.CommandPipeline;
-import cross.datastructures.pipeline.ICommandSequence;
-import cross.datastructures.tuple.TupleND;
-import cross.exception.ConstraintViolationException;
-import java.util.ArrayList;
 import java.util.List;
-import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -56,7 +48,7 @@ public class SceneValidator {
         List<PipelineElementWidget> pipeline = SceneParser.getPipeline(this.scene);
         List<Widget> other = SceneParser.getNonPipeline(this.scene);
         int nodeCount = SceneParser.getPipelinesLayer(this.scene).getChildren().size();
-        if (other.size() > 1) {
+        if (pipeline.size() > 0 && other.size() > 2) {
             return "At least one element ist not connected to the pipeline.";
         }
         if (pipeline.isEmpty()) {
@@ -71,37 +63,39 @@ public class SceneValidator {
 
     private String checkPipeline(List<PipelineElementWidget> pipeline) {
 //        final Maltcms m = Maltcms.getInstance();
+//        m.
 //        final PropertiesConfiguration cfg = m.getDefaultConfiguration();
 //        Factory.getInstance().
 
-        ICommandSequence cs = new CommandPipeline();
-        List<IFragmentCommand> p = new ArrayList<>();
-        for (PipelineElementWidget w : pipeline) {
-            try {
-                p.add((IFragmentCommand) Factory.getInstance().getObjectFactory().instantiate(Class.forName(w.getClassName())));
-            } catch (ClassNotFoundException ex) {
-//                Exceptions.printStackTrace(ex);
-                return ex.getMessage();
-            }
-        }
-        cs.setCommands(p);
-//        System.out.println("COMMMANDSEQUENCE SIZE IS: " + cs.getCommands().size());
-        try {
-            cs.setInput(new TupleND<IFileFragment>());
-        } catch (ConstraintViolationException ex) {
-            if (!ex.getMessage().contains("smaller than minimum supplied")) {
-//                Exceptions.printStackTrace(ex);
-                return ex.getMessage();
-            }
-        }
-        if (cs.validate()) {
-
-//        Factory.getInstance().configure(cfg);
-//        ICommandSequence cs = Factory.getInstance().getObjectFactory().instantiate(CommandPipeline.class);
-//        cs.setInput(null);
-            return "Everything looks fine";
-        } else {
-            return "Validation failed!";
-        }
+//        ICommandSequence cs = new CommandPipeline();
+//        List<IFragmentCommand> p = new ArrayList<>();
+//        for (PipelineElementWidget w : pipeline) {
+//            try {
+//                p.add((IFragmentCommand) Factory.getInstance().getObjectFactory().instantiate(Class.forName(w.getClassName())));
+//            } catch (ClassNotFoundException ex) {
+////                Exceptions.printStackTrace(ex);
+//                return ex.getMessage();
+//            }
+//        }
+//        cs.setCommands(p);
+////        System.out.println("COMMMANDSEQUENCE SIZE IS: " + cs.getCommands().size());
+//        try {
+//            cs.setInput(new TupleND<IFileFragment>());
+//        } catch (ConstraintViolationException ex) {
+//            if (!ex.getMessage().contains("smaller than minimum supplied")) {
+////                Exceptions.printStackTrace(ex);
+//                return ex.getMessage();
+//            }
+//        }
+//        if (cs.validate()) {
+//
+////        Factory.getInstance().configure(cfg);
+////        ICommandSequence cs = Factory.getInstance().getObjectFactory().instantiate(CommandPipeline.class);
+////        cs.setInput(null);
+//            return "Everything looks fine";
+//        } else {
+//            return "Validation failed!";
+//        }
+        return "Validation is currently being skipped!";
     }
 }

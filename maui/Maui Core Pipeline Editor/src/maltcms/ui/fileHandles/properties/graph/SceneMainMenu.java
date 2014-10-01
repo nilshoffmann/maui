@@ -27,6 +27,8 @@
  */
 package maltcms.ui.fileHandles.properties.graph;
 
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 

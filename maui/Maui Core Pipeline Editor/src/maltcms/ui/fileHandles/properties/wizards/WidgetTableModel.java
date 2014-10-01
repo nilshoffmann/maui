@@ -30,11 +30,7 @@ package maltcms.ui.fileHandles.properties.wizards;
 import maltcms.ui.fileHandles.properties.tools.HashTableModel;
 import java.util.Map;
 import java.util.Vector;
-import javax.swing.JTable;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
-import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
 import org.openide.util.NotImplementedException;
 
 /**
@@ -45,8 +41,8 @@ public class WidgetTableModel extends HashTableModel {
 
     private PipelineElementWidget w = null;
 
-    public WidgetTableModel(Vector<String> header, Map<String, Object> property, Class<?> c) {
-        super(header, property, c);
+    public WidgetTableModel(Vector<String> header, Map<String, Object> property, Object bean) {
+        super(header, property, bean==null?null:bean.getClass());
     }
 
     // TODO remove dirty style

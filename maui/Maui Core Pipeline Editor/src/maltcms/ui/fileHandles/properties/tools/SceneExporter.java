@@ -38,8 +38,8 @@ import java.util.Stack;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
-import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -102,84 +102,38 @@ public class SceneExporter {
      */
     private void createConfigFiles(List<PipelineElementWidget> pipeline, PipelineGeneralConfigWidget general) {
         try {
-            //create a stack for FileLock objects to ease bookkeeping
-//            Stack<FileLock> fls = new Stack<FileLock>();
             //create base config
             FileObject baseConfigFo = this.file.getFileObject(this.name + ".mpl");
             File f = FileUtil.toFile(baseConfigFo);
-//            lock(baseConfigFo, fls);
             PropertiesConfiguration baseConfig = new PropertiesConfiguration();
-
-            //create subdir "fragmentCommands"
             File subDir = new File(f.getParent(), "xml");
             FileUtil.createFolder(subDir);
-//            subDir.mkdirs();
-//            lock(subDir, fls);
             //retrieve general configuration
             Configuration generalConfig = general.getProperties();
             //only create and link, if non-empty
             if (!generalConfig.isEmpty()) {
-                FileObject generalConfigFo = this.file.createData(this.name + "-general.properties");
-//                lock(generalConfigFo, fls);
-                //create outputstream for general config
-                PropertiesConfiguration pc = new PropertiesConfiguration();
-                ConfigurationUtils.copy(generalConfig, pc);
-                pc.save(new PrintStream(generalConfigFo.getOutputStream()));
-//                PrintStream baseConfigPrintStream = new PrintStream(generalConfigFo.getOutputStream());
-//                //loop over config keys
-//                ConfigurationUtils.dump(generalConfig, baseConfigPrintStream);
-//                unlock(fls);
-                //add to base configuration
-                baseConfig.addProperty("include", this.name + "-general.properties");
+                ConfigurationUtils.copy(generalConfig, baseConfig);
             }
-
-            //number scheme for subdirectories
-            int cnt = 0;
-            final int digits = (int) Math.ceil(Math.log10(pipeline.size())) + 1;
-
             //String list for pipeline elements
             List<String> pipelineElements = new LinkedList<>();
-            //String list for pipeline elements configuration locations
-            List<String> pipelinePropertiesElements = new LinkedList<>();
+            File pipelineXml = new File(subDir, this.name+".xml");
             for (PipelineElementWidget pw : pipeline) {
                 //add full class name to pipeline elements
                 pipelineElements.add(pw.getClassName());
-                //add subdirs and specific configuration
-                //get class name suffix
-                String[] tmp = pw.getClassName().split("\\.");
-                String cname = tmp[tmp.length - 1];
-                //create numbered subdir with name (gives a better hint to contents,
-                //than just the number
-                File pipeElementSubDir = new File(subDir, String.format("%0" + digits + "d", cnt++)
-                        + "_" + cname);
-                FileObject pipeDirFo = FileUtil.createFolder(pipeElementSubDir);
-//                pipeElementSubDir.mkdirs();
-//                lock(pipeElementSubDir, fls);
-                //create file object for pipeline element specific configuration
-                File cfgf = new File(pipeElementSubDir, cname + ".properties");
-                FileObject cfgFo = FileUtil.createData(cfgf);
                 //write configuration to that file
                 PropertiesConfiguration pc = new PropertiesConfiguration();
-                ConfigurationUtils.copy(pw.getProperties(), pc);
-                pc.save(new PrintStream(cfgFo.getOutputStream()));
-//                unlock(fls);
-                //append file path to other pipeline properties elements
-                pipelinePropertiesElements.add(cfgf.getPath());
             }
             //set pipeline property
             baseConfig.setProperty("pipeline", pipelineElements);
             //set pipeline.properties property
-            baseConfig.setProperty("pipeline.properties", pipelinePropertiesElements);
+            String pipelineXmlString = "file:${config.basedir}/xml/bipace.xml";
+            baseConfig.setProperty("pipeline.xml", pipelineXmlString);
             FileObject fo = FileUtil.toFileObject(f);
             try {
                 baseConfig.save(new PrintStream(fo.getOutputStream()));
-                //release remaining file locks
-                //            unlockAll(fls);
             } catch (ConfigurationException ex) {
                 Exceptions.printStackTrace(ex);
             }
-        } catch (ConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
         } catch (FileNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
@@ -216,7 +170,6 @@ public class SceneExporter {
 
     public static void showSaveDialog(PipelineGraphScene scene) {
         if (scene.getBaseFile() == null) {
-
             JFileChooser chooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                     "property files", "properties");
@@ -227,10 +180,8 @@ public class SceneExporter {
                 File f = chooser.getSelectedFile();
                 saveScene(scene, f);
             }
-
         } else {
             try {
-
                 saveScene(scene, new File(scene.getBaseFile().getURL().toURI()));
             } catch (FileStateInvalidException | URISyntaxException ex) {
                 Exceptions.printStackTrace(ex);

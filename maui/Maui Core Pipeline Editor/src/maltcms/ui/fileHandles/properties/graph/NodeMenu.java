@@ -30,13 +30,25 @@ package maltcms.ui.fileHandles.properties.graph;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.IntrospectionException;
+import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
 import maltcms.ui.fileHandles.properties.wizards.PipelinePropertiesWizardAction;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
+import org.openide.actions.PropertiesAction;
+import org.openide.explorer.propertysheet.PropertySheet;
+import org.openide.nodes.BeanNode;
+import org.openide.nodes.Node;
+import org.openide.nodes.NodeOperation;
+import org.openide.util.Exceptions;
 import org.openide.util.actions.CallableSystemAction;
+import org.openide.util.actions.SystemAction;
 
 /**
  *
@@ -83,8 +95,18 @@ public class NodeMenu implements PopupMenuProvider, ActionListener {
             case EDIT_PROPERTIES_ACTION:
                 //Fallunterscheidung zwischen verschiedenen nodes
                 e.setSource(this.node);
-                CallableSystemAction csa = PipelinePropertiesWizardAction.getInstance();
-                csa.actionPerformed(e);
+                if (e.getSource() instanceof PipelineElementWidget) {
+                    PipelineElementWidget pipelineElement = (PipelineElementWidget) e.getSource();
+                    try {
+                        BeanNode<Object> beanNode = new BeanNode<>(pipelineElement.getBean());
+                        NodeOperation.getDefault().showProperties(beanNode);
+                    } catch (IntrospectionException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                } else {
+                    CallableSystemAction csa = PipelinePropertiesWizardAction.getInstance();
+                    csa.actionPerformed(e);
+                }
                 break;
         }
     }

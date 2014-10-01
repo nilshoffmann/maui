@@ -39,14 +39,14 @@ import org.apache.commons.configuration.Configuration;
  */
 public class ModelBuilder {
 
-    public static WidgetTableModel getModel(Configuration properties, Class<?> c) {
+    public static WidgetTableModel getModel(Configuration properties, Object bean) {
 
         Vector<String> header = new Vector<>();
         header.add("Key");
         header.add("Value");
         Logger.getLogger(ModelBuilder.class.getName()).log(Level.INFO, "properties: {0}", properties);
 
-        return new WidgetTableModel(header, PropertyLoader.asHash(properties), c);
+        return new WidgetTableModel(header, PropertyLoader.asHash(properties), bean);
     }
 
 }

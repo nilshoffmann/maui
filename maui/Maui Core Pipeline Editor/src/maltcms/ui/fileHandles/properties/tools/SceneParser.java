@@ -29,20 +29,17 @@ package maltcms.ui.fileHandles.properties.tools;
 
 import cross.commands.fragments.IFragmentCommand;
 import cross.datastructures.pipeline.ICommandSequence;
-import cross.tools.StringTools;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
-import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
 import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -50,7 +47,6 @@ import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
-import org.springframework.beans.BeanInfoFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
@@ -117,6 +113,15 @@ public class SceneParser {
         List<Widget> connectionWidgetList = new ArrayList<>();
         if (connectionLayer != null) {
             connectionWidgetList.addAll(connectionLayer.getChildren());
+        }
+        System.out.println("Number of children in pipeline layer: " + pipelinesLayer.getChildren().size());
+        for (Widget w:pipelinesLayer.getChildren()) {
+            if (w instanceof PipelineElementWidget) {
+                pipeline.add((PipelineElementWidget) w);
+            }
+        }
+        if(pipeline.size()==1) {
+            return pipeline;
         }
 
 //        System.out.println("Trying to find starting Widget");
@@ -245,6 +250,7 @@ public class SceneParser {
         //Get pipeline from configuration
         cfg.addProperty("config.basedir", f.getParentFile().getAbsoluteFile().toURI().getPath());
         String pipelineXml = cfg.getString("pipeline.xml");
+
         FileSystemXmlApplicationContext fsxmac = new FileSystemXmlApplicationContext(new String[]{pipelineXml}, true);
         ICommandSequence commandSequence = fsxmac.getBean("commandPipeline", cross.datastructures.pipeline.CommandPipeline.class);
 //        String[] pipes = pipeline.toArray(new String[]{});
@@ -262,10 +268,9 @@ public class SceneParser {
             String nodeId = command.getClass().getCanonicalName() + "" + nodeCounter;
             PipelineElementWidget node = (PipelineElementWidget) scene.addNode(nodeId);
 //            node.setPropertyFile();
-            scene.validate();
 
-//            System.out.println("Parsing pipeline element " + pipeCfg.getAbsolutePath());
-            node.setClassName(command.getClass().getCanonicalName());
+            //            System.out.println("Parsing pipeline element " + pipeCfg.getAbsolutePath());
+            node.setBean(command);
             node.setLabel(command.getClass().getSimpleName());
             node.setCurrentClassProperties();
             Configuration prop = node.getProperties();
@@ -288,6 +293,7 @@ public class SceneParser {
             }
 //                x += dx;
 //                y += dy;
+            scene.validate();
             lastNode = nodeId;
             nodeCounter++;
         }

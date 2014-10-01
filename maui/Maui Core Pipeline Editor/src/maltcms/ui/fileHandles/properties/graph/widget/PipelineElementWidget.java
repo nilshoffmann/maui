@@ -25,17 +25,23 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package maltcms.ui.fileHandles.properties.graph;
+package maltcms.ui.fileHandles.properties.graph.widget;
 
+import cross.commands.fragments.IFragmentCommand;
 import cross.datastructures.tuple.Tuple2D;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.netbeans.api.visual.widget.Scene;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.ProxyLookup;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
 /**
  *
@@ -45,8 +51,10 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
 
     private static final String CLASS_NAME = "Class";
     private Configuration variables = new PropertiesConfiguration();
-    private String className = "";
-    private String propertyFile = "";
+    private BeanWrapper beanWrapper;
+    private final InstanceContent content = new InstanceContent();
+    private final AbstractLookup lookup = new AbstractLookup(content);
+    private Object bean;
 
     public PipelineElementWidget(Scene scene, TextOrientation to) {
         super(scene, to);
@@ -54,6 +62,11 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
 
     public PipelineElementWidget(Scene scene) {
         super(scene);
+    }
+    
+    @Override
+    public Lookup getLookup() {
+        return new ProxyLookup(super.getLookup(), lookup);
     }
 
     @Override
@@ -74,15 +87,7 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
     }
 
     public String getClassName() {
-        return this.className;
-    }
-
-    public void setClassName(String className) {
-        if (className != null) {
-            this.className = className;
-            String[] tmp = this.className.split("\\.");
-            this.propertyFile = tmp[tmp.length - 1] + ".properties";
-        }
+        return this.bean.getClass().getCanonicalName();
     }
 
     public void setVariables(Configuration variables) {
@@ -98,23 +103,19 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
     public Object getVariables(String key) {
         return this.variables.getProperty(key);
     }
+    
+    public BeanWrapper getBeanWrapper() {
+        return this.beanWrapper;
+    }
 
     public void setCurrentClassProperties() {
         //System.out.println("SetCurrentClassProperties " + this.className);
-        Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(this.className, this.getClass());
+        Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(this.bean);
         if (v != null) {
             this.properties = v.getFirst();
             this.variables = v.getSecond();
             checkFurtherClassNames();
         }
-    }
-
-    public void setPropertyFile(String propertyFile) {
-        this.propertyFile = propertyFile;
-    }
-
-    public String getPropertyFile() {
-        return this.propertyFile;
     }
 
     private void checkFurtherClassNames() {
@@ -125,7 +126,7 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
             String key = (String) keys.next();
             if (key.endsWith(CLASS_NAME)) {
                 Logger.getLogger(getClass().getName()).log(Level.INFO, "Loading Properties for {0}({1})", new Object[]{key, this.properties.getProperty(key)});
-                Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(this.properties.getProperty(key), this.getClass());
+                Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(this.bean);
                 if (v != null) {
                     if (v.getFirst().isEmpty() && v.getSecond().isEmpty()) {
                         //maybe wrong name
@@ -146,8 +147,8 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
         }
     }
 
-    private void removeKeysForClassNameKey(String keyValue) {
-        Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(keyValue, this.getClass());
+    private void removeKeysForClassNameKey(Object bean) {
+        Tuple2D<Configuration, Configuration> v = PropertyLoader.handleShowProperties(bean);
         if (v != null) {
             Iterator keys = v.getFirst().getKeys();
             while (keys.hasNext()) {
@@ -157,5 +158,18 @@ public class PipelineElementWidget extends PipelineGeneralConfigWidget {
             }
             // TODO maybe "classname" has required/optional/provided vars too
         }
+    }
+
+    public void setBean(IFragmentCommand command) {
+        if(this.bean!=null) {
+            this.content.remove(this.bean);
+        }
+        this.bean = command;
+        this.beanWrapper = new BeanWrapperImpl(command);
+        this.content.add(bean);
+    }
+    
+    public Object getBean() {
+        return this.bean;
     }
 }

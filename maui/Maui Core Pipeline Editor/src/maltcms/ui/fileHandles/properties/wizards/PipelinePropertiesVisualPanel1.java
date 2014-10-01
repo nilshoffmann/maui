@@ -39,7 +39,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.table.TableModel;
-import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
+import maltcms.ui.fileHandles.properties.graph.PipelineGraphScene;
 import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import org.apache.commons.configuration.Configuration;
 
@@ -64,7 +65,7 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
             this.jComboBox1.setSelectedItem(node.getClassName());
         }
         this.jComboBox1.addItemListener(this);
-        refreshTableModel(getSelectedClassName());
+        refreshTableModel(node.getBean());
     }
 
     private class CustomComboBoxModelRenderer extends JLabel implements ListCellRenderer<String> {
@@ -282,43 +283,36 @@ public final class PipelinePropertiesVisualPanel1 extends JPanel implements Item
     @Override
     public void itemStateChanged(final ItemEvent e) {
 
-        refreshTableModel(getSelectedClassName());
+        refreshTableModel(this.jComboBox1.getSelectedItem());
 
     }
 
-    private String getSelectedClassName() {
-        return this.jTextField5.getText() + this.jComboBox1.getSelectedItem().toString();
-    }
-
-    private void refreshTableModel(String className) {
-        try {
-            Class<?> c = Class.forName(className);
-            Configuration properties;
-            Configuration variables;
-            if (className.equals(this.node.getClassName()) && !this.node.getProperties().isEmpty()) {
-                properties = this.node.getProperties();
-                variables = this.node.getVariables();
-            } else {
-                Tuple2D<Configuration, Configuration> tmp = PropertyLoader.handleShowProperties(className, this.getClass());
-                properties = tmp.getFirst();
-                variables = tmp.getSecond();
-            }
-            this.node.setLabel(className);
-            this.node.setClassName(className);
-            this.node.setProperties(properties);
+    private void refreshTableModel(Object object) {
+        Configuration properties;
+        Configuration variables;
+        if (object.getClass().getCanonicalName().equals(this.node.getClassName()) && !this.node.getProperties().isEmpty()) {
+            properties = this.node.getProperties();
+            variables = this.node.getVariables();
+        } else {
+            Tuple2D<Configuration, Configuration> tmp = PropertyLoader.handleShowProperties(object);
+            properties = tmp.getFirst();
+            variables = tmp.getSecond();
+        }
+        if(node.getScene() instanceof PipelineGraphScene) {
+            PipelineGraphScene scene = (PipelineGraphScene)node.getScene();
+            this.node.setLabel(scene.getNodeLabel(node, scene.isShortLabelActive()));
+        }
+        this.node.setProperties(properties);
 			//        this.jTable1.setModel(PropertyLoader.getModel(properties));
 
-            // TODO remove dirty style
-            TableModel htm = new HashTableModelFactory().create(this.node, this.jTable1, true, c);
+        // TODO remove dirty style
+        TableModel htm = new HashTableModelFactory().create(this.node, this.jTable1, true, object);
 
             //        if (className.length() > 17) {
-            //            this.node.setLabel(className.substring(17, className.length()));
-            //        }
-            this.jTextField1.setText(variables.getString(PropertyLoader.REQUIRED_VARS));
-            this.jTextField2.setText(variables.getString(PropertyLoader.OPTIONAL_VARS));
-            this.jTextField3.setText(variables.getString(PropertyLoader.PROVIDED_VARS));
-        } catch (ClassNotFoundException e) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not refresh table model for class: {0}", className);
-        }
+        //            this.node.setLabel(className.substring(17, className.length()));
+        //        }
+        this.jTextField1.setText(variables.getString(PropertyLoader.REQUIRED_VARS));
+        this.jTextField2.setText(variables.getString(PropertyLoader.OPTIONAL_VARS));
+        this.jTextField3.setText(variables.getString(PropertyLoader.PROVIDED_VARS));
     }
 }
