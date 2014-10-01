@@ -132,9 +132,11 @@
                 <package>net.sf.maltcms.chromaui.project.api.beans</package>
                 <package>net.sf.maltcms.chromaui.project.api.container</package>
                 <package>net.sf.maltcms.chromaui.project.api.descriptors</package>
+                <package>net.sf.maltcms.chromaui.project.api.extimport</package>
                 <package>net.sf.maltcms.chromaui.project.api.nodes</package>
                 <package>net.sf.maltcms.chromaui.project.api.persistence</package>
                 <package>net.sf.maltcms.chromaui.project.api.types</package>
+                <package>net.sf.maltcms.chromaui.project.api.utilities</package>
             </public-packages>
         </data>
     </configuration>

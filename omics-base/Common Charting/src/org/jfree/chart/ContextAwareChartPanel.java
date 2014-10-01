@@ -207,7 +207,7 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
     }
 
     @Override
-    public void mouseClicked(MouseEvent event) {
+    public void mouseClicked(final MouseEvent event) {
         super.mouseClicked(event); //To change body of generated methods, choose Tools | Templates.
     }
 

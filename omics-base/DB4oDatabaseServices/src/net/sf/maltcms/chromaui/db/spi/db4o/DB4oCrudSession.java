@@ -71,7 +71,7 @@ public final class DB4oCrudSession implements ICrudSession {
             if (!oc.ext().isClosed()) {
                 for (Object obj : o) {
                     if (obj != null) {
-                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Storing object of type {0}", obj.getClass().getName());
+                        Logger.getLogger(getClass().getName()).log(Level.FINE, "Storing object of type {0}", obj.getClass().getName());
                         oc.store(obj);
                     } else {
                         Logger.getLogger(getClass().getName()).info("Skipping null object!");
