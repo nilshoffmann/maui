@@ -55,7 +55,6 @@ import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.Chroma
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseDoubleArray;
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseIntegrationStartEnd;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
@@ -488,40 +487,6 @@ public class Utils {
                 //                append(ipad.getApexTime()).
                 toString();
         return key;
-    }
-
-    public static LinkedHashMap<String, File> mapReports(LinkedHashMap<String, IChromatogramDescriptor> chromatograms, File[] files) {
-        LinkedHashMap<String, File> reports = new LinkedHashMap<>();
-        for (File file : files) {
-            String chromName = file.getName();
-            chromName = chromName.substring(0, chromName.lastIndexOf(
-                    "."));
-            if (chromatograms.containsKey(chromName)) {
-                reports.put(chromName, file);
-                Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Adding report: {0}", chromName);
-            } else {
-                Logger.getLogger(Utils.class.getName()).log(
-                        Level.INFO, "Could not find matching chromatogram for report: {0}", chromName);
-            }
-        }
-        if (reports.size() != chromatograms.size()) {
-            Logger.getLogger(Utils.class.getName()).warning(
-                    "Not all chromatograms could be matched!");
-        }
-        return reports;
-    }
-
-    public static LinkedHashMap<String, IChromatogramDescriptor> createChromatogramMap(IChromAUIProject project) {
-        LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<>();
-        for (IChromatogramDescriptor descriptor : project.getChromatograms()) {
-            String chromName = new File(descriptor.getResourceLocation()).getName();
-            chromName = chromName.substring(0, chromName.lastIndexOf(
-                    "."));
-            chromatograms.put(chromName, descriptor);
-            Logger.getLogger(Utils.class.getName()).log(
-                    Level.INFO, "Added chromatogram {0}: {1}", new Object[]{chromName, descriptor});
-        }
-        return chromatograms;
     }
 
     public static void addMassSpectrum(TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key) {

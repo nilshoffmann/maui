@@ -130,51 +130,54 @@ public class PropertyLoader {
     /**
      * @param optionValues
      */
-    public static Tuple2D<Configuration, Configuration> handleShowProperties(Object optionValues, Class loader) {
+    public static Tuple2D<Configuration, Configuration> handleShowProperties(Object optionValues, ClassLoader classLoader) {
+        Class<?> c = optionValues.getClass();
+        return loadPropertiesFromClass(c);
+    }
+    
+     public static Tuple2D<Configuration, Configuration> handleShowProperties(Object optionValues) {
+        Class<?> c = optionValues.getClass();
+        return loadPropertiesFromClass(c);
+    }
+
+    private static Tuple2D<Configuration, Configuration> loadPropertiesFromClass(Class<?> c) {
         PropertiesConfiguration ret = new PropertiesConfiguration();
         PropertiesConfiguration var = new PropertiesConfiguration();
-        Class<?> c;
         String requiredVariables = "";
         String optionalVariables = "";
         String providedVariables = "";
-        try {
-            c = loader.getClassLoader().loadClass((String) optionValues);
-            Collection<String> reqVars = AnnotationInspector.getRequiredVariables(c);
-            for (String rv : reqVars) {
-                requiredVariables += rv + ",";
-            }
-            if (requiredVariables.length() > 0) {
-                requiredVariables = requiredVariables.substring(0, requiredVariables.length() - 1);
-            }
-            var.setProperty(REQUIRED_VARS, requiredVariables);
+        Collection<String> reqVars = AnnotationInspector.getRequiredVariables(c);
+        for (String rv : reqVars) {
+            requiredVariables += rv + ",";
+        }
+        if (requiredVariables.length() > 0) {
+            requiredVariables = requiredVariables.substring(0, requiredVariables.length() - 1);
+        }
+        var.setProperty(REQUIRED_VARS, requiredVariables);
 
-            Collection<String> optVars = AnnotationInspector.getOptionalRequiredVariables(c);
-            for (String rv : optVars) {
-                optionalVariables += rv + ",";
-            }
-            if (optionalVariables.length() > 0) {
-                optionalVariables = optionalVariables.substring(0, optionalVariables.length() - 1);
-            }
-            var.setProperty(OPTIONAL_VARS, optionalVariables);
+        Collection<String> optVars = AnnotationInspector.getOptionalRequiredVariables(c);
+        for (String rv : optVars) {
+            optionalVariables += rv + ",";
+        }
+        if (optionalVariables.length() > 0) {
+            optionalVariables = optionalVariables.substring(0, optionalVariables.length() - 1);
+        }
+        var.setProperty(OPTIONAL_VARS, optionalVariables);
 
-            Collection<String> provVars = AnnotationInspector.getProvidedVariables(c);
-            for (String rv : provVars) {
-                providedVariables += rv + ",";
-            }
-            if (providedVariables.length() > 0) {
-                providedVariables = providedVariables.substring(0, providedVariables.length() - 1);
-            }
-            var.setProperty(PROVIDED_VARS, providedVariables);
+        Collection<String> provVars = AnnotationInspector.getProvidedVariables(c);
+        for (String rv : provVars) {
+            providedVariables += rv + ",";
+        }
+        if (providedVariables.length() > 0) {
+            providedVariables = providedVariables.substring(0, providedVariables.length() - 1);
+        }
+        var.setProperty(PROVIDED_VARS, providedVariables);
 
-            Collection<String> keys = AnnotationInspector.getRequiredConfigKeys(c);
-            if (!keys.isEmpty()) {
-                for (String key : keys) {
-                    ret.setProperty(key, AnnotationInspector.getDefaultValueFor(c, key));
-                }
+        Collection<String> keys = AnnotationInspector.getRequiredConfigKeys(c);
+        if (!keys.isEmpty()) {
+            for (String key : keys) {
+                ret.setProperty(key, AnnotationInspector.getDefaultValueFor(c, key));
             }
-        } catch (ClassNotFoundException ex) {
-            //Exceptions.printStackTrace(ex);
-            return null;
         }
         return new Tuple2D<Configuration, Configuration>(ret, var);
     }

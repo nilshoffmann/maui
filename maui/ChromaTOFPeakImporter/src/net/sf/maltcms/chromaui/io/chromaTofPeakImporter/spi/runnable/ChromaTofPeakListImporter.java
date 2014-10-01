@@ -44,6 +44,8 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.Utils.*;
+import static net.sf.maltcms.chromaui.project.api.utilities.Mapping.createChromatogramMap;
+import static net.sf.maltcms.chromaui.project.api.utilities.Mapping.mapReports;
 import org.openide.util.Exceptions;
 
 /**
