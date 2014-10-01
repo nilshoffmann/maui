@@ -31,10 +31,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
@@ -58,9 +62,10 @@ import org.openide.util.WeakListeners;
  * @author Nils Hoffmann
  */
 public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay, PropertyChangeListener {
-
+    
     private final Peak1DContainer peakAnnotations;
     private final IChromatogramDescriptor descriptor;
+    private final HashSet<UUID> non2DPeaks;
 
     /**
      *
@@ -73,9 +78,11 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
      */
     public Peak2DOverlay(IChromatogramDescriptor descriptor, String name, String displayName, String shortDescription, boolean visibilityChangeable, Peak1DContainer peakAnnotations) {
         super(name, displayName, shortDescription, visibilityChangeable);
+        non2DPeaks = new HashSet<UUID>();
         for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
             if (!(descr instanceof IPeak2DAnnotationDescriptor)) {
-                throw new IllegalArgumentException("Must supply a peak container with 2d peaks!");
+                Logger.getLogger(Peak2DOverlay.class.getName()).log(Level.WARNING, "Removing non-2D peak descriptor {0}", descr);
+                non2DPeaks.add(descr.getId());
             }
         }
         this.descriptor = descriptor;
@@ -120,14 +127,16 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
             }
             g2.setColor(ChartCustomizer.withAlpha(fillColor, 0.5f));
             for (IPeakAnnotationDescriptor descr : peakAnnotations.getMembers()) {
-                IPeak2DAnnotationDescriptor descr2D = (IPeak2DAnnotationDescriptor) descr;
-                double x = descr2D.getFirstColumnRt();
-                double xx = xAxis.valueToJava2D(x, dataArea, xAxisEdge);
-                double y = descr2D.getSecondColumnRt();
-                double yy = yAxis.valueToJava2D(y, dataArea, yAxisEdge);
-                AffineTransform at = AffineTransform.getTranslateInstance(xx, yy);
-                at.concatenate(AffineTransform.getTranslateInstance(-x, -y));
-                g2.fill(at.createTransformedShape(descr2D.getBounds()));
+                if (!non2DPeaks.contains(descr.getId())) {
+                    IPeak2DAnnotationDescriptor descr2D = (IPeak2DAnnotationDescriptor) descr;
+                    double x = descr2D.getFirstColumnRt();
+                    double xx = xAxis.valueToJava2D(x, dataArea, xAxisEdge);
+                    double y = descr2D.getSecondColumnRt();
+                    double yy = yAxis.valueToJava2D(y, dataArea, yAxisEdge);
+                    AffineTransform at = AffineTransform.getTranslateInstance(xx, yy);
+                    at.concatenate(AffineTransform.getTranslateInstance(-x, -y));
+                    g2.fill(at.createTransformedShape(descr2D.getBounds()));
+                }
             }
             g2.setColor(c);
             g2.setClip(savedClip);
@@ -170,7 +179,7 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
 //        }
         fireOverlayChanged();
     }
-
+    
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
         fireOverlayChanged();

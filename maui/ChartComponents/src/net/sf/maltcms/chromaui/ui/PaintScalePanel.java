@@ -73,7 +73,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         initComponents();
         String[] s = new String[]{"res/colorRamps/bcgyr.csv", "res/colorRamps/bgr.csv", "res/colorRamps/bw.csv", "res/colorRamps/br.csv", "res/colorRamps/bgrw.csv", "res/colorRamps/rgbr.csv"};
         for (String str : s) {
-            GradientPaintScale gradientPaintScale = new GradientPaintScale(getSampleTable(samples), this.alpha, this.beta, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(str)));
+            GradientPaintScale gradientPaintScale = new GradientPaintScale(getSampleTable(samples), 0, 1, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(str)));
             gradientPaintScale.setLabel(str);
             elements.add(gradientPaintScale);
         }
@@ -141,19 +141,19 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         jLabel2.setText("Alpha");
 
         jSlider1.setMajorTickSpacing(-1);
-        jSlider1.setMaximum(20);
-        jSlider1.setMinimum(-20);
+        jSlider1.setMaximum(40);
+        jSlider1.setMinimum(-40);
         jSlider1.setMinorTickSpacing(-1);
         jSlider1.setPaintLabels(true);
         jSlider1.setPaintTicks(true);
         jSlider1.setValue(0);
         Hashtable<Integer, JLabel> labelTable =
         new Hashtable<Integer, JLabel>();
-        labelTable.put(-20, new JLabel("-1"));
-        labelTable.put(-10, new JLabel("-0.5"));
+        labelTable.put(-40, new JLabel("-1"));
+        labelTable.put(-20, new JLabel("-0.5"));
         labelTable.put(0, new JLabel("0"));
-        labelTable.put(10, new JLabel("0.5"));
-        labelTable.put(20, new JLabel("1"));
+        labelTable.put(20, new JLabel("0.5"));
+        labelTable.put(40, new JLabel("1"));
 
         jSlider1.setLabelTable(labelTable);
         jSlider1.setPaintLabels(true);
@@ -161,7 +161,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         jLabel3.setText("Beta");
 
         jSlider2.setMajorTickSpacing(-1);
-        jSlider2.setMaximum(20);
+        jSlider2.setMaximum(40);
         jSlider2.setMinorTickSpacing(-1);
         jSlider2.setPaintLabels(true);
         jSlider2.setPaintTicks(true);
@@ -169,8 +169,8 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
         Hashtable<Integer, JLabel> labelTable2 =
         new Hashtable<Integer, JLabel>();
         labelTable2.put(0, new JLabel("1"));
-        labelTable2.put(10, new JLabel("5"));
-        labelTable2.put(20, new JLabel("10"));
+        labelTable2.put(20, new JLabel("5"));
+        labelTable2.put(40, new JLabel("10"));
         jSlider2.setLabelTable(labelTable2);
 
         jLabel1.setText("Paint scale");
@@ -225,7 +225,7 @@ public class PaintScalePanel extends javax.swing.JPanel implements ChangeListene
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))

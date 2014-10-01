@@ -129,7 +129,7 @@
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="29" max="32767" attributes="0"/>
+                  <EmptySpace pref="33" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jSlider1" min="-2" pref="80" max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" pref="16" max="-2" attributes="0"/>
@@ -153,8 +153,8 @@
         <Component class="javax.swing.JSlider" name="jSlider1">
           <Properties>
             <Property name="majorTickSpacing" type="int" value="-1"/>
-            <Property name="maximum" type="int" value="20"/>
-            <Property name="minimum" type="int" value="-20"/>
+            <Property name="maximum" type="int" value="40"/>
+            <Property name="minimum" type="int" value="-40"/>
             <Property name="minorTickSpacing" type="int" value="-1"/>
             <Property name="paintLabels" type="boolean" value="true"/>
             <Property name="paintTicks" type="boolean" value="true"/>
@@ -163,7 +163,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Hashtable&lt;Integer, JLabel&gt; labelTable = &#xa;            new Hashtable&lt;Integer, JLabel&gt;();&#xa;labelTable.put(-20, new JLabel(&quot;-1&quot;));&#xa;labelTable.put(-10, new JLabel(&quot;-0.5&quot;));&#xa;labelTable.put(0, new JLabel(&quot;0&quot;));&#xa;labelTable.put(10, new JLabel(&quot;0.5&quot;));&#xa;labelTable.put(20, new JLabel(&quot;1&quot;));&#xa;&#xa;jSlider1.setLabelTable(labelTable);&#xa;jSlider1.setPaintLabels(true);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Hashtable&lt;Integer, JLabel&gt; labelTable = &#xa;            new Hashtable&lt;Integer, JLabel&gt;();&#xa;labelTable.put(-40, new JLabel(&quot;-1&quot;));&#xa;labelTable.put(-20, new JLabel(&quot;-0.5&quot;));&#xa;labelTable.put(0, new JLabel(&quot;0&quot;));&#xa;labelTable.put(20, new JLabel(&quot;0.5&quot;));&#xa;labelTable.put(40, new JLabel(&quot;1&quot;));&#xa;&#xa;jSlider1.setLabelTable(labelTable);&#xa;jSlider1.setPaintLabels(true);"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
@@ -174,7 +174,7 @@
         <Component class="javax.swing.JSlider" name="jSlider2">
           <Properties>
             <Property name="majorTickSpacing" type="int" value="-1"/>
-            <Property name="maximum" type="int" value="20"/>
+            <Property name="maximum" type="int" value="40"/>
             <Property name="minorTickSpacing" type="int" value="-1"/>
             <Property name="paintLabels" type="boolean" value="true"/>
             <Property name="paintTicks" type="boolean" value="true"/>
@@ -183,7 +183,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Hashtable&lt;Integer, JLabel&gt; labelTable2 = &#xa;            new Hashtable&lt;Integer, JLabel&gt;();&#xa;labelTable2.put(0, new JLabel(&quot;1&quot;));&#xa;labelTable2.put(10, new JLabel(&quot;5&quot;));&#xa;labelTable2.put(20, new JLabel(&quot;10&quot;));&#xa;jSlider2.setLabelTable(labelTable2);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Hashtable&lt;Integer, JLabel&gt; labelTable2 = &#xa;            new Hashtable&lt;Integer, JLabel&gt;();&#xa;labelTable2.put(0, new JLabel(&quot;1&quot;));&#xa;labelTable2.put(20, new JLabel(&quot;5&quot;));&#xa;labelTable2.put(40, new JLabel(&quot;10&quot;));&#xa;jSlider2.setLabelTable(labelTable2);"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">

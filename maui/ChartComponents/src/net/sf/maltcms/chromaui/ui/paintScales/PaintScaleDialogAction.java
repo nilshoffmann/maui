@@ -37,14 +37,16 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.ui.PaintScalePanel;
 import org.jfree.chart.renderer.PaintScale;
+import org.openide.util.Lookup;
 
 /**
  *
  * @author nilshoffmann
  */
 public class PaintScaleDialogAction extends AbstractAction {
+    private static final long serialVersionUID = 695398043093737680L;
 
-    private List<PaintScaleTarget> targets = new LinkedList<>();
+    private final List<PaintScaleTarget> targets = new LinkedList<>();
     private Component parent = null;
     private int alpha, beta;
     private PaintScale ps = null;
@@ -71,6 +73,10 @@ public class PaintScaleDialogAction extends AbstractAction {
      */
     public PaintScaleDialogAction(String name, Icon icon) {
         super(name, icon);
+        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
+        ips.setMin(0);
+        ips.setMax(1);
+        ps = ips.getPaintScales().get(0);
     }
 
     @Override
