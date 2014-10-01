@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.actions;
 
+import cross.datastructures.StatsMap;
+import cross.datastructures.Vars;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -44,6 +46,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
+import net.sf.maltcms.chromaui.normalization.spi.PeakGroupUtilities;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -84,7 +87,7 @@ public final class ExportPeakGroups implements ActionListener {
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
         File exportDir = new File(FileUtil.toFile(project.getLocation()), "export/peakGroups/" + sdf.format(new Date()));
         exportDir.mkdirs();
-        File exportFile = new File(exportDir, "peakGroupExport.csv");
+        File exportFile = new File(exportDir, context.getDisplayName()+"-peakGroupExport.csv");
         ExportRunnable er = new ExportRunnable(project, context, exportFile);
         ExportRunnable.createAndRun("Peak Group Export", er);
     }
@@ -112,9 +115,17 @@ public final class ExportPeakGroups implements ActionListener {
                 LinkedHashMap<UUID, Integer> chromToIndex = new LinkedHashMap<>();
                 List<String> chromatogramNames = new ArrayList<>();
                 int idx = 0;
+                int separationDimensions = -1;
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                     chromatogramNames.add(chrom.getDisplayName());
                     chromToIndex.put(chrom.getId(), idx++);
+                    if (separationDimensions == -1) {
+                        separationDimensions = chrom.getSeparationType().getFeatureDimensions();
+                    } else {
+                        if (separationDimensions != chrom.getSeparationType().getFeatureDimensions()) {
+                            throw new IllegalArgumentException("Separation dimensions of peaks in peak group must be equal!");
+                        }
+                    }
                 }
                 try {
                     bw = new BufferedWriter(new FileWriter(output));
@@ -125,6 +136,12 @@ public final class ExportPeakGroups implements ActionListener {
                     headerStrings.add("DatabaseId");
                     headerStrings.add("RetentionTimeAvg");
                     headerStrings.add("RetentionTimeStdev");
+                    if (separationDimensions == 2) {
+                        headerStrings.add("RetentionTime1Avg");
+                        headerStrings.add("RetentionTime1Stdev");
+                        headerStrings.add("RetentionTime2Avg");
+                        headerStrings.add("RetentionTime2Stdev");
+                    }
                     headerStrings.addAll(Arrays.asList(new String[]{"Name", "PeakGroupId"}));
                     headerStrings.addAll(chromatogramNames);
                     for (String head : headerStrings) {
@@ -133,6 +150,7 @@ public final class ExportPeakGroups implements ActionListener {
                     bw.write(header.toString());
                     bw.newLine();
                     IPeakNormalizer normalizer = null;
+                    PeakGroupUtilities utils = new PeakGroupUtilities();
                     for (IPeakGroupDescriptor peakGroup : context.getMembers()) {
                         ph.progress(i++);
                         StringBuilder sb = new StringBuilder();
@@ -141,6 +159,8 @@ public final class ExportPeakGroups implements ActionListener {
                             if (normalizer == null) {
                                 Logger.getLogger(getClass().getName()).info("Normalization cancelled by user!");
                                 bw.close();
+                                output.delete();
+                                output.getParentFile().delete();
                                 ph.finish();
                                 return;
                             }
@@ -150,6 +170,14 @@ public final class ExportPeakGroups implements ActionListener {
                         sb.append(peakGroup.getMajorityNativeDatabaseId()).append("\t");
                         sb.append(peakGroup.getMeanApexTime()).append("\t");
                         sb.append(peakGroup.getApexTimeStdDev()).append("\t");
+                        if (separationDimensions == 2) {
+                            StatsMap rt1Stats = utils.getStatsForArray(utils.getArrayForRt1(peakGroup));
+                            StatsMap rt2Stats = utils.getStatsForArray(utils.getArrayForRt2(peakGroup));
+                            sb.append(rt1Stats.get(Vars.Mean.name())).append("\t");
+                            sb.append(Math.sqrt(rt1Stats.get(Vars.Variance.name()))).append("\t");
+                            sb.append(rt2Stats.get(Vars.Mean.name())).append("\t");
+                            sb.append(Math.sqrt(rt2Stats.get(Vars.Variance.name()))).append("\t");
+                        }
                         sb.append(peakGroup.getName()).append("\t");
                         sb.append(peakGroup.getId()).append("\t");
                         String[] peaks = new String[chromatogramNames.size()];
@@ -193,4 +221,5 @@ public final class ExportPeakGroups implements ActionListener {
             }
         }
     }
+
 }
