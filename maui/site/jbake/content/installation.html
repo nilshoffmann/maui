@@ -1,0 +1,177 @@
+title=Download and Installation of Maui
+date=2014-09-28
+type=page
+status=published
+~~~~~~
+<p>Download one of the following installers suitable for your operating system and run it to install Maui on your system.</p>
+<p class="alert alert-info">Novice users should prefer one of the stable release versions below. Expert users and developers may also check the latest stable developer build <a href="http://maltcms.de/maui/latest/">here</a>.</p>
+<p>The source code of Maui is available at <a href="http://sourceforge.net/projects/maltcmsui/">sourceforge.net</a>.</p>
+<h3>Release History</h3>
+<h4 class="alert alert-success">Maui 1.3.0</h4>
+<p>Released on March xx, 2014</p>
+<h5>Requirements</h5>
+<ul>
+    <li>Maui 1.3.0 requires a <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment (JRE) 7</a> in order to run. We recommend to install a 64 bit version of Java where possible to allow more memory to be allocated.</li>
+    <li>The statistical backend of Maui is based on <a href="http://www.r-project.org">R</a>, at least version 3.0, and accessed using <a href="http://www.rforge.net/Rserve/">Rserve</a>. Please consult the respective sites on notes how to install R for your operating system.<br /> Rserve may be installed from within a running R session via <code>install.packages("Rserve")</code>.</li>
+</ul>
+<h5>Installers</h5>
+<ul class="inline">
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-windows.exe">Windows</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-macosx.tgz">MacOS X</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-linux.sh">Linux</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-solaris.sh">Solaris</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui.zip">Platform Independent ZIP</a></li>
+</ul>
+<h4>Change Log</h4>
+<h5>New Features</h5>
+<ul>
+    <li>Added action for peak group database identification.</li>
+    <li>Added combo boxes to select, which principle components are displayed.</li>
+    <li>Added FoldChangeViewer module to display volcano plots on pairs of treatment groups, based on anova p-values.</li>
+    <li>Added Action to create SVG application screenshots.</li>
+    <li>Added possibility to hide sample nodes in peak group and peak container views.</li>
+    <li>Added exception handling for unexpected exceptions, prematurely closing the database.</li>
+    <li>Added a default ehcache configuration.</li>
+    <li>Added additional actions for easy creation of user peak databases.</li>
+    <li>Added additional action for identification of selected peaks.</li>
+    <li>Added action to add a newly imported database to an existing database container.</li>
+    <li>Added svg export of charts.</li>
+    <li>Added xcms matched filter peak finding template.</li>
+    <li>Added project-specific peak normalization remembering the last selected group.</li>
+    <li>Added search ability for peaks.</li>
+    <li>Added project-specific peak pvalue adjustment remembering the last selected method.</li>
+    <li>Added database resize actions to Options panel.</li>
+    <li>Added panning (CTRL+MOUSE) and mouse-wheel zooming ability to all charts.</li>
+    <li>Added checking for peaks with empty mass spectra which are now skipped during conversion.</li>
+    <li>Added a guard against accidental null setting of PeakAnnotationDescriptor displayName.</li>
+    <li>Added a new Action to export the mass spectrum to the clipboard in a format compatible with Golm Metabolite Database's web frontend.</li>
+    <li>Added a project submenu provider and switched implementation for getActions in ChromAUIProjectNode to the new system.</li>
+    <li>Added flashing of scans in Chromatogram Views on selection from navigator view.</li>
+    <li>Added category datasets to charting support, adapted other classes to changes.</li>
+    <li>Added a warning dialog if different Descriptors should be deleted.</li>
+    <li>Added new Methods to IMauiProject for descriptor and container retrieval by id.</li>
+    <li>Added chromatogram creation to DescriptorFactory.</li>
+    <li>Added msLevel attribute to Scans on creation.</li>
+    <li>Added support for different radius for neighbor search in horizontal and vertical directions in 2D chromatogram views.</li>
+    <li>Added some convenience methods to IMauiProject for simpler retrieval of the output and import directories.</li>
+    <li>Added installed maltcms pipelines as dynamic actions into project context menu.</li>
+    <li>Added additional field for maltcms runtime arguments.</li>
+    <li>Added better error messages and progress indication to PeakAlignmentImporter.</li>
+    <li>Added CheckDatabaseConsistency Action to check a closed database for errors.</li>
+    <li>Added ui elements to change block size in Chromatogram2DPanel.</li>
+</ul>
+<h5>Updates and Improvements</h5>
+<ul>
+    <li>Updated cross and maltcms versions to 1.3.1.</li>
+    <li>Updated cross and maltcms versions to 1.3.0.</li>
+    <li>Updated peak descriptor to include baseline information. Added rendering of peak shapes to peak overlay.</li>
+    <li>Updated navigator view for 1D chromatograms.</li> 
+    <li>Updated JOGL version and Java3D due to Mesa-related rendering bug on Ubuntu with Intel graphics.</li>
+    <li>Updated pipeline wizard (not fully functional yet).</li>
+    <li>Updated license to include L-GPL and EPL license text.</li> 
+    <li>Updated implementation of CachingChromatogram1D and 2D to be aware of ms-n information. Adapted charting datasets and dataset providers
+        accordingly.</li>
+    <li>Updated DescriptorNode generation to also include contents of objects implementing Lookup.Provider.</li>
+    <li>This allows selection of PeakGroups and corresponding highlighting of associated PeakAnnotationDescriptors, i.e. in the
+        Chromatogram1D View.</li>
+    <li>Updated PCA calculation to better map input data to processed pca data. Added co-plotting of projected variables (peak groups) in PCAViewer and interactive selection, visualized in PeakGroup TopComponent.</li>
+    <li>Improved speed of peak group import and retrieval of retention time related data.</li>
+    <li>Updated Chromatogram1DViewTopComponent to allow for visualization of visible/hidden chart series.</li> 
+    <li>Updated the navigator display of peak overlays, now grouped by their parent chromatogram descriptor. All overlays for one parent can now be set visible/invisible all at once or individually.</li>
+    <li>Improved display of FileFragments and their variables to avoid loading of array data.</li>
+    <li>Updated wizard to allow creation of SampleGroups. Updated node factories to display sample groups if they are present.</li>
+</ul>
+<h5>Bug Fixes</h5>
+<ul>
+    <li>Fixed chromatogram node menu item problem for multiple selections.</li>
+    <li>Fixed a startup problem on Linux for R>=3.0.</li>
+    <li>Fixed Navigator PanelUI to keep contents, expansion state and as much as possible, the selection.</li>
+    <li>Fixed import problems with latest GMD database format in MSP.</li>
+    <li>Fixed MassSpectrumPanel viewer to also process selection events from FoldChangeViewer.</li>
+    <li>Fixed copying of downloaded maltcms distribution to avoid an exception under windows.</li>
+    <li>Fixed the enablement logic into the finally block to avoid disabling the options dialog on failures/exceptions.</li>
+    <li>Fixed storage of normalization and pvalue adjustment dialogs to only use project name. Using the project path leads to problems on windows platforms.</li>
+    <li>Fixed search output to include project name and chromatogram name for each peak.</li>
+    <li>Fixed PeakGroupContainer to set itself as PeakGroupContainer on added IPeakGroupDescriptors.</li>
+    <li>Fixed a bug with caching of scans in CachingChromatogram1D and -2D.</li>
+    <li>Fixed a bug when opening 2D chromatograms in 1D view.</li>
+    <li>Fixed a minor issue with viewport synchronization.</li>
+    <li>Fixed index out of bounds problem in CachingChromatogram1D. Modified Peak1DOverlay so that it listens to global selection of PeakAnnotationDescriptors e.g. from the project explorer, and highlights the appropriate peaks.</li> 
+    <li>Fixed issue [#13]. EIC Coplot is still not fully functional, but all other plots now work as expected. Added peak indicator lines to overlay. Can be customized via navigator node properties.</li>
+    <li>Fixed pipeline to scene parsing of PipelineEditor. Related to issue [#8].</li>
+    <li>Fixed problems with project wizard losing sample and treatment groups [#10]. Fixed layout differences.</li>
+    <li>Fixed wizard group definition issue [#7].</li>
+    <li>Fixed selection issues in PeakTableViewerTopComponent. Modified view to include source chromatograms of peak annotation descriptors.</li>
+    <li>Fixed getChromatogram() method to internally use URIs to align it further with IFileFragment.</li>
+    <li>Fixed a bug in retention time to scan index mapping [#3].</li>
+    <li>Fixed issues [#1]: Added better handling of missing sample group associations in the New Project Wizard.</li>
+    <li>Fixed retrieval of latest maltcms build.</li> 
+    <li>Fixed a small issue in SelectionOverlay with antialiasing.</li> 
+    <li>Fixed some layer registration problems. Improved behaviour of PeakGroupAnovaRunnable and PeakGroupPcaRunnable by adding progress information and updating the project node hierarchy.</li>
+    <li>Fixed: Input files are now passed as URIs to Maltcms.</li>
+</ul>
+<h5>Removed Functionality</h5>
+<ul>
+    <li>Deactived meltdb module actions due to server-side encoding problems.</li>
+</ul>
+<hr>
+<h4 class="alert alert-success">Maui 1.2.1</h4>
+<p>Released on April 24th, 2013</p>
+<h5>Requirements</h5>
+<ul>
+    <li>Maui 1.2.1 requires a <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment (JRE) 7</a> in order to run. We recommend to install a 64 bit version of Java where possible to allow more memory to be allocated.</li>
+    <li>The statistical backend of Maui is based on <a href="http://www.r-project.org">R</a> and accessed using <a href="http://www.rforge.net/Rserve/">Rserve</a>. Please consult the respective sites on notes how to install R for your operating system.<br /> Rserve may be installed from within a running R session via <code>install.packages("Rserve")</code>.</li>
+</ul>
+<h5>Installers</h5>
+<ul class="inline">
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-windows.exe">Windows</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-macosx.tgz">MacOS X</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-linux.sh">Linux</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui-solaris.sh">Solaris</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2.1/maui.zip">Platform Independent ZIP</a></li>
+</ul>
+<h5>New Features</h5>
+<ul>
+    <li>Peak overlays are now better visible for 1D chromatogram views</li>
+    <li>Peak overlays are colored according to peak descriptor container color, or by treatment group color</li>
+    <li>Added a diff button to mass spectral viewer to show a difference spectrum of two mass spectra</li>
+    <li>Peak groups now show a percentage of covered chromatograms</li>
+</ul>
+<h5>Bug Fixes</h5>
+<ul>
+    <li>Fixed Rserve connection testing on Mac OS X related to the cairo library</li>
+    <li>Fixed invalid cache paths for Ehcache on Windows</li>
+    <li>Fixed EIC display options for 1D chromatogram views</li> 
+    <li>Fixed label display of masses with highest intensities in mass spectral view</li>
+    <li>Changed update center locations, SF FRS location is incompatible with NetBeans updater</li>
+</ul>
+<h5>Known Issues</h5>
+<ul>
+    <li>Retention time to peak index mapping for ChromaTOF data is disfunctional when importing peaks additionally to raw data.</li>
+</ul>
+<hr>
+<h4 class="alert alert-success">Maui 1.2</h4>
+<p>Released on March 26th, 2013</p>
+<h5>Requirements</h5>
+<ul>
+    <li>Maui 1.2 requires a <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment (JRE) 7</a> in order to run. We recommend to install a 64 bit version of Java where possible to allow more memory to be allocated.</li>
+    <li>The statistical backend of Maui is based on <a href="http://www.r-project.org">R</a> and accessed using <a href="http://www.rforge.net/Rserve/">Rserve</a>. Please consult the respective sites on notes how to install R for your operating system.<br /> Rserve may be installed from within a running R session via <code>install.packages("Rserve")</code>.</li>
+</ul>
+<h5>Installers</h5>
+<ul class="inline">
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-windows.exe">Windows</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-macosx.tgz">MacOS X</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-linux.sh">Linux</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui-solaris.sh">Solaris</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.2/maui.zip">Platform Independent ZIP</a></li>
+</ul>
+<h5>New Features</h5>
+<ul>
+    <li>Welcome center to aid with first steps in Maui</li>
+    <li>Viewport synchronization for chromatogram views</li>
+    <li>Selection system for chromatogram views</li>
+    <li>Improved integration and configuration of external tools</li>
+    <li>Import of ChromaTOF peak lists as pseudo-chromatograms</li>
+    <li>Completed integration of Anova and PCA via RServe</li>
+    <li>Interactive visualization of PCA results</li>
+</ul>
