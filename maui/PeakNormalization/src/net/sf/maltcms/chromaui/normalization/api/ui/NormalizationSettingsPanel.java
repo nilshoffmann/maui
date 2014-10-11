@@ -67,7 +67,7 @@ public class NormalizationSettingsPanel extends javax.swing.JPanel {
      * @param context
      */
     public NormalizationSettingsPanel(PeakGroupContainer context) {
-        previousPeakAnnotation = NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getPath()).get("peakGroupIdForNormalization", "");
+        previousPeakAnnotation = NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getId().toString()).get("peakGroupIdForNormalization", "");
         this.peakGroups = new ArrayList<>();
         peakGroups.add(DescriptorFactory.newPeakGroupDescriptor("No Normalization"));
         IPeakGroupDescriptor previousSelection = null;

@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.api.ui;
 
+import java.nio.charset.Charset;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.normalization.spi.CompositeNormalizer;
@@ -64,7 +66,7 @@ public class NormalizationDialog {
             IPeakGroupDescriptor normalizationGroup = nsp.getInternalNormalizationGroup();
             if (normalizationGroup != null) {
                 Logger.getLogger(NormalizationDialog.class.getName()).log(Level.INFO, "Storing peak group with id as normalization reference for current project: {0}", normalizationGroup.getId());
-                NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getLocation().getPath()).put("peakGroupIdForNormalization", normalizationGroup.getId().toString());
+                NbPreferences.forModule(NormalizationSettingsPanel.class).node(context.getProject().getId().toString()).put("peakGroupIdForNormalization", normalizationGroup.getId().toString());
             }
             Logger.getLogger(NormalizationDialog.class.getName()).log(Level.INFO, "Selected normalization group: {0}", normalizationGroup.getMajorityName());
             IPeakNormalizer externalNormalizer = null;
