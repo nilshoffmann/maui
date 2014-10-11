@@ -33,6 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.foldChangeViewer.charts.datasets.FoldChangeDataset;
 import net.sf.maltcms.chromaui.foldChangeViewer.charts.datasets.FoldChangeElement;
@@ -53,6 +54,8 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.awt.NotificationDisplayer;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
@@ -125,39 +128,43 @@ public final class OpenAnovaDescriptorFoldChangePlot implements ActionListener {
                 sc.setName("Anova Subselection");
                 InstanceContent ic = new InstanceContent();
                 FoldChangeElementProvider provider = new FoldChangeElementProvider(lhs.getDisplayName() + " vs " + rhs.getDisplayName(), sc, lhs, rhs, peakNormalizer);
-                providers.add(provider);
-                ic.add(sc);
+                if (provider.size() > 0) {
+                    providers.add(provider);
+                    ic.add(sc);
 
-                final FoldChangeDataset ds = new FoldChangeDataset(providers, lhs.getDisplayName() + " vs " + rhs.getDisplayName(), new AbstractLookup(ic)) {
-                    @Override
-                    public String getDescription() {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("<html><p>");
-                        for (INamedElementProvider<?, ?> np : targetProvider) {
-                            sb.append(np.getKey());
-                            if (targetProvider.size() > 1) {
-                                sb.append(", ");
+                    final FoldChangeDataset ds = new FoldChangeDataset(providers, lhs.getDisplayName() + " vs " + rhs.getDisplayName(), new AbstractLookup(ic)) {
+                        @Override
+                        public String getDescription() {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("<html><p>");
+                            for (INamedElementProvider<?, ?> np : targetProvider) {
+                                sb.append(np.getKey());
+                                if (targetProvider.size() > 1) {
+                                    sb.append(", ");
+                                }
                             }
+                            sb.append("; Normalized by: <br>");
+                            String[] peakNormalizers = peakNormalizer.toString().split(",");
+                            for (String s : peakNormalizers) {
+                                sb.append(s);
+                                sb.append("<br>");
+                            }
+                            sb.append("</p></html>");
+                            return sb.toString();
                         }
-                        sb.append("; Normalized by: <br>");
-                        String[] peakNormalizers = peakNormalizer.toString().split(",");
-                        for (String s : peakNormalizers) {
-                            sb.append(s);
-                            sb.append("<br>");
-                        }
-                        sb.append("</p></html>");
-                        return sb.toString();
-                    }
-                };
-                onEdt(new Runnable() {
-                    @Override
-                    public void run() {
-                        FoldChangeViewTopComponent topComponent = new FoldChangeViewTopComponent();
-                        topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), ds);
-                        topComponent.open();
+                    };
+                    onEdt(new Runnable() {
+                        @Override
+                        public void run() {
+                            FoldChangeViewTopComponent topComponent = new FoldChangeViewTopComponent();
+                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), ds);
+                            topComponent.open();
 //                            topComponent.load();
-                    }
-                });
+                        }
+                    });
+                } else {
+                    NotificationDisplayer.getDefault().notify("Could not find common peaks", new ImageIcon(ImageUtilities.loadImage("net/sf/maltcms/chromaui/foldChangeViewer/resources/Warning.png")), "Could not find common peaks between treatment groups " + lhs.getDisplayName() + " and " + rhs.getDisplayName(), null, NotificationDisplayer.Priority.NORMAL, NotificationDisplayer.Category.WARNING);
+                }
 
             } finally {
                 progressHandle.finish();
