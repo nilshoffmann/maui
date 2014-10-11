@@ -29,6 +29,7 @@ package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.api;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromatogramFromPeakListImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -49,7 +50,7 @@ public final class ChromaTOFImporter {
      */
     public static AProgressAwareRunnable importAsPeakDescriptors(IChromAUIProject project, File... reports) {
         File importDir = project.getImportLocation(ChromaTofPeakListImporter.class);
-        return new ChromaTofPeakListImporter(project, reports, importDir);
+        return new ChromaTofPeakListImporter(project, reports, importDir, Locale.getDefault());
     }
 
     /**

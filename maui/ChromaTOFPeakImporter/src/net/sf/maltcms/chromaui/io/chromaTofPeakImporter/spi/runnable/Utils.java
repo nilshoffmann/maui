@@ -51,9 +51,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
-import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseDouble;
-import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseDoubleArray;
-import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser.parseIntegrationStartEnd;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -71,14 +68,13 @@ import ucar.nc2.Dimension;
  * @author Nils Hoffmann
  */
 public class Utils {
-
+    
     public enum ChromatogramType {
-
+        
         D1, D2
     };
-    public static Locale defaultLocale = Locale.getDefault();
-
-    public static ChromatogramType parseTable(Tuple2D<LinkedHashSet<String>, List<TableRow>> report, ChromatogramType chromatogramType, IChromatogramDescriptor chromatogram, HashSet<String> peakRegistry, List<IPeakAnnotationDescriptor> peaks) {
+    
+    public static ChromatogramType parseTable(Tuple2D<LinkedHashSet<String>, List<TableRow>> report, ChromatogramType chromatogramType, IChromatogramDescriptor chromatogram, HashSet<String> peakRegistry, List<IPeakAnnotationDescriptor> peaks, ChromaTOFParser parser) {
         int index = 0;
         IChromatogram chrom = chromatogram.getChromatogram();
         for (TableRow tr : report.getSecond()) {
@@ -93,10 +89,11 @@ public class Utils {
                     chromatogramType = ChromatogramType.D2;
                     Logger.getLogger(Utils.class.getName()).info("2D chromatogram peak data detected");
                     String[] rts = rt.split(",");
-                    double rt1 = parseDouble(rts[0].trim());
-                    double rt2 = parseDouble(rts[1].trim());
+                    double rt1 = parser.parseDouble(rts[0].trim());
+                    double rt2 = parser.parseDouble(rts[1].trim());
                     IPeak2DAnnotationDescriptor descriptor = create2DPeak(
-                            chromatogram, tr, rt1, rt2);
+                            chromatogram, tr, rt1, rt2, parser);
+                    Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Adding peak at {0}|{1}", new Object[]{rt1, rt2});
                     int idx = index;
                     try {
                         idx = chrom.getIndexFor(rt1 + rt2);
@@ -105,7 +102,7 @@ public class Utils {
                     }
                     String key = key(descriptor);
 //                    if (!peakRegistry.contains(key)) {
-                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key);
+                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key, parser);
                     index++;
 //                    } else {
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
@@ -113,7 +110,8 @@ public class Utils {
                 } else {
                     Logger.getLogger(Utils.class.getName()).info("1D chromatogram peak data detected");
                     IPeakAnnotationDescriptor descriptor = create1DPeak(
-                            chromatogram, tr);
+                            chromatogram, tr, parser);
+                    Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Adding peak at {0}", new Object[]{rt});
                     String key = key(descriptor);
 //                    if (!peakRegistry.contains(key)) {
                     int idx = index;
@@ -122,7 +120,7 @@ public class Utils {
                     } catch (IllegalArgumentException iae) {
                         //we are importing from a peak list
                     }
-                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key);
+                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key, parser);
                     index++;
 //                    } else {
 //                        System.err.println("Peak " + key + " already encountered, skipping!");
@@ -132,9 +130,10 @@ public class Utils {
                 if (tr.containsKey("1ST_DIMENSION_TIME_(S)") && tr.containsKey("2ND_DIMENSION_TIME_(S)")) {
                     Logger.getLogger(Utils.class.getName()).info("Separate RT 2D chromatogram peak data detected");
                     chromatogramType = ChromatogramType.D2;
-                    double rt1 = parseDouble(tr.get("1ST_DIMENSION_TIME_(S)"));
-                    double rt2 = parseDouble(tr.get("2ND_DIMENSION_TIME_(S)"));
-                    IPeakAnnotationDescriptor descriptor = create2DPeak(chromatogram, tr, rt1, rt2);
+                    double rt1 = parser.parseDouble(tr.get("1ST_DIMENSION_TIME_(S)"));
+                    double rt2 = parser.parseDouble(tr.get("2ND_DIMENSION_TIME_(S)"));
+                    IPeakAnnotationDescriptor descriptor = create2DPeak(chromatogram, tr, rt1, rt2, parser);
+                    Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Adding peak at {0}|{1}", new Object[]{rt1, rt2});
                     String key = key(descriptor);
                     int idx = index;
                     try {
@@ -143,7 +142,7 @@ public class Utils {
                         //we are importing from a peak list
                     }
 //                    if (!peakRegistry.contains(key)) {
-                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key);
+                    addMassSpectrum(tr, descriptor, idx, peaks, peakRegistry, key, parser);
                     index++;
 //                    } else {
 
@@ -154,7 +153,7 @@ public class Utils {
         }
         return chromatogramType;
     }
-
+    
     public static String toCSVString(List<String> values, boolean[] quoteColumn, String fieldSeparator, String quotationChar) {
         StringBuilder sb = new StringBuilder();
         if (values.size() != quoteColumn.length) {
@@ -175,61 +174,15 @@ public class Utils {
         return sb.toString();
     }
 
-//    public static Map<String,Set<String>> parseWhiteList(File file) {
-//        Map<String,Set<String>> whitelist = new HashMap<String,Set<String>>();
-//        if (file.getName().toLowerCase().endsWith("csv")) {
-//            System.out.println("CSV Mode");
-//            ChromaTOFParser.FIELD_SEPARATOR = ",";
-//            ChromaTOFParser.QUOTATION_CHARACTER = "\"";
-//        } else if (file.getName().toLowerCase().endsWith("tsv") || file.getName().toLowerCase().endsWith("txt")) {
-//            System.out.println("TSV Mode");
-//            ChromaTOFParser.FIELD_SEPARATOR = "\t";
-//            ChromaTOFParser.QUOTATION_CHARACTER = "";
-//        }
-//        Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(file, false);
-//        List<String> header = new ArrayList<String>(report.getFirst());
-//        System.out.println(header);
-//        int idx = 0;
-//        for(TableRow tr:report.getSecond()) {
-//           int fileColumnIndex = ChromaTOFParser.getIndexOfHeaderColumn(header,
-//                            "File");
-//           int peakNameColumnIndex = ChromaTOFParser.getIndexOfHeaderColumn(header,
-//                            "Name");
-//           String filename = tr.get(header.get(fileColumnIndex));
-//           String peakname = tr.get(header.get(peakNameColumnIndex));
-//           if(whitelist.containsKey(filename)) {
-//               Set<String> f = whitelist.get(filename);
-//               if(f.contains(peakname)) {
-//                   System.err.println("Non-unique peakname "+peakname+" for report "+filename+" at row "+idx);
-//               }else{
-//                   f.add(peakname);
-//               }
-//           }else{
-//               HashSet<String> hs = new HashSet<String>();
-//               hs.add(peakname);
-//               whitelist.put(filename,hs);
-//           }
-//           idx++;
-//        }
-//        return whitelist;
-//    }
-    public static File convertPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram, boolean skipAmbiguousPeakNames) {
+    public static File convertPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram, boolean skipAmbiguousPeakNames, Locale locale) {
         File file = reports.get(chromName);
-        if (file.getName().toLowerCase().endsWith("csv")) {
-            Logger.getLogger(Utils.class.getName()).info("CSV Mode");
-            ChromaTOFParser.FIELD_SEPARATOR = ",";
-            ChromaTOFParser.QUOTATION_CHARACTER = "\"";
-        } else if (file.getName().toLowerCase().endsWith("tsv") || file.getName().toLowerCase().endsWith("txt")) {
-            Logger.getLogger(Utils.class.getName()).info("TSV Mode");
-            ChromaTOFParser.FIELD_SEPARATOR = "\t";
-            ChromaTOFParser.QUOTATION_CHARACTER = "";
-        }
-        Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(reports.get(chromName), false);
+        ChromaTOFParser parser = ChromaTOFParser.create(file, true, locale);
+        Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(parser, reports.get(chromName), false);
         List<String> header = new ArrayList<>(report.getFirst());
         Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Available fields: {0}", header);
         HashSet<String> peakRegistry = new HashSet<>();
         ChromatogramType chromatogramType = ChromatogramType.D1;
-        chromatogramType = parseTable(report, chromatogramType, chromatogram, peakRegistry, peaks);
+        chromatogramType = parseTable(report, chromatogramType, chromatogram, peakRegistry, peaks, parser);
         File output = new File(importDir, chromName + "." + StringTools.getFileExtension(file.getName()));
         if (output.exists()) {
             throw new RuntimeException("File exists: " + output);
@@ -258,7 +211,7 @@ public class Utils {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(output));
-            String headerString = toCSVString(newHeader, quoteColumn, ChromaTOFParser.FIELD_SEPARATOR, ChromaTOFParser.QUOTATION_CHARACTER);
+            String headerString = toCSVString(newHeader, quoteColumn, parser.getFieldSeparator(), parser.getQuotationCharacter());
             bw.write(headerString);
             bw.newLine();
             //do not quote spectra entries
@@ -267,12 +220,12 @@ public class Utils {
             for (TableRow tr : report.getSecond()) {
                 String[] targetRow = new String[newHeader.size()];
                 //set things that were not within our report
-                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "CAS")] = "0-0-0";
-                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Purity")] = "";
-                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "UniqueMass")] = "NaN";
-                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Concerns")] = "NaN";
+                targetRow[parser.getIndexOfHeaderColumn(newHeader, "CAS")] = "0-0-0";
+                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Purity")] = "";
+                targetRow[parser.getIndexOfHeaderColumn(newHeader, "UniqueMass")] = "NaN";
+                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Concerns")] = "NaN";
                 for (String headerColumn : header) {
-                    int sourceIndex = ChromaTOFParser.getIndexOfHeaderColumn(header,
+                    int sourceIndex = parser.getIndexOfHeaderColumn(header,
                             headerColumn);
                     String sourceValue = null;
                     if (sourceIndex >= 0 && sourceIndex < header.size()) {//found column name
@@ -280,7 +233,7 @@ public class Utils {
                     } else {//did not find column name
                         sourceValue = "NaN";
                     }
-                    int targetIndex = ChromaTOFParser.getIndexOfHeaderColumn(newHeader, headerColumn);
+                    int targetIndex = parser.getIndexOfHeaderColumn(newHeader, headerColumn);
                     if (targetIndex >= 0 && targetIndex < newHeader.size()) {//found column name
                         if (sourceValue == null) {
                             sourceValue = "NaN";
@@ -290,15 +243,6 @@ public class Utils {
                                 Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Skipping row with label {0}. Reason: ambiguous peak name!", sourceValue);
                                 skip = true;
                             }
-//                            if(!whitelist.isEmpty()) {
-//                                Set<String> whitelistForFile = whitelist.get(chromName);
-//                                if(whitelistForFile!=null) {
-//                                    if(!whitelistForFile.contains(sourceValue)) {
-//                                        skip = true;
-//                                        System.out.println("Skipping row with label " + sourceValue+". Reason: blacklisted!");
-//                                    }
-//                                }
-//                            }
                         } else if (headerColumn.equals("Spectra") && sourceValue.equals("NaN")) {
                             Logger.getLogger(Utils.class.getName()).info("Skipping row with empty mass spectrum!");
                             skip = true;
@@ -307,23 +251,23 @@ public class Utils {
                     } else { //did not find column name
                         switch (headerColumn) {
                             case "R.T. (s)":
-                                int targetIndex1 = ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "1st Dimension Time (s)");
-                                int targetIndex2 = ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "2nd Dimension Time (s)");
+                                int targetIndex1 = parser.getIndexOfHeaderColumn(newHeader, "1st Dimension Time (s)");
+                                int targetIndex2 = parser.getIndexOfHeaderColumn(newHeader, "2nd Dimension Time (s)");
                                 String[] rts = sourceValue.split(",");
                                 targetRow[targetIndex1] = rts[0].trim();
                                 targetRow[targetIndex2] = rts[1].trim();
                                 break;
                             case "Hit 1 Similarity":
-                                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Similarity")] = sourceValue;
+                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Similarity")] = sourceValue;
                                 break;
                             case "Hit 1 Reverse":
-                                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Reverse")] = sourceValue;
+                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Reverse")] = sourceValue;
                                 break;
                             case "Hit 1 Probability":
-                                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "Probability")] = sourceValue;
+                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Probability")] = sourceValue;
                                 break;
                             case "Quant S/N":
-                                targetRow[ChromaTOFParser.getIndexOfHeaderColumn(newHeader, "S/N")] = sourceValue;
+                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "S/N")] = sourceValue;
                                 break;
                             default:
                                 Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Skipping non-mappable field: {0}", headerColumn);
@@ -332,7 +276,7 @@ public class Utils {
                     }
                 }
                 if (!skip) {
-                    String rowString = toCSVString(Arrays.asList(targetRow), quoteColumn, ChromaTOFParser.FIELD_SEPARATOR, ChromaTOFParser.QUOTATION_CHARACTER);
+                    String rowString = toCSVString(Arrays.asList(targetRow), quoteColumn, parser.getFieldSeparator(), parser.getQuotationCharacter());
                     bw.write(rowString);
                     bw.newLine();
                 } else {
@@ -341,7 +285,7 @@ public class Utils {
             }
             bw.flush();
             bw.close();
-
+            
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } finally {
@@ -353,32 +297,23 @@ public class Utils {
                 }
             }
         }
-
         return output;
     }
-
-    public static File importPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram) {
+    
+    public static File importPeaks(File importDir, List<IPeakAnnotationDescriptor> peaks, LinkedHashMap<String, File> reports, String chromName, IChromatogramDescriptor chromatogram, Locale locale) {
         File file = reports.get(chromName);
-        if (file.getName().toLowerCase().endsWith("csv")) {
-            Logger.getLogger(Utils.class.getName()).info("CSV Mode");
-            ChromaTOFParser.FIELD_SEPARATOR = ",";
-            ChromaTOFParser.QUOTATION_CHARACTER = "\"";
-        } else if (file.getName().toLowerCase().endsWith("tsv") || file.getName().toLowerCase().endsWith("txt")) {
-            Logger.getLogger(Utils.class.getName()).info("TSV Mode");
-            ChromaTOFParser.FIELD_SEPARATOR = "\t";
-            ChromaTOFParser.QUOTATION_CHARACTER = "";
-        }
-        Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(reports.get(chromName));
+        ChromaTOFParser parser = ChromaTOFParser.create(file, true, locale);
+        Tuple2D<LinkedHashSet<String>, List<TableRow>> report = ChromaTOFParser.parseReport(parser, reports.get(chromName), true);
         LinkedHashSet<String> header = report.getFirst();
         Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Available fields: {0}", header);
         HashSet<String> peakRegistry = new HashSet<>();
         ChromatogramType chromatogramType = ChromatogramType.D1;
-        chromatogramType = parseTable(report, chromatogramType, chromatogram, peakRegistry, peaks);
+        chromatogramType = Utils.parseTable(report, chromatogramType, chromatogram, peakRegistry, peaks, parser);
         return createArtificialChromatogram(importDir,
                 new File(chromatogram.getResourceLocation()).getName(),
                 peaks, chromatogramType);
     }
-
+    
     public static File createArtificialChromatogram(File importDir,
             String peakListName, List<IPeakAnnotationDescriptor> peaks, ChromatogramType chromatogramType) {
         File fragment = new File(importDir, StringTools.removeFileExt(
@@ -462,22 +397,15 @@ public class Utils {
             secondColumnElutionTimeVar.setDimensions(new Dimension[]{scanNumber});
         }
         f.save();
-//            return f;
-//        } catch (IOException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-//        return null;
         return fragment;
     }
-
+    
     public static String key(IPeakAnnotationDescriptor ipad) {
         if (ipad instanceof IPeak2DAnnotationDescriptor) {
             IPeak2DAnnotationDescriptor descriptor = (IPeak2DAnnotationDescriptor) ipad;
             String key = new StringBuilder().
                     append(descriptor.getName()).append(" ").
                     append(descriptor.getArea()).append(" ").
-                    //                    append(descriptor.getFirstColumnRt()).
-                    //                    append(" ").append(descriptor.getSecondColumnRt()).
                     toString();
             return key;
         }
@@ -488,9 +416,9 @@ public class Utils {
                 toString();
         return key;
     }
-
-    public static void addMassSpectrum(TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key) {
-        Tuple2D<double[], int[]> massSpectrum = ChromaTOFParser.convertMassSpectrum(tr.get("SPECTRA"));
+    
+    public static void addMassSpectrum(TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key, ChromaTOFParser parser) {
+        Tuple2D<double[], int[]> massSpectrum = parser.convertMassSpectrum(tr.get("SPECTRA"));
 //        int msIndex = index++;
         if (massSpectrum.getFirst().length > 0) {
             descriptor.setMassValues(massSpectrum.getFirst());
@@ -502,45 +430,50 @@ public class Utils {
             Logger.getLogger(Utils.class.getName()).log(Level.WARNING, "Skipping peak with empty mass spectrum: {0}", descriptor.toString());
         }
     }
-
-    public static IPeakAnnotationDescriptor create1DPeak(IChromatogramDescriptor chromatogram, TableRow tr) {
-        //System.out.println("1D chromatogram peak data detected");
+    
+    public static IPeakAnnotationDescriptor create1DPeak(IChromatogramDescriptor chromatogram, TableRow tr, ChromaTOFParser parser) {
+//System.out.println("1D chromatogram peak data detected");
         IPeakAnnotationDescriptor descriptor = DescriptorFactory.newPeakAnnotationDescriptor(
                 chromatogram,
                 tr.get("NAME"),
-                parseDouble((tr.get("UNIQUEMASS"))),
-                parseDoubleArray("QUANT_MASSES", tr, ","),
-                parseDouble((tr.get("RETENTION_INDEX"))),
-                parseDouble((tr.get("S/N"))),
-                parseDouble(tr.get(
+                parser.parseDouble((tr.get("UNIQUEMASS"))),
+                parser.parseDoubleArray("QUANT_MASSES", tr, ","),
+                parser.parseDouble((tr.get("RETENTION_INDEX"))),
+                parser.parseDouble((tr.get("S/N"))),
+                parser.parseDouble(tr.get(
                                 "FULL_WIDTH_AT_HALF_HEIGHT")),
-                parseDouble((tr.get("SIMILARITY"))),
+                parser.parseDouble((tr.get("SIMILARITY"))),
                 tr.get("LIBRARY"),
                 tr.get("CAS"),
                 tr.get("FORMULA"),
-                "ChromaTOF", parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
-                parseDouble((tr.get("R.T._(S)"))), parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), parseDouble((tr.get("AREA"))),
+                "ChromaTOF", parser.parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
+                parser.parseDouble((tr.get("R.T._(S)"))), 
+                parser.parseIntegrationStartEnd(tr.get("INTEGRATIONEND")),
+                parser.parseDouble((tr.get("AREA"))),
                 Double.NaN);
         return descriptor;
     }
-
-    public static IPeak2DAnnotationDescriptor create2DPeak(IChromatogramDescriptor chromatogram, TableRow tr, double rt1, double rt2) {
+    
+    public static IPeak2DAnnotationDescriptor create2DPeak(IChromatogramDescriptor chromatogram, TableRow tr, double rt1, double rt2, ChromaTOFParser parser) {
         //System.out.println("Adding peak "+tr.get("NAME"));
         IPeak2DAnnotationDescriptor descriptor = DescriptorFactory.newPeak2DAnnotationDescriptor(
                 chromatogram,
                 tr.get("NAME"),
-                parseDouble((tr.get("UNIQUEMASS"))),
-                parseDoubleArray("QUANT_MASSES", tr, ","),
-                parseDouble((tr.get("RETENTION_INDEX"))),
-                parseDouble((tr.get("S/N"))),
-                parseDouble(tr.get(
+                parser.parseDouble((tr.get("UNIQUEMASS"))),
+                parser.parseDoubleArray("QUANT_MASSES", tr, ","),
+                parser.parseDouble((tr.get("RETENTION_INDEX"))),
+                parser.parseDouble((tr.get("S/N"))),
+                parser.parseDouble(tr.get(
                                 "FULL_WIDTH_AT_HALF_HEIGHT")),
-                parseDouble((tr.get("SIMILARITY"))),
+                parser.parseDouble((tr.get("SIMILARITY"))),
                 tr.get("LIBRARY"),
                 tr.get("CAS"),
                 tr.get("FORMULA"),
-                "ChromaTOF", parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
-                rt1 + rt2, parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), parseDouble((tr.get("AREA"))),
+                "ChromaTOF", 
+                parser.parseIntegrationStartEnd(tr.get("INTEGRATIONBEGIN")),
+                rt1 + rt2, 
+                parser.parseIntegrationStartEnd(tr.get("INTEGRATIONEND")), 
+                parser.parseDouble((tr.get("AREA"))),
                 Double.NaN, rt1, rt2);
         return descriptor;
     }

@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Data;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
@@ -61,7 +62,7 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
 
     private final File importDir;
     private final File[] files;
-    private Locale locale = Locale.US;
+    private final Locale locale = Locale.US;
 
     @Override
     public List<File> call() {
@@ -81,7 +82,6 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
             trd.setDisplayName(getClass().getSimpleName());
-            Utils.defaultLocale = locale;
             for (File file : files) {
                 progressHandle.progress(
                         "Importing " + (peakReportsImported + 1) + "/" + files.length,
@@ -90,11 +90,10 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
                 String chromName = StringTools.removeFileExt(file.getName());
                 IChromatogramDescriptor chromatogram = createChromatogramDescriptor(file, new GC(), new TOFMS(), chromName);
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<>();
-                File created = importPeaks(importDir, peaks, reports, chromName, chromatogram);
+                File created = importPeaks(importDir, peaks, reports, chromName, chromatogram, locale);
                 resultFiles.add(created);
                 peakReportsImported++;
             }
-            Utils.defaultLocale = Locale.getDefault();
         } catch (Exception e) {
             Exceptions.printStackTrace(e);
         } finally {

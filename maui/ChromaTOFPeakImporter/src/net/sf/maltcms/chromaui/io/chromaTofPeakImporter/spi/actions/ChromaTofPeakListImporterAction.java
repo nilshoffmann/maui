@@ -30,10 +30,14 @@ package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.actions;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.Locale;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListImporter;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.Utils;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.ui.LocalePanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 import org.openide.awt.ActionRegistration;
@@ -60,6 +64,7 @@ public final class ChromaTofPeakListImporterAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         JFileChooser jfc = new JFileChooser();
+        LocalePanel lp = new LocalePanel();
         jfc.setAcceptAllFileFilterUsed(true);
         jfc.addChoosableFileFilter(new FileFilter() {
 
@@ -74,11 +79,13 @@ public final class ChromaTofPeakListImporterAction implements ActionListener {
             }
         });
         jfc.setDialogTitle("Select ChromaTOF reports");
+        lp.setSelectedLocale(Locale.getDefault());
+        jfc.setAccessory(lp);
         jfc.setMultiSelectionEnabled(true);
         int result = jfc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             ChromaTofPeakListImporter plir = new ChromaTofPeakListImporter(context,
-                    jfc.getSelectedFiles(), context.getImportLocation(ChromaTofPeakListImporter.class));
+                    jfc.getSelectedFiles(), context.getImportLocation(ChromaTofPeakListImporter.class), lp.getSelectedLocale());
             ChromaTofPeakListImporter.createAndRun("ChromaTOF Peak List Import", plir);
         }
     }

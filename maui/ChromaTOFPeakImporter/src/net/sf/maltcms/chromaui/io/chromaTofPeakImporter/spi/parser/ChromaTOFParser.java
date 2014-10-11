@@ -47,6 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.Value;
 import maltcms.datastructures.peak.Peak1D;
 import maltcms.datastructures.peak.Peak2D;
 
@@ -54,13 +55,22 @@ import maltcms.datastructures.peak.Peak2D;
  *
  * @author Nils Hoffmann
  */
+@Value
 public class ChromaTOFParser {
 
-    public static String FIELD_SEPARATOR = "\t";
-    public static String QUOTATION_CHARACTER = "\"";
-    public static Locale defaultLocale = Locale.getDefault();
+    public static String FIELD_SEPARATOR_TAB = "\t";
+    public static String FIELD_SEPARATOR_COMMA = ",";
+    public static String FIELD_SEPARATOR_SEMICOLON = ";";
+    
+    public static String QUOTATION_CHARACTER_DOUBLETICK = "\"";
+    public static String QUOTATION_CHARACTER_NONE = "";
+    public static String QUOTATION_CHARACTER_SINGLETICK = "\'";
+    
+    private final String fieldSeparator;
+    private final String quotationCharacter;
+    private final Locale locale;// = Locale.getDefault();
 
-    public static HashMap<String, String> getFilenameToGroupMap(File f) {
+    public HashMap<String, String> getFilenameToGroupMap(File f) {
         List<String> header = null;
         HashMap<String, String> filenameToGroupMap = new LinkedHashMap<>();
         BufferedReader br = null;
@@ -70,7 +80,7 @@ public class ChromaTOFParser {
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    String[] lineArray = line.split(String.valueOf(FIELD_SEPARATOR));
+                    String[] lineArray = line.split(String.valueOf(fieldSeparator));
                     if (lineCount > 0) {
                         //                        System.out.println(
                         //                                "Adding file to group mapping: " + lineArray[0] + " " + lineArray[1]);
@@ -94,7 +104,7 @@ public class ChromaTOFParser {
         return filenameToGroupMap;
     }
 
-    public static int getIndexOfHeaderColumn(List<String> header,
+    public int getIndexOfHeaderColumn(List<String> header,
             String columnName) {
         int idx = 0;
         for (String str : header) {
@@ -106,7 +116,7 @@ public class ChromaTOFParser {
         return -1;
     }
 
-    public static Tuple2D<double[], int[]> convertMassSpectrum(
+    public Tuple2D<double[], int[]> convertMassSpectrum(
             String massSpectrum) {
         if (massSpectrum == null) {
             Logger.getLogger(ChromaTOFParser.class.getName()).warning("Warning: mass spectral data was null!");
@@ -134,7 +144,7 @@ public class ChromaTOFParser {
         return new Tuple2D<>(masses, intensities);
     }
 
-    public static LinkedHashSet<String> getHeader(File f, boolean normalizeColumnNames) {
+    public LinkedHashSet<String> getHeader(File f, boolean normalizeColumnNames) {
         LinkedHashSet<String> globalHeader = new LinkedHashSet<>();
         ArrayList<String> header = null;
         String fileName = f.getName().substring(0, f.getName().lastIndexOf(
@@ -147,7 +157,7 @@ public class ChromaTOFParser {
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    String[] lineArray = splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER);//line.split(String.valueOf(FIELD_SEPARATOR));
+                    String[] lineArray = splitLine(line, fieldSeparator, quotationCharacter);//line.split(String.valueOf(FIELD_SEPARATOR));
                     if (header == null) {
                         if (normalizeColumnNames) {
                             for (int i = 0; i < lineArray.length; i++) {
@@ -178,10 +188,8 @@ public class ChromaTOFParser {
         globalHeader.addAll(header);
         return globalHeader;
     }
-    public static final String doubleQuotePattern = "";
-    public static final String msPattern = "";
 
-    public static String[] splitLine(String line, String fieldSeparator, String quoteSymbol) {
+    public String[] splitLine(String line, String fieldSeparator, String quoteSymbol) {
         switch (fieldSeparator) {
             case ",":
                 Pattern p = Pattern.compile("((\")([^\"]*)(\"))");
@@ -202,7 +210,7 @@ public class ChromaTOFParser {
         }
     }
 
-    public static List<TableRow> parseBody(LinkedHashSet<String> globalHeader,
+    public List<TableRow> parseBody(LinkedHashSet<String> globalHeader,
             File f, boolean normalizeColumnNames) {
         List<TableRow> body = new ArrayList<>();
         BufferedReader br = null;
@@ -214,7 +222,7 @@ public class ChromaTOFParser {
             List<String> header = null;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    ArrayList<String> lineList = new ArrayList<>(Arrays.asList(splitLine(line, FIELD_SEPARATOR, QUOTATION_CHARACTER)));//.split(String.valueOf(FIELD_SEPARATOR))));
+                    ArrayList<String> lineList = new ArrayList<>(Arrays.asList(splitLine(line, fieldSeparator, quotationCharacter)));//.split(String.valueOf(FIELD_SEPARATOR))));
                     if (header == null) {
                         if (normalizeColumnNames) {
                             for (int i = 0; i < lineList.size(); i++) {
@@ -253,29 +261,37 @@ public class ChromaTOFParser {
         }
         return body;
     }
-
-    public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(
-            File f) {
-        return parseReport(f, true);
-    }
-
-    public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(
-            File f, boolean normalizeColumnNames) {
-        if (f.getName().toLowerCase().endsWith("csv")) {
-//            System.out.println("CSV Mode");
-            ChromaTOFParser.FIELD_SEPARATOR = ",";
-            ChromaTOFParser.QUOTATION_CHARACTER = "\"";
-        } else if (f.getName().toLowerCase().endsWith("tsv") || f.getName().toLowerCase().endsWith("txt")) {
-//            System.out.println("TSV Mode");
-            ChromaTOFParser.FIELD_SEPARATOR = "\t";
-            ChromaTOFParser.QUOTATION_CHARACTER = "";
-        }
-        LinkedHashSet<String> header = getHeader(f, normalizeColumnNames);
-        List<TableRow> table = parseBody(header, f, normalizeColumnNames);
+    
+    public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(ChromaTOFParser parser, File f, boolean normalizeColumnNames) {
+        LinkedHashSet<String> header = parser.getHeader(f, normalizeColumnNames);
+        List<TableRow> table = parser.parseBody(header, f, normalizeColumnNames);
         return new Tuple2D<>(header, table);
     }
 
-    public static Peak1D create1DPeak(File peakReport, TableRow tr) {
+    public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(
+            File f, Locale locale) {
+        return parseReport(f, true, locale);
+    }
+
+    public static Tuple2D<LinkedHashSet<String>, List<TableRow>> parseReport(
+            File f, boolean normalizeColumnNames, Locale locale) {
+        ChromaTOFParser parser = create(f, normalizeColumnNames, locale);
+        return parseReport(parser, f, normalizeColumnNames);
+    }
+    
+    public static ChromaTOFParser create(File f, boolean normalizeColumnNames, Locale locale) {
+        ChromaTOFParser parser;
+        if (f.getName().toLowerCase().endsWith("csv")) {
+            parser = new ChromaTOFParser(FIELD_SEPARATOR_COMMA, QUOTATION_CHARACTER_DOUBLETICK, locale);
+        } else if (f.getName().toLowerCase().endsWith("tsv") || f.getName().toLowerCase().endsWith("txt")) {
+            parser = new ChromaTOFParser(FIELD_SEPARATOR_TAB, QUOTATION_CHARACTER_NONE, locale);
+        } else {
+            throw new IllegalArgumentException("Unsupported file extension '"+f.getName().toLowerCase()+"'! Supported are '.csv', '.tsv', '.txt'.");
+        }
+        return parser;
+    }
+
+    public Peak1D create1DPeak(File peakReport, TableRow tr) {
         //System.out.println("1D chromatogram peak data detected");
         Peak1D p1 = new Peak1D();
         p1.setName(tr.get("NAME"));
@@ -284,7 +300,7 @@ public class ChromaTOFParser {
         return p1;
     }
 
-    public static Peak2D create2DPeak(File peakReport, TableRow tr, double rt1, double rt2) {
+    public Peak2D create2DPeak(File peakReport, TableRow tr, double rt1, double rt2) {
         //System.out.println("Adding peak "+tr.get("NAME"));
         Peak2D p2 = new Peak2D();
         p2.setName(tr.get("NAME"));
@@ -294,7 +310,7 @@ public class ChromaTOFParser {
         return p2;
     }
 
-    public static double[] parseDoubleArray(String fieldName, TableRow row,
+    public double[] parseDoubleArray(String fieldName, TableRow row,
             String elementSeparator) {
         if (row.get(fieldName).contains(elementSeparator)) {
             String[] values = row.get(fieldName).split(elementSeparator);
@@ -307,18 +323,18 @@ public class ChromaTOFParser {
         return new double[]{parseDouble(row.get(fieldName))};
     }
 
-    public static double parseDouble(String fieldName, TableRow tr) {
+    public double parseDouble(String fieldName, TableRow tr) {
 //        System.out.println("Retrieving " + fieldName);
         String value = tr.get(fieldName);
 //        System.out.println("Value: " + value);
         return parseDouble(value);
     }
 
-    public static double parseDouble(String s) {
-        return parseDouble(s, defaultLocale);
+    public double parseDouble(String s) {
+        return parseDouble(s, locale);
     }
 
-    public static double parseDouble(String s, Locale locale) {
+    public double parseDouble(String s, Locale locale) {
         if (s == null || s.isEmpty()) {
             return Double.NaN;
         }
@@ -334,7 +350,7 @@ public class ChromaTOFParser {
         }
     }
 
-    public static double parseIntegrationStartEnd(String s) {
+    public double parseIntegrationStartEnd(String s) {
         if (s == null || s.isEmpty()) {
             return Double.NaN;
         }

@@ -46,9 +46,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptorFactory;
-import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
-import org.openide.util.Lookup;
 
 /**
  *
@@ -144,40 +141,13 @@ public class GcImageBlobParser {
         return -1;
     }
 
-//    public static Tuple2D<double[], int[]> convertMassSpectrum(
-//            String massSpectrum) {
-//        if (massSpectrum == null) {
-//            Logger.getLogger(GcImageBlobParser.class.getName()).warning("Warning: mass spectral data was null!");
-//            return new Tuple2D<>(new double[0], new int[0]);
-//        }
-//        String[] mziTuples = massSpectrum.split(" ");
-//        TreeMap<Float, Integer> tm = new TreeMap<>();
-//        for (String tuple : mziTuples) {
-//            if (tuple.contains(":")) {
-//                String[] tplArray = tuple.split(":");
-//                tm.put(Float.valueOf(tplArray[0]), Integer.valueOf(tplArray[1]));
-//            } else {
-//                Logger.getLogger(GcImageBlobParser.class.getName()).log(
-//                        Level.WARNING, "Warning: encountered strange tuple: {0} within ms: {1}", new Object[]{tuple, massSpectrum});
-//            }
-//        }
-//        double[] masses = new double[tm.keySet().size()];
-//        int[] intensities = new int[tm.keySet().size()];
-//        int i = 0;
-//        for (Float key : tm.keySet()) {
-//            masses[i] = key;
-//            intensities[i] = tm.get(key);
-//            i++;
-//        }
-//        return new Tuple2D<>(masses, intensities);
-//    }
     public static List<ColumnName> getHeaderColumns(String[] lineArray) {
         List<ColumnName> l = new ArrayList<>();
         for(String col:lineArray) {
             try {
                 l.add(ColumnName.fromString(col));
             }catch(IllegalArgumentException iae) {
-                Logger.getLogger(GcImageBlobParser.class.getName()).log(Level.WARNING,"Skipping unsupported column key '{0}'",col);
+                Logger.getLogger(GcImageBlobParser.class.getName()).log(Level.WARNING, "Skipping unsupported column key {0}", col);
             }
         }
         return l;
@@ -312,15 +282,6 @@ public class GcImageBlobParser {
         List<TableRow> table = parseBody(header, f, normalizeColumnNames);
         return new Tuple2D<>(header, table);
     }
-
-//    public static IPeak2DAnnotationDescriptor create2DPeak(File peakReport, TableRow tr, double rt1, double rt2) {
-//        Lookup.getDefault().lookup(IDescriptorFactory.class).newPeak2DAnnotationDescriptor(null, msPattern, rt2, quantMasses, rt2, rt2, rt2, rt2, msPattern, msPattern, msPattern, msPattern, rt2, rt2, rt2, rt2, rt2, rt1, rt2)
-//        p2.setName(tr.get(ColumnName.COMPOUND_NAME));
-//        p2.setFile(peakReport.getAbsolutePath());
-//        p2.setFirstRetTime(rt1);
-//        p2.setSecondRetTime(rt2);
-//        return p2;
-//    }
 
     public static double parseDouble(ColumnName columnName, TableRow tr) {
         String value = tr.get(columnName);
