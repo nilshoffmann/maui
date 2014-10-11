@@ -35,12 +35,17 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import maltcms.ui.project.tasks.MultiplePeakAlignmentImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.api.project.ProjectManager;
+import org.netbeans.spi.project.ui.support.ProjectChooser;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.WindowManager;
 
 @ActionID(category = "Maui",
         id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportPeakGroups")
@@ -60,20 +65,23 @@ public final class ImportMultiplePeakAlignment implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        JFileChooser jfc = new JFileChooser(new File(FileUtil.toFile(context.getProjectDirectory()), "output"));
-        jfc.setMultiSelectionEnabled(false);
-        jfc.addChoosableFileFilter(new FileFilter() {
+        ProjectChooser.setProjectsFolder(context.getOutputDirectory());
+        JFileChooser chooser = ProjectChooser.projectChooser();
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setCurrentDirectory(context.getOutputDirectory());
+        chooser.setFileFilter(new FileFilter() {
 
             @Override
             public boolean accept(File file) {
-                if (file.isDirectory() || new File(file, "workflow.xml").exists()) {
-                    FindMultipleAlignment fpf = new FindMultipleAlignment();
-                    File[] results = fpf.getResults(file);
-                    return results.length > 0;
-//                    if (file.isDirectory() || file.getName().endsWith(
-//                        "multiple-alignment.csv")) {
-//                    return true;
-//                }
+
+                if (file.isDirectory()) {
+                    if (new File(file, "workflow.xml").exists()) {
+                        FindMultipleAlignment fpf = new FindMultipleAlignment();
+                        File[] results = fpf.getResults(file);
+                        return results.length > 0;
+                    } else {
+                        return true;
+                    }
                 }
 
                 return false;
@@ -81,21 +89,25 @@ public final class ImportMultiplePeakAlignment implements ActionListener {
 
             @Override
             public String getDescription() {
-                return "Maltcms Multiple Peak Alignment";
+                return "Maltcms workflow result (Multiple Peak Alignment)";
             }
         });
-        int value = jfc.showOpenDialog(null);
+        int value = chooser.showOpenDialog(WindowManager.getDefault().getMainWindow());
         if (value == JFileChooser.APPROVE_OPTION) {
-            File f = jfc.getSelectedFile();
-            File[] results = null;
-            if (f.isFile()) {
-                results = new File[]{f};
+            File f = chooser.getSelectedFile();
+            if (ProjectManager.getDefault().isProject(FileUtil.toFileObject(f))) {
+                MultiplePeakAlignmentImporter tc
+                        = new MultiplePeakAlignmentImporter(
+                                context,
+                                new FindMultipleAlignment().getResults(f)
+                        );
+                MultiplePeakAlignmentImporter.createAndRun("Peak alignment import", tc);
             } else {
-                FindMultipleAlignment fma = new FindMultipleAlignment();
-                results = fma.getResults(f);
+                NotifyDescriptor.Message message = new NotifyDescriptor.Message(
+                        "Import requires a Maltcms workflow project!",
+                        NotifyDescriptor.WARNING_MESSAGE);
+                DialogDisplayer.getDefault().notify(message);
             }
-            MultiplePeakAlignmentImporter tc = new MultiplePeakAlignmentImporter(context, results);
-            MultiplePeakAlignmentImporter.createAndRun("Peak alignment import", tc);
         }
     }
 

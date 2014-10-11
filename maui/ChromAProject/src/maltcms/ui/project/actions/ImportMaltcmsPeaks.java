@@ -34,13 +34,19 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import maltcms.ui.project.tasks.MaltcmsPeakFinderImporter;
+import maltcms.ui.project.tasks.MultiplePeakAlignmentImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import org.netbeans.api.project.ProjectManager;
+import org.netbeans.spi.project.ui.support.ProjectChooser;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.WindowManager;
 
 @ActionID(category = "Maui",
         id = "net.sf.maltcms.chromaui.normalization.spi.actions.ImportMaltcmsPeaks")
@@ -60,46 +66,49 @@ public final class ImportMaltcmsPeaks implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        JFileChooser jfc = new JFileChooser(new File(FileUtil.toFile(context.getProjectDirectory()), "output"));
-        jfc.setMultiSelectionEnabled(false);
-        jfc.addChoosableFileFilter(new FileFilter() {
+        ProjectChooser.setProjectsFolder(context.getOutputDirectory());
+        JFileChooser chooser = ProjectChooser.projectChooser();
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setCurrentDirectory(context.getOutputDirectory());
+        chooser.setFileFilter(new FileFilter() {
 
             @Override
             public boolean accept(File file) {
-                if(file.isDirectory() || new File(file,"workflow.xml").exists()) {
-                    FindPeakFiles fpf = new FindPeakFiles();
-                    File[] results = fpf.getResults(file);
-                    return results.length>0;
-//                }else if (file.getName().endsWith(
-//                        "TICPeakFinder") || file.isDirectory()) {
-//                    return true;
+
+                if (file.isDirectory()) {
+                    if (new File(file, "workflow.xml").exists()) {
+                        FindPeakFiles fpf = new FindPeakFiles();
+                        File[] results = fpf.getResults(file);
+                        return results.length > 0;
+                    } else {
+                        return true;
+                    }
                 }
+
                 return false;
             }
 
             @Override
             public String getDescription() {
-                return "Maltcms Workflow Peaks";
+                return "Maltcms workflow result (Peak Lists)";
             }
         });
-        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int value = jfc.showOpenDialog(null);
+        int value = chooser.showOpenDialog(WindowManager.getDefault().getMainWindow());
         if (value == JFileChooser.APPROVE_OPTION) {
-            File f = jfc.getSelectedFile();
-            FindPeakFiles fpf = new FindPeakFiles();
-//            //output directory
-//            File[] peakFiles = f.listFiles(new java.io.FileFilter() {
-//
-//                @Override
-//                public boolean accept(File f) {
-//                    if (f.getName().toLowerCase().endsWith(".cdf")) {
-//                        return true;
-//                    }
-//                    return false;
-//                }
-//            });
-            MaltcmsPeakFinderImporter tc = new MaltcmsPeakFinderImporter(context, fpf.getResults(f));
-            MaltcmsPeakFinderImporter.createAndRun("Maltcms peak import", tc);
+            File f = chooser.getSelectedFile();
+            if (ProjectManager.getDefault().isProject(FileUtil.toFileObject(f))) {
+                MaltcmsPeakFinderImporter tc
+                        = new MaltcmsPeakFinderImporter(
+                                context,
+                                new FindPeakFiles().getResults(f)
+                        );
+                MaltcmsPeakFinderImporter.createAndRun("Maltcms peak import", tc);
+            } else {
+                NotifyDescriptor.Message message = new NotifyDescriptor.Message(
+                        "Import requires a Maltcms workflow project!",
+                        NotifyDescriptor.WARNING_MESSAGE);
+                DialogDisplayer.getDefault().notify(message);
+            }
         }
     }
 }
