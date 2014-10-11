@@ -34,8 +34,10 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import org.*;
+import org.netbeans.swing.outline.Outline;
 import org.openide.explorer.ExplorerManager;
-import org.openide.explorer.view.ListView;
+import org.openide.explorer.view.OutlineView;
 
 /**
  *
@@ -57,11 +59,16 @@ public class DialogPanel extends JPanel implements ExplorerManager.Provider {
         jlabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(jlabel);
         add(Box.createVerticalStrut(10));
-        ListView cv = new ListView();
+        OutlineView cv = new OutlineView();
+        cv.setTreeSortable(true);
+        Outline o = cv.getOutline();
+        o.setRootVisible(false);
+        cv.setDefaultActionAllowed(false);
+//        cv.getOutline().set
         if (singleSelectionOnly) {
-            cv.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+            o.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         } else {
-            cv.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            o.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         }
         JScrollPane jsp = new JScrollPane(cv);
         jsp.setAlignmentX(Component.LEFT_ALIGNMENT);

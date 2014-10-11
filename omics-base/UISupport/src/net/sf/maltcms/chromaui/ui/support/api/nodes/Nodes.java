@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
@@ -25,17 +25,16 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project.api;
+package net.sf.maltcms.chromaui.ui.support.api.nodes;
 
-import java.util.HashMap;
+import org.openide.nodes.Node;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class ProjectSettings extends HashMap<String, Object> {
-
-    public static final String KEY_UID = "project.uid";
-    public static final String KEY_OUTPUT_BASEDIR = "output.basedir";
-    
+public class Nodes {
+    public static Node checkable(Node node) {
+        return new CheckableFilterNode(node);
+    }
 }

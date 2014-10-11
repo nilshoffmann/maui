@@ -44,11 +44,13 @@ import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.InplaceEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.explorer.propertysheet.PropertyModel;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = URI.class)
 public class URIPropertyEditor extends PropertyEditorSupport implements ExPropertyEditor, InplaceEditor.Factory {
 
     private InplaceEditor ed = null;

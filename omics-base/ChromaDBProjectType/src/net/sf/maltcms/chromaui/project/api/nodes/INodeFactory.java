@@ -98,4 +98,5 @@ public interface INodeFactory {
      * @return
      */
     Action createMenuItem(String name, Action[] actions);
+    
 }

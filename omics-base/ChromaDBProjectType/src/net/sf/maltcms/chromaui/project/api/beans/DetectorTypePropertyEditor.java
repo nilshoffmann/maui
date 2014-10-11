@@ -32,13 +32,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.types.IDetectorType;
+import org.openide.nodes.PropertyEditorRegistration;
 import org.openide.util.Lookup;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = IDetectorType.class)
 public class DetectorTypePropertyEditor extends PropertyEditorSupport {
 
     /**

@@ -25,17 +25,33 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project.api;
+package net.sf.maltcms.chromaui.project.api.beans;
 
-import java.util.HashMap;
+import java.beans.PropertyEditorSupport;
+import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class ProjectSettings extends HashMap<String, Object> {
+@PropertyEditorRegistration(targetType = IToolDescriptor.class)
+public class ToolDescriptorPropertyEditor extends PropertyEditorSupport {
 
-    public static final String KEY_UID = "project.uid";
-    public static final String KEY_OUTPUT_BASEDIR = "output.basedir";
-    
+    /**
+     *
+     */
+    public ToolDescriptorPropertyEditor() {
+    }
+
+    @Override
+    public String getAsText() {
+        IToolDescriptor id = (IToolDescriptor) getValue();
+        return id.getDisplayName();
+    }
+
+    @Override
+    public void setAsText(String string) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Editing of TreatmentGroupDescriptor is not supported!");
+    }
 }

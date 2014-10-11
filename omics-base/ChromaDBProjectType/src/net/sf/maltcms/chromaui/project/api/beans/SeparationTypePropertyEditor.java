@@ -29,11 +29,13 @@ package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
 import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = ISeparationType.class)
 public class SeparationTypePropertyEditor extends PropertyEditorSupport {
 
     /**

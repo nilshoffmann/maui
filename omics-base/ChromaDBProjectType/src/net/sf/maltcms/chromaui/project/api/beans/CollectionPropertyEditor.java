@@ -28,36 +28,31 @@
 package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
-import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
-import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
+import java.util.Collection;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class GenericDescriptorPropertyEditor extends PropertyEditorSupport {
+@PropertyEditorRegistration(targetType = Collection.class)
+public class CollectionPropertyEditor extends PropertyEditorSupport {
 
     /**
      *
      */
-    public GenericDescriptorPropertyEditor() {
+    public CollectionPropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        Object value = getValue();
-        if (value instanceof IDescriptor) {
-            IDescriptor id = (IDescriptor) value;
-            return id.getDisplayName();
-        } else if (value instanceof IBasicDescriptor) {
-            IBasicDescriptor id = (IBasicDescriptor) value;
-            return id.getDisplayName();
-        }
-        return "<NA>";
+        Collection s = (Collection)getValue();
+        return s.toString();
     }
 
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
-        throw new IllegalArgumentException("Editing of descriptor name is not supported!");
+        throw new IllegalArgumentException("Editing of Dates is not supported!");
+//        setValue(UUID.fromString(string));
     }
 }

@@ -29,11 +29,13 @@ package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
 import java.util.UUID;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = UUID.class)
 public class UUIDPropertyEditor extends PropertyEditorSupport {
 
     /**

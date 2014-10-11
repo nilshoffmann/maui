@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.project.api;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
@@ -38,6 +39,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 
 /**
@@ -63,10 +65,6 @@ public interface IMauiProject extends PropertyChangeListener {
      * @return
      */
     Collection<IChromatogramDescriptor> getChromatograms();
-
-//    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp);
-//    
-//    <T> Collection<T> query(Class<T> c, IMatchPredicate<T> mp, Comparator<T> comp);
 
     /**
      *
@@ -108,6 +106,12 @@ public interface IMauiProject extends PropertyChangeListener {
      */
     Collection<SampleGroupContainer> getSampleGroupsForTreatmentGroup(ITreatmentGroupDescriptor treatmentGroup);
 
+    /**
+     * 
+     * @return 
+     */
+    Collection<IToolDescriptor> getToolsForPeakContainers();
+    
     /**
      *
      * @param <T>
@@ -169,5 +173,11 @@ public interface IMauiProject extends PropertyChangeListener {
      * @return
      */
     File getOutputDirectory();
+    
+    /**
+     * Returns a unique id for this project.
+     * @return the unique id of this project
+     */
+    UUID getId();
 
 }

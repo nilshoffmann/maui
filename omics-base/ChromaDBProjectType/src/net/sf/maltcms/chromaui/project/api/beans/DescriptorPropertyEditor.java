@@ -25,26 +25,41 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project;
+package net.sf.maltcms.chromaui.project.api.beans;
 
-import java.beans.PropertyEditorManager;
-import org.openide.modules.ModuleInstall;
+import java.beans.PropertyEditorSupport;
+import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IDescriptor;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class Installer extends ModuleInstall {
+@PropertyEditorRegistration(targetType = {IDescriptor.class, IBasicDescriptor.class})
+public class DescriptorPropertyEditor extends PropertyEditorSupport {
 
     /**
      *
      */
+    public DescriptorPropertyEditor() {
+    }
+
     @Override
-    public void restored() {
-        String[] searchPath = PropertyEditorManager.getEditorSearchPath();
-        String[] newPath = new String[searchPath.length + 1];
-        System.arraycopy(searchPath, 0, newPath, 0, searchPath.length);
-        newPath[searchPath.length] = "net.sf.maltcms.chromaui.project.api.beans";
-        PropertyEditorManager.setEditorSearchPath(newPath);
+    public String getAsText() {
+        Object value = getValue();
+        if (value instanceof IDescriptor) {
+            IDescriptor id = (IDescriptor) value;
+            return id.getDisplayName();
+        } else if (value instanceof IBasicDescriptor) {
+            IBasicDescriptor id = (IBasicDescriptor) value;
+            return id.getDisplayName();
+        }
+        return "<NA>";
+    }
+
+    @Override
+    public void setAsText(String string) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Editing of descriptor name is not supported!");
     }
 }

@@ -30,13 +30,11 @@ package net.sf.maltcms.chromaui.db.spi.db4o.options;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
-import net.sf.maltcms.chromaui.ui.support.api.DialogPanel;
 import org.openide.util.NbPreferences;
 
 final class Db4oGeneralSettingsPanel extends javax.swing.JPanel implements ValidationMessageListener, DocumentListener {
 
     private final Db4oGeneralSettingsOptionsPanelController controller;
-    private DialogPanel panel = null;
 
     Db4oGeneralSettingsPanel(Db4oGeneralSettingsOptionsPanelController controller) {
         this.controller = controller;

@@ -28,11 +28,17 @@
 package net.sf.maltcms.chromaui.project.api.utilities;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import org.openide.*;
 
 /**
  *
@@ -40,7 +46,18 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
  */
 public class Mapping {
 
-    public static LinkedHashMap<String, File> mapReports(LinkedHashMap<String, IChromatogramDescriptor> chromatograms, File[] files) {
+    public static Map<IChromatogramDescriptor, File> mapReportsManually(Collection<IChromatogramDescriptor> chromatograms, File[] files) {
+        AssignSamplesToResources astr = new AssignSamplesToResources();
+        astr.setSamples(new ArrayList<>(chromatograms));
+        astr.setReports(Arrays.asList(files));
+        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(astr, "Assign reports to samples", NotifyDescriptor.OK_CANCEL_OPTION);
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+            return astr.getAssignedSamplesToResources();
+        }
+        return Collections.emptyMap();
+    }
+    
+    public static LinkedHashMap<String, File> mapReports(Map<String, IChromatogramDescriptor> chromatograms, File[] files) {
         LinkedHashMap<String, File> reports = new LinkedHashMap<>();
         for (File file : files) {
             String chromName = file.getName();
@@ -61,7 +78,7 @@ public class Mapping {
         return reports;
     }
 
-    public static LinkedHashMap<String, IChromatogramDescriptor> createChromatogramMap(IChromAUIProject project) {
+    public static Map<String, IChromatogramDescriptor> createChromatogramMap(IChromAUIProject project) {
         LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<>();
         for (IChromatogramDescriptor descriptor : project.getChromatograms()) {
             String chromName = new File(descriptor.getResourceLocation()).getName();
@@ -72,5 +89,5 @@ public class Mapping {
                     Level.INFO, "Added chromatogram {0}: {1}", new Object[]{chromName, descriptor});
         }
         return chromatograms;
-    }
+    }    
 }

@@ -29,11 +29,13 @@ package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = ITreatmentGroupDescriptor.class)
 public class TreatmentGroupDescriptorPropertyEditor extends PropertyEditorSupport {
 
     /**

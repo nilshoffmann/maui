@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 OpenIDE-Module: net.sf.maltcms.chromaui.project
-OpenIDE-Module-Install: net/sf/maltcms/chromaui/project/Installer.class
 OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/project/Bundle.properties
 OpenIDE-Module-Specification-Version: 1.1.2
 

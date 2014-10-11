@@ -242,7 +242,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
         ec.common().add(new TransparentActivationSupport());
         ec.common().add(new TransparentPersistenceSupport(
                 new DeactivatingRollbackStrategy()));
-        ec.common().queries().evaluationMode(QueryEvaluationMode.IMMEDIATE);
+        ec.common().queries().evaluationMode(QueryEvaluationMode.LAZY);
         ec.common().optimizeNativeQueries(true);
         ec.common().maxStackDepth(80);
         ec.common().bTreeNodeSize(2048);

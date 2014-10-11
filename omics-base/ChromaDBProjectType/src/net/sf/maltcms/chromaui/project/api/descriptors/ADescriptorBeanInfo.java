@@ -58,7 +58,7 @@ public class ADescriptorBeanInfo extends SimpleBeanInfo {
     
         try {
             properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor.class, "getTool", null ); // NOI18N
-            properties[PROPERTY_tool].setPropertyEditorClass ( net.sf.maltcms.chromaui.project.api.beans.GenericDescriptorPropertyEditor.class );
+            properties[PROPERTY_tool].setPropertyEditorClass ( net.sf.maltcms.chromaui.project.api.beans.DescriptorPropertyEditor.class );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

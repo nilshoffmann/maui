@@ -51,7 +51,12 @@ public class DatabaseResizeRunnable extends AProgressAwareRunnable {
     public void run() {
         Logger.getLogger(getClass().getName()).info("Updating database sizes!");
         final Project[] projects = OpenProjects.getDefault().getOpenProjects();
-        final Collection<Project> selectedProjects = Projects.getSelectedOpenProjects(Project.class, "Update Database Size", "Select Projects for Size Update");
+        final Collection<? extends Project> selectedProjects = 
+            Projects.getSelectedOpenProjects(
+                Project.class,
+                "Update Database Size",
+                "Select Projects for Size Update"
+            );
         //close all projects
         OpenProjects.getDefault().close(projects);
         RequestProcessor rp = new RequestProcessor("Database Size Updater", 1);
