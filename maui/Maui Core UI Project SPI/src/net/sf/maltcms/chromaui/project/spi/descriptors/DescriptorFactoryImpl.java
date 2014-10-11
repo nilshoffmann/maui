@@ -41,6 +41,7 @@ import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -250,6 +251,12 @@ public class DescriptorFactoryImpl implements IDescriptorFactory {
         p1dc.setChromatogram(chromatogram);
         p1dc.addMembers(peaks.toArray(new IPeakAnnotationDescriptor[]{}));
         p1dc.setTool(trd);
+        for(IPeakAnnotationDescriptor descr:peaks) {
+            if(descr instanceof ADescriptor) {
+                ADescriptor adesc = (ADescriptor)descr;
+                adesc.setTool(trd);
+            }
+        }
         p1dc.setDisplayName(trd.getName() + " " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(trd.getDate()));
         project.addContainer(p1dc);
         project.refresh();

@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.netbeans.junit.NbModuleSuite;
 import org.netbeans.junit.NbModuleSuite.Configuration;
 import org.netbeans.junit.NbTestCase;
+import org.openide.util.Utilities;
 
 /**
  *
@@ -93,9 +94,9 @@ public class ChromAUIProjectTest extends NbTestCase {
             f.getParentFile().deleteOnExit();
 
             cap = new ChromAUIProject();
-            cap.activate(f.toURI().toURL());
+            cap.activate(Utilities.toURI(f).toURL());
             cap.openSession();
-            cap.getCrudProvider();
+//            cap.getCrudProvider();
 //            ChromatogramContainer icc = new ChromatogramContainer();
             ChromatogramDescriptor gcd1 = new ChromatogramDescriptor();
             gcd1.setResourceLocation(new File("test/a/chrom1.cdf").getAbsolutePath());

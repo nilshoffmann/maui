@@ -72,6 +72,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     public PeakGroupDescriptor() {
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
+            if(pad instanceof ADescriptor) {
+                ((ADescriptor)pad).setTool(getTool());
+            }
             pad.addPropertyChangeListener(WeakListeners.propertyChange(this, pad));
         }
     }

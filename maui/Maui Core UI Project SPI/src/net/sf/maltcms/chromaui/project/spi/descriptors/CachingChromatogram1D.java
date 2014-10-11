@@ -53,6 +53,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IExperiment1D;
@@ -71,7 +72,7 @@ import ucar.ma2.MAMath;
  *
  * @author Nils Hoffmann
  */
-@Slf4j
+@Log
 public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProvider<Integer, SerializableScan1D> {
 
     private IFileFragment parent;
@@ -428,17 +429,17 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
         double[] satArray = getSatArray();
         int idx = Arrays.binarySearch(satArray, scan_acquisition_time);
         if (idx >= 0) {// exact hit
-            log.info("sat {}, scan_index {}",
-                    scan_acquisition_time, idx);
+            log.log(Level.FINE, "sat {0}, scan_index {1}",
+                    new Object[]{scan_acquisition_time, idx});
             return idx;
         } else {// imprecise hit, find closest element
             int insertionPosition = (-idx) - 1;
-            if (insertionPosition < 0) {
-                log.warn("Insertion position was {}, setting to index 0", insertionPosition);
+            if (insertionPosition <= 0) {
+                log.log(Level.WARNING, "Insertion position was {0}, setting to index 0", insertionPosition);
 //				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + "<" + 0);
             }
             if (insertionPosition >= satArray.length) {
-                log.warn("Insertion position was {}, setting to index {}", insertionPosition, satArray.length - 1);
+                log.log(Level.WARNING, "Insertion position was {0}, setting to index {1}", new Object[]{insertionPosition, satArray.length - 1});
 //				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + ">=" + satArray.length);
             }
 //			System.out.println("Would insert before "+insertionPosition);

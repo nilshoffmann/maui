@@ -27,9 +27,11 @@
  */
 package net.sf.maltcms.chromaui.project.spi.project;
 
+import com.db4o.ObjectSet;
 import com.db4o.ext.DatabaseClosedException;
 import com.db4o.ext.DatabaseFileLockedException;
 import com.db4o.query.Predicate;
+import com.db4o.query.Query;
 import cross.exception.ConstraintViolationException;
 import cross.exception.ResourceNotAvailableException;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
@@ -55,6 +57,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,6 +67,7 @@ import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProviderFactory;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
+import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.IMauiSubprojectProviderFactory;
@@ -77,8 +81,10 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
+import net.sf.maltcms.chromaui.project.spi.runnables.DeletePeakAnnotationsRunnable;
 import org.apache.commons.io.FileUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
@@ -259,15 +265,22 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public <T extends IContainer> Collection<T> getContainer(Class<T> c) {
         if (icp != null) {
-            ICrudSession ics = icp.createSession();
-            Collection<T> l = ics.retrieve(c);
-            ics.close();
-            for (IContainer container : l) {
-                if (container.getProject() == null) {
-                    container.setProject(this);
+            ICrudSession localSession = null;
+            try {
+                localSession = icp.createSession();
+                Collection<T> l = localSession.retrieve(c);
+                localSession.close();
+                for (IContainer container : l) {
+                    if (container.getProject() == null) {
+                        container.setProject(this);
+                    }
+                }
+                return l;
+            } finally {
+                if (localSession != null) {
+                    localSession.close();
                 }
             }
-            return l;
         }
         return Collections.emptyList();
     }
@@ -364,7 +377,7 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public FileObject getOutputDir() {
         try {
-            return getSetting("output.basedir", FileObject.class);
+            return getSetting(ProjectSettings.KEY_OUTPUT_BASEDIR, FileObject.class);
         } catch (NullPointerException | DatabaseFileLockedException | DatabaseClosedException npe) {
             Logger.getLogger(ChromAUIProject.class.getName()).log(Level.WARNING, "Failed to retrieve setting 'output.basedir':", npe);
         }
@@ -380,7 +393,7 @@ public class ChromAUIProject implements IChromAUIProject {
     @Override
     public void setOutputDir(FileObject f) {
         ProjectSettings ps = getSettings();
-        ps.put("output.basedir", f);
+        ps.put(ProjectSettings.KEY_OUTPUT_BASEDIR, f);
         ics.update(ps);
     }
 
@@ -648,6 +661,49 @@ public class ChromAUIProject implements IChromAUIProject {
             }
         }
         throw new IllegalStateException("Database not initialized!");
+    }
+
+    @Override
+    public Set<IToolDescriptor> getToolsForPeakContainers() {
+        final Set<IToolDescriptor> tools = new LinkedHashSet<>();
+        ICrudSession session = null;
+        try {
+            session = getCrudProvider().createSession();
+            session.open();
+            Query query = session.getSODAQuery();
+            query.constrain(Peak1DContainer.class);
+            query.descend("tool").constrain(IToolDescriptor.class);
+            ObjectSet<Peak1DContainer> peakContainers = query.execute();
+            for (Peak1DContainer td : peakContainers) {
+                Logger.getLogger(DeletePeakAnnotationsRunnable.class.getName()).
+                        log(Level.INFO, "Adding tool descriptor {0}", new Object[]{td.getTool().getDisplayName()});
+                tools.add(td.getTool());
+            }
+        } catch (AuthenticationException ae) {
+            Exceptions.printStackTrace(ae);
+        } finally {
+            try {
+                if (session != null) {
+                    session.close();
+                }
+            } catch (AuthenticationException ae) {
+                Exceptions.printStackTrace(ae);
+            }
+        }
+        return tools;
+    }
+
+    @Override
+    public UUID getId() {
+        ProjectSettings settings = getSettings();
+        if (settings.containsKey(ProjectSettings.KEY_UID)) {
+            return UUID.fromString((String) settings.get(ProjectSettings.KEY_UID));
+        } else {
+            UUID uid = UUID.randomUUID();
+            settings.put(ProjectSettings.KEY_UID, uid.toString());
+            ics.update(settings);
+            return uid;
+        }
     }
 
 //	@Override

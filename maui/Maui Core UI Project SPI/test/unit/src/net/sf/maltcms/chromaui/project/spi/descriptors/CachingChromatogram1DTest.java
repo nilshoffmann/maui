@@ -80,8 +80,8 @@ public class CachingChromatogram1DTest {
             IChromatogramDescriptor icd = DescriptorFactory.newChromatogramDescriptor();
             icd.setResourceLocation(f.getUri().toString());
             IChromatogram ic1d = icd.getChromatogram();
-            double[] searchTimes = new double[]{0.438, 0.477, 0.6, 1.21};
-            int[] expectedIndices = new int[]{1, 3, 4, 5};
+            double[] searchTimes = new double[]{0.438, 0.477, 0.6, 1.21, 1.35, 1.4};
+            int[] expectedIndices = new int[]{1, 3, 4, 5, sats.length-1, sats.length};
             for (int i = 0; i < expectedIndices.length; i++) {
                 Logger.getLogger(getClass().getName()).log(Level.INFO, "Start Test {0}/{1}", new Object[]{i + 1, expectedIndices.length});
                 double time = searchTimes[i];

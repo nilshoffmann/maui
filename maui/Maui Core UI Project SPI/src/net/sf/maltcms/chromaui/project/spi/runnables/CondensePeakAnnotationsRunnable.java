@@ -51,7 +51,7 @@ import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
-import net.sf.maltcms.chromaui.project.spi.ui.Dialogs;
+import net.sf.maltcms.chromaui.project.api.ui.Dialogs;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
 import org.jfree.chart.ChartFactory;
@@ -82,22 +82,20 @@ public class CondensePeakAnnotationsRunnable extends AProgressAwareRunnable {
         try {
             progressHandle.start(3);
             progressHandle.progress("Retrieving Tool Descriptors", 1);
-            final Set<IToolDescriptor> tools = new LinkedHashSet<>();
-            for (IChromatogramDescriptor chrom : project.getChromatograms()) {
-                for (Peak1DContainer container : project.getPeaks(chrom)) {
-                    tools.add(container.getTool());
-                }
-            }
-            Collection<? extends IToolDescriptor> selectedTools = Dialogs.showAndSelectToolDescriptors(tools, Lookups.singleton(project), true);
+            Collection<? extends IToolDescriptor> selectedTools = 
+                Dialogs.showAndSelectDescriptors(
+                    project.getToolsForPeakContainers(),
+                    Lookups.singleton(project),
+                    true,
+                    IToolDescriptor.class,
+                    "Condense Peaks",
+                    "Check Peak Tool Results to Condense");
             if (!selectedTools.isEmpty()) {
-                tools.clear();
-                tools.addAll(selectedTools);
-
-                progressHandle.progress("Retrieving Peak Containers for " + tools.size() + " Tools", 2);
+                progressHandle.progress("Retrieving Peak Containers for " + selectedTools.size() + " Tools", 2);
                 List<Peak1DContainer> peakContainers = new ArrayList<>();
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                     for (Peak1DContainer container : project.getPeaks(chrom)) {
-                        if (tools.contains(container.getTool())) {
+                        if (selectedTools.contains(container.getTool())) {
                             peakContainers.add(container);
                         }
                     }

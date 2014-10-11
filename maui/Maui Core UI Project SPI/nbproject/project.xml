@@ -322,6 +322,10 @@
                 <test-type>
                     <name>unit</name>
                     <test-dependency>
+                        <code-name-base>net.sf.maltcms.chromaui.db</code-name-base>
+                        <compile-dependency/>
+                    </test-dependency>
+                    <test-dependency>
                         <code-name-base>net.sf.maltcms.chromaui.db.spi.db4o</code-name-base>
                         <compile-dependency/>
                     </test-dependency>

@@ -29,7 +29,7 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import java.beans.*;
 import net.sf.maltcms.chromaui.project.api.beans.ChromAUIProjectPropertyEditor;
-import net.sf.maltcms.chromaui.project.api.beans.GenericDescriptorPropertyEditor;
+import net.sf.maltcms.chromaui.project.api.beans.DescriptorPropertyEditor;
 
 /**
  *
@@ -100,7 +100,7 @@ public class PeakAnnotationDescriptorBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_baselineStopTime] = new PropertyDescriptor ( "baselineStopTime", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getBaselineStopTime", "setBaselineStopTime" ); // NOI18N
             properties[PROPERTY_cas] = new PropertyDescriptor ( "cas", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getCas", "setCas" ); // NOI18N
             properties[PROPERTY_chromatogramDescriptor] = new PropertyDescriptor ( "chromatogramDescriptor", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getChromatogramDescriptor", null ); // NOI18N
-            properties[PROPERTY_chromatogramDescriptor].setPropertyEditorClass ( GenericDescriptorPropertyEditor.class );
+            properties[PROPERTY_chromatogramDescriptor].setPropertyEditorClass (DescriptorPropertyEditor.class );
             properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getDate", null ); // NOI18N
             properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
             properties[PROPERTY_formula] = new PropertyDescriptor ( "formula", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getFormula", "setFormula" ); // NOI18N
@@ -130,7 +130,7 @@ public class PeakAnnotationDescriptorBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_stopIntensity] = new PropertyDescriptor ( "stopIntensity", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, null, "setStopIntensity" ); // NOI18N
             properties[PROPERTY_stopTime] = new PropertyDescriptor ( "stopTime", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getStopTime", "setStopTime" ); // NOI18N
             properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getTool", null ); // NOI18N
-            properties[PROPERTY_tool].setPropertyEditorClass ( GenericDescriptorPropertyEditor.class );
+            properties[PROPERTY_tool].setPropertyEditorClass (DescriptorPropertyEditor.class );
             properties[PROPERTY_uniqueMass] = new PropertyDescriptor ( "uniqueMass", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getUniqueMass", "setUniqueMass" ); // NOI18N
         }
         catch(IntrospectionException e) {
