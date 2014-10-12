@@ -301,7 +301,7 @@ public final class RunACustomEmbeddedPipeline implements ActionListener {
 				});
 				FileFragment peakFile = new FileFragment(new File(peakListTmpDirectory, chrom.getParent().getName()));
 				peakFile.addSourceFile(chrom.getParent());
-				Peak1D.append(peakFile, new LinkedList<IPeakNormalizer>(), peaksForChromatogram, chrom.getParent().getChild("total_intensity").getArray(), "tic_peaks", "tic_filtered");
+				Peak1D.append(peakFile, new LinkedList<IPeakNormalizer>(), peaksForChromatogram, "tic_peaks");
 				peakFile.save();
 				//avoid memory leaks
 				fragments.add(new FileFragment(peakFile.getUri()));
