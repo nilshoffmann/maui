@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.statistics.view;
+package net.sf.maltcms.chromaui.statistics.view.ui;
 
 import java.awt.BorderLayout;
 import java.beans.BeanInfo;
@@ -169,7 +169,7 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
             return;
         }
         HashSet<String> whiteList = new HashSet<>(Arrays.asList("groupSize",
-                "pvalueAdjustmentMethod", "pvalues", "factors", "fvalues", "degreesOfFreedom"));
+                "pvalueAdjustmentMethod", "pvaluesList", "factorsList", "fvaluesList", "degreesOfFreedomList"));
         if (descriptor != null) {
 //        container.addMembers(iter.toArray(new IStatisticsDescriptor[iter.size()]));
             setDisplayName("Statistical results for " + project.getLocation().
