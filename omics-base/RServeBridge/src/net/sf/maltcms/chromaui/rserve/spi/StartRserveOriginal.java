@@ -174,6 +174,7 @@ public class StartRserveOriginal {
         return (launchRserve("R")
                 || /* try some common unix locations of R */ ((new File("/Library/Frameworks/R.framework/Resources/bin/R")).exists() && launchRserve("/Library/Frameworks/R.framework/Resources/bin/R"))
                 || ((new File("/usr/local/lib/R/bin/R")).exists() && launchRserve("/usr/local/lib/R/bin/R"))
+                || ((new File("/usr/bin/R")).exists() && launchRserve("/usr/local/lib/R/bin/R"))
                 || ((new File("/usr/lib/R/bin/R")).exists() && launchRserve("/usr/lib/R/bin/R"))
                 || ((new File("/usr/local/bin/R")).exists() && launchRserve("/usr/local/bin/R"))
                 || ((new File("/sw/bin/R")).exists() && launchRserve("/sw/bin/R"))

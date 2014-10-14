@@ -29,13 +29,15 @@ package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
-@PropertyEditorRegistration(targetType = Collection.class)
+@PropertyEditorRegistration(targetType = {Collection.class, List.class, Map.class})
 public class CollectionPropertyEditor extends PropertyEditorSupport {
 
     /**

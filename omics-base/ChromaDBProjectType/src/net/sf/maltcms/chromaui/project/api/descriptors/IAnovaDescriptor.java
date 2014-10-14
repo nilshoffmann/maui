@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
+import java.util.List;
+
 /**
  *
  * @author Nils Hoffmann
@@ -44,6 +46,13 @@ public interface IAnovaDescriptor extends IStatisticsDescriptor, IHypothesisTest
      * @return the value of fValues
      */
     double[] getFvalues();
+    
+    /**
+     * Get the value of fValues
+     *
+     * @return the value of fValues
+     */
+    List<Double> getFvaluesList();
 
     /**
      * Set the value of fValues

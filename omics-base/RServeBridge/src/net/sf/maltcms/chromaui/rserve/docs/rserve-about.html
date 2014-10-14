@@ -27,15 +27,97 @@ for details.
 -->
 <html>
     <head>
-        <title>About Common Rserve Bridge</title>
-        <link rel="stylesheet" href="nbdocs://org.netbeans.modules.usersguide/org/netbeans/modules/usersguide/ide.css" type="text/css">
+        <title>About Common R / Rserve Bridge</title>
+        <link rel="stylesheet" href="nbdocs://net.sf.maltcms.chromaui.javahelp/net/sf/maltcms/chromaui/javahelp/style/custom.css" type="text/css">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-        <h2>About Common Rserve Bridge</h2>
+        <h2>About Common R / Rserve Bridge</h2>
         <p>
-            <!-- TODO describe your module, add more pages... -->
+            Maui provides two ways to access <object CLASSID="java:org.netbeans.modules.javahelp.BrowserDisplayer">
+                <param name="content" value="http://r-project.org">
+                <param name="text" value="<html><u>R</u></html>">
+                <param name="textFontSize" value="medium">
+                <param name="textColor" value="blue">
+            </object>: Rscript and <object CLASSID="java:org.netbeans.modules.javahelp.BrowserDisplayer">
+                <param name="content" value="http://rforge.net/Rserve/doc.html">
+                <param name="text" value="<html><u>Rserve</u></html>">
+                <param name="textFontSize" value="medium">
+                <param name="textColor" value="blue">
+            </object>.
+            Rscript may be used by tools that need to execute a prewritten R script, maybe from 
+            a third party. The <object CLASSID="java:org.netbeans.modules.javahelp.BrowserDisplayer">
+                <param name="content" value="http://groovy.codehaus.org/">
+                <param name="text" value="<html><u>Groovy</u></html>">
+                <param name="textFontSize" value="medium">
+                <param name="textColor" value="blue">
+            </object> Template for <object CLASSID="java:org.netbeans.modules.javahelp.BrowserDisplayer">
+                <param name="content" value="http://www.bioconductor.org/packages/release/bioc/html/xcms.html">
+                <param name="text" value="<html><u>XCMS</u></html>">
+                <param name="textFontSize" value="medium">
+                <param name="textColor" value="blue">
+            </object> (<em>Project &rarr; New &rarr; Groovy / R XCMS...</em>) 
+            shows, how such an integration can be realized. 
+            Other tools, such as the PCA and Anova tools included in Maui, make use of the Rserve
+            backend to directly interact with a local or remote R session, without the need for 
+            intermediate files.
         </p>
+        <h2>Accessing R / Rserve Options</h2>
+        To open the R and Rserve options dialog, select <i>Tools &rarr; Options &rarr; Miscellaneous</i>.
+        <img src="R-RserveOptionsFull.png" title="Complete View of the R / Rserve options panel"/>
+        <h2>Settings for R and Rscript</h2>
+        <img src="ROptions.png"/>
+        <dl>
+            <dt><b>R Binary Location</b></dt>
+            <dd>The file system path to the R or R.exe binary.</dd>
+            <dt><b>Rscript Location</b></dt>
+            <dd>The file system path to the Rscript or Rscript.exe binary.</dd>
+            <dt><b>... Buttons</b></dt>
+            <dd>Open a file chooser to manually select the location of either
+                R or Rscript.</dd>
+            <dt><b>Autodetect</b></dt>
+            <dd>Tries to autodetect the locations of R and Rscript binaries.</dd>
+        </dl>
+        <h2>Local Settings for Rserve</h2>
+        <img src="RserveLocalOptions.png"/>
+        <dl>
+            <dt><b>Use local Rserve instance</b></dt>
+            <dd>If selected will autostart and / or connect to a local instance of Rserve.</dd>
+            <dt><b>Local Rserve Arguments</b></dt>
+            <dd>Arguments that can be passed to Rserve, when it is started.</dd>
+        </dl>
+        <h2>Remote Settings for Rserve</h2>
+        <img src="RserveRemoteOptions.png"/>
+        <p>This panel is only accessible, if <em>Use local Rserve instance</em> is 
+            deselected.</p>
+        <dl>
+            <dt><b>Remote Host</b></dt>
+            <dd>The remote host's DNS name or ip address.</dd>
+            <dt><b>Port</b></dt>
+            <dd>The port on which the remote Rserve is listening for connections.</dd>
+            <dt><b>User Name</b></dt>
+            <dd>The user name for the remote Rserve.</dd>
+            <dt><b>Password</b></dt>
+            <dd>The password used to authenticate the user against the remote Rserve.
+                The password is stored securely in the operating system's keyring.</dd>
+            <dt><b>Debug Mode</b></dt>
+            <dd>Activates verbose mode when Rserve is started and connection is attempted. Output is visible in View &rarr; IDE Log.</dd>
+            <dt><b>Test</b></dt>
+            <dd>Tries to connect to the configured Rserve and executes test commands.</dd>
+        </dl>
+        <h2>Programmatic Access</h2>
+        <p>In order to use the R / Rserve facilities, add a dependency to <em>Common Rserve Bridge</em>
+            module from the <em>omics-base</em> cluster to your module. Then, within 
+            your code, call <code>RserveConnectionFactory.getInstance()</code> to obtain 
+            in instance of the connection factory. The class <code>PeakGroupAnovaRunnable</code> in module
+            <em>Maui Core Peak Methods</em> contains an example of how to access a local or remote Rserve
+            connection.</p>
+        <p>For a local execution of an R script via <i>Rscript</i>, see the <em>Maui Ext Groovy Actions</em>
+            module for details in class <code>XCMSMatchedFilterPeakFinder.groovy</code>. That 
+            file is also available as a template: Right click on a Maui project node <em>Project &rarr; New &rarr; Groovy / R XCMS...</em>. 
+            The script can be executed by shift/control selecting an arbitrary number of chromatograms, followed by 
+            a right click <em>Run CDF Groovy Action</em> and selecting the appropriate 
+            script from the popup dialog.</p>
     </body>
 </html>
 <!--

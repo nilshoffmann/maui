@@ -73,7 +73,7 @@ public final class RServeOptionsPanelController extends OptionsPanelController {
 
     @Override
     public HelpCtx getHelpCtx() {
-        return null; // new HelpCtx("...ID") if you have a help set
+        return new HelpCtx("net.sf.maltcms.chromaui.rserve.about");
     }
 
     @Override
