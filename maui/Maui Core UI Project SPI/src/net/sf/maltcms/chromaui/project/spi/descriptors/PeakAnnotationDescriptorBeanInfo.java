@@ -59,35 +59,37 @@ public class PeakAnnotationDescriptorBeanInfo extends SimpleBeanInfo {
     private static final int PROPERTY_formula = 12;
     private static final int PROPERTY_fwhh = 13;
     private static final int PROPERTY_id = 14;
-    private static final int PROPERTY_index = 15;
-    private static final int PROPERTY_intensityValues = 16;
-    private static final int PROPERTY_library = 17;
-    private static final int PROPERTY_massValues = 18;
-    private static final int PROPERTY_method = 19;
-    private static final int PROPERTY_name = 20;
-    private static final int PROPERTY_nativeDatabaseId = 21;
-    private static final int PROPERTY_normalizationMethods = 22;
-    private static final int PROPERTY_normalizedArea = 23;
-    private static final int PROPERTY_project = 24;
-    private static final int PROPERTY_quantMasses = 25;
-    private static final int PROPERTY_quantSnr = 26;
-    private static final int PROPERTY_rawArea = 27;
-    private static final int PROPERTY_retentionIndex = 28;
-    private static final int PROPERTY_retentionIndexMethod = 29;
-    private static final int PROPERTY_shortDescription = 30;
-    private static final int PROPERTY_similarity = 31;
-    private static final int PROPERTY_snr = 32;
-    private static final int PROPERTY_startIntensity = 33;
-    private static final int PROPERTY_startTime = 34;
-    private static final int PROPERTY_stopIntensity = 35;
-    private static final int PROPERTY_stopTime = 36;
-    private static final int PROPERTY_tool = 37;
-    private static final int PROPERTY_uniqueMass = 38;
+    private static final int PROPERTY_inchi = 15;
+    private static final int PROPERTY_index = 16;
+    private static final int PROPERTY_intensityValues = 17;
+    private static final int PROPERTY_library = 18;
+    private static final int PROPERTY_massValues = 19;
+    private static final int PROPERTY_method = 20;
+    private static final int PROPERTY_name = 21;
+    private static final int PROPERTY_nativeDatabaseId = 22;
+    private static final int PROPERTY_normalizationMethods = 23;
+    private static final int PROPERTY_normalizedArea = 24;
+    private static final int PROPERTY_project = 25;
+    private static final int PROPERTY_quantMasses = 26;
+    private static final int PROPERTY_quantSnr = 27;
+    private static final int PROPERTY_rawArea = 28;
+    private static final int PROPERTY_retentionIndex = 29;
+    private static final int PROPERTY_retentionIndexMethod = 30;
+    private static final int PROPERTY_shortDescription = 31;
+    private static final int PROPERTY_similarity = 32;
+    private static final int PROPERTY_smiles = 33;
+    private static final int PROPERTY_snr = 34;
+    private static final int PROPERTY_startIntensity = 35;
+    private static final int PROPERTY_startTime = 36;
+    private static final int PROPERTY_stopIntensity = 37;
+    private static final int PROPERTY_stopTime = 38;
+    private static final int PROPERTY_tool = 39;
+    private static final int PROPERTY_uniqueMass = 40;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[39];
+        PropertyDescriptor[] properties = new PropertyDescriptor[41];
     
         try {
             properties[PROPERTY_apexIntensity] = new PropertyDescriptor ( "apexIntensity", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getApexIntensity", "setApexIntensity" ); // NOI18N
@@ -100,12 +102,13 @@ public class PeakAnnotationDescriptorBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_baselineStopTime] = new PropertyDescriptor ( "baselineStopTime", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getBaselineStopTime", "setBaselineStopTime" ); // NOI18N
             properties[PROPERTY_cas] = new PropertyDescriptor ( "cas", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getCas", "setCas" ); // NOI18N
             properties[PROPERTY_chromatogramDescriptor] = new PropertyDescriptor ( "chromatogramDescriptor", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getChromatogramDescriptor", null ); // NOI18N
-            properties[PROPERTY_chromatogramDescriptor].setPropertyEditorClass (DescriptorPropertyEditor.class );
+            properties[PROPERTY_chromatogramDescriptor].setPropertyEditorClass ( DescriptorPropertyEditor.class );
             properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getDate", null ); // NOI18N
             properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
             properties[PROPERTY_formula] = new PropertyDescriptor ( "formula", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getFormula", "setFormula" ); // NOI18N
             properties[PROPERTY_fwhh] = new PropertyDescriptor ( "fwhh", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getFwhh", "setFwhh" ); // NOI18N
             properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getId", null ); // NOI18N
+            properties[PROPERTY_inchi] = new PropertyDescriptor ( "inchi", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getInchi", "setInchi" ); // NOI18N
             properties[PROPERTY_index] = new PropertyDescriptor ( "index", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getIndex", "setIndex" ); // NOI18N
             properties[PROPERTY_intensityValues] = new PropertyDescriptor ( "intensityValues", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getIntensityValues", "setIntensityValues" ); // NOI18N
             properties[PROPERTY_library] = new PropertyDescriptor ( "library", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getLibrary", "setLibrary" ); // NOI18N
@@ -124,13 +127,14 @@ public class PeakAnnotationDescriptorBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_retentionIndexMethod] = new PropertyDescriptor ( "retentionIndexMethod", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getRetentionIndexMethod", "setRetentionIndexMethod" ); // NOI18N
             properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
             properties[PROPERTY_similarity] = new PropertyDescriptor ( "similarity", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getSimilarity", "setSimilarity" ); // NOI18N
+            properties[PROPERTY_smiles] = new PropertyDescriptor ( "smiles", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getSmiles", "setSmiles" ); // NOI18N
             properties[PROPERTY_snr] = new PropertyDescriptor ( "snr", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getSnr", "setSnr" ); // NOI18N
             properties[PROPERTY_startIntensity] = new PropertyDescriptor ( "startIntensity", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getStartIntensity", "setStartIntensity" ); // NOI18N
             properties[PROPERTY_startTime] = new PropertyDescriptor ( "startTime", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getStartTime", "setStartTime" ); // NOI18N
             properties[PROPERTY_stopIntensity] = new PropertyDescriptor ( "stopIntensity", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, null, "setStopIntensity" ); // NOI18N
             properties[PROPERTY_stopTime] = new PropertyDescriptor ( "stopTime", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getStopTime", "setStopTime" ); // NOI18N
             properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getTool", null ); // NOI18N
-            properties[PROPERTY_tool].setPropertyEditorClass (DescriptorPropertyEditor.class );
+            properties[PROPERTY_tool].setPropertyEditorClass ( DescriptorPropertyEditor.class );
             properties[PROPERTY_uniqueMass] = new PropertyDescriptor ( "uniqueMass", net.sf.maltcms.chromaui.project.spi.descriptors.PeakAnnotationDescriptor.class, "getUniqueMass", "setUniqueMass" ); // NOI18N
         }
         catch(IntrospectionException e) {

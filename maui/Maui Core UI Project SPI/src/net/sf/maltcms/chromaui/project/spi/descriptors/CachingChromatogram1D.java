@@ -90,7 +90,7 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     private int prefetchSize = 500;
     private boolean initialized = false;
     private AtomicBoolean loading = new AtomicBoolean(false);
-    private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(2);
+    private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(1);
     private SoftReference<Array> satReference;
     private SoftReference<double[]> satArrayReference;
     private Tuple2D<Double, Double> massRange;
@@ -181,7 +181,6 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
         try {
             SerializableScan1D scan = whm.get(i);
             if (scan == null) {
-//            System.out.println("Retrieving scan "+i);
                 scan = provide(i);
                 whm.put(i, scan);
                 if (!loading.get()) {
@@ -436,24 +435,17 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
             int insertionPosition = (-idx) - 1;
             if (insertionPosition <= 0) {
                 log.log(Level.WARNING, "Insertion position was {0}, setting to index 0", insertionPosition);
-//				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + "<" + 0);
             }
             if (insertionPosition >= satArray.length) {
                 log.log(Level.WARNING, "Insertion position was {0}, setting to index {1}", new Object[]{insertionPosition, satArray.length - 1});
-//				throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + ">=" + satArray.length);
             }
-//			System.out.println("Would insert before "+insertionPosition);
             double current = satArray[Math.min(satArray.length - 1, insertionPosition)];
-//			System.out.println("Value at insertion position: "+current);
             double previous = satArray[Math.max(0, insertionPosition - 1)];
-//			System.out.println("Value before insertion position: "+previous);
             if (Math.abs(scan_acquisition_time - previous) <= Math.abs(
                     scan_acquisition_time - current)) {
                 int index = Math.max(0, insertionPosition - 1);
-//				System.out.println("Returning "+index);
                 return index;
             } else {
-//				System.out.println("Returning "+insertionPosition);
                 return insertionPosition;
             }
         }
@@ -472,13 +464,19 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
     @Override
     public SerializableScan1D provide(Integer k) {
         init();
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "Retrieving mass value at index {0}", k);
+        if (Logger.getLogger(getClass().getName()).isLoggable(Level.FINE)) {
+            Logger.getLogger(getClass().getName()).log(Level.FINE, "Retrieving mass value at index {0}", k);
+        }
         final Array masses = massValues.get(k);
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "Retrieving intensity value at index {0}", k);
+        if (Logger.getLogger(getClass().getName()).isLoggable(Level.FINE)) {
+            Logger.getLogger(getClass().getName()).log(Level.FINE, "Retrieving intensity value at index {0}", k);
+        }
         final Array intens = intensityValues.get(k);
         short scanMsLevel = 1;
         if (msLevel != null) {
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "Retrieving ms level at index {0}", k);
+            if (Logger.getLogger(getClass().getName()).isLoggable(Level.FINE)) {
+                Logger.getLogger(getClass().getName()).log(Level.FINE, "Retrieving ms level at index {0}", k);
+            }
             scanMsLevel = msLevel.getShort(k);
         }
         Scan1D s = new Scan1D(masses, intens, k,
