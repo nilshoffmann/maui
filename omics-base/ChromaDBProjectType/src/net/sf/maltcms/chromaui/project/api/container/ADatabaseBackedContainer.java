@@ -226,11 +226,6 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getName() + ": " + getName() + "\n");
-        //for (T igd : this.members) {
-        //sb.append(igd.toString() + "\n");
-//            sb.append(igd.getType()+"\n");
-//            sb.append(igd.getLocation()+"\n");
-        //}
         return sb.toString();
     }
 

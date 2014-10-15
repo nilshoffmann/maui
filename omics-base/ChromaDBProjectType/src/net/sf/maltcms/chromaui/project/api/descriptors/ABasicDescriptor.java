@@ -224,9 +224,6 @@ public class ABasicDescriptor implements IBasicDescriptor {
             IChromAUIProject old = this.project;
             this.project = project;
         }
-//		if(old!=project) {
-//			getPropertyChangeSupport().firePropertyChange(IDescriptor.PROP_PROJECT, old, this.project);
-//		}
     }
 
     private transient Activator activator;
@@ -295,9 +292,6 @@ public class ABasicDescriptor implements IBasicDescriptor {
     @Override
     public String getDisplayName() {
         activate(ActivationPurpose.READ);
-//        if (displayName == null) {
-//            return getName();
-//        }
         return displayName;
     }
 
@@ -358,10 +352,6 @@ public class ABasicDescriptor implements IBasicDescriptor {
      */
     @Override
     public void setId(UUID id) {
-//        activate(ActivationPurpose.WRITE);
-//        UUID old = this.id;
-//        this.id = id;
-//        firePropertyChange(PROP_ID, old, id);
         Logger.getLogger(ABasicDescriptor.class.getName()).warning("Setting of UUIDs is no longer supported! UUIDs are created automatically when objects are first instantiated!");
     }
 
