@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
+import net.sf.maltcms.chromaui.db.spi.db4o.runnables.DatabaseDefragmentRunnable;
 import net.sf.maltcms.chromaui.db.spi.db4o.runnables.DatabaseResizeRunnable;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
@@ -62,25 +63,35 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
 
     @Override
     public void applyChanges() {
+        Logger.getLogger(getClass().getName()).info("Update in progress: "+updateInProgress.get());
         if (!updateInProgress.get()) {
             getPanel().store();
             changed = false;
             boolean automaticBackups = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("createAutomaticBackups", false);
             boolean verboseDiagnostics = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("verboseDiagnostics", false);
             boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
-            if (automaticBackups || verboseDiagnostics) {
-                Project[] projects = OpenProjects.getDefault().getOpenProjects();
-                //close all projects
-                OpenProjects.getDefault().close(projects);
-                //restore projects that were initially open
-                OpenProjects.getDefault().open(projects, false, true);
-            } else if (updateDatabaseSize) {
+            boolean defragmentDatabase = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("defragmentDatabase", false);
+            if (updateDatabaseSize) {
                 if (updateInProgress.compareAndSet(false, true)) {
                     DatabaseResizeRunnable drr = new DatabaseResizeRunnable(this);
                     DatabaseResizeRunnable.createAndRun("Updating database size", drr);
                 } else {
                     Logger.getLogger(getClass().getName()).warning("Update already in progress!");
                 }
+            } else if (defragmentDatabase) {
+                if (updateInProgress.compareAndSet(false, true)) {
+                    DatabaseDefragmentRunnable drr = new DatabaseDefragmentRunnable(this);
+                    DatabaseDefragmentRunnable.createAndRun("Updating database size", drr);
+                } else {
+                    Logger.getLogger(getClass().getName()).warning("Update already in progress!");
+                }
+            } else if (automaticBackups || verboseDiagnostics) {
+                //do this last, so that preOpen actions to not interfere
+                Project[] projects = OpenProjects.getDefault().getOpenProjects();
+                //close all projects
+                OpenProjects.getDefault().close(projects);
+                //restore projects that were initially open
+                OpenProjects.getDefault().open(projects, false, true);
             }
         } else {
             changed();

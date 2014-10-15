@@ -99,12 +99,16 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
             Dimension d = getSize();
             if (scene == null && sg != null) {
                 sg.setInstanceContent(content);
+                sg.setMinimumSize(new Dimension(200, 200));
+                sg.setPreferredSize(new Dimension(600, 480));
                 add(sg, BorderLayout.CENTER);
             } else {
                 remove(scene);
 //            throw new IllegalStateException("StandardGUI may only be added once!");
                 if (sg != null) {
                     sg.setInstanceContent(content);
+                    sg.setMinimumSize(new Dimension(200, 200));
+                    sg.setPreferredSize(new Dimension(600, 480));
                     add(sg, BorderLayout.CENTER);
                 }
             }

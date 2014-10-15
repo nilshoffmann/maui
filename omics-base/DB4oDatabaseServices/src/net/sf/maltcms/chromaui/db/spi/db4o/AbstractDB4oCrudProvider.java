@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.db.spi.db4o;
 
 import com.db4o.EmbeddedObjectContainer;
+import com.db4o.ObjectContainer;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.ext.DatabaseClosedException;
 import com.db4o.ext.DatabaseReadOnlyException;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
@@ -57,6 +59,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
     protected final ClassLoader domainClassLoader;
     protected final ICredentials ic;
     protected final HashSet<ICrudSession> openSessions = new HashSet<>();
+    protected final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
     protected final File projectDBLocation;
     private boolean verboseDiagnostics = false;
 
@@ -99,7 +102,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
     }
 
     @Override
-    public final void close() {
+    public final synchronized void close() {
         authenticate();
         if (eoc != null) {
             try {
@@ -127,7 +130,7 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
     }
 
     @Override
-    public final ICrudSession createSession() {
+    public final synchronized ICrudSession createSession() {
         if (eoc == null) {
             open();
         }
@@ -179,13 +182,17 @@ public abstract class AbstractDB4oCrudProvider implements ICrudProvider {
 
     public abstract EmbeddedConfiguration configure();
 
-    public void preOpen() {
+    public ObjectContainer getObjectContainer() {
+        return eoc;
     }
 
-    public void postOpen() {
+    public synchronized void preOpen() {
     }
 
-    public void preClose() {
+    public synchronized void postOpen() {
+    }
+
+    public synchronized void preClose() {
         if (backupDatabase && backupService != null) {
             backupService.shutdown();
             try {

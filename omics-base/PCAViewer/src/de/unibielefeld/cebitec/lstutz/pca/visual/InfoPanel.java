@@ -44,31 +44,12 @@ public class InfoPanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
     private JLabel achsen, info, label, x, y, z, color, view, export, heading_x, heading_y, heading_z;
-//    private Link link;
 
     public InfoPanel(Heading h, StandardGUI g) {
-//        this.setPreferredSize(new Dimension(200, 480));
         this.setMinimumSize(new Dimension(250, 300));
-//        this.setBackground(new Color(51, 51, 51));
         this.setLayout(new GridLayout(13, 1, 0, 2));
-//        achsen = new JLabel("Axis labeling:");
-//        this.add(achsen);
-//        heading_x = new JLabel(h.getHeading_x());
-//        heading_x.setForeground(Color.green);
-//        this.add(heading_x);
-//        heading_y = new JLabel(h.getHeading_y());
-//        heading_y.setForeground(Color.red);
-//        this.add(heading_y);
-//        heading_z = new JLabel(h.getHeading_z());
-//        heading_z.setForeground(Color.blue);
-//        this.add(heading_z);
         info = new JLabel("Current Selection:");
         this.add(info);
-//        label = new JLabel("Nothing selected");
-//        this.add(label);
-//        link = new Link("Nothing selected", "http://");
-//        link.addMouseListener(this);
-//        this.add(link);
         x = new JLabel(" ");
         this.add(x);
         y = new JLabel(" ");
@@ -111,13 +92,9 @@ public class InfoPanel extends JPanel {
     }
 
     public void set_coords(DataModel da) {
-//        this.label.setText("Label = " + da.getLabel());
-//        this.label.setToolTipText(da.getAnnotation());
-        this.x.setText("x = " + da.getCoordinates().get(0));
-        this.y.setText("y = " + da.getCoordinates().get(1));
-        this.z.setText("z = " + da.getCoordinates().get(2));
-//        this.link.setText("<html><head></head><body><u>Link to...</u></body></html>");
-//        this.link.setLink(da.getLink());
+        this.x.setText("x = " + String.format("%.6f", da.getCoordinates().get(0).doubleValue()));
+        this.y.setText("y = " + String.format("%.6f", da.getCoordinates().get(1).doubleValue()));
+        this.z.setText("z = " + String.format("%.6f", da.getCoordinates().get(2).doubleValue()));
     }
 
     private Color create_complement(Color c) {
@@ -130,8 +107,6 @@ public class InfoPanel extends JPanel {
     }
 
     public void set_colors() {
-//        achsen.setForeground(create_complement(this.getBackground()));
-//        label.setForeground(create_complement(this.getBackground()));
         color.setForeground(create_complement(this.getBackground()));
         view.setForeground(create_complement(this.getBackground()));
         x.setForeground(create_complement(this.getBackground()));
@@ -139,7 +114,6 @@ public class InfoPanel extends JPanel {
         z.setForeground(create_complement(this.getBackground()));
         info.setForeground(create_complement(this.getBackground()));
         export.setForeground(create_complement(this.getBackground()));
-//        link.setForeground(create_complement(this.getBackground()));
         this.repaint();
     }
 
