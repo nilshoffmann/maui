@@ -36,8 +36,10 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.ImmutableVariableFragment2;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tuple.Tuple2D;
+import cross.exception.NotImplementedException;
 import cross.exception.ResourceNotAvailableException;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.extern.java.Log;
+import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IExperiment2D;
 import maltcms.datastructures.ms.IScan2D;
@@ -506,6 +509,21 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public RtProvider getRtProvider() {
         init();
         return this.rtProvider;
+    }
+
+    @Override
+    public Rectangle2D getTimeRange2D() {
+        double[] startRts = getRtProvider().getRts(0);
+        double[] stopRts = getRtProvider().getRts(getNumberOfScans() - 1);
+        return new Rectangle2D.Double(
+                startRts[0], startRts[1],
+                stopRts[0] - startRts[0], Math.max(stopRts[1], getModulationDuration()) - startRts[1]
+        );
+    }
+
+    @Override
+    public IScanLine getScanLineImpl() {
+        throw new NotImplementedException();
     }
 
     public abstract class RtProvider {

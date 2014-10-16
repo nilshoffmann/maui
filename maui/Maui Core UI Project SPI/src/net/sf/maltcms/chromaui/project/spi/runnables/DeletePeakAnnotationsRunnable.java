@@ -27,14 +27,8 @@
  */
 package net.sf.maltcms.chromaui.project.spi.runnables;
 
-import com.db4o.ObjectSet;
-import com.db4o.query.Query;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.Data;
-import net.sf.maltcms.chromaui.db.api.ICrudSession;
-import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
