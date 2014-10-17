@@ -33,46 +33,91 @@ package net.sf.maltcms.common.charts.api.selection;
  */
 public class DefaultDisplayPropertiesProvider implements IDisplayPropertiesProvider {
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getName(ISelection selection) {
         return selection.getTarget().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getDisplayName(ISelection selection) {
         return selection.getTarget().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getShortDescription(ISelection selection) {
         return selection.getTarget().toString() + " with source: " + selection.getSource().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getSourceName(ISelection selection) {
         return selection.getSource().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getSourceDisplayName(ISelection selection) {
         return selection.getSource().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getSourceShortDescription(ISelection selection) {
         return selection.getSource().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getTargetName(ISelection selection) {
         return selection.getTarget().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getTargetDisplayName(ISelection selection) {
         return selection.getTarget().toString();
     }
 
+    /**
+     *
+     * @param selection
+     * @return
+     */
     @Override
     public String getTargetShortDescription(ISelection selection) {
         return selection.getTarget().toString();

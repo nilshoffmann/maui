@@ -49,6 +49,11 @@ import org.openide.windows.WindowManager;
  */
 public class Charts {
 
+    /**
+     *
+     * @param chartOverlay
+     * @return
+     */
     public static Node overlayNode(ChartOverlay chartOverlay) {
         try {
             OverlayNode<ChartOverlay> node = new OverlayNode<>(chartOverlay);
@@ -59,6 +64,12 @@ public class Charts {
         return Node.EMPTY;
     }
 
+    /**
+     *
+     * @param chartOverlay
+     * @param children
+     * @return
+     */
     public static Node overlayNode(ChartOverlay chartOverlay, Children children) {
         try {
             OverlayNode<ChartOverlay> node = new OverlayNode<>(chartOverlay, children);
@@ -69,6 +80,13 @@ public class Charts {
         return Node.EMPTY;
     }
 
+    /**
+     *
+     * @param chartOverlay
+     * @param children
+     * @param lookup
+     * @return
+     */
     public static Node overlayNode(ChartOverlay chartOverlay, Children children, Lookup lookup) {
         try {
             OverlayNode<ChartOverlay> node = new OverlayNode<>(chartOverlay, children, lookup);
@@ -79,6 +97,14 @@ public class Charts {
         return Node.EMPTY;
     }
 
+    /**
+     *
+     * @param <TARGET>
+     * @param typeClass
+     * @param dataset
+     * @param builder
+     * @param listener
+     */
     public static <TARGET> void openXYChart(final Class<TARGET> typeClass, final ADataset1D<?, TARGET> dataset, final XYChartBuilder builder, final TaskListener listener) {
         Task t = RequestProcessor.getDefault().create(new Runnable() {
             @Override

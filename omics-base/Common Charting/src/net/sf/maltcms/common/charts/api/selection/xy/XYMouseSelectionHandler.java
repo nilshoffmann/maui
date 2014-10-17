@@ -25,44 +25,73 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.api.selection;
+package net.sf.maltcms.common.charts.api.selection.xy;
 
-import java.awt.event.MouseEvent;
 import javax.swing.event.EventListenerList;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
+import net.sf.maltcms.common.charts.api.selection.DefaultSelectionShapeFactory;
+import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
+import net.sf.maltcms.common.charts.api.selection.IMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
+import net.sf.maltcms.common.charts.api.selection.ISelectionShapeFactory;
+import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.entity.XYItemEntity;
 
 /**
  *
  * @author Nils Hoffmann
+ * @param <TARGET>
  */
-public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
+public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler<TARGET> {
 
-    private MouseEvent mouseEvent = null;
     private XYSelection selection = null;
     private ADataset1D<?, TARGET> dataset;
     private final EventListenerList listenerList = new EventListenerList();
     private final IDisplayPropertiesProvider provider;
     private final ISelectionShapeFactory shapeFactory;
 
+    /**
+     *
+     * @param dataset
+     * @param provider
+     * @param shapeFactory
+     */
+    public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset, IDisplayPropertiesProvider provider, ISelectionShapeFactory shapeFactory) {
+        this.dataset = dataset;
+        this.provider = provider;
+        this.shapeFactory = shapeFactory;
+    }
+
+    /**
+     *
+     * @param dataset
+     */
     public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset) {
         this(dataset, new DefaultSelectionShapeFactory());
     }
 
+    /**
+     *
+     * @param dataset
+     * @param shapeFactory
+     */
     public XYMouseSelectionHandler(ADataset1D<?, TARGET> dataset, ISelectionShapeFactory shapeFactory) {
-        this.dataset = dataset;
-        this.provider = dataset.getLookup().lookup(IDisplayPropertiesProvider.class);
-        this.shapeFactory = shapeFactory;
+        this(dataset, dataset.getLookup().lookup(IDisplayPropertiesProvider.class), shapeFactory);
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         selection = null;
-        mouseEvent = null;
         fireSelectionChange();
     }
 
+    /**
+     *
+     */
     protected void fireSelectionChange() {
         final SelectionChangeEvent event = new SelectionChangeEvent(this, selection);
         for (ISelectionChangeListener listener : listenerList.getListeners(ISelectionChangeListener.class)) {
@@ -70,10 +99,18 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
         }
     }
 
+    /**
+     *
+     * @param dataset
+     */
     public void setDataset(ADataset1D<?, TARGET> dataset) {
         this.dataset = dataset;
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
@@ -82,11 +119,14 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
-            mouseEvent = cme.getTrigger();
             fireSelectionChange();
         }
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof XYItemEntity) {
@@ -95,18 +135,25 @@ public class XYMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
-            mouseEvent = cme.getTrigger();
             fireSelectionChange();
         } else {
             clear();
         }
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void addSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.add(ISelectionChangeListener.class, listener);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void removeSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.remove(ISelectionChangeListener.class, listener);

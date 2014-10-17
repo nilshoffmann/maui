@@ -41,11 +41,20 @@ public class SelectionChangeEvent extends ChangeEvent {
         super(source);
     }
 
+    /**
+     *
+     * @param source
+     * @param selection
+     */
     public SelectionChangeEvent(Object source, ISelection selection) {
         this(source);
         this.selection = selection;
     }
 
+    /**
+     *
+     * @return
+     */
     public ISelection getSelection() {
         return selection;
     }

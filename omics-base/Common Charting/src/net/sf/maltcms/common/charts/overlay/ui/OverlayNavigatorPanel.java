@@ -52,7 +52,7 @@ public class OverlayNavigatorPanel implements NavigatorPanel {
      * template for finding data in given context. Object used as example,
      * replace with your own data source, for example JavaDataObject etc
      */
-    private static final Lookup.Template<Node> MY_DATA = new Lookup.Template(Node.class);
+    private static final Lookup.Template<Node> MY_DATA = new Lookup.Template<>(Node.class);
     /**
      * current context to work on
      */

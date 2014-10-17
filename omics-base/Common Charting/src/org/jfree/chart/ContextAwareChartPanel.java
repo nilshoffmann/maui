@@ -27,11 +27,19 @@
  */
 package org.jfree.chart;
 
+import java.awt.AlphaComposite;
 import java.awt.Component;
+import java.awt.Composite;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -72,42 +80,109 @@ import org.openide.util.actions.Presenter;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+/**
+ *
+ * @author nilshoffmann
+ */
 public class ContextAwareChartPanel extends ChartPanel implements LookupListener {
 
-    private List<Overlay> overlays = new ArrayList<>();
+    private final List<Overlay> overlays = new ArrayList<>();
     private IActionProvider popupMenuActionProvider = null;
 
+    /**
+     *
+     * @param chart
+     */
     public ContextAwareChartPanel(JFreeChart chart) {
         super(chart);
     }
 
+    /**
+     *
+     * @param chart
+     * @param useBuffer
+     */
     public ContextAwareChartPanel(JFreeChart chart, boolean useBuffer) {
         super(chart, useBuffer);
     }
 
+    /**
+     *
+     * @param chart
+     * @param properties
+     * @param save
+     * @param print
+     * @param zoom
+     * @param tooltips
+     */
     public ContextAwareChartPanel(JFreeChart chart, boolean properties, boolean save, boolean print, boolean zoom, boolean tooltips) {
         super(chart, properties, save, print, zoom, tooltips);
     }
 
+    /**
+     *
+     * @param chart
+     * @param width
+     * @param height
+     * @param minimumDrawWidth
+     * @param minimumDrawHeight
+     * @param maximumDrawWidth
+     * @param maximumDrawHeight
+     * @param useBuffer
+     * @param properties
+     * @param save
+     * @param print
+     * @param zoom
+     * @param tooltips
+     */
     public ContextAwareChartPanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean save, boolean print, boolean zoom, boolean tooltips) {
         super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer, properties, save, print, zoom, tooltips);
     }
 
+    /**
+     *
+     * @param chart
+     * @param width
+     * @param height
+     * @param minimumDrawWidth
+     * @param minimumDrawHeight
+     * @param maximumDrawWidth
+     * @param maximumDrawHeight
+     * @param useBuffer
+     * @param properties
+     * @param copy
+     * @param save
+     * @param print
+     * @param zoom
+     * @param tooltips
+     */
     public ContextAwareChartPanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean copy, boolean save, boolean print, boolean zoom, boolean tooltips) {
         super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer, properties, copy, save, print, zoom, tooltips);
     }
 
+    /**
+     *
+     * @param actionProvider
+     */
     public void setPopupMenuActionProvider(IActionProvider actionProvider) {
         this.popupMenuActionProvider = actionProvider;
         actionProvider.getLookup().lookupResult(Object.class).addLookupListener(this);
     }
 
+    /**
+     *
+     * @param overlay
+     */
     @Override
     public void addOverlay(Overlay overlay) {
         super.addOverlay(overlay);
         overlays.add(overlay);
     }
 
+    /**
+     *
+     * @param overlay
+     */
     @Override
     public void removeOverlay(Overlay overlay) {
         super.removeOverlay(overlay);
@@ -116,37 +191,37 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        super.mouseEntered(e); //To change body of generated methods, choose Tools | Templates.
+        super.mouseEntered(e);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        super.mouseExited(e); //To change body of generated methods, choose Tools | Templates.
+        super.mouseExited(e);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        super.mousePressed(e); //To change body of generated methods, choose Tools | Templates.
+        super.mousePressed(e);
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        super.mouseDragged(e); //To change body of generated methods, choose Tools | Templates.
+        super.mouseDragged(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
+        super.mouseReleased(e);
     }
 
     @Override
     public void mouseClicked(MouseEvent event) {
-        super.mouseClicked(event); //To change body of generated methods, choose Tools | Templates.
+        super.mouseClicked(event);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        super.mouseMoved(e); //To change body of generated methods, choose Tools | Templates.
+        super.mouseMoved(e);
     }
 
     @Override
@@ -157,6 +232,10 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         setRefreshBuffer(refreshBuffer);
     }
 
+    /**
+     *
+     * @param g2
+     */
     public void paintChart(Graphics2D g2) {
         getChart().draw(g2, new Rectangle2D.Double(0, 0, getWidth(), getHeight()), getChartRenderingInfo());
         for (Overlay overlay : overlays) {
@@ -216,6 +295,15 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         return components;
     }
 
+    /**
+     *
+     * @param properties
+     * @param copy
+     * @param save
+     * @param print
+     * @param zoom
+     * @return
+     */
     @Override
     protected JPopupMenu createPopupMenu(boolean properties,
             boolean copy, boolean save, boolean print, boolean zoom) {
@@ -436,6 +524,9 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         }
     }
 
+    /**
+     *
+     */
     public void saveAsSvg() {
         FileChooserBuilder fcb = new FileChooserBuilder(ContextAwareChartPanel.class);
         JFileChooser fileChooser = fcb.createFileChooser();
@@ -487,12 +578,15 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         String command = event.getActionCommand();
 
         if (command.equals("SAVE_AS_SVG")) {
-            System.out.println("This is a message");
             saveAsSvg();
         }
 
     }
 
+    /**
+     *
+     * @param le
+     */
     @Override
     public void resultChanged(LookupEvent le) {
         Runnable popupMenuCreator = new Runnable() {
@@ -500,11 +594,9 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
             @Override
             public void run() {
                 setPopupMenu(createPopupMenu(true, true, true, true, true));
-                System.err.println("This is an error");
             }
 
         };
         SwingUtilities.invokeLater(popupMenuCreator);
-
     }
 }

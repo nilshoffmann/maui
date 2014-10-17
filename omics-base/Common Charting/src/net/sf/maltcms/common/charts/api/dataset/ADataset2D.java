@@ -34,18 +34,37 @@ import org.jfree.data.xy.XYZDataset;
 /**
  *
  * @author Nils Hoffmann
+ * @param <SOURCE>
+ * @param <TARGET>
  */
 public abstract class ADataset2D<SOURCE, TARGET> extends ADataset1D<SOURCE, TARGET> implements XYZDataset {
 
+    /**
+     *
+     * @param l
+     * @param provider
+     */
     public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l, IDisplayPropertiesProvider provider) {
         super(l, provider);
     }
 
+    /**
+     *
+     * @param l
+     */
     public ADataset2D(List<INamedElementProvider<? extends SOURCE, ? extends TARGET>> l) {
         super(l);
     }
 
+    /**
+     *
+     * @return
+     */
     public abstract double getMinZ();
 
+    /**
+     *
+     * @return
+     */
     public abstract double getMaxZ();
 }

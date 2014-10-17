@@ -68,6 +68,7 @@ public final class XYChartComponentOpenAction implements ActionListener {
                 XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
                 renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
                 renderer.setBaseItemLabelsVisible(true);
+                renderer.setDefaultEntityRadius(50);
                 NumberAxis domain = new NumberAxis("x-axis");
                 domain.setLowerBound(-100);
                 domain.setUpperBound(1000);
@@ -75,7 +76,7 @@ public final class XYChartComponentOpenAction implements ActionListener {
                 domain.setUpperMargin(0.1);
                 domain.setPositiveArrowVisible(true);
                 domain.setNegativeArrowVisible(true);
-                builder.xy(dataset).renderer(renderer).domainAxis(domain).minimumDrawSize(400, 300).preferredDrawSize(800, 600).maximumDrawSize(1280, 1024).plot().chart("Sample plot").createLegend(true);
+                builder.xy(dataset).renderer(renderer).domainAxis(domain).useBuffer(false).minimumDrawSize(400, 300).preferredDrawSize(800, 600).plot().chart("Sample plot").createLegend(true);
                 invokeLater(new Runnable() {
                     @Override
                     public void run() {

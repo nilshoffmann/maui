@@ -34,7 +34,6 @@ import javax.swing.Action;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
-import org.openide.util.Utilities;
 import static org.openide.util.Utilities.actionsForPath;
 
 /**
@@ -68,7 +67,6 @@ public class SelectionOverlayNode extends OverlayNode<SelectionOverlay> {
                 nodeActions.add(a);
             }
         }
-//        nodeActions.addAll(Arrays.asList(actions));
         return nodeActions.toArray(new Action[nodeActions.size()]);
     }
 }

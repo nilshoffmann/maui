@@ -38,10 +38,8 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import static org.openide.util.Exceptions.printStackTrace;
 import org.openide.util.WeakListeners;
-import org.openide.util.lookup.Lookups;
 import static org.openide.util.lookup.Lookups.fixed;
 import org.openide.util.lookup.ProxyLookup;
 
@@ -49,7 +47,7 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author Nils Hoffmann
  */
-public class SelectionOverlayChildFactory extends ChildFactory<ISelection> implements PropertyChangeListener {
+public class SelectionOverlayChildFactory extends ChildFactory<ISelection> {
 
     private final SelectionOverlay so;
     private final Set<ISelection> selection;
@@ -59,7 +57,7 @@ public class SelectionOverlayChildFactory extends ChildFactory<ISelection> imple
         this.so = so;
         this.source = source;
         this.selection = selection;
-        so.addPropertyChangeListener(WeakListeners.propertyChange(this, so));
+        so.addPropertyChangeListener(WeakListeners.propertyChange(new SelectionOverlayPropertyChangeListener(), so));
     }
 
     @Override
@@ -81,10 +79,13 @@ public class SelectionOverlayChildFactory extends ChildFactory<ISelection> imple
         return Node.EMPTY;
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent pce) {
-        if (pce.getPropertyName().equals(SelectionOverlay.PROP_SELECTION)) {
-            refresh(true);
+    private class SelectionOverlayPropertyChangeListener implements PropertyChangeListener {
+
+        @Override
+        public void propertyChange(PropertyChangeEvent pce) {
+            if (pce.getPropertyName().equals(SelectionOverlay.PROP_SELECTION)) {
+                refresh(true);
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ import net.sf.maltcms.common.charts.api.XYChartBuilder;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
-import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.xy.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
@@ -65,7 +65,7 @@ import org.openide.windows.TopComponent;
     "CTL_XYChartAction=XYChart",
     "CTL_XYChartTopComponent=XYChart Window",
     "HINT_XYChartTopComponent=This is a XYChart window"})
-public final class XYChartTopComponent<TARGET> extends TopComponent implements TaskListener {
+public final class XYChartTopComponent<TARGET> extends TopComponent {
 
     private ChartPanel panel;
     private InstanceContent content = new InstanceContent();
@@ -89,7 +89,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
                 createChartPanel(cb, dataset, content);
             }
         });
-        t.addTaskListener(this);
+        t.addTaskListener(new XYChartLoaderTaskListener());
         RequestProcessor.getDefault().post(t);
     }
 
@@ -203,7 +203,7 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
 
             }
         });
-        t.addTaskListener(this);
+        t.addTaskListener(new XYChartLoaderTaskListener());
         RequestProcessor.getDefault().post(t);
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
@@ -235,25 +235,27 @@ public final class XYChartTopComponent<TARGET> extends TopComponent implements T
         // TODO read your settings according to their version
     }
 
-    @Override
-    public void taskFinished(Task task) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                panel = getLookup().lookup(ChartPanel.class);
-                add(panel, BorderLayout.CENTER);
-                selectionHandler = getLookup().lookup(InstanceContentSelectionHandler.class);
-                setEnabled(true);
-                invalidate();
-                revalidate();
-            }
-        });
+    private class XYChartLoaderTaskListener implements TaskListener {
+
+        @Override
+        public void taskFinished(Task task) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    panel = getLookup().lookup(ChartPanel.class);
+                    add(panel, BorderLayout.CENTER);
+                    selectionHandler = getLookup().lookup(InstanceContentSelectionHandler.class);
+                    setEnabled(true);
+                    invalidate();
+                    revalidate();
+                }
+            });
+        }
     }
 
     private void customizeChart(ChartPanel customPanel) {
         ChartCustomizer.setSeriesColors(customPanel.getChart().getXYPlot(), 0.5f);
         ChartCustomizer.setSeriesStrokes(customPanel.getChart().getXYPlot(), 2.0f);
-//        ChartCustomizer.setSeriesShapes(customPanel.getChart().getXYPlot(), new Ellipse2D.Double(-4.0, -4.0, 8.0, 8.0));
     }
 
     private void createChartPanel(final XYChartBuilder cb, final ADataset1D<?, TARGET> dataset, final InstanceContent content) {

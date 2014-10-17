@@ -25,44 +25,64 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.api.selection;
+package net.sf.maltcms.common.charts.api.selection.category;
 
-import java.awt.event.MouseEvent;
+import net.sf.maltcms.common.charts.api.selection.xy.XYSelection;
 import javax.swing.event.EventListenerList;
 import net.sf.maltcms.common.charts.api.dataset.ACategoryDataset;
+import net.sf.maltcms.common.charts.api.selection.DefaultSelectionShapeFactory;
+import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
+import net.sf.maltcms.common.charts.api.selection.IMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
+import net.sf.maltcms.common.charts.api.selection.ISelectionShapeFactory;
+import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.entity.CategoryItemEntity;
 
 /**
  *
  * @author Nils Hoffmann
+ * @param <TARGET>
  */
-public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHandler {
+public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHandler<TARGET> {
 
-    private MouseEvent mouseEvent = null;
     private CategorySelection selection = null;
     private ACategoryDataset<?, TARGET> dataset;
     private final EventListenerList listenerList = new EventListenerList();
     private final IDisplayPropertiesProvider provider;
     private final ISelectionShapeFactory shapeFactory;
 
+    /**
+     *
+     * @param dataset
+     */
     public CategoryMouseSelectionHandler(ACategoryDataset<?, TARGET> dataset) {
         this(dataset, new DefaultSelectionShapeFactory());
     }
 
+    /**
+     *
+     * @param dataset
+     * @param shapeFactory
+     */
     public CategoryMouseSelectionHandler(ACategoryDataset<?, TARGET> dataset, ISelectionShapeFactory shapeFactory) {
         this.dataset = dataset;
         this.provider = dataset.getLookup().lookup(IDisplayPropertiesProvider.class);
         this.shapeFactory = shapeFactory;
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         selection = null;
-        mouseEvent = null;
         fireSelectionChange();
     }
 
+    /**
+     *
+     */
     protected void fireSelectionChange() {
         final SelectionChangeEvent event = new SelectionChangeEvent(this, selection);
         for (ISelectionChangeListener listener : listenerList.getListeners(ISelectionChangeListener.class)) {
@@ -70,18 +90,24 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
         }
     }
 
+    /**
+     *
+     * @param dataset
+     */
     public void setDataset(ACategoryDataset<?, TARGET> dataset) {
         this.dataset = dataset;
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseClicked(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof CategoryItemEntity) {
             CategoryItemEntity itemEntity = ((CategoryItemEntity) cme.getEntity());
-            int seriesIndex = -1;
-            int itemIndex = -1;
-            seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
-            itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
+            int seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
+            int itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
             if (seriesIndex == -1 || itemIndex == -1) {
                 throw new ArrayIndexOutOfBoundsException("Could not locate series and item index for entity!");
             }
@@ -89,20 +115,20 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
-            mouseEvent = cme.getTrigger();
             fireSelectionChange();
         }
     }
 
+    /**
+     *
+     * @param cme
+     */
     @Override
     public void chartMouseMoved(ChartMouseEvent cme) {
         if (cme.getEntity() instanceof CategoryItemEntity) {
-//			System.out.println("Firing chartMouseMoved event!");
             CategoryItemEntity itemEntity = ((CategoryItemEntity) cme.getEntity());
-            int seriesIndex = -1;
-            int itemIndex = -1;
-            seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
-            itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
+            int seriesIndex = dataset.getRowIndex(itemEntity.getRowKey());
+            int itemIndex = dataset.getColumnIndex(itemEntity.getColumnKey());
             if (seriesIndex == -1 || itemIndex == -1) {
                 throw new ArrayIndexOutOfBoundsException("Could not locate series and item index for entity!");
             }
@@ -110,19 +136,25 @@ public class CategoryMouseSelectionHandler<TARGET> implements IMouseSelectionHan
             selection.setName(provider.getName(selection));
             selection.setDisplayName(provider.getDisplayName(selection));
             selection.setShortDescription(provider.getShortDescription(selection));
-            mouseEvent = cme.getTrigger();
             fireSelectionChange();
         } else {
-//			System.out.println("Firing clear event!");
             clear();
         }
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void addSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.add(ISelectionChangeListener.class, listener);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void removeSelectionChangeListener(ISelectionChangeListener listener) {
         listenerList.remove(ISelectionChangeListener.class, listener);

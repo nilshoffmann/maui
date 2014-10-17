@@ -25,11 +25,12 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.common.charts.api.selection;
+package net.sf.maltcms.common.charts.api.selection.category;
 
 import java.awt.Shape;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import net.sf.maltcms.common.charts.api.selection.ISelection;
 import static net.sf.maltcms.common.charts.api.selection.ISelection.PROP_DISPLAY_NAME;
 import static net.sf.maltcms.common.charts.api.selection.ISelection.PROP_NAME;
 import static net.sf.maltcms.common.charts.api.selection.ISelection.PROP_SHORT_DESCRIPTION;
@@ -43,6 +44,9 @@ import org.jfree.data.general.Dataset;
  */
 public class CategorySelection implements ISelection {
 
+    /**
+     *
+     */
     public static final String PROP_DATASET = "dataset";
     private CategoryDataset dataset;
     private final int seriesIndex;
@@ -57,6 +61,10 @@ public class CategorySelection implements ISelection {
     private String shortDescription;
     private static CategorySelection clearSelection = null;
 
+    /**
+     *
+     * @return
+     */
     public static CategorySelection clearSelection() {
         if (clearSelection == null) {
             clearSelection = new CategorySelection(null, -1, -1, Type.CLEAR, null, null, null);
@@ -67,6 +75,16 @@ public class CategorySelection implements ISelection {
         return clearSelection;
     }
 
+    /**
+     *
+     * @param dataset
+     * @param seriesIndex
+     * @param itemIndex
+     * @param type
+     * @param source
+     * @param target
+     * @param selectionShape
+     */
     public CategorySelection(CategoryDataset dataset, int seriesIndex, int itemIndex, Type type, Object source, Object target, Shape selectionShape) {
         this.dataset = dataset;
         this.seriesIndex = seriesIndex;
@@ -84,11 +102,19 @@ public class CategorySelection implements ISelection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public CategoryDataset getDataset() {
         return dataset;
     }
 
+    /**
+     *
+     * @param dataset
+     */
     @Override
     public void setDataset(Dataset dataset) {
         if (!(dataset instanceof CategoryDataset)) {
@@ -97,47 +123,83 @@ public class CategorySelection implements ISelection {
         setDataset((CategoryDataset) dataset);
     }
 
+    /**
+     *
+     * @param dataset
+     */
     public void setDataset(CategoryDataset dataset) {
         CategoryDataset old = dataset;
         this.dataset = dataset;
         pcs.firePropertyChange(PROP_DATASET, old, this.dataset);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getSeriesIndex() {
         return seriesIndex;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getItemIndex() {
         return itemIndex;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Type getType() {
         return type;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Object getSource() {
         return source;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Object getTarget() {
         return target;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Shape getSelectionShape() {
         return selectionShape;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     *
+     * @param b
+     */
     @Override
     public void setVisible(boolean b) {
         boolean old = this.visible;
@@ -145,21 +207,39 @@ public class CategorySelection implements ISelection {
         pcs.firePropertyChange(PROP_VISIBLE, old, this.visible);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
+    /**
+     *
+     * @param property
+     * @param listener
+     */
     @Override
     public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(property, listener);
     }
 
+    /**
+     *
+     * @param listener
+     */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
+    /**
+     *
+     * @param property
+     * @param listener
+     */
     @Override
     public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(property, listener);
@@ -200,17 +280,7 @@ public class CategorySelection implements ISelection {
         if (this.itemIndex != other.itemIndex) {
             return false;
         }
-        if (this.type != other.type) {
-            return false;
-        }
-        //target and source may or may not implement equals and hashcode correctly, so better leave them out
-//        if (this.target != other.target && (this.target == null || !this.target.equals(other.target))) {
-//            return false;
-//        }
-//        if (this.source != other.source && (this.source == null || !this.source.equals(other.source))) {
-//            return false;
-//        }
-        return true;
+        return this.type == other.type;
     }
 
     @Override
@@ -218,21 +288,37 @@ public class CategorySelection implements ISelection {
         return "CategorySelection{" + "dataset=" + dataset + ", seriesIndex=" + seriesIndex + ", itemIndex=" + itemIndex + ", type=" + type + ", target=" + target + ", source=" + source + ", selectionShape=" + selectionShape + '}';
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getShortDescription() {
         return shortDescription;
     }
 
+    /**
+     *
+     * @param name
+     */
     @Override
     public void setName(String name) {
         String old = this.name;
@@ -240,6 +326,10 @@ public class CategorySelection implements ISelection {
         pcs.firePropertyChange(PROP_NAME, old, this.name);
     }
 
+    /**
+     *
+     * @param displayName
+     */
     @Override
     public void setDisplayName(String displayName) {
         String old = this.displayName;
@@ -247,6 +337,10 @@ public class CategorySelection implements ISelection {
         pcs.firePropertyChange(PROP_DISPLAY_NAME, old, this.displayName);
     }
 
+    /**
+     *
+     * @param shortDescription
+     */
     @Override
     public void setShortDescription(String shortDescription) {
         String old = this.shortDescription;

@@ -35,5 +35,9 @@ import java.util.EventListener;
  */
 public interface ISelectionChangeListener extends EventListener, IClearable {
 
+    /**
+     *
+     * @param ce
+     */
     public void selectionStateChanged(SelectionChangeEvent ce);
 }

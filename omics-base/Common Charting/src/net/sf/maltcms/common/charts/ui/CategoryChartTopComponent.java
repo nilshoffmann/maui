@@ -34,7 +34,7 @@ import javax.swing.SwingUtilities;
 import net.sf.maltcms.common.charts.api.CategoryChartBuilder;
 import net.sf.maltcms.common.charts.api.dataset.ACategoryDataset;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
-import net.sf.maltcms.common.charts.api.selection.CategoryMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.category.CategoryMouseSelectionHandler;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
 import static net.sf.maltcms.common.charts.ui.Bundle.CTL_CategoryChartTopComponent;
 import static net.sf.maltcms.common.charts.ui.Bundle.HINT_CategoryChartTopComponent;
@@ -58,7 +58,7 @@ import org.openide.windows.TopComponent;
     "CTL_CategoryChartAction=CategoryChart",
     "CTL_CategoryChartTopComponent=CategoryChart Window",
     "HINT_CategoryChartTopComponent=This is a CategoryChart window"})
-public final class CategoryChartTopComponent<TARGET> extends TopComponent implements TaskListener {
+public final class CategoryChartTopComponent<TARGET> extends TopComponent {
 
     private ChartPanel panel;
     private InstanceContent content = new InstanceContent();
@@ -82,7 +82,7 @@ public final class CategoryChartTopComponent<TARGET> extends TopComponent implem
                 createChartPanel(cb, dataset, content);
             }
         });
-        t.addTaskListener(this);
+        t.addTaskListener(new CategoryChartLoaderTaskListener());
         getDefault().post(t);
     }
 
@@ -147,20 +147,23 @@ public final class CategoryChartTopComponent<TARGET> extends TopComponent implem
         // TODO read your settings according to their version
     }
 
-    @Override
-    public void taskFinished(Task task) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                panel = getLookup().lookup(ChartPanel.class);
-                JScrollPane pane = new JScrollPane(panel);
-                add(pane, BorderLayout.CENTER);
-                selectionHandler = getLookup().lookup(InstanceContentSelectionHandler.class);
-                setEnabled(true);
-                invalidate();
-                revalidate();
-            }
-        });
+    private class CategoryChartLoaderTaskListener implements TaskListener {
+
+        @Override
+        public void taskFinished(Task task) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    panel = getLookup().lookup(ChartPanel.class);
+                    JScrollPane pane = new JScrollPane(panel);
+                    add(pane, BorderLayout.CENTER);
+                    selectionHandler = getLookup().lookup(InstanceContentSelectionHandler.class);
+                    setEnabled(true);
+                    invalidate();
+                    revalidate();
+                }
+            });
+        }
     }
 
     private void customizeChart(ChartPanel customPanel) {

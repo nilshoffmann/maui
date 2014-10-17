@@ -126,6 +126,9 @@
                 <package>net.sf.maltcms.common.charts.api.dataset</package>
                 <package>net.sf.maltcms.common.charts.api.overlay</package>
                 <package>net.sf.maltcms.common.charts.api.selection</package>
+                <package>net.sf.maltcms.common.charts.api.selection.category</package>
+                <package>net.sf.maltcms.common.charts.api.selection.xy</package>
+                <package>net.sf.maltcms.common.charts.api.themes</package>
                 <package>org.jfree.chart</package>
             </public-packages>
         </data>

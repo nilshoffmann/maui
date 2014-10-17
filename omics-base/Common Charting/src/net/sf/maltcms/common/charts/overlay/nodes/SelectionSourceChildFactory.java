@@ -39,21 +39,18 @@ import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.openide.nodes.ChildFactory;
-import org.openide.nodes.Children;
 import static org.openide.nodes.Children.create;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import static org.openide.util.Exceptions.printStackTrace;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
-import org.openide.util.lookup.Lookups;
 import static org.openide.util.lookup.Lookups.fixed;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class SelectionSourceChildFactory extends ChildFactory<Object> implements PropertyChangeListener {
+public class SelectionSourceChildFactory extends ChildFactory<Object> {
 
     private final Map<Object, Set<ISelection>> sourceToSelection = new LinkedHashMap<>();
     private final SelectionOverlay so;
@@ -61,7 +58,7 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
 
     public SelectionSourceChildFactory(SelectionOverlay so, Lookup.Provider dataset) {
         recreateSelection();
-        so.addPropertyChangeListener(WeakListeners.propertyChange(this, so));
+        so.addPropertyChangeListener(WeakListeners.propertyChange(new SelectionOverlayPropertyChangeListener(), so));
         this.so = so;
         this.dataset = dataset;
     }
@@ -101,11 +98,14 @@ public class SelectionSourceChildFactory extends ChildFactory<Object> implements
         }
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent pce) {
-        if (pce.getPropertyName().equals(SelectionOverlay.PROP_SELECTION)) {
-            recreateSelection();
-            refresh(true);
+    private class SelectionOverlayPropertyChangeListener implements PropertyChangeListener {
+
+        @Override
+        public void propertyChange(PropertyChangeEvent pce) {
+            if (pce.getPropertyName().equals(SelectionOverlay.PROP_SELECTION)) {
+                recreateSelection();
+                refresh(true);
+            }
         }
     }
 }

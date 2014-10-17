@@ -32,13 +32,25 @@ import org.jfree.chart.ChartMouseListener;
 /**
  *
  * @author Nils Hoffmann
+ * @param <TARGET>
  */
 public interface IMouseSelectionHandler<TARGET> extends ChartMouseListener {
 
+    /**
+     *
+     */
     public void clear();
 
+    /**
+     *
+     * @param listener
+     */
     public void addSelectionChangeListener(ISelectionChangeListener listener);
 
+    /**
+     *
+     * @param listener
+     */
     public void removeSelectionChangeListener(ISelectionChangeListener listener);
 
 }

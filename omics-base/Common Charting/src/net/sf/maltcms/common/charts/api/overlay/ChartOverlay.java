@@ -37,29 +37,92 @@ import org.openide.util.Lookup;
  */
 public interface ChartOverlay extends Overlay, Lookup.Provider {
 
+    /**
+     *
+     * @param b
+     */
     public void setVisible(boolean b);
 
+    /**
+     *
+     * @return
+     */
     public boolean isVisible();
 
+    /**
+     *
+     * @return
+     */
     public boolean isVisibilityChangeable();
 
+    /**
+     *
+     * @return
+     */
     public int getLayerPosition();
 
+    /**
+     *
+     * @param pos
+     */
     public void setLayerPosition(int pos);
 
+    /**
+     *
+     * @return
+     */
     public String getName();
 
+    /**
+     *
+     * @return
+     */
     public String getDisplayName();
 
+    /**
+     *
+     * @return
+     */
     public String getShortDescription();
 
+    /**
+     *
+     * @return
+     */
     public Node createNodeDelegate();
 
+    /**
+     *
+     */
     public final int LAYER_LOWEST = Integer.MIN_VALUE;
+
+    /**
+     *
+     */
     public final int LAYER_HIGHEST = Integer.MAX_VALUE;
+
+    /**
+     *
+     */
     public final String PROP_VISIBLE = "visible";
+
+    /**
+     *
+     */
     public final String PROP_LAYER_POSITION = "layerPosition";
+
+    /**
+     *
+     */
     public final String PROP_NAME = "name";
+
+    /**
+     *
+     */
     public final String PROP_DISPLAY_NAME = "displayName";
+
+    /**
+     *
+     */
     public final String PROP_SHORT_DESCRIPTION = "shortDescription";
 }

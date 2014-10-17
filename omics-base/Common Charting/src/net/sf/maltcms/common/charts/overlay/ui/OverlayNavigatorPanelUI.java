@@ -68,8 +68,6 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
         initComponents();
         outline = new OverlayTreeView();
         outline.setName("Overlays");
-//        Outline o = outline.getOutline();
-//        o.setRootVisible(false);
         outline.setRootVisible(false);
         add(outline, BorderLayout.CENTER);
         lookup = ExplorerUtils.createLookup(manager, map);
@@ -124,7 +122,7 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
                 public int compare(Node t, Node t1) {
                     ChartOverlay lhs = t.getLookup().lookup(ChartOverlay.class);
                     ChartOverlay rhs = t1.getLookup().lookup(ChartOverlay.class);
-                    if ((lhs == null || rhs == null) || (lhs == null && rhs == null)) {
+                    if ((lhs == null || rhs == null)) {
                         return 0;
                     }
                     return lhs.getLayerPosition() - rhs.getLayerPosition();
@@ -154,27 +152,22 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
         final List<Node> selectedNodes = new ArrayList<>();
         Node root = manager.getRootContext();
         for (String[] sp : selectedPaths) {
-//                LOG.log(Level.FINE, "{0}: selecting {1}", new Object[] {id, Arrays.asList(sp)});
             try {
                 Node n = NodeOp.findPath(root, sp);
                 if (n != null) {
                     selectedNodes.add(n);
                 }
             } catch (NodeNotFoundException x) {
-//                    LOG.log(Level.FINE, null, x);
             }
         }
         if (!selectedNodes.isEmpty()) {
-//                LOG.log(Level.FINE, "{0}: Switching to AWT", id);
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         manager.setSelectedNodes(selectedNodes.toArray(new Node[selectedNodes.size()]));
                     } catch (PropertyVetoException x) {
-//                            LOG.log(Level.FINE, null, x);
                     }
-//                        LOG.log(Level.FINE, "{0}: done.", id);
                 }
             });
         }
@@ -185,7 +178,6 @@ public class OverlayNavigatorPanelUI extends javax.swing.JPanel implements Explo
         Node root = manager.getRootContext();
         for (Node n : manager.getSelectedNodes()) {
             String[] path = NodeOp.createPath(n, root);
-//            LOG.log(Level.FINE, "path from {0} to {1}: {2}", new Object[] {root, n, Arrays.asList(path)});
             if (path != null) {
                 result.add(path);
             }

@@ -54,7 +54,11 @@ public class ChartCustomizer {
 //        new Color(255, 127, 0),
 //        new Color(202, 178, 214),
 //        new Color(106, 61, 154)};
-    public static final Color[] baseColors = new Color[]{
+
+    /**
+     *
+     */
+        public static final Color[] baseColors = new Color[]{
         new Color(166, 206, 227),
         new Color(178, 223, 138),
         new Color(251, 154, 153),
@@ -65,6 +69,10 @@ public class ChartCustomizer {
         new Color(227, 26, 28),
         new Color(255, 127, 0),
         new Color(106, 61, 154),};
+
+    /**
+     *
+     */
     public static final Color[] plotColors = new Color[baseColors.length * 2];
 
     static {
@@ -76,6 +84,11 @@ public class ChartCustomizer {
         }
     }
 
+    /**
+     *
+     * @param plot
+     * @param alpha
+     */
     public static void setSeriesColors(XYPlot plot, float alpha) {
         XYItemRenderer renderer = plot.getRenderer();
         int series = plot.getSeriesCount();
@@ -85,12 +98,23 @@ public class ChartCustomizer {
         }
     }
 
+    /**
+     *
+     * @param color
+     * @param alpha
+     * @return
+     */
     public static Color withAlpha(Color color, float alpha) {
         Color ca = new Color(color.getRed(), color.getGreen(), color.getBlue(),
                 (int) (alpha * 255.0f));
         return ca;
     }
 
+    /**
+     *
+     * @param plot
+     * @param width
+     */
     public static void setSeriesStrokes(XYPlot plot, float width) {
         XYItemRenderer renderer = plot.getRenderer();
         int series = plot.getSeriesCount();
@@ -100,6 +124,11 @@ public class ChartCustomizer {
         }
     }
 
+    /**
+     *
+     * @param plot
+     * @param s
+     */
     public static void setSeriesShapes(XYPlot plot, Shape s) {
         XYItemRenderer renderer = plot.getRenderer();
         int series = plot.getSeriesCount();
@@ -108,6 +137,11 @@ public class ChartCustomizer {
         }
     }
 
+    /**
+     *
+     * @param plot
+     * @param alpha
+     */
     public static void setSeriesColors(CategoryPlot plot, float alpha) {
 
         int datasets = plot.getDatasetCount();
@@ -122,6 +156,12 @@ public class ChartCustomizer {
         }
     }
 
+    /**
+     *
+     * @param plot
+     * @param alpha
+     * @param colors
+     */
     public static void setSeriesColors(CategoryPlot plot, float alpha, List<Color> colors) {
         int datasets = plot.getDatasetCount();
         for (int i = 0; i < datasets; i++) {
