@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
@@ -28,31 +28,31 @@
 package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
-import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
-@PropertyEditorRegistration(targetType = {Collection.class, List.class})
-public class CollectionPropertyEditor extends PropertyEditorSupport {
+@PropertyEditorRegistration(targetType = {Map.class})
+public class MapPropertyEditor extends PropertyEditorSupport {
 
     /**
      *
      */
-    public CollectionPropertyEditor() {
+    public MapPropertyEditor() {
     }
 
     @Override
     public String getAsText() {
-        Collection s = (Collection)getValue();
+        Map s = (Map)getValue();
         return s.toString();
     }
 
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
-        throw new IllegalArgumentException("Editing of Collections is not supported!");
+        throw new IllegalArgumentException("Editing of Maps is not supported!");
     }
+    
 }

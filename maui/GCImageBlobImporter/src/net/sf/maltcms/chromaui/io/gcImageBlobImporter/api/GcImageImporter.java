@@ -28,7 +28,7 @@
 package net.sf.maltcms.chromaui.io.gcImageBlobImporter.api;
 
 import java.io.File;
-import net.sf.maltcms.chromaui.io.gcImageBlobImporter.tasks.GcImageBlobImporter;
+import net.sf.maltcms.chromaui.io.gcImageBlobImporter.tasks.GcImageBlobImporterTask;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 
@@ -45,8 +45,8 @@ public class GcImageImporter {
      * @return
      */
     public static AProgressAwareRunnable importAsPeakDescriptors(IChromAUIProject project, File... reports) {
-        File importDir = project.getImportLocation(GcImageBlobImporter.class);
-        return new GcImageBlobImporter(project, reports, importDir);
+        File importDir = project.getImportLocation(GcImageBlobImporterTask.class);
+        return new GcImageBlobImporterTask(project, reports, importDir);
     }
 
 }

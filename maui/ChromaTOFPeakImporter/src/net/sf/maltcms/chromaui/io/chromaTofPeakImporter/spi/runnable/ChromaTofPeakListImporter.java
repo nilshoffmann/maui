@@ -75,15 +75,13 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
                         "Could not match reports to existing chromatograms!",
                         NotifyDescriptor.WARNING_MESSAGE);
                 DialogDisplayer.getDefault().notify(message);
+                return;
             }
             int peakReportsImported = 0;
             progressHandle.progress("Importing " + reports.keySet().size() + " Peak Lists");
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
             trd.setDisplayName(getClass().getSimpleName());
-            if (reports.keySet().isEmpty()) {
-                return;
-            }
             for (String chromName : reports.keySet()) {
                 progressHandle.progress(
                         "Importing " + (peakReportsImported + 1) + "/" + files.length,

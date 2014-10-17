@@ -57,6 +57,27 @@ public class Mapping {
         return Collections.emptyMap();
     }
     
+    public static LinkedHashMap<IChromatogramDescriptor, File> mapChromatogramsToReports(Map<String, IChromatogramDescriptor> chromatograms, File[] files) {
+        LinkedHashMap<IChromatogramDescriptor, File> reports = new LinkedHashMap<>();
+        for (File file : files) {
+            String chromName = file.getName();
+            chromName = chromName.substring(0, chromName.lastIndexOf(
+                    "."));
+            if (chromatograms.containsKey(chromName)) {
+                reports.put(chromatograms.get(chromName), file);
+                Logger.getLogger(Mapping.class.getName()).log(Level.INFO, "Adding report: {0}", chromName);
+            } else {
+                Logger.getLogger(Mapping.class.getName()).log(
+                        Level.INFO, "Could not find matching chromatogram for report: {0}", chromName);
+            }
+        }
+        if (reports.size() != chromatograms.size()) {
+            Logger.getLogger(Mapping.class.getName()).warning(
+                    "Not all chromatograms could be matched!");
+        }
+        return reports;
+    }
+    
     public static LinkedHashMap<String, File> mapReports(Map<String, IChromatogramDescriptor> chromatograms, File[] files) {
         LinkedHashMap<String, File> reports = new LinkedHashMap<>();
         for (File file : files) {

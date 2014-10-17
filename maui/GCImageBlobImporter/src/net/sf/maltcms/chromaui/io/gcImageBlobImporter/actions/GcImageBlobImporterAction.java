@@ -33,7 +33,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import net.sf.maltcms.chromaui.io.gcImageBlobImporter.tasks.GcImageBlobImporter;
+import net.sf.maltcms.chromaui.io.gcImageBlobImporter.tasks.GcImageBlobImporterTask;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 import org.openide.awt.ActionRegistration;
@@ -77,9 +77,9 @@ public final class GcImageBlobImporterAction implements ActionListener {
         jfc.setMultiSelectionEnabled(true);
         int result = jfc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            GcImageBlobImporter plir = new GcImageBlobImporter(context,
-                    jfc.getSelectedFiles(), context.getImportLocation(GcImageBlobImporter.class));
-            GcImageBlobImporter.createAndRun("GC Image Blob Import", plir);
+            GcImageBlobImporterTask plir = new GcImageBlobImporterTask(context,
+                    jfc.getSelectedFiles(), context.getImportLocation(GcImageBlobImporterTask.class));
+            GcImageBlobImporterTask.createAndRun("GC Image Blob Import", plir);
         }
     }
 }

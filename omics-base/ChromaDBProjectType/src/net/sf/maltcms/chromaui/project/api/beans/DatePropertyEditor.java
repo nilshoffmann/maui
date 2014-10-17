@@ -54,6 +54,5 @@ public class DatePropertyEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
         throw new IllegalArgumentException("Editing of Dates is not supported!");
-//        setValue(UUID.fromString(string));
     }
 }

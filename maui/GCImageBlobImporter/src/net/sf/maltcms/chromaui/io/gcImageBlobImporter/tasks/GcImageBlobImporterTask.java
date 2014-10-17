@@ -31,32 +31,28 @@ import cross.datastructures.fragments.FileFragment;
 import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tools.ArrayTools;
-import cross.datastructures.tuple.Tuple2D;
 import cross.tools.MathTools;
 import cross.tools.StringTools;
 import java.io.File;
-import static java.lang.Double.parseDouble;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Value;
-import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
-import net.sf.maltcms.ap.Utils;
-import net.sf.maltcms.chromaui.io.gcImageBlobImporter.parser.GcImageBlobParser;
-import net.sf.maltcms.chromaui.io.gcImageBlobImporter.parser.TableRow;
+import maltcms.datastructures.peak.Peak2D;
+import maltcms.io.csv.gcimage.GcImageBlobImporter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
+import static net.sf.maltcms.chromaui.project.api.utilities.Mapping.createChromatogramMap;
+import static net.sf.maltcms.chromaui.project.api.utilities.Mapping.mapChromatogramsToReports;
 import static net.sf.maltcms.chromaui.project.api.utilities.Mapping.mapReportsManually;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.DialogDisplayer;
@@ -73,7 +69,7 @@ import ucar.nc2.Dimension;
  * @author Nils Hoffmann
  */
 @Value
-public class GcImageBlobImporter extends AProgressAwareRunnable {
+public class GcImageBlobImporterTask extends AProgressAwareRunnable {
 
     private final IChromAUIProject project;
     private final File[] files;
@@ -85,12 +81,16 @@ public class GcImageBlobImporter extends AProgressAwareRunnable {
         try {
             progressHandle.start(files.length);
             progressHandle.progress("Matching Chromatograms");
-            Map<IChromatogramDescriptor, File> reports = mapReportsManually(project.getChromatograms(), files);
+            Map<IChromatogramDescriptor, File> reports = mapChromatogramsToReports(createChromatogramMap(project), files);
             if (reports.isEmpty()) {
-                NotifyDescriptor.Message message = new NotifyDescriptor.Message(
-                        "Could not match reports to existing chromatograms!",
-                        NotifyDescriptor.WARNING_MESSAGE);
-                DialogDisplayer.getDefault().notify(message);
+                reports = mapReportsManually(project.getChromatograms(), files);
+                if (reports.isEmpty()) {
+                    NotifyDescriptor.Message message = new NotifyDescriptor.Message(
+                            "Could not match reports to existing chromatograms!",
+                            NotifyDescriptor.WARNING_MESSAGE);
+                    DialogDisplayer.getDefault().notify(message);
+                    return;
+                }
             }
             int peakReportsImported = 0;
             progressHandle.progress("Importing " + reports.keySet().size() + " Peak Lists");
@@ -125,61 +125,35 @@ public class GcImageBlobImporter extends AProgressAwareRunnable {
     private List<IPeakAnnotationDescriptor> importPeaks(File importDir, Map<IChromatogramDescriptor, File> reports, IChromatogramDescriptor chromatogram) {
         List<IPeakAnnotationDescriptor> peaks = new ArrayList<>();
         File file = reports.get(chromatogram);
-        if (file.getName().toLowerCase().endsWith("csv")) {
-            Logger.getLogger(GcImageBlobImporter.class.getName()).info("CSV Mode");
-            GcImageBlobParser.FIELD_SEPARATOR = ",";
-            GcImageBlobParser.QUOTATION_CHARACTER = "\"";
-        } else if (file.getName().toLowerCase().endsWith("tsv") || file.getName().toLowerCase().endsWith("txt")) {
-            Logger.getLogger(GcImageBlobImporter.class.getName()).info("TSV Mode");
-            GcImageBlobParser.FIELD_SEPARATOR = "\t";
-            GcImageBlobParser.QUOTATION_CHARACTER = "";
+        GcImageBlobImporter importer = new GcImageBlobImporter(locale, "\"");
+        List<Peak2D> peaks2D = importer.importPeaks(file, chromatogram.getChromatogram());
+        if (chromatogram.getChromatogram() instanceof IChromatogram2D) {
+            IChromatogram2D chrom2D = (IChromatogram2D) chromatogram.getChromatogram();
+            for (Peak2D peak2d : peaks2D) {
+                IPeakAnnotationDescriptor descriptor = create2DPeak(chromatogram, peak2d);
+                String key = key(descriptor);
+                Logger.getLogger(GcImageBlobImporterTask.class.getName()).log(Level.INFO, "Peak @: {0} Rt1: {1}, Rt2: {2}", new Object[]{key, peak2d.getFirstRetTime(), peak2d.getSecondRetTime()});
+                try {
+                    addMassSpectrum(chrom2D, descriptor, peak2d.getApexIndex(), peaks);
+                } catch (IllegalArgumentException iae) {
+                    //we are importing from a peak list
+                }
+            }
+            createArtificialChromatogram(importDir,
+                    new File(chromatogram.getResourceLocation()).getName(),
+                    peaks);
+        } else {
+            throw new IllegalArgumentException("Could not import peaks for " + chromatogram.getName() + "! Chromatogram is not a 2D chromatogram.");
         }
-        Tuple2D<LinkedHashSet<GcImageBlobParser.ColumnName>, List<TableRow>> report = GcImageBlobParser.parseReport(file);
-        LinkedHashSet<GcImageBlobParser.ColumnName> header = report.getFirst();
-        Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Available fields: {0}", header);
-        HashSet<String> peakRegistry = new HashSet<>();
-        parseTable(report, chromatogram, peakRegistry, peaks);
-        createArtificialChromatogram(importDir,
-                new File(chromatogram.getResourceLocation()).getName(),
-                peaks);
+
         return peaks;
 
     }
 
-    private void parseTable(
-            Tuple2D<LinkedHashSet<GcImageBlobParser.ColumnName>, List<TableRow>> report,
-            IChromatogramDescriptor chromatogram,
-            HashSet<String> peakRegistry,
-            List<IPeakAnnotationDescriptor> peaks) {
-        int index = 0;
-        IChromatogram chrom = chromatogram.getChromatogram();
-        if (chrom instanceof IChromatogram2D) {
-            IChromatogram2D chrom2D = (IChromatogram2D) chrom;
-            for (TableRow tr : report.getSecond()) {
-                Logger.getLogger(GcImageBlobImporter.class.getName()).log(Level.INFO, tr.toString());
-                double rt1 = GcImageBlobParser.parseDouble(tr.get(GcImageBlobParser.ColumnName.RETENTION_I));
-                //convert from minutes to seconds
-                rt1 *= 60;
-                double rt2 = GcImageBlobParser.parseDouble(tr.get(GcImageBlobParser.ColumnName.RETENTION_II));
-                IPeakAnnotationDescriptor descriptor = create2DPeak(chromatogram, tr, rt1, rt2);
-                String key = key(descriptor);
-                int idx = index;
-                Logger.getLogger(GcImageBlobImporter.class.getName()).log(Level.INFO, "Key: {0} Rt1: {1}, Rt2: {2}", new Object[]{key, rt1, rt2});
-                try {
-                    idx = chrom.getIndexFor(rt1 + rt2);
-                } catch (IllegalArgumentException iae) {
-                    //we are importing from a peak list
-                }
-                addMassSpectrum(chrom2D, tr, descriptor, idx, peaks, peakRegistry, key);
-                index++;
-            }
-        }
-    }
-
-    private IPeak2DAnnotationDescriptor create2DPeak(IChromatogramDescriptor chromatogram, TableRow tr, double rt1, double rt2) {
+    private IPeak2DAnnotationDescriptor create2DPeak(IChromatogramDescriptor chromatogram, Peak2D peak) {
         IPeak2DAnnotationDescriptor descriptor = DescriptorFactory.newPeak2DAnnotationDescriptor(
                 chromatogram,//chromatogram
-                tr.get(GcImageBlobParser.ColumnName.COMPOUND_NAME),//name
+                peak.getName(),//name
                 Double.NaN,//unique mass
                 new double[0],//quant masses
                 Double.NaN,//retention index
@@ -191,12 +165,12 @@ public class GcImageBlobImporter extends AProgressAwareRunnable {
                 "<NA>",//formula
                 "Gc Image Blob Detection",//method
                 Double.NaN,//start time
-                rt1 + rt2,//apex time
+                peak.getFirstRetTime() + peak.getSecondRetTime(),//apex time
                 Double.NaN,//stop time
-                parseDouble((tr.get(GcImageBlobParser.ColumnName.VOLUME))),//area
-                parseDouble((tr.get(GcImageBlobParser.ColumnName.PEAK_VALUE))),//intensity
-                rt1, rt2);
-        descriptor.setName(tr.get(GcImageBlobParser.ColumnName.BLOBID));
+                peak.getArea(),//area
+                peak.getApexIntensity(),//intensity
+                peak.getFirstRetTime(), peak.getSecondRetTime());
+        descriptor.setName("Blob " + peak.getIndex());
         return descriptor;
     }
 
@@ -279,11 +253,6 @@ public class GcImageBlobImporter extends AProgressAwareRunnable {
         secondColumnElutionTimeVar.setArray(secondColumnElutionTime);
         secondColumnElutionTimeVar.setDimensions(new Dimension[]{scanNumber});
         f.save();
-//            return f;
-//        } catch (IOException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-//        return null;
         return fragment;
     }
 
@@ -306,13 +275,12 @@ public class GcImageBlobImporter extends AProgressAwareRunnable {
         return key;
     }
 
-    public static void addMassSpectrum(IChromatogram2D chrom2D, TableRow tr, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks, HashSet<String> peakRegistry, String key) {
+    public static void addMassSpectrum(IChromatogram2D chrom2D, IPeakAnnotationDescriptor descriptor, int index, List<IPeakAnnotationDescriptor> peaks) {
         IScan2D scan2d = chrom2D.getScan(index);
         descriptor.setMassValues((double[]) scan2d.getMasses().get1DJavaArray(double.class));
         descriptor.setIntensityValues((int[]) scan2d.getIntensities().get1DJavaArray(int.class));
         descriptor.setIndex(index);
         peaks.add(descriptor);
-        peakRegistry.add(key);
     }
 
 }

@@ -53,6 +53,5 @@ public class UUIDPropertyEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
         throw new IllegalArgumentException("Editing of UUIDs is not supported!");
-//        setValue(UUID.fromString(string));
     }
 }
