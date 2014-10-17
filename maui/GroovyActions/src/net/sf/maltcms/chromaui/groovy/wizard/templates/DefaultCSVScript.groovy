@@ -56,11 +56,11 @@ import cross.datastructures.fragments.IFileFragment
 */
 class ${name} implements CSVDataGroovyScript {
     
-    String name = "${name}"
-    String category = "Project modification"
-    IChromAUIProject project
-    Collection<CSVDataObject> dataObjects
-    ProgressHandle progressHandle
+    final String name = "${name}"
+    final String category = "Project modification"
+    private IChromAUIProject project
+    private Collection<CSVDataObject> dataObjects
+    private ProgressHandle progressHandle
     
     public void create(IChromAUIProject project, ProgressHandle progressHandle, Collection<CSVDataObject> dobjs) {
         this.project = project;
@@ -71,27 +71,25 @@ class ${name} implements CSVDataGroovyScript {
     @Override
     public boolean cancel() {
         //implement custom cancellation logic
-}
-    
-@Override
-public void run() {
-File outdir = project.getOutputLocation(this);
-try {
-    progressHandle.setDisplayName(name)
-    progressHandle.start(dataObjects.length)
-    def i = 1;
-    dataObjects.each{ it ->
-        progressHandle.progress("Processing ${r"${rootFragment.getName()}"}",i)
-        //do something
-
-        i++
     }
-} finally {
-    progressHandle.finish()
-}
-FileObject fo = FileUtil.toFileObject(outdir)
-fo.refresh()
-}
-	
-}
+    
+    @Override
+    public void run() {
+        File outdir = project.getOutputLocation(this);
+        try {
+            progressHandle.setDisplayName(name)
+            progressHandle.start(dataObjects.length)
+            def i = 1;
+            dataObjects.each{ it ->
+                progressHandle.progress("Processing ${r"${rootFragment.getName()}"}",i)
+                //do something
 
+                i++
+            }
+        } finally {
+            progressHandle.finish()
+        }
+        FileObject fo = FileUtil.toFileObject(outdir)
+        fo.refresh()
+    }   
+}

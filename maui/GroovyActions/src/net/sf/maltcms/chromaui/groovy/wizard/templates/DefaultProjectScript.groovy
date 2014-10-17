@@ -50,9 +50,9 @@ import maltcms.*;
 */
 class ${name} implements GroovyProjectScript<IChromAUIProject> {
     
-    String name = "${name}"
-    IChromAUIProject project
-    ProgressHandle progressHandle
+    final String name = "${name}"
+    private IChromAUIProject project
+    private ProgressHandle progressHandle
     
     public String getName() {
         return name
@@ -77,16 +77,16 @@ class ${name} implements GroovyProjectScript<IChromAUIProject> {
     @Override
     public void run() {
         //uncomment if you need a tool specific output location
-File outdir = project.getOutputLocation(this);
-try {
-    progressHandle.start()
-    progressHandle.progress("Processing project "+project.getLocation())
-    //do something with the project
-} finally {
-    progressHandle.finish()
-}
-//uncomment, if you used a tool specific output location
-FileObject fo = FileUtil.toFileObject(outdir)
-fo.refresh()
-}
+        File outdir = project.getOutputLocation(this);
+        try {
+            progressHandle.start()
+            progressHandle.progress("Processing project "+project.getLocation())
+            //do something with the project
+        } finally {
+            progressHandle.finish()
+        }
+        //uncomment, if you used a tool specific output location
+        FileObject fo = FileUtil.toFileObject(outdir)
+        fo.refresh()
+    }
 }

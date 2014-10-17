@@ -80,6 +80,7 @@ public class ${name} implements RawDataGroovyScript {
     private Collection<CDFDataObject> dataObjects
     private ProgressHandle progressHandle
 
+    //these properties will be configurable
     double signalToNoise = 5.0
     double fullWidthAtHalfMaximum = 5.0
     int max = 10
