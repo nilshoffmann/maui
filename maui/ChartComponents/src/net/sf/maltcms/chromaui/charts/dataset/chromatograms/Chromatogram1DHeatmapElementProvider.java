@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan1D;
+import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 
 /**
@@ -44,6 +46,10 @@ public class Chromatogram1DHeatmapElementProvider implements INamedElementProvid
     private Comparable name;
     private final int[] scanIndex;
     private final int size;
+
+    public Chromatogram1DHeatmapElementProvider(Comparable key, IChromatogram2D chrom) {
+        this(key, DescriptorFactory.newChromatogram1D(chrom.getParent()));
+    }
 
     public Chromatogram1DHeatmapElementProvider(Comparable key, IChromatogram1D chrom) {
         this.chrom = chrom;

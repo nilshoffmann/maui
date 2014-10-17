@@ -29,7 +29,12 @@ package net.sf.maltcms.chromaui.charts;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.util.List;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ContextAwareChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
@@ -129,5 +134,12 @@ public class ChartCustomizer {
                         withAlpha(colors.get(j), alpha));
             }
         }
+    }
+    
+    public static ChartPanel createChartPanel(JFreeChart chart, int width, int height, boolean useBuffer) {
+        Dimension maxSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getSize();
+        ContextAwareChartPanel cacp = new ContextAwareChartPanel(chart, width, height, 50, 50, maxSize.width, maxSize.height, useBuffer, true, true, true, true, true, true);
+        cacp.setDoubleBuffered(true);
+        return cacp;
     }
 }

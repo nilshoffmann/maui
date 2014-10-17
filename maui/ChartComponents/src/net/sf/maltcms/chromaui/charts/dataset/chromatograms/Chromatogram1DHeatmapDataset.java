@@ -53,11 +53,11 @@ public class Chromatogram1DHeatmapDataset extends ADataset2D<IChromatogram1D, IS
 
     private String defaultDomainVariable = "scan_acquisition_time";
     private String defaultValueVariable = "intensity_values";
-    private final Array[] domainVariableValues;
-    private final int[][] domainVariableValueRanks;
-    private final Array[] rangeVariableValues;
-    private final Array[] valueVariableValues;
-    private final MinMax domain, value, range;
+    private Array[] domainVariableValues;
+    private int[][] domainVariableValueRanks;
+    private Array[] rangeVariableValues;
+    private Array[] valueVariableValues;
+    private MinMax domain, value, range;
     private final Lookup lookup;
 
     public Chromatogram1DHeatmapDataset(List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> l, Lookup lookup) {
@@ -113,9 +113,14 @@ public class Chromatogram1DHeatmapDataset extends ADataset2D<IChromatogram1D, IS
 
             @Override
             public String getTargetShortDescription(ISelection selection) {
-                return getTargetShortDescription(selection);
+                return getShortDescription(selection);
             }
         });
+        this.lookup = new ProxyLookup(super.getLookup(), lookup);
+        initDatasets(l);
+    }
+
+    private void initDatasets(List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> l) {
         MinMax domainMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MinMax valueMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
         MinMax rangeMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -169,7 +174,7 @@ public class Chromatogram1DHeatmapDataset extends ADataset2D<IChromatogram1D, IS
         this.domain = domainMM;
         this.range = rangeMM;
         this.value = valueMM;
-        this.lookup = new ProxyLookup(super.getLookup(), lookup);
+        fireDatasetChanged();
     }
 
     @Override

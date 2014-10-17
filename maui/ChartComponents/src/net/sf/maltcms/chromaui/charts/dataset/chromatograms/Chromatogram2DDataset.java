@@ -115,7 +115,7 @@ public class Chromatogram2DDataset extends ADataset2D<IChromatogram2D, IScan2D> 
 
             @Override
             public String getTargetShortDescription(ISelection selection) {
-                return getTargetShortDescription(selection);
+                return getShortDescription(selection);
             }
         });
         MinMax domainMM = new MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);

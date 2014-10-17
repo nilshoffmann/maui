@@ -29,9 +29,12 @@ package net.sf.maltcms.chromaui.charts.dataset.chromatograms;
 
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.fragments.IVariableFragment;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IScan;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.dataset.DatasetUtils;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
@@ -39,6 +42,7 @@ import net.sf.maltcms.common.charts.api.selection.IDisplayPropertiesProvider;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import org.jfree.data.DomainOrder;
 import org.openide.util.Lookup;
+import org.openide.util.NotImplementedException;
 import org.openide.util.lookup.ProxyLookup;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayFloat;
@@ -117,7 +121,7 @@ public class Chromatogram1DDataset extends ADataset1D<IChromatogram1D, IScan> {
 
             @Override
             public String getTargetShortDescription(ISelection selection) {
-                return getTargetShortDescription(selection);
+                return getShortDescription(selection);
             }
         });
         MAMath.MinMax domainMM = new MAMath.MinMax(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
