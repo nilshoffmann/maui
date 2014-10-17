@@ -127,13 +127,13 @@ public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent im
         setName(NbBundle.getMessage(Chromatogram1DHeatmapViewTopComponent.class, "CTL_Chromatogram1DHeatmapViewerTopComponent"));
         setEnabled(false);
         //project may be null
-        this.hmp = createPanel(descriptor, ds);
+        this.hmp = createPanel(ds);
         add(this.hmp, BorderLayout.CENTER);
         setEnabled(true);
     }
 
-    private Chromatogram1DHeatmapViewerPanel createPanel(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram1D, IScan> ds) {
-        XYPlot p = createPlot(chromatogram, ds);
+    private Chromatogram1DHeatmapViewerPanel createPanel(ADataset2D<IChromatogram1D, IScan> ds) {
+        XYPlot p = createPlot(ds);
         final PaintScale ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
         p.setDomainGridlinesVisible(false);
         p.setRangeGridlinesVisible(false);
@@ -172,14 +172,14 @@ public final class Chromatogram1DHeatmapViewTopComponent extends TopComponent im
         return panel;
     }
 
-    private XYPlot createPlot(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram1D, IScan> ds) {
+    private XYPlot createPlot(ADataset2D<IChromatogram1D, IScan> ds) {
         XYBlockRenderer xybr = new XYBlockRenderer();
         IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
         ips.setMin(ds.getMinZ());
         ips.setMax(ds.getMaxZ());
         PaintScale ps = ips.getPaintScales().get(0);
         xybr.setPaintScale(ps);
-        xybr.setDefaultEntityRadius(1);
+        xybr.setDefaultEntityRadius(5);
         xybr.setBlockWidth(0.1);
         xybr.setBlockAnchor(RectangleAnchor.CENTER);
         xybr.setBlockHeight(1.0);

@@ -44,7 +44,7 @@ import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
-import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.xy.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;

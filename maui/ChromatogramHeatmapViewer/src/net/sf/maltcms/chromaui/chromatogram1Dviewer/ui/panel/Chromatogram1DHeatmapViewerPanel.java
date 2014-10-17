@@ -58,7 +58,7 @@ import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.ISelectionChangeListener;
 import net.sf.maltcms.common.charts.api.selection.InstanceContentSelectionHandler;
-import net.sf.maltcms.common.charts.api.selection.XYMouseSelectionHandler;
+import net.sf.maltcms.common.charts.api.selection.xy.XYMouseSelectionHandler;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -73,7 +73,9 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.RangeType;
+import org.jfree.data.general.DatasetUtilities;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -185,18 +187,6 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
         } else {
             //received viewport change from somewhere else
         }
-//        
-//        if (this.ticplot != null) {
-//            double xmin = this.ticplot.getDomainAxis().getLowerBound();
-//            double xmax = this.ticplot.getDomainAxis().getUpperBound();
-//            double ymin = this.ticplot.getRangeAxis().getLowerBound();
-//            double ymax = this.ticplot.getRangeAxis().getUpperBound();
-//            if (hasFocus() && this.viewport == null) {
-//                this.viewport = new ChromatogramViewViewport();
-//                this.viewport.setViewPort(new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin));
-//                this.ic.add(viewport);
-//            }
-//        }
     }
 
     public void setViewport(Rectangle2D rect) {
@@ -379,10 +369,12 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
         jPanel2.setLayout(new java.awt.BorderLayout());
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        jSlider2.setMajorTickSpacing(10);
-        jSlider2.setMinorTickSpacing(5);
+        jSlider2.setMajorTickSpacing(25);
+        jSlider2.setMaximum(99);
+        jSlider2.setMinorTickSpacing(10);
         jSlider2.setPaintLabels(true);
         jSlider2.setPaintTicks(true);
+        jSlider2.setSnapToTicks(true);
         jSlider2.setValue(0);
         jSlider2.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -513,12 +505,10 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
             public void run() {
                 double value2 = value / 100.0d;
                 System.out.println("ViewPort around " + value2);
+                Range dataDomainBounds = DatasetUtilities.findDomainBounds(chartPanel.getChart().getXYPlot().getDataset());
                 ValueAxis domainAxis = chartPanel.getChart().getXYPlot().getDomainAxis();
-                double range = domainAxis.getUpperBound() - domainAxis.getLowerBound();
-                System.out.println("Axis range: " + range);
-                double dataValue = value2 * range;
-                double lowerBound = Math.max(domainAxis.getLowerBound(), dataValue);
-                double upperBound = Math.min(domainAxis.getUpperBound(), dataValue + (range / 10.0d));
+                double lowerBound = Math.max(dataDomainBounds.getLowerBound(), dataDomainBounds.getLowerBound() + (value / 99.0d * dataDomainBounds.getLength()));
+                double upperBound = Math.min(dataDomainBounds.getUpperBound(), dataDomainBounds.getLowerBound() + ((value + 10.0d) / 99.0d * dataDomainBounds.getLength()));
                 domainAxis.setRange(lowerBound, upperBound);
             }
         };
@@ -655,7 +645,7 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
             this.selectionOverlay = null;
         }
         if (selectionOverlay == null) {
-            selectionOverlay = new SelectionOverlay(Color.BLUE, Color.RED, 1.75f, 1.75f, 0.66f);
+            selectionOverlay = new SelectionOverlay(Color.LIGHT_GRAY, Color.RED, 2.5f, 2.5f, 0.66f);
             chartPanel.addOverlay(selectionOverlay);
             selectionOverlay.addChangeListener(chartPanel);
             this.content.add(selectionOverlay);

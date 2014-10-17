@@ -27,21 +27,17 @@
  */
 package net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import lombok.Data;
-import maltcms.datastructures.ms.IChromatogram1D;
-import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
-import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
-import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 import org.openide.util.Lookup;
 import org.openide.util.NotImplementedException;
 
@@ -50,7 +46,7 @@ import org.openide.util.NotImplementedException;
  * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
  */
 @Data
-public abstract class Chromatogram1DTopComponentLoader extends AProgressAwareRunnable {
+public abstract class Chromatogram1DMultiTopComponentLoader extends AProgressAwareRunnable {
 
     private final Lookup lookup;
     private final List<IChromatogramDescriptor> chromatograms;
@@ -58,20 +54,28 @@ public abstract class Chromatogram1DTopComponentLoader extends AProgressAwareRun
     @Override
     public void run() {
         try {
-            progressHandle.setDisplayName("Creating Chromatogram1D View");
+            progressHandle.setDisplayName("Creating Chromatogram1D View (separate)");
             progressHandle.start();
             progressHandle.switchToIndeterminate();
-            Logger.getLogger(Chromatogram1DTopComponentLoader.class.getName()).fine("Creating chart for chromatogram 1D view");
-            SwingUtilities.invokeLater(new Runnable() {
+            Logger.getLogger(Chromatogram1DMultiTopComponentLoader.class.getName()).fine("Creating chart for chromatogram 1D view");
+            final AtomicInteger descriptorCnt = new AtomicInteger(0);
+            progressHandle.switchToDeterminate(chromatograms.size());
+            for (final IChromatogramDescriptor descriptor : chromatograms) {
+                final Chromatogram1DDataset dataset = createDataset(Arrays.asList(descriptor), lookup);
+                SwingUtilities.invokeLater(new Runnable() {
 
                     @Override
                     public void run() {
                         Chromatogram1DViewTopComponent tc = new Chromatogram1DViewTopComponent();
-                        tc.initialize(lookup.lookup(IChromAUIProject.class), chromatograms, createDataset(chromatograms, lookup));
+                        descriptorCnt.incrementAndGet();
+                        tc.initialize(lookup.lookup(IChromAUIProject.class), Arrays.asList(descriptor), dataset);
                         tc.open();
 //                        tc.requestActive();
+                        progressHandle.progress(descriptorCnt.getAndIncrement());
                     }
                 });
+                
+            }
         } catch (NotImplementedException e) {
 
         } finally {

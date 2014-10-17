@@ -31,25 +31,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.SwingUtilities;
 
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
-import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks.Chromatogram1DTopComponentLoader;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionID;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.AbstractLookup;
-import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.Lookups;
 
 @ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
         id = "maltcms.ui.Chromatogram1DViewOpenAction")
@@ -65,79 +62,43 @@ public final class Chromatogram1DViewOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        RunnableAction ra = new RunnableAction(this.chromatograms);
-        RunnableAction.createAndRun("Loading 1D chromatogram view", ra);
-    }
-
-    private class RunnableAction extends AProgressAwareRunnable {
-
-        private final List<IChromatogramDescriptor> chromatograms;
-
-        public RunnableAction(List<IChromatogramDescriptor> chromatograms) {
-            this.chromatograms = chromatograms;
+        int separationDimensionSum = 0;
+        for (IChromatogramDescriptor descr : chromatograms) {
+            separationDimensionSum += descr.getSeparationType().getFeatureDimensions();
         }
+        int quotient = separationDimensionSum / chromatograms.size();
+        switch (quotient) {
+            case 1:
+                Chromatogram1DTopComponentLoader loader1 = new Chromatogram1DTopComponentLoader(Utilities.actionsGlobalContext(), chromatograms) {
 
-        public void onEdt(Runnable r) {
-            SwingUtilities.invokeLater(r);
-        }
-
-        @Override
-        public void run() {
-            try {
-                progressHandle.start(chromatograms.size());
-                int workunit = 0;
-                boolean is1D = true;
-                for (IChromatogramDescriptor descr : chromatograms) {
-//            System.out.println("descr: "+(descr instanceof IChromatogram1D));
-                    if (!(descr.getChromatogram() instanceof IChromatogram1D)) {
-                        is1D = false;
-                    }
-                }
-                if (is1D) {
-                    System.out.println("Creating 1D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
-                    InstanceContent ic = new InstanceContent();
-                    for (IChromatogramDescriptor descr : chromatograms) {
-                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
-                        providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
-                        ic.add(descr);
-                    }
-
-                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(new AbstractLookup(ic), Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
-                    onEdt(new Runnable() {
-                        @Override
-                        public void run() {
-                            Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
-                            topComponent.open();
-                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
-                            topComponent.requestActive();
-//                            topComponent.load();
+                    @Override
+                    public Chromatogram1DDataset createDataset(List<IChromatogramDescriptor> chromatograms, Lookup lookup) {
+                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
+                        for (IChromatogramDescriptor descr : chromatograms) {
+                            providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
                         }
-                    });
-                } else {
-                    System.out.println("Creating 2D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
-                    InstanceContent ic = new InstanceContent();
-                    for (IChromatogramDescriptor descr : chromatograms) {
-                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
-                        providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
-                        ic.add(descr);
+                        return new Chromatogram1DDataset(providers, lookup);
                     }
+                };
+                Chromatogram1DTopComponentLoader.createAndRun("Loading 1D chromatogram view", loader1);
+                return;
+            case 2:
+                Chromatogram1DTopComponentLoader loader2 = new Chromatogram1DTopComponentLoader(Utilities.actionsGlobalContext(), chromatograms) {
 
-                    final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(new AbstractLookup(ic), Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
-                    onEdt(new Runnable() {
-                        @Override
-                        public void run() {
-                            Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
-                            topComponent.open();
-                            topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
-//                            topComponent.load();
+                    @Override
+                    public Chromatogram1DDataset createDataset(List<IChromatogramDescriptor> chromatograms, Lookup lookup) {
+                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
+                        for (IChromatogramDescriptor descr : chromatograms) {
+                            providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
                         }
-                    });
-                }
-            } finally {
-                progressHandle.finish();
-            }
+                        return new Chromatogram1DDataset(providers, lookup);
+                    }
+                };
+                Chromatogram1DTopComponentLoader.createAndRun("Loading 1D chromatogram view", loader2);
+                return;
+            default:
+                NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + quotient + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
+                DialogDisplayer.getDefault().notify(nd);
         }
     }
 }

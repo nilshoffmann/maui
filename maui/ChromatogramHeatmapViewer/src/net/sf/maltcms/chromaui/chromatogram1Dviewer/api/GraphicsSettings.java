@@ -53,7 +53,7 @@ public class GraphicsSettings {
     private Paint paint;
 
     public GraphicsSettings(Stroke stroke, Composite composite,
-            AffineTransform transform, Paint color, Color background, Font font,
+            AffineTransform transform, Paint paint, Color background, Font font,
             Shape clip) {
         this.stroke = stroke;
         this.composite = composite;

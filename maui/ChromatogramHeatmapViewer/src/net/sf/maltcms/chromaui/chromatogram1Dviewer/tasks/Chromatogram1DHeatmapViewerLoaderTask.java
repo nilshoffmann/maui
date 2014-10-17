@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IChromatogram1D;
+import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DHeatmapDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DHeatmapElementProvider;
@@ -39,6 +40,8 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.loaders.DataObject;
 import org.openide.util.lookup.Lookups;
 
@@ -51,7 +54,6 @@ public class Chromatogram1DHeatmapViewerLoaderTask extends AProgressAwareRunnabl
     private final IChromAUIProject project;
     private final DataObject dobj;
     private final IChromatogramDescriptor chromatogram;
-//    private Chromatogram2DViewerPanel panel;
 
     public Chromatogram1DHeatmapViewerLoaderTask(IChromAUIProject project, DataObject dobj, IChromatogramDescriptor chromatogram) {
         this.project = project;
@@ -68,18 +70,27 @@ public class Chromatogram1DHeatmapViewerLoaderTask extends AProgressAwareRunnabl
         try {
             progressHandle.start();
             progressHandle.progress("Creating dataset");
+            int separationDimension = chromatogram.getSeparationType().getFeatureDimensions();
             List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>();
-            if (!(chromatogram.getChromatogram() instanceof IChromatogram1D)) {
-                throw new IllegalArgumentException("Action only on 1D chromatograms!");
+            switch (separationDimension) {
+                case 1:
+                    providers.add(new Chromatogram1DHeatmapElementProvider(chromatogram.getDisplayName(), (IChromatogram1D) chromatogram.getChromatogram()));
+                    break;
+                case 2:
+                    providers.add(new Chromatogram1DHeatmapElementProvider(chromatogram.getDisplayName(), (IChromatogram2D) chromatogram.getChromatogram()));
+                    break;
+                default:
+                    NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + separationDimension + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
+                    DialogDisplayer.getDefault().notify(nd);
+                    return;
             }
-            providers.add(new Chromatogram1DHeatmapElementProvider(chromatogram.getDisplayName(), (IChromatogram1D) chromatogram.getChromatogram()));
             final Chromatogram1DHeatmapDataset ds = new Chromatogram1DHeatmapDataset(providers, Lookups.fixed(chromatogram, project));
             onEdt(new Runnable() {
                 @Override
                 public void run() {
                     final Chromatogram1DHeatmapViewTopComponent jtc = new Chromatogram1DHeatmapViewTopComponent(dobj, ds);
                     jtc.open();
-                    jtc.requestActive();
+//                    jtc.requestActive();
                 }
             });
         } finally {

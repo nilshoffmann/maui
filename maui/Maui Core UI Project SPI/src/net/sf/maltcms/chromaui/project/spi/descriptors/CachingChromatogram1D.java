@@ -179,15 +179,15 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
         try {
             SerializableScan1D scan = whm.get(i);
             if (scan == null) {
-//            System.out.println("Retrieving scan "+i);
-                scan = provide(i);
-                whm.put(i, scan);
-                if (!loading.get()) {
+                System.err.println("Retrieving scan " + i);
+                if (loading.compareAndSet(false, true)) {
+                    System.err.println("Scheduling batched prefetch!");
                     Runnable r = new Runnable() {
                         @Override
                         public void run() {
                             int minBound = Math.max(0, i - prefetchSize);
                             int maxBound = Math.min(getNumberOfScans(), i + prefetchSize);
+                            System.err.println("Prefetching scans from " + minBound + " to " + maxBound + " into cache!");
                             for (int j = minBound; j <= maxBound; j++) {
                                 whm.put(j, provide(j));
                             }
@@ -196,6 +196,14 @@ public class CachingChromatogram1D implements IChromatogram1D, ICacheElementProv
                     };
                     prefetchLoader.submit(r);
                 }
+                scan = whm.get(i);
+                if (scan == null) {
+                    scan = provide(i);
+                    System.err.println("Putting scan " + i + " into cache!");
+                    whm.put(i, scan);
+                }
+            } else {
+                System.err.println("Retrieved scan " + i + " from cache!");
             }
             return scan.getScan();
         } catch (java.lang.IndexOutOfBoundsException ex) {

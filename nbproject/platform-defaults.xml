@@ -25,6 +25,8 @@
             <entry key="bootstrap.url" value="${bootstrap.url}"/>
             <entry key="autoupdate.catalog.url" value="${autoupdate.catalog.url}"/>
             <entry key="autoupdate.catalog.url1" value="${autoupdate.catalog.url1}"/>
+             <entry key="autoupdate.catalog.url2" value="${autoupdate.catalog.url2}"/>
+              <entry key="autoupdate.catalog.url3" value="${autoupdate.catalog.url3}"/>
             <entry key="platform.base" value="${platform.base}"/>
             <entry key="nbplatform.active" value="${nbplatform.active}"/>
             <entry key="nbplatform.721.netbeans.dest.dir" value="${nbplatform.nb721.netbeans.dest.dir}"/>

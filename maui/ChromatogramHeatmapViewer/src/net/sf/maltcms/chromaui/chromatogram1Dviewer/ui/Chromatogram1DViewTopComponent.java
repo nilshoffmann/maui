@@ -35,9 +35,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -59,6 +58,7 @@ import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.SettingsPanel;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
+import net.sf.maltcms.chromaui.ui.support.api.LookupUtils;
 import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
@@ -68,6 +68,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.netbeans.api.project.Project;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -105,10 +106,7 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
     private Lookup lookup = new AbstractLookup(ic);
     private SettingsPanel sp;
     private Chromatogram1DViewPanel jp;
-    private boolean loading = false;
     private List<XYAnnotation> annotations = Collections.emptyList();
-    private Object selected = null;
-    private ExecutorService es = Executors.newFixedThreadPool(1);
     private Result<ChromatogramViewViewport> result;
     private ADataset1D<IChromatogram1D, IScan> dataset;
     private boolean syncViewport = false;
@@ -340,10 +338,10 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
                         renderer.setSeriesVisible(i, !isVisible);
                         s.setVisible(!isVisible);
                     } else {
-                        System.out.println("XYItemRenderer is null!");
+                        Logger.getLogger(Chromatogram1DViewTopComponent.class.getName()).fine("XYItemRenderer is null!");
                     }
                 } else {
-                    System.out.println("XYPlot is null!");
+                    Logger.getLogger(Chromatogram1DViewTopComponent.class.getName()).fine("XYPlot is null!");
                 }
             }
         }
@@ -410,7 +408,9 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
-        // TODO store your settings
+        Project project = LookupUtils.ensureSingle(getLookup(),Project.class);
+        p.setProperty("project.path",project.getProjectDirectory().getPath());
+        
     }
 
     Object readProperties(java.util.Properties p) {
@@ -424,6 +424,11 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+        if("1.0".equals(version)) {
+            
+        }else{
+            throw new IllegalArgumentException("Property format version "+version+" is unsupported!");
+        }
     }
 
     @Override
@@ -459,14 +464,14 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
     public void resultChanged(LookupEvent le) {
         //do not react to ourself
         if (hasFocus()) {
-            System.out.println("I have focus, not setting viewport!");
+            Logger.getLogger(Chromatogram1DViewTopComponent.class.getName()).fine("I have focus, not setting viewport!");
         } else {
             if (syncViewport) {
                 Collection<? extends ChromatogramViewViewport> viewports = result.allInstances();
                 if (!viewports.isEmpty()) {
                     this.jp.setViewport(viewports.iterator().next().getViewPort());
                 } else {
-                    System.err.println("No viewports received!");
+                    Logger.getLogger(Chromatogram1DViewTopComponent.class.getName()).fine("No viewports received!");
                 }
             }
         }

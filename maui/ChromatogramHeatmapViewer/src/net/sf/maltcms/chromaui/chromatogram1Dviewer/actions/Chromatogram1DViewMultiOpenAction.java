@@ -27,29 +27,27 @@
  */
 package net.sf.maltcms.chromaui.chromatogram1Dviewer.actions;
 
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import javax.swing.SwingUtilities;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import maltcms.datastructures.ms.IChromatogram1D;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan;
-import net.sf.maltcms.chromaui.chromatogram1Dviewer.ui.Chromatogram1DViewTopComponent;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DDataset;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram1DElementProvider;
-import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.chromatogram1Dviewer.tasks.Chromatogram1DMultiTopComponentLoader;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
-import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
-import org.openide.awt.ActionRegistration;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionRegistration;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.Lookups;
 
 @ActionID(category = "ContainerNodeActions/ChromatogramNode/Open",
         id = "maltcms.ui.Chromatogram1DViewMultiOpenAction")
@@ -65,73 +63,45 @@ public final class Chromatogram1DViewMultiOpenAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        RunnableAction ra = new RunnableAction(this.chromatograms);
-        RunnableAction.createAndRun("Loading 1D chromatogram multi view", ra);
-    }
-
-    private class RunnableAction extends AProgressAwareRunnable {
-
-        private final List<IChromatogramDescriptor> chromatograms;
-
-        public RunnableAction(List<IChromatogramDescriptor> chromatograms) {
-            this.chromatograms = chromatograms;
+        int separationDimensionSum = 0;
+        for (IChromatogramDescriptor descr : chromatograms) {
+            separationDimensionSum += descr.getSeparationType().getFeatureDimensions();
         }
+        int quotient = separationDimensionSum / chromatograms.size();
+        switch (quotient) {
+            case 1:
+                final AtomicInteger workunit1 = new AtomicInteger(0);
+                Chromatogram1DMultiTopComponentLoader loader1 = new Chromatogram1DMultiTopComponentLoader(Utilities.actionsGlobalContext(), chromatograms) {
 
-        public void onEdt(Runnable r) {
-            SwingUtilities.invokeLater(r);
-        }
-
-        @Override
-        public void run() {
-            try {
-                progressHandle.start(chromatograms.size());
-                int workunit = 0;
-                boolean is1D = true;
-                for (IChromatogramDescriptor descr : chromatograms) {
-                    //            System.out.println("descr: "+(descr instanceof IChromatogram1D));
-                    if (!(descr.getChromatogram() instanceof IChromatogram1D)) {
-                        is1D = false;
-                    }
-                }
-                if (is1D) {
-                    for (final IChromatogramDescriptor descr : chromatograms) {
-                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
-                        System.out.println("Creating 1D data providers and dataset.");
-                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(1);
+                    @Override
+                    public Chromatogram1DDataset createDataset(List<IChromatogramDescriptor> chromatograms, Lookup lookup) {
+                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
+                        IChromatogramDescriptor descr = chromatograms.get(0);
+                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit1.getAndIncrement());
                         providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram1D) descr.getChromatogram()));
-                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(descr, Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
-                        onEdt(new Runnable() {
-                            @Override
-                            public void run() {
-                                Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
-                                topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), Arrays.asList(descr), ds);
-                                topComponent.open();
-//                                topComponent.load();
-                            }
-                        });
+                        return new Chromatogram1DDataset(providers, lookup);
+                    }
+                };
+                Chromatogram1DMultiTopComponentLoader.createAndRun("Loading 1D chromatogram multi view", loader1);
+                return;
+            case 2:
+                final AtomicInteger workunit2 = new AtomicInteger(0);
+                Chromatogram1DMultiTopComponentLoader loader2 = new Chromatogram1DMultiTopComponentLoader(Utilities.actionsGlobalContext(), chromatograms) {
 
-                    }
-                } else {
-                    System.out.println("Creating 2D data providers and dataset.");
-                    for (IChromatogramDescriptor descr : chromatograms) {
-                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit++);
-                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
+                    @Override
+                    public Chromatogram1DDataset createDataset(List<IChromatogramDescriptor> chromatograms, Lookup lookup) {
+                        List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
+                        IChromatogramDescriptor descr = chromatograms.get(0);
+                        progressHandle.progress("Creating data set for " + descr.getDisplayName(), workunit2.getAndIncrement());
                         providers.add(new Chromatogram1DElementProvider(descr.getDisplayName(), (IChromatogram2D) descr.getChromatogram()));
-                        final Chromatogram1DDataset ds = new Chromatogram1DDataset(providers, Lookups.fixed(descr, Utilities.actionsGlobalContext().lookup(IChromAUIProject.class)));
-                        onEdt(new Runnable() {
-                            @Override
-                            public void run() {
-                                Chromatogram1DViewTopComponent topComponent = new Chromatogram1DViewTopComponent();
-                                topComponent.initialize(Utilities.actionsGlobalContext().lookup(IChromAUIProject.class), chromatograms, ds);
-                                topComponent.open();
-//                                topComponent.load();
-                            }
-                        });
+                        return new Chromatogram1DDataset(providers, lookup);
                     }
-                }
-            } finally {
-                progressHandle.finish();
-            }
+                };
+                Chromatogram1DMultiTopComponentLoader.createAndRun("Loading 2D chromatogram multi view", loader2);
+                return;
+            default:
+                NotifyDescriptor nd = new NotifyDescriptor.Message("Can not open chromatogram with " + quotient + " separation dimension(s)!", NotifyDescriptor.Message.INFORMATION_MESSAGE);
+                DialogDisplayer.getDefault().notify(nd);
         }
     }
 }

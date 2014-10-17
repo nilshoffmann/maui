@@ -30,7 +30,7 @@ package net.sf.maltcms.chromaui.chromatogram1Dviewer.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import static net.sf.maltcms.chromaui.chromatogram1Dviewer.actions.AddSelectionAsPeakDescriptors.invokeHoverAction;
-import net.sf.maltcms.common.charts.api.selection.XYSelection;
+import net.sf.maltcms.common.charts.api.selection.xy.XYSelection;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;

@@ -37,7 +37,7 @@ public class SeriesItem {
 
     private final Comparable comp;
     private boolean visible = true;
-    private ChartOverlay overlay;
+    private final ChartOverlay overlay;
 
     public SeriesItem(ChartOverlay overlay, Comparable comp, boolean visible) {
         this.comp = comp;

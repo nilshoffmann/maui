@@ -52,7 +52,7 @@ import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
 import net.sf.maltcms.common.charts.api.overlay.SelectionOverlay;
 import net.sf.maltcms.common.charts.api.selection.ISelection;
-import net.sf.maltcms.common.charts.api.selection.XYSelection;
+import net.sf.maltcms.common.charts.api.selection.xy.XYSelection;
 import org.jfree.data.general.Dataset;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
