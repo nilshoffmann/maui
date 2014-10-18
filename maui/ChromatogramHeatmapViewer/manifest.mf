@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 OpenIDE-Module: net.sf.maltcms.chromaui.chromatogram1Dviewer
 OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/chromatogram1Dviewer/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.2.1
+OpenIDE-Module-Specification-Version: 1.2.2
 

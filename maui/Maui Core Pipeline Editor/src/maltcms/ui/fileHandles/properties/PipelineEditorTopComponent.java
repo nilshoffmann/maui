@@ -278,6 +278,7 @@ public final class PipelineEditorTopComponent extends CloneableTopComponent {
         jToolBar1.add(jSeparator5);
 
         org.openide.awt.Mnemonics.setLocalizedText(jButton4, org.openide.util.NbBundle.getMessage(PipelineEditorTopComponent.class, "PipelineEditorTopComponent.jButton4.text")); // NOI18N
+        jButton4.setEnabled(false);
         jButton4.setFocusable(false);
         jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

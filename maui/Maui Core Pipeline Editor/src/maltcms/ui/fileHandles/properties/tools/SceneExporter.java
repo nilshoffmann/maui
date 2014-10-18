@@ -84,12 +84,13 @@ public class SceneExporter {
     }
 
     public boolean export() {
-        Widget pipelinesLayer = SceneParser.getPipelinesLayer(this.scene), connectionLayer = SceneParser.getConnectionLayer(this.scene);
-        if (connectionLayer != null && pipelinesLayer != null) {
-            createConfigFiles(SceneParser.getPipeline(this.scene), SceneParser.getGeneralConfig(pipelinesLayer));
-        }
-
-        return true;
+//        Widget pipelinesLayer = SceneParser.getPipelinesLayer(this.scene), connectionLayer = SceneParser.getConnectionLayer(this.scene);
+//        if (connectionLayer != null && pipelinesLayer != null) {
+//            createConfigFiles(SceneParser.getPipeline(this.scene), SceneParser.getGeneralConfig(pipelinesLayer));
+//        }
+//
+//        return true;
+        return false;
     }
 
     /**
@@ -169,24 +170,27 @@ public class SceneExporter {
     }
 
     public static void showSaveDialog(PipelineGraphScene scene) {
-        if (scene.getBaseFile() == null) {
-            JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                    "property files", "properties");
-            chooser.setFileFilter(filter);
-
-            int returnVal = chooser.showSaveDialog(scene.getView());
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File f = chooser.getSelectedFile();
-                saveScene(scene, f);
-            }
-        } else {
-            try {
-                saveScene(scene, new File(scene.getBaseFile().getURL().toURI()));
-            } catch (FileStateInvalidException | URISyntaxException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
+        JOptionPane.showMessageDialog(scene.getView(), "Saving of Pipelines is currently disabled!",
+                    "Confirmation", 1);
+        return;
+//        if (scene.getBaseFile() == null) {
+//            JFileChooser chooser = new JFileChooser();
+//            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+//                    "property files", "properties");
+//            chooser.setFileFilter(filter);
+//
+//            int returnVal = chooser.showSaveDialog(scene.getView());
+//            if (returnVal == JFileChooser.APPROVE_OPTION) {
+//                File f = chooser.getSelectedFile();
+//                saveScene(scene, f);
+//            }
+//        } else {
+//            try {
+//                saveScene(scene, new File(scene.getBaseFile().getURL().toURI()));
+//            } catch (FileStateInvalidException | URISyntaxException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
+//        }
     }
 
     public static void saveScene(PipelineGraphScene scene, File configuration) {
