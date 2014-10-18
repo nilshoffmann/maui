@@ -88,24 +88,24 @@ public class HeatmapViewer {
                 throw new IllegalArgumentException("Could not create surface image!");
             }
 
-            PickingSupport pickingSupport = new PickingSupport();
-            for (int i = 0; i < 10; i++) {
-                int xpos = (int) (roi.x + (int) (Math.random() * (roi.width)));
-                int ypos = (int) (roi.y + (int) (Math.random() * (roi.height)));
-                String item = xpos + " " + ypos;
-                BarChartBar<String> bcb = new BarChartBar<>(chart, item,
-                        item);
-                bcb.setPickingId(i);
-                pickingSupport.registerDrawableObject(bcb, item);
-                bcb.setData(new Coord3d(xpos, ypos,
-                        cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
-                                ypos) - cc.getBounds().getZmin(),
-                        new Color((float) Math.random(), (float) Math.random(),
-                                (float) Math.random(), 0.3f));
-                chart.getScene().getGraph().add(bcb);
-            }
-            LabeledMouseSelector lms = new LabeledMouseSelector(chart, pickingSupport);
-            lms.register(chart);
+//            PickingSupport pickingSupport = new PickingSupport();
+//            for (int i = 0; i < 10; i++) {
+//                int xpos = (int) (roi.x + (int) (Math.random() * (roi.width)));
+//                int ypos = (int) (roi.y + (int) (Math.random() * (roi.height)));
+//                String item = xpos + " " + ypos;
+//                BarChartBar<String> bcb = new BarChartBar<>(chart, item,
+//                        item);
+//                bcb.setPickingId(i);
+//                pickingSupport.registerDrawableObject(bcb, item);
+//                bcb.setData(new Coord3d(xpos, ypos,
+//                        cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
+//                                ypos) - cc.getBounds().getZmin(),
+//                        new Color((float) Math.random(), (float) Math.random(),
+//                                (float) Math.random(), 0.3f));
+//                chart.getScene().getGraph().add(bcb);
+//            }
+//            LabeledMouseSelector lms = new LabeledMouseSelector(chart, pickingSupport);
+//            lms.register(chart);
             chart.getAxeLayout().setXAxeLabel("Retention Time 1");
             chart.getAxeLayout().setYAxeLabel("Retention Time 2");
             chart.getAxeLayout().setZAxeLabel("Relative Intensity");

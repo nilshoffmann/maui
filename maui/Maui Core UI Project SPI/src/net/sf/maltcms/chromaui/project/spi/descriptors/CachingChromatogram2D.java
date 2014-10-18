@@ -466,11 +466,13 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     @Override
     public int getNumberOfModulations() {
+        init();
         return modulations;
     }
 
     @Override
     public int getNumberOfScansPerModulation() {
+        init();
         return spm;
     }
 
@@ -513,11 +515,14 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     @Override
     public Rectangle2D getTimeRange2D() {
+        IScan2D startScan = getScanForMsLevel(0, (short)1);
+        IScan2D endScan = getScanForMsLevel(getNumberOfScansForMsLevel((short)1)-1, (short)1);
         double[] startRts = getRtProvider().getRts(0);
         double[] stopRts = getRtProvider().getRts(getNumberOfScans() - 1);
         return new Rectangle2D.Double(
-                startRts[0], startRts[1],
-                stopRts[0] - startRts[0], Math.max(stopRts[1], getModulationDuration()) - startRts[1]
+            startScan.getFirstColumnScanAcquisitionTime(), 0,
+            endScan.getFirstColumnScanAcquisitionTime()-startScan.getFirstColumnScanAcquisitionTime(),
+            getModulationDuration()
         );
     }
 

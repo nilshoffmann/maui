@@ -27,23 +27,20 @@
  */
 package net.sf.maltcms.maui.heatmapViewer.actions;
 
-import cross.datastructures.fragments.IVariableFragment;
 import cross.exception.ResourceNotAvailableException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import maltcms.datastructures.ms.IChromatogram;
 import maltcms.datastructures.ms.IChromatogram2D;
-import maltcms.datastructures.quadTree.QuadTree;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.maui.heatmapViewer.HeatmapViewerTopComponent;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ArrayD2Mapper;
-import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.QuadTreeMapper;
+import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ChromatogramArrayD2Mapper;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
-import org.jzy3d.maths.Rectangle;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
@@ -52,8 +49,6 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.NotImplementedException;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayInt;
-import ucar.ma2.MAMath;
-import ucar.ma2.MAMath.MinMax;
 
 @ActionID(
         category = "ContainerNodeActions/ChromatogramNode/Open",
@@ -88,126 +83,26 @@ public final class ViewAs3DHeatmap implements ActionListener {
                 try {
                     progressHandle.start();
                     progressHandle.progress("Loading heatmap data");
-                    IChromatogram chrom = context.getChromatogram();
+                    final IChromatogram chrom = context.getChromatogram();
                     if (chrom instanceof IChromatogram2D) {
                         IChromatogram2D chrom2d = (IChromatogram2D) chrom;
-
-                        //check for first_column_elution_time and second_column_elution_time
                         try {
-                            IVariableFragment fcet = chrom2d.getParent().getChild("first_column_elution_time", true);
-                            Array fcetArray = fcet.getArray();
-                            MinMax fmm = MAMath.getMinMax(fcetArray);
-                            IVariableFragment scet = chrom2d.getParent().getChild("second_column_elution_time", true);
-                            Array scetArray = scet.getArray();
-                            MinMax smm = MAMath.getMinMax(scetArray);
-                            IVariableFragment tic = chrom2d.getParent().getChild("total_intensity", true);
-                            Array ticArray = tic.getArray();
-                            Array modTimeArray = null;
-                            try {
-                                IVariableFragment modTime = chrom2d.getParent().getChild("modulation_time");
-                                modTimeArray = modTime.getArray();
-                            } catch (ResourceNotAvailableException rnae) {
-                            }
-                            MinMax tmm = MAMath.getMinMax(ticArray);
-                            int length = fcet.getDimensions()[0].getLength();
-                            final Rectangle bounds = new Rectangle((int) fmm.min, (int) smm.min, (int) (fmm.max - fmm.min), (int) (smm.max - smm.min));
-                            final Rectangle2D bounds2d = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
-                            QuadTree<Integer> qt = new QuadTree<>(bounds2d);
-                            for (int i = 0; i < length; i++) {
-                                qt.put(new Point2D.Float(fcetArray.getFloat(i), scetArray.getFloat(i)), ticArray.getInt(i));
-                            }
-                            double radiusx = 10;
-                            if (modTimeArray != null) {
-                                radiusx = modTimeArray.getDouble(0) * 3;
-                            }
-                            final QuadTreeMapper qtm = new QuadTreeMapper(qt, bounds2d, radiusx, 10);
+                            final ViewportMapper m = createChromatogramArrayD2Mapper(chrom2d);
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
                                     hvtc.open();
                                     hvtc.requestActive();
-                                    hvtc.setMapper(qtm);
+                                    hvtc.setMapper(m, context);
+                                    hvtc.setDisplayName("3D Heatmap view of "+context.getDisplayName());
                                 }
                             });
-//							fcetArray = null;
-//							scetArray = null;
-//							ticArray = null;
-//							chrom2d.getParent().clearArrays();
-//							SurfaceFactory sf = new SurfaceFactory();
-//							AbstractDrawable ad = sf.createImplicitlyGriddedSurface(qtm, bounds, (int) (300), (int) (400));
-//							System.err.println(ad.getBounds());
-//							CompileableComposite cc = new CompileableComposite();
-//							cc.add(ad);
-//
-//							sf.applyStyling(cc);
-//
-//							progressHandle.progress("Creating Top Component");
-//
-//							Chart chart = new Chart(Quality.Advanced, "awt");
-//							chart.getScene().getGraph().add(cc);
-////							chart.getScene().getGraph().add(new Sphere());
-//							LabeledMouseSelector lms = new LabeledMouseSelector(chart);
-//							chart.getCanvas().addKeyController(lms);
-//
-////							chart.getAxeLayout().setXAxeLabel("Retention Time 1");
-////							chart.getAxeLayout().setYAxeLabel("Retention Time 2");
-////							chart.getAxeLayout().setZAxeLabel("Relative Intensity");
-//
-//							chart.getView().setMaximized(true);
-//							chart.getView().getCamera().setScreenGridDisplayed(false);
-//							AWTCameraMouseController mouse = new AWTCameraMouseController();
-//							chart.addController(mouse);
-//							mouse.addControllerEventListener(new ControllerEventListener() {
-//								public void controllerEventFired(ControllerEvent e) {
-//									if (e.getType() == ControllerType.PAN) {
-//										System.out.println("Mouse[PAN]: " + e.getValue());
-//
-//									} else if (e.getType() == ControllerType.SHIFT) {
-//										System.out.println("Mouse[SHIFT]: " + e.getValue());
-//									} else if (e.getType() == ControllerType.ZOOM) {
-//										System.out.println("Mouse[ZOOM]: " + e.getValue());
-//									} else if (e.getType() == ControllerType.ROTATE) {
-//										System.out.println("Mouse[ROTATE]:" + e.getValue());
-//									}
-//								}
-//							});
-//							ChartLauncher.instructions();
-//							Settings.getInstance().setHardwareAccelerated(true);
-//							Screen screen = Settings.getInstance().getScreen();
-//							chart.getFactory().newFrame(chart, new Rectangle(0, 0, 800, 600), "HeatmapViewer");
-                            //SurfaceViewerPanel svp1 = new SurfaceViewerPanel(chart);
-
-//							} catch (IOException ex) {
-//								Logger.getLogger(HeatmapViewer.class.getName()).log(Level.SEVERE,
-//										null, ex);
-//							}
                         } catch (ResourceNotAvailableException rnae) {
-                            final int modulations = chrom2d.getNumberOfModulations();
-                            final int spm = chrom2d.getNumberOfScansPerModulation();
-                            final ArrayInt.D2 surface = new ArrayInt.D2(modulations, spm);
-                            int scanIndex = 0;
-                            progressHandle.progress("Creating surface");
-                            Array tic = chrom2d.getParent().getChild("total_intensity").getArray();
-                            for (int i = 0; i < modulations; i++) {
-                                for (int j = 0; j < spm; j++) {
-                                    int height = (int) tic.getInt(scanIndex++);
-                                    surface.set(i, j, height);
-                                }
-                            }
-                            final ViewportMapper m = new ArrayD2Mapper(surface);
-                            progressHandle.progress("Creating Top Component");
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    final HeatmapViewerTopComponent hvtc = new HeatmapViewerTopComponent();
-                                    hvtc.open();
-                                    hvtc.requestActive();
-                                    hvtc.setMapper(m);
-                                }
-                            });
+                            Logger.getLogger(ViewAs3DHeatmapRunnable.class.getName()).log(Level.WARNING,"Caught Exception while trying to open 3D Heatmap view of chromatogram "+context.getDisplayName(),rnae);
+                            NotifyDescriptor nd = new NotifyDescriptor.Message("Could not open chromatogram "+context.getDisplayName()+"!", NotifyDescriptor.Message.WARNING_MESSAGE);
+                            DialogDisplayer.getDefault().notify(nd);
                         }
-
                         progressHandle.progress("Done!");
                     }
                 } finally {
@@ -216,6 +111,39 @@ public final class ViewAs3DHeatmap implements ActionListener {
             } else {
                 throw new NotImplementedException("No support for " + context.getSeparationType().getFeatureDimensions() + " separation dimensions!");
             }
+        }
+
+        private ViewportMapper createArrayD2Mapper(IChromatogram2D chrom2d) throws ResourceNotAvailableException {
+            final int modulations = chrom2d.getNumberOfModulations();
+            final int spm = chrom2d.getNumberOfScansPerModulation();
+            final ArrayInt.D2 surface = new ArrayInt.D2(modulations, spm);
+            int scanIndex = 0;
+            Array tic = chrom2d.getParent().getChild("total_intensity").getArray();
+            for (int i = 0; i < modulations; i++) {
+                for (int j = 0; j < spm; j++) {
+                    int height = (int) tic.getInt(scanIndex++);
+                    surface.set(i, j, height);
+                }
+            }
+            final ViewportMapper m = new ArrayD2Mapper(surface);
+            return m;
+        }
+
+        private ViewportMapper createChromatogramArrayD2Mapper(IChromatogram2D chrom2d) throws ResourceNotAvailableException {
+            final int modulations = chrom2d.getNumberOfModulations();
+            final int spm = chrom2d.getNumberOfScansPerModulation();
+            int scans = chrom2d.getNumberOfScans();
+            final ArrayInt.D2 surface = new ArrayInt.D2(modulations,spm);
+            int scanIndex = 0;
+            Array tic = chrom2d.getParent().getChild("total_intensity").getArray();
+            for (int i = 0; i < modulations; i++) {
+                for (int j = 0; j < spm; j++) {
+                    int height = (int) tic.getInt(scanIndex++);
+                    surface.set(i, j, height);
+                }
+            }
+            final ViewportMapper m = new ChromatogramArrayD2Mapper(chrom2d, surface);
+            return m;
         }
     }
 }

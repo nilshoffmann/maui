@@ -27,29 +27,36 @@
  */
 package net.sf.maltcms.maui.heatmapViewer;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
+import maltcms.datastructures.ms.IChromatogram2D;
+import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
-import net.sf.maltcms.maui.heatmapViewer.chart.controllers.LabeledMouseSelector;
-import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.BufferedImageMapper;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.controllers.ControllerType;
-import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
+import org.jzy3d.chart.controllers.mouse.camera.NewtCameraMouseController;
 import org.jzy3d.chart.factories.AWTChartComponentFactory;
-import org.jzy3d.demos.histogram.barchart.BarChartBar;
+import org.jzy3d.chart.factories.IChartComponentFactory;
+import org.jzy3d.colors.Color;
 import org.jzy3d.events.ControllerEvent;
 import org.jzy3d.events.ControllerEventListener;
+import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
+import org.jzy3d.plot3d.primitives.Tube;
+import org.jzy3d.plot3d.rendering.canvas.CanvasNewtAwt;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.scene.Graph;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -75,18 +82,18 @@ import org.openide.windows.TopComponent;
 public final class HeatmapViewerTopComponent extends TopComponent {
 
     private Chart chart = null;
+    private CanvasNewtAwt canvas = null;
     private AbstractDrawable cc;
-    private List<BarChartBar<String>> barChartBars = new ArrayList<>();
     private ViewportMapper mapper = null;
     private Rectangle roi = null;
-    private int sampling = 1;
     private AtomicBoolean updatingScene = new AtomicBoolean(false);
+    private AtomicBoolean chartCreated = new AtomicBoolean(false);
+    private ExecutorService es = Executors.newSingleThreadExecutor();
 
     public HeatmapViewerTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(HeatmapViewerTopComponent.class, "CTL_HeatmapViewerTopComponent"));
         setToolTipText(NbBundle.getMessage(HeatmapViewerTopComponent.class, "HINT_HeatmapViewerTopComponent"));
-        jTextField1.setText(sampling + "");
     }
 
     /**
@@ -97,95 +104,90 @@ public final class HeatmapViewerTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jToolBar1 = new javax.swing.JToolBar();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-
         setLayout(new java.awt.BorderLayout());
-
-        jToolBar1.setRollover(true);
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(HeatmapViewerTopComponent.class, "HeatmapViewerTopComponent.jButton1.text")); // NOI18N
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jButton1);
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(HeatmapViewerTopComponent.class, "HeatmapViewerTopComponent.jButton2.text")); // NOI18N
-        jButton2.setFocusable(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jButton2);
-
-        jTextField1.setEditable(false);
-        jTextField1.setColumns(4);
-        jTextField1.setText(org.openide.util.NbBundle.getMessage(HeatmapViewerTopComponent.class, "HeatmapViewerTopComponent.jTextField1.text")); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jTextField1);
-
-        add(jToolBar1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int old = sampling;
-        sampling = Math.max(1, --sampling);
-        if (sampling != old) {
-            jButton1.setEnabled(false);
-            jTextField1.setText(sampling + "");
-            if (updatingScene.compareAndSet(false, true)) {
-                SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
-                SceneUpdater.createAndRun("Updating Scene", su);
-            }
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        int old = sampling;
-        sampling = Math.min(10, ++sampling);
-        if (sampling != old) {
-            jButton2.setEnabled(false);
-            jTextField1.setText(sampling + "");
-            if (updatingScene.compareAndSet(false, true)) {
-                SceneUpdater su = new SceneUpdater(chart.getScene().getGraph());
-                SceneUpdater.createAndRun("Updating Scene", su);
-            }
-        }
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
-
     @Override
-    public void componentOpened() {
-
+    protected void componentOpened() {
+        super.componentOpened();
+        System.out.println("Opened");
+//        createChart();
     }
 
-    public void setMapper(ViewportMapper mapper) {
+    @Override
+    protected void componentClosed() {
+        super.componentClosed();
+        System.out.println("Closed");
+        if (chartCreated.get() && chart != null) {
+            try {
+                //dispose chart resources
+                chart.dispose();
+            } catch (Exception e) {
+                Exceptions.printStackTrace(e);
+            } finally {
+                //cleanup
+                chart = null;
+//                ctc = null;
+                remove(canvas);
+                //dispose of canvas and native resources
+                canvas.dispose();
+                chartCreated.set(false);
+            }
+        }
+    }
+
+    @Override
+    protected void componentShowing() {
+        super.componentShowing();
+        System.out.println("Showing");
+        if (chartCreated.get()) {
+//            if (ctc != null) {
+//                if (toggleAnimation.isSelected()) {
+//                    //reenable animation if animation is toggled and component is set to visible
+//                    ctc.start();
+//                }
+//            }
+        }
+    }
+
+    @Override
+    protected void componentHidden() {
+        super.componentHidden();
+        System.out.println("Hidden");
+        if (chartCreated.get()) {
+//            if (ctc != null) {
+//                //stop animation if top component is not visible
+//                ctc.stop();
+//            }
+        }
+    }
+
+    @Override
+    protected void componentActivated() {
+        super.componentActivated();
+        System.out.println("Activated");
+        if (chartCreated.get()) {
+            if (chart != null) {
+                CanvasNewtAwt cna = (CanvasNewtAwt) chart.getCanvas();
+                cna.setSize(getSize());
+                //need to update complete component tree
+                invalidate();
+                getTopLevelAncestor().invalidate();
+                getTopLevelAncestor().revalidate();
+            }
+        }
+    }
+
+    public void setMapper(ViewportMapper mapper, IChromatogramDescriptor chromatogram) {
         this.mapper = mapper;
         this.roi = mapper.getViewport();
-        buildScene();
+        if (chromatogram.getSeparationType().getFeatureDimensions() == 2) {
+            buildScene(chromatogram);
+        } else {
+            throw new IllegalArgumentException("Can only handle 2D chromatograms!");
+        }
     }
 
     private class SceneUpdater extends AProgressAwareRunnable {
@@ -206,48 +208,27 @@ public final class HeatmapViewerTopComponent extends TopComponent {
                 if (cc != null) {
                     graph.remove(cc, false);
                 }
-                for (BarChartBar<String> bcb : barChartBars) {
-                    graph.remove(bcb, false);
-                }
+//                for (BarChartBar<String> bcb : barChartBars) {
+//                    graph.remove(bcb, false);
+//                }
                 SurfaceFactory sf = new SurfaceFactory();
-//        ViewportMapper mapper = null;
 
                 progressHandle.progress("Building surface");
                 boolean fastTesselation = true;
-//                    if(coords==null) {
                 cc = sf.createSurface(mapper.getClippedViewport(roi), mapper,
-                        fastTesselation, (int) (roi.width / sampling), (int) (roi.height / sampling));
-//                    }else{
-//                        //use delaunay builder
-//                        cc = sf.createDelaunaySurface(coords);
-//                    }
+                        fastTesselation, (int) (roi.width), (int) (roi.height));
                 progressHandle.progress("Adding to scene");
                 Logger.getLogger(getClass().getName()).info("Adding surface to scene graph");
                 graph.add(cc);
-//                }
-//
-//                for (int i = 0; i < 10; i++) {
-//                    int xpos = (int) (roi.x + (double) (Math.random() * (roi.width)));
-//                    int ypos = (int) (roi.y + (double) (Math.random() * (roi.height)));
-//                    String item = xpos + " " + ypos;
-//                    BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
-//                            item);
-//                    bcb.setData(new Coord3d(xpos, ypos,
-//                            cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
-//                                    ypos) - cc.getBounds().getZmin(),
-//                            new Color((float) Math.random(), (float) Math.random(),
-//                                    (float) Math.random(), 0.3f));
-//                    chart.getScene().getGraph().add(bcb);
-//                    barChartBars.add(bcb);
-//                }
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         setEnabled(true);
                         chart.getCanvas().forceRepaint();
                         progressHandle.progress("Done!");
-                        jButton1.setEnabled(true);
-                        jButton2.setEnabled(true);
+                        invalidate();
+                        getTopLevelAncestor().invalidate();
+                        getTopLevelAncestor().revalidate();
                     }
                 });
 
@@ -263,77 +244,146 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 //    }
     private Chart getChart() {
         if (chart == null) {
-            chart = AWTChartComponentFactory.chart(Quality.Intermediate, "awt");
-//            chart = new Chart(Quality.Intermediate, "awt");
-            LabeledMouseSelector lms = new LabeledMouseSelector(chart);
-            chart.getCanvas().addKeyController(lms);
-
+            AWTChartComponentFactory accf = new AWTChartComponentFactory();
+            chart = accf.newChart(Quality.Intermediate, IChartComponentFactory.Toolkit.newt.name());
+            chart.getView().setMaximized(true);
+            if(canvas!=null) {
+                remove(canvas);
+                canvas.dispose();
+            }
+            canvas = (CanvasNewtAwt) chart.getCanvas();
             chart.getAxeLayout().setXAxeLabel("Retention Time 1");
             chart.getAxeLayout().setYAxeLabel("Retention Time 2");
             chart.getAxeLayout().setZAxeLabel("Total Intensity");
-            cc.setLegend(new org.jzy3d.plot3d.rendering.legends.colorbars.AWTColorbarLegend(cc, chart.getView().getAxe().getLayout()));
-            cc.setLegendDisplayed(true);
             chart.getView().setMaximized(true);
             chart.getView().getCamera().setScreenGridDisplayed(false);
-            AWTCameraMouseController mouse = new AWTCameraMouseController();
+            NewtCameraMouseController mouse = new NewtCameraMouseController(chart);
             chart.addController(mouse);
-            mouse.addControllerEventListener(new ControllerEventListener() {
-                @Override
-                public void controllerEventFired(ControllerEvent e) {
-                    if (e.getType() == ControllerType.PAN) {
-                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[PAN]: {0}", e.getValue());
+//            mouse.addControllerEventListener(new ControllerEventListener() {
+//                @Override
+//                public void controllerEventFired(ControllerEvent e) {
+//                    if (e.getType() == ControllerType.PAN) {
+//                        Logger.getLogger(getClass().getName()).log(Level.FINE, "Mouse[PAN]: {0}", e.getValue());
+//                    } else if (e.getType() == ControllerType.SHIFT) {
+//                        Logger.getLogger(getClass().getName()).log(Level.FINE, "Mouse[SHIFT]: {0}", e.getValue());
+//                    } else if (e.getType() == ControllerType.ZOOM) {
+//                        Logger.getLogger(getClass().getName()).log(Level.FINE, "Mouse[ZOOM]: {0}", e.getValue());
+//                    } else if (e.getType() == ControllerType.ROTATE) {
+//                        Logger.getLogger(getClass().getName()).log(Level.FINE, "Mouse[ROTATE]:{0}", e.getValue());
+//                    }
+//                }
+//            });
+            SwingUtilities.invokeLater(new Runnable() {
 
-                    } else if (e.getType() == ControllerType.SHIFT) {
-                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[SHIFT]: {0}", e.getValue());
-                    } else if (e.getType() == ControllerType.ZOOM) {
-                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[ZOOM]: {0}", e.getValue());
-                    } else if (e.getType() == ControllerType.ROTATE) {
-                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Mouse[ROTATE]:{0}", e.getValue());
-                    }
+                @Override
+                public void run() {
+                    canvas.setMinimumSize(getMinimumSize());
+                    canvas.setMaximumSize(getMaximumSize());
+                    canvas.setPreferredSize(getPreferredSize());
+                    add(canvas, BorderLayout.CENTER);
+//                    setCameraThreadController(ctc);
+//                    if (toggleAnimation.isSelected()) {
+//                        ctc.start();
+//                    }
+                    //need to update complete component tree
+                    invalidate();
+                    getTopLevelAncestor().invalidate();
+                    getTopLevelAncestor().revalidate();
                 }
             });
-            add((java.awt.Component) chart.getCanvas());
         }
         return chart;
     }
 
-    private void buildScene() {
-        if (mapper == null && roi == null) {
-            BufferedImage bi;
-            try {
-                bi = ImageIO.read(HeatmapViewer.class.getClassLoader().getResourceAsStream(
-                        "net/sf/maltcms/maui/heatmapViewer/chromatogram.png"));
-                mapper = new BufferedImageMapper(bi);
-                //select a smaller rectangle, if the complete image is too large
-                //Rectangle roi = new Rectangle(200, 200, 300, 300);
-                //                roi = new Rectangle(200, 200, 300, 300);
-                roi = new Rectangle(0, 0, bi.getWidth(), bi.getHeight());
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-//        if(cc==null) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                setEnabled(false);
-//        addComposite(getChart().getScene().getGraph());
-//		getChart();
+    private void buildScene(final IChromatogramDescriptor chromatogram) {
         if (cc == null) {
-            SurfaceFactory sf = new SurfaceFactory();
-            cc = sf.createSurface(mapper.getClippedViewport(roi), mapper);
-            getChart().addDrawable(cc);
-        }
-//                setEnabled(true);
-////                requestActive();
-//            }
-//        });
-    }
+//            Runnable runnable = new Runnable() {
+////
+//                @Override
+//                public void run() {
+                    SurfaceFactory sf = new SurfaceFactory();
+                    IChromatogram2D chrom = (IChromatogram2D) chromatogram.getChromatogram();
+                    cc = sf.createSurfaceChrom(mapper.getViewport(), mapper, true, chrom.getNumberOfModulations() / 3, chrom.getNumberOfScansPerModulation() / 3);
+                    cc.setLegend(new org.jzy3d.plot3d.rendering.legends.colorbars.AWTColorbarLegend(cc, getChart().getView().getAxe().getLayout()));
+                    cc.setLegendDisplayed(true);
+                    final List<AbstractDrawable> drawables = new ArrayList<>();
+//            drawables.add(cc);
+                    int peakPickingId = 0;
+                    for (Peak1DContainer peaks : chromatogram.getProject().getPeaks(chromatogram)) {
+                        java.awt.Color fillColor = peaks.getColor();
+                        if (fillColor == null || fillColor.equals(java.awt.Color.WHITE) || fillColor.equals(new java.awt.Color(255, 255, 255, 0))) {
+//				System.out.println("Peak annotation color was null or white, using color from treatment group!");
+                            fillColor = peaks.getChromatogram().getTreatmentGroup().getColor();
+                        }
+                        float[] colors = fillColor.getColorComponents(null);
+                        for (IPeakAnnotationDescriptor descr : peaks) {
+                            if (descr instanceof IPeak2DAnnotationDescriptor) {
+                                IPeak2DAnnotationDescriptor peak2d = (IPeak2DAnnotationDescriptor) descr;
+                                Tube tube = new Tube();
+                                tube.setData(new Coord3d(
+                                        peak2d.getFirstColumnRt(),
+                                        peak2d.getSecondColumnRt(),
+                                        0.0d),
+                                        (float) (chrom.getModulationDuration() / (float) chrom.getNumberOfScansPerModulation()) * 5,
+                                        (float) (chrom.getModulationDuration() / (float) chrom.getNumberOfScansPerModulation()),
+                                        (float) Math.min(
+                                                mapper.f(peak2d.getFirstColumnRt(), peak2d.getSecondColumnRt())
+                                                + ((cc.getBounds().getZmax() - cc.getBounds().getZmin()) / 100.0f * 5.0f),
+                                                cc.getBounds().getZmax()),
+                                        5, 5);
+//                        tube.setColor(new Color(colors[0], colors[1], colors[2], 1.0f));
+                                tube.setWireframeDisplayed(true);
+                                tube.setWireframeColor(new Color(colors[0], colors[1], colors[2], 0.7f));
+                                tube.setFaceDisplayed(false);
+                                drawables.add(tube);
+                            } else {
+                                Logger.getLogger(HeatmapViewerTopComponent.class.getName()).log(Level.WARNING, "Ignoring 1D Peak {}", descr.getDisplayName());
+                            }
+                        }
+                    }
+//                    BarChartBar<String> bcb = new BarChartBar<String>(chart, item,
+//                            item);
+//                    bcb.setData(new Coord3d(xpos, ypos,
+//                            cc.getBounds().getZmin()), 10.0f, 10.0f, (float) mapper.f(xpos,
+//                                    ypos) - cc.getBounds().getZmin(),
+//                            new Color((float) Math.random(), (float) Math.random(),
+//                                    (float) Math.random(), 0.3f));
+//                    chart.getScene().getGraph().add(bcb);
+//                    barChartBars.add(bcb);
+//                    SwingUtilities.invokeLater(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            canvas.setMinimumSize(getMinimumSize());
+//                            canvas.setMaximumSize(getMaximumSize());
+//                            canvas.setPreferredSize(getPreferredSize());
+                            getChart().getScene().getGraph().add(cc, false);
+                            getChart().getScene().getGraph().add(drawables, true);
+//                    setCameraThreadController(ctc);
+//                    if (toggleAnimation.isSelected()) {
+//                        ctc.start();
+//                    }
+                            //need to update complete component tree
+                            invalidate();
+                            getTopLevelAncestor().invalidate();
+                            getTopLevelAncestor().revalidate();
+//                            getTopLevelAncestor().invalidate();
+//                            getTopLevelAncestor().revalidate();public void run() {
+//                            invalidate();
+//                            getTopLevelAncestor().invalidate();
+//                            getTopLevelAncestor().revalidate();
 
-    @Override
-    public void componentClosed() {
-        super.componentClosed();
-        // TODO add custom code on component closing
+//                        }
+//                    });
+
+//                }
+//
+//                    
+//                }
+
+//            };
+//            es.submit(runnable);
+        }
     }
 
     void writeProperties(java.util.Properties p) {
@@ -346,35 +396,5 @@ public final class HeatmapViewerTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
-    }
-
-    @Override
-    protected void componentActivated() {
-        super.componentActivated();
-//        buildScene();
-    }
-
-    @Override
-    protected void componentDeactivated() {
-        super.componentDeactivated();
-//        buildScene();
-    }
-
-    @Override
-    protected void componentHidden() {
-        super.componentHidden();
-//        buildScene();
-    }
-
-    @Override
-    protected void componentShowing() {
-        super.componentShowing();
-//        buildScene();
-    }
-
-    @Override
-    public void validate() {
-        super.validate();
-//        buildScene();
     }
 }

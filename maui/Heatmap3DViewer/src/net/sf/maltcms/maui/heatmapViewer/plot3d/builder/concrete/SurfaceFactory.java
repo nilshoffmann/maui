@@ -59,7 +59,7 @@ import ucar.ma2.ArrayDouble;
 public class SurfaceFactory {
 
     private IColorMap colorMap = new ColorMapRainbow();
-    private Color colorFactor = new Color(1, 1, 1, 0.75f);
+    private Color colorFactor = new Color(1, 1, 1, 1f);
     private boolean faceDisplayed = true;
     private boolean wireframeDisplayed = false;
     private Color wireframeColor = Color.BLACK;
@@ -82,6 +82,20 @@ public class SurfaceFactory {
 
     public void setWireframeDisplayed(boolean wireframeDisplayed) {
         this.wireframeDisplayed = wireframeDisplayed;
+    }
+    
+    public CompileableComposite createSurfaceChrom(final Rectangle r, final Mapper m, boolean fast, int stepsx, int stepsy) {
+        final int columns = (int) (r.width-1);
+        final int rows = (int) (r.height - 1);
+        Range rangex = new Range(r.x, r.x+ r.width);
+        Range rangey = new Range(r.y, r.y + r.height);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Building surface for rect: {0}", r.toString());
+        final int sx = stepsx == -1 ? columns : stepsx;
+        final int sy = stepsy == -1 ? rows : stepsy;
+        CompileableComposite sls = fast ? createSurfaceFast(rangex, sx, rangey, sy, m) : createSurface(rangex, sx, rangey, sy, m);
+//        sls.setFace(new ColorbarFace(sls)); // attach a 2d panel annotating the surface: a colorbar
+//        sls.setFace2dDisplayed(true); // opens a colorbar on the right part of the display
+        return sls;
     }
 
     public CompileableComposite createSurface(final Rectangle r, final Mapper m, boolean fast, int stepsx, int stepsy) {
