@@ -459,7 +459,8 @@ public class ChromAUIProject implements IChromAUIProject {
                             projectSettings.setProperty(key, ps.get(key).toString());
                         }
                     }
-//                    ics.delete(ps);
+                    Logger.getLogger(ChromAUIProject.class.getName()).log(Level.INFO, "Deleting old project settings from database!");
+                    ics.delete(ps);
                 }
                 projectSettings.save();
             } catch (ConfigurationException ex) {
@@ -473,15 +474,6 @@ public class ChromAUIProject implements IChromAUIProject {
                 Exceptions.printStackTrace(ex);
             }
         }
-//        Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
-//        if (l.isEmpty()) {
-//            ProjectSettings ps = new ProjectSettings();
-//            ics.create(Arrays.asList(ps));
-//            l = ics.retrieve(ProjectSettings.class);
-//        }
-//        ProjectSettings ps = l.toArray(new ProjectSettings[l.size()])[0];
-//
-//        return ps;
         return projectSettings;
     }
 
