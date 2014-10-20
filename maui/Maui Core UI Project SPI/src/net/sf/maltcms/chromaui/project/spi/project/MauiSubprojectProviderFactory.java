@@ -154,7 +154,6 @@ public class MauiSubprojectProviderFactory implements IMauiSubprojectProviderFac
 
     @Override
     public SubprojectProvider provide(IChromAUIProject project) {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "Creating subproject provider for project {0}", project);
         return new MauiSubprojectProvider(project);
     }
 

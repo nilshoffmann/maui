@@ -28,8 +28,6 @@
 package net.sf.maltcms.chromaui.project.spi.project;
 
 import com.db4o.ObjectSet;
-import com.db4o.ext.DatabaseClosedException;
-import com.db4o.ext.DatabaseFileLockedException;
 import com.db4o.query.Predicate;
 import com.db4o.query.Query;
 import cross.exception.ConstraintViolationException;
@@ -42,6 +40,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -85,6 +84,9 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ITreatmentGroupDescriptor;
 import net.sf.maltcms.chromaui.project.spi.ChromAUIProjectLogicalView;
 import net.sf.maltcms.chromaui.project.spi.runnables.DeletePeakAnnotationsRunnable;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
@@ -135,6 +137,7 @@ public class ChromAUIProject implements IChromAUIProject {
     private FileObject parentFile;
     private InstanceContent ic = new InstanceContent();
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private PropertiesConfiguration projectSettings;
 
     public synchronized void removePropertyChangeListener(String string, PropertyChangeListener pl) {
         pcs.removePropertyChangeListener(string, pl);
@@ -375,26 +378,34 @@ public class ChromAUIProject implements IChromAUIProject {
     }
 
     @Override
-    public FileObject getOutputDir() {
-        try {
-            return getSetting(ProjectSettings.KEY_OUTPUT_BASEDIR, FileObject.class);
-        } catch (NullPointerException | DatabaseFileLockedException | DatabaseClosedException npe) {
-            Logger.getLogger(ChromAUIProject.class.getName()).log(Level.WARNING, "Failed to retrieve setting 'output.basedir':", npe);
-        }
-        try {
-            return FileUtil.createFolder(parentFile, "output");
-        } catch (IOException ex) {
-            File outdir = new File(FileUtil.toFile(parentFile), "output");
-            outdir.mkdirs();
-            return FileUtil.toFileObject(outdir);
+    public synchronized FileObject getOutputDir() {
+        String outputBasedir = getSetting(ProjectSettings.KEY_OUTPUT_BASEDIR);
+        if (outputBasedir != null) {
+            if(outputBasedir.startsWith("file:")) {
+                URI uri = URI.create(outputBasedir);
+                return FileUtil.toFileObject(new File(uri));
+            }
+            return FileUtil.toFileObject(new File(outputBasedir));
+        } else {
+            Logger.getLogger(ChromAUIProject.class.getName()).log(Level.WARNING, "Failed to retrieve setting '{0}'. Restoring default value!", new Object[]{ProjectSettings.KEY_OUTPUT_BASEDIR});
+            FileObject outputDir = null;
+            try {
+                outputDir = FileUtil.createFolder(parentFile, "output");
+            } catch (IOException ex) {
+                File outdir = new File(FileUtil.toFile(parentFile), "output");
+                outdir.mkdirs();
+                outputDir = FileUtil.toFileObject(outdir);
+            }
+            getSettings().addProperty(ProjectSettings.KEY_OUTPUT_BASEDIR, outputDir.getPath());
+            Logger.getLogger(ChromAUIProject.class.getName()).log(Level.INFO, "Updated setting '{0}': {1}", new Object[]{ProjectSettings.KEY_OUTPUT_BASEDIR, outputDir.getPath()});
+            return outputDir;
         }
     }
 
     @Override
     public void setOutputDir(FileObject f) {
-        ProjectSettings ps = getSettings();
-        ps.put(ProjectSettings.KEY_OUTPUT_BASEDIR, f);
-        ics.update(ps);
+        Configuration ps = getSettings();
+        ps.setProperty(ProjectSettings.KEY_OUTPUT_BASEDIR, f.getPath());
     }
 
     @Override
@@ -415,27 +426,63 @@ public class ChromAUIProject implements IChromAUIProject {
         return outputDir;
     }
 
-    protected synchronized <T> T getSetting(String key, Class<T> c) throws NullPointerException, ClassCastException {
-        ProjectSettings ps = getSettings();
+    protected synchronized String getSetting(String key) {
+        Configuration ps = getSettings();
         if (ps.containsKey(key)) {
-            return c.cast(ps.get(key));
+            return ps.getString(key);
         }
-        throw new NullPointerException("No element for key: " + key);
+        return null;
     }
 
-    protected synchronized ProjectSettings getSettings() {
-        if (ics == null) {
-            openSession();
+    protected synchronized Configuration getSettings() {
+        File preferencesFile = new File(FileUtil.toFile(getProjectDirectory()), "project.properties");
+        if (!preferencesFile.exists()) {
+            try {
+                projectSettings = new PropertiesConfiguration(preferencesFile);
+                projectSettings.setAutoSave(true);
+                if (ics == null) {
+                    openSession();
+                }
+                Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
+                if (!l.isEmpty()) {
+                    Logger.getLogger(ChromAUIProject.class.getName()).log(Level.INFO, "Converting old project settings.");
+                    l = ics.retrieve(ProjectSettings.class);
+                    ProjectSettings ps = l.iterator().next();
+                    for (String key : ps.keySet()) {
+                        Logger.getLogger(ChromAUIProject.class.getName()).log(Level.INFO, "Updating setting {0}={1}", new Object[]{key, ps.get(key).toString()});
+                        if (ps.get(key) instanceof FileObject) {
+                            FileObject fo = (FileObject) ps.get(key);
+                            String path = fo.getPath();
+                            Logger.getLogger(ChromAUIProject.class.getName()).log(Level.INFO, "Setting path for {0} to {1}.", new Object[]{key, path});
+                            projectSettings.setProperty(key, path);
+                        } else {
+                            projectSettings.setProperty(key, ps.get(key).toString());
+                        }
+                    }
+//                    ics.delete(ps);
+                }
+                projectSettings.save();
+            } catch (ConfigurationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } else {
+            try {
+                projectSettings = new PropertiesConfiguration(preferencesFile);
+                projectSettings.setAutoSave(true);
+            } catch (ConfigurationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
-        Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
-        if (l.isEmpty()) {
-            ProjectSettings ps = new ProjectSettings();
-            ics.create(Arrays.asList(ps));
-            l = ics.retrieve(ProjectSettings.class);
-        }
-        ProjectSettings ps = l.toArray(new ProjectSettings[l.size()])[0];
-
-        return ps;
+//        Collection<ProjectSettings> l = ics.retrieve(ProjectSettings.class);
+//        if (l.isEmpty()) {
+//            ProjectSettings ps = new ProjectSettings();
+//            ics.create(Arrays.asList(ps));
+//            l = ics.retrieve(ProjectSettings.class);
+//        }
+//        ProjectSettings ps = l.toArray(new ProjectSettings[l.size()])[0];
+//
+//        return ps;
+        return projectSettings;
     }
 
     @Override
@@ -475,12 +522,14 @@ public class ChromAUIProject implements IChromAUIProject {
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent pce) {
+    public void propertyChange(PropertyChangeEvent pce
+    ) {
         pcs.firePropertyChange(pce);
     }
 
     @Override
-    public void addToLookup(Object... obj) {
+    public void addToLookup(Object... obj
+    ) {
         for (Object object : obj) {
             if (object != null) {
                 this.ic.add(object);
@@ -490,7 +539,8 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public Collection<Peak1DContainer> getPeaks(
-            IChromatogramDescriptor descriptor) {
+            IChromatogramDescriptor descriptor
+    ) {
         Collection<Peak1DContainer> containers = getContainer(
                 Peak1DContainer.class);
         List<Peak1DContainer> peaks = new ArrayList<Peak1DContainer>();
@@ -514,7 +564,8 @@ public class ChromAUIProject implements IChromAUIProject {
     }
 
     @Override
-    public File getImportLocation(Object importer) {
+    public File getImportLocation(Object importer
+    ) {
         File importDir = getImportDirectory();
         if (importer instanceof Class) {
             importDir = new File(importDir, ((Class) importer).getSimpleName());
@@ -695,13 +746,12 @@ public class ChromAUIProject implements IChromAUIProject {
 
     @Override
     public UUID getId() {
-        ProjectSettings settings = getSettings();
+        Configuration settings = getSettings();
         if (settings.containsKey(ProjectSettings.KEY_UID)) {
-            return UUID.fromString((String) settings.get(ProjectSettings.KEY_UID));
+            return UUID.fromString((String) settings.getString(ProjectSettings.KEY_UID));
         } else {
             UUID uid = UUID.randomUUID();
-            settings.put(ProjectSettings.KEY_UID, uid.toString());
-            ics.update(settings);
+            settings.setProperty(ProjectSettings.KEY_UID, uid.toString());
             return uid;
         }
     }

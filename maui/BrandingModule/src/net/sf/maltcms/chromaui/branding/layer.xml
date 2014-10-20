@@ -51,7 +51,6 @@ for details.
         <folder name="File">
             <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction.shadow_hidden"/>
             <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction2.shadow_hidden"/>
-            <file name="net-sf-maltcms-chromaui-project-spi-actions-ExportProjectToXmlAction.shadow_hidden"/>
         </folder>
         <file name="GoTo_hidden"/>
         <folder name="Help">

@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
@@ -25,76 +25,76 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.project.api.container;
+package net.sf.maltcms.chromaui.project.spi.descriptors;
 
-import java.beans.BeanDescriptor;
-import java.beans.BeanInfo;
-import java.beans.EventSetDescriptor;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.MethodDescriptor;
-import java.beans.PropertyDescriptor;
-import java.beans.SimpleBeanInfo;
+import java.beans.*;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class Peak1DContainerBeanInfo extends SimpleBeanInfo {
+public class UserDatabaseDescriptorBeanInfo extends SimpleBeanInfo {
 
     // Bean descriptor information will be obtained from introspection.//GEN-FIRST:BeanDescriptor
     private static BeanDescriptor beanDescriptor = null;
     private static BeanDescriptor getBdescriptor(){//GEN-HEADEREND:BeanDescriptor
+    // Here you can add code for customizing the BeanDescriptor.
 
-        // Here you can add code for customizing the BeanDescriptor.
          return beanDescriptor;     }//GEN-LAST:BeanDescriptor
+
+
     // Property identifiers//GEN-FIRST:Properties
-    private static final int PROPERTY_chromatogram = 0;
-    private static final int PROPERTY_color = 1;
+    private static final int PROPERTY_applicableDetectorTypes = 0;
+    private static final int PROPERTY_applicableSeparationTypes = 1;
     private static final int PROPERTY_date = 2;
     private static final int PROPERTY_displayName = 3;
     private static final int PROPERTY_id = 4;
-    private static final int PROPERTY_members = 5;
+    private static final int PROPERTY_maskedMasses = 5;
     private static final int PROPERTY_name = 6;
-    private static final int PROPERTY_precedence = 7;
+    private static final int PROPERTY_resourceLocation = 7;
     private static final int PROPERTY_shortDescription = 8;
     private static final int PROPERTY_tool = 9;
+    private static final int PROPERTY_type = 10;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[10];
+        PropertyDescriptor[] properties = new PropertyDescriptor[11];
     
         try {
-            properties[PROPERTY_chromatogram] = new PropertyDescriptor ( "chromatogram", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getChromatogram", "setChromatogram" ); // NOI18N
-            properties[PROPERTY_color] = new PropertyDescriptor ( "color", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getColor", "setColor" ); // NOI18N
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getId", "setId" ); // NOI18N
-            properties[PROPERTY_members] = new PropertyDescriptor ( "members", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, null, "setMembers" ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getName", "setName" ); // NOI18N
-            properties[PROPERTY_precedence] = new PropertyDescriptor ( "precedence", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getPrecedence", "setPrecedence" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getTool", "setTool" ); // NOI18N
+            properties[PROPERTY_applicableDetectorTypes] = new PropertyDescriptor ( "applicableDetectorTypes", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getApplicableDetectorTypes", "setApplicableDetectorTypes" ); // NOI18N
+            properties[PROPERTY_applicableSeparationTypes] = new PropertyDescriptor ( "applicableSeparationTypes", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getApplicableSeparationTypes", "setApplicableSeparationTypes" ); // NOI18N
+            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getDate", "setDate" ); // NOI18N
+            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
+            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getId", "setId" ); // NOI18N
+            properties[PROPERTY_maskedMasses] = new PropertyDescriptor ( "maskedMasses", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getMaskedMasses", "setMaskedMasses" ); // NOI18N
+            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_resourceLocation] = new PropertyDescriptor ( "resourceLocation", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getResourceLocation", "setResourceLocation" ); // NOI18N
+            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
+            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getTool", "setTool" ); // NOI18N
+            properties[PROPERTY_type] = new PropertyDescriptor ( "type", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getType", "setType" ); // NOI18N
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
         }//GEN-HEADEREND:Properties
+    // Here you can add code for customizing the properties array.
 
-        // Here you can add code for customizing the properties array.
         return properties;     }//GEN-LAST:Properties
+
     // Event set information will be obtained from introspection.//GEN-FIRST:Events
     private static EventSetDescriptor[] eventSets = null;
     private static EventSetDescriptor[] getEdescriptor(){//GEN-HEADEREND:Events
+    // Here you can add code for customizing the event sets array.
 
-        // Here you can add code for customizing the event sets array.
         return eventSets;     }//GEN-LAST:Events
+
     // Method information will be obtained from introspection.//GEN-FIRST:Methods
     private static MethodDescriptor[] methods = null;
     private static MethodDescriptor[] getMdescriptor(){//GEN-HEADEREND:Methods
+    // Here you can add code for customizing the methods array.
 
-        // Here you can add code for customizing the methods array.
         return methods;     }//GEN-LAST:Methods
+
     private static java.awt.Image iconColor16 = null;//GEN-BEGIN:IconsDef
     private static java.awt.Image iconColor32 = null;
     private static java.awt.Image iconMono16 = null;
@@ -103,16 +103,15 @@ public class Peak1DContainerBeanInfo extends SimpleBeanInfo {
     private static String iconNameC32 = null;
     private static String iconNameM16 = null;
     private static String iconNameM32 = null;//GEN-END:Icons
+
     private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
     private static final int defaultEventIndex = -1;//GEN-END:Idx
 
-    public BeanInfo[] getAdditionalBeanInfo() {//GEN-FIRST:Superclass
-        Class superclass = net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class.getSuperclass();
-        BeanInfo sbi = null;
-        try {
-            sbi = Introspector.getBeanInfo(superclass);//GEN-HEADEREND:Superclass
-            // Here you can add code for customizing the Superclass BeanInfo.
-            } catch(IntrospectionException ex) { }  return new BeanInfo[] { sbi }; }//GEN-LAST:Superclass
+
+//GEN-FIRST:Superclass
+    // Here you can add code for customizing the Superclass BeanInfo.
+
+//GEN-LAST:Superclass
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *
@@ -259,4 +258,5 @@ public class Peak1DContainerBeanInfo extends SimpleBeanInfo {
                 return null;
         }
     }
+    
 }

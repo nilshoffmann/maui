@@ -53,6 +53,7 @@ public interface IContainer<T extends IBasicDescriptor> extends IGenericContaine
      */
     void setPrecedence(int i);
 
+    final String PROP_ICON = "icon";
     /**
      *
      * @param type
@@ -60,6 +61,7 @@ public interface IContainer<T extends IBasicDescriptor> extends IGenericContaine
      */
     Image getIcon(int type);
 
+    final String PROP_LEVEL = "level";
     /**
      *
      * @return

@@ -35,21 +35,26 @@ import com.db4o.consistency.ConsistencyReport;
 import com.db4o.consistency.SlotDetail;
 import com.db4o.ext.DatabaseClosedException;
 import com.db4o.ext.DatabaseFileLockedException;
+import com.db4o.ext.DatabaseReadOnlyException;
 import com.db4o.ext.Db4oIOException;
+import com.db4o.ext.IncompatibleFileFormatException;
 import com.db4o.ext.InvalidIDException;
+import com.db4o.ext.OldFormatException;
 import com.db4o.ext.StoredClass;
 import com.db4o.foundation.Pair;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Value;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
 import net.sf.maltcms.chromaui.db.spi.db4o.DB4oCrudProvider;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.chromaui.ui.support.api.Projects;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectManager;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -71,7 +76,9 @@ import org.openide.windows.InputOutput;
 @Messages("CTL_CheckDatabaseConsistency=Check Database Consistency")
 public final class CheckDatabaseConsistency implements ActionListener {
 
-    private boolean isConsistent(File dbFile, InputOutput io) {
+    private static final AtomicBoolean isRunningConsistencyCheck = new AtomicBoolean(false);
+
+    private boolean isConsistent(File dbFile, InputOutput io, int retryCount) {
         EmbeddedObjectContainer container = null;
         try {
             container = Db4oEmbedded.openFile(dbFile.getAbsolutePath());
@@ -98,7 +105,19 @@ public final class CheckDatabaseConsistency implements ActionListener {
                 io.getOut().println(cr.toString());
             }
             return cr.consistent();
-        } catch (Exception e) {
+        } catch (DatabaseFileLockedException dfle) {
+            if (retryCount > 0) {
+                try {
+                    Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.INFO, "Waiting 5 seconds for database to finish writing!");
+                    Thread.sleep(5000);
+                    return isConsistent(dbFile, io, retryCount - 1);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Caught exception while waiting for database closing.");
+                }
+            } else {
+                throw new RuntimeException(dfle);
+            }
+        } catch (Db4oIOException | IncompatibleFileFormatException | OldFormatException | DatabaseReadOnlyException e) {
             Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Caught exception while opening database " + dbFile, e);
             throw new RuntimeException(e);
         } finally {
@@ -110,83 +129,103 @@ public final class CheckDatabaseConsistency implements ActionListener {
                 }
             }
         }
+        return false;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Collection<? extends Project> projects = Projects.getSelectedOpenProject(Project.class, "Select Project to check", "Project");
-        if (projects.isEmpty()) {
-            Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.INFO, "No project selected, returning!");
-            return;
+        if (isRunningConsistencyCheck.compareAndSet(false, true)) {
+            ConsistencyCheckWorker ccw = new ConsistencyCheckWorker();
+            ConsistencyCheckWorker.createAndRun("Checking database consistency", ccw);
         }
-        Project project = projects.iterator().next();
-        if (OpenProjects.getDefault().isProjectOpen(project)) {
-            OpenProjects.getDefault().close(new Project[]{project});
-        }
-        InputOutput io = null;
-        try {
-            io = IOProvider.getDefault().getIO("Db4o Database Consistency Check", true);
-            io.select();
-            File f = new File(FileUtil.toFile(project.getProjectDirectory()), "maui.mpr");
-            if (f.canRead()) {
-                Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.INFO, "Database file {0} is accessible!", f);
-            } else {
-                Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Database file {0} is not readable!", f);
-                NotifyDescriptor ndd2 = new NotifyDescriptor.Confirmation("Database at " + f.getAbsolutePath() + " is not a valid Maui database (.mpr)!", "Invalid database file", NotifyDescriptor.DEFAULT_OPTION, NotifyDescriptor.WARNING_MESSAGE);
-                DialogDisplayer.getDefault().notify(ndd2);
-                return;
-            }
+    }
+
+    @Value
+    private class ConsistencyCheckWorker extends AProgressAwareRunnable {
+
+        @Override
+        public void run() {
+            InputOutput io = null;
             try {
-                if (!isConsistent(f, io)) {
-                    NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Database at " + f.getAbsolutePath() + " is inconsistent!\nAttempt to fix?\nSelecting 'No' will cancel all other attempts!", "Attempt fix of corrupt db?", NotifyDescriptor.YES_NO_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
-                    Object obj = DialogDisplayer.getDefault().notify(ndd);
-                    if (obj.equals(NotifyDescriptor.OK_OPTION)) {
-                        DB4oCrudProvider icpSource;
-                        DB4oCrudProvider icpTarget;
-                        icpSource = new DB4oCrudProvider(f,
-                                new NoAuthCredentials(), Lookup.getDefault().lookup(
-                                        ClassLoader.class));
-                        icpSource.open();
-                        File repairBackupFile = new File(f.getAbsolutePath(), ".repBackup");
-                        icpTarget = new DB4oCrudProvider(repairBackupFile,
-                                new NoAuthCredentials(), Lookup.getDefault().lookup(
-                                        ClassLoader.class));
-                        icpTarget.open();
-                        try {
-                            copyDatabase(io, icpSource.getObjectContainer(), icpTarget.getObjectContainer());
-                            if (isConsistent(repairBackupFile, io)) {
-                                io.getOut().println("Database is consistent after copying! Replacing original database with repaired one!");
+                getProgressHandle().start();
+                getProgressHandle().progress("Prompting to select project");
+                Collection<? extends Project> projects = Projects.getSelectedOpenProject(Project.class, "Select Project to check", "Project");
+                if (projects.isEmpty()) {
+                    Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.INFO, "No project selected, returning!");
+                    return;
+                }
+                Project project = projects.iterator().next();
+                OpenProjects.getDefault().close(new Project[]{project});
+                io = IOProvider.getDefault().getIO("Db4o Database Consistency Check", true);
+                io.select();
+                File f = new File(FileUtil.toFile(project.getProjectDirectory()), "maui.mpr");
+                getProgressHandle().progress("Checking database access");
+                if (f.canRead()) {
+                    Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.INFO, "Database file {0} is accessible!", f);
+                } else {
+                    Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Database file {0} is not readable!", f);
+                    NotifyDescriptor ndd2 = new NotifyDescriptor.Confirmation("Database at " + f.getAbsolutePath() + " is not a valid Maui database (.mpr)!", "Invalid database file", NotifyDescriptor.DEFAULT_OPTION, NotifyDescriptor.WARNING_MESSAGE);
+                    DialogDisplayer.getDefault().notify(ndd2);
+                    return;
+                }
+                int retryCount = 5;
+                try {
+                    if (!isConsistent(f, io, retryCount)) {
+                        getProgressHandle().progress("Database is not consistent");
+                        NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Database at " + f.getAbsolutePath() + " is inconsistent!\nAttempt to fix?\nSelecting 'No' will cancel all other attempts!", "Attempt fix of corrupt db?", NotifyDescriptor.YES_NO_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
+                        Object obj = DialogDisplayer.getDefault().notify(ndd);
+                        if (obj.equals(NotifyDescriptor.OK_OPTION)) {
+                            DB4oCrudProvider icpSource;
+                            DB4oCrudProvider icpTarget;
+                            icpSource = new DB4oCrudProvider(f,
+                                    new NoAuthCredentials(), Lookup.getDefault().lookup(
+                                            ClassLoader.class));
+                            icpSource.open();
+                            File repairBackupFile = new File(f.getAbsolutePath(), ".repBackup");
+                            icpTarget = new DB4oCrudProvider(repairBackupFile,
+                                    new NoAuthCredentials(), Lookup.getDefault().lookup(
+                                            ClassLoader.class));
+                            icpTarget.open();
+                            try {
+                                copyDatabase(io, icpSource.getObjectContainer(), icpTarget.getObjectContainer());
+                                if (isConsistent(repairBackupFile, io, retryCount)) {
+                                    io.getOut().println("Database is consistent after copying! Replacing original database with repaired one!");
+                                    icpSource.close();
+                                    icpTarget.close();
+                                    f.delete();
+                                    repairBackupFile.renameTo(f);
+                                    //restore project that was initially open
+                                    OpenProjects.getDefault().open(new Project[]{project}, false, true);
+                                } else {
+                                    NotifyDescriptor ndd2 = new NotifyDescriptor.Confirmation("Database at " + f.getAbsolutePath() + " could not be repaired!", "Could not repair database", NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.ERROR_MESSAGE);
+                                    DialogDisplayer.getDefault().notify(ndd2);
+                                }
+                            } finally {
+                                //close, just in case
                                 icpSource.close();
                                 icpTarget.close();
-                                f.delete();
-                                repairBackupFile.renameTo(f);
-                                //restore project that was initially open
-                                OpenProjects.getDefault().open(new Project[]{project}, false, true);
-                            } else {
-                                NotifyDescriptor ndd2 = new NotifyDescriptor.Confirmation("Database at " + f.getAbsolutePath() + " could not be repaired!", "Could not repair database", NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.ERROR_MESSAGE);
-                                DialogDisplayer.getDefault().notify(ndd2);
                             }
-                        } finally {
-                            //close, just in case
-                            icpSource.close();
-                            icpTarget.close();
                         }
+                    } else {
+                        getProgressHandle().progress("Database is consistent");
+                        //restore project that was initially open
+                        OpenProjects.getDefault().open(new Project[]{project}, false, true);
                     }
-                } else {
-                    //restore project that was initially open
-                    OpenProjects.getDefault().open(new Project[]{project}, false, true);
+                } catch (DatabaseFileLockedException dfle) {
+                    Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Database file " + f + " is locked!", dfle);
+                } catch (RuntimeException re) {
+                    Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Caught runtime exception while checking database consistency!", re);
                 }
-            } catch (DatabaseFileLockedException dfle) {
-                Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Database file " + f + " is locked!", dfle);
-            } catch (RuntimeException re) {
-                Logger.getLogger(CheckDatabaseConsistency.class.getName()).log(Level.WARNING, "Caught runtime exception while checking database consistency!", re);
-            }
-        } finally {
-            if (io != null) {
-                io.getOut().close();
-                io.getErr().close();
+            } finally {
+                if (io != null) {
+                    io.getOut().close();
+                    io.getErr().close();
+                }
+                getProgressHandle().finish();
+                isRunningConsistencyCheck.compareAndSet(true, false);
             }
         }
+
     }
 
     private void copyDatabase(InputOutput io, ObjectContainer sourceContainer, ObjectContainer targetContainer) {
