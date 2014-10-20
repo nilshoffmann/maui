@@ -467,6 +467,9 @@ public class RserveConnectionFactory implements PreferenceChangeListener {
             return rscriptLocation;
         }
         File rbinary = getRBinaryLocation();
+        if(rbinary==null) {
+            return null;
+        }
         File rBinDir = rbinary.getParentFile();
         String rscriptExeName = "Rscript";
         String osname = System.getProperty("os.name");

@@ -324,10 +324,10 @@ final class RServePanel extends javax.swing.JPanel {
                 Logger.getLogger(getClass().getName()).log(Level.INFO, "Result: {0}", Arrays.toString(rexp.asDoubles()));
                 return true;
             } catch (REXPMismatchException ex) {
-                ex.printStackTrace();
+                Exceptions.printStackTrace(ex);
             }
         } catch (RserveException ex) {
-            ex.printStackTrace();
+            Exceptions.printStackTrace(ex);
         }
         return false;
     }
