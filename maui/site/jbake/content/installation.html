@@ -16,11 +16,11 @@ status=published
 </ul>
 <h5>Installers</h5>
 <ul class="inline">
-    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-windows.exe">Windows</a></li>
-    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-macosx.tgz">MacOS X</a></li>
-    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-linux.sh">Linux</a></li>
-    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui-solaris.sh">Solaris</a></li>
-    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.0/maui.zip">Platform Independent ZIP</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.2/maui-windows.exe">Windows</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.2/maui-macosx.tgz">MacOS X</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.2/maui-linux.sh">Linux</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.2/maui-solaris.sh">Solaris</a></li>
+    <li><a class="btn btn-primary" href="http://sourceforge.net/projects/maltcms/files/maui/1.3.2/maui.zip">Platform Independent ZIP</a></li>
 </ul>
 <h4>Change Log</h4>
 <h5>New Features</h5>
@@ -36,7 +36,7 @@ status=published
     <li>Added additional action for identification of selected peaks.</li>
     <li>Added action to add a newly imported database to an existing database container.</li>
     <li>Added svg export of charts.</li>
-    <li>Added xcms matched filter peak finding template.</li>
+    <li>Added XCMS matched filter peak finding template.</li>
     <li>Added project-specific peak normalization remembering the last selected group.</li>
     <li>Added search ability for peaks.</li>
     <li>Added project-specific peak pvalue adjustment remembering the last selected method.</li>
@@ -57,15 +57,18 @@ status=published
     <li>Added installed maltcms pipelines as dynamic actions into project context menu.</li>
     <li>Added additional field for maltcms runtime arguments.</li>
     <li>Added better error messages and progress indication to PeakAlignmentImporter.</li>
-    <li>Added CheckDatabaseConsistency Action to check a closed database for errors.</li>
+    <li>Added CheckDatabaseConsistency Action to check a database for errors.</li>
+    <li>Added Defragment Database Action to resize a database with spare place.</li>
     <li>Added ui elements to change block size in Chromatogram2DPanel.</li>
+    <li>Added display/selection of peak annotations close to click location in 2D chromatogram view.</li>
+    <li>Added automatic selection of R/Rscript locations for usage in custom scripts.</li>
 </ul>
 <h5>Updates and Improvements</h5>
 <ul>
     <li>Updated cross and maltcms versions to 1.4.0.</li>
     <li>Updated cross and maltcms versions to 1.3.2.</li>
     <li>Updated peak descriptor to include baseline information. Added rendering of peak shapes to peak overlay.</li>
-    <li>Updated navigator view for 1D chromatograms.</li> 
+    <li>Updated navigator view for 1D and 2D chromatograms.</li> 
     <li>Updated JOGL version and Java3D due to Mesa-related rendering bug on Ubuntu with Intel graphics.</li>
     <li>Updated pipeline wizard (not fully functional yet).</li>
     <li>Updated license to include L-GPL and EPL license text.</li> 
@@ -83,6 +86,7 @@ status=published
 </ul>
 <h5>Bug Fixes</h5>
 <ul>
+    <li>Fixed database locked exception in project file chooser when accessing project settings.</li>
     <li>Fixed chromatogram node menu item problem for multiple selections.</li>
     <li>Fixed a startup problem on Linux for R>=3.0.</li>
     <li>Fixed Navigator PanelUI to keep contents, expansion state and as much as possible, the selection.</li>
@@ -96,7 +100,8 @@ status=published
     <li>Fixed a bug with caching of scans in CachingChromatogram1D and -2D.</li>
     <li>Fixed a bug when opening 2D chromatograms in 1D view.</li>
     <li>Fixed a minor issue with viewport synchronization.</li>
-    <li>Fixed index out of bounds problem in CachingChromatogram1D. Modified Peak1DOverlay so that it listens to global selection of PeakAnnotationDescriptors e.g. from the project explorer, and highlights the appropriate peaks.</li> 
+    <li>Fixed index out of bounds problem in CachingChromatogram1D and -2D. </li>
+    <li>Fixed Peak1DOverlay so that it listens to global selection of PeakAnnotationDescriptors e.g. from the project explorer, and highlights the appropriate peaks.</li> 
     <li>Fixed issue [#13]. EIC Coplot is still not fully functional, but all other plots now work as expected. Added peak indicator lines to overlay. Can be customized via navigator node properties.</li>
     <li>Fixed pipeline to scene parsing of PipelineEditor. Related to issue [#8].</li>
     <li>Fixed problems with project wizard losing sample and treatment groups [#10]. Fixed layout differences.</li>
