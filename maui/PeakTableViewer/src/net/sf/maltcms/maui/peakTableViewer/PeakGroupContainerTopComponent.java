@@ -183,7 +183,7 @@ public final class PeakGroupContainerTopComponent extends TopComponent implement
     void setContainer(PeakGroupContainer context, boolean hideSamples) {
         peakGroupContainer = context;
         activeProject = context.getProject();
-        setDisplayName(peakGroupContainer.getDisplayName());
+        setDisplayName("Peak group "+peakGroupContainer.getDisplayName()+" for "+peakGroupContainer.getProject().getLocation().getName());
         if (view != null) {
             remove(view);
         }
@@ -207,9 +207,10 @@ public final class PeakGroupContainerTopComponent extends TopComponent implement
 //                    typesForColumns.add(peaks.get(0).getClass());
 //                }
             }
-            HashSet<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(typesForColumns);
+            Collection<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(typesForColumns);
             utils.addPropertyColumns(view, columns);
             createNodes(hideSamples);
+            view.requestFocusInWindow();
         }
     }
     

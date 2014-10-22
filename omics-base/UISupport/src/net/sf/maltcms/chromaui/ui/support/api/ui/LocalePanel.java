@@ -71,7 +71,11 @@ public class LocalePanel extends javax.swing.JPanel {
         @Override
         public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            setText(((Locale) value).getDisplayName());
+            String label = ((Locale) value).getDisplayName();
+            if(label.length()>22) {
+                label = label.substring(0, 24)+"...";
+            }
+            setText(label);
             return c;
         }
     }
@@ -96,9 +100,16 @@ public class LocalePanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         localComboBox = new javax.swing.JComboBox();
 
+        setAlignmentY(0.0F);
+
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(LocalePanel.class, "LocalePanel.jLabel1.text")); // NOI18N
 
         localComboBox.setModel(getLocaleComboBoxModel());
+        localComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                localComboBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -106,10 +117,10 @@ public class LocalePanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(localComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                    .addComponent(localComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,9 +129,13 @@ public class LocalePanel extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(localComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void localComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_localComboBoxActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

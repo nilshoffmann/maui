@@ -108,7 +108,10 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
     @Override
     public boolean requestFocusInWindow() {
-        return view.requestFocusInWindow();
+        if(view!=null) {
+            return view.requestFocusInWindow();
+        }
+        return true;
     }
 
     /**
@@ -155,7 +158,9 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
     @Override
     protected void componentActivated() {
         ExplorerUtils.activateActions(manager, true);
-        view.requestFocusInWindow();
+        if(view!=null) {
+            view.requestFocusInWindow();
+        }
     }
 
     @Override
@@ -229,14 +234,14 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
         if (peakGroupDescriptor != null && !peakGroupDescriptor.getPeakAnnotationDescriptors().isEmpty()) {
             ColumnUtilities utils = new ColumnUtilities();
             List<Class> typesForColumns = new ArrayList<>();
-            typesForColumns.add(peakGroupDescriptor.getClass());
             List<IPeakAnnotationDescriptor> peaks = peakGroupDescriptor.getPeakAnnotationDescriptors();
             if (!peaks.isEmpty()) {
                 typesForColumns.add(peaks.get(0).getClass());
             }
-            HashSet<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(typesForColumns);
+            Collection<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(typesForColumns);
             utils.addPropertyColumns(view, columns);
             createNodes(peakGroupDescriptor, hideChromatogramDescriptor);
+            view.requestFocusInWindow();
         }
     }
 

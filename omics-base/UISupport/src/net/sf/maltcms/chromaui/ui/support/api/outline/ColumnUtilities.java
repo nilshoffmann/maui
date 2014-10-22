@@ -31,10 +31,10 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import org.openide.explorer.view.OutlineView;
 import org.openide.util.Exceptions;
 
@@ -44,7 +44,7 @@ import org.openide.util.Exceptions;
  */
 public class ColumnUtilities {
 
-    public void addPropertyColumns(OutlineView view, HashSet<ColumnDescriptor> columns, HashSet<String> whiteList) {
+    public void addPropertyColumns(OutlineView view, Collection<ColumnDescriptor> columns, HashSet<String> whiteList) {
         for (ColumnDescriptor cd : columns) {
             if (whiteList.contains(cd.name)) {
                 view.addPropertyColumn(cd.name, cd.displayName,
@@ -53,33 +53,35 @@ public class ColumnUtilities {
         }
     }
 
-    public void addPropertyColumns(OutlineView view, HashSet<ColumnDescriptor> columns) {
+    public void addPropertyColumns(OutlineView view, Collection<ColumnDescriptor> columns) {
         for (ColumnDescriptor cd : columns) {
             view.addPropertyColumn(cd.name, cd.displayName,
                     cd.shortDescription);
         }
     }
 
-    public HashSet<ColumnDescriptor> getColumnDescriptorsForClasses(Collection<? extends Class> container) {
-         HashSet<ColumnDescriptor> columns = new LinkedHashSet<>();
+    public Collection<ColumnDescriptor> getColumnDescriptorsForClasses(Collection<? extends Class> container) {
+        HashMap<String, ColumnDescriptor> columns = new LinkedHashMap<>();
         for (Class sdesc : container) {
             try {
                 BeanInfo info = Introspector.getBeanInfo(
                         sdesc);
                 PropertyDescriptor[] pds = info.getPropertyDescriptors();
                 for (PropertyDescriptor pd : pds) {
-                    columns.add(new ColumnDescriptor(
-                            pd.getName(),
-                            pd.getDisplayName(),
-                            pd.getShortDescription()));
+                    if (!columns.containsKey(pd.getName())) {
+                        columns.put(pd.getName(), new ColumnDescriptor(
+                                pd.getName(),
+                                pd.getDisplayName(),
+                                pd.getShortDescription()));
+                    }
                 }
             } catch (IntrospectionException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
-        return columns;
+        return columns.values();
     }
-    
+
 //    public HashSet<ColumnDescriptor> getColumnDescriptors(Collection<? extends Object> container) {
 //        ArrayList<Class> l = new ArrayList<>();
 //        for(Object o:container) {

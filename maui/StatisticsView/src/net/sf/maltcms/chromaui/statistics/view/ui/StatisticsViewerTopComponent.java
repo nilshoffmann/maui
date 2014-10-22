@@ -169,7 +169,7 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
             }else{
                 l.add(IStatisticsDescriptor.class);
             }
-            HashSet<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(l);
+            Collection<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(l);
             childFactory = new StatisticsContainerListChildFactory(project, descriptor,
                     -1);
             root = new AbstractNode(Children.create(childFactory, true), Lookups.fixed(project,
