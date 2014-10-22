@@ -27,6 +27,7 @@
  */
 package maltcms.ui.fileHandles.csv;
 
+import net.sf.maltcms.chromaui.ui.support.api.jtable.JTableCustomizer;
 import cross.tools.MathTools;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

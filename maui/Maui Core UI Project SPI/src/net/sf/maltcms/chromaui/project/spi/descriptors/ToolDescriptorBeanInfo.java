@@ -44,27 +44,11 @@ public class ToolDescriptorBeanInfo extends SimpleBeanInfo {
 
 
     // Property identifiers//GEN-FIRST:Properties
-    private static final int PROPERTY_date = 0;
-    private static final int PROPERTY_displayName = 1;
-    private static final int PROPERTY_id = 2;
-    private static final int PROPERTY_name = 3;
-    private static final int PROPERTY_shortDescription = 4;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[5];
-    
-        try {
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor.class, "getId", "setId" ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor.class, "getName", "setName" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
-        }
-        catch(IntrospectionException e) {
-            e.printStackTrace();
-        }//GEN-HEADEREND:Properties
+        PropertyDescriptor[] properties = new PropertyDescriptor[0];//GEN-HEADEREND:Properties
     // Here you can add code for customizing the properties array.
 
         return properties;     }//GEN-LAST:Properties
@@ -96,10 +80,14 @@ public class ToolDescriptorBeanInfo extends SimpleBeanInfo {
     private static final int defaultEventIndex = -1;//GEN-END:Idx
 
 
-//GEN-FIRST:Superclass
+    public BeanInfo[] getAdditionalBeanInfo() {//GEN-FIRST:Superclass
+        Class superclass = net.sf.maltcms.chromaui.project.spi.descriptors.ToolDescriptor.class.getSuperclass();
+        BeanInfo sbi = null;
+        try {
+            sbi = Introspector.getBeanInfo(superclass);//GEN-HEADEREND:Superclass
     // Here you can add code for customizing the Superclass BeanInfo.
 
-//GEN-LAST:Superclass
+            } catch(IntrospectionException ex) { }  return new BeanInfo[] { sbi }; }//GEN-LAST:Superclass
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *

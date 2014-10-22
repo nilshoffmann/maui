@@ -36,7 +36,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.ChromaTofPeakListConverter;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.ui.LocalePanel;
+import net.sf.maltcms.chromaui.ui.support.api.ui.LocalePanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 import org.openide.awt.ActionRegistration;

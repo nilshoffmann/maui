@@ -44,55 +44,41 @@ public class AnovaDescriptorBeanInfo extends SimpleBeanInfo {
 
 
     // Property identifiers//GEN-FIRST:Properties
-    private static final int PROPERTY_date = 0;
-    private static final int PROPERTY_degreesOfFreedomList = 1;
-    private static final int PROPERTY_displayName = 2;
-    private static final int PROPERTY_factorsList = 3;
-    private static final int PROPERTY_fvaluesList = 4;
-    private static final int PROPERTY_groupSize = 5;
-    private static final int PROPERTY_id = 6;
-    private static final int PROPERTY_name = 7;
-    private static final int PROPERTY_peakGroupDescriptor = 8;
-    private static final int PROPERTY_project = 9;
-    private static final int PROPERTY_pvalueAdjustmentMethod = 10;
-    private static final int PROPERTY_pvaluesList = 11;
-    private static final int PROPERTY_shortDescription = 12;
-    private static final int PROPERTY_tool = 13;
+    private static final int PROPERTY_degreesOfFreedomList = 0;
+    private static final int PROPERTY_factorsList = 1;
+    private static final int PROPERTY_fvaluesList = 2;
+    private static final int PROPERTY_groupSize = 3;
+    private static final int PROPERTY_peakGroupDescriptor = 4;
+    private static final int PROPERTY_pvalueAdjustmentMethod = 5;
+    private static final int PROPERTY_pvaluesList = 6;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[14];
+        PropertyDescriptor[] properties = new PropertyDescriptor[7];
     
         try {
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_date].setDisplayName ( "Date of Creation" );
             properties[PROPERTY_degreesOfFreedomList] = new PropertyDescriptor ( "degreesOfFreedomList", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getDegreesOfFreedomList", null ); // NOI18N
             properties[PROPERTY_degreesOfFreedomList].setDisplayName ( "Degrees of Freedom" );
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_displayName].setDisplayName ( "Display Name" );
+            properties[PROPERTY_degreesOfFreedomList].setShortDescription ( "The degrees of freedom" );
             properties[PROPERTY_factorsList] = new PropertyDescriptor ( "factorsList", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getFactorsList", null ); // NOI18N
             properties[PROPERTY_factorsList].setDisplayName ( "Factors" );
+            properties[PROPERTY_factorsList].setShortDescription ( "The factors used in this Anova" );
             properties[PROPERTY_fvaluesList] = new PropertyDescriptor ( "fvaluesList", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getFvaluesList", null ); // NOI18N
             properties[PROPERTY_fvaluesList].setDisplayName ( "F-Values" );
+            properties[PROPERTY_fvaluesList].setShortDescription ( "The F-values of this Anova" );
             properties[PROPERTY_groupSize] = new PropertyDescriptor ( "groupSize", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getGroupSize", "setGroupSize" ); // NOI18N
             properties[PROPERTY_groupSize].setDisplayName ( "Group Size" );
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getId", "setId" ); // NOI18N
-            properties[PROPERTY_id].setDisplayName ( "Id" );
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getName", "setName" ); // NOI18N
-            properties[PROPERTY_name].setDisplayName ( "Name" );
+            properties[PROPERTY_groupSize].setShortDescription ( "The group size of this Anova" );
             properties[PROPERTY_peakGroupDescriptor] = new PropertyDescriptor ( "peakGroupDescriptor", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getPeakGroupDescriptor", "setPeakGroupDescriptor" ); // NOI18N
             properties[PROPERTY_peakGroupDescriptor].setDisplayName ( "Peak Group" );
-            properties[PROPERTY_project] = new PropertyDescriptor ( "project", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getProject", "setProject" ); // NOI18N
-            properties[PROPERTY_project].setDisplayName ( "Parent Project" );
+            properties[PROPERTY_peakGroupDescriptor].setShortDescription ( "The peak group associated to this Anova" );
             properties[PROPERTY_pvalueAdjustmentMethod] = new PropertyDescriptor ( "pvalueAdjustmentMethod", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getPvalueAdjustmentMethod", "setPvalueAdjustmentMethod" ); // NOI18N
             properties[PROPERTY_pvalueAdjustmentMethod].setDisplayName ( "P-Value Adjustment" );
+            properties[PROPERTY_pvalueAdjustmentMethod].setShortDescription ( "The p-value adjustment method used to correct for multiple testing bias" );
             properties[PROPERTY_pvaluesList] = new PropertyDescriptor ( "pvaluesList", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getPvaluesList", null ); // NOI18N
             properties[PROPERTY_pvaluesList].setDisplayName ( "P-Values" );
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_shortDescription].setDisplayName ( "Short Description" );
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class, "getTool", "setTool" ); // NOI18N
-            properties[PROPERTY_tool].setDisplayName ( "Created by" );
+            properties[PROPERTY_pvaluesList].setShortDescription ( "The p-values of this Anova" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
@@ -128,10 +114,14 @@ public class AnovaDescriptorBeanInfo extends SimpleBeanInfo {
     private static final int defaultEventIndex = -1;//GEN-END:Idx
 
 
-//GEN-FIRST:Superclass
+    public BeanInfo[] getAdditionalBeanInfo() {//GEN-FIRST:Superclass
+        Class superclass = net.sf.maltcms.chromaui.project.spi.descriptors.AnovaDescriptor.class.getSuperclass();
+        BeanInfo sbi = null;
+        try {
+            sbi = Introspector.getBeanInfo(superclass);//GEN-HEADEREND:Superclass
     // Here you can add code for customizing the Superclass BeanInfo.
 
-//GEN-LAST:Superclass
+            } catch(IntrospectionException ex) { }  return new BeanInfo[] { sbi }; }//GEN-LAST:Superclass
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *

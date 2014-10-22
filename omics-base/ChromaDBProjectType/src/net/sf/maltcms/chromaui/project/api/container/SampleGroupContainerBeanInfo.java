@@ -51,33 +51,23 @@ public class SampleGroupContainerBeanInfo extends SimpleBeanInfo {
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_color = 0;
     private static final int PROPERTY_comment = 1;
-    private static final int PROPERTY_date = 2;
-    private static final int PROPERTY_displayName = 3;
-    private static final int PROPERTY_id = 4;
-    private static final int PROPERTY_members = 5;
-    private static final int PROPERTY_name = 6;
-    private static final int PROPERTY_precedence = 7;
-    private static final int PROPERTY_sampleGroup = 8;
-    private static final int PROPERTY_shortDescription = 9;
-    private static final int PROPERTY_tool = 10;
+    private static final int PROPERTY_sampleGroup = 2;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[11];
+        PropertyDescriptor[] properties = new PropertyDescriptor[3];
     
         try {
             properties[PROPERTY_color] = new PropertyDescriptor ( "color", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getColor", "setColor" ); // NOI18N
+            properties[PROPERTY_color].setDisplayName ( "Color" );
+            properties[PROPERTY_color].setShortDescription ( "The sample group's color" );
             properties[PROPERTY_comment] = new PropertyDescriptor ( "comment", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getComment", "setComment" ); // NOI18N
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getId", "setId" ); // NOI18N
-            properties[PROPERTY_members] = new PropertyDescriptor ( "members", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, null, "setMembers" ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getName", "setName" ); // NOI18N
-            properties[PROPERTY_precedence] = new PropertyDescriptor ( "precedence", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getPrecedence", "setPrecedence" ); // NOI18N
+            properties[PROPERTY_comment].setDisplayName ( "Comment" );
+            properties[PROPERTY_comment].setShortDescription ( "An arbitrary comment" );
             properties[PROPERTY_sampleGroup] = new PropertyDescriptor ( "sampleGroup", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getSampleGroup", "setSampleGroup" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer.class, "getTool", "setTool" ); // NOI18N
+            properties[PROPERTY_sampleGroup].setDisplayName ( "Sample Group" );
+            properties[PROPERTY_sampleGroup].setShortDescription ( "The associated sample group" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

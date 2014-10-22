@@ -27,11 +27,12 @@
  */
 package net.sf.maltcms.chromaui.statistics.view.propertyEditors;
 
-import java.awt.Component;
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
+import org.openide.nodes.PropertyEditorRegistration;
 
 
+@PropertyEditorRegistration(targetType = {float[].class})
 public class FloatArrayPropertyEditor extends PropertyEditorSupport {
     
     @Override

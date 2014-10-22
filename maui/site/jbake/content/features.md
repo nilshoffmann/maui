@@ -9,6 +9,7 @@ status=published
 + mzData, mzXML (limited)
 + msp (NIST AMDIS &copy; mass spec format)
 + LECO ChromaTOF &copy; peak list
++ GC Image Blob &copy; peak list
 
 <h2>Interactivity</h2>
 + all domain objects are interlinked and retrievable from specialized views 

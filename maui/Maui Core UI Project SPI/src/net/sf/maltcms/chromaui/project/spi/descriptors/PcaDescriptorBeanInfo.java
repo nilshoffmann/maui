@@ -46,41 +46,47 @@ public class PcaDescriptorBeanInfo extends SimpleBeanInfo {
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_cases = 0;
     private static final int PROPERTY_center = 1;
-    private static final int PROPERTY_date = 2;
-    private static final int PROPERTY_displayName = 3;
-    private static final int PROPERTY_groupColors = 4;
-    private static final int PROPERTY_id = 5;
-    private static final int PROPERTY_name = 6;
-    private static final int PROPERTY_peakGroupContainer = 7;
-    private static final int PROPERTY_rotation = 8;
-    private static final int PROPERTY_scale = 9;
-    private static final int PROPERTY_sdev = 10;
-    private static final int PROPERTY_shortDescription = 11;
-    private static final int PROPERTY_tool = 12;
-    private static final int PROPERTY_variables = 13;
-    private static final int PROPERTY_x = 14;
+    private static final int PROPERTY_groupColors = 2;
+    private static final int PROPERTY_peakGroupContainer = 3;
+    private static final int PROPERTY_rotation = 4;
+    private static final int PROPERTY_scale = 5;
+    private static final int PROPERTY_sdev = 6;
+    private static final int PROPERTY_variables = 7;
+    private static final int PROPERTY_x = 8;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[15];
+        PropertyDescriptor[] properties = new PropertyDescriptor[9];
     
         try {
             properties[PROPERTY_cases] = new PropertyDescriptor ( "cases", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getCases", "setCases" ); // NOI18N
+            properties[PROPERTY_cases].setDisplayName ( "Cases" );
+            properties[PROPERTY_cases].setShortDescription ( "The cases covered by this PCA" );
             properties[PROPERTY_center] = new PropertyDescriptor ( "center", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getCenter", "setCenter" ); // NOI18N
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
+            properties[PROPERTY_center].setDisplayName ( "Center" );
+            properties[PROPERTY_center].setShortDescription ( "The center vector of this PCA" );
             properties[PROPERTY_groupColors] = new PropertyDescriptor ( "groupColors", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getGroupColors", "setGroupColors" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getId", "setId" ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_groupColors].setDisplayName ( "Group Colors" );
+            properties[PROPERTY_groupColors].setShortDescription ( "The group colors, used for charting" );
             properties[PROPERTY_peakGroupContainer] = new PropertyDescriptor ( "peakGroupContainer", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getPeakGroupContainer", "setPeakGroupContainer" ); // NOI18N
+            properties[PROPERTY_peakGroupContainer].setDisplayName ( "Peak Groups" );
+            properties[PROPERTY_peakGroupContainer].setShortDescription ( "The associated peak group container" );
             properties[PROPERTY_rotation] = new PropertyDescriptor ( "rotation", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getRotation", "setRotation" ); // NOI18N
-            properties[PROPERTY_scale] = new PropertyDescriptor ( "scale", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "isScale", "setScale" ); // NOI18N
+            properties[PROPERTY_rotation].setDisplayName ( "Rotation" );
+            properties[PROPERTY_rotation].setShortDescription ( "The rotation matrix of this PCA" );
+            properties[PROPERTY_scale] = new PropertyDescriptor ( "scale", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "isScale", null ); // NOI18N
+            properties[PROPERTY_scale].setDisplayName ( "Scale" );
+            properties[PROPERTY_scale].setShortDescription ( "The scale vector of this PCA" );
             properties[PROPERTY_sdev] = new PropertyDescriptor ( "sdev", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getSdev", "setSdev" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getTool", "setTool" ); // NOI18N
+            properties[PROPERTY_sdev].setDisplayName ( "Std.Dev." );
+            properties[PROPERTY_sdev].setShortDescription ( "The standard deviation vector of this PCA" );
             properties[PROPERTY_variables] = new PropertyDescriptor ( "variables", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getVariables", "setVariables" ); // NOI18N
+            properties[PROPERTY_variables].setDisplayName ( "Variables" );
+            properties[PROPERTY_variables].setShortDescription ( "The variables used for this PCA" );
             properties[PROPERTY_x] = new PropertyDescriptor ( "x", net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class, "getX", "setX" ); // NOI18N
+            properties[PROPERTY_x].setDisplayName ( "X" );
+            properties[PROPERTY_x].setShortDescription ( "The x vector of this PCA" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
@@ -116,10 +122,14 @@ public class PcaDescriptorBeanInfo extends SimpleBeanInfo {
     private static final int defaultEventIndex = -1;//GEN-END:Idx
 
 
-//GEN-FIRST:Superclass
+    public BeanInfo[] getAdditionalBeanInfo() {//GEN-FIRST:Superclass
+        Class superclass = net.sf.maltcms.chromaui.project.spi.descriptors.PcaDescriptor.class.getSuperclass();
+        BeanInfo sbi = null;
+        try {
+            sbi = Introspector.getBeanInfo(superclass);//GEN-HEADEREND:Superclass
     // Here you can add code for customizing the Superclass BeanInfo.
 
-//GEN-LAST:Superclass
+            } catch(IntrospectionException ex) { }  return new BeanInfo[] { sbi }; }//GEN-LAST:Superclass
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *

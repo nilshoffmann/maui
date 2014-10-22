@@ -108,7 +108,9 @@
             </module-dependencies>
             <public-packages>
                 <package>net.sf.maltcms.chromaui.ui.support.api</package>
+                <package>net.sf.maltcms.chromaui.ui.support.api.jtable</package>
                 <package>net.sf.maltcms.chromaui.ui.support.api.nodes</package>
+                <package>net.sf.maltcms.chromaui.ui.support.api.outline</package>
                 <package>net.sf.maltcms.chromaui.ui.support.api.ui</package>
             </public-packages>
         </data>

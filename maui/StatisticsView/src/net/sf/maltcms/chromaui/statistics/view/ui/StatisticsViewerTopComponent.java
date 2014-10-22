@@ -28,25 +28,21 @@
 package net.sf.maltcms.chromaui.statistics.view.ui;
 
 import java.awt.BorderLayout;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import javax.swing.ActionMap;
+import javax.swing.JTable;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.StatisticsContainer;
-import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.project.api.descriptors.IStatisticsDescriptor;
 import net.sf.maltcms.chromaui.statistics.view.spi.nodes.StatisticsContainerListChildFactory;
-import org.openide.util.Exceptions;
+import net.sf.maltcms.chromaui.ui.support.api.outline.ColumnDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.outline.ColumnUtilities;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
-import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.OutlineView;
@@ -60,19 +56,6 @@ import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 
-/**
- * Top component which displays something.
- */
-@ConvertAsProperties(
-        dtd = "-//net.sf.maltcms.chromaui.statistics.view//StatisticsViewer//EN",
-        autostore = false)
-@TopComponent.Description(preferredID = "StatisticsViewerTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
-        persistenceType = TopComponent.PERSISTENCE_NEVER)
-@TopComponent.Registration(mode = "navigator", openAtStartup = false)
-@ActionID(category = "Window",
-        id = "net.sf.maltcms.chromaui.statistics.view.StatisticsViewerTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_StatisticsViewerAction",
         preferredID = "StatisticsViewerTopComponent")
 public final class StatisticsViewerTopComponent extends TopComponent implements
@@ -179,24 +162,14 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
             if (view != null) {
                 remove(view);
             }
-
-            HashSet<ColumnDescriptor> columns = new HashSet<>();
-
-            for (IBasicDescriptor sdesc : descriptor.getMembers()) {
-                try {
-                    BeanInfo info = Introspector.getBeanInfo(
-                            sdesc.getClass());
-                    PropertyDescriptor[] pds = info.getPropertyDescriptors();
-                    for (PropertyDescriptor pd : pds) {
-                        columns.add(new ColumnDescriptor(
-                                pd.getName(),
-                                pd.getDisplayName(),
-                                pd.getShortDescription()));
-                    }
-                } catch (IntrospectionException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+            ColumnUtilities utils = new ColumnUtilities();
+            ArrayList<Class> l = new ArrayList<>();
+            if(!descriptor.getMembers().isEmpty()) {
+                l.add(descriptor.getMembers().iterator().next().getClass());
+            }else{
+                l.add(IStatisticsDescriptor.class);
             }
+            HashSet<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(l);
             childFactory = new StatisticsContainerListChildFactory(project, descriptor,
                     -1);
             root = new AbstractNode(Children.create(childFactory, true), Lookups.fixed(project,
@@ -205,12 +178,9 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
             manager.setRootContext(root);
             view = new OutlineView("Statistical Results");
             view.setTreeSortable(true);
-            for (ColumnDescriptor cd : columns) {
-                if (whiteList.contains(cd.name)) {
-                    view.addPropertyColumn(cd.name, cd.displayName,
-                            cd.shortDescription);
-                }
-            }
+            view.setHorizontalScrollBarPolicy(OutlineView.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            view.getOutline().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            utils.addPropertyColumns(view, columns, whiteList);
             view.getOutline().setRootVisible(false);
             add(view, BorderLayout.CENTER);
 
@@ -221,54 +191,5 @@ public final class StatisticsViewerTopComponent extends TopComponent implements
     @Override
     public ExplorerManager getExplorerManager() {
         return manager;
-    }
-
-    public class ColumnDescriptor {
-
-        public final String name;
-        public final String displayName;
-        public final String shortDescription;
-
-        public ColumnDescriptor(String name, String displayName,
-                String shortDescription) {
-            this.name = name;
-            this.displayName = displayName;
-            this.shortDescription = shortDescription;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final ColumnDescriptor other = (ColumnDescriptor) obj;
-            if ((this.name == null) ? (other.name != null) : !this.name.equals(
-                    other.name)) {
-                return false;
-            }
-            if ((this.displayName == null) ? (other.displayName != null) : !this.displayName.
-                    equals(other.displayName)) {
-                return false;
-            }
-            if ((this.shortDescription == null) ? (other.shortDescription != null) : !this.shortDescription.
-                    equals(other.shortDescription)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
-            hash = 47 * hash + (this.displayName != null ? this.displayName.
-                    hashCode() : 0);
-            hash = 47 * hash + (this.shortDescription != null ? this.shortDescription.
-                    hashCode() : 0);
-            return hash;
-        }
     }
 }

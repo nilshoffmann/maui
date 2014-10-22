@@ -46,33 +46,31 @@ public class UserDatabaseDescriptorBeanInfo extends SimpleBeanInfo {
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_applicableDetectorTypes = 0;
     private static final int PROPERTY_applicableSeparationTypes = 1;
-    private static final int PROPERTY_date = 2;
-    private static final int PROPERTY_displayName = 3;
-    private static final int PROPERTY_id = 4;
-    private static final int PROPERTY_maskedMasses = 5;
-    private static final int PROPERTY_name = 6;
-    private static final int PROPERTY_resourceLocation = 7;
-    private static final int PROPERTY_shortDescription = 8;
-    private static final int PROPERTY_tool = 9;
-    private static final int PROPERTY_type = 10;
+    private static final int PROPERTY_maskedMasses = 2;
+    private static final int PROPERTY_resourceLocation = 3;
+    private static final int PROPERTY_type = 4;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[11];
+        PropertyDescriptor[] properties = new PropertyDescriptor[5];
     
         try {
             properties[PROPERTY_applicableDetectorTypes] = new PropertyDescriptor ( "applicableDetectorTypes", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getApplicableDetectorTypes", "setApplicableDetectorTypes" ); // NOI18N
+            properties[PROPERTY_applicableDetectorTypes].setDisplayName ( "Applicable Detector Types" );
+            properties[PROPERTY_applicableDetectorTypes].setShortDescription ( "A list of detector types that are supported by this database" );
             properties[PROPERTY_applicableSeparationTypes] = new PropertyDescriptor ( "applicableSeparationTypes", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getApplicableSeparationTypes", "setApplicableSeparationTypes" ); // NOI18N
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getId", "setId" ); // NOI18N
+            properties[PROPERTY_applicableSeparationTypes].setDisplayName ( "Applicable Separation Types" );
+            properties[PROPERTY_applicableSeparationTypes].setShortDescription ( "A list of separation types supported by this database" );
             properties[PROPERTY_maskedMasses] = new PropertyDescriptor ( "maskedMasses", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getMaskedMasses", "setMaskedMasses" ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_maskedMasses].setDisplayName ( "Masked Masses" );
+            properties[PROPERTY_maskedMasses].setShortDescription ( "A list of masses that need to be masked for queries, because they are not present in the database." );
             properties[PROPERTY_resourceLocation] = new PropertyDescriptor ( "resourceLocation", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getResourceLocation", "setResourceLocation" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getTool", "setTool" ); // NOI18N
+            properties[PROPERTY_resourceLocation].setDisplayName ( "Resource Location" );
+            properties[PROPERTY_resourceLocation].setShortDescription ( "The location of the database" );
             properties[PROPERTY_type] = new PropertyDescriptor ( "type", net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class, "getType", "setType" ); // NOI18N
+            properties[PROPERTY_type].setDisplayName ( "Type" );
+            properties[PROPERTY_type].setShortDescription ( "The database type" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
@@ -108,10 +106,14 @@ public class UserDatabaseDescriptorBeanInfo extends SimpleBeanInfo {
     private static final int defaultEventIndex = -1;//GEN-END:Idx
 
 
-//GEN-FIRST:Superclass
+    public BeanInfo[] getAdditionalBeanInfo() {//GEN-FIRST:Superclass
+        Class superclass = net.sf.maltcms.chromaui.project.spi.descriptors.UserDatabaseDescriptor.class.getSuperclass();
+        BeanInfo sbi = null;
+        try {
+            sbi = Introspector.getBeanInfo(superclass);//GEN-HEADEREND:Superclass
     // Here you can add code for customizing the Superclass BeanInfo.
 
-//GEN-LAST:Superclass
+            } catch(IntrospectionException ex) { }  return new BeanInfo[] { sbi }; }//GEN-LAST:Superclass
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *

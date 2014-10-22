@@ -51,31 +51,19 @@ public class Peak1DContainerBeanInfo extends SimpleBeanInfo {
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_chromatogram = 0;
     private static final int PROPERTY_color = 1;
-    private static final int PROPERTY_date = 2;
-    private static final int PROPERTY_displayName = 3;
-    private static final int PROPERTY_id = 4;
-    private static final int PROPERTY_members = 5;
-    private static final int PROPERTY_name = 6;
-    private static final int PROPERTY_precedence = 7;
-    private static final int PROPERTY_shortDescription = 8;
-    private static final int PROPERTY_tool = 9;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[10];
+        PropertyDescriptor[] properties = new PropertyDescriptor[2];
     
         try {
             properties[PROPERTY_chromatogram] = new PropertyDescriptor ( "chromatogram", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getChromatogram", "setChromatogram" ); // NOI18N
+            properties[PROPERTY_chromatogram].setDisplayName ( "Chromatogram" );
+            properties[PROPERTY_chromatogram].setShortDescription ( "The associated chromatogram" );
             properties[PROPERTY_color] = new PropertyDescriptor ( "color", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getColor", "setColor" ); // NOI18N
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getId", "setId" ); // NOI18N
-            properties[PROPERTY_members] = new PropertyDescriptor ( "members", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, null, "setMembers" ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getName", "setName" ); // NOI18N
-            properties[PROPERTY_precedence] = new PropertyDescriptor ( "precedence", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getPrecedence", "setPrecedence" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.api.container.Peak1DContainer.class, "getTool", "setTool" ); // NOI18N
+            properties[PROPERTY_color].setDisplayName ( "Color" );
+            properties[PROPERTY_color].setShortDescription ( "The color of this peak container, used for charting" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

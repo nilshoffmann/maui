@@ -29,11 +29,13 @@ package net.sf.maltcms.chromaui.statistics.view.propertyEditors;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = {double[].class})
 public class DoubleArrayPropertyEditor extends PropertyEditorSupport {
 
     @Override

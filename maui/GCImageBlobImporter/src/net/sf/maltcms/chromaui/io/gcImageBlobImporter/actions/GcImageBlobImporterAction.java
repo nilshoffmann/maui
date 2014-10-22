@@ -30,11 +30,13 @@ package net.sf.maltcms.chromaui.io.gcImageBlobImporter.actions;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.Locale;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import net.sf.maltcms.chromaui.io.gcImageBlobImporter.tasks.GcImageBlobImporterTask;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.ui.support.api.ui.LocalePanel;
 
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
@@ -60,21 +62,24 @@ public final class GcImageBlobImporterAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         JFileChooser jfc = new JFileChooser();
+        LocalePanel lp = new LocalePanel();
         jfc.setAcceptAllFileFilterUsed(true);
         jfc.addChoosableFileFilter(new FileFilter() {
 
             @Override
             public boolean accept(File file) {
-                return file.getName().toLowerCase().endsWith(".txt") || file.getName().toLowerCase().endsWith(".csv") || file.getName().toLowerCase().endsWith(".tsv");
+                return file.getName().toLowerCase().endsWith(".csv");
             }
 
             @Override
             public String getDescription() {
-                return "txt,csv,tsv";
+                return "csv";
             }
         });
         jfc.setDialogTitle("Select GC Image Blob reports");
         jfc.setMultiSelectionEnabled(true);
+        lp.setSelectedLocale(Locale.getDefault());
+        jfc.setAccessory(lp);
         int result = jfc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             GcImageBlobImporterTask plir = new GcImageBlobImporterTask(context,

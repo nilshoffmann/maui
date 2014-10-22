@@ -50,24 +50,43 @@ public class ADatabaseBackedContainerBeanInfo extends SimpleBeanInfo {
     private static final int PROPERTY_date = 0;
     private static final int PROPERTY_displayName = 1;
     private static final int PROPERTY_id = 2;
-    private static final int PROPERTY_name = 3;
-    private static final int PROPERTY_precedence = 4;
-    private static final int PROPERTY_shortDescription = 5;
-    private static final int PROPERTY_tool = 6;
+    private static final int PROPERTY_members = 3;
+    private static final int PROPERTY_name = 4;
+    private static final int PROPERTY_precedence = 5;
+    private static final int PROPERTY_shortDescription = 6;
+    private static final int PROPERTY_tool = 7;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[7];
+        PropertyDescriptor[] properties = new PropertyDescriptor[8];
     
         try {
             properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, "getDate", "setDate" ); // NOI18N
+            properties[PROPERTY_date].setDisplayName ( "Date" );
+            properties[PROPERTY_date].setShortDescription ( "The date when this container was created" );
             properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, "getDisplayName", "setDisplayName" ); // NOI18N
+            properties[PROPERTY_displayName].setDisplayName ( "Display Name" );
+            properties[PROPERTY_displayName].setShortDescription ( "The display name of this container" );
             properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, "getId", "setId" ); // NOI18N
+            properties[PROPERTY_id].setDisplayName ( "Id" );
+            properties[PROPERTY_id].setShortDescription ( "The unique id of this container" );
+            properties[PROPERTY_members] = new PropertyDescriptor ( "members", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, null, "setMembers" ); // NOI18N
+            properties[PROPERTY_members].setHidden ( true );
+            properties[PROPERTY_members].setDisplayName ( "Members" );
+            properties[PROPERTY_members].setShortDescription ( "The members of this container" );
             properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_name].setDisplayName ( "Name" );
+            properties[PROPERTY_name].setShortDescription ( "The name of this container" );
             properties[PROPERTY_precedence] = new PropertyDescriptor ( "precedence", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, "getPrecedence", "setPrecedence" ); // NOI18N
+            properties[PROPERTY_precedence].setDisplayName ( "Precedence" );
+            properties[PROPERTY_precedence].setShortDescription ( "The precedence of this container" );
             properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, "getShortDescription", "setShortDescription" ); // NOI18N
+            properties[PROPERTY_shortDescription].setDisplayName ( "Short Description" );
+            properties[PROPERTY_shortDescription].setShortDescription ( "The short description of this container" );
             properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer.class, "getTool", "setTool" ); // NOI18N
+            properties[PROPERTY_tool].setDisplayName ( "Tool" );
+            properties[PROPERTY_tool].setShortDescription ( "The tool that created this container" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

@@ -25,7 +25,7 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package maltcms.ui.fileHandles.csv;
+package net.sf.maltcms.chromaui.ui.support.api.jtable;
 
 import java.awt.Component;
 import java.util.Comparator;

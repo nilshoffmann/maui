@@ -25,12 +25,15 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.ui;
+package net.sf.maltcms.chromaui.ui.support.api.ui;
 
+import java.awt.Component;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
 
 /**
  *
@@ -43,6 +46,7 @@ public class LocalePanel extends javax.swing.JPanel {
      */
     public LocalePanel() {
         initComponents();
+        localComboBox.setRenderer(new LocaleCellRenderer());
     }
 
     private DefaultComboBoxModel<Locale> getLocaleComboBoxModel() {
@@ -56,6 +60,20 @@ public class LocalePanel extends javax.swing.JPanel {
         });
         DefaultComboBoxModel<Locale> d = new DefaultComboBoxModel<>(locales);
         return d;
+    }
+    
+    private static final class LocaleCellRenderer extends DefaultListCellRenderer {
+
+        public LocaleCellRenderer() {
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            setText(((Locale) value).getDisplayName());
+            return c;
+        }
     }
 
     public void setSelectedLocale(Locale locale) {
@@ -90,7 +108,7 @@ public class LocalePanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(localComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
