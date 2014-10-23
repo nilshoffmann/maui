@@ -30,10 +30,14 @@ package net.sf.maltcms.chromaui.charts.renderer;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.EntityCollection;
+import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.CrosshairState;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -189,5 +193,42 @@ public class XYNoBlockRenderer extends XYBlockRenderer {
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    @Override
+    protected void addEntity(EntityCollection entities, Shape area,
+            XYDataset dataset, int series, int item,
+            double entityX, double entityY) {
+        if (!getItemCreateEntity(series, item)) {
+            return;
+        }
+        Shape hotspot = area;
+        if (hotspot == null) {
+            double r = getDefaultEntityRadius();
+            double w = r * 2;
+            if (getPlot().getOrientation() == PlotOrientation.VERTICAL) {
+                hotspot = new Ellipse2D.Double(entityX - r, entityY - r, w, w);
+            } else {
+                hotspot = new Ellipse2D.Double(entityY - r, entityX - r, w, w);
+            }
+        } else if (hotspot.getBounds2D().getWidth() < 5.0 || hotspot.getBounds2D().getHeight() < 5.0) {
+            if (getPlot().getOrientation() == PlotOrientation.VERTICAL) {
+                hotspot = new Rectangle2D.Double(entityX - 2.5, entityY - 2.5, 5, 5);
+            } else {
+                hotspot = new Rectangle2D.Double(entityY - 2.5, entityX - 2.5, 5, 5);
+            }
+        }
+        String tip = null;
+        XYToolTipGenerator generator = getToolTipGenerator(series, item);
+        if (generator != null) {
+            tip = generator.generateToolTip(dataset, series, item);
+        }
+        String url = null;
+        if (getURLGenerator() != null) {
+            url = getURLGenerator().generateURL(dataset, series, item);
+        }
+        XYItemEntity entity = new XYItemEntity(hotspot, dataset, series, item,
+                tip, url);
+        entities.add(entity);
     }
 }

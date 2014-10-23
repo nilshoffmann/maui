@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.ui.support.api.ui;
 import java.awt.Component;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -61,7 +62,7 @@ public class LocalePanel extends javax.swing.JPanel {
         DefaultComboBoxModel<Locale> d = new DefaultComboBoxModel<>(locales);
         return d;
     }
-    
+
     private static final class LocaleCellRenderer extends DefaultListCellRenderer {
 
         public LocaleCellRenderer() {
@@ -72,10 +73,13 @@ public class LocalePanel extends javax.swing.JPanel {
         public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             String label = ((Locale) value).getDisplayName();
-            if(label.length()>22) {
-                label = label.substring(0, 24)+"...";
+            if (label != null) {
+                list.setToolTipText(label);
+                if (label.length() > 24) {
+                    label = label.substring(0, 21) + "...";
+                }
+                setText(label);
             }
-            setText(label);
             return c;
         }
     }

@@ -95,13 +95,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     private Color selectionOutline = Color.BLACK;
     private PaintScaleDialogAction psda = null;
     private InstanceContent content;
-    private IScan2D activeScan = null;
+//    private IScan2D activeScan = null;
     private boolean syncViewport = false;
     private Chromatogram2DViewViewport viewport;
     private Color backgroundColor = null;
     private SelectionOverlay selectionOverlay;
-    private Crosshair domainCrosshair;
-    private Crosshair rangeCrosshair;
     private InstanceContentSelectionHandler selectionHandler;
     private XYMouseSelectionHandler<IScan2D> mouseSelectionHandler;
     private ChartPanel chartPanel;
@@ -526,27 +524,27 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         if (ke.isControlDown()) {
             modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
         }
-        if (getDataPoint() != null) {
-            Logger.getLogger(getClass().getName()).info("Data point is not null!");
-            Point p = null;
-            if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {
-                p = new Point(getDataPoint());
-                p.translate(1, 0);
-            } else if (ke.getKeyCode() == KeyEvent.VK_LEFT) {
-                p = new Point(getDataPoint());
-                p.translate(-1, 0);
-            } else if (ke.getKeyCode() == KeyEvent.VK_UP) {
-                p = new Point(getDataPoint());
-                p.translate(0, 1);
-            } else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-                p = new Point(getDataPoint());
-                p.translate(0, -1);
-            }
-            setDataPoint(p);
-            if (!ke.isShiftDown()) {
-//                triggerMSUpdate();
-            }
-        }
+//        if (getDataPoint() != null) {
+//            Logger.getLogger(getClass().getName()).info("Data point is not null!");
+//            Point p = null;
+//            if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {
+//                p = new Point(getDataPoint());
+//                p.translate(1, 0);
+//            } else if (ke.getKeyCode() == KeyEvent.VK_LEFT) {
+//                p = new Point(getDataPoint());
+//                p.translate(-1, 0);
+//            } else if (ke.getKeyCode() == KeyEvent.VK_UP) {
+//                p = new Point(getDataPoint());
+//                p.translate(0, 1);
+//            } else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
+//                p = new Point(getDataPoint());
+//                p.translate(0, -1);
+//            }
+//            setDataPoint(p);
+//            if (!ke.isShiftDown()) {
+////                triggerMSUpdate();
+//            }
+//        }
     }
 
     @Override
@@ -624,10 +622,10 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         this.plot.setNoDataMessage("Loading Data...");
         chart = new JFreeChart(this.plot);
         chartPanel.setChart(chart);
-        dmkl = new DomainMarkerKeyListener(
-                this.plot);
-        dmkl.setPlot(this.plot);
-        chartPanel.addKeyListener(dmkl);
+//        dmkl = new DomainMarkerKeyListener(
+//                this.plot);
+//        dmkl.setPlot(this.plot);
+//        chartPanel.addKeyListener(dmkl);
         addAxisListener();
         //add available chart overlays
         List<Overlay> overlays = new ArrayList<>(getLookup().lookupAll(Overlay.class));
