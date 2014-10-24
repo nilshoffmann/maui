@@ -241,16 +241,32 @@
     
     <target name="build-site" depends="-init,-init-ant-contrib,branding,release" description="Copies and prepares the site for distribution.">
         <mkdir dir="${suite.dir}/build/site"/>
-        <copy todir="${suite.dir}/build/site/" flatten="false">
-            <fileset dir="${suite.dir}/site/public_html">
-                <include name="**"/>
-            </fileset>
-            <filterset>
-                <filter token="app.title" value="${app.title}"/>
-                <filter token="app.version.release" value="${app.version.release}"/>
-                <filter token="app.version" value="${app.version}"/>
-            </filterset>
-        </copy>
+		<if>
+            <available file="${suite.dir}/site/jbake" type="dir"/>
+            <then>
+                <!-- use tools/jbake-2.3.2/bin/jbake ${suite.dir}/site/jbake ${suite.dir}/site/public_html-->
+                <echo level="info">Using jbake to render site.</echo>
+				<exec executable="${suite.dir}/../tools/jbake-2.3.2/bin/jbake" inputstring="">
+				    <arg value="${suite.dir}/site/jbake"/>
+				    <arg value="${suite.dir}/site/public_html"/>
+				</exec>    
+            </then>
+        </if>
+		<copy todir="${suite.dir}/build/site/" flatten="false">
+		    <fileset dir="${suite.dir}/site/public_html">
+		        <include name="**/*.html"/>
+		    </fileset>
+		    <filterset>
+		        <filter token="app.title" value="${app.title}"/>
+		        <filter token="app.version.release" value="${app.version.release}"/>
+		        <filter token="app.version" value="${app.version}"/>
+		    </filterset>
+		</copy>
+		<copy todir="${suite.dir}/build/site/" flatten="false">
+		    <fileset dir="${suite.dir}/site/public_html">
+		        <exclude name="**/*.html"/>
+		    </fileset>
+		</copy>
     </target>
 	
     <target name="javadoc" depends="-init,-init-ant-contrib,branding,release,-hide-excluded-modules,build-site" description="Create JavaDoc for all modules in the suite.">

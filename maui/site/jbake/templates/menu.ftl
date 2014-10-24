@@ -17,7 +17,7 @@
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>features.html">Features</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>installation.html">Download</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>contact.html">Contact</a></li>
-            <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>${config.feed_file}">Subscribe</a></li>
+            <!--<li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>${config.feed_file}">Subscribe</a></li>-->
           </ul>
         </div><!--/.nav-collapse -->
       </div>

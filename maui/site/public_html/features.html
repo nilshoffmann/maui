@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Features</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <meta name="generator" content="JBake">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/asciidoctor.css" rel="stylesheet">
+    <link href="css/base.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="icon" href="favicon.gif">
+  </head>
+  <body onload="prettyPrint()">
+    <div id="wrap">
+   
+
+	<!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="">Maui</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="installation.html">Download</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <!--<li><a href="feed.xml">Subscribe</a></li>-->
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <div class="container">
+	
+	<div class="page-header">
+		<h1>Features</h1>
+	</div>
+
+	<p class="pull-right"><em>25 Oktober 2014</em></p>
+
+	<p><h2>File Formats</h2>
+<ul>
+  <li>ANDI-CHROM, ANDI-MS, netCDF</li>
+  <li>mzML</li>
+  <li>mzData, mzXML (limited)</li>
+  <li>msp (NIST AMDIS &copy; mass spec format)</li>
+  <li>LECO ChromaTOF &copy; peak list</li>
+  <li>GC Image Blob &copy; peak list</li>
+</ul>
+<h2>Interactivity</h2>
+<ul>
+  <li>all domain objects are interlinked and retrievable from specialized views</li>
+</ul>
+<h2>Visualization</h2>
+<ul>
+  <li>1D intensity profile, side and top view</li>
+  <li>1D extracted ion profile</li>
+  <li>2D intensity profile (heatmap)</li>
+  <li>2D fold change plot</li>
+  <li>3D intensity profile (height mapped heatmap)</li>
+  <li>3D PCA plot</li>
+  <li>visualization of tabular data, e.g. ANOVA reports</li>
+  <li>synchronization of viewports</li>
+</ul>
+<h2>Extendability</h2>
+<h2>Integration</h2>
+<ul>
+  <li>Export of mass spectra to clipboard, compatible to GMD database input format</li>
+  <li>
+  <ul>
+<li>action for peak group database identification.</li>
+<li>combo boxes to select, which principle components are displayed.</li>
+<li>FoldChangeViewer module to display volcano plots on pairs of treatment groups, based on anova p-values.</li>
+<li>Action to create SVG application screenshots.</li>
+<li>possibility to hide sample nodes in peak group and peak container views.</li>
+<li>exception handling for unexpected exceptions, prematurely closing the database.</li>
+<li>a default ehcache configuration.</li>
+<li>additional actions for easy creation of user peak databases.</li>
+<li>additional action for identification of selected peaks.</li>
+<li>action to add a newly imported database to an existing database container.</li>
+<li>svg export of charts.</li>
+<li>xcms matched filter peak finding template.</li>
+<li>project-specific peak normalization remembering the last selected group.</li>
+<li>search ability for peaks.</li>
+<li>project-specific peak pvalue adjustment remembering the last selected method.</li>
+<li>database resize actions to Options panel.</li>
+<li>panning (CTRL+MOUSE) and mouse-wheel zooming ability to all charts.</li>
+<li>checking for peaks with empty mass spectra which are now skipped during conversion.</li>
+<li>a guard against accidental null setting of PeakAnnotationDescriptor displayName.</li>
+<li>a new Action to export the mass spectrum to the clipboard in a format compatible with Golm Metabolite Database's web frontend.</li>
+<li>a project submenu provider and switched implementation for getActions in ChromAUIProjectNode to the new system.</li>
+<li>flashing of scans in Chromatogram Views on selection from navigator view.</li>
+<li>category datasets to charting support, adapted other classes to changes.</li>
+<li>a warning dialog if different Descriptors should be deleted.</li>
+<li>new Methods to IMauiProject for descriptor and container retrieval by id.</li>
+<li>chromatogram creation to DescriptorFactory.</li>
+<li>msLevel attribute to Scans on creation.</li>
+<li>support for different radius for neighbor search in horizontal and vertical directions in 2D chromatogram views.</li>
+<li>some convenience methods to IMauiProject for simpler retrieval of the output and import directories.</li>
+<li>installed maltcms pipelines as dynamic actions into project context menu.</li>
+<li>additional field for maltcms runtime arguments.</li>
+<li>better error messages and progress indication to PeakAlignmentImporter.</li>
+<li>CheckDatabaseConsistency Action to check a closed database for errors.</li>
+<li>ui elements to change block size in Chromatogram2DPanel.</li>
+<li>Peak overlays are now better visible for 1D chromatogram views</li>
+<li>Peak overlays are colored according to peak descriptor container color, or by treatment group color</li>
+<li>a diff button to mass spectral viewer to show a difference spectrum of two mass spectra</li>
+<li>Peak groups now show a percentage of covered chromatograms</li>
+<li>Welcome center to aid with first steps in Maui</li>
+<li>Viewport synchronization for chromatogram views</li>
+<li>Selection system for chromatogram views</li>
+<li>Improved integration and configuration of external tools</li>
+<li>Import of ChromaTOF peak lists as pseudo-chromatograms</li>
+<li>Completed integration of Anova and PCA via RServe</li>
+<li>Interactive visualization of PCA results</li>
+</ul></li>
+</ul></p>
+
+	<hr />
+
+		</div>
+		<div id="push"></div>
+    </div>
+    
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">&copy; Nils Hoffmann 2014 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.3.2</a></p>
+      </div>
+    </div>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/prettify.js"></script>
+    
+  </body>
+</html>

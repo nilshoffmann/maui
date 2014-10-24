@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JBake</title>
+    <link>https://maltcms.de/maui/</link>
+    <atom:link href="https://maltcms.de/maui//feed.xml" rel="self" type="application/rss+xml" />
+    <description>JBake Bootstrap Template</description>
+    <language>en-gb</language>
+    <pubDate>Fr, 24 Okt 2014 17:09:35 +0200</pubDate>
+    <lastBuildDate>Fr, 24 Okt 2014 17:09:35 +0200</lastBuildDate>
+
+
+  </channel> 
+</rss>
