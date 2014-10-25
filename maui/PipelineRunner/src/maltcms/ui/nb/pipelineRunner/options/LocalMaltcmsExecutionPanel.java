@@ -139,7 +139,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
             }
         });
 
-        maltcmsOnlineVersion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1.3.0", "1.2.1", "1.2.0", "1.1.0", "LATEST-SNAPSHOT" }));
+        maltcmsOnlineVersion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1.3.2", "1.3.1", "1.3.0", "1.2.1", "1.2.0", "1.1.0", "LATEST-SNAPSHOT" }));
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel4.text")); // NOI18N
 
@@ -351,10 +351,6 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                 }
                 File userDir = Places.getUserDirectory();
                 File targetDirectory = new File(userDir, "maltcms");
-//                FileChooserBuilder fcb = new FileChooserBuilder(LocalMaltcmsExecutionPanel.class);
-//                fcb.setDirectoriesOnly(true);
-//                File targetDirectory = fcb.showSaveDialog();
-//                if(targetDirectory!=null) {
                 targetDirectory.mkdirs();
                 progressHandle.progress("Downloading Maltcms " + (String) maltcmsOnlineVersion.getSelectedItem());
                 String version = (String) maltcmsOnlineVersion.getSelectedItem();
@@ -383,12 +379,20 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 
                 progressHandle.progress("Extracting Maltcms " + (String) maltcmsOnlineVersion.getSelectedItem());
                 unzipArchive(targetFile, targetDirectory);
+                File maltcmsDistDir = new File(targetDirectory, maltcmsBasename.replace("maltcms-", "maltcms-distribution-"));
                 File maltcmsInstallationDir = new File(targetDirectory, maltcmsBasename);
-                progressHandle.progress("Setting Maltcms Installation Path");
-                maltcmsInstallationPath.setText(maltcmsInstallationDir.getAbsolutePath());
-                checkVersion(maltcmsInstallationDir.getAbsolutePath());
-                controller.changed();
-                store();
+                if (maltcmsDistDir.isDirectory()) {
+                    FileUtils.copyDirectory(maltcmsDistDir, maltcmsInstallationDir);
+                }
+                if (maltcmsInstallationDir.isDirectory()) {
+                    progressHandle.progress("Setting Maltcms Installation Path");
+                    maltcmsInstallationPath.setText(maltcmsInstallationDir.getAbsolutePath());
+                    checkVersion(maltcmsInstallationDir.getAbsolutePath());
+                    controller.changed();
+                    store();
+                } else {
+                    throw new IOException("Could not locate unzipped directory! Please check!");
+                }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             } finally {
@@ -464,6 +468,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         nativeSpecTextField.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.nativeSpec", ""));
         pathToShellTextField.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.pathToShell", ""));
         useDrmaaApiCheckBox.setSelected(NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false));
+        nativeSpecTextField.setEnabled(useDrmaaApiCheckBox.isSelected());
+        pathToShellTextField.setEnabled(useDrmaaApiCheckBox.isSelected());
     }
 
     void store() {
