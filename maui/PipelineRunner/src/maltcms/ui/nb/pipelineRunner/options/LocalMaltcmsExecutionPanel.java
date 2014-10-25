@@ -154,6 +154,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel5.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(useDrmaaApiCheckBox, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.useDrmaaApiCheckBox.text")); // NOI18N
+        useDrmaaApiCheckBox.setToolTipText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.useDrmaaApiCheckBox.toolTipText")); // NOI18N
+        useDrmaaApiCheckBox.setEnabled(false);
         useDrmaaApiCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 useDrmaaApiCheckBoxActionPerformed(evt);
@@ -162,10 +164,13 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 
         nativeSpecTextField.setText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.nativeSpecTextField.text")); // NOI18N
         nativeSpecTextField.setToolTipText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.nativeSpecTextField.toolTipText")); // NOI18N
+        nativeSpecTextField.setEnabled(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel6, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel6.text")); // NOI18N
 
         pathToShellTextField.setText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.pathToShellTextField.text")); // NOI18N
+        pathToShellTextField.setToolTipText(org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.pathToShellTextField.toolTipText")); // NOI18N
+        pathToShellTextField.setEnabled(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel7, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel7.text")); // NOI18N
 
@@ -182,10 +187,6 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                 .addComponent(jSeparator2)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(213, 213, 213)
-                .addComponent(useDrmaaApiCheckBox)
-                .addGap(408, 408, 408))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,17 +200,22 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pathToShellTextField)
-                    .addComponent(maltcmsOnlineVersion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(maltcmsInstallationPath)
-                    .addComponent(maltcmsVersion)
-                    .addComponent(commandLineOptions)
-                    .addComponent(maltcmsOptions)
-                    .addComponent(nativeSpecTextField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(download, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(select, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(useDrmaaApiCheckBox)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pathToShellTextField)
+                            .addComponent(maltcmsOnlineVersion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(maltcmsInstallationPath, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                            .addComponent(maltcmsVersion)
+                            .addComponent(commandLineOptions)
+                            .addComponent(maltcmsOptions)
+                            .addComponent(nativeSpecTextField))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(download, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(select, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 

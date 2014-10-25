@@ -31,11 +31,6 @@
               <Component id="jSeparator2" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Group type="102" attributes="0">
-              <EmptySpace min="213" pref="213" max="-2" attributes="0"/>
-              <Component id="useDrmaaApiCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="408" pref="408" max="-2" attributes="0"/>
-          </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
@@ -53,18 +48,26 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="pathToShellTextField" max="32767" attributes="0"/>
-                  <Component id="maltcmsOnlineVersion" alignment="0" max="32767" attributes="0"/>
-                  <Component id="maltcmsInstallationPath" alignment="0" max="32767" attributes="0"/>
-                  <Component id="maltcmsVersion" alignment="0" max="32767" attributes="0"/>
-                  <Component id="commandLineOptions" alignment="0" max="32767" attributes="0"/>
-                  <Component id="maltcmsOptions" alignment="0" max="32767" attributes="0"/>
-                  <Component id="nativeSpecTextField" alignment="0" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="download" linkSize="1" alignment="0" min="-2" pref="102" max="-2" attributes="0"/>
-                  <Component id="select" linkSize="1" alignment="0" min="-2" pref="104" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="useDrmaaApiCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="pathToShellTextField" max="32767" attributes="0"/>
+                          <Component id="maltcmsOnlineVersion" alignment="0" max="32767" attributes="0"/>
+                          <Component id="maltcmsInstallationPath" alignment="0" pref="421" max="32767" attributes="0"/>
+                          <Component id="maltcmsVersion" alignment="0" max="32767" attributes="0"/>
+                          <Component id="commandLineOptions" alignment="0" max="32767" attributes="0"/>
+                          <Component id="maltcmsOptions" alignment="0" max="32767" attributes="0"/>
+                          <Component id="nativeSpecTextField" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="download" linkSize="1" alignment="0" min="-2" pref="102" max="-2" attributes="0"/>
+                          <Component id="select" linkSize="1" alignment="0" min="-2" pref="104" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -248,6 +251,10 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.useDrmaaApiCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.useDrmaaApiCheckBox.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="useDrmaaApiCheckBoxActionPerformed"/>
@@ -261,6 +268,7 @@
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.nativeSpecTextField.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
@@ -275,6 +283,10 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.pathToShellTextField.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.pathToShellTextField.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
