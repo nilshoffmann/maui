@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
+import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
 import net.sf.maltcms.chromaui.db.spi.db4o.DB4oCrudProvider;
@@ -154,10 +155,10 @@ public class DB4oCrudProviderTest extends NbTestCase {
 //    public DB4oCrudProviderTest() {
 //    }
     /**
-     * Test of create method, of class DB4oCrudProvider.
+     * Test of db operations
      */
     @Test
-    public void testCreate() {
+    public void testDbOperations() {
 
         //BEGIN SETUP, DO NOT COPY
         IntStringTuple a = new IntStringTuple(1, "Have");
@@ -174,7 +175,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
         //Credentials
         ICredentials ic = new NoAuthCredentials();
         //CrudProvider
-        DB4oCrudProvider instance = new DB4oCrudProvider(f, ic, this.getClass().
+        ICrudProvider instance = new DB4oCrudProvider(f, ic, this.getClass().
                 getClassLoader());
         try {
             //initialize and open database
@@ -223,43 +224,6 @@ public class DB4oCrudProviderTest extends NbTestCase {
             instance.close();
         }
 
-    }
-
-    /**
-     * Test of update method, of class DB4oCrudProvider.
-     */
-    @Test
-    public void testUpdate() {
-//        System.out.println("update");
-//        Collection<? extends Object> o = null;
-//        ICredentials ic = null;
-//        DB4oCrudProvider instance = null;
-//        instance.update(o, ic);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of delete method, of class DB4oCrudProvider.
-     */
-    @Test
-    public void testDelete() {
-//        System.out.println("delete");
-//        Collection<? extends Object> o = null;
-//        ICredentials ic = null;
-//        DB4oCrudProvider instance = null;
-//        instance.delete(o, ic);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of retrieve method, of class DB4oCrudProvider.
-     */
-    @Test
-    public void testRetrieve() {
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
 
     /**

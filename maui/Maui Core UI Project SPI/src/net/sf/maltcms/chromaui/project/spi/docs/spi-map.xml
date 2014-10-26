@@ -33,4 +33,5 @@ for details.
     <mapID target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel1" url="spi-wizard1.html"/>
     <mapID target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel2" url="spi-wizard2.html"/>
     <mapID target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3" url="spi-wizard3.html"/>
+    <mapID target="net.sf.maltcms.chromaui.project.spi.options.chromatogramScanCache" url="chromatogram-scan-cache.html"/>
 </map>

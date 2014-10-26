@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.swing.JComponent;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -51,6 +52,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.netbeans.api.options.OptionsDisplayer;
 import org.openide.filesystems.FileChooserBuilder;
 import org.openide.modules.Places;
 import org.openide.util.Exceptions;
@@ -95,6 +97,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         pathToShellTextField = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
+        notificationLabel = new javax.swing.JLabel();
 
         setMinimumSize(new java.awt.Dimension(750, 450));
 
@@ -174,6 +178,8 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel7, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.jLabel7.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(notificationLabel, org.openide.util.NbBundle.getMessage(LocalMaltcmsExecutionPanel.class, "LocalMaltcmsExecutionPanel.notificationLabel.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -207,7 +213,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pathToShellTextField)
                             .addComponent(maltcmsOnlineVersion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(maltcmsInstallationPath, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                            .addComponent(maltcmsInstallationPath, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
                             .addComponent(maltcmsVersion)
                             .addComponent(commandLineOptions)
                             .addComponent(maltcmsOptions)
@@ -216,6 +222,14 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(download, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(select, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSeparator3)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(notificationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -260,7 +274,11 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(pathToShellTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
-                .addContainerGap(151, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(notificationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(85, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {commandLineOptions, maltcmsInstallationPath, maltcmsOnlineVersion, maltcmsOptions, maltcmsVersion});
@@ -325,7 +343,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_commandLineOptionsActionPerformed
 
     private void downloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadActionPerformed
-        DownloadAndInstallTask dait = new DownloadAndInstallTask();
+        DownloadAndInstallTask dait = new DownloadAndInstallTask(this);
         DownloadAndInstallTask.createAndRun("Maltcms download and installation", dait);
     }//GEN-LAST:event_downloadActionPerformed
 
@@ -346,15 +364,36 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
 
     private class DownloadAndInstallTask extends AProgressAwareRunnable {
 
+        private final JComponent component;
+        
+        DownloadAndInstallTask(JComponent component) {
+            this.component = component;
+        }
+        
+        @Override
+        public boolean cancel() {
+            component.setEnabled(true);
+            for (Component c : component.getComponents()) {
+                c.setEnabled(true);
+            }
+            setDrmaaSettingsVisible(false, false);
+            if(progressHandle!=null) {
+                progressHandle.finish();
+            }
+            return true;
+        }
+
         @Override
         public void run() {
             try {
                 progressHandle.start();
+                notificationLabel.setText("<html><font color=blue>Downloading Maltcms, please wait!</font></html>");
                 progressHandle.progress("Asking User for Download Location");
-                setEnabled(false);
-                for (Component c : getComponents()) {
+                component.setEnabled(false);
+                for (Component c : component.getComponents()) {
                     c.setEnabled(false);
                 }
+                notificationLabel.setEnabled(true);
                 File userDir = Places.getUserDirectory();
                 File targetDirectory = new File(userDir, "maltcms");
                 targetDirectory.mkdirs();
@@ -402,10 +441,12 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             } finally {
-                setEnabled(true);
-                for (Component c : getComponents()) {
+                component.setEnabled(true);
+                for (Component c : component.getComponents()) {
                     c.setEnabled(true);
                 }
+                setDrmaaSettingsVisible(false, false);
+                boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
                 progressHandle.finish();
             }
         }
@@ -473,7 +514,12 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
         maltcmsOptions.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsOptions", ""));
         nativeSpecTextField.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.nativeSpec", ""));
         pathToShellTextField.setText(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.pathToShell", ""));
-        useDrmaaApiCheckBox.setSelected(NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false));
+//        setDrmaaSettingsVisible(NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false),NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false));
+    }
+
+    private void setDrmaaSettingsVisible(boolean enabled, boolean selected) {
+        useDrmaaApiCheckBox.setEnabled(enabled);
+        useDrmaaApiCheckBox.setSelected(selected);
         nativeSpecTextField.setEnabled(useDrmaaApiCheckBox.isSelected());
         pathToShellTextField.setEnabled(useDrmaaApiCheckBox.isSelected());
     }
@@ -510,6 +556,7 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
     }
 
     boolean valid() {
+        notificationLabel.setText("");
         return true;
         // TODO check whether form is consistent and complete
 //        return true;
@@ -526,11 +573,13 @@ final class LocalMaltcmsExecutionPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextField maltcmsInstallationPath;
     private javax.swing.JComboBox maltcmsOnlineVersion;
     private javax.swing.JTextField maltcmsOptions;
     private javax.swing.JTextField maltcmsVersion;
     private javax.swing.JTextField nativeSpecTextField;
+    private javax.swing.JLabel notificationLabel;
     private javax.swing.JTextField pathToShellTextField;
     private javax.swing.JButton select;
     private javax.swing.JCheckBox useDrmaaApiCheckBox;

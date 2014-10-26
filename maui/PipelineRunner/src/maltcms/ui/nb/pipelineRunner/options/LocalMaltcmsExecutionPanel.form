@@ -56,7 +56,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="pathToShellTextField" max="32767" attributes="0"/>
                           <Component id="maltcmsOnlineVersion" alignment="0" max="32767" attributes="0"/>
-                          <Component id="maltcmsInstallationPath" alignment="0" pref="421" max="32767" attributes="0"/>
+                          <Component id="maltcmsInstallationPath" alignment="0" pref="406" max="32767" attributes="0"/>
                           <Component id="maltcmsVersion" alignment="0" max="32767" attributes="0"/>
                           <Component id="commandLineOptions" alignment="0" max="32767" attributes="0"/>
                           <Component id="maltcmsOptions" alignment="0" max="32767" attributes="0"/>
@@ -69,6 +69,16 @@
                       </Group>
                   </Group>
               </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jSeparator3" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="notificationLabel" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -119,7 +129,11 @@
                   <Component id="pathToShellTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="151" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jSeparator3" min="-2" pref="4" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="notificationLabel" min="-2" pref="30" max="-2" attributes="0"/>
+              <EmptySpace pref="85" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -293,6 +307,15 @@
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.jLabel7.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JSeparator" name="jSeparator3">
+    </Component>
+    <Component class="javax.swing.JLabel" name="notificationLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="maltcms/ui/nb/pipelineRunner/options/Bundle.properties" key="LocalMaltcmsExecutionPanel.notificationLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

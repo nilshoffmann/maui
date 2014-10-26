@@ -27,10 +27,11 @@
  */
 package maltcms.ui.nb.pipelineRunner.ui;
 
-import cross.exception.NotImplementedException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,6 +41,7 @@ import java.util.prefs.Preferences;
 import javax.swing.SwingUtilities;
 import maltcms.ui.fileHandles.properties.pipeline.MaltcmsPipelineFormatDataObject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.ui.support.api.Projects;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
@@ -63,68 +65,75 @@ public class PipelineRunOpenSupport extends OpenSupport implements OpenCookie, C
 
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
-        final List<File> files;
+        final List<File> files = new ArrayList<File>();
         final DataObject dataObject = entry.getDataObject();
         final Project p = FileOwnerQuery.getOwner(entry.getFile());
         final File outputDirectory = new File(FileUtil.toFile(p.getProjectDirectory()), "output");
         outputDirectory.mkdirs();
         if (p instanceof IChromAUIProject) {
             IChromAUIProject icp = ((IChromAUIProject) p);
-            files = DataSourceDialog.getFilesForDatasource(icp);
+            files.addAll(DataSourceDialog.getFilesForDatasource(icp));
             Logger.getLogger(PipelineRunOpenSupport.class.getName()).log(Level.FINE, "Files: {0}", files);
         } else {
-            //TODO implement Selection Dialog for open Maui projects
-            throw new NotImplementedException("Can not open Maltcms process for non IChromAUI projects!");
-        }
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                File pipelineFile = FileUtil.toFile(dataObject.getPrimaryFile());
-                Logger.getLogger(PipelineRunOpenSupport.class.getName()).log(Level.FINE, "Retrieving maltcms path and version preferences!");
-                Preferences prefs = NbPreferences.forModule(PipelineRunnerTopComponent.class);
-                String maltcmsPath = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
-                String maltcmsVersion = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsVersion", "NA");
-                if (maltcmsPath.equals("NA") || maltcmsPath.isEmpty() || maltcmsVersion.equals("NA") || maltcmsVersion.isEmpty()) {
-                    boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
-                } else {
-                    if (files != null && !files.isEmpty()) {
-                        try {
-                            File maltcmsOutputDirectory = new File(outputDirectory, "maltcms-" + maltcmsVersion);
-                            maltcmsOutputDirectory.mkdirs();
-                            boolean useDrmaa = NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false);
-                            if (useDrmaa) {
-                                final MaltcmsDRMAAExecution mlhe = new MaltcmsDRMAAExecution(new File(maltcmsPath), maltcmsOutputDirectory, pipelineFile, files.toArray(new File[files.size()]));
-                                mlhe.setBashString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.pathToShell", "/bin/bash"));
-                                mlhe.setNativeSpecification(Arrays.asList(Arrays.toString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.nativeSpec", "").split(" "))));
-                                SwingUtilities.invokeLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
-                                        PipelineRunnerTopComponent.findInstance().requestActive();
-                                    }
-                                });
-                            } else {
-                                final MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), maltcmsOutputDirectory, pipelineFile, files.toArray(new File[files.size()]));
-                                SwingUtilities.invokeLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
-                                        PipelineRunnerTopComponent.findInstance().requestActive();
-                                    }
-                                });
-                            }
+            Collection<? extends IChromAUIProject> projects = Projects.getSelectedOpenProject(IChromAUIProject.class, "Please select a valid Maui project", "Open Maui projects");
+            if (!projects.isEmpty()) {
+                IChromAUIProject icp = projects.iterator().next();
+                files.addAll(DataSourceDialog.getFilesForDatasource(icp));
+            } else {
+                Logger.getLogger(PipelineRunOpenSupport.class.getName()).log(Level.INFO, "User did not select a valid Maui project.");
 
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+            }
+        }
+        if (!files.isEmpty()) {
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    File pipelineFile = FileUtil.toFile(dataObject.getPrimaryFile());
+                    Logger.getLogger(PipelineRunOpenSupport.class.getName()).log(Level.FINE, "Retrieving maltcms path and version preferences!");
+                    Preferences prefs = NbPreferences.forModule(PipelineRunnerTopComponent.class);
+                    String maltcmsPath = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
+                    String maltcmsVersion = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsVersion", "NA");
+                    if (maltcmsPath.equals("NA") || maltcmsPath.isEmpty() || maltcmsVersion.equals("NA") || maltcmsVersion.isEmpty()) {
+                        boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
+                    } else {
+                        if (files != null && !files.isEmpty()) {
+                            try {
+                                File maltcmsOutputDirectory = new File(outputDirectory, "maltcms-" + maltcmsVersion);
+                                maltcmsOutputDirectory.mkdirs();
+                                boolean useDrmaa = NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false);
+                                if (useDrmaa) {
+                                    final MaltcmsDRMAAExecution mlhe = new MaltcmsDRMAAExecution(new File(maltcmsPath), maltcmsOutputDirectory, pipelineFile, files.toArray(new File[files.size()]));
+                                    mlhe.setBashString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.pathToShell", "/bin/bash"));
+                                    mlhe.setNativeSpecification(Arrays.asList(Arrays.toString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.nativeSpec", "").split(" "))));
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
+                                            PipelineRunnerTopComponent.findInstance().requestActive();
+                                        }
+                                    });
+                                } else {
+                                    final MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), maltcmsOutputDirectory, pipelineFile, files.toArray(new File[files.size()]));
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
+                                            PipelineRunnerTopComponent.findInstance().requestActive();
+                                        }
+                                    });
+                                }
+
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
                     }
                 }
-            }
-        };
-        es.submit(r);
-        es.shutdown();
-
+            };
+            es.submit(r);
+            es.shutdown();
+        }
         return PipelineRunnerTopComponent.findInstance();
     }
 }
