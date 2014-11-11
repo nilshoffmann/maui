@@ -59,7 +59,6 @@ final class RServePanel extends javax.swing.JPanel {
     RServePanel(RServeOptionsPanelController controller) {
         this.controller = controller;
         initComponents();
-        // TODO listen to changes in form fields and call controller.changed()
     }
 
     /**
@@ -305,7 +304,7 @@ final class RServePanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void localRserveSettingsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localRserveSettingsFieldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_localRserveSettingsFieldActionPerformed
 
     private void useLocalInstanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useLocalInstanceActionPerformed
@@ -313,7 +312,7 @@ final class RServePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_useLocalInstanceActionPerformed
 
     private void userNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userNameFieldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_userNameFieldActionPerformed
 
     public boolean testRserve() {
@@ -381,11 +380,11 @@ final class RServePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_testButtonActionPerformed
 
     private void remoteHostPortFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remoteHostPortFieldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_remoteHostPortFieldActionPerformed
 
     private void debugModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugModeActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_debugModeActionPerformed
 
     private void rbinaryLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbinaryLocationButtonActionPerformed

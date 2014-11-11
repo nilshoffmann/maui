@@ -33,9 +33,10 @@ import com.db4o.config.ConfigScope;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.config.QueryEvaluationMode;
 import com.db4o.defragment.AvailableClassFilter;
-import com.db4o.defragment.DatabaseIdMapping;
 import com.db4o.defragment.Defragment;
 import com.db4o.defragment.DefragmentConfig;
+import com.db4o.defragment.DefragmentInfo;
+import com.db4o.defragment.DefragmentListener;
 import com.db4o.diagnostic.DiagnosticToConsole;
 import com.db4o.ext.DatabaseFileLockedException;
 import com.db4o.ext.DatabaseReadOnlyException;
@@ -99,7 +100,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
     private float toGBytes(long bytes) {
         return ((float) bytes) / 1073741824.0f;
     }
-    
+
     private File getBackupFile(File projectFile) {
         return new File(projectFile.getAbsolutePath() + ".backup");
     }
@@ -125,35 +126,29 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
         }
         boolean updateDatabaseSize = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("updateDatabaseSize", false);
         boolean defragmentDatabase = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("defragmentDatabase", false);
-        if (updateDatabaseSize) {
-            NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Database file resize for " + projectDBLocation.getAbsolutePath() + " requested!\nContinue with resize?\nSelecting 'No' will cancel all other attempts!", "Continue with resize?", NotifyDescriptor.YES_NO_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
-            Object obj = DialogDisplayer.getDefault().notify(ndd);
-            if (obj.equals(NotifyDescriptor.OK_OPTION)) {
-                Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Updating database size for {0}", projectDBLocation.getAbsolutePath());
-                int blockSize = Math.max(1, Math.min(254, NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2);
-                defragmentDatabase(projectDBLocation, blockSize);
-            } else if (obj.equals(NotifyDescriptor.NO_OPTION)) {
-                NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("updateDatabaseSize", false);
-            }
-        } else if (defragmentDatabase) {
+        String label = "Defragmenting";
+        if (updateDatabaseSize && !defragmentDatabase) {
+            label = "Resizing";
+        }
+        if (defragmentDatabase || updateDatabaseSize) {
             NotifyDescriptor ndd = new NotifyDescriptor.Confirmation("Defragment database file for " + projectDBLocation.getAbsolutePath() + " requested!\nContinue with defragmentation?\nSelecting 'No' will cancel defragment!", "Continue with defragmentation?", NotifyDescriptor.YES_NO_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
             Object obj = DialogDisplayer.getDefault().notify(ndd);
             if (obj.equals(NotifyDescriptor.OK_OPTION)) {
                 Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Defragmenting database for {0}", projectDBLocation.getAbsolutePath());
                 int blockSize = Math.max(1, Math.min(254, NbPreferences.forModule(DB4oCrudProviderFactory.class).getInt("databaseBlockSize", 2)) / 2);
-                defragmentDatabase(projectDBLocation, blockSize);
+                defragmentDatabase(projectDBLocation, blockSize, label);
             } else if (obj.equals(NotifyDescriptor.NO_OPTION)) {
                 NbPreferences.forModule(DB4oCrudProviderFactory.class).putBoolean("defragmentDatabase", false);
             }
         }
     }
 
-    private void defragmentDatabase(File projectDBLocation, int blockSize) {
-        ProgressHandle ph = ProgressHandleFactory.createHandle("Defragmentation of " + projectDBLocation);
+    private void defragmentDatabase(File projectDBLocation, int blockSize, String label) {
+        ProgressHandle ph = ProgressHandleFactory.createHandle(label + " of " + projectDBLocation);
         ph.start();
         File backupFile;
         try {
-            ph.progress("Defragmenting database file");
+            ph.progress(label + " database file");
             if (blockSize > 0) {
                 EmbeddedObjectContainer c = null;
                 try {
@@ -183,7 +178,7 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
             DefragmentConfig config = new DefragmentConfig(
                     projectDBLocation.getAbsolutePath(), backupFile.getAbsolutePath());
             config.objectCommitFrequency(10000);
-            config.storedClassFilter(new AvailableClassFilter());
+            config.storedClassFilter(new AvailableClassFilter(domainClassLoader));
             config.forceBackupDelete(false);
             EmbeddedConfiguration configuration = configure();
             Logger.getLogger(DB4oCrudProvider.class.getName()).log(Level.INFO, "Setting maximum database size to {0} GBytes", (blockSize * 2));
@@ -192,7 +187,12 @@ public final class DB4oCrudProvider extends AbstractDB4oCrudProvider {
             }
             config.db4oConfig(configuration);
             try {
-                Defragment.defrag(config);
+                Defragment.defrag(config, new DefragmentListener() {
+                    @Override
+                    public void notifyDefragmentInfo(DefragmentInfo defragmentInfo) {
+                        Logger.getLogger(DB4oCrudProvider.class.getName()).info("Defragment Info: " + defragmentInfo.toString());
+                    }
+                });
                 ph.progress("Deleting backup file");
                 backupFile = getBackupFile(projectDBLocation);
                 backupFile.delete();

@@ -73,15 +73,15 @@ public final class Db4oGeneralSettingsOptionsPanelController extends OptionsPane
             boolean defragmentDatabase = NbPreferences.forModule(DB4oCrudProviderFactory.class).getBoolean("defragmentDatabase", false);
             if (updateDatabaseSize) {
                 if (updateInProgress.compareAndSet(false, true)) {
-                    DatabaseResizeRunnable drr = new DatabaseResizeRunnable(this);
-                    DatabaseResizeRunnable.createAndRun("Updating database size", drr);
+                    DatabaseResizeRunnable dfr = new DatabaseResizeRunnable(this);
+                    DatabaseResizeRunnable.createAndRun("Updating database size", dfr);
                 } else {
                     Logger.getLogger(getClass().getName()).warning("Update already in progress!");
                 }
             } else if (defragmentDatabase) {
                 if (updateInProgress.compareAndSet(false, true)) {
                     DatabaseDefragmentRunnable drr = new DatabaseDefragmentRunnable(this);
-                    DatabaseDefragmentRunnable.createAndRun("Updating database size", drr);
+                    DatabaseDefragmentRunnable.createAndRun("Defragmenting database", drr);
                 } else {
                     Logger.getLogger(getClass().getName()).warning("Update already in progress!");
                 }
