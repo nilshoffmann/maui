@@ -1,0 +1,47 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+.navbar {
+  background-color: #CCEE99; /* fallback color, place your own */
+
+  /* Gradients for modern browsers, replace as you see fit */
+  background-image: -moz-linear-gradient(top, #CCEE99, #AACC88);
+  background-image: -ms-linear-gradient(top, #CCEE99, #AACC88);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#CCEE99), to(#AACC88));
+  background-image: -webkit-linear-gradient(top, #CCEE99, #AACC88);
+  background-image: -o-linear-gradient(top, #CCEE99, #AACC88);
+  background-image: linear-gradient(top, #CCEE99, #AACC88);
+  background-repeat: repeat-x;
+
+  /* IE8-9 gradient filter */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#CCEE99', endColorstr='#AACC88', GradientType=0);
+}
+
+.navbar .brand {
+	color: #335500;
+}
+
+
+.navbar .nav>li>a {
+	color: #335500;
+}
+
+.navbar .nav>.active>a, .navbar .nav>.active>a:hover, .navbar .nav>.active>a:focus {
+	background-color: #668833;
+	color: #FFFFFF;
+	text-shadow: 0 1px 0 #333;
+}
+
+
+
+
+
+
+
+
+
+
+

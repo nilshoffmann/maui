@@ -8,14 +8,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>">Maui</a>
+          <a class="navbar-brand" href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>">Omics Base</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>index.html">Home</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>about.html">About</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>features.html">Features</a></li>
-            <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>installation.html">Download</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>documentation.html">Documentation</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>contact.html">Contact</a></li>
             <!--<li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>${config.feed_file}">Subscribe</a></li>-->

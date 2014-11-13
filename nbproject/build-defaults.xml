@@ -239,52 +239,146 @@
         </taskdef>
     </target>
     
-    <target name="build-site" depends="-init,-init-ant-contrib,branding,release" description="Copies and prepares the site for distribution.">
+    <target name="build-site" depends="-init,-init-ant-contrib,branding,release,javadoc" description="Copies and prepares the site for distribution.">
         <mkdir dir="${suite.dir}/build/site"/>
-		<if>
+        <if>
             <available file="${suite.dir}/site/jbake" type="dir"/>
             <then>
                 <!-- use tools/jbake-2.3.2/bin/jbake ${suite.dir}/site/jbake ${suite.dir}/site/public_html-->
                 <echo level="info">Using jbake to render site.</echo>
-				<exec executable="${suite.dir}/../tools/jbake-2.3.2/bin/jbake" inputstring="">
-				    <arg value="${suite.dir}/site/jbake"/>
-				    <arg value="${suite.dir}/site/public_html"/>
-				</exec>    
+                <exec executable="${suite.dir}/../tools/jbake-2.3.2/bin/jbake" inputstring="">
+                    <arg value="${suite.dir}/site/jbake"/>
+                    <arg value="${suite.dir}/site/public_html"/>
+                </exec>   
+                <copy todir="${suite.dir}/site/public_html/javadoc/${app.version}" flatten="false">
+                    <fileset dir="${suite.dir}">
+                        <include name="**/build/javadoc/**"/>
+                        <exclude name="build/javadoc/**"/>
+                    </fileset>
+                    <cutdirsmapper dirs="3"/>
+                </copy>
             </then>
         </if>
-		<copy todir="${suite.dir}/build/site/" flatten="false">
-		    <fileset dir="${suite.dir}/site/public_html">
-		        <include name="**/*.html"/>
-		    </fileset>
-		    <filterset>
-		        <filter token="app.title" value="${app.title}"/>
-		        <filter token="app.version.release" value="${app.version.release}"/>
-		        <filter token="app.version" value="${app.version}"/>
-		    </filterset>
-		</copy>
-		<copy todir="${suite.dir}/build/site/" flatten="false">
-		    <fileset dir="${suite.dir}/site/public_html">
-		        <exclude name="**/*.html"/>
-		    </fileset>
-		</copy>
+        <copy todir="${suite.dir}/build/site/" flatten="false">
+            <fileset dir="${suite.dir}/site/public_html">
+                <include name="**/*.html"/>
+            </fileset>
+            <filterset>
+                <filter token="app.title" value="${app.title}"/>
+                <filter token="app.version.release" value="${app.version.release}"/>
+                <filter token="app.version" value="${app.version}"/>
+            </filterset>
+        </copy>
+        <copy todir="${suite.dir}/build/site/" flatten="false">
+            <fileset dir="${suite.dir}/site/public_html">
+                <exclude name="**/*.html"/>
+            </fileset>
+        </copy>
     </target>
 	
-    <target name="javadoc" depends="-init,-init-ant-contrib,branding,release,-hide-excluded-modules,build-site" description="Create JavaDoc for all modules in the suite.">
+    <target name="javadoc" depends="-init,-init-ant-contrib,branding,release,-hide-excluded-modules" description="Create JavaDoc for all modules in the suite.">
         <!-- create a path for later reference -->
         <path id="modules.sorted.path">
             <pathelement path="${modules.sorted}"/>
         </path>
         <subant target="javadoc" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false"/>
-        <mkdir dir="${suite.dir}/build/site/javadoc/${app.version}"/>
-        <copy todir="${suite.dir}/build/site/javadoc/${app.version}" flatten="false">
-            <fileset dir="${suite.dir}">
-                <include name="**/build/javadoc/**"/>
-                <exclude name="build/javadoc/**"/>
-            </fileset>
-            <cutdirsmapper dirs="3"/>
-        </copy>
-        <echo>Modules sorted: ${modules.sorted}</echo>
-        <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html"><![CDATA[
+        <if>
+            <available file="${suite.dir}/site/jbake" type="dir"/>
+            <then>
+                <mkdir dir="${suite.dir}/site/jbake/content/javadoc/${app.version}"/>
+<!--                <copy todir="${suite.dir}/site/jbake/content/javadoc/${app.version}" flatten="false">
+                    <fileset dir="${suite.dir}">
+                        <include name="**/build/javadoc/**"/>
+                        <exclude name="build/javadoc/**"/>
+                    </fileset>
+                    <cutdirsmapper dirs="3"/>
+                </copy>-->
+                <tstamp>
+                    <format property="datetime" pattern="yyyy-MM-dd"/>
+                </tstamp>
+                <echo>Modules sorted: ${modules.sorted}</echo>
+                <echo file="${suite.dir}/site/jbake/content/javadoc/${app.version}/index.md"><![CDATA[title=JavaDoc
+date=${datetime}
+type=page
+status=published
+~~~~~~
+<h2>Modules</h2>
+<ul>]]></echo>
+                <for param="file">
+                    <path refid="modules.sorted.path"/>
+                    <sequential>
+                        <echo>Adding JavaDoc for Module: @{file}</echo>
+                        <pathconvert property="relative-path">
+                            <path path="@{file}"/>
+                            <chainedmapper>
+                                <regexpmapper from=".*/(.+)$" to="\1" casesensitive="no"/>
+                            </chainedmapper>
+                        </pathconvert>
+                        <echo level="info">Module Relative Path: ${relative-path}</echo>
+                        <!-- Retrieve official module name, not the javadoc link name -->
+                        <loadfile srcfile="${relative-path}/manifest.mf" property="localizing-bundle.location">
+                            <filterchain>
+                                <linecontains>
+                                    <contains value="OpenIDE-Module-Localizing-Bundle"/>
+                                </linecontains>
+                                <!-- avoid newlines in filtered output -->
+                                <tokenfilter delimoutput="">
+                                    <!-- remove prefix, trim whitespace -->
+                                    <replacestring from="OpenIDE-Module-Localizing-Bundle:" to=""/>
+                                    <trim/>
+                                </tokenfilter>
+                            </filterchain>
+                        </loadfile>
+                        <loadfile srcfile="${relative-path}/manifest.mf" property="module-javadoc.location">
+                            <filterchain>
+                                <linecontains>
+                                    <contains value="OpenIDE-Module:"/>
+                                </linecontains>
+                                <!-- avoid newlines in filtered output -->
+                                <tokenfilter delimoutput="">
+                                    <!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
+                                    <replacestring from="OpenIDE-Module:" to=""/>
+                                    <replaceregex pattern="/[0-9]+" replace="" flags="gi"/>
+                                    <trim/>
+                                </tokenfilter>
+                            </filterchain>
+                        </loadfile>
+                        <!-- replace dots with hyphens/dashes -->
+                        <propertyregex property="module-javadoc-hyphenated.location" input="${module-javadoc.location}" regexp="\." replace="-" global="true" />
+                        <echo level="info">Localizing Bundle location: ${localizing-bundle.location}</echo>
+                        <echo level="info">Module javadoc relative location: ${module-javadoc-hyphenated.location}</echo>
+                        <if>
+                            <available file="${suite.dir}/build/site/javadoc/${app.version}/${module-javadoc-hyphenated.location}/index.html"/>
+                            <then>
+                                <!-- append link to index.html-->
+                                <echo file="${suite.dir}/site/jbake/content/javadoc/${app.version}/index.md" append="true">
+<![CDATA[   <li><a href="${module-javadoc-hyphenated.location}/index.html">${relative-path}</a></li>]]></echo>
+                            </then>
+                            <else>
+                                <echo level="warn">Skipping due to missing javadoc at ${suite.dir}/site/jbake/content/javadoc/${app.version}/${module-javadoc-hyphenated.location}</echo>
+                            </else>
+                        </if>
+                        <!-- reset properties for next module -->
+                        <var name="relative-path" unset="true"/>
+                        <var name="localizing-bundle.location" unset="true"/>
+                        <var name="module-javadoc.location" unset="true"/>
+                        <var name="module-javadoc-hyphenated.location" unset="true"/>
+                    </sequential>
+                </for>
+                <echo file="${suite.dir}/site/jbake/content/javadoc/${app.version}/index.md" append="true">
+<![CDATA[</ul>]]></echo>	
+            </then>
+            <else>
+                <mkdir dir="${suite.dir}/build/site/javadoc/${app.version}"/>
+                <copy todir="${suite.dir}/build/site/javadoc/${app.version}" flatten="false">
+                    <fileset dir="${suite.dir}">
+                        <include name="**/build/javadoc/**"/>
+                        <exclude name="build/javadoc/**"/>
+                    </fileset>
+                    <cutdirsmapper dirs="3"/>
+                </copy>
+                <echo>Modules sorted: ${modules.sorted}</echo>
+                <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html"><![CDATA[
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -342,69 +436,69 @@
             <h2>Modules</h2>
             <ul>
 ]]></echo>
-        <for param="file">
-            <path refid="modules.sorted.path"/>
-            <sequential>
-                <echo>Adding JavaDoc for Module: @{file}</echo>
-                <pathconvert property="relative-path">
-                    <path path="@{file}"/>
-                    <chainedmapper>
-                        <regexpmapper from=".*/(.+)$" to="\1" casesensitive="no"/>
-                    </chainedmapper>
-                </pathconvert>
-                <echo level="info">Module Relative Path: ${relative-path}</echo>
-                <!-- Retrieve official module name, not the javadoc link name -->
-                <loadfile srcfile="${relative-path}/manifest.mf" property="localizing-bundle.location">
-                    <filterchain>
-                        <linecontains>
-                            <contains value="OpenIDE-Module-Localizing-Bundle"/>
-                        </linecontains>
-                        <!-- avoid newlines in filtered output -->
-                        <tokenfilter delimoutput="">
-                            <!-- remove prefix, trim whitespace -->
-                            <replacestring from="OpenIDE-Module-Localizing-Bundle:" to=""/>
-                            <trim/>
-                        </tokenfilter>
-                    </filterchain>
-                </loadfile>
-                <loadfile srcfile="${relative-path}/manifest.mf" property="module-javadoc.location">
-                    <filterchain>
-                        <linecontains>
-                            <contains value="OpenIDE-Module:"/>
-                        </linecontains>
-                        <!-- avoid newlines in filtered output -->
-                        <tokenfilter delimoutput="">
-                            <!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
-                            <replacestring from="OpenIDE-Module:" to=""/>
-                            <replaceregex pattern="/[0-9]+" replace="" flags="gi"/>
-                            <trim/>
-                        </tokenfilter>
-                    </filterchain>
-                </loadfile>
-                <!-- replace dots with hyphens/dashes -->
-                <propertyregex property="module-javadoc-hyphenated.location" input="${module-javadoc.location}" regexp="\." replace="-" global="true" />
-                <echo level="info">Localizing Bundle location: ${localizing-bundle.location}</echo>
-                <echo level="info">Module javadoc relative location: ${module-javadoc-hyphenated.location}</echo>
-                <if>
-                    <available file="${suite.dir}/build/site/javadoc/${app.version}/${module-javadoc-hyphenated.location}/index.html"/>
-                    <then>
-                        <!-- append link to index.html-->
-                        <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html" append="true"><![CDATA[
+                <for param="file">
+                    <path refid="modules.sorted.path"/>
+                    <sequential>
+                        <echo>Adding JavaDoc for Module: @{file}</echo>
+                        <pathconvert property="relative-path">
+                            <path path="@{file}"/>
+                            <chainedmapper>
+                                <regexpmapper from=".*/(.+)$" to="\1" casesensitive="no"/>
+                            </chainedmapper>
+                        </pathconvert>
+                        <echo level="info">Module Relative Path: ${relative-path}</echo>
+                        <!-- Retrieve official module name, not the javadoc link name -->
+                        <loadfile srcfile="${relative-path}/manifest.mf" property="localizing-bundle.location">
+                            <filterchain>
+                                <linecontains>
+                                    <contains value="OpenIDE-Module-Localizing-Bundle"/>
+                                </linecontains>
+                                <!-- avoid newlines in filtered output -->
+                                <tokenfilter delimoutput="">
+                                    <!-- remove prefix, trim whitespace -->
+                                    <replacestring from="OpenIDE-Module-Localizing-Bundle:" to=""/>
+                                    <trim/>
+                                </tokenfilter>
+                            </filterchain>
+                        </loadfile>
+                        <loadfile srcfile="${relative-path}/manifest.mf" property="module-javadoc.location">
+                            <filterchain>
+                                <linecontains>
+                                    <contains value="OpenIDE-Module:"/>
+                                </linecontains>
+                                <!-- avoid newlines in filtered output -->
+                                <tokenfilter delimoutput="">
+                                    <!-- remove prefix, remove potential suffix (like module-name/1), trim whitespace -->
+                                    <replacestring from="OpenIDE-Module:" to=""/>
+                                    <replaceregex pattern="/[0-9]+" replace="" flags="gi"/>
+                                    <trim/>
+                                </tokenfilter>
+                            </filterchain>
+                        </loadfile>
+                        <!-- replace dots with hyphens/dashes -->
+                        <propertyregex property="module-javadoc-hyphenated.location" input="${module-javadoc.location}" regexp="\." replace="-" global="true" />
+                        <echo level="info">Localizing Bundle location: ${localizing-bundle.location}</echo>
+                        <echo level="info">Module javadoc relative location: ${module-javadoc-hyphenated.location}</echo>
+                        <if>
+                            <available file="${suite.dir}/build/site/javadoc/${app.version}/${module-javadoc-hyphenated.location}/index.html"/>
+                            <then>
+                                <!-- append link to index.html-->
+                                <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html" append="true"><![CDATA[
 <li><a href="${module-javadoc-hyphenated.location}/index.html">${relative-path}</a></li>
 ]]></echo>
-                    </then>
-                    <else>
-                        <echo level="warn">Skipping due to missing javadoc at ${suite.dir}/build/site/javadoc/${app.version}/${module-javadoc-hyphenated.location}</echo>
-                    </else>
-                </if>
-                <!-- reset properties for next module -->
-                <var name="relative-path" unset="true"/>
-                <var name="localizing-bundle.location" unset="true"/>
-                <var name="module-javadoc.location" unset="true"/>
-                <var name="module-javadoc-hyphenated.location" unset="true"/>
-            </sequential>
-        </for>
-        <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html" append="true"><![CDATA[
+                            </then>
+                            <else>
+                                <echo level="warn">Skipping due to missing javadoc at ${suite.dir}/build/site/javadoc/${app.version}/${module-javadoc-hyphenated.location}</echo>
+                            </else>
+                        </if>
+                        <!-- reset properties for next module -->
+                        <var name="relative-path" unset="true"/>
+                        <var name="localizing-bundle.location" unset="true"/>
+                        <var name="module-javadoc.location" unset="true"/>
+                        <var name="module-javadoc-hyphenated.location" unset="true"/>
+                    </sequential>
+                </for>
+                <echo file="${suite.dir}/build/site/javadoc/${app.version}/index.html" append="true"><![CDATA[
             </ul>
             <hr>
 
@@ -431,7 +525,10 @@
         </script>
     </body>
 </html>
-]]></echo>		
+]]></echo>	
+            </else>
+        </if>
+	
     </target> 
 	
     <target name="zip-javadoc" depends="javadoc">
