@@ -32,6 +32,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;

@@ -122,6 +122,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>net.sf.maltcms.common.charts.actions</package>
                 <package>net.sf.maltcms.common.charts.api</package>
                 <package>net.sf.maltcms.common.charts.api.dataset</package>
                 <package>net.sf.maltcms.common.charts.api.overlay</package>

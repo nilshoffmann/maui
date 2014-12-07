@@ -293,41 +293,16 @@ public class XYChartBuilder {
 
     /**
      *
-        return this;
-    }
-
-    /**
-     *
-     * @param renderer
-     * @param datasetSeriesColorMap
-     */
-    protected void setDatasetSeriesColorMap(XYItemRenderer renderer, Map<Comparable<?>, Color> datasetSeriesColorMap) {
-        if (datasetSeriesColorMap != null) {
-            if (datasetSeriesColorMap.keySet().size() != dataset.getSeriesCount()) {
-                throw new IllegalArgumentException("Mismatch in series colors and series count!");
-            }
-            for (int i = 0; i < dataset.getSeriesCount(); i++) {
-                Comparable<?> key = dataset.getSeriesKey(i);
-                renderer.setSeriesPaint(i, datasetSeriesColorMap.get(key));
-            }
-        }
-    }
-
-    /**
      * @param chartPanelBuffer
      * @return
      */
     public XYChartBuilder useBuffer(boolean chartPanelBuffer) {
         this.chartPanelBuffer = chartPanelBuffer;
-     */
-    public ChartFrame buildFrame(boolean scrollPane) {
-        chart.setRenderingHints(renderingHints);
-        chartTheme.apply(chart);
-        ChartFrame chartFrame = new ChartFrame(chartTitle, chart, scrollPane);
-        return chartFrame;
+        return this;
     }
 
     /**
+     *
      * @param chartPanelProperties
      * @return
      */
@@ -399,6 +374,36 @@ public class XYChartBuilder {
 
     /**
      *
+     * @param renderer
+     * @param datasetSeriesColorMap
+     */
+    protected void setDatasetSeriesColorMap(XYItemRenderer renderer, Map<Comparable<?>, Color> datasetSeriesColorMap) {
+        if (datasetSeriesColorMap != null) {
+            if (datasetSeriesColorMap.keySet().size() != dataset.getSeriesCount()) {
+                throw new IllegalArgumentException("Mismatch in series colors and series count!");
+            }
+            for (int i = 0; i < dataset.getSeriesCount(); i++) {
+                Comparable<?> key = dataset.getSeriesKey(i);
+                renderer.setSeriesPaint(i, datasetSeriesColorMap.get(key));
+            }
+        }
+    }
+
+    /**
+     * Creates a new ChartFrame.
+     * @param scrollPane whether a scroll pane should be used
+     * @return the chart frame
+     */
+    public ChartFrame buildFrame(boolean scrollPane) {
+        chart.setRenderingHints(renderingHints);
+        chartTheme.apply(chart);
+        ChartFrame chartFrame = new ChartFrame(chartTitle, chart, scrollPane);
+        return chartFrame;
+    }
+
+    /**
+     * Creates a new ContextAwareChartPanel instance.
+     * @return the chart panel
      */
     public ChartPanel buildPanel() {
         chart.setRenderingHints(renderingHints);
@@ -413,6 +418,3 @@ public class XYChartBuilder {
     }
 
 }
-     * Creates a new ChartFrame.
-     * @param scrollPane whether a scroll pane should be used
-     * @return the chart frame
