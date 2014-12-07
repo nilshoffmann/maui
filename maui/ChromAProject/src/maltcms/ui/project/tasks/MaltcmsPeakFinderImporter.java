@@ -65,6 +65,10 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
         try {
             importDir = project.getImportLocation(this);
             progressHandle.start(files.length);
+            if(files.length==0) {
+                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Could not import peak files! No files were found! ", NotifyDescriptor.WARNING_MESSAGE));
+                return;
+            }
             progressHandle.progress("Retrieving Chromatograms");
             LinkedHashMap<String, IChromatogramDescriptor> chromatograms = new LinkedHashMap<>();
             for (IChromatogramDescriptor descriptor : project.getChromatograms()) {
@@ -97,6 +101,7 @@ public class MaltcmsPeakFinderImporter extends AProgressAwareRunnable {
                         "Could not match reports to existing chromatograms!",
                         NotifyDescriptor.WARNING_MESSAGE);
                 DialogDisplayer.getDefault().notify(message);
+                return;
             }
             int peaksReportsImported = 0;
             progressHandle.progress("Importing Peak Lists");

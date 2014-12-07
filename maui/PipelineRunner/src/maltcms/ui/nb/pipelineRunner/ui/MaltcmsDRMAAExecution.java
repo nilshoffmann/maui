@@ -31,12 +31,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import org.netbeans.api.project.Project;
 //import org.ggf.drmaa.Session;
 
 public class MaltcmsDRMAAExecution extends MaltcmsLocalHostExecution {
 
-    public MaltcmsDRMAAExecution(File baseDir, File outputBaseDir, File configurationFile, File[] inputFiles) throws IOException {
-        super(baseDir, outputBaseDir, configurationFile, inputFiles);
+    public MaltcmsDRMAAExecution(File baseDir, File outputBaseDir, File configurationFile, File[] inputFiles, Project project) throws IOException {
+        super(baseDir, outputBaseDir, configurationFile, inputFiles, project);
     }
 
     public String bashString = "/bin/bash";

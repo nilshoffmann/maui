@@ -88,7 +88,7 @@ public class Dialogs {
                     public void run() {
                         ChoiceViewDialogPanel dp = new ChoiceViewDialogPanel();
                         dp.init(label, false);
-                        dp.getExplorerManager().setRootContext(new AbstractNode(Children.create(new ChildFactory<IToolDescriptor>() {
+                        dp.getExplorerManager().setRootContext(new AbstractNode(Children.create(new ChildFactory<T>() {
 
                             @Override
                             protected boolean createKeys(List list) {
@@ -97,7 +97,7 @@ public class Dialogs {
                             }
 
                             @Override
-                            protected Node createNodeForKey(final IToolDescriptor key) {
+                            protected Node createNodeForKey(final T key) {
                                 INodeFactory nodeFactory = Lookup.getDefault().lookup(INodeFactory.class);
                                 Node toolNode = nodeFactory.createDescriptorNode(key, Children.LEAF, lookup);
                                 FilterNode fn = new FilterNode(toolNode) {
@@ -135,8 +135,8 @@ public class Dialogs {
                     @Override
                     public void run() {
                         OutlineViewDialogPanel dp = new OutlineViewDialogPanel();
-                        dp.init("Check Tool Descriptors for Deletion: ", false);
-                        dp.getExplorerManager().setRootContext(new AbstractNode(Children.create(new ChildFactory<IToolDescriptor>() {
+                        dp.init(label, false);
+                        dp.getExplorerManager().setRootContext(new AbstractNode(Children.create(new ChildFactory<T>() {
 
                             @Override
                             protected boolean createKeys(List list) {
@@ -145,7 +145,7 @@ public class Dialogs {
                             }
 
                             @Override
-                            protected Node createNodeForKey(final IToolDescriptor key) {
+                            protected Node createNodeForKey(final T key) {
                                 INodeFactory nodeFactory = Lookup.getDefault().lookup(INodeFactory.class);
                                 Node toolNode = Nodes.checkable(nodeFactory.createDescriptorNode(key, Children.LEAF, lookup));
                                 FilterNode fn = new FilterNode(toolNode) {
@@ -157,7 +157,7 @@ public class Dialogs {
                                 return fn;
                             }
                         }, true)));
-                        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, "Select Tool Results for Deletion", NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
+                        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
                         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
                             Set<T> toolDescriptors = new LinkedHashSet<>();
                             Node[] selectedNodes = dp.getExplorerManager().getRootContext().getChildren().getNodes(true);

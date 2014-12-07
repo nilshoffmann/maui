@@ -86,54 +86,85 @@ public class PipelineRunOpenSupport extends OpenSupport implements OpenCookie, C
         }
         if (!files.isEmpty()) {
             ExecutorService es = Executors.newSingleThreadExecutor();
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    File pipelineFile = FileUtil.toFile(dataObject.getPrimaryFile());
-                    Logger.getLogger(PipelineRunOpenSupport.class.getName()).log(Level.FINE, "Retrieving maltcms path and version preferences!");
-                    Preferences prefs = NbPreferences.forModule(PipelineRunnerTopComponent.class);
-                    String maltcmsPath = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
-                    String maltcmsVersion = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsVersion", "NA");
-                    if (maltcmsPath.equals("NA") || maltcmsPath.isEmpty() || maltcmsVersion.equals("NA") || maltcmsVersion.isEmpty()) {
-                        boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
-                    } else {
-                        if (files != null && !files.isEmpty()) {
-                            try {
-                                File maltcmsOutputDirectory = new File(outputDirectory, "maltcms-" + maltcmsVersion);
-                                maltcmsOutputDirectory.mkdirs();
-                                boolean useDrmaa = NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false);
-                                if (useDrmaa) {
-                                    final MaltcmsDRMAAExecution mlhe = new MaltcmsDRMAAExecution(new File(maltcmsPath), maltcmsOutputDirectory, pipelineFile, files.toArray(new File[files.size()]));
-                                    mlhe.setBashString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.pathToShell", "/bin/bash"));
-                                    mlhe.setNativeSpecification(Arrays.asList(Arrays.toString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.nativeSpec", "").split(" "))));
-                                    SwingUtilities.invokeLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
-                                            PipelineRunnerTopComponent.findInstance().requestActive();
-                                        }
-                                    });
-                                } else {
-                                    final MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(new File(maltcmsPath), maltcmsOutputDirectory, pipelineFile, files.toArray(new File[files.size()]));
-                                    SwingUtilities.invokeLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
-                                            PipelineRunnerTopComponent.findInstance().requestActive();
-                                        }
-                                    });
-                                }
-
-                            } catch (IOException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                        }
-                    }
-                }
-            };
-            es.submit(r);
+            es.submit(new ExecutionRunnable(
+                p,
+                dataObject,
+                files,
+                outputDirectory
+            ));
             es.shutdown();
         }
         return PipelineRunnerTopComponent.findInstance();
     }
+
+    private class ExecutionRunnable implements Runnable {
+
+        private final Project project;
+        private final DataObject dataObject;
+        private final Collection<? extends File> files;
+        private final File outputDirectory;
+
+        ExecutionRunnable(Project project, DataObject dataObject, Collection<? extends File> files, File outputDirectory) {
+            this.project = project;
+            this.dataObject = dataObject;
+            this.files = files;
+            this.outputDirectory = outputDirectory;
+        }
+
+        @Override
+        public void run() {
+            File pipelineFile = FileUtil.toFile(dataObject.getPrimaryFile());
+            Logger.getLogger(PipelineRunOpenSupport.class.getName()).log(Level.FINE, "Retrieving maltcms path and version preferences!");
+            Preferences prefs = NbPreferences.forModule(PipelineRunnerTopComponent.class);
+            String maltcmsPath = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
+            String maltcmsVersion = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsVersion", "NA");
+            if (maltcmsPath.equals("NA") || maltcmsPath.isEmpty() || maltcmsVersion.equals("NA") || maltcmsVersion.isEmpty()) {
+                boolean b = OptionsDisplayer.getDefault().open("maltcmsOptions");
+            } else {
+                if (files != null && !files.isEmpty()) {
+                    try {
+                        File maltcmsOutputDirectory = new File(outputDirectory, "maltcms-" + maltcmsVersion);
+                        maltcmsOutputDirectory.mkdirs();
+                        boolean useDrmaa = NbPreferences.forModule(PipelineRunnerTopComponent.class).getBoolean("drmaa.use", false);
+                        if (useDrmaa) {
+                            final MaltcmsDRMAAExecution mlhe = new MaltcmsDRMAAExecution(
+                                new File(maltcmsPath),
+                                maltcmsOutputDirectory,
+                                pipelineFile, 
+                                files.toArray(new File[files.size()]), 
+                                project
+                            );
+                            mlhe.setBashString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.pathToShell", "/bin/bash"));
+                            mlhe.setNativeSpecification(Arrays.asList(Arrays.toString(NbPreferences.forModule(PipelineRunnerTopComponent.class).get("drmaa.nativeSpec", "").split(" "))));
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
+                                    PipelineRunnerTopComponent.findInstance().requestActive();
+                                }
+                            });
+                        } else {
+                            final MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(
+                                new File(maltcmsPath), 
+                                maltcmsOutputDirectory, 
+                                pipelineFile, 
+                                files.toArray(new File[files.size()]), 
+                                project
+                            );
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    PipelineRunnerTopComponent.findInstance().addProcess(mlhe);
+                                    PipelineRunnerTopComponent.findInstance().requestActive();
+                                }
+                            });
+                        }
+
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
+    };
 }

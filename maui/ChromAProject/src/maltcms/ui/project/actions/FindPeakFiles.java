@@ -27,6 +27,7 @@
  */
 package maltcms.ui.project.actions;
 
+import net.sf.maltcms.chromaui.project.api.extimport.IFileResultFinder;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,8 +40,13 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import maltcms.ui.project.tasks.MaltcmsPeakFinderImporter;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.extimport.FileBasedToolResultDescriptor;
+import net.sf.maltcms.chromaui.project.api.extimport.IFileBasedToolResultDescriptor;
 import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.ServiceProvider;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -49,7 +55,8 @@ import org.xml.sax.InputSource;
  *
  * @author Nils Hoffmann
  */
-public class FindPeakFiles {
+@ServiceProvider(service=IFileResultFinder.class)
+public class FindPeakFiles implements IFileResultFinder {
     public File[] getResults(File maltcmsProjectDirectory) {
         File workflowXml = new File(maltcmsProjectDirectory, "workflow.xml");
         if (workflowXml.exists() && workflowXml.canRead()) {
@@ -72,8 +79,24 @@ public class FindPeakFiles {
                 return new File[0];
             }
         } else {
-            Logger.getLogger(FindMultipleAlignment.class.getName()).log(Level.WARNING, "Could not locate 'workflow.xml' file in directory {0}", maltcmsProjectDirectory);
+            Logger.getLogger(FindPeakFiles.class.getName()).log(Level.WARNING, "Could not locate 'workflow.xml' file in directory {0}", maltcmsProjectDirectory);
             return new File[0];
         }
+    }
+    
+    @Override
+    public IFileBasedToolResultDescriptor createDescriptor(IChromAUIProject project, File outputDirectory) {
+        IFileBasedToolResultDescriptor descr = new FileBasedToolResultDescriptor();
+        descr.setOutputDirectory(outputDirectory);
+        descr.setProject(project);
+        descr.setName("findPeakFiles");
+        descr.setDisplayName("Import Peak Reports");
+        descr.setProgressAwareRunnable(
+            new MaltcmsPeakFinderImporter(
+                project,
+                getResults(outputDirectory)
+            )
+        );
+        return descr;
     }
 }
