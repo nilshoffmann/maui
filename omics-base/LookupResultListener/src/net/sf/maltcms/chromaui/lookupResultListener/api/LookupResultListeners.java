@@ -95,6 +95,9 @@ public class LookupResultListeners implements List<AbstractLookupResultListener>
         return lookupResultListeners.equals(o);
     }
 
+    /**
+     *
+     */
     public void trimToSize() {
         lookupResultListeners.trimToSize();
     }
@@ -150,6 +153,10 @@ public class LookupResultListeners implements List<AbstractLookupResultListener>
         return lookupResultListeners.get(i);
     }
 
+    /**
+     *
+     * @param i
+     */
     public void ensureCapacity(int i) {
         lookupResultListeners.ensureCapacity(i);
     }
@@ -191,6 +198,9 @@ public class LookupResultListeners implements List<AbstractLookupResultListener>
         return lookupResultListeners.add(e);
     }
 
+    /**
+     *
+     */
     @Override
     public void deregister() {
         for (AbstractLookupResultListener listener : this) {
@@ -198,6 +208,10 @@ public class LookupResultListeners implements List<AbstractLookupResultListener>
         }
     }
 
+    /**
+     *
+     * @param targetLookup
+     */
     @Override
     public void register(Lookup targetLookup) {
         for (AbstractLookupResultListener listener : this) {
@@ -205,6 +219,10 @@ public class LookupResultListeners implements List<AbstractLookupResultListener>
         }
     }
 
+    /**
+     *
+     * @param result
+     */
     @Override
     public void resultChanged(LookupEvent result) {
         for (AbstractLookupResultListener listener : this) {

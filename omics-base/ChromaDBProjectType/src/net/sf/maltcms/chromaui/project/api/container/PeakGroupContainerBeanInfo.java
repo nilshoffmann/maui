@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.project.api.container;
 import java.beans.BeanDescriptor;
 import java.beans.BeanInfo;
 import java.beans.EventSetDescriptor;
+import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.MethodDescriptor;
@@ -48,9 +49,23 @@ public class PeakGroupContainerBeanInfo extends SimpleBeanInfo {
 
         // Here you can add code for customizing the BeanDescriptor.
          return beanDescriptor;     }//GEN-LAST:BeanDescriptor
-    // Properties information will be obtained from introspection.//GEN-FIRST:Properties
-    private static PropertyDescriptor[] properties = null;
-    private static PropertyDescriptor[] getPdescriptor(){//GEN-HEADEREND:Properties
+    // Property identifiers//GEN-FIRST:Properties
+    private static final int PROPERTY_statisticsContainers = 0;
+
+    // Property array 
+    /*lazy PropertyDescriptor*/
+    private static PropertyDescriptor[] getPdescriptor(){
+        PropertyDescriptor[] properties = new PropertyDescriptor[1];
+    
+        try {
+            properties[PROPERTY_statisticsContainers] = new PropertyDescriptor ( "statisticsContainers", net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer.class, "getStatisticsContainers", "setStatisticsContainers" ); // NOI18N
+            properties[PROPERTY_statisticsContainers].setHidden ( true );
+            properties[PROPERTY_statisticsContainers].setDisplayName ( "Statistics Containers" );
+            properties[PROPERTY_statisticsContainers].setShortDescription ( "The statistics containers contained in this peak group container" );
+        }
+        catch(IntrospectionException e) {
+            e.printStackTrace();
+        }//GEN-HEADEREND:Properties
 
         // Here you can add code for customizing the properties array.
         return properties;     }//GEN-LAST:Properties

@@ -32,17 +32,33 @@ import net.sf.maltcms.chromaui.jmztab.ui.api.IMzTabDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Param;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class ParamDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_PARAM = "param";
+    private static final long serialVersionUID = -6933193736465996945L;
 
     private Param param;
 
+    /**
+     *
+     * @return
+     */
     public Param getParam() {
         activate(ActivationPurpose.READ);
         return param;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setParam(Param element) {
         activate(ActivationPurpose.WRITE);
         Param old = this.param;
@@ -59,18 +75,31 @@ public class ParamDescriptor extends ABasicDescriptor implements IMzTabDescripto
         return param.getName();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCvLabel() {
         return getParam().getCvLabel();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getAccession() {
         return getParam().getAccession();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getValue() {
         return getParam().getValue();
     }
 
+    @Override
     public String toString() {
         return getParam().toString();
     }

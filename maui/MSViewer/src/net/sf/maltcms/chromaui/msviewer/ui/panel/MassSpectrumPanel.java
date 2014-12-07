@@ -39,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -106,7 +107,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 
     private XYSeriesCollection sc;
     private XYPlot plot;
-    private HashMap<Comparable, Double> scales = new HashMap<Comparable, Double>();
+    private HashMap<Comparable, Double> scales = new HashMap<>();
     private ExecutorService es = Executors.newFixedThreadPool(1);
     private int topK = 15;
     private int activeMS = -1;
@@ -117,7 +118,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
 //    private Result<IScan2D> scan2DSelection;
     private Result<IMetabolite> metaboliteSelection;
     private Result<IPeakAnnotationDescriptor> peakAnnotationDescriptorResult;
-    private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<MSSeries, IScan>();
+    private HashMap<MSSeries, IScan> seriesToScan = new LinkedHashMap<>();
     private DatabaseSearchPanel ddp = null;
     private Lookup contentProviderLookup;
     private double barWidth = 0.5d;
@@ -311,7 +312,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
     }
 
     private TopKItemsLabelGenerator createTopKItemsLabelGenerator(int topK, int series) {
-        List<Point> seriesItemList = new ArrayList<Point>();
+        List<Point> seriesItemList = new ArrayList<>();
         Comparator<Point> c = new Comparator<Point>() {
             @Override
             public int compare(Point o1, Point o2) {
@@ -795,7 +796,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                 if (s != null) {
                     addSeries(s, scan, add);
                 } else {
-                    System.err.println("MSSeries was null!");
+                    Logger.getLogger(getClass().getName()).warning("MSSeries was null!");
                 }
             }
         };
@@ -817,7 +818,7 @@ public class MassSpectrumPanel extends JPanel implements LookupListener {
                     }
 
                 } else {
-                    List<XYSeries> seriesToRemove = new ArrayList<XYSeries>();
+                    List<XYSeries> seriesToRemove = new ArrayList<>();
                     for (int i = 0; i < sc.getSeriesCount(); i++) {
                         seriesToRemove.add(sc.getSeries(i));
                         seriesToScan.remove((MSSeries) sc.getSeries(i));

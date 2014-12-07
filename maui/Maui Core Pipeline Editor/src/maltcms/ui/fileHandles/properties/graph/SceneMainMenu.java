@@ -27,6 +27,8 @@
  */
 package maltcms.ui.fileHandles.properties.graph;
 
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -104,26 +106,6 @@ public class SceneMainMenu implements PopupMenuProvider, ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (ADD_NEW_NODE_ACTION.equals(e.getActionCommand())) {
             PipelineElementWidget node = (PipelineElementWidget) this.scene.addNode("" + nodeCount++);
-            this.scene.validate();
-            e.setSource(node);
-
-            CallableSystemAction csa = PipelinePropertiesWizardAction.getInstance();
-            csa.actionPerformed(e);
-
-            if (!node.getLastAction().equals("cancelled")) {
-                this.scene.getSceneAnimator().animatePreferredLocation(node, point);
-            } else {
-                this.scene.removeNodeWithEdges((String) this.scene.findObject(node));
-                this.scene.validate();
-            }
-        } else if (ADD_NEW_INPUT_ACTION.equals(e.getActionCommand())) {
-//            if (!this.scene.hasRootNode()) {
-//            } else {
-//                System.out.println("Already has root node");
-//            }
-        } else if (ADD_NEW_GENERAL_ACTION.equals(e.getActionCommand())) {
-            if (!this.scene.hasGeneralNode()) {
-                PipelineGeneralConfigWidget node = (PipelineGeneralConfigWidget) this.scene.addNode(PipelineGraphScene.GENERAL_WIDGET);
                 this.scene.validate();
                 e.setSource(node);
 
@@ -135,18 +117,38 @@ public class SceneMainMenu implements PopupMenuProvider, ActionListener {
                 } else {
                     this.scene.removeNodeWithEdges((String) this.scene.findObject(node));
                     this.scene.validate();
-                }
-            } else {
+            }
+        } else if (ADD_NEW_INPUT_ACTION.equals(e.getActionCommand())) {
+//            if (!this.scene.hasRootNode()) {
+//            } else {
+//                System.out.println("Already has root node");
+//            }
+        } else if (ADD_NEW_GENERAL_ACTION.equals(e.getActionCommand())) {
+                if (!this.scene.hasGeneralNode()) {
+                    PipelineGeneralConfigWidget node = (PipelineGeneralConfigWidget) this.scene.addNode(PipelineGraphScene.GENERAL_WIDGET);
+                    this.scene.validate();
+                    e.setSource(node);
+                    
+                    CallableSystemAction csa = PipelinePropertiesWizardAction.getInstance();
+                    csa.actionPerformed(e);
+                    
+                    if (!node.getLastAction().equals("cancelled")) {
+                        this.scene.getSceneAnimator().animatePreferredLocation(node, point);
+                    } else {
+                        this.scene.removeNodeWithEdges((String) this.scene.findObject(node));
+                        this.scene.validate();
+                    }
+                } else {
                 System.out.println("Scene already has general node");
             }
         } else if (EXPORT_SCENE.equals(e.getActionCommand())) {
-            SceneExporter.showSaveDialog(this.scene);
+                SceneExporter.showSaveDialog(this.scene);
         } else if (CONNECTION_MODE.equals(e.getActionCommand())) {
-            this.scene.setActiveTool(CONNECTION_MODE);
-            StatusDisplayer.getDefault().setStatusText("Connection Mode");
+                this.scene.setActiveTool(CONNECTION_MODE);
+                StatusDisplayer.getDefault().setStatusText("Connection Mode");
         } else if (MOVE_MODE.equals(e.getActionCommand())) {
-            this.scene.setActiveTool(MOVE_MODE);
-            StatusDisplayer.getDefault().setStatusText("Move Mode");
+                this.scene.setActiveTool(MOVE_MODE);
+                StatusDisplayer.getDefault().setStatusText("Move Mode");
         }
     }
 }

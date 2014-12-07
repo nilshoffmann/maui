@@ -28,6 +28,8 @@
 package net.sf.maltcms.chromaui.rserve.api;
 
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.rserve.spi.StartRserveOriginal;
 import org.junit.Test;
 import org.rosuda.REngine.REXP;
@@ -51,8 +53,7 @@ public class RserveLaunchAndConnectTest {
         try {
             REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
             try {
-                System.out.println("Result: "
-                        + Arrays.toString(rexp.asDoubles()));
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Result: {0}", Arrays.toString(rexp.asDoubles()));
             } catch (REXPMismatchException ex) {
                 throw ex;
             }
@@ -62,11 +63,11 @@ public class RserveLaunchAndConnectTest {
             try {
                 connection.serverShutdown();
             } catch (RserveException re) {
-                System.err.println("serverShutdown failed, trying normal shutdown!");
+                Logger.getLogger(getClass().getName()).warning("serverShutdown failed, trying normal shutdown!");
             }
-            System.out.println("Shutting down connection!");
+            Logger.getLogger(getClass().getName()).info("Shutting down connection!");
             connection.shutdown();
-            System.out.println("Closing connection!");
+            Logger.getLogger(getClass().getName()).info("Closing connection!");
             connection.close();
         }
 //        try {

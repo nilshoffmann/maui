@@ -41,5 +41,11 @@ import org.openide.util.Cancellable;
  */
 public interface GroovyProjectDataObjectScript<T extends Project, U extends DataObject> extends Runnable, Cancellable, GroovyScript {
 
+    /**
+     *
+     * @param project
+     * @param progressHandle
+     * @param dobjects
+     */
     public void create(T project, ProgressHandle progressHandle, Collection<? extends U> dobjects);
 }

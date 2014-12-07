@@ -36,10 +36,13 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class XYPlotRendererModel extends DefaultComboBoxModel {
 
+    /**
+     *
+     */
     public XYPlotRendererModel() {
         XYLineAndShapeRenderer l = new XYLineAndShapeRenderer(true, false);
         l.setDrawSeriesLineAsPath(false);

@@ -32,12 +32,27 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class MzTabDataNode extends DataNode {
 
+    /**
+     *
+     * @param obj
+     * @param ch
+     * @param lookup
+     */
     public MzTabDataNode(DataObject obj, Children ch, Lookup lookup) {
         super(obj, ch, lookup);
     }
 
+    /**
+     *
+     * @param obj
+     * @param ch
+     */
     public MzTabDataNode(DataObject obj, Children ch) {
         super(obj, ch);
     }

@@ -49,6 +49,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 
 import cross.event.EventSource;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPopupMenu;
 import net.sf.maltcms.common.charts.api.dataset.ADataset1D;
 import org.jfree.chart.entity.LegendItemEntity;
@@ -62,47 +64,77 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
+/**
+ *
+ * @author Nils Hoffmann
+ * @param <SOURCE>
+ * @param <TARGET>
+ */
 public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEventSource,
         ChartMouseListener, Lookup.Provider {
 
     private ChartPanel cp;
     private ExecutorService es = Executors.newSingleThreadExecutor();
-    private final EventSource<XYItemEntity> esource = new EventSource<XYItemEntity>(
+    private final EventSource<XYItemEntity> esource = new EventSource<>(
             1);
     private InstanceContent ic = new InstanceContent();
     private Lookup lkp = new AbstractLookup(ic);
     private ADataset1D<SOURCE, TARGET> dataset;
     private TARGET lastTarget = null;
 
+    /**
+     *
+     * @param ds
+     */
     public ChartPanelMouseListener(ADataset1D<SOURCE, TARGET> ds) {
         this.dataset = ds;
     }
 
+    /**
+     *
+     * @param cp
+     */
     public void setChartPanel(ChartPanel cp) {
         this.cp = cp;
     }
 
+    /**
+     *
+     * @param il
+     */
     @Override
     public void addListener(IListener<IEvent<XYItemEntity>> il) {
         this.esource.addListener(il);
     }
 
+    /**
+     *
+     * @param ievent
+     */
     @Override
     public void fireEvent(IEvent<XYItemEntity> ievent) {
         this.esource.fireEvent(ievent);
     }
 
+    /**
+     *
+     * @param il
+     */
     @Override
     public void removeListener(IListener<IEvent<XYItemEntity>> il) {
         this.esource.removeListener(il);
     }
 
+    /**
+     *
+     * @param cme
+     */
     protected void setTarget(ChartMouseEvent cme) {
         if (cme.getEntity() != null) {
             if (cme.getEntity() instanceof XYItemEntity) {
                 XYItemEntity xyie = (XYItemEntity) cme.getEntity();
                 XYDataset ds = xyie.getDataset();
-                System.out.println("Series Index of item: " + xyie.getSeriesIndex() + " item number: " + xyie.getItem());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Series Index of item: {0} item number: {1}", new Object[]{xyie.getSeriesIndex(), xyie.getItem()});
                 TARGET target = this.dataset.getTarget(xyie.getSeriesIndex(), xyie.getItem());
                 if (lastTarget != null) {
                     ic.remove(lastTarget);
@@ -119,6 +151,12 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
     /* (non-Javadoc)
      * @see org.jfree.chart.ChartMouseListener#chartMouseClicked(org.jfree.chart.ChartMouseEvent)
      */
+
+    /**
+     *
+     * @param arg0
+     */
+    
     @Override
     public void chartMouseClicked(final ChartMouseEvent arg0) {
         final ChartPanelMouseListener cpml = this;
@@ -198,6 +236,13 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
         }
     }
 
+    /**
+     *
+     * @param xyp
+     * @param pri
+     * @param p
+     * @return
+     */
     public XYPlot getSubplot(XYPlot xyp, PlotRenderingInfo pri, Point2D p) {
         if (xyp instanceof CombinedDomainXYPlot) {
             return ((CombinedDomainXYPlot) xyp).findSubplot(pri, p);
@@ -218,6 +263,12 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
     /* (non-Javadoc)
      * @see org.jfree.chart.ChartMouseListener#chartMouseMoved(org.jfree.chart.ChartMouseEvent)
      */
+
+    /**
+     *
+     * @param arg0
+     */
+    
     @Override
     public void chartMouseMoved(final ChartMouseEvent arg0) {
         final ChartPanelMouseListener cpml = this;
@@ -249,6 +300,10 @@ public class ChartPanelMouseListener<SOURCE, TARGET> implements XYItemEntityEven
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return this.lkp;

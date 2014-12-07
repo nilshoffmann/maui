@@ -43,16 +43,25 @@ public class DomainMarkerKeyListener implements KeyListener, XYItemEntityEventSo
 
     private XYPlot xyp;
 
-    private final EventSource<XYItemEntity> esource = new EventSource<XYItemEntity>(1);
+    private final EventSource<XYItemEntity> esource = new EventSource<>(1);
 
+    /**
+     *
+     * @param xyp
+     */
     public DomainMarkerKeyListener(XYPlot xyp) {
         this.xyp = xyp;
     }
 
+    /**
+     *
+     * @param plot
+     */
     public void setPlot(XYPlot plot) {
         this.xyp = plot;
     }
 
+    @Override
     public void keyTyped(KeyEvent e) {
         double oldPos = xyp.getDomainCrosshairValue();
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -66,22 +75,39 @@ public class DomainMarkerKeyListener implements KeyListener, XYItemEntityEventSo
         }
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
 
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
 
     }
 
+    /**
+     *
+     * @param il
+     */
+    @Override
     public void addListener(IListener<IEvent<XYItemEntity>> il) {
         esource.addListener(il);
     }
 
+    /**
+     *
+     * @param ievent
+     */
+    @Override
     public void fireEvent(IEvent<XYItemEntity> ievent) {
         esource.fireEvent(ievent);
     }
 
+    /**
+     *
+     * @param il
+     */
+    @Override
     public void removeListener(IListener<IEvent<XYItemEntity>> il) {
         esource.removeListener(il);
     }

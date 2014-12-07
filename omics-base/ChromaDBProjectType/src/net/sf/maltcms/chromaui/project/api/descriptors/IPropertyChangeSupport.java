@@ -36,32 +36,107 @@ import java.beans.PropertyChangeListener;
  */
 public interface IPropertyChangeSupport {
 
+    /**
+     *
+     * @param string
+     * @param pl
+     */
     void addPropertyChangeListener(String string, PropertyChangeListener pl);
 
+    /**
+     *
+     * @param pl
+     */
     void addPropertyChangeListener(PropertyChangeListener pl);
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param bln
+     * @param bln1
+     */
     void fireIndexedPropertyChange(String string, int i, boolean bln, boolean bln1);
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param i1
+     * @param i2
+     */
     void fireIndexedPropertyChange(String string, int i, int i1, int i2);
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param o
+     * @param o1
+     */
     void fireIndexedPropertyChange(String string, int i, Object o, Object o1);
 
+    /**
+     *
+     * @param pce
+     */
     void firePropertyChange(PropertyChangeEvent pce);
 
+    /**
+     *
+     * @param string
+     * @param bln
+     * @param bln1
+     */
     void firePropertyChange(String string, boolean bln, boolean bln1);
 
+    /**
+     *
+     * @param string
+     * @param i
+     * @param i1
+     */
     void firePropertyChange(String string, int i, int i1);
 
+    /**
+     *
+     * @param string
+     * @param o
+     * @param o1
+     */
     void firePropertyChange(String string, Object o, Object o1);
 
+    /**
+     *
+     * @param string
+     * @return
+     */
     PropertyChangeListener[] getPropertyChangeListeners(String string);
 
+    /**
+     *
+     * @return
+     */
     PropertyChangeListener[] getPropertyChangeListeners();
 
+    /**
+     *
+     * @param string
+     * @return
+     */
     boolean hasListeners(String string);
 
+    /**
+     *
+     * @param string
+     * @param pl
+     */
     void removePropertyChangeListener(String string, PropertyChangeListener pl);
 
+    /**
+     *
+     * @param pl
+     */
     void removePropertyChangeListener(PropertyChangeListener pl);
 
 }

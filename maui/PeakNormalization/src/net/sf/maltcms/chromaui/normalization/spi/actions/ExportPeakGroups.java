@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi.actions;
 
+import cross.datastructures.StatsMap;
+import cross.datastructures.Vars;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -41,7 +43,10 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.normalization.api.ui.NormalizationDialog;
+import net.sf.maltcms.chromaui.normalization.spi.PeakGroupUtilities;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -77,12 +82,12 @@ public final class ExportPeakGroups implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        System.out.println("Exporting peak groups!");
+        Logger.getLogger(getClass().getName()).info("Exporting peak groups!");
         IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
         File exportDir = new File(FileUtil.toFile(project.getLocation()), "export/peakGroups/" + sdf.format(new Date()));
         exportDir.mkdirs();
-        File exportFile = new File(exportDir, "peakGroupExport.csv");
+        File exportFile = new File(exportDir, context.getDisplayName()+"-peakGroupExport.csv");
         ExportRunnable er = new ExportRunnable(project, context, exportFile);
         ExportRunnable.createAndRun("Peak Group Export", er);
     }
@@ -107,22 +112,36 @@ public final class ExportPeakGroups implements ActionListener {
             try {
                 ph.progress("Exporting Peak Groups...");
                 BufferedWriter bw = null;
-                LinkedHashMap<UUID, Integer> chromToIndex = new LinkedHashMap<UUID, Integer>();
-                List<String> chromatogramNames = new ArrayList<String>();
+                LinkedHashMap<UUID, Integer> chromToIndex = new LinkedHashMap<>();
+                List<String> chromatogramNames = new ArrayList<>();
                 int idx = 0;
+                int separationDimensions = -1;
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                     chromatogramNames.add(chrom.getDisplayName());
                     chromToIndex.put(chrom.getId(), idx++);
+                    if (separationDimensions == -1) {
+                        separationDimensions = chrom.getSeparationType().getFeatureDimensions();
+                    } else {
+                        if (separationDimensions != chrom.getSeparationType().getFeatureDimensions()) {
+                            throw new IllegalArgumentException("Separation dimensions of peaks in peak group must be equal!");
+                        }
+                    }
                 }
                 try {
                     bw = new BufferedWriter(new FileWriter(output));
                     StringBuilder header = new StringBuilder();
-                    List<String> headerStrings = new ArrayList<String>();
+                    List<String> headerStrings = new ArrayList<>();
                     headerStrings.add("PutativeIdentification");
                     headerStrings.add("PutativeIdentificationCoverage");
                     headerStrings.add("DatabaseId");
                     headerStrings.add("RetentionTimeAvg");
                     headerStrings.add("RetentionTimeStdev");
+                    if (separationDimensions == 2) {
+                        headerStrings.add("RetentionTime1Avg");
+                        headerStrings.add("RetentionTime1Stdev");
+                        headerStrings.add("RetentionTime2Avg");
+                        headerStrings.add("RetentionTime2Stdev");
+                    }
                     headerStrings.addAll(Arrays.asList(new String[]{"Name", "PeakGroupId"}));
                     headerStrings.addAll(chromatogramNames);
                     for (String head : headerStrings) {
@@ -131,14 +150,17 @@ public final class ExportPeakGroups implements ActionListener {
                     bw.write(header.toString());
                     bw.newLine();
                     IPeakNormalizer normalizer = null;
+                    PeakGroupUtilities utils = new PeakGroupUtilities();
                     for (IPeakGroupDescriptor peakGroup : context.getMembers()) {
                         ph.progress(i++);
                         StringBuilder sb = new StringBuilder();
                         if (normalizer == null) {
                             normalizer = NormalizationDialog.getPeakNormalizer(peakGroup.getPeakGroupContainer());
                             if (normalizer == null) {
-                                System.out.println("Normalization cancelled by user!");
+                                Logger.getLogger(getClass().getName()).info("Normalization cancelled by user!");
                                 bw.close();
+                                output.delete();
+                                output.getParentFile().delete();
                                 ph.finish();
                                 return;
                             }
@@ -148,6 +170,14 @@ public final class ExportPeakGroups implements ActionListener {
                         sb.append(peakGroup.getMajorityNativeDatabaseId()).append("\t");
                         sb.append(peakGroup.getMeanApexTime()).append("\t");
                         sb.append(peakGroup.getApexTimeStdDev()).append("\t");
+                        if (separationDimensions == 2) {
+                            StatsMap rt1Stats = utils.getStatsForArray(utils.getArrayForRt1(peakGroup));
+                            StatsMap rt2Stats = utils.getStatsForArray(utils.getArrayForRt2(peakGroup));
+                            sb.append(rt1Stats.get(Vars.Mean.name())).append("\t");
+                            sb.append(Math.sqrt(rt1Stats.get(Vars.Variance.name()))).append("\t");
+                            sb.append(rt2Stats.get(Vars.Mean.name())).append("\t");
+                            sb.append(Math.sqrt(rt2Stats.get(Vars.Variance.name()))).append("\t");
+                        }
                         sb.append(peakGroup.getName()).append("\t");
                         sb.append(peakGroup.getId()).append("\t");
                         String[] peaks = new String[chromatogramNames.size()];
@@ -162,12 +192,12 @@ public final class ExportPeakGroups implements ActionListener {
                             }
                             peaks[chromToIndex.get(peakChrom.getId())] = value + "";
                         }
-                        System.out.println("Row: " + Arrays.toString(peaks));
-                        for (int j = 0; j < peaks.length; j++) {
-                            if (peaks[j] == null) {
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Row: {0}", Arrays.toString(peaks));
+                        for (String peak : peaks) {
+                            if (peak == null) {
                                 sb.append("0");
                             } else {
-                                sb.append(peaks[j]);
+                                sb.append(peak);
                             }
                             sb.append("\t");
                         }
@@ -191,4 +221,5 @@ public final class ExportPeakGroups implements ActionListener {
             }
         }
     }
+
 }

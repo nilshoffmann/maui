@@ -34,6 +34,7 @@ import javax.swing.Action;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.nodes.CheckableFilterNode;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;

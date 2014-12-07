@@ -38,12 +38,20 @@ import org.jfree.chart.annotations.XYAnnotation;
 import cross.event.EventSource;
 import javax.swing.DefaultListModel;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class PeakListSelectionListener implements XYAnnotationEventSource, ListSelectionListener {
 
     private final DefaultListModel xyalm;
 
-    private final EventSource<XYAnnotation> es = new EventSource<XYAnnotation>(1);
+    private final EventSource<XYAnnotation> es = new EventSource<>(1);
 
+    /**
+     *
+     * @param xyalm
+     */
     public PeakListSelectionListener(DefaultListModel xyalm) {
         this.xyalm = xyalm;
     }
@@ -55,17 +63,32 @@ public class PeakListSelectionListener implements XYAnnotationEventSource, ListS
     public void valueChanged(ListSelectionEvent e) {
         int index = e.getFirstIndex();
         XYAnnotation xya = (XYAnnotation) this.xyalm.get(index);
-        fireEvent(new AEvent<XYAnnotation>(xya, this, "XYANNOTATION_SELECT"));
+        fireEvent(new AEvent<>(xya, this, "XYANNOTATION_SELECT"));
     }
 
+    /**
+     *
+     * @param il
+     */
+    @Override
     public void addListener(IListener<IEvent<XYAnnotation>> il) {
         this.es.addListener(il);
     }
 
+    /**
+     *
+     * @param ievent
+     */
+    @Override
     public void fireEvent(IEvent<XYAnnotation> ievent) {
         this.es.fireEvent(ievent);
     }
 
+    /**
+     *
+     * @param il
+     */
+    @Override
     public void removeListener(IListener<IEvent<XYAnnotation>> il) {
         this.es.removeListener(il);
     }

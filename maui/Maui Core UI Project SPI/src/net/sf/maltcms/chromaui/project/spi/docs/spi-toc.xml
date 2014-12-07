@@ -36,5 +36,6 @@ for details.
             <tocitem text="Sample Groups and Settings" target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel2"/>
             <tocitem text="Normalization" target="net.sf.maltcms.chromaui.project.spi.wizard.DBProjectVisualPanel3"/>
         </tocitem>
+        <tocitem text="Chromatogram Scan Cache Settings" target="net.sf.maltcms.chromaui.project.spi.options.chromatogramScanCache"/>
     </tocitem>
 </toc>

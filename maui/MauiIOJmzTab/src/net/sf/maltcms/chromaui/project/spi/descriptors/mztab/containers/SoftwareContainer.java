@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SoftwareDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.Software;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class SoftwareContainer extends BasicMzTabMetaDataContainer<SoftwareDescriptor> {
+    private static final long serialVersionUID = 7284489697138381757L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static SoftwareContainer create(Metadata metadata) {
         SoftwareContainer c = new SoftwareContainer();
         c.setLevel(2);

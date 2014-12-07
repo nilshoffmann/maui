@@ -33,6 +33,10 @@ package de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api;
  */
 public interface IRegistryFactory {
 
+    /**
+     *
+     * @return
+     */
     public IRegistry getDefault();
 
 }

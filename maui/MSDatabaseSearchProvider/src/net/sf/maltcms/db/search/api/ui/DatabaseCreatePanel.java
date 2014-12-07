@@ -67,27 +67,39 @@ public final class DatabaseCreatePanel extends javax.swing.JPanel {
                 return o1.getDisplayName().compareTo(o2.getDisplayName());
             }
         });
-        DefaultComboBoxModel<Locale> d = new DefaultComboBoxModel<Locale>(locales);
+        DefaultComboBoxModel<Locale> d = new DefaultComboBoxModel<>(locales);
         return d;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDatabaseDescriptorName() {
         return nameField.getText();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Double> getMaskedMasses() {
         String text = maskedMasses.getText();
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
         String[] values = text.split(",");
-        List<Double> list = new ArrayList<Double>();
+        List<Double> list = new ArrayList<>();
         for (String str : values) {
             list.add(Double.parseDouble(str));
         }
         return list;
     }
 
+    /**
+     *
+     * @return
+     */
     public DatabaseType getDatabaseType() {
         return (DatabaseType) jComboBox1.getSelectedItem();
     }
@@ -186,6 +198,10 @@ public final class DatabaseCreatePanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     *
+     * @return
+     */
     public Locale getSelectedLocale() {
         Locale locale = (Locale) localeComboBox.getSelectedItem();
         if (locale == null) {

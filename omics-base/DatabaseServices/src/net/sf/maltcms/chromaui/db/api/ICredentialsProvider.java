@@ -33,10 +33,21 @@ package net.sf.maltcms.chromaui.db.api;
  */
 public interface ICredentialsProvider {
 
+    /**
+     *
+     * @return
+     */
     public String getName();
 
+    /**
+     *
+     * @return
+     */
     public char[] getPassword();
 
+    /**
+     *
+     */
     public void getCredentials();
 
 }

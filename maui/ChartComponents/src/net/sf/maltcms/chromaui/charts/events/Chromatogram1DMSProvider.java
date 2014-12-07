@@ -31,12 +31,22 @@ import maltcms.datastructures.ms.IChromatogram1D;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 import cross.datastructures.tuple.Tuple2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IScan1D;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class Chromatogram1DMSProvider implements MassSpectrumProvider<IScan1D> {
 
     private final IChromatogram1D c;
 
+    /**
+     *
+     * @param c
+     */
     public Chromatogram1DMSProvider(IChromatogram1D c) {
         this.c = c;
     }
@@ -44,25 +54,46 @@ public class Chromatogram1DMSProvider implements MassSpectrumProvider<IScan1D> {
     /* (non-Javadoc)
      * @see maltcms.ui.events.MSChartHandler.MassSpectrumProvider#getMS(int)
      */
+
+    /**
+     *
+     * @param index
+     * @return
+     */
+    
     @Override
     public Tuple2D<Array, Array> getMS(int index) {
         IScan1D s = this.c.getScan(index);
-        return new Tuple2D<Array, Array>(s.getMasses(), s.getIntensities());
+        return new Tuple2D<>(s.getMasses(), s.getIntensities());
     }
 
     /* (non-Javadoc)
      * @see maltcms.ui.events.MassSpectrumProvider#getIndex(double)
      */
+
+    /**
+     *
+     * @param rt
+     * @return
+     */
+    
     @Override
     public int getIndex(double rt) {
         int idx = this.c.getIndexFor(rt);
-        System.out.println("Index " + idx + " for rt " + rt);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Index {0} for rt {1}", new Object[]{idx, rt});
         return idx;
     }
 
     /* (non-Javadoc)
      * @see maltcms.ui.events.MassSpectrumProvider#getRT(int)
      */
+
+    /**
+     *
+     * @param index
+     * @return
+     */
+    
     @Override
     public double getRT(int index) {
         Array a = this.c.getScanAcquisitionTime();
@@ -70,6 +101,11 @@ public class Chromatogram1DMSProvider implements MassSpectrumProvider<IScan1D> {
         return a.getDouble(idx.set(index));
     }
 
+    /**
+     *
+     * @param index
+     * @return
+     */
     @Override
     public IScan1D getScan(int index) {
         IScan1D s = this.c.getScan(index);

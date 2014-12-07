@@ -37,38 +37,65 @@ import net.sf.maltcms.common.charts.api.dataset.INamedElementProvider;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class Chromatogram1DElementProvider implements INamedElementProvider<IChromatogram1D, IScan1D> {
 
     private final IChromatogram1D chrom;
     private Comparable name;
 
+    /**
+     *
+     * @param key
+     * @param chrom
+     */
     public Chromatogram1DElementProvider(Comparable key, IChromatogram2D chrom) {
         this.name = key;
         this.chrom = DescriptorFactory.newChromatogram1D(chrom.getParent());
     }
 
+    /**
+     *
+     * @param key
+     * @param chrom
+     */
     public Chromatogram1DElementProvider(Comparable key, IChromatogram1D chrom) {
         this.chrom = chrom;
         this.name = key;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Comparable getKey() {
         return name;
     }
 
+    /**
+     *
+     * @param key
+     */
     @Override
     public void setKey(Comparable key) {
         this.name = key;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int size() {
         return chrom.getNumberOfScansForMsLevel((short) 1);
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     @Override
     public IScan1D get(int i) {
 //		System.out.println("Retrieving scan " + i + " from " + getClass().getName() + " " + getKey());
@@ -77,20 +104,33 @@ public class Chromatogram1DElementProvider implements INamedElementProvider<IChr
         return scan;
     }
 
+    /**
+     *
+     * @param i
+     * @param i1
+     * @return
+     */
     @Override
     public List<IScan1D> get(int i, int i1) {
         int nscans = i1 - i;
-        ArrayList<IScan1D> al = new ArrayList<IScan1D>(nscans);
+        ArrayList<IScan1D> al = new ArrayList<>(nscans);
         for (int j = 0; j < i1; j++) {
             al.add(chrom.getScanForMsLevel(i + j, (short) 1));
         }
         return al;
     }
 
+    /**
+     *
+     */
     @Override
     public void reset() {
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IChromatogram1D getSource() {
         return chrom;

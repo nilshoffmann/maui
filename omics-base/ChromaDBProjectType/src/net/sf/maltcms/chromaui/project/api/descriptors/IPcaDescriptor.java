@@ -39,18 +39,43 @@ import ucar.ma2.ArrayDouble;
  */
 public interface IPcaDescriptor extends IStatisticsDescriptor {
 
+    /**
+     *
+     */
     String PROP_GROUPCOLORS = "groupColors";
 
+    /**
+     *
+     * @return
+     */
     Map<ITreatmentGroupDescriptor, Color> getGroupColors();
 
+    /**
+     *
+     * @param map
+     */
     void setGroupColors(Map<ITreatmentGroupDescriptor, Color> map);
 
+    /**
+     *
+     */
     String PROP_ROTATION = "rotation";
 
+    /**
+     *
+     * @param rotation
+     */
     void setRotation(ArrayDouble.D2 rotation);
 
+    /**
+     *
+     * @return
+     */
     ArrayDouble.D2 getRotation();
 
+    /**
+     *
+     */
     String PROP_SDEV = "sdev";
 
     /**
@@ -60,8 +85,15 @@ public interface IPcaDescriptor extends IStatisticsDescriptor {
      */
     void setSdev(ArrayDouble.D1 sdev);
 
+    /**
+     *
+     * @return
+     */
     ArrayDouble.D1 getSdev();
 
+    /**
+     *
+     */
     String PROP_CENTER = "center";
 
     /**
@@ -71,36 +103,95 @@ public interface IPcaDescriptor extends IStatisticsDescriptor {
      */
     void setCenter(ArrayDouble.D1 center);
 
+    /**
+     *
+     * @return
+     */
     ArrayDouble.D1 getCenter();
 
+    /**
+     *
+     */
     String PROP_SCALE = "scale";
 
+    /**
+     *
+     * @return
+     */
     boolean isScale();
 
+    /**
+     *
+     * @param scale
+     */
     void setScale(boolean scale);
 
+    /**
+     *
+     */
     String PROP_X = "x";
 
+    /**
+     *
+     * @param x
+     */
     void setX(ArrayDouble.D2 x);
 
+    /**
+     *
+     * @return
+     */
     ArrayDouble.D2 getX();
 
+    /**
+     *
+     */
     String PROP_PEAKGROUPCONTAINER = "peakGroupContainer";
 
+    /**
+     *
+     * @param peakGroupContainer
+     */
     void setPeakGroupContainer(PeakGroupContainer peakGroupContainer);
 
+    /**
+     *
+     * @return
+     */
     PeakGroupContainer getPeakGroupContainer();
 
+    /**
+     *
+     */
     String PROP_CASES = "rows";
 
+    /**
+     *
+     * @param chromatograms
+     */
     void setCases(List<IChromatogramDescriptor> chromatograms);
 
+    /**
+     *
+     * @return
+     */
     List<IChromatogramDescriptor> getCases();
 
+    /**
+     *
+     */
     String PROP_VARIABLES = "variables";
 
+    /**
+     *
+     * @param peakGroup
+     */
     void setVariables(List<IPeakGroupDescriptor> peakGroup);
 
+    /**
+     *
+     * @return
+     */
     List<IPeakGroupDescriptor> getVariables();
 
 }

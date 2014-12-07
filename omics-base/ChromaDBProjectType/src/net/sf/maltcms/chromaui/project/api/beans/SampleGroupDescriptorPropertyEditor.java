@@ -29,13 +29,18 @@ package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
 import net.sf.maltcms.chromaui.project.api.descriptors.ISampleGroupDescriptor;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = ISampleGroupDescriptor.class)
 public class SampleGroupDescriptorPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public SampleGroupDescriptorPropertyEditor() {
     }
 

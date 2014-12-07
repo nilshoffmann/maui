@@ -30,12 +30,17 @@ package net.sf.maltcms.chromaui.charts.events;
 import cross.datastructures.fragments.IFileFragment;
 import cross.datastructures.tuple.Tuple2D;
 import java.awt.Point;
+import java.util.logging.Logger;
 import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.caches.ScanLineCacheFactory;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
 import ucar.ma2.Array;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class Chromatogram2DMSProvider implements MassSpectrumProvider<IScan2D> {
 
     private final int sl;
@@ -44,25 +49,44 @@ public class Chromatogram2DMSProvider implements MassSpectrumProvider<IScan2D> {
     private final IScanLine isl;
     private final IChromatogram2D chrom;
 
+    /**
+     *
+     * @param f
+     * @param sl
+     * @param spm
+     */
     public Chromatogram2DMSProvider(IChromatogram2D f, int sl, int spm) {
         this.sl = sl;
         this.spm = spm;
         this.iff = f.getParent();
         this.chrom = f;
-        System.out.println("Initing scanlinecache");
+        Logger.getLogger(getClass().getName()).info("Initing scanlinecache");
         this.isl = ScanLineCacheFactory.getScanLineCache(this.iff);
-        System.out.println("done initing scanlinecache");
+        Logger.getLogger(getClass().getName()).info("done initing scanlinecache");
     }
 
     /* (non-Javadoc)
      * @see maltcms.ui.events.MSChartHandler.MassSpectrumProvider#getMS(int)
      */
+
+    /**
+     *
+     * @param index
+     * @return
+     */
+    
     @Override
     public Tuple2D<Array, Array> getMS(int index) {
         return this.isl.getSparseMassSpectrum(index / sl, index % sl);
         //return MaltcmsTools.getMS(this.iff,index);
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     public Tuple2D<Array, Array> getMS(int x, int y) {
         int index = (x * spm) + y;
         return this.isl.getSparseMassSpectrum(x, y);
@@ -72,6 +96,13 @@ public class Chromatogram2DMSProvider implements MassSpectrumProvider<IScan2D> {
     /* (non-Javadoc)
      * @see maltcms.ui.events.MassSpectrumProvider#getIndex(double)
      */
+
+    /**
+     *
+     * @param rt
+     * @return
+     */
+    
     @Override
     public int getIndex(double rt) {
         return this.chrom.getIndexFor(rt);
@@ -80,11 +111,23 @@ public class Chromatogram2DMSProvider implements MassSpectrumProvider<IScan2D> {
     /* (non-Javadoc)
      * @see maltcms.ui.events.MassSpectrumProvider#getRT(int)
      */
+
+    /**
+     *
+     * @param index
+     * @return
+     */
+    
     @Override
     public double getRT(int index) {
         return this.chrom.getScanAcquisitionTime().getDouble(index);
     }
 
+    /**
+     *
+     * @param index
+     * @return
+     */
     @Override
     public IScan2D getScan(int index) {
         Point p = this.chrom.getPointFor(index);

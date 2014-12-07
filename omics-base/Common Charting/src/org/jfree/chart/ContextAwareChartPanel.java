@@ -82,7 +82,7 @@ import org.w3c.dom.Document;
 
 /**
  *
- * @author nilshoffmann
+ * @author Nils Hoffmann
  */
 public class ContextAwareChartPanel extends ChartPanel implements LookupListener {
 
@@ -246,9 +246,9 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
 
     private List<Component> actionsToPopup(Action[] actions, Lookup lookup) {
         // keeps actions for which was menu item created already (do not add them twice)
-        Set<Action> counted = new HashSet<Action>();
+        Set<Action> counted = new HashSet<>();
         // components to be added (separators are null)
-        List<Component> components = new ArrayList<Component>();
+        List<Component> components = new ArrayList<>();
         Logger.getLogger(ContextAwareChartPanel.class.getName()).log(Level.FINE, "Processing {0} actions!", actions.length);
         for (Action action : actions) {
             if (action != null && counted.add(action)) {
@@ -600,3 +600,4 @@ public class ContextAwareChartPanel extends ChartPanel implements LookupListener
         SwingUtilities.invokeLater(popupMenuCreator);
     }
 }
+

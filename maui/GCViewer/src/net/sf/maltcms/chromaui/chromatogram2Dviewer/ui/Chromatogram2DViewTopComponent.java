@@ -35,10 +35,17 @@ import java.awt.Color;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
+import net.sf.maltcms.chromaui.charts.overlay.ChartOverlayChildFactory;
+import net.sf.maltcms.chromaui.charts.overlay.ChromatogramDescriptorOverlay;
 import net.sf.maltcms.chromaui.charts.overlay.Peak2DOverlay;
+import net.sf.maltcms.chromaui.charts.renderer.XYNoBlockRenderer;
 import net.sf.maltcms.chromaui.charts.units.RTUnit;
 import net.sf.maltcms.chromaui.chromatogram2Dviewer.ui.panel.Chromatogram2DViewerPanel;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -48,19 +55,23 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.GCGC;
 import net.sf.maltcms.chromaui.project.api.types.TOFMS;
 import net.sf.maltcms.chromaui.ui.paintScales.IPaintScaleProvider;
+import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
+import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYZToolTipGenerator;
+import org.jfree.chart.panel.Overlay;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.ui.RectangleAnchor;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.loaders.DataObject;
+import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -76,7 +87,7 @@ import org.openide.windows.WindowManager;
 @TopComponent.Description(persistenceType = TopComponent.PERSISTENCE_NEVER, preferredID = "ChromatogramViewTopComponent")
 public final class Chromatogram2DViewTopComponent extends TopComponent implements LookupListener {
 
-    private static Chromatogram2DViewTopComponent instance;
+    private static final long serialVersionUID = 2061376786775174386L;
     private IChromAUIProject project = null;
     private InstanceContent content = new InstanceContent();
     private Chromatogram2DViewerPanel hmp;
@@ -105,8 +116,8 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         } else {
             EvalTools.notNull(descriptor.getChromatogram(), this);
         }
-        System.out.println("Using project: " + icp + " from active nodes lookup!");
-        System.out.println("Using descriptor: " + descriptor + " from active nodes lookup!");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using project: {0} from active nodes lookup!", icp);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using descriptor: {0} from active nodes lookup!", descriptor);
         if (dobj != null) {
             content.add(dobj);
             setToolTipText(dobj.getPrimaryFile().getPath());
@@ -116,6 +127,7 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         setDisplayName("2D Chromatogram View of " + new File(descriptor.getResourceLocation()).getName());
         content.add(descriptor);
         content.add(descriptor.getChromatogram());
+        List<ChartOverlay> overlays = new LinkedList<>();
         content.add(new NavigatorLookupHint() {
             @Override
             public String getContentType() {
@@ -126,23 +138,41 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         setName(NbBundle.getMessage(Chromatogram2DViewTopComponent.class, "CTL_Chromatogram2DViewerTopComponent"));
         setEnabled(false);
         //project may be null
-        this.hmp = createPanel(descriptor, ds);
+        this.hmp = createPanel(descriptor, ds, overlays);
         add(new JScrollPane(this.hmp, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
         setEnabled(true);
+        /*
+         * Virtual overlay that groups all related overlays
+         */
+        ChromatogramDescriptorOverlay cdo = new ChromatogramDescriptorOverlay(descriptor, descriptor.getName(), descriptor.getDisplayName(), descriptor.getShortDescription(), true, overlays);
+        content.add(cdo);
+        // create node children for display in navigator view
+        Children children = Children.create(new ChartOverlayChildFactory(overlays), true);
+        // create the actual node for this chromatogram
+        content.add(Charts.overlayNode(cdo, children));
+        //if we had more than one dataset, we could add it to a combo box model
+//                            for (int i = 0; i < ds.getSeriesCount(); i++) {
+//                                if (ds.getSeriesKey(i).toString().equals(descriptor.getDisplayName())) {
+//                                    dcbm.addElement(new SeriesItem(cdo, ds.getSeriesKey(i), true));
+//                                }
+//                            }
     }
 
-    private Chromatogram2DViewerPanel createPanel(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds) {
-        XYPlot p = createPlot(chromatogram, ds);
-        final PaintScale ps = ((XYBlockRenderer) p.getRenderer()).getPaintScale();
+    private Chromatogram2DViewerPanel createPanel(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds, List<ChartOverlay> overlays) {
+        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
+        ips.setMin(ds.getMinZ());
+        ips.setMax(ds.getMaxZ());
+        PaintScale ps = ips.getPaintScales().get(0);
+        XYPlot p = createPlot(chromatogram, ds, ps);
         p.setDomainGridlinesVisible(false);
         p.setRangeGridlinesVisible(false);
         JFreeChart jfc = new JFreeChart(p);
-        final ChartPanel cp = new ChartPanel(jfc, true);
+        final ContextAwareChartPanel cp = new ContextAwareChartPanel(jfc, true);
         cp.setZoomFillPaint(new Color(192, 192, 192, 96));
         cp.setZoomOutlinePaint(new Color(220, 220, 220, 192));
         cp.setFillZoomRectangle(false);
         cp.getChart().getLegend().setVisible(true);
-        Chromatogram2DViewerPanel panel = new Chromatogram2DViewerPanel(content, getLookup(), ds);
+        Chromatogram2DViewerPanel panel = new Chromatogram2DViewerPanel(content, getLookup(), ds, ps);
         if (panel.getBackgroundColor() == null) {
             panel.setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
         }
@@ -160,27 +190,23 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
                 Peak2DOverlay overlay = new Peak2DOverlay(chromatogram, peaks.getName(), peaks.getDisplayName(), peaks.getShortDescription(), true, peaks);
                 cp.addOverlay(overlay);
                 content.add(overlay);
+                overlays.add(overlay);
             }
         }
+
         panel.setChartPanel(cp);
-        if (ps != null) {
-            panel.setPaintScale(ps);
-        }
         panel.setPlot(p);
         return panel;
     }
 
-    private XYPlot createPlot(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds) {
-        XYBlockRenderer xybr = new XYBlockRenderer();
-        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
-        ips.setMin(ds.getMinZ());
-        ips.setMax(ds.getMaxZ());
-        PaintScale ps = ips.getPaintScales().get(0);
+    private XYPlot createPlot(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds, PaintScale ps) {
+        XYNoBlockRenderer xybr = new XYNoBlockRenderer();
         xybr.setPaintScale(ps);
         try {
             double modulationTime = chromatogram.getChromatogram().getParent().getChild("modulation_time").getArray().getDouble(0);
             double scanRate = chromatogram.getChromatogram().getParent().getChild("scan_rate").getArray().getDouble(0);
-            xybr.setDefaultEntityRadius(1);//Math.max(1, (int)(modulationTime / scanRate)));
+            xybr.setDefaultEntityRadius(10);//Math.max(1, (int)(modulationTime / scanRate)));
+            xybr.setEntityThreshold(ds.getMinZ());
             xybr.setBlockWidth(modulationTime);
             xybr.setBlockAnchor(RectangleAnchor.CENTER);
             double spm = modulationTime * scanRate;
@@ -221,7 +247,7 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-	@Override
+    @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
@@ -234,6 +260,11 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         TopComponent msView = WindowManager.getDefault().findTopComponent("MassSpectrumViewerTopComponent");
         if (msView != null) {
             msView.open();
+        }
+        TopComponent tc = WindowManager.getDefault().findTopComponent("navigatorTC");
+        if (tc != null) {
+            tc.open();
+            tc.requestAttention(true);
         }
     }
 
@@ -256,62 +287,11 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         }
     }
 
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-//        if (this.project != null) {
-//            p.setProperty("projectLocation", this.project.getLocation().getPath());
-//        }
-//        if (this.file != null) {
-//            p.setProperty("fileLocation", this.file.getPrimaryFile().getPath());
-//        }
-        // TODO store your settings
-    }
-
-    Object readProperties(java.util.Properties p) {
-        if (instance == null) {
-            instance = this;
-        }
-        instance.readPropertiesImpl(p);
-        return instance;
-    }
-
-    private void readPropertiesImpl(java.util.Properties p) {
-        String version = p.getProperty("version");
-//        String projectLocation = p.getProperty("projectLocation");
-//        if (projectLocation != null) {
-//            FileObject projectToBeOpened = FileUtil.toFileObject(new File(projectLocation));
-//            Project prj;
-//            try {
-//                prj = ProjectManager.getDefault().findProject(projectToBeOpened);
-//                Project[] array = new Project[1];
-//                array[0] = prj;
-//                OpenProjects.getDefault().open(array, false);
-//                this.project = (IChromAUIProject) prj;
-//            } catch (IOException ex) {
-//                Exceptions.printStackTrace(ex);
-//            } catch (IllegalArgumentException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//
-//        }
-//        String fileLocation = p.getProperty("fileLocation");
-//        if (fileLocation != null) {
-//            try {
-//                init(DataObject.find(FileUtil.toFileObject(new File(fileLocation))));
-//            } catch (DataObjectNotFoundException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//        }
-        // TODO read your settings according to their version
-    }
-
     @Override
     public void resultChanged(LookupEvent le) {
         //do not react to ourself
         if (hasFocus()) {
-            System.out.println("I have focus, not setting viewport!");
+            Logger.getLogger(getClass().getName()).info("I have focus, not setting viewport!");
         } else {
             if (hmp.isSyncViewport()) {
                 Collection<? extends Chromatogram2DViewViewport> viewports = result.allInstances();

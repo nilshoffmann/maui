@@ -34,7 +34,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
@@ -59,16 +62,16 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
 
     private final File importDir;
     private final File[] files;
-    private Locale locale = Locale.US;
+    private final Locale locale = Locale.US;
 
     @Override
     public List<File> call() {
-        List<File> resultFiles = new LinkedList<File>();
+        List<File> resultFiles = new LinkedList<>();
         try {
             progressHandle.start(files.length);
             progressHandle.progress("Retrieving Chromatograms");
             progressHandle.progress("Matching Chromatograms");
-            LinkedHashMap<String, File> reports = new LinkedHashMap<String, File>();
+            LinkedHashMap<String, File> reports = new LinkedHashMap<>();
             for (File file : files) {
                 String chromName = StringTools.removeFileExt(file.getName());
                 reports.put(chromName, file);
@@ -79,20 +82,18 @@ public class ChromatogramFromPeakListImporter extends AProgressAwareCallable<Lis
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
             trd.setDisplayName(getClass().getSimpleName());
-            Utils.defaultLocale = locale;
             for (File file : files) {
                 progressHandle.progress(
                         "Importing " + (peakReportsImported + 1) + "/" + files.length,
                         peakReportsImported);
-                System.out.println("Importing report " + file.getName() + ".");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Importing report {0}.", file.getName());
                 String chromName = StringTools.removeFileExt(file.getName());
                 IChromatogramDescriptor chromatogram = createChromatogramDescriptor(file, new GC(), new TOFMS(), chromName);
-                List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
-                File created = importPeaks(importDir, peaks, reports, chromName, chromatogram);
+                List<IPeakAnnotationDescriptor> peaks = new ArrayList<>();
+                File created = importPeaks(importDir, peaks, reports, chromName, chromatogram, locale);
                 resultFiles.add(created);
                 peakReportsImported++;
             }
-            Utils.defaultLocale = Locale.getDefault();
         } catch (Exception e) {
             Exceptions.printStackTrace(e);
         } finally {

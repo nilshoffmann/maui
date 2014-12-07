@@ -33,16 +33,31 @@ import java.util.List;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CommentDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Comment;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class CommentsContainer extends BasicMzTabMetaDataContainer<CommentDescriptor> {
+    private static final long serialVersionUID = 2511765064813451224L;
 
+    /**
+     *
+     * @param smc
+     * @return
+     */
     public static List<Comment> toComments(CommentsContainer smc) {
-        List<Comment> l = new ArrayList<Comment>();
+        List<Comment> l = new ArrayList<>();
         for (CommentDescriptor smd : smc.getMembers()) {
             l.add(smd.getComment());
         }
         return l;
     }
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static CommentsContainer create(Collection<Comment> c) {
         CommentsContainer cc = new CommentsContainer();
         cc.setLevel(1);

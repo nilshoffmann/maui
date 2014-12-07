@@ -29,6 +29,8 @@ package maltcms.ui.nb;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -61,7 +63,7 @@ public class ChromaProjectFactory implements ProjectFactory {
     public org.netbeans.api.project.Project loadProject(FileObject fo, ProjectState ps) throws IOException {
         
         if(isProject(fo)) {
-            System.out.println("Loading project from "+fo.getPath());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Loading project from {0}", fo.getPath());
             ChromaProject cp = new ChromaProject(fo.getFileObject(PROJECT_FILE), ps, unmarshall(new File(fo.getPath(),PROJECT_FILE)));
             return cp;
         }else{
@@ -74,7 +76,7 @@ public class ChromaProjectFactory implements ProjectFactory {
         ChromaProject cp = (ChromaProject)prjct;
         net.sourceforge.maltcms.chromauiproject.Project p = cp.getProject();
         File f = new File(prjct.getProjectDirectory().getPath(),PROJECT_FILE);
-        System.out.println("Saving project to: "+f.getAbsolutePath());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Saving project to: {0}", f.getAbsolutePath());
         marshall(p, f);
     }
 

@@ -33,12 +33,28 @@ package net.sf.maltcms.chromaui.db.api;
  */
 public interface ICredentials {
 
+    /**
+     *
+     * @return
+     */
     String getName();
 
+    /**
+     *
+     * @param name
+     */
     void setName(String name);
 
+    /**
+     *
+     * @param icp
+     */
     void provideCredentials(ICredentialsProvider icp);
 
+    /**
+     *
+     * @return
+     */
     boolean authenticate();
 
 }

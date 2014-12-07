@@ -43,21 +43,42 @@ import org.netbeans.junit.NbTestCase;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class UtilsTest extends NbTestCase {
 
+    /**
+     *
+     */
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    /**
+     *
+     */
     @Rule
     public LogMethodName lmn = new LogMethodName();
 
+    /**
+     *
+     */
     @Rule
     public SetupLogging logging = new SetupLogging();
 
+    /**
+     *
+     * @param name
+     */
     public UtilsTest(String name) {
         super(name);
     }
 
+    /**
+     *
+     * @return
+     */
     public static junit.framework.Test suite() {
         NbModuleSuite.Configuration config = NbModuleSuite.createConfiguration(UtilsTest.class);
         config.enableClasspathModules(true);

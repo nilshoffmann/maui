@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
@@ -94,7 +96,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
             while ((buffer = bis.readLine()) != null) {
                 sb.append(buffer).append("\n");
             }
-            System.out.println(sb.toString());
+            Logger.getLogger(getClass().getName()).info(sb.toString());
             return sb.toString();
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
@@ -152,6 +154,8 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jPanel3 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         quantify = new javax.swing.JButton();
@@ -319,25 +323,46 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
 
         display.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 653, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(display, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 416, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jTabbedPane1)
+                        .addComponent(display, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addContainerGap()))
+        );
+
+        jScrollPane2.setViewportView(jPanel3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(display, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 655, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScrollPane2))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1)
-                    .addComponent(display, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+            .addGap(0, 418, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScrollPane2))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -391,7 +416,9 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
     private javax.swing.JButton importPeaks;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton maltcmsIntegration;
     private javax.swing.JButton newProject;
@@ -428,13 +455,13 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
         URL u = he.getURL();
         if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (u.getProtocol().equals("http") || u.getProtocol().equals("https")) {
-                System.out.println(u.getPath());
+                Logger.getLogger(getClass().getName()).info(u.getPath());
                 if (u.getPath().startsWith("/maui/")) {
                     String path = u.getPath().substring("/maui".length());
-                    System.out.println("Path: " + path);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Path: {0}", path);
                     if (path.startsWith("/OptionsDialog")) {
                         String optionsPanelRegistration = path.substring("/OptionsDialog/".length());
-                        System.out.println("Opening options panel: " + optionsPanelRegistration);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "Opening options panel: {0}", optionsPanelRegistration);
                         OptionsDisplayer.getDefault().open(optionsPanelRegistration);
                     } else {
                         Actions.execFileSystemAction(path, new ActionEvent(this, 1, u.getPath()));
@@ -448,9 +475,7 @@ public final class MauiWelcomeTopComponent extends TopComponent implements Hyper
                 } else {
                     try {
                         Desktop.getDesktop().browse(u.toURI());
-                    } catch (URISyntaxException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (IOException ex) {
+                    } catch (URISyntaxException | IOException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                 }

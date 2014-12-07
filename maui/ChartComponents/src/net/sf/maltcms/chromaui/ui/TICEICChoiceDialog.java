@@ -33,6 +33,9 @@ package net.sf.maltcms.chromaui.ui;
  */
 public class TICEICChoiceDialog extends javax.swing.JPanel {
 
+    /**
+     *
+     */
     public TICEICChoiceDialog() {
         initComponents();
     }
@@ -145,6 +148,10 @@ public class TICEICChoiceDialog extends javax.swing.JPanel {
         jTextField2.setEnabled(true);
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
+    /**
+     *
+     * @return
+     */
     public double[] getMinMZ() {
         String[] vals = jTextField1.getText().split(" ");
         double[] minmz = new double[vals.length];
@@ -154,6 +161,10 @@ public class TICEICChoiceDialog extends javax.swing.JPanel {
         return minmz;
     }
 
+    /**
+     *
+     * @return
+     */
     public double[] getMaxMZ() {
         String[] vals = jTextField1.getText().split(" ");
         double[] maxmz = new double[vals.length];
@@ -163,6 +174,10 @@ public class TICEICChoiceDialog extends javax.swing.JPanel {
         return maxmz;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isTICSelected() {
         return jRadioButton1.isSelected();
     }
@@ -172,6 +187,7 @@ public class TICEICChoiceDialog extends javax.swing.JPanel {
      */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
 //                TICEICChoiceDialog dialog = new TICEICChoiceDialog(new javax.swing.JFrame(), true);
 //                dialog.addWindowListener(new java.awt.event.WindowAdapter() {

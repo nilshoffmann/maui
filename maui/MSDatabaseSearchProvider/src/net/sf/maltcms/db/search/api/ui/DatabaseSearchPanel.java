@@ -86,6 +86,9 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
         return riDbModel;
     }
 
+    /**
+     *
+     */
     public void updateView() {
         if (project != null) {
             if (listModel == null) {
@@ -112,21 +115,32 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     protected DefaultComboBoxModel getScoreFunctions() {
-        List<AMetabolitePredicate> predicates = new ArrayList<AMetabolitePredicate>(Lookup.getDefault().
+        List<AMetabolitePredicate> predicates = new ArrayList<>(Lookup.getDefault().
                 lookupAll(AMetabolitePredicate.class));
-        List<AMetabolitePredicate> whiteListed = new ArrayList<AMetabolitePredicate>();
+        List<AMetabolitePredicate> whiteListed = new ArrayList<>();
         for (AMetabolitePredicate p : predicates) {
-            if (p.getClass().getName().equals("net.sf.maltcms.db.search.spi.similarities.Cosine")) {
-                whiteListed.add(p);
-            } else if (p.getClass().getName().equals("net.sf.maltcms.db.search.spi.similarities2.SteinAndScott")) {
-                whiteListed.add(p);
+            switch (p.getClass().getName()) {
+                case "net.sf.maltcms.db.search.spi.similarities.Cosine":
+                    whiteListed.add(p);
+                    break;
+                case "net.sf.maltcms.db.search.spi.similarities2.SteinAndScott":
+                    whiteListed.add(p);
+                    break;
             }
         }
         DefaultComboBoxModel dcbm = new DefaultComboBoxModel(whiteListed.toArray());
         return dcbm;
     }
 
+    /**
+     *
+     * @return
+     */
     public AMetabolitePredicate getSelectedMetabolitePredicate() {
         Object obj = jComboBox1.getSelectedItem();
         if (obj == null) {
@@ -135,15 +149,23 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
         return ((AMetabolitePredicate) obj);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IDatabaseDescriptor> getSelectedDatabases() {
         Object[] descriptors = jList1.getSelectedValues();
-        List<IDatabaseDescriptor> list = new ArrayList<IDatabaseDescriptor>();
+        List<IDatabaseDescriptor> list = new ArrayList<>();
         for (Object obj : descriptors) {
             list.add((IDatabaseDescriptor) obj);
         }
         return list;
     }
 
+    /**
+     *
+     * @return
+     */
     public RetentionIndexCalculator getRetentionIndexCalculator() {
         if (useRI.isSelected()) {
             IDatabaseDescriptor descriptor = (IDatabaseDescriptor) jComboBox2.
@@ -158,10 +180,18 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isClearExistingMatches() {
         return clearExistingMatches.isSelected();
     }
 
+    /**
+     *
+     * @return
+     */
     public double getRIWindow() {
         String str = jTextField1.getText();
         if (str.isEmpty()) {
@@ -170,6 +200,10 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
         return Double.parseDouble(jTextField1.getText());
     }
 
+    /**
+     *
+     * @return
+     */
     public double getMatchThreshold() {
         String str = minimumMatchScore.getText();
         if (str.isEmpty()) {
@@ -178,6 +212,10 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
         return Double.parseDouble(minimumMatchScore.getText());
     }
 
+    /**
+     *
+     * @return
+     */
     public int getMaxNumberOfHits() {
         String str = maximumMatches.getText();
         if (str.isEmpty()) {

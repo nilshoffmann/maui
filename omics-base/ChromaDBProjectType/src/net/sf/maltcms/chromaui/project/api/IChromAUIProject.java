@@ -40,26 +40,67 @@ import org.openide.filesystems.FileObject;
  */
 public interface IChromAUIProject extends Project, IMauiProject {
 
+    /**
+     *
+     * @return
+     */
     ICrudProvider getCrudProvider();
 
+    /**
+     *
+     * @param dbfile
+     */
     void activate(URL dbfile);
 
+    /**
+     *
+     * @param state
+     */
     void setState(ProjectState state);
 
+    /**
+     *
+     * @return
+     */
     FileObject getOutputDir();
 
+    /**
+     *
+     * @param f
+     */
     void setOutputDir(FileObject f);
 
+    /**
+     *
+     * @return
+     */
     FileObject getLocation();
 
+    /**
+     *
+     */
     void openSession();
 
+    /**
+     *
+     */
     void closeSession();
 
+    /**
+     *
+     */
     void refresh();
 
+    /**
+     *
+     * @param pcl
+     */
     void addPropertyChangeListener(PropertyChangeListener pcl);
 
+    /**
+     *
+     * @param pcl
+     */
     void removePropertyChangeListener(PropertyChangeListener pcl);
 
 }

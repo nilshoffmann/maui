@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -78,7 +80,7 @@ public class DBPeakContainerAnnotationTask extends AProgressAwareRunnable implem
                 }
                 getProgressHandle().progress("Annotating peaks on container " + container.getDisplayName(), cnt++);
                 if (clearExistingMatches) {
-                    System.out.println("Resetting peak match information!");
+                    Logger.getLogger(getClass().getName()).info("Resetting peak match information!");
                     for (IPeakAnnotationDescriptor ipad : container.getMembers()) {
                         if (isCancel()) {
                             return;
@@ -94,10 +96,10 @@ public class DBPeakContainerAnnotationTask extends AProgressAwareRunnable implem
                 }
                 IQuery<IPeakAnnotationDescriptor> query = Lookup.getDefault().lookup(
                         IQueryFactory.class).createQuery(databases, ricalc, predicate, matchThreshold, maxNumberOfHits,
-                                new ArrayList<IPeakAnnotationDescriptor>(container.getMembers()), riWindow);
-                System.out.println("Created query for container: " + container.getDisplayName());
+                                new ArrayList<>(container.getMembers()), riWindow);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Created query for container: {0}", container.getDisplayName());
                 try {
-                    System.out.println("Running query on container: " + container.getDisplayName());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Running query on container: {0}", container.getDisplayName());
                     List<QueryResultList<IPeakAnnotationDescriptor>> results = query.call();
 
                     for (QueryResultList<IPeakAnnotationDescriptor> resultList : results) {
@@ -111,7 +113,7 @@ public class DBPeakContainerAnnotationTask extends AProgressAwareRunnable implem
 //								IChromatogramDescriptor icd = result.getScan().getChromatogramDescriptor();
                             IPeakAnnotationDescriptor ipad = result.getScan();
                             if (result.getMetabolites().size() > 0) {
-                                System.out.println("Found " + result.getMetabolites().size() + " matches above threshold!");
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "Found {0} matches above threshold!", result.getMetabolites().size());
                                 IMetabolite bestHit = result.getMetabolites().get(0);
                                 ipad.setNativeDatabaseId(bestHit.getID());
                                 ipad.setSimilarity(result.getScoreFor(bestHit));

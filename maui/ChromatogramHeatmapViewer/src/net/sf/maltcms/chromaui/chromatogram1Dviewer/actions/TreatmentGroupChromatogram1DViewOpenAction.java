@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 import maltcms.datastructures.ms.IChromatogram;
@@ -98,10 +99,10 @@ public final class TreatmentGroupChromatogram1DViewOpenAction implements ActionL
                     }
                 }
                 if (is1D) {
-                    System.out.println("Creating 1D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(treatmentGroups.size());
+                    Logger.getLogger(getClass().getName()).info("Creating 1D data providers and dataset.");
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(treatmentGroups.size());
                     InstanceContent ic = new InstanceContent();
-                    final ArrayList<IChromatogramDescriptor> chromatograms = new ArrayList<IChromatogramDescriptor>();
+                    final ArrayList<IChromatogramDescriptor> chromatograms = new ArrayList<>();
                     for (TreatmentGroupContainer treatmentGroup : treatmentGroups) {
                         progressHandle.progress("Processing treatment group " + treatmentGroup.getDisplayName(), workunit++);
                         for (IChromatogramDescriptor descr : treatmentGroup.getMembers()) {
@@ -123,9 +124,9 @@ public final class TreatmentGroupChromatogram1DViewOpenAction implements ActionL
                     });
 
                 } else {
-                    System.out.println("Creating 2D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(treatmentGroups.size());
-                    final ArrayList<IChromatogramDescriptor> chromatograms = new ArrayList<IChromatogramDescriptor>();
+                    Logger.getLogger(getClass().getName()).info("Creating 2D data providers and dataset.");
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(treatmentGroups.size());
+                    final ArrayList<IChromatogramDescriptor> chromatograms = new ArrayList<>();
                     InstanceContent ic = new InstanceContent();
                     for (TreatmentGroupContainer treatmentGroup : treatmentGroups) {
                         progressHandle.progress("Processing treatment group " + treatmentGroup.getDisplayName(), workunit++);

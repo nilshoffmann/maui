@@ -27,6 +27,9 @@
  */
 package maltcms.ui.fileHandles.properties.graph;
 
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineInputWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -43,7 +46,6 @@ import org.netbeans.api.visual.widget.Widget;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
-import maltcms.ui.fileHandles.properties.tools.PropertyLoader;
 import maltcms.ui.fileHandles.properties.tools.SceneParser;
 import org.netbeans.api.visual.action.EditProvider;
 import org.netbeans.api.visual.action.HoverProvider;
@@ -79,7 +81,8 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     private SceneLayout layout;
     //private PipelineInputWidget root;
     private PipelineGeneralConfigWidget general;
-    private boolean shortLabel = false;
+    private boolean shortLabelActive = false;
+
     private IconNodeWidget activeIconNode = null;
     private FileObject activeFile = null;
 
@@ -130,19 +133,21 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
     @Override
     protected Widget attachNodeWidget(String node) {
         IconNodeWidget label;
-        if (node.equals(INPUT_WIDGET)) {
-            label = new PipelineInputWidget(this);
-        } else if (node.equals(GENERAL_WIDGET)) {
-            label = new PipelineGeneralConfigWidget(this);
-        } else {
-            label = new PipelineElementWidget(this);
+        switch (node) {
+            case INPUT_WIDGET:
+                label = new PipelineInputWidget(this);
+                label.setLabel(node);
+                break;
+            case GENERAL_WIDGET:
+                label = new PipelineGeneralConfigWidget(this);
+                label.setLabel(node);
+                break;
+            default:
+                label = new PipelineElementWidget(this);
+//                label.setLabel(node);
+                break;
         }
-        if (this.shortLabel) {
-            String[] tmp = node.split("\\.");
-            label.setLabel(tmp[tmp.length - 1]);
-        } else {
-            label.setLabel(node);
-        }
+//        label.setLabel(getNodeLabel(label, this.shortLabelActive));
         label.setToolTipText("Hold 'Ctrl'+'Mouse Right Button' to create Edge");
         label.setImage(IMAGE);
 
@@ -266,23 +271,26 @@ public class PipelineGraphScene extends GraphScene.StringGraph {
         return w;
     }
 
-    public void setShortLabelActive(boolean activateShortLabel) {
-        if (activateShortLabel) {
-            this.shortLabel = true;
-            for (Widget w : this.mainLayer.getChildren()) {
-                if (w instanceof PipelineElementWidget) {
-                    PipelineElementWidget wt = (PipelineElementWidget) w;
-                    String[] tmp = wt.getClassName().split("\\.");
-                    wt.getLabelWidget().setLabel(tmp[tmp.length - 1]);
-                }
+    public boolean isShortLabelActive() {
+        return shortLabelActive;
+    }
+
+    public String getNodeLabel(IconNodeWidget pew, boolean shortLabel) {
+        if (pew instanceof PipelineElementWidget) {
+            if (shortLabel) {
+                return ((PipelineElementWidget) pew).getBean().getClass().getSimpleName();
             }
-        } else {
-            this.shortLabel = false;
-            for (Widget w : this.mainLayer.getChildren()) {
-                if (w instanceof PipelineElementWidget) {
-                    PipelineElementWidget wt = (PipelineElementWidget) w;
-                    wt.getLabelWidget().setLabel(wt.getClassName());
-                }
+            return ((PipelineElementWidget) pew).getBean().getClass().getCanonicalName();
+        }
+        return pew.getLabelWidget().getLabel();
+    }
+
+    public void setShortLabelActive(boolean activateShortLabel) {
+        this.shortLabelActive = activateShortLabel;
+        for (Widget w : this.mainLayer.getChildren()) {
+            if (w instanceof PipelineElementWidget) {
+                PipelineElementWidget wt = (PipelineElementWidget) w;
+                wt.setLabel(getNodeLabel(wt, activateShortLabel));
             }
         }
     }

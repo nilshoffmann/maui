@@ -47,7 +47,7 @@ import org.openide.util.NotImplementedException;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public abstract class Chromatogram1DTopComponentLoader extends AProgressAwareRunnable {

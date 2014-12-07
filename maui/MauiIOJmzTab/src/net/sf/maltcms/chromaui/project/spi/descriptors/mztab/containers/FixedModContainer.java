@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.FixedModDescriptor;
 import uk.ac.ebi.pride.jmztab.model.FixedMod;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class FixedModContainer extends BasicMzTabMetaDataContainer<FixedModDescriptor> {
+    private static final long serialVersionUID = 8255285222307635226L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static FixedModContainer create(Metadata metadata) {
         FixedModContainer c = new FixedModContainer();
         c.setLevel(2);

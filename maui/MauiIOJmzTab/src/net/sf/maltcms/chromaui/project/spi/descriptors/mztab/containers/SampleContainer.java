@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.SampleDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.Sample;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class SampleContainer extends BasicMzTabMetaDataContainer<SampleDescriptor> {
+    private static final long serialVersionUID = -9006872759430991944L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static SampleContainer create(Metadata metadata) {
         SampleContainer c = new SampleContainer();
         c.setLevel(2);

@@ -32,17 +32,33 @@ import net.sf.maltcms.chromaui.jmztab.ui.api.IMzTabDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Comment;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class CommentDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_COMMENT = "comment";
+    private static final long serialVersionUID = -5185516703075288189L;
 
     private Comment comment;
 
+    /**
+     *
+     * @return
+     */
     public Comment getComment() {
         activate(ActivationPurpose.READ);
         return comment;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setComment(Comment element) {
         activate(ActivationPurpose.WRITE);
         Comment old = this.comment;
@@ -53,10 +69,18 @@ public class CommentDescriptor extends ABasicDescriptor implements IMzTabDescrip
         getPropertyChangeSupport().firePropertyChange(PROP_COMMENT, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getMsg() {
         return getComment().getMsg();
     }
 
+    /**
+     *
+     * @param msg
+     */
     public void setMsg(String msg) {
         getComment().setMsg(msg);
     }

@@ -32,7 +32,9 @@ import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,7 +56,9 @@ public class GroupPanel extends JPanel {
 //        this.setPreferredSize(new Dimension(840, 30));
 //        this.setBackground(new Color(51, 51, 51));
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
-        for (String s : hash.keySet()) {
+        List<String> keys = new ArrayList<>(hash.keySet());
+        Collections.sort(keys);
+        for (String s : keys) {
             Checkbox bla = new Checkbox();
             bla.setState(true);
             bla.setBackground(get_color(s));
@@ -92,10 +96,10 @@ public class GroupPanel extends JPanel {
     }
 
     public String get40CharString(String label) {
-        if (label.length() > 37) {
-            String shortString = label.substring(0, Math.min(37, label.length()));
-            return shortString + "...";
-        }
+//        if (label.length() > 37) {
+//            String shortString = label.substring(0, Math.min(37, label.length()));
+//            return shortString + "...";
+//        }
         return label;
     }
 

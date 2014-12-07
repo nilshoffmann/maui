@@ -32,10 +32,18 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import org.openide.loaders.DataObject;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class CSV2JFCOpenAction implements ActionListener {
 
     private final List<DataObject> context;
 
+    /**
+     *
+     * @param context
+     */
     public CSV2JFCOpenAction(List<DataObject> context) {
         this.context = context;
     }

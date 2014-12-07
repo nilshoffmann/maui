@@ -47,55 +47,126 @@ import org.openide.util.Lookup;
  */
 public class DescriptorFactory {
 
+    /**
+     *
+     */
     public static final IDescriptorFactory factoryImpl = Lookup.getDefault().lookup(IDescriptorFactory.class);
 
+    /**
+     *
+     * @param id
+     * @return
+     * @throws DataObjectNotFoundException
+     * @throws IOException
+     */
     public static DataObject getDataObject(IResourceDescriptor id) throws DataObjectNotFoundException, IOException {
         return factoryImpl.getDataObject(id);
     }
 
+    /**
+     *
+     * @param descr
+     * @return
+     */
     public static IChromatogram1D newChromatogram1D(IFileFragment descr) {
         return factoryImpl.newChromatogram1D(descr);
     }
 
+    /**
+     *
+     * @param descr
+     * @return
+     */
     public static IChromatogram2D newChromatogram2D(IFileFragment descr) {
         return factoryImpl.newChromatogram2D(descr);
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static IPeakGroupDescriptor newPeakGroupDescriptor(String name) {
         return factoryImpl.newPeakGroupDescriptor(name);
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static ISampleGroupDescriptor newSampleGroupDescriptor(String name) {
         return factoryImpl.newSampleGroupDescriptor(name);
     }
 
+    /**
+     *
+     * @return
+     */
     public static IChromatogramDescriptor newChromatogramDescriptor() {
         return factoryImpl.newChromatogramDescriptor();
     }
 
+    /**
+     *
+     * @param name
+     * @param treatmentGroup
+     * @param sampleGroup
+     * @param normalization
+     * @return
+     */
     public static IChromatogramDescriptor newChromatogramDescriptor(String name, ITreatmentGroupDescriptor treatmentGroup, ISampleGroupDescriptor sampleGroup, INormalizationDescriptor normalization) {
         return factoryImpl.newChromatogramDescriptor(name, treatmentGroup, sampleGroup, normalization);
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static ITreatmentGroupDescriptor newTreatmentGroupDescriptor(
             String name) {
         return factoryImpl.newTreatmentGroupDescriptor();
     }
 
+    /**
+     *
+     * @return
+     */
     public static IToolDescriptor newToolResultDescriptor() {
         return factoryImpl.newToolResultDescriptor();
     }
 
+    /**
+     *
+     * @param location
+     * @param type
+     * @return
+     */
     public static IDatabaseDescriptor newDatabaseDescriptor(String location,
             DatabaseType type) {
         return factoryImpl.newDatabaseDescriptor(location, type);
     }
 
+    /**
+     *
+     * @param peaks
+     * @param tool
+     * @return
+     */
     public static IPeakGroupDescriptor newPeakGroupDescriptor(
             List<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool) {
         return factoryImpl.newPeakGroupDescriptor(peaks, tool);
     }
 
+    /**
+     *
+     * @param location
+     * @param type
+     * @param separationType
+     * @param detectorType
+     * @return
+     */
     public static IDatabaseDescriptor newDatabaseDescriptor(String location,
             DatabaseType type,
             ISeparationType separationType, IDetectorType detectorType) {
@@ -112,6 +183,27 @@ public class DescriptorFactory {
         return factoryImpl.newNormalizationDescriptor();
     }
 
+    /**
+     *
+     * @param chromatogram
+     * @param name
+     * @param uniqueMass
+     * @param quantMasses
+     * @param retentionIndex
+     * @param snr
+     * @param fwhh
+     * @param similarity
+     * @param library
+     * @param cas
+     * @param formula
+     * @param method
+     * @param startTime
+     * @param apexTime
+     * @param stopTime
+     * @param area
+     * @param intensity
+     * @return
+     */
     public static IPeakAnnotationDescriptor newPeakAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
@@ -122,6 +214,29 @@ public class DescriptorFactory {
         return factoryImpl.newPeakAnnotationDescriptor(chromatogram, name, uniqueMass, quantMasses, retentionIndex, snr, fwhh, similarity, library, cas, formula, method, startTime, apexTime, stopTime, area, intensity);
     }
 
+    /**
+     *
+     * @param chromatogram
+     * @param name
+     * @param uniqueMass
+     * @param quantMasses
+     * @param retentionIndex
+     * @param snr
+     * @param fwhh
+     * @param similarity
+     * @param library
+     * @param cas
+     * @param formula
+     * @param method
+     * @param startTime
+     * @param apexTime
+     * @param stopTime
+     * @param area
+     * @param intensity
+     * @param rt1
+     * @param rt2
+     * @return
+     */
     public static IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
@@ -132,24 +247,48 @@ public class DescriptorFactory {
         return factoryImpl.newPeak2DAnnotationDescriptor(chromatogram, name, uniqueMass, quantMasses, retentionIndex, snr, fwhh, similarity, library, cas, formula, method, startTime, apexTime, stopTime, area, intensity, rt1, rt2);
     }
 
+    /**
+     *
+     * @return
+     */
     public static IAnovaDescriptor newAnovaDescriptor() {
         return factoryImpl.newAnovaDescriptor();
     }
 
+    /**
+     *
+     * @return
+     */
     public static IPcaDescriptor newPcaDescriptor() {
         return factoryImpl.newPcaDescriptor();
     }
 
+    /**
+     *
+     * @param project
+     * @param chromatogram
+     * @param peaks
+     * @param trd
+     */
     public static void addPeakAnnotations(IChromAUIProject project,
             IChromatogramDescriptor chromatogram,
             List<IPeakAnnotationDescriptor> peaks, IToolDescriptor trd) {
         factoryImpl.addPeakAnnotations(project, chromatogram, peaks, trd);
     }
 
+    /**
+     *
+     * @param descriptor
+     * @return
+     */
     public static Image getImage(IBasicDescriptor descriptor) {
         return factoryImpl.getImage(descriptor);
     }
 
+    /**
+     *
+     * @return
+     */
     public static IScanSelectionDescriptor newScanSelectionDescriptor() {
         return factoryImpl.newScanSelectionDescriptor();
     }

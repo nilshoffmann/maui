@@ -37,7 +37,15 @@ import org.openide.util.Lookup;
  */
 public interface GroovyLookupScript extends Runnable, Cancellable, GroovyScript {
 
+    /**
+     *
+     * @param lookup
+     */
     public void setLookup(Lookup lookup);
 
+    /**
+     *
+     * @param progressHandle
+     */
     public void setProgressHandle(ProgressHandle progressHandle);
 }

@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import maltcms.ui.charts.GradientPaintScale;
 import maltcms.ui.fileHandles.serialized.JFCTopComponent;
@@ -77,8 +79,13 @@ public class CSV2JFCLoader implements Runnable {
     }
     private CHART mode = CHART.XY;
 
+    /**
+     *
+     * @param m
+     * @param jtc
+     */
     public void load(CSVDataObject m, JFCTopComponent jtc) {
-        System.out.println("Load");
+        Logger.getLogger(getClass().getName()).info("Load");
         this.ph = ProgressHandleFactory.createHandle("Loading file " + m.getPrimaryFile().getName());
         this.is = m.getPrimaryFile();
 
@@ -108,7 +115,7 @@ public class CSV2JFCLoader implements Runnable {
                         try {
                             double d = Double.parseDouble(o.toString());
                             xys.add(i, d);
-                            System.out.println("Adding " + i + " " + d + " " + dtm.getColumnName(j));
+                            Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding {0} {1} {2}", new Object[]{i, d, dtm.getColumnName(j)});
                         } catch (Exception e) {
                         }
                     }
@@ -119,12 +126,12 @@ public class CSV2JFCLoader implements Runnable {
 
                 JFreeChart jfc = new JFreeChart(this.title, xyp);
                 jtc.setChart(jfc);
-                System.out.println("creating chart done");
+                Logger.getLogger(getClass().getName()).info("creating chart done");
             } else if (this.mode == CHART.MATRIX) {
                 DefaultXYZDataset cd = new DefaultXYZDataset();
-                System.out.println("Name of column 0: " + dtm.getColumnName(0));
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Name of column 0: {0}", dtm.getColumnName(0));
                 if (dtm.getColumnName(0).isEmpty()) {
-                    System.out.println("Removing column 0");
+                    Logger.getLogger(getClass().getName()).info("Removing column 0");
                     dtm = removeColumn(dtm, 0);
                 }
                 if (dtm.getColumnName(dtm.getColumnCount() - 1).equalsIgnoreCase("filename")) {
@@ -137,7 +144,7 @@ public class CSV2JFCLoader implements Runnable {
                     }
                     sb.append("\n");
                 }
-                System.out.println("Table before sorting: " + sb.toString());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Table before sorting: {0}", sb.toString());
 //                dtm = sort(dtm);
                 StringBuilder sb2 = new StringBuilder();
                 for (int i = 0; i < dtm.getRowCount(); i++) {
@@ -146,10 +153,10 @@ public class CSV2JFCLoader implements Runnable {
                     }
                     sb2.append("\n");
                 }
-                System.out.println("Table after sorting: " + sb2.toString());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Table after sorting: {0}", sb2.toString());
                 int rows = dtm.getRowCount();
                 int columns = dtm.getColumnCount();
-                System.out.println("Storing " + columns + " * " + rows + " elements, " + (rows * columns) + " total!");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Storing {0} * {1} elements, {2} total!", new Object[]{columns, rows, rows * columns});
                 double[][] data = new double[3][(columns * rows)];
                 ArrayDouble.D1 dt = new ArrayDouble.D1((columns) * rows);
                 double min = Double.POSITIVE_INFINITY;
@@ -263,15 +270,15 @@ public class CSV2JFCLoader implements Runnable {
         int rows = dtm.getRowCount();
 
         int[] ranks = new int[rows];
-        List<Tuple2D<Double, Integer>> valueToIndex = new ArrayList<Tuple2D<Double, Integer>>();
+        List<Tuple2D<Double, Integer>> valueToIndex = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             Object o = dtm.getValueAt(i, column);
             if (o instanceof Double) {
                 Double d = (Double) o;
-                valueToIndex.add(new Tuple2D<Double, Integer>(d, Integer.valueOf(i)));
+                valueToIndex.add(new Tuple2D<>(d, i));
             } else if (o instanceof String) {
                 Double d = Double.parseDouble((String) o);
-                valueToIndex.add(new Tuple2D<Double, Integer>(d, Integer.valueOf(i)));
+                valueToIndex.add(new Tuple2D<>(d, i));
             }
         }
 
@@ -305,7 +312,7 @@ public class CSV2JFCLoader implements Runnable {
         for (int i = 0; i < dtm.getRowCount(); i++) {
             names[i] = dtm.getColumnName(permutation[i]);
         }
-        System.out.println("Table model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Table model has {0} rows and {1} columns with {2} labels", new Object[]{modelByRows.length, modelByRows[0].length, names.length});
         return new DefaultTableModel(modelByRows, names);
     }
 
@@ -324,7 +331,7 @@ public class CSV2JFCLoader implements Runnable {
         for (int i = 0; i < dtm.getRowCount(); i++) {
             names[i] = dtm.getColumnName(permutation[i]);
         }
-        System.out.println("Table model has " + modelByRows.length + " rows and " + modelByRows[0].length + " columns with " + names.length + " labels");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Table model has {0} rows and {1} columns with {2} labels", new Object[]{modelByRows.length, modelByRows[0].length, names.length});
         return new DefaultTableModel(modelByRows, names);
     }
 
@@ -345,7 +352,7 @@ public class CSV2JFCLoader implements Runnable {
                 }
             }
         }
-        System.out.println("Table model has " + data.length + " rows and " + data[0].length + " columns with " + names.length + " labels");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Table model has {0} rows and {1} columns with {2} labels", new Object[]{data.length, data[0].length, names.length});
         return new DefaultTableModel(data, names);
     }
 }

@@ -49,6 +49,7 @@ public class CustomKeyboardControl extends KeyAdapter {
         this.chart = chart;
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_1:

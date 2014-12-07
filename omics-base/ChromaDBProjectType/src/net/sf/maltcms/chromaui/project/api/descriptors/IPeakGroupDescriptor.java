@@ -41,67 +41,200 @@ import ucar.ma2.Array;
  */
 public interface IPeakGroupDescriptor extends IBasicDescriptor {
 
+    /**
+     *
+     */
     final String PROP_PEAKGROUPCONTAINER = "peakGroupContainer";
 
+    /**
+     *
+     * @return
+     */
     public PeakGroupContainer getPeakGroupContainer();
 
+    /**
+     *
+     * @param pgc
+     */
     public void setPeakGroupContainer(PeakGroupContainer pgc);
 
+    /**
+     *
+     * @return
+     */
     public List<IPeakAnnotationDescriptor> getPeakAnnotationDescriptors();
 
+    /**
+     *
+     * @param peakAnnotationDescriptors
+     */
     public void setPeakAnnotationDescriptors(
             List<IPeakAnnotationDescriptor> peakAnnotationDescriptors);
 
+    /**
+     *
+     * @return
+     */
     public double getMeanApexTime();
 
+    /**
+     *
+     * @return
+     */
     public double getMedianApexTime();
 
+    /**
+     *
+     * @param normalizer
+     * @return
+     */
     public double getMeanArea(IPeakNormalizer normalizer);
 
+    /**
+     *
+     * @param normalizer
+     * @return
+     */
     public double getMedianArea(IPeakNormalizer normalizer);
 
+    /**
+     *
+     * @param normalizer
+     * @return
+     */
     public double getMeanApexIntensity(IPeakNormalizer normalizer);
 
+    /**
+     *
+     * @param normalizer
+     * @return
+     */
     public double getMeanAreaLog10(IPeakNormalizer normalizer);
 
+    /**
+     *
+     * @param normalizer
+     * @return
+     */
     public double getMeanApexIntensityLog10(IPeakNormalizer normalizer);
 
+    /**
+     *
+     * @return
+     */
     public double getApexTimeStdDev();
 
+    /**
+     *
+     * @param normalizer
+     * @return
+     */
     public double getAreaStdDev(IPeakNormalizer normalizer);
 
+    /**
+     *
+     * @return
+     */
     public String getMajorityName();
 
+    /**
+     *
+     * @return
+     */
     public double getMajorityNamePercentage();
 
+    /**
+     *
+     * @return
+     */
     public String getMajorityNativeDatabaseId();
 
+    /**
+     *
+     * @return
+     */
     public String getMajorityDisplayName();
 
+    /**
+     *
+     * @return
+     */
     public String getCas();
 
+    /**
+     *
+     * @param cas
+     */
     public void setCas(String cas);
 
+    /**
+     *
+     * @return
+     */
     public String getFormula();
 
+    /**
+     *
+     * @param formula
+     */
     public void setFormula(String formula);
 
+    /**
+     *
+     * @return
+     */
     public Tuple2D<Array, Array> getMeanMassSpectrum();
 
+    /**
+     *
+     * @return
+     */
     public int getIndex();
 
+    /**
+     *
+     * @param i
+     */
     public void setIndex(int i);
 
+    /**
+     *
+     * @return
+     */
     public Map<ITreatmentGroupDescriptor, Set<IPeakAnnotationDescriptor>> getPeaksByTreatmentGroup();
 
+    /**
+     *
+     * @return
+     */
     public Map<ISampleGroupDescriptor, Set<IPeakAnnotationDescriptor>> getPeaksBySampleGroup();
 
+    /**
+     *
+     * @param chromatogramDescriptor
+     * @return
+     */
     public IPeakAnnotationDescriptor getPeakForSample(IChromatogramDescriptor chromatogramDescriptor);
 
+    /**
+     *
+     * @param peakAnnotationDescriptors
+     * @return
+     */
     public StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors);
 
+    /**
+     *
+     * @param group
+     * @return
+     */
     public Set<IPeakAnnotationDescriptor> getPeaksForTreatmentGroup(ITreatmentGroupDescriptor group);
 
+    /**
+     *
+     * @param group
+     * @return
+     */
     public Set<IPeakAnnotationDescriptor> getPeaksForSampleGroup(ISampleGroupDescriptor group);
 
     /**

@@ -29,6 +29,8 @@ package net.sf.maltcms.chromaui.chromatogram2Dviewer.tools;
 
 import cross.tools.StringTools;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 
 /**
@@ -48,7 +50,7 @@ public class FileFinder {
 //            System.out.println(f.getName());
             String file = StringTools.removeFileExt(f.getName());
             s += "/" + file + "_peaklist.csv";
-            System.out.println("Using peakfile: " + s);
+            Logger.getLogger(FileFinder.class.getName()).log(Level.INFO, "Using peakfile: {0}", s);
             if (new File(s).isFile()) {
                 return s;
             }

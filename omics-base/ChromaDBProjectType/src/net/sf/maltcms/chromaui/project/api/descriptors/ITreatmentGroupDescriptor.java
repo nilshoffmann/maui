@@ -33,8 +33,16 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  */
 public interface ITreatmentGroupDescriptor extends IBasicDescriptor, IColorizableDescriptor {
 
+    /**
+     *
+     * @return
+     */
     String getComment();
 
+    /**
+     *
+     * @param comment
+     */
     void setComment(String comment);
 
 }

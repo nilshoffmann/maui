@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.InstrumentDescripto
 import uk.ac.ebi.pride.jmztab.model.Instrument;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class InstrumentContainer extends BasicMzTabMetaDataContainer<InstrumentDescriptor> {
+    private static final long serialVersionUID = -1665392072284725237L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static InstrumentContainer create(Metadata metadata) {
         InstrumentContainer c = new InstrumentContainer();
         c.setLevel(2);

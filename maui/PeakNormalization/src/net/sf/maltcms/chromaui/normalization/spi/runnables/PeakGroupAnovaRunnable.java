@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.normalization.spi.PvalueAdjustment;
@@ -60,7 +62,7 @@ import org.rosuda.REngine.Rserve.RserveException;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
@@ -83,13 +85,13 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                 anovaDescriptors.setDisplayName("Analysis of Variance");
                 int maxFactors = 0;
                 int unit = 0;
-                List<double[]> pvalues = new ArrayList<double[]>();
+                List<double[]> pvalues = new ArrayList<>();
                 for (IPeakGroupDescriptor descr : container.getMembers()) {
                     int i = 0;
                     double[] peakArea = new double[descr.getPeakAnnotationDescriptors().size()];
                     String[] treatmentGroup = new String[peakArea.length];
 //                        String[] sampleGroup = new String[peakArea.length];
-                    HashMap<String, Set<IPeakAnnotationDescriptor>> groupToPeak = new HashMap<String, Set<IPeakAnnotationDescriptor>>();
+                    HashMap<String, Set<IPeakAnnotationDescriptor>> groupToPeak = new HashMap<>();
                     for (IPeakAnnotationDescriptor pad : descr.getPeakAnnotationDescriptors()) {
                         peakArea[i] = normalizer.getNormalizationFactor(pad) * pad.getArea();
 //                        sampleGroup[i] = pad.getChromatogramDescriptor().
@@ -101,15 +103,15 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                     treatmentGroup[i]);
                             set.add(pad);
                         } else {
-                            Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<IPeakAnnotationDescriptor>();
+                            Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<>();
                             set.add(pad);
                             groupToPeak.put(treatmentGroup[i], set);
                         }
                         i++;
                     }
-                    System.out.println("Peak set contains group factor with " + groupToPeak.keySet().size() + " levels: " + groupToPeak.keySet());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Peak set contains group factor with {0} levels: {1}", new Object[]{groupToPeak.keySet().size(), groupToPeak.keySet()});
                     if (groupToPeak.keySet().size() < 2) {
-                        System.err.println("Warning: peak group " + descr.getDisplayName() + " only has one level for factor group! Omitting from ANOVA!");
+                        Logger.getLogger(getClass().getName()).log(Level.WARNING, "Warning: peak group {0} only has one level for factor group! Omitting from ANOVA!", descr.getDisplayName());
                     } else {
                         for (String group1 : groupToPeak.keySet()) {
                             Set<IPeakAnnotationDescriptor> set = groupToPeak.get(
@@ -156,7 +158,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                 pvalues.add(targetpvs);
                                 ad.setPvalues(targetpvs);
 
-                                System.out.println("p-value: " + Arrays.toString(
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "p-value: {0}", Arrays.toString(
                                         targetpvs));
                             }
                         }
@@ -168,7 +170,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                         fvs.length - 1);
                                 ad.setFvalues(targetfvs);
 
-                                System.out.println("F-values: " + Arrays.toString(
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "F-values: {0}", Arrays.toString(
                                         targetfvs));
                             }
                         }
@@ -180,7 +182,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                         dvs.length - 1);
                                 ad.setDegreesOfFreedom(targetdvs);
 
-                                System.out.println("Degrees of freedom: " + Arrays.toString(
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "Degrees of freedom: {0}", Arrays.toString(
                                         targetdvs));
                             }
                         }
@@ -192,7 +194,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                                         svs.length - 1);
                                 ad.setFactors(targetsvs);
 
-                                System.out.println("Factors: " + Arrays.toString(
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "Factors: {0}", Arrays.toString(
                                         targetsvs));
                             }
                         }
@@ -202,7 +204,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
 
                         ad.setPeakGroupDescriptor(descr);
                         ad.setName("Anova " + descr.getName());
-                        System.out.println("GroupDescriptor:" + ad.getPeakGroupDescriptor().getDisplayName());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "GroupDescriptor:{0}", ad.getPeakGroupDescriptor().getDisplayName());
                         ad.setDisplayName(ad.getPeakGroupDescriptor().
                                 getDisplayName());
                         anovaDescriptors.addMembers(ad);
@@ -214,7 +216,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
 
                 List<StatisticsContainer> statContainers = container.getStatisticsContainers();
                 if (statContainers == null) {
-                    statContainers = new ActivatableArrayList<StatisticsContainer>();
+                    statContainers = new ActivatableArrayList<>();
                 }
                 statContainers.add(anovaDescriptors);
                 container.setStatisticsContainers(statContainers);
@@ -222,15 +224,11 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                 project.updateContainer(container);
                 // close RConnection, we're done
                 //c.close();
-            } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
+            } catch (RserveException | REXPMismatchException rse) { // RserveException (transport layer - e.g. Rserve is not running)
                 System.out.println(rse);
                 Exceptions.printStackTrace(rse);
-            } catch (REXPMismatchException mme) { // REXP mismatch exception (we got something we didn't think we getMembers)
-                System.out.println(mme);
-                Exceptions.printStackTrace(mme);
-            } catch (Exception e) { // something else
-                System.out.println("Something went wrong, but it's not the Rserve: "
-                        + e.getMessage());
+            } catch (REngineException e) { // something else
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Something went wrong, but it''s not the Rserve: {0}", e.getMessage());
                 Exceptions.printStackTrace(e);
             }
 //            project.refresh();
@@ -246,22 +244,22 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
 
     public void adjustPvalues(List<double[]> pvalues, int maxFactors,
             RConnection c, StatisticsContainer anovaDescriptors) throws REXPMismatchException, REngineException {
-        List<double[]> transposedPvalues = new ArrayList<double[]>(pvalues.size());
-        System.out.println("Adding " + maxFactors + " pvalue arrays with length " + pvalues.size());
+        List<double[]> transposedPvalues = new ArrayList<>(pvalues.size());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding {0} pvalue arrays with length {1}", new Object[]{maxFactors, pvalues.size()});
         for (int i = 0; i < maxFactors; i++) {
             transposedPvalues.add(new double[pvalues.size()]);
         }
         int row = 0;
         for (double[] d : pvalues) {
             for (int i = 0; i < d.length; i++) {
-                System.out.println("Accessing index " + i + " of transposedPvalues at row " + row);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Accessing index {0} of transposedPvalues at row {1}", new Object[]{i, row});
                 transposedPvalues.get(i)[row] = d[i];
             }
             row++;
         }
 
         for (int i = 0; i < transposedPvalues.size(); i++) {
-            System.out.println("Adjusting pvalues for factor " + i);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Adjusting pvalues for factor {0}", i);
             REXP r = new REXPDouble(transposedPvalues.get(i));
             c.assign("pvaluesArray", r);
             REXP returnVal = c.parseAndEval("p.adjust(pvaluesArray,method=\"" + pvalueAdjustmentMethod + "\")");
@@ -274,7 +272,7 @@ public class PeakGroupAnovaRunnable extends AProgressAwareRunnable {
                     pvals[i] = adjPvalues[j++];
                     anovaDescr.setPvalues(pvals);
                 } else {
-                    System.out.println("Skipping adjustment of empty p-values for " + anovaDescr.getDisplayName());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Skipping adjustment of empty p-values for {0}", anovaDescr.getDisplayName());
                 }
             }
         }

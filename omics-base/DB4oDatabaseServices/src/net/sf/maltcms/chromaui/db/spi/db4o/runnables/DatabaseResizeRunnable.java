@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.db.spi.db4o.runnables;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.db4o.DB4oCrudProviderFactory;
 import net.sf.maltcms.chromaui.db.spi.db4o.options.Db4oGeneralSettingsOptionsPanelController;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
@@ -48,9 +49,14 @@ public class DatabaseResizeRunnable extends AProgressAwareRunnable {
 
     @Override
     public void run() {
-        System.out.println("Updating database sizes!");
+        Logger.getLogger(getClass().getName()).info("Updating database sizes!");
         final Project[] projects = OpenProjects.getDefault().getOpenProjects();
-        final Collection<Project> selectedProjects = Projects.getSelectedOpenProjects(Project.class, "Update Database Size", "Select Projects for Size Update");
+        final Collection<? extends Project> selectedProjects = 
+            Projects.getSelectedOpenProjects(
+                Project.class,
+                "Update Database Size",
+                "Select Projects for Size Update"
+            );
         //close all projects
         OpenProjects.getDefault().close(projects);
         RequestProcessor rp = new RequestProcessor("Database Size Updater", 1);
@@ -67,7 +73,7 @@ public class DatabaseResizeRunnable extends AProgressAwareRunnable {
         rp.post(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Finalizing updates");
+                Logger.getLogger(getClass().getName()).info("Finalizing updates");
                 try {
                     OpenProjects.getDefault().close(selectedProjects.toArray(new Project[selectedProjects.size()]));
                     //store that we updated the database size

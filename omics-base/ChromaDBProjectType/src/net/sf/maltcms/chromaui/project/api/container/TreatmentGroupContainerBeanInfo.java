@@ -48,9 +48,30 @@ public class TreatmentGroupContainerBeanInfo extends SimpleBeanInfo {
 
         // Here you can add code for customizing the BeanDescriptor.
          return beanDescriptor;     }//GEN-LAST:BeanDescriptor
-    // Properties information will be obtained from introspection.//GEN-FIRST:Properties
-    private static PropertyDescriptor[] properties = null;
-    private static PropertyDescriptor[] getPdescriptor(){//GEN-HEADEREND:Properties
+    // Property identifiers//GEN-FIRST:Properties
+    private static final int PROPERTY_color = 0;
+    private static final int PROPERTY_comment = 1;
+    private static final int PROPERTY_treatmentGroup = 2;
+
+    // Property array 
+    /*lazy PropertyDescriptor*/
+    private static PropertyDescriptor[] getPdescriptor(){
+        PropertyDescriptor[] properties = new PropertyDescriptor[3];
+    
+        try {
+            properties[PROPERTY_color] = new PropertyDescriptor ( "color", net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer.class, "getColor", "setColor" ); // NOI18N
+            properties[PROPERTY_color].setDisplayName ( "Color" );
+            properties[PROPERTY_color].setShortDescription ( "The treatment group's color, used for charting" );
+            properties[PROPERTY_comment] = new PropertyDescriptor ( "comment", net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer.class, "getComment", "setComment" ); // NOI18N
+            properties[PROPERTY_comment].setDisplayName ( "Comment" );
+            properties[PROPERTY_comment].setShortDescription ( "An arbitrary comment" );
+            properties[PROPERTY_treatmentGroup] = new PropertyDescriptor ( "treatmentGroup", net.sf.maltcms.chromaui.project.api.container.TreatmentGroupContainer.class, "getTreatmentGroup", "setTreatmentGroup" ); // NOI18N
+            properties[PROPERTY_treatmentGroup].setDisplayName ( "Treatment Group" );
+            properties[PROPERTY_treatmentGroup].setShortDescription ( "The associated treatment group" );
+        }
+        catch(IntrospectionException e) {
+            e.printStackTrace();
+        }//GEN-HEADEREND:Properties
 
         // Here you can add code for customizing the properties array.
         return properties;     }//GEN-LAST:Properties

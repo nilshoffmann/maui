@@ -33,5 +33,18 @@ package net.sf.maltcms.chromaui.project.api.types;
  */
 public enum DatabaseType {
 
-    RI, USER, OTHER;
+    /**
+     *
+     */
+    RI, 
+
+    /**
+     *
+     */
+    USER, 
+
+    /**
+     *
+     */
+    OTHER;
 }

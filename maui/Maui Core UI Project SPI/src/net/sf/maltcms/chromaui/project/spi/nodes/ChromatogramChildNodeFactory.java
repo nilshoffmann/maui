@@ -33,6 +33,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -70,7 +72,7 @@ public class ChromatogramChildNodeFactory extends ChildFactory<Peak1DContainer>
         Collection<Peak1DContainer> peakContainer = lkp.lookup(
                 IChromAUIProject.class).getPeaks(chromatogramDescriptor);
         if (peakContainer.isEmpty()) {
-            System.out.println("Did not find any peaks for " + chromatogramDescriptor.getDisplayName());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Did not find any peaks for {0}", chromatogramDescriptor.getDisplayName());
             return true;
         }
         for (Peak1DContainer pad : peakContainer) {

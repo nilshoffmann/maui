@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
 import net.sf.maltcms.db.search.api.DBConnectionManager;
@@ -43,13 +44,18 @@ import net.sf.maltcms.db.search.api.IRetentionIndexDatabase;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class RetentionIndexDatabase implements IRetentionIndexDatabase {
 
     private RetentionIndexCalculator ric;
     private boolean isothermal = false;
 
+    /**
+     *
+     * @param databaseDescriptor
+     * @param isothermal
+     */
     public RetentionIndexDatabase(IDatabaseDescriptor databaseDescriptor,
             boolean isothermal) {
         if (databaseDescriptor.getType() != DatabaseType.RI) {
@@ -83,7 +89,7 @@ public class RetentionIndexDatabase implements IRetentionIndexDatabase {
             oc.close();
         } catch (MalformedURLException ex) {
             throw new RuntimeException(ex);
-        } catch (Exception e) {
+        } catch (AuthenticationException e) {
             if (oc != null) {
                 oc.close();
             }
@@ -95,11 +101,20 @@ public class RetentionIndexDatabase implements IRetentionIndexDatabase {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public RetentionIndexCalculator getRetentionIndexCalculator() {
         return ric;
     }
 
+    /**
+     *
+     * @param rt
+     * @return
+     */
     @Override
     public double getRi(double rt) {
         if (isothermal) {

@@ -27,7 +27,6 @@
  */
 package net.sf.maltcms.chromaui.project.spi.nodes;
 
-import com.db4o.query.Predicate;
 import java.awt.Image;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
@@ -36,12 +35,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.maltcms.chromaui.db.api.ICrudSession;
-import net.sf.maltcms.chromaui.db.api.query.IQuery;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
@@ -138,7 +134,7 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
 
     protected List<FileObject> getFileChildren() {
         FileObject[] fo = cp.getProjectDirectory().getChildren();
-        List<FileObject> children = new ArrayList<FileObject>(fo.length);
+        List<FileObject> children = new ArrayList<>(fo.length);
         children.addAll(Arrays.asList(fo));
         return children;
     }
@@ -217,10 +213,10 @@ public class ChromaUIProjectNodesFactory extends ChildFactory<Object> implements
             return true;
         }
     }
-
+    
     protected List<IContainer> filter(Collection<IContainer> l,
             Class<? extends IContainer>... toFilter) {
-        List<IContainer> r = new ArrayList<IContainer>();
+        List<IContainer> r = new ArrayList<>();
         for (IContainer ic : l) {
             if (Thread.interrupted()) {
                 return Collections.emptyList();

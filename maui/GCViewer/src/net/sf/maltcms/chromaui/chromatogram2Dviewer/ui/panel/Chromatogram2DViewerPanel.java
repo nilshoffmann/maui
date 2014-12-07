@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -93,13 +95,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     private Color selectionOutline = Color.BLACK;
     private PaintScaleDialogAction psda = null;
     private InstanceContent content;
-    private IScan2D activeScan = null;
+//    private IScan2D activeScan = null;
     private boolean syncViewport = false;
     private Chromatogram2DViewViewport viewport;
     private Color backgroundColor = null;
     private SelectionOverlay selectionOverlay;
-    private Crosshair domainCrosshair;
-    private Crosshair rangeCrosshair;
     private InstanceContentSelectionHandler selectionHandler;
     private XYMouseSelectionHandler<IScan2D> mouseSelectionHandler;
     private ChartPanel chartPanel;
@@ -111,7 +111,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     /**
      * Creates new form Chromatogram2DViewerPanel
      */
-    public Chromatogram2DViewerPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset2D<IChromatogram2D, IScan2D> ds) {
+    public Chromatogram2DViewerPanel(InstanceContent topComponentInstanceContent, Lookup tcLookup, ADataset2D<IChromatogram2D, IScan2D> ds, PaintScale ps) {
         initComponents();
         this.content = topComponentInstanceContent;
         this.lookup = tcLookup;
@@ -127,6 +127,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jPanel2.add(chartPanel, BorderLayout.CENTER);
         content.add(chartPanel);
         addKeyListener(this);
+        setPaintScale(ps);
     }
 
     public boolean isSyncViewport() {
@@ -199,14 +200,14 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     public void setViewport(Rectangle2D rect) {
         //ignore viewport changes if we have the focus
         if (hasFocus()) {
-            System.out.println("Ignoring viewport update since we have the focus!");
+            Logger.getLogger(getClass().getName()).info("Ignoring viewport update since we have the focus!");
         } else {
             //otherwise, clear our own viewport and set to new value
             if (this.viewport != null) {
                 this.content.remove(this.viewport);
             }
             this.viewport = new Chromatogram2DViewViewport(rect);
-            System.out.println("Setting viewport!");
+            Logger.getLogger(getClass().getName()).info("Setting viewport!");
             removeAxisListener();
             this.chartPanel.getChart().getXYPlot().getDomainAxis().setLowerBound(rect.getMinX());
             this.chartPanel.getChart().getXYPlot().getDomainAxis().setUpperBound(rect.getMaxX());
@@ -247,7 +248,6 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
-        settingsButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jSlider1 = new RangeSlider(0,1000);
@@ -271,17 +271,6 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
         jToolBar2.setFloatable(false);
         jToolBar2.setRollover(true);
-
-        settingsButton.setText(org.openide.util.NbBundle.getMessage(Chromatogram2DViewerPanel.class, "Chromatogram2DViewerPanel.settingsButton.text")); // NOI18N
-        settingsButton.setFocusable(false);
-        settingsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        settingsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        settingsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settingsButtonActionPerformed(evt);
-            }
-        });
-        jToolBar2.add(settingsButton);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/sf/maltcms/chromaui/chromatogram2Dviewer/ui/panel/Bundle"); // NOI18N
         jButton1.setText(bundle.getString("Chromatogram2DViewerPanel.jButton1.text")); // NOI18N
@@ -402,8 +391,8 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (psda == null) {
             psda = new PaintScaleDialogAction("New Paintscale", this.alpha, this.beta, this.ps);
+            psda.addPaintScaleTarget(this);
         }
-        psda.addPaintScaleTarget(this);
         psda.actionPerformed(evt);
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -430,10 +419,6 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             setBackgroundColor((Color) ps.getPaint(ps.getLowerBound()));
         }
     }//GEN-LAST:event_jCheckBox2ActionPerformed
-
-    private void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_settingsButtonActionPerformed
 
     private void modeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_modeSpinnerStateChanged
         if (selectionHandler != null) {
@@ -464,14 +449,14 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             @Override
             public void run() {
 
-                if (ps instanceof GradientPaintScale) {
+                if (ps!=null && ps instanceof GradientPaintScale) {
                     GradientPaintScale gps = (GradientPaintScale) ps;
                     double min = gps.getLowerBound();
                     double max = gps.getUpperBound();
                     gps.setLowerBoundThreshold(min + ((max - min) * ((double) low / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
                     gps.setUpperBoundThreshold(max + ((max - min) * ((double) high / (double) (jSlider1.getMaximum() - jSlider1.getMinimum()))));
+                    updateChart();
                 }
-                updateChart();
             }
         };
         SwingUtilities.invokeLater(r);
@@ -481,9 +466,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         if (xyb != null && xyb instanceof XYNoBlockRenderer) {
             throw new IllegalArgumentException();
         }
-        XYPlot plot = ((XYPlot) this.chartPanel.getChart().getPlot());
-        ChartTools.changePaintScale(plot, this.ps);
-        chartPanel.repaint();
+        ChartTools.changePaintScale((XYPlot) this.chartPanel.getChart().getPlot(), this.ps);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner boxHeightSpinner;
@@ -507,14 +490,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JSpinner modeSpinner;
-    private javax.swing.JButton settingsButton;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void setPaintScale(PaintScale ps) {
-        System.out.println("Set paint scale called on HeatmapPanel");
-//        if (ps != null && ps instanceof GradientPaintScale) {
-        System.out.println("Paint scale using!");
+        Logger.getLogger(getClass().getName()).info("Set paint scale called on HeatmapPanel");
         GradientPaintScale sps = (GradientPaintScale) ps;
         if (this.ps != null) {
             double lb = this.ps.getLowerBound();
@@ -527,23 +507,11 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         this.beta = (int) sps.getBeta();
         this.ps = sps;
         Color c = (Color) sps.getPaint(this.ps.getUpperBound());
-        if (chartPanel != null) {
-            JFreeChart jfc = chartPanel.getChart();
-            if (jfc != null) {
-                XYPlot plot = jfc.getXYPlot();
-                if (!jCheckBox2.isSelected()) {
-                    Color bg = (Color) this.ps.getPaint(this.ps.getLowerBound());
-                    System.out.println("Background color: " + bg);
-                    setBackgroundColor(bg);
-                }
-            }
-        }
         selectionFill = new Color(c.getRed(), c.getBlue(), c.getGreen(), 192);
         selectionOutline = new Color(c.getRed(), c.getBlue(), c.getGreen()).darker();
         this.jSlider1.setMaximum(100);
         this.jSlider1.setMinimum(0);
         handleSliderChange();
-//        }
     }
 
     @Override
@@ -552,31 +520,31 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
 
     @Override
     public void keyPressed(KeyEvent ke) {
-        System.out.println("Received key event: " + ke.toString());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Received key event: {0}", ke.toString());
         if (ke.isControlDown()) {
             modeSpinner.setValue(InstanceContentSelectionHandler.Mode.ON_HOVER.toString());
         }
-        if (getDataPoint() != null) {
-            System.out.println("Data point is not null!");
-            Point p = null;
-            if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {
-                p = new Point(getDataPoint());
-                p.translate(1, 0);
-            } else if (ke.getKeyCode() == KeyEvent.VK_LEFT) {
-                p = new Point(getDataPoint());
-                p.translate(-1, 0);
-            } else if (ke.getKeyCode() == KeyEvent.VK_UP) {
-                p = new Point(getDataPoint());
-                p.translate(0, 1);
-            } else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-                p = new Point(getDataPoint());
-                p.translate(0, -1);
-            }
-            setDataPoint(p);
-            if (!ke.isShiftDown()) {
-//                triggerMSUpdate();
-            }
-        }
+//        if (getDataPoint() != null) {
+//            Logger.getLogger(getClass().getName()).info("Data point is not null!");
+//            Point p = null;
+//            if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {
+//                p = new Point(getDataPoint());
+//                p.translate(1, 0);
+//            } else if (ke.getKeyCode() == KeyEvent.VK_LEFT) {
+//                p = new Point(getDataPoint());
+//                p.translate(-1, 0);
+//            } else if (ke.getKeyCode() == KeyEvent.VK_UP) {
+//                p = new Point(getDataPoint());
+//                p.translate(0, 1);
+//            } else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
+//                p = new Point(getDataPoint());
+//                p.translate(0, -1);
+//            }
+//            setDataPoint(p);
+//            if (!ke.isShiftDown()) {
+////                triggerMSUpdate();
+//            }
+//        }
     }
 
     @Override
@@ -626,7 +594,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             selectionHandler.setDataset(dataset);
         }
         if (mouseSelectionHandler == null) {
-            mouseSelectionHandler = new XYMouseSelectionHandler<IScan2D>(dataset);
+            mouseSelectionHandler = new XYMouseSelectionHandler<>(dataset);
             mouseSelectionHandler.addSelectionChangeListener(selectionOverlay);
             mouseSelectionHandler.addSelectionChangeListener(selectionHandler);
             chartPanel.addChartMouseListener(mouseSelectionHandler);
@@ -654,13 +622,13 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         this.plot.setNoDataMessage("Loading Data...");
         chart = new JFreeChart(this.plot);
         chartPanel.setChart(chart);
-        dmkl = new DomainMarkerKeyListener(
-                this.plot);
-        dmkl.setPlot(this.plot);
-        chartPanel.addKeyListener(dmkl);
+//        dmkl = new DomainMarkerKeyListener(
+//                this.plot);
+//        dmkl.setPlot(this.plot);
+//        chartPanel.addKeyListener(dmkl);
         addAxisListener();
         //add available chart overlays
-        List<Overlay> overlays = new ArrayList<Overlay>(getLookup().lookupAll(Overlay.class));
+        List<Overlay> overlays = new ArrayList<>(getLookup().lookupAll(Overlay.class));
         Collections.sort(overlays, new Comparator<Overlay>() {
 
             @Override

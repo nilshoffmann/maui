@@ -45,43 +45,55 @@ public class PeakGroupDescriptorBeanInfo extends SimpleBeanInfo {
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_apexTimeStdDev = 0;
     private static final int PROPERTY_cas = 1;
-    private static final int PROPERTY_date = 2;
-    private static final int PROPERTY_displayName = 3;
-    private static final int PROPERTY_formula = 4;
-    private static final int PROPERTY_id = 5;
-    private static final int PROPERTY_index = 6;
-    private static final int PROPERTY_majorityDisplayName = 7;
-    private static final int PROPERTY_majorityName = 8;
-    private static final int PROPERTY_majorityNamePercentage = 9;
-    private static final int PROPERTY_majorityNativeDatabaseId = 10;
-    private static final int PROPERTY_meanApexTime = 11;
-    private static final int PROPERTY_meanMassSpectrum = 12;
-    private static final int PROPERTY_medianApexTime = 13;
-    private static final int PROPERTY_name = 14;
-    private static final int PROPERTY_shortDescription = 15;
+    private static final int PROPERTY_formula = 2;
+    private static final int PROPERTY_index = 3;
+    private static final int PROPERTY_majorityDisplayName = 4;
+    private static final int PROPERTY_majorityName = 5;
+    private static final int PROPERTY_majorityNamePercentage = 6;
+    private static final int PROPERTY_majorityNativeDatabaseId = 7;
+    private static final int PROPERTY_meanApexTime = 8;
+    private static final int PROPERTY_meanMassSpectrum = 9;
+    private static final int PROPERTY_medianApexTime = 10;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[16];
+        PropertyDescriptor[] properties = new PropertyDescriptor[11];
     
         try {
             properties[PROPERTY_apexTimeStdDev] = new PropertyDescriptor ( "apexTimeStdDev", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getApexTimeStdDev", null ); // NOI18N
+            properties[PROPERTY_apexTimeStdDev].setDisplayName ( "Apex Time StdDev" );
+            properties[PROPERTY_apexTimeStdDev].setShortDescription ( "Standard Deviation of the apex times within the peak group" );
             properties[PROPERTY_cas] = new PropertyDescriptor ( "cas", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getCas", "setCas" ); // NOI18N
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
+            properties[PROPERTY_cas].setDisplayName ( "CAS" );
+            properties[PROPERTY_cas].setShortDescription ( "The Chemical Abstracts Service number" );
             properties[PROPERTY_formula] = new PropertyDescriptor ( "formula", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getFormula", "setFormula" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getId", "setId" ); // NOI18N
+            properties[PROPERTY_formula].setDisplayName ( "Formula" );
+            properties[PROPERTY_formula].setShortDescription ( "The chemical sum formula of the putative identification of this peak group" );
             properties[PROPERTY_index] = new PropertyDescriptor ( "index", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getIndex", "setIndex" ); // NOI18N
+            properties[PROPERTY_index].setDisplayName ( "Index" );
+            properties[PROPERTY_index].setShortDescription ( "The index of this peak group within the peak group container at time of creation" );
             properties[PROPERTY_majorityDisplayName] = new PropertyDescriptor ( "majorityDisplayName", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getMajorityDisplayName", null ); // NOI18N
+            properties[PROPERTY_majorityDisplayName].setDisplayName ( "Majority Display Name" );
+            properties[PROPERTY_majorityDisplayName].setShortDescription ( "The majority display name of all peaks in this group" );
             properties[PROPERTY_majorityName] = new PropertyDescriptor ( "majorityName", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getMajorityName", null ); // NOI18N
+            properties[PROPERTY_majorityName].setDisplayName ( "Majority Name" );
+            properties[PROPERTY_majorityName].setShortDescription ( "The majority name of the peaks in this group" );
             properties[PROPERTY_majorityNamePercentage] = new PropertyDescriptor ( "majorityNamePercentage", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getMajorityNamePercentage", null ); // NOI18N
+            properties[PROPERTY_majorityNamePercentage].setDisplayName ( "Majority Name Percentage" );
+            properties[PROPERTY_majorityNamePercentage].setShortDescription ( "The majority name percentage of peaks in this group relative to all peaks in the group" );
             properties[PROPERTY_majorityNativeDatabaseId] = new PropertyDescriptor ( "majorityNativeDatabaseId", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getMajorityNativeDatabaseId", null ); // NOI18N
+            properties[PROPERTY_majorityNativeDatabaseId].setDisplayName ( "Majority Native DB Id" );
+            properties[PROPERTY_majorityNativeDatabaseId].setShortDescription ( "The majority native database id of the peaks in this group" );
             properties[PROPERTY_meanApexTime] = new PropertyDescriptor ( "meanApexTime", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getMeanApexTime", null ); // NOI18N
+            properties[PROPERTY_meanApexTime].setDisplayName ( "Mean Apex Time" );
+            properties[PROPERTY_meanApexTime].setShortDescription ( "The mean apex time of peaks in this group" );
             properties[PROPERTY_meanMassSpectrum] = new PropertyDescriptor ( "meanMassSpectrum", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getMeanMassSpectrum", null ); // NOI18N
+            properties[PROPERTY_meanMassSpectrum].setDisplayName ( "Mean Mass Spectrum" );
+            properties[PROPERTY_meanMassSpectrum].setShortDescription ( "The mean mass spectrum of peaks in this group" );
             properties[PROPERTY_medianApexTime] = new PropertyDescriptor ( "medianApexTime", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getMedianApexTime", null ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getName", "setName" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
+            properties[PROPERTY_medianApexTime].setDisplayName ( "Median Apex Time" );
+            properties[PROPERTY_medianApexTime].setShortDescription ( "The median apex time of peaks in this group" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
@@ -112,9 +124,13 @@ public class PeakGroupDescriptorBeanInfo extends SimpleBeanInfo {
     private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
     private static final int defaultEventIndex = -1;//GEN-END:Idx
 
-//GEN-FIRST:Superclass
+    public BeanInfo[] getAdditionalBeanInfo() {//GEN-FIRST:Superclass
+        Class superclass = net.sf.maltcms.chromaui.project.spi.descriptors.PeakGroupDescriptor.class.getSuperclass();
+        BeanInfo sbi = null;
+        try {
+            sbi = Introspector.getBeanInfo(superclass);//GEN-HEADEREND:Superclass
 	// Here you can add code for customizing the Superclass BeanInfo.
-//GEN-LAST:Superclass
+            } catch(IntrospectionException ex) { }  return new BeanInfo[] { sbi }; }//GEN-LAST:Superclass
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *

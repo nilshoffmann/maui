@@ -76,8 +76,8 @@ public class ContainerNode extends BeanNode<IContainer<? extends IBasicDescripto
 
     @Override
     public Action[] getActions(boolean context) {
-        LinkedHashSet<Action> list = new LinkedHashSet<Action>();
-        ArrayList<Action> actions = new ArrayList<Action>();
+        LinkedHashSet<Action> list = new LinkedHashSet<>();
+        ArrayList<Action> actions = new ArrayList<>();
         if (getBean() instanceof StatisticsContainer) {
             StatisticsContainer sc = (StatisticsContainer) getBean();
             String method = sc.getMethod();

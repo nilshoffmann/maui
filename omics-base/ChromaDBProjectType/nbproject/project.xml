@@ -23,6 +23,22 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>net.sf.maltcms.chromaui.lombok</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.14.8</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>net.sf.maltcms.chromaui.ui.support</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>net.sf.maltcms.cross.nbm</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -45,6 +61,22 @@
                     <run-dependency>
                         <release-version>1</release-version>
                         <specification-version>1.40.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.awt</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.61.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.dialogs</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.36.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -132,9 +164,12 @@
                 <package>net.sf.maltcms.chromaui.project.api.beans</package>
                 <package>net.sf.maltcms.chromaui.project.api.container</package>
                 <package>net.sf.maltcms.chromaui.project.api.descriptors</package>
+                <package>net.sf.maltcms.chromaui.project.api.extimport</package>
                 <package>net.sf.maltcms.chromaui.project.api.nodes</package>
                 <package>net.sf.maltcms.chromaui.project.api.persistence</package>
                 <package>net.sf.maltcms.chromaui.project.api.types</package>
+                <package>net.sf.maltcms.chromaui.project.api.ui</package>
+                <package>net.sf.maltcms.chromaui.project.api.utilities</package>
             </public-packages>
         </data>
     </configuration>

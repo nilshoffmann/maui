@@ -79,6 +79,7 @@ public class EdgeMenu implements PopupMenuProvider, ActionListener {
 
     }
 
+    @Override
     public JPopupMenu getPopupMenu(Widget widget, Point point) {
         if (widget instanceof ConnectionWidget) {
             this.edge = (ConnectionWidget) widget;
@@ -90,15 +91,18 @@ public class EdgeMenu implements PopupMenuProvider, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals(ADD_REMOVE_CP_ACTION)) {
-            addRemoveControlPoint(point);
-        } else if (e.getActionCommand().equals(DELETE_TRANSITION)) {
-            scene.removeEdge((String) scene.findObject(edge));
+        switch (e.getActionCommand()) {
+            case ADD_REMOVE_CP_ACTION:
+                addRemoveControlPoint(point);
+                break;
+            case DELETE_TRANSITION:
+                scene.removeEdge((String) scene.findObject(edge));
+                break;
         }
     }
 
     private void addRemoveControlPoint(Point localLocation) {
-        ArrayList<Point> list = new ArrayList<Point>(edge.getControlPoints());
+        ArrayList<Point> list = new ArrayList<>(edge.getControlPoints());
         double createSensitivity = 1.00, deleteSensitivity = 5.00;
         if (!removeControlPoint(localLocation, list, deleteSensitivity)) {
             Point exPoint = null;

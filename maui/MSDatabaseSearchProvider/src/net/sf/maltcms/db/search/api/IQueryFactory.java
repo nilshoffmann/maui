@@ -41,12 +41,51 @@ import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
  */
 public interface IQueryFactory {
 
+    /**
+     *
+     * @param project
+     * @param peakAnnotationDescriptors
+     * @param riWindow
+     * @return
+     */
     public IQuery<IPeakAnnotationDescriptor> createQuery(IChromAUIProject project, List<IPeakAnnotationDescriptor> peakAnnotationDescriptors, double riWindow);
 
+    /**
+     *
+     * @param descriptors
+     * @param retentionIndexCalculator
+     * @param predicate
+     * @param matchThreshold
+     * @param maxHits
+     * @param peakAnnotationDescriptors
+     * @param riWindow
+     * @return
+     */
     public IQuery<IPeakAnnotationDescriptor> createQuery(List<IDatabaseDescriptor> descriptors, RetentionIndexCalculator retentionIndexCalculator, AMetabolitePredicate predicate, double matchThreshold, int maxHits, List<IPeakAnnotationDescriptor> peakAnnotationDescriptors, double riWindow);
 
+    /**
+     *
+     * @param project
+     * @param predicate
+     * @param matchThreshold
+     * @param maxHits
+     * @param riWindow
+     * @param scans
+     * @return
+     */
     public IQuery<IScan> createQuery(IChromAUIProject project, AMetabolitePredicate predicate, double matchThreshold, int maxHits, double riWindow, IScan... scans);
 
+    /**
+     *
+     * @param descriptors
+     * @param retentionIndexCalculator
+     * @param predicate
+     * @param matchThreshold
+     * @param maxHits
+     * @param riWindow
+     * @param scans
+     * @return
+     */
     public IQuery<IScan> createQuery(List<IDatabaseDescriptor> descriptors, RetentionIndexCalculator retentionIndexCalculator, AMetabolitePredicate predicate, double matchThreshold, int maxHits, double riWindow, IScan... scans);
 
 }

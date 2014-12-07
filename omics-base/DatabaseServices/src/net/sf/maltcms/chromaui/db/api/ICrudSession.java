@@ -38,27 +38,90 @@ import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
  */
 public interface ICrudSession {
 
+    /**
+     *
+     * @throws AuthenticationException
+     */
     void open() throws AuthenticationException;
 
+    /**
+     *
+     * @param o
+     * @throws AuthenticationException
+     */
     void create(Collection<? extends Object> o) throws AuthenticationException;
 
+    /**
+     *
+     * @param o
+     * @throws AuthenticationException
+     */
     void create(Object... o) throws AuthenticationException;
 
+    /**
+     *
+     * @param o
+     * @throws AuthenticationException
+     */
     void delete(Collection<? extends Object> o) throws AuthenticationException;
 
+    /**
+     *
+     * @param o
+     * @throws AuthenticationException
+     */
     void delete(Object... o) throws AuthenticationException;
 
+    /**
+     *
+     * @param <T>
+     * @param c
+     * @return
+     * @throws AuthenticationException
+     */
     <T> Collection<T> retrieve(Class<T> c) throws AuthenticationException;
 
+    /**
+     *
+     * @param <T>
+     * @param c
+     * @return
+     * @throws AuthenticationException
+     */
     <T> Collection<T> retrieveByExample(T c) throws AuthenticationException;
 
+    /**
+     *
+     * @param o
+     * @throws AuthenticationException
+     */
     void update(Collection<? extends Object> o) throws AuthenticationException;
 
+    /**
+     *
+     * @param o
+     * @throws AuthenticationException
+     */
     void update(Object... o) throws AuthenticationException;
 
+    /**
+     *
+     * @throws AuthenticationException
+     */
     void close() throws AuthenticationException;
 
+    /**
+     *
+     * @return
+     */
     Query getSODAQuery();
 
+    /**
+     *
+     * @param <T>
+     * @param c
+     * @return
+     * @throws AuthenticationException
+     */
     <T> IQuery<T> newQuery(Class<T> c) throws AuthenticationException;
 }

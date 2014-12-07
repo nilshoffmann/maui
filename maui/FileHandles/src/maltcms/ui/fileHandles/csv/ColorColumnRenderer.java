@@ -29,7 +29,7 @@ package maltcms.ui.fileHandles.csv;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  * @author bunkowski
  */
 import java.awt.Color;
@@ -42,6 +42,10 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
 
     private Color colorSelected;
@@ -50,6 +54,11 @@ public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
     private Color colorActive;
     private int[] selectedRows;
 
+    /**
+     *
+     * @param selected
+     * @param selectedRows
+     */
     public ColorColumnRenderer(Color selected, int[] selectedRows) {
         setOpaque(true);
         colorNormal = Color.WHITE;
@@ -59,6 +68,11 @@ public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
         this.selectedRows = selectedRows;
     }
 
+    /**
+     *
+     * @param c
+     * @param row
+     */
     public void setBackground(Color c, int row) {
         Color color = new Color(c.getRed(), c.getGreen(), c.getBlue());
         if (row % 2 == 0) {
@@ -130,7 +144,7 @@ public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
             setText(color.getRed() + ", " + color.getGreen() + ", "
                     + color.getBlue());
         } else if (value instanceof Boolean) {
-            if (((Boolean) value).booleanValue()) {
+            if (((Boolean) value)) {
                 setText("yes");
             } else {
                 setText("no");

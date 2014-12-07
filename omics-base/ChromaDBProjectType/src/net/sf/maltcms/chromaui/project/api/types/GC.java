@@ -40,11 +40,19 @@ public class GC implements ISeparationType {
     private final String longName = "gas chromatography";
     private final int separationDimensions = 1;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getSeparationType() {
         return separationType;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getLongName() {
         return longName;

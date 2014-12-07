@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.PeptideDescriptor;
 import uk.ac.ebi.pride.jmztab.model.MZTabFile;
 import uk.ac.ebi.pride.jmztab.model.Peptide;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class PeptideContainer extends BasicMzTabMetaDataContainer<PeptideDescriptor> {
+    private static final long serialVersionUID = 7679399920707639250L;
 
+    /**
+     *
+     * @param mzTabFile
+     * @return
+     */
     public static PeptideContainer create(MZTabFile mzTabFile) {
         PeptideContainer c = new PeptideContainer();
         c.setLevel(1);

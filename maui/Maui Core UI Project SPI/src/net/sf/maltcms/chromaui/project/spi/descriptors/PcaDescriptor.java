@@ -48,7 +48,7 @@ import ucar.ma2.ArrayDouble.D2;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
 
@@ -56,7 +56,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
     public int compareTo(IBasicDescriptor t) {
         return getDisplayName().compareTo(t.getDisplayName());
     }
-    private ActivatableMap<ITreatmentGroupDescriptor, Color> groupColors = new ActivatableHashMap<ITreatmentGroupDescriptor, Color>();
+    private ActivatableMap<ITreatmentGroupDescriptor, Color> groupColors = new ActivatableHashMap<>();
 
     @Override
     public Map<ITreatmentGroupDescriptor, Color> getGroupColors() {
@@ -68,7 +68,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
     public void setGroupColors(Map<ITreatmentGroupDescriptor, Color> map) {
         activate(ActivationPurpose.WRITE);
         Map<ITreatmentGroupDescriptor, Color> old = groupColors;
-        this.groupColors = new ActivatableHashMap<ITreatmentGroupDescriptor, Color>(map);
+        this.groupColors = new ActivatableHashMap<>(map);
         firePropertyChange(PROP_GROUPCOLORS, old, groupColors);
     }
     private ArrayDouble.D2 rotation;
@@ -162,7 +162,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
         this.peakGroupContainer = peakGroupContainer;
         firePropertyChange(PROP_PEAKGROUPCONTAINER, old, this.peakGroupContainer);
     }
-    private ActivatableList<IChromatogramDescriptor> cases = new ActivatableArrayList<IChromatogramDescriptor>(0);
+    private ActivatableList<IChromatogramDescriptor> cases = new ActivatableArrayList<>(0);
 
     @Override
     public void setCases(List<IChromatogramDescriptor> chromatograms) {
@@ -171,7 +171,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
             descr.setProject(getProject());
         }
         List<IChromatogramDescriptor> old = this.cases;
-        this.cases = new ActivatableArrayList<IChromatogramDescriptor>(chromatograms);
+        this.cases = new ActivatableArrayList<>(chromatograms);
         firePropertyChange(PROP_CASES, old, this.cases);
     }
 
@@ -180,7 +180,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
         activate(ActivationPurpose.READ);
         return cases;
     }
-    private ActivatableList<IPeakGroupDescriptor> variables = new ActivatableArrayList<IPeakGroupDescriptor>(0);
+    private ActivatableList<IPeakGroupDescriptor> variables = new ActivatableArrayList<>(0);
 
     @Override
     public void setVariables(List<IPeakGroupDescriptor> peakGroup) {
@@ -189,7 +189,7 @@ public class PcaDescriptor extends ADescriptor implements IPcaDescriptor {
             peakGroups.setProject(getProject());
         }
         List<IPeakGroupDescriptor> old = this.variables;
-        this.variables = new ActivatableArrayList<IPeakGroupDescriptor>(peakGroup);
+        this.variables = new ActivatableArrayList<>(peakGroup);
         firePropertyChange(PROP_VARIABLES, old, this.variables);
     }
 

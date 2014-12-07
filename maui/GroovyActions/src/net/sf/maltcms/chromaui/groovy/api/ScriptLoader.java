@@ -37,6 +37,12 @@ import org.openide.filesystems.FileObject;
  */
 public interface ScriptLoader<T extends GroovyScript> {
 
+    /**
+     *
+     * @param fileObject
+     * @param classLoader
+     * @return
+     */
     T loadScript(FileObject fileObject, GroovyClassLoader classLoader);
 
 }

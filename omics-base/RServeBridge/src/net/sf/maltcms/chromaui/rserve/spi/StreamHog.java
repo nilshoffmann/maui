@@ -31,6 +31,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * helper class that consumes output of a process. In addition, it filter output
@@ -55,6 +57,7 @@ public class StreamHog extends Thread {
         return installPath;
     }
 
+    @Override
     public void run() {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -69,10 +72,10 @@ public class StreamHog extends Thread {
                             s = s.substring(j + 6).trim();
                         }
                         installPath = s;
-                        System.out.println("R InstallPath = " + s);
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "R InstallPath = {0}", s);
                     }
                 } else {
-                    System.out.println(name + ">" + line);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "{0}>{1}", new Object[]{name, line});
                 }
             }
         } catch (IOException e) {

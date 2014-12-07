@@ -30,6 +30,8 @@ package net.sf.maltcms.db.search.spi.tasks;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
@@ -67,9 +69,9 @@ public class DBPeakGroupAnnotationTask extends AProgressAwareRunnable implements
         getProgressHandle().start(context.size());
         int cnt = 1;
         try {
-            List<IPeakAnnotationDescriptor> peakAnnotations = new ArrayList<IPeakAnnotationDescriptor>();
+            List<IPeakAnnotationDescriptor> peakAnnotations = new ArrayList<>();
             if (clearExistingMatches) {
-                System.out.println("Resetting peak match information!");
+                Logger.getLogger(getClass().getName()).info("Resetting peak match information!");
                 for (IPeakGroupDescriptor igd : context) {
                     for (IPeakAnnotationDescriptor ipad : igd.getPeakAnnotationDescriptors()) {
                         if (isCancel()) {
@@ -89,7 +91,7 @@ public class DBPeakGroupAnnotationTask extends AProgressAwareRunnable implements
             IQuery<IPeakAnnotationDescriptor> query = Lookup.getDefault().lookup(
                     IQueryFactory.class).createQuery(databases, ricalc, predicate, matchThreshold, maxNumberOfHits,
                             peakAnnotations, riWindow);
-            System.out.println("Created query for " + context.size() + " peaks!");
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Created query for {0} peaks!", context.size());
             try {
                 List<QueryResultList<IPeakAnnotationDescriptor>> results = query.call();
 
@@ -105,7 +107,7 @@ public class DBPeakGroupAnnotationTask extends AProgressAwareRunnable implements
 //								IChromatogramDescriptor icd = result.getScan().getChromatogramDescriptor();
                         IPeakAnnotationDescriptor ipad = result.getScan();
                         if (result.getMetabolites().size() > 0) {
-                            System.out.println("Found " + result.getMetabolites().size() + " matches above threshold!");
+                            Logger.getLogger(getClass().getName()).log(Level.INFO, "Found {0} matches above threshold!", result.getMetabolites().size());
                             IMetabolite bestHit = result.getMetabolites().get(0);
                             ipad.setNativeDatabaseId(bestHit.getID());
                             ipad.setSimilarity(result.getScoreFor(bestHit));

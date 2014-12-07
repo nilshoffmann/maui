@@ -51,7 +51,7 @@ public class QueryResult<T> implements
 
     @Override
     public List<IMetabolite> getMetabolites() {
-        return new ArrayList<IMetabolite>(metabolitesToScore.keySet());
+        return new ArrayList<>(metabolitesToScore.keySet());
     }
 
     @Override

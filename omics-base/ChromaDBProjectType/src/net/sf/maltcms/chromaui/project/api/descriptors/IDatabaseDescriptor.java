@@ -39,20 +39,52 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  */
 public interface IDatabaseDescriptor extends IResourceDescriptor {
 
+    /**
+     *
+     * @return
+     */
     DatabaseType getType();
 
+    /**
+     *
+     * @param type
+     */
     void setType(DatabaseType type);
 
+    /**
+     *
+     * @return
+     */
     Set<ISeparationType> getApplicableSeparationTypes();
 
+    /**
+     *
+     * @param separationTypes
+     */
     void setApplicableSeparationTypes(Set<ISeparationType> separationTypes);
 
+    /**
+     *
+     * @return
+     */
     Set<IDetectorType> getApplicableDetectorTypes();
 
+    /**
+     *
+     * @param detectorTypes
+     */
     void setApplicableDetectorTypes(Set<IDetectorType> detectorTypes);
 
+    /**
+     *
+     * @return
+     */
     List<Double> getMaskedMasses();
 
+    /**
+     *
+     * @param masses
+     */
     public void setMaskedMasses(List<Double> masses);
 
 }

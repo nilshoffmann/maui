@@ -28,6 +28,9 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors;
 
 import com.db4o.activation.ActivationPurpose;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IAnovaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
@@ -35,7 +38,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
 
@@ -51,6 +54,24 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
     public double[] getPvalues() {
         activate(ActivationPurpose.READ);
         return pValues;
+    }
+    
+    /**
+     * Get the value of pValues
+     *
+     * @return the value of pValues
+     */
+    @Override
+    public List<Double> getPvaluesList() {
+        ArrayList<Double> list = new ArrayList<>();
+        double[] pvalues = getPvalues();
+        if(pvalues == null) {
+            return Collections.emptyList();
+        }
+        for(double d:getPvalues()) {
+            list.add(d);
+        }
+        return list;
     }
 
     /**
@@ -77,6 +98,24 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
         activate(ActivationPurpose.READ);
         return fValues;
     }
+    
+    /**
+     * Get the value of fValues
+     *
+     * @return the value of fValues
+     */
+    @Override
+    public List<Double> getFvaluesList() {
+        ArrayList<Double> list = new ArrayList<>();
+        double[] fvalues = getFvalues();
+        if(fvalues == null) {
+            return Collections.emptyList();
+        }
+        for(double d:getFvalues()) {
+            list.add(d);
+        }
+        return list;
+    }
 
     /**
      * Set the value of fValue
@@ -102,6 +141,24 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
         activate(ActivationPurpose.READ);
         return factors;
     }
+    
+    /**
+     * Get the value of fValues
+     *
+     * @return the value of fValues
+     */
+    @Override
+    public List<String> getFactorsList() {
+        List<String> list = new ArrayList<String>();
+        String[] factors = getFactors();
+        if(factors==null) {
+            return Collections.emptyList();
+        }
+        for(String s:getFactors()) {
+            list.add(s);
+        }
+        return list;
+    }
 
     /**
      * Set the value of factors
@@ -126,6 +183,24 @@ public class AnovaDescriptor extends ADescriptor implements IAnovaDescriptor {
     public int[] getDegreesOfFreedom() {
         activate(ActivationPurpose.READ);
         return degreesOfFreedom;
+    }
+    
+    /**
+     * Get the value of degreesOfFreedom
+     *
+     * @return the value of degreesOfFreedom
+     */
+    @Override
+    public List<Integer> getDegreesOfFreedomList() {
+        ArrayList<Integer> list = new ArrayList<>();
+        int[] dof = getDegreesOfFreedom();
+        if(dof==null) {
+            return Collections.emptyList();
+        }
+        for(int i:dof) {
+            list.add(i);
+        }
+        return list;
     }
 
     /**

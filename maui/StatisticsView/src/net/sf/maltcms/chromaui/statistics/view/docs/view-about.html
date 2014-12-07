@@ -28,25 +28,53 @@ for details.
 <html>
     <head>
         <title>About Maui Vis Statistics View</title>
-        <link rel="stylesheet" href="nbdocs://org.netbeans.modules.usersguide/org/netbeans/modules/usersguide/ide.css" type="text/css">
+        <link rel="stylesheet" href="nbdocs://net.sf.maltcms.chromaui.javahelp/net/sf/maltcms/chromaui/javahelp/style/custom.css" type="text/css">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
         <h2>About Maui Vis Statistics View</h2>
         <p>
-            <!-- TODO describe your module, add more pages... -->
+            Maui provides a tabular view for statistical results like <object CLASSID="java:org.netbeans.modules.javahelp.BrowserDisplayer">
+                <param name="content" value="http://r-project.org">
+                <param name="text" value="<html><u>Anova</u>.</html>">
+                <param name="textFontSize" value="medium">
+                <param name="textColor" value="blue">
+            </object>
         </p>
+        <h2>Accessing Statistics Viewer</h2>
+        <p>To open the statistics view, select <em>Window &rarr; Statistics</em>. If 
+        you then select a statistics container in the project explorer, the statistics view will 
+        display the contents of that descriptor for each peak group individually.</p>
+        <h2>Viewing Anova Results</h2>
+        <p>The Anova descriptor in Maui is modeled to report the information available from 
+        the R <em>aov</em> method, after performing a <object CLASSID="java:org.netbeans.modules.javahelp.BrowserDisplayer">
+                <param name="content" value="http://en.wikipedia.org/wiki/One-way_ANOVA.">
+                <param name="text" value="<html><u>One-way_ANOVA</u>.</html>">
+                <param name="textFontSize" value="medium">
+                <param name="textColor" value="blue">
+        </object></p> 
+        <img src="StatisticsViewAnova.png" title="Statistics View of Anova results"/>
+        <dl>
+            <dt><b>Statistical Results</b></dt>
+            <dd>The peak group id and the putative group identification.</dd>
+            <dt><b>F-Values</b></dt>
+            <dd>A list of F-Values corresponding to the F-distribution value associated to the aov test for that group.</dd>
+            <dt><b>Factors</b></dt>
+            <dd>The factors under test. <em>groups</em> corresponds to the treatment groups defined in the project.</dd>
+            <dt><b>Group Size</b></dt>
+            <dd>The number of physical samples in the peak group under consideration.</dd>
+            <dt><b>Degrees of Freedom</b></dt>
+            <dd>The degrees of freedom when calculating the F-value.</dd>
+            <dt><b>P-Values</b></dt>
+            <dd>The probability of the reported F-Value to occur by chance under the null hypothesis and the F-distribution for each peak group. A low value may indicate a difference in peak areas between treatment groups.</dd>
+            <dt><b>P-Value Adjustment Method</b></dt>
+            <dd>The adjustment method used to correct for multiple testing bias.</dd>
+        </dl>
+            <p>Left-clicking a column will update the sort order of all entries.
+            Left-clicking a row will update the active selection and will notify any registered views to update. 
+            In case of the Anova descriptor, a selected row will update the mass spectrum view to show the 
+            mass spectra of the peaks contained in the corresponding peak group.</p>
+            <p>Right-clicking a row opens a context-specific menu that provides further actions.</p>
+            <p>Double-clicking a row opens the properties view of the selected entry.</p>
     </body>
 </html>
-<!--
-Tip: to create a link which will open in an external web browser, try:
-<object classid="java:org.netbeans.modules.javahelp.BrowserDisplayer">
-    <param name="content" value="http://www.netbeans.org/">
-    <param name="text" value="<html><u>http://www.netbeans.org/</u></html>">
-    <param name="textFontSize" value="medium">
-    <param name="textColor" value="blue">
-</object>
-To create a link to a help set from another module, you need to know the code name base and path, e.g.:
-<a href="nbdocs://org.netbeans.modules.usersguide/org/netbeans/modules/usersguide/configure/configure_options.html">Using the Options Window</a>
-(This link will behave sanely if that module is disabled or missing.)
--->

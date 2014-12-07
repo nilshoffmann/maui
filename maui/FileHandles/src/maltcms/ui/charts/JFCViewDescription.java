@@ -48,31 +48,55 @@ public class JFCViewDescription implements MultiViewDescription, Serializable {
 
     private String name = "Chart";
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayName() {
         return this.name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Image getIcon() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public HelpCtx getHelpCtx() {
         return HelpCtx.DEFAULT_HELP;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String preferredID() {
         return "JFC_VIEW1";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public MultiViewElement createElement() {
         if (this.jfc == null) {

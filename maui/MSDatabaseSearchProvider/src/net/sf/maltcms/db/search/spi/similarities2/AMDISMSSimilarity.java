@@ -43,8 +43,8 @@ import ucar.ma2.MAMath.MinMax;
 public class AMDISMSSimilarity {
 
     private final ArrayWeightedCosine2 awc = new ArrayWeightedCosine2();
-    private final HashMap<Array, Double> minMassCache = new HashMap<Array, Double>();
-    private final HashMap<Array, Double> maxMassCache = new HashMap<Array, Double>();
+    private final HashMap<Array, Double> minMassCache = new HashMap<>();
+    private final HashMap<Array, Double> maxMassCache = new HashMap<>();
 
     public double apply(Tuple2D<Array, Array> referenceMassSpectrum,
             Tuple2D<Array, Array> queryMassSpectrum) {

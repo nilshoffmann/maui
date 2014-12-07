@@ -39,6 +39,11 @@ import org.openide.util.ImageUtilities;
  */
 public abstract class MetaDataContainer<T extends IMetaDataDescriptor> extends ADatabaseBackedContainer<T> implements IMetaDataDescriptor {
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(

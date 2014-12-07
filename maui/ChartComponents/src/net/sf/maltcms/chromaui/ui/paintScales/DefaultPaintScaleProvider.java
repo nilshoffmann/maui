@@ -45,20 +45,32 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
 
     private int numberOfSamples = 2048;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getNumberOfSamples() {
         return numberOfSamples;
     }
 
+    /**
+     *
+     * @param numberOfSamples
+     */
     @Override
     public void setNumberOfSamples(int numberOfSamples) {
         this.numberOfSamples = numberOfSamples;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<PaintScale> getPaintScales() {
         String[] s = new String[]{"res/colorRamps/bcgyr.csv", "res/colorRamps/bgr.csv", "res/colorRamps/bw.csv", "res/colorRamps/br.csv", "res/colorRamps/bgrw.csv", "res/colorRamps/rgbr.csv"};
-        List<PaintScale> paintScales = new LinkedList<PaintScale>();
+        List<PaintScale> paintScales = new LinkedList<>();
         for (String str : s) {
             PaintScale ps = new GradientPaintScale(ImageTools.createSampleTable(this.numberOfSamples), min, max, ImageTools.rampToColorArray(new ColorRampReader().readColorRamp(str)));
             paintScales.add(ps);
@@ -69,11 +81,19 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
 
     private double min = 0.0d;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMin() {
         return min;
     }
 
+    /**
+     *
+     * @param min
+     */
     @Override
     public void setMin(double min) {
         this.min = min;
@@ -81,11 +101,19 @@ public class DefaultPaintScaleProvider implements IPaintScaleProvider {
 
     private double max = 1.0d;
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getMax() {
         return this.max;
     }
 
+    /**
+     *
+     * @param max
+     */
     @Override
     public void setMax(double max) {
         this.max = max;

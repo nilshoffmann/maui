@@ -33,6 +33,7 @@ import cross.datastructures.fragments.FileFragment;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
+import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.ADescriptor;
@@ -58,7 +59,7 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
     private IDetectorType detectorType = new QUADMS();
     private ITreatmentGroupDescriptor treatmentGroup = new TreatmentGroupDescriptor();
     private INormalizationDescriptor normalizationDescriptor = new NormalizationDescriptor();
-    private List<Peak1DContainer> peakAnnotations = new ActivatableArrayList<Peak1DContainer>();
+    private List<Peak1DContainer> peakAnnotations = new ActivatableArrayList<>();
 
     public List<Peak1DContainer> getPeakAnnotations() {
         activate(ActivationPurpose.READ);
@@ -71,7 +72,7 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
             peaks.setProject(getProject());
         }
         List<Peak1DContainer> oldValue = this.peakAnnotations;
-        this.peakAnnotations = new ActivatableArrayList<Peak1DContainer>(peakAnnotations);
+        this.peakAnnotations = new ActivatableArrayList<>(peakAnnotations);
         firePropertyChange("peakAnnotations", oldValue, this.peakAnnotations);
     }
 
@@ -116,7 +117,7 @@ public class ChromatogramDescriptor extends ADescriptor implements IChromatogram
                     uri = new File(getResourceLocation()).toURI();
                 }
             } catch (IllegalArgumentException iae) {
-                System.err.println("Resource location is not an URI!");
+                Logger.getLogger(getClass().getName()).warning("Resource location is not an URI!");
                 uri = new File(getResourceLocation()).toURI();
             }
 

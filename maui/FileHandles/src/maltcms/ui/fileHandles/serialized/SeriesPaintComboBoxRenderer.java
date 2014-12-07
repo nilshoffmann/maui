@@ -55,6 +55,10 @@ public class SeriesPaintComboBoxRenderer implements ListCellRenderer {
 
     private XYPlot xyp = null;
 
+    /**
+     *
+     * @param xyp
+     */
     public SeriesPaintComboBoxRenderer(XYPlot xyp) {
         this.xyp = xyp;
     }
@@ -75,6 +79,9 @@ public class SeriesPaintComboBoxRenderer implements ListCellRenderer {
         return bi;
     }
 
+    /**
+     *
+     */
     public class ColorPanel extends JPanel implements ActionListener {
 
         private Paint p;
@@ -82,6 +89,11 @@ public class SeriesPaintComboBoxRenderer implements ListCellRenderer {
         private JButton button;
         private XYPlot xyp = null;
 
+        /**
+         *
+         * @param c
+         * @param p
+         */
         public ColorPanel(Comparable c, Paint p) {
             this.c = c;
             this.p = p;
@@ -117,6 +129,10 @@ public class SeriesPaintComboBoxRenderer implements ListCellRenderer {
             }
         }
 
+        /**
+         *
+         * @param xypl
+         */
         public void setXYPlot(XYPlot xypl) {
             this.xyp = xypl;
         }

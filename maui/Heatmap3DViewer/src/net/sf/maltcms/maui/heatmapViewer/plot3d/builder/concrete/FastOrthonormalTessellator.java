@@ -30,16 +30,22 @@ package net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.media.opengl.GL;
 
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
+import org.jzy3d.io.IGLLoader;
 import org.jzy3d.maths.Array;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.builder.Tessellator;
 import org.jzy3d.plot3d.primitives.AbstractComposite;
+import org.jzy3d.plot3d.primitives.LineStripInterpolated;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Shape;
+import org.jzy3d.plot3d.primitives.vbo.DrawableVBO;
 
 /**
  * The {@link OrthonormalTesselator} checks that coordinates are lying on an
@@ -219,7 +225,7 @@ public class FastOrthonormalTessellator extends Tessellator {
     }
 
     public List<Polygon> getSquarePolygonsOnCoordinates(ColorMapper cmap, Color colorFactor) {
-        List<Polygon> polygons = new ArrayList<Polygon>();
+        List<Polygon> polygons = new ArrayList<>();
         for (int xi = 0; xi
                 < x.length - 1; xi++) {
             for (int yi = 0; yi
@@ -242,9 +248,8 @@ public class FastOrthonormalTessellator extends Tessellator {
                     p[3].rgb.mul(colorFactor);
                 } // Store quad
                 Polygon quad = new Polygon();
-                for (int pi = 0; pi
-                        < p.length; pi++) {
-                    quad.add(p[pi]);
+                for (Point p1 : p) {
+                    quad.add(p1);
                 }
                 polygons.add(quad);
             }
@@ -253,9 +258,9 @@ public class FastOrthonormalTessellator extends Tessellator {
     }
 
     public List<Polygon> getSquarePolygonsOnCoordinates2(ColorMapper cmap, Color colorFactor) {
-        List<Polygon> polygons = new ArrayList<Polygon>();
+        List<Polygon> polygons = new ArrayList<>();
         Polygon poly = new Polygon();
-        List<Point> points = new ArrayList<Point>();
+        List<Point> points = new ArrayList<>();
         for (int xi = 0; xi
                 < x.length - 1; xi++) {
             for (int yi = 0; yi
@@ -290,17 +295,17 @@ public class FastOrthonormalTessellator extends Tessellator {
 //                polygons.add(quad);
             }
         }
-        for (int i = 0; i < points.size(); i++) {
-            poly.add(points.get(i));
+        for (Point point : points) {
+            poly.add(point);
         }
         polygons.add(poly);
         points.clear();
-        System.out.println("Drawing " + (polygons.size()) + " vertices");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Drawing {0} vertices", (polygons.size()));
         return polygons;
     }
 
     public List<Polygon> getSquarePolygonsAroundCoordinates(ColorMapper cmap, Color colorFactor) {
-        List<Polygon> polygons = new ArrayList<Polygon>();
+        List<Polygon> polygons = new ArrayList<>();
         for (int xi = 1; xi
                 < x.length - 1; xi++) {
             for (int yi = 1; yi
@@ -323,9 +328,8 @@ public class FastOrthonormalTessellator extends Tessellator {
                     p[3].rgb.mul(colorFactor);
                 } // Store quad
                 Polygon quad = new Polygon();
-                for (int pi = 0; pi
-                        < p.length; pi++) {
-                    quad.add(p[pi]);
+                for (Point p1 : p) {
+                    quad.add(p1);
                 }
                 polygons.add(quad);
             }

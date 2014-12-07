@@ -92,7 +92,7 @@ public final class ChromatogramScanCacheOptionsPanelController extends OptionsPa
 
     @Override
     public HelpCtx getHelpCtx() {
-        return null; // new HelpCtx("...ID") if you have a help set
+        return new HelpCtx("net.sf.maltcms.chromaui.project.spi.options.chromatogramScanCache");
     }
 
     @Override

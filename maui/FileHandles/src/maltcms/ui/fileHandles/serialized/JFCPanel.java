@@ -30,6 +30,8 @@ package maltcms.ui.fileHandles.serialized;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
@@ -47,12 +49,19 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 //import org.openide.util.ImageUtilities;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class JFCPanel extends JPanel {
 
     private ChartPanel chartPanel = null;
-    private List<XYAnnotation> annotations = new ArrayList<XYAnnotation>();
+    private List<XYAnnotation> annotations = new ArrayList<>();
     private JToggleButton toggleAnnotations = null, toggleYAxisFix = null, toggleXAxisFix = null;
 
+    /**
+     *
+     */
     public JFCPanel() {
         this.chartPanel = new ChartPanel(new JFreeChart(new XYPlot()));
 
@@ -81,14 +90,14 @@ public final class JFCPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (chartPanel.getChart().getXYPlot().getAnnotations().isEmpty()) {
-                    System.out.println("Adding annotations");
+                    Logger.getLogger(getClass().getName()).info("Adding annotations");
                     for (XYAnnotation xya : annotations) {
                         chartPanel.getChart().getXYPlot().addAnnotation(xya);
                     }
                     chartPanel.getChart().fireChartChanged();
                     toggleAnnotations.setSelected(true);
                 } else {
-                    System.out.println("Removing annotations");
+                    Logger.getLogger(getClass().getName()).info("Removing annotations");
                     List<?> l = chartPanel.getChart().getXYPlot().getAnnotations();
                     if (!l.isEmpty()) {
                         annotations.clear();
@@ -104,6 +113,10 @@ public final class JFCPanel extends JPanel {
         toggleAnnotations.setSelected(true);
     }
 
+    /**
+     *
+     * @param chart
+     */
     public void setChart(final JFreeChart chart) {
         if (this.chartPanel == null) {
             this.chartPanel = new ChartPanel(chart);
@@ -173,7 +186,7 @@ public final class JFCPanel extends JPanel {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         String s = (String) jComboBox1.getSelectedItem();
-        System.out.println("Selected: " + s);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Selected: {0}", s);
         XYPlot oldPlot = this.chartPanel.getChart().getXYPlot();
         XYItemRenderer xyir = oldPlot.getRenderer();
         if (xyir instanceof XYBlockRenderer) {
@@ -277,10 +290,10 @@ public final class JFCPanel extends JPanel {
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         boolean showLegend = this.jToggleButton1.isSelected();
         if (showLegend) {
-            System.out.println("Showing legend");
+            Logger.getLogger(getClass().getName()).info("Showing legend");
             this.chartPanel.getChart().getLegend().setVisible(true);
         } else {
-            System.out.println("Hiding legend");
+            Logger.getLogger(getClass().getName()).info("Hiding legend");
             this.chartPanel.getChart().getLegend().setVisible(false);
         }
     }//GEN-LAST:event_jToggleButton1ActionPerformed
@@ -293,6 +306,10 @@ public final class JFCPanel extends JPanel {
     private javax.swing.JToolBar jToolBar2;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     *
+     * @return
+     */
     public JToolBar getToolBar() {
         return this.jToolBar2;
     }

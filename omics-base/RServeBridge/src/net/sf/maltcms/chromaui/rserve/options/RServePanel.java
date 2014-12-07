@@ -27,15 +27,21 @@
  */
 package net.sf.maltcms.chromaui.rserve.options;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
 import org.netbeans.api.keyring.Keyring;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.filesystems.FileChooserBuilder;
+import org.openide.filesystems.FileChooserBuilder.SelectionApprover;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
@@ -53,7 +59,6 @@ final class RServePanel extends javax.swing.JPanel {
     RServePanel(RServeOptionsPanelController controller) {
         this.controller = controller;
         initComponents();
-        // TODO listen to changes in form fields and call controller.changed()
     }
 
     /**
@@ -65,20 +70,28 @@ final class RServePanel extends javax.swing.JPanel {
     private void initComponents() {
 
         localRserveSettingsField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        localRserverArgsLabel = new javax.swing.JLabel();
         useLocalInstance = new javax.swing.JCheckBox();
-        jSeparator1 = new javax.swing.JSeparator();
         remoteHostIpField = new javax.swing.JTextField();
         userNameField = new javax.swing.JTextField();
         passwordField = new javax.swing.JPasswordField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        remoteHostLabel = new javax.swing.JLabel();
+        userNameLabel = new javax.swing.JLabel();
+        passwordLabel = new javax.swing.JLabel();
         testButton = new javax.swing.JButton();
-        jSeparator2 = new javax.swing.JSeparator();
         remoteHostPortField = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
+        remoteHostPortLabel = new javax.swing.JLabel();
         debugMode = new javax.swing.JCheckBox();
+        rscriptLocation = new javax.swing.JTextField();
+        rBinaryLocation = new javax.swing.JTextField();
+        rScriptLocationLabel = new javax.swing.JLabel();
+        rBinaryLocationLabel = new javax.swing.JLabel();
+        rbinaryLocationButton = new javax.swing.JButton();
+        rscriptLocationButton = new javax.swing.JButton();
+        autodetectButton = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
+        jSeparator3 = new javax.swing.JSeparator();
 
         localRserveSettingsField.setText(org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.localRserveSettingsField.text")); // NOI18N
         localRserveSettingsField.setToolTipText(org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.localRserveSettingsField.toolTipText")); // NOI18N
@@ -88,7 +101,8 @@ final class RServePanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.jLabel1.text")); // NOI18N
+        localRserverArgsLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        org.openide.awt.Mnemonics.setLocalizedText(localRserverArgsLabel, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.localRserverArgsLabel.text")); // NOI18N
 
         useLocalInstance.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(useLocalInstance, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.useLocalInstance.text")); // NOI18N
@@ -112,14 +126,14 @@ final class RServePanel extends javax.swing.JPanel {
         passwordField.setText(org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.passwordField.text")); // NOI18N
         passwordField.setEnabled(false);
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.jLabel2.text")); // NOI18N
+        remoteHostLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(remoteHostLabel, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.remoteHostLabel.text")); // NOI18N
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.jLabel3.text")); // NOI18N
+        userNameLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(userNameLabel, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.userNameLabel.text")); // NOI18N
 
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.jLabel4.text")); // NOI18N
+        passwordLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(passwordLabel, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.passwordLabel.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(testButton, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.testButton.text")); // NOI18N
         testButton.addActionListener(new java.awt.event.ActionListener() {
@@ -136,9 +150,45 @@ final class RServePanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.jLabel5.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(remoteHostPortLabel, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.remoteHostPortLabel.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(debugMode, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.debugMode.text")); // NOI18N
+        debugMode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugModeActionPerformed(evt);
+            }
+        });
+
+        rscriptLocation.setText(org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.rscriptLocation.text")); // NOI18N
+
+        rBinaryLocation.setText(org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.rBinaryLocation.text")); // NOI18N
+
+        rScriptLocationLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        org.openide.awt.Mnemonics.setLocalizedText(rScriptLocationLabel, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.rScriptLocationLabel.text")); // NOI18N
+
+        rBinaryLocationLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        org.openide.awt.Mnemonics.setLocalizedText(rBinaryLocationLabel, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.rBinaryLocationLabel.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(rbinaryLocationButton, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.rbinaryLocationButton.text")); // NOI18N
+        rbinaryLocationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbinaryLocationButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(rscriptLocationButton, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.rscriptLocationButton.text")); // NOI18N
+        rscriptLocationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rscriptLocationButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(autodetectButton, org.openide.util.NbBundle.getMessage(RServePanel.class, "RServePanel.autodetectButton.text")); // NOI18N
+        autodetectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autodetectButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -147,82 +197,114 @@ final class RServePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(rBinaryLocationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rScriptLocationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(remoteHostIpField, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(remoteHostPortField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(localRserveSettingsField)
-                            .addComponent(userNameField)
-                            .addComponent(passwordField))
-                        .addContainerGap())
+                            .addComponent(rscriptLocation)
+                            .addComponent(rBinaryLocation))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rbinaryLocationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rscriptLocationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jSeparator1)
-                        .addGap(12, 12, 12))
+                        .addGap(193, 343, Short.MAX_VALUE)
+                        .addComponent(useLocalInstance))
+                    .addComponent(jSeparator1)
+                    .addComponent(jSeparator2)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jSeparator2)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(passwordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(userNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(remoteHostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(localRserverArgsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(useLocalInstance)
-                                .addContainerGap())
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(passwordField)
+                                    .addComponent(userNameField)
+                                    .addComponent(localRserveSettingsField))
+                                .addGap(66, 66, 66))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(debugMode)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(testButton)
-                                .addGap(12, 12, 12))))))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(143, 143, 143)
+                                        .addComponent(remoteHostPortLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(remoteHostPortField, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(debugMode)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(testButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(remoteHostIpField)
+                                .addGap(138, 138, 138))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(autodetectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {rbinaryLocationButton, rscriptLocationButton});
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {localRserverArgsLabel, passwordLabel, rBinaryLocationLabel, rScriptLocationLabel, remoteHostLabel, userNameLabel});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rBinaryLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rBinaryLocationLabel)
+                    .addComponent(rbinaryLocationButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rscriptLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rScriptLocationLabel)
+                    .addComponent(rscriptLocationButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(autodetectButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(useLocalInstance)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(localRserveSettingsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(localRserverArgsLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(remoteHostIpField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(remoteHostLabel)
                     .addComponent(remoteHostPortField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
+                    .addComponent(remoteHostPortLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(userNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(userNameLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addGap(12, 12, 12)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(passwordLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(testButton)
                     .addComponent(debugMode))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void localRserveSettingsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localRserveSettingsFieldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_localRserveSettingsFieldActionPerformed
 
     private void useLocalInstanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useLocalInstanceActionPerformed
@@ -230,7 +312,7 @@ final class RServePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_useLocalInstanceActionPerformed
 
     private void userNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userNameFieldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_userNameFieldActionPerformed
 
     public boolean testRserve() {
@@ -238,14 +320,13 @@ final class RServePanel extends javax.swing.JPanel {
             RConnection connection = RserveConnectionFactory.getDefaultConnection();
             REXP rexp = connection.eval("x <- seq(from=1,by=1,to=10);");
             try {
-                System.out.println("Result: "
-                        + Arrays.toString(rexp.asDoubles()));
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Result: {0}", Arrays.toString(rexp.asDoubles()));
                 return true;
             } catch (REXPMismatchException ex) {
-                ex.printStackTrace();
+                Exceptions.printStackTrace(ex);
             }
         } catch (RserveException ex) {
-            ex.printStackTrace();
+            Exceptions.printStackTrace(ex);
         }
         return false;
     }
@@ -256,11 +337,8 @@ final class RServePanel extends javax.swing.JPanel {
             public void run() {
                 testButton.setEnabled(false);
                 try {
-//                    StartRserve.checkLocalRserve();
                     if (useLocalInstance.isSelected()) {
                         store();
-//                        RConnection testConnection = RserveConnectionFactory.getDefaultConnection();
-//                        PlotDemo.createPlotDemo(testConnection);
                         if (testRserve()) {
                             DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!", NotifyDescriptor.INFORMATION_MESSAGE));
                         } else {
@@ -271,8 +349,6 @@ final class RServePanel extends javax.swing.JPanel {
                             InetAddress address = InetAddress.getByName(remoteHostIpField.getText().trim());
                             int port = Integer.parseInt(remoteHostPortField.getText().trim());
                             store();
-//                            RConnection testConnection = RserveConnectionFactory.getInstance().getRemoteConnection(address, port, userNameField.getText(), passwordField.getPassword());
-//                            PlotDemo.createPlotDemo(testConnection);
                             if (testRserve()) {
                                 DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Connection to Rserve successful!", NotifyDescriptor.INFORMATION_MESSAGE));
                             } else {
@@ -292,6 +368,7 @@ final class RServePanel extends javax.swing.JPanel {
         Task t = rp.create(r);
         final ProgressHandle ph = ProgressHandleFactory.createHandle("Rserve connection test", t);
         t.addTaskListener(new TaskListener() {
+            @Override
             public void taskFinished(org.openide.util.Task task) {
                 //make sure that we get rid of the ProgressHandle
                 //when the task is finished
@@ -303,8 +380,47 @@ final class RServePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_testButtonActionPerformed
 
     private void remoteHostPortFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remoteHostPortFieldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_remoteHostPortFieldActionPerformed
+
+    private void debugModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugModeActionPerformed
+        
+    }//GEN-LAST:event_debugModeActionPerformed
+
+    private void rbinaryLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbinaryLocationButtonActionPerformed
+        FileChooserBuilder fcb = new FileChooserBuilder(RServePanel.class);
+        File basedir = new File(System.getProperty("user.home"));
+        if(!rBinaryLocation.getText().isEmpty()) {
+            basedir = new File(rBinaryLocation.getText()).getParentFile();
+        }
+        File file = fcb.setDefaultWorkingDirectory(basedir).setFilesOnly(true).setControlButtonsAreShown(true).setApproveText("Select").setTitle("Select R executable").showOpenDialog();
+        if(file!=null && file.isFile()) {
+            rBinaryLocation.setText(file.getAbsolutePath());
+        }
+    }//GEN-LAST:event_rbinaryLocationButtonActionPerformed
+
+    private void rscriptLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rscriptLocationButtonActionPerformed
+        FileChooserBuilder fcb = new FileChooserBuilder(RServePanel.class);
+        File basedir = new File(System.getProperty("user.home"));
+        if(!rscriptLocation.getText().isEmpty()) {
+            basedir = new File(rscriptLocation.getText()).getParentFile();
+        }
+        File file = fcb.setDefaultWorkingDirectory(basedir).setFilesOnly(true).setControlButtonsAreShown(true).setApproveText("Select").setTitle("Select Rscript executable").showOpenDialog();
+        if(file!=null && file.isFile()) {
+            rscriptLocation.setText(file.getAbsolutePath());
+        }
+    }//GEN-LAST:event_rscriptLocationButtonActionPerformed
+
+    private void autodetectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autodetectButtonActionPerformed
+        File rBinaryLocationFile = RserveConnectionFactory.getInstance().getRBinaryLocation();
+        if (rBinaryLocationFile != null) {
+            rBinaryLocation.setText(rBinaryLocationFile.getAbsolutePath());
+        }
+        File rScriptLocationFile = RserveConnectionFactory.getInstance().getRscriptLocation();
+        if (rScriptLocationFile != null) {
+            rscriptLocation.setText(rScriptLocationFile.getAbsolutePath());
+        }
+    }//GEN-LAST:event_autodetectButtonActionPerformed
 
     private void updateUseLocalInstance() {
         if (useLocalInstance.isSelected()) {
@@ -324,6 +440,14 @@ final class RServePanel extends javax.swing.JPanel {
 
     void load() {
         localRserveSettingsField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVEARGS, ""));
+        File rbinaryLocation = RserveConnectionFactory.getInstance().getRBinaryLocation();
+        if (rbinaryLocation != null) {
+            rBinaryLocation.setText(rbinaryLocation.getAbsolutePath());
+        }
+        File rscriptLocationFile = RserveConnectionFactory.getInstance().getRscriptLocation();
+        if (rscriptLocationFile != null) {
+            rscriptLocation.setText(rscriptLocationFile.getAbsolutePath());
+        }
         remoteHostIpField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_HOST, "127.0.0.1"));
         remoteHostPortField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_PORT, "6311"));
         userNameField.setText(NbPreferences.forModule(RserveConnectionFactory.class).get(RserveConnectionFactory.KEY_RSERVE_USER, ""));
@@ -342,6 +466,10 @@ final class RServePanel extends javax.swing.JPanel {
         NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_HOST, remoteHostIpField.getText());
         NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_PORT, remoteHostPortField.getText());
         NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSERVE_USER, userNameField.getText());
+        String rbinaryLocationFile = rBinaryLocation.getText();
+        NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RBINARY_LOCATION, rbinaryLocationFile == null ? "" : rbinaryLocationFile);
+        String rscriptLocationFile = rscriptLocation.getText();
+        NbPreferences.forModule(RserveConnectionFactory.class).put(RserveConnectionFactory.KEY_RSCRIPT_LOCATION, rscriptLocationFile == null ? "" : rscriptLocationFile);
         if (!remoteHostIpField.getText().isEmpty()) {
             Keyring.save("Rserve://" + remoteHostIpField.getText().trim(), passwordField.getPassword(), "Rserve password for host " + remoteHostIpField.getText());
         }
@@ -353,20 +481,28 @@ final class RServePanel extends javax.swing.JPanel {
         return true;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton autodetectButton;
     private javax.swing.JCheckBox debugMode;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextField localRserveSettingsField;
+    private javax.swing.JLabel localRserverArgsLabel;
     private javax.swing.JPasswordField passwordField;
+    private javax.swing.JLabel passwordLabel;
+    private javax.swing.JTextField rBinaryLocation;
+    private javax.swing.JLabel rBinaryLocationLabel;
+    private javax.swing.JLabel rScriptLocationLabel;
+    private javax.swing.JButton rbinaryLocationButton;
     private javax.swing.JTextField remoteHostIpField;
+    private javax.swing.JLabel remoteHostLabel;
     private javax.swing.JTextField remoteHostPortField;
+    private javax.swing.JLabel remoteHostPortLabel;
+    private javax.swing.JTextField rscriptLocation;
+    private javax.swing.JButton rscriptLocationButton;
     private javax.swing.JButton testButton;
     private javax.swing.JCheckBox useLocalInstance;
     private javax.swing.JTextField userNameField;
+    private javax.swing.JLabel userNameLabel;
     // End of variables declaration//GEN-END:variables
 }

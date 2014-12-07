@@ -237,7 +237,7 @@ public class SimilaritySelectionPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public ProductSimilarity getParameterizedSimilarity() {
-        Map<String, Double> hashMap = new HashMap<String, Double>();
+        Map<String, Double> hashMap = new HashMap<>();
         if (rt1Panel.getComponents().length > 0) {
             JPanel panel1 = (JPanel) rt1Panel.getComponents()[0];
             if (panel1 instanceof GaussianDifferenceSimilarityParametersPanel) {

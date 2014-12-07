@@ -38,15 +38,21 @@ import ucar.ma2.Array;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class Tic1DProvider {
 
-    private static Map<IChromatogramDescriptor, Tic1DProvider> statics = new HashMap<IChromatogramDescriptor, Tic1DProvider>();
+    private static Map<IChromatogramDescriptor, Tic1DProvider> statics = new HashMap<>();
     private IFileFragment ff;
     private IVariableFragment tic = null;
     private IVariableFragment vtic = null;
 
+    /**
+     *
+     * @param filename
+     * @return
+     * @throws IOException
+     */
     public static Tic1DProvider getInstance(IChromatogramDescriptor filename) throws IOException {
         if (statics.containsKey(filename)) {
             return statics.get(filename);
@@ -65,22 +71,46 @@ public class Tic1DProvider {
         this.tic = ff.getChild("total_intensity");
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getScanlineTIC(int mod) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getScanlineVTIC(int mod) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getHScanlineTIC(int mod) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @param mod
+     * @return
+     */
     public Array getHScanlineVTIC(int mod) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getTIC() {
         if (this.tic == null) {
             loadTotalIntensity();
@@ -88,14 +118,26 @@ public class Tic1DProvider {
         return this.tic.getArray();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Array> getScanlineTICS() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @return
+     */
     public Array getVTIC() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Array> getScanlineVTICS() {
         throw new UnsupportedOperationException();
     }

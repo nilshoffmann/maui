@@ -36,6 +36,12 @@ import net.sf.maltcms.chromaui.features.spi.FeatureTable;
  */
 public class FeatureTableFactory {
 
+    /**
+     *
+     * @param factorNames
+     * @param variableNames
+     * @return
+     */
     public static IFeatureTable createFeatureTable(List<String> factorNames, List<String> variableNames) {
         FeatureTable ft = new FeatureTable(factorNames.size(), variableNames.size());
         for (int i = 0; i < factorNames.size(); i++) {

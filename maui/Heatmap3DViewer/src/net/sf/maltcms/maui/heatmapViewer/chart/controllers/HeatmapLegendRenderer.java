@@ -52,6 +52,7 @@ public class HeatmapLegendRenderer implements Renderer2d {
         this.icm = icm;
     }
 
+    @Override
     public void paint(Graphics g) {
         g.drawImage(toImage(100, 100), c.getRendererWidth() - 100, 0, null);
     }

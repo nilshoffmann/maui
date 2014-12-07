@@ -29,7 +29,7 @@ package maltcms.ui.fileHandles.properties.wizards;
 
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
-import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 

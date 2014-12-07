@@ -35,6 +35,10 @@ import org.jfree.chart.renderer.PaintScale;
  */
 public interface PaintScaleSource {
 
+    /**
+     *
+     * @return
+     */
     public abstract PaintScale getPaintScale();
 
 }

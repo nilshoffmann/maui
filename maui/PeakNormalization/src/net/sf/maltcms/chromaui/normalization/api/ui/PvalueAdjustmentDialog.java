@@ -38,6 +38,11 @@ import org.openide.NotifyDescriptor;
  */
 public class PvalueAdjustmentDialog {
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static PvalueAdjustment getPvalueAdjustment(IChromAUIProject context) {
         PvalueAdjustmentSettingsPanel panel = new PvalueAdjustmentSettingsPanel(context);
         NotifyDescriptor nd = new NotifyDescriptor(

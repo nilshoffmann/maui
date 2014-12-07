@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ChangeListener;
 import maltcms.ui.project.SimpleChromAProject;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -68,7 +70,7 @@ public class MauiSubprojectProviderFactory implements IMauiSubprojectProviderFac
 
         @Override
         public Set<? extends Project> getSubprojects() {
-            System.out.println("Subproject location: " + project.getOutputDir());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Subproject location: {0}", project.getOutputDir());
             return loadProjects(project.getOutputDir());
         }
 
@@ -85,10 +87,10 @@ public class MauiSubprojectProviderFactory implements IMauiSubprojectProviderFac
                 };
                 File[] children = dirFile.listFiles(directoryFilter);
                 for (File childFolder : children) {
-                    System.out.println("Checking files in " + childFolder.getName());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Checking files in {0}", childFolder.getName());
                     if (childFolder.getName().startsWith("maltcms-")) {
                         for (File maltcmsChildFolder : childFolder.listFiles(directoryFilter)) {
-                            System.out.println("Found maltcms folder: " + maltcmsChildFolder.getName());
+                            Logger.getLogger(getClass().getName()).log(Level.INFO, "Found maltcms folder: {0}", maltcmsChildFolder.getName());
                             try {
                                 Project subp = ProjectManager.getDefault().
                                         findProject(FileUtil.toFileObject(maltcmsChildFolder));
@@ -96,16 +98,14 @@ public class MauiSubprojectProviderFactory implements IMauiSubprojectProviderFac
                                     newProjects.add((SimpleChromAProject) subp);
                                     subp.getProjectDirectory().addFileChangeListener(this);
                                 }
-                            } catch (IOException ex) {
-                                Exceptions.printStackTrace(ex);
-                            } catch (IllegalArgumentException ex) {
+                            } catch (IOException | IllegalArgumentException ex) {
                                 Exceptions.printStackTrace(ex);
                             }
                         }
                     }
                 }
             } else {
-                System.err.println("Project directory was null!");
+                Logger.getLogger(getClass().getName()).warning("Project directory was null!");
             }
 
             return Collections.unmodifiableSet(newProjects);
@@ -154,7 +154,6 @@ public class MauiSubprojectProviderFactory implements IMauiSubprojectProviderFac
 
     @Override
     public SubprojectProvider provide(IChromAUIProject project) {
-        System.out.println("Creating subproject provider for project " + project);
         return new MauiSubprojectProvider(project);
     }
 

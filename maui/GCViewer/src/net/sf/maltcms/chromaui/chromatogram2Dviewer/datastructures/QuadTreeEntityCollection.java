@@ -45,17 +45,32 @@ public class QuadTreeEntityCollection implements EntityCollection {
     private QuadTree<ChartEntity> qt;
     private LinkedList<ChartEntity> ll;
 
+    /**
+     *
+     * @param minx
+     * @param miny
+     * @param maxx
+     * @param maxy
+     * @param capacity
+     */
     public QuadTreeEntityCollection(double minx, double miny, double maxx, double maxy, int capacity) {
-        qt = new QuadTree<ChartEntity>(minx, miny, maxx - minx, maxy - miny, capacity);
-        ll = new LinkedList<ChartEntity>();
+        qt = new QuadTree<>(minx, miny, maxx - minx, maxy - miny, capacity);
+        ll = new LinkedList<>();
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         qt.clear();
         ll.clear();
     }
 
+    /**
+     *
+     * @param ce
+     */
     @Override
     public void add(ChartEntity ce) {
         qt.put(getPoint(ce.getArea().getBounds2D().getCenterX(), ce.getArea().getBounds2D().getCenterY()), ce);
@@ -63,6 +78,10 @@ public class QuadTreeEntityCollection implements EntityCollection {
 //        System.out.println(""+ll.size()+" entities in collection!");
     }
 
+    /**
+     *
+     * @param ec
+     */
     @Override
     public void addAll(EntityCollection ec) {
         Iterator iter = ec.iterator();
@@ -73,6 +92,12 @@ public class QuadTreeEntityCollection implements EntityCollection {
         }
     }
 
+    /**
+     *
+     * @param d
+     * @param d1
+     * @return
+     */
     @Override
     public ChartEntity getEntity(double d, double d1) {
         ChartEntity ce = null;
@@ -87,21 +112,38 @@ public class QuadTreeEntityCollection implements EntityCollection {
         return new Point2D.Double(x, y);
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     @Override
     public ChartEntity getEntity(int i) {
         return ll.get(i);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getEntityCount() {
         return ll.size();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Collection getEntities() {
         return ll;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Iterator iterator() {
         return ll.iterator();

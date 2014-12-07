@@ -100,26 +100,50 @@ public class CredentialsPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     *
+     * @return
+     */
     public String getUserName() {
         return nameField.getText();
     }
 
+    /**
+     *
+     * @param userName
+     */
     public void setUserName(String userName) {
         nameField.setText(userName);
     }
 
+    /**
+     *
+     * @return
+     */
     public char[] getPassword() {
         return passwordField.getPassword();
     }
 
+    /**
+     *
+     * @param c
+     */
     public void setPassword(char[] c) {
         passwordField.setText(String.valueOf(c));
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isStoreInKeyring() {
         return storeInKeyring.isSelected();
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setStoreInKeyring(boolean b) {
         storeInKeyring.setSelected(b);
     }

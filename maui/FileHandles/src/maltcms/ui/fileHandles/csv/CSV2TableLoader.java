@@ -36,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import org.openide.filesystems.FileObject;
@@ -51,8 +52,13 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
     private final ProgressHandle ph;
     private DefaultTableModel dtm = null;
 
+    /**
+     *
+     * @param ph
+     * @param f
+     */
     public CSV2TableLoader(ProgressHandle ph, FileObject... f) {
-        Set<FileObject> s = new LinkedHashSet<FileObject>();
+        Set<FileObject> s = new LinkedHashSet<>();
         s.addAll(Arrays.asList(f));
         this.f = s.toArray(new FileObject[]{});
         this.ph = ph;
@@ -62,14 +68,16 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
     public DefaultTableModel call() throws Exception {
         ph.start(100);
         int[] lengths = new int[f.length];
-        Logger.getLogger(CSV2TableLoader.class.getName()).info("Loading " + f.length + " files!");
+        Logger.getLogger(CSV2TableLoader.class.getName()).log(Level.INFO, "Loading {0} files!", f.length);
         for (int i = 0; i < f.length; i++) {
-            Logger.getLogger(CSV2TableLoader.class.getName()).info("Loading file " + f[i].toString());
+            Logger.getLogger(CSV2TableLoader.class.getName()).log(Level.INFO, "Loading file {0}", f[i].toString());
             CSVReader csvr = new CSVReader();
-            BufferedInputStream bis = new BufferedInputStream(f[i].getInputStream());
+            Tuple2D<Vector<Vector<String>>, Vector<String>> t;
             //ph.progress("Opening file", 10*(i+1)/f.length);
-            Tuple2D<Vector<Vector<String>>, Vector<String>> t = csvr.read(bis);
-            bis.close();
+            try (BufferedInputStream bis = new BufferedInputStream(f[i].getInputStream())) {
+                //ph.progress("Opening file", 10*(i+1)/f.length);
+                t = csvr.read(bis);
+            }
             //ph.progress("Extracting headers", 20*(i+1)/f.length);
             HashMap<String, Vector<String>> hm = csvr.getColumns(t);
             //ph.progress("Extracting columns", 50*(i+1)/f.length);
@@ -113,13 +121,13 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
     }
 
     private Vector<Vector<?>> toRows(Vector<Vector<?>> cols) {
-        Vector<Vector<?>> rows = new Vector<Vector<?>>();
+        Vector<Vector<?>> rows = new Vector<>();
         for (int j = 0; j < cols.get(0).size(); j++) {
-            Vector<Object> row = new Vector<Object>();
-            for (int i = 0; i < cols.size(); i++) {
-                row.add(cols.get(i).get(j));
+            Vector<Object> row = new Vector<>();
+            for (Vector<?> col : cols) {
+                row.add(col.get(j));
             }
-            System.out.println("Row= " + row);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Row= {0}", row);
             rows.add(row);
         }
         return rows;
@@ -127,13 +135,13 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
     }
 
     private Tuple2D<Vector<Vector<String>>, Vector<String>> getColumns(HashMap<String, Vector<String>> hm) {
-        Vector<Vector<String>> v = new Vector<Vector<String>>();
-        Vector<String> headers = new Vector<String>(hm.keySet());
+        Vector<Vector<String>> v = new Vector<>();
+        Vector<String> headers = new Vector<>(hm.keySet());
         for (String s : headers) {
             v.add(hm.get(s));
-            System.out.println("Column: " + s + " = " + hm.get(s));
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Column: {0} = {1}", new Object[]{s, hm.get(s)});
         }
-        return new Tuple2D<Vector<Vector<String>>, Vector<String>>(v, headers);
+        return new Tuple2D<>(v, headers);
     }
 
     private Class<?> getClassForColumn(String colName, Vector<String> col) {
@@ -146,7 +154,7 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
             }
             try {
                 Long.valueOf(val);
-                System.out.println("Class for column " + colName + " is: Long");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Class for column {0} is: Long", colName);
                 c = Long.class;
 //                break;
             } catch (NumberFormatException nfe) {
@@ -155,30 +163,30 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
             try {
                 Double.valueOf(val);
 //                c = Double.class;
-                System.out.println("Class for column " + colName + " is: Double");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Class for column {0} is: Double", colName);
                 c = Double.class;
             } catch (NumberFormatException nfe) {
             }
 
             if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false")) {
 //                c = Boolean.class;
-                System.out.println("Class for column " + colName + " is: Boolean");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Class for column {0} is: Boolean", colName);
                 c = Boolean.class;
             } else {
 //                c = String.class;
-                System.out.println("Class for column " + colName + " is: String");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Class for column {0} is: String", colName);
                 c = String.class;
             }
 //            break;
         }
 
 //        return c;
-        System.out.println("Class for column " + colName + " is String");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Class for column {0} is String", colName);
         return String.class;
     }
 
     private Vector<Vector<?>> convertColumns(Vector<Vector<String>> v) {
-        Vector<Vector<?>> r = new Vector<Vector<?>>();
+        Vector<Vector<?>> r = new Vector<>();
         int i = 0;
         for (Vector<String> vs : v) {
             r.add(convertColumn(vs, getClassForColumn(i + "", vs)));
@@ -195,37 +203,37 @@ public class CSV2TableLoader implements Callable<DefaultTableModel> {
     }
 
     private Vector<?> convertColumn(Vector<String> v, Class<?> c) {
-        System.out.println("Class for column is: " + c.getName());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Class for column is: {0}", c.getName());
         if (c.equals(Long.class) || c.equals(Integer.class)) {
-            System.out.println("Converting to Long/Integer");
-            Vector<Long> ret = new Vector<Long>();
+            Logger.getLogger(getClass().getName()).info("Converting to Long/Integer");
+            Vector<Long> ret = new Vector<>();
             for (String s : v) {
                 final String tmp = replaceNAs(s);
                 ret.add(Long.valueOf(tmp.equals("NaN") ? "-1" : tmp));
             }
             return ret;
         } else if (c.equals(Double.class) || c.equals(Float.class)) {
-            System.out.println("Converting to Double/Float");
-            Vector<Double> ret = new Vector<Double>();
+            Logger.getLogger(getClass().getName()).info("Converting to Double/Float");
+            Vector<Double> ret = new Vector<>();
             for (String s : v) {
                 ret.add(Double.valueOf(replaceNAs(s)));
             }
             return ret;
         } else if (c.equals(Boolean.class)) {
-            System.out.println("Converting to boolean");
-            Vector<Boolean> ret = new Vector<Boolean>();
+            Logger.getLogger(getClass().getName()).info("Converting to boolean");
+            Vector<Boolean> ret = new Vector<>();
             for (String s : v) {
                 final String tmp = replaceNAs(s);
                 ret.add(Boolean.valueOf(tmp.equals("NaN") ? "false" : tmp));
             }
             return ret;
         } else if (c.equals(String.class)) {
-            Vector<String> ret = new Vector<String>();
+            Vector<String> ret = new Vector<>();
             for (String s : v) {
                 ret.add(s);
             }
             return ret;
         }
-        return new Vector<Object>();
+        return new Vector<>();
     }
 }

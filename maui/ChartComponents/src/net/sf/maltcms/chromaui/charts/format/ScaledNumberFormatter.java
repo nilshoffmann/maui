@@ -55,18 +55,34 @@ public class ScaledNumberFormatter extends NumberFormat implements ChartChangeLi
     private boolean relativeMode = false;
     private NumberFormat metricFormatter = new MetricNumberFormatter();
 
+    /**
+     *
+     * @param scale
+     */
     public void setScale(double scale) {
         this.scale = scale;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getScale() {
         return this.scale;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isRelativeMode() {
         return this.relativeMode;
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setRelativeMode(boolean b) {
         this.relativeMode = b;
     }
@@ -94,6 +110,10 @@ public class ScaledNumberFormatter extends NumberFormat implements ChartChangeLi
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     * @param cce
+     */
     @Override
     public void chartChanged(ChartChangeEvent cce) {
         ChartChangeEventType ccet = cce.getType();

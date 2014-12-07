@@ -43,12 +43,20 @@ public class ADescriptor extends ABasicDescriptor implements IDescriptor {
     @Indexed
     IToolDescriptor tool = DescriptorFactory.newToolResultDescriptor();
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IToolDescriptor getTool() {
         activate(ActivationPurpose.READ);
         return tool;
     }
 
+    /**
+     *
+     * @param tool
+     */
     @Override
     public void setTool(IToolDescriptor tool) {
         activate(ActivationPurpose.WRITE);

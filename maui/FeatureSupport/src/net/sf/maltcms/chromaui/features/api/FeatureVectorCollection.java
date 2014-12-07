@@ -45,6 +45,12 @@ public class FeatureVectorCollection implements Iterable<IFeatureVector> {
 
     private List<IFeatureVector> featureVectors;
 
+    /**
+     *
+     * @param fragment
+     * @param groups
+     * @param featureVectors
+     */
     public FeatureVectorCollection(IFileFragment fragment,
             List<String> groups,
             List<IFeatureVector> featureVectors) {
@@ -63,6 +69,10 @@ public class FeatureVectorCollection implements Iterable<IFeatureVector> {
         return Collections.unmodifiableList(featureVectors).iterator();
     }
 
+    /**
+     *
+     * @return
+     */
     public int size() {
         return this.featureVectors.size();
     }

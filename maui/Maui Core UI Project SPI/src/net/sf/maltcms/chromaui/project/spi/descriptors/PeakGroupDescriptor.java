@@ -72,6 +72,9 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     public PeakGroupDescriptor() {
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
+            if(pad instanceof ADescriptor) {
+                ((ADescriptor)pad).setTool(getTool());
+            }
             pad.addPropertyChangeListener(WeakListeners.propertyChange(this, pad));
         }
     }
@@ -115,7 +118,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         this.cas = cas;
         firePropertyChange(PROP_CAS, oldCas, cas);
     }
-    private List<IPeakAnnotationDescriptor> peakAnnotationDescriptors = new ActivatableArrayList<IPeakAnnotationDescriptor>();
+    private List<IPeakAnnotationDescriptor> peakAnnotationDescriptors = new ActivatableArrayList<>();
     public static final String PROP_PEAKANNOTATIONDESCRIPTORS = "peakAnnotationDescriptors";
 
     /**
@@ -143,7 +146,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         for (IPeakAnnotationDescriptor old : oldPeakAnnotationDescriptors) {
             old.removePropertyChangeListener(this);
         }
-        this.peakAnnotationDescriptors = new ActivatableArrayList<IPeakAnnotationDescriptor>(
+        this.peakAnnotationDescriptors = new ActivatableArrayList<>(
                 peakAnnotationDescriptors);
         for (IPeakAnnotationDescriptor pad : peakAnnotationDescriptors) {
             pad.addPropertyChangeListener(WeakListeners.propertyChange(this, pad));
@@ -157,7 +160,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public StringBuilder createDisplayName(List<IPeakAnnotationDescriptor> peakAnnotationDescriptors) {
         StringBuilder sb = new StringBuilder("<html>" + super.getName());
         sb.append(" (");
-        Map<String, Integer> nameToCount = new HashMap<String, Integer>();
+        Map<String, Integer> nameToCount = new HashMap<>();
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             if (nameToCount.containsKey(pad.getDisplayName())) {
                 nameToCount.put(pad.getDisplayName(), nameToCount.get(pad.getDisplayName()) + 1);
@@ -369,14 +372,14 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public Map<ITreatmentGroupDescriptor, Set<IPeakAnnotationDescriptor>> getPeaksByTreatmentGroup() {
-        Map<ITreatmentGroupDescriptor, Set<IPeakAnnotationDescriptor>> map = new LinkedHashMap<ITreatmentGroupDescriptor, Set<IPeakAnnotationDescriptor>>();
+        Map<ITreatmentGroupDescriptor, Set<IPeakAnnotationDescriptor>> map = new LinkedHashMap<>();
 
         for (IPeakAnnotationDescriptor ipad : getPeakAnnotationDescriptors()) {
             ITreatmentGroupDescriptor treatmentGroup = ipad.getChromatogramDescriptor().getTreatmentGroup();
             Set<IPeakAnnotationDescriptor> descr = map.get(
                     treatmentGroup);
             if (descr == null) {
-                descr = new LinkedHashSet<IPeakAnnotationDescriptor>();
+                descr = new LinkedHashSet<>();
                 map.put(treatmentGroup, descr);
             }
             descr.add(ipad);
@@ -386,14 +389,14 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public Map<ISampleGroupDescriptor, Set<IPeakAnnotationDescriptor>> getPeaksBySampleGroup() {
-        Map<ISampleGroupDescriptor, Set<IPeakAnnotationDescriptor>> map = new LinkedHashMap<ISampleGroupDescriptor, Set<IPeakAnnotationDescriptor>>();
+        Map<ISampleGroupDescriptor, Set<IPeakAnnotationDescriptor>> map = new LinkedHashMap<>();
 
         for (IPeakAnnotationDescriptor ipad : getPeakAnnotationDescriptors()) {
             ISampleGroupDescriptor sampleGroup = ipad.getChromatogramDescriptor().getSampleGroup();
             Set<IPeakAnnotationDescriptor> descr = map.get(
                     sampleGroup);
             if (descr == null) {
-                descr = new LinkedHashSet<IPeakAnnotationDescriptor>();
+                descr = new LinkedHashSet<>();
                 map.put(sampleGroup, descr);
             }
             descr.add(ipad);
@@ -439,12 +442,12 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public String getMajorityName() {
         StringBuilder sb = new StringBuilder(super.getName());
         sb.append(" (");
-        Map<String, Integer> nameToCount = new HashMap<String, Integer>();
+        Map<String, Integer> nameToCount = new HashMap<>();
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             if (nameToCount.containsKey(pad.getName())) {
-                nameToCount.put(pad.getName(), Integer.valueOf(nameToCount.get(pad.getName()).intValue() + 1));
+                nameToCount.put(pad.getName(), nameToCount.get(pad.getName()) + 1);
             } else {
-                nameToCount.put(pad.getName(), Integer.valueOf(1));
+                nameToCount.put(pad.getName(), 1);
             }
         }
         return getMostFrequentTerm(nameToCount);
@@ -452,18 +455,18 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public double getMajorityNamePercentage() {
-        Map<String, Integer> nameToCount = new HashMap<String, Integer>();
+        Map<String, Integer> nameToCount = new HashMap<>();
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             if (nameToCount.containsKey(pad.getDisplayName())) {
-                nameToCount.put(pad.getDisplayName(), Integer.valueOf(nameToCount.get(pad.getDisplayName()).intValue() + 1));
+                nameToCount.put(pad.getDisplayName(), nameToCount.get(pad.getDisplayName()) + 1);
             } else {
-                nameToCount.put(pad.getDisplayName(), Integer.valueOf(1));
+                nameToCount.put(pad.getDisplayName(), 1);
             }
         }
         String mostFrequentName = "";
         float highestCount = 0;
         for (String key : nameToCount.keySet()) {
-            int count = nameToCount.get(key).intValue();
+            int count = nameToCount.get(key);
             if (count > highestCount) {
                 mostFrequentName = key;
                 highestCount = count;
@@ -476,12 +479,12 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public String getMajorityNativeDatabaseId() {
-        Map<String, Integer> nameToCount = new HashMap<String, Integer>();
+        Map<String, Integer> nameToCount = new HashMap<>();
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             if (nameToCount.containsKey(pad.getNativeDatabaseId())) {
-                nameToCount.put(pad.getNativeDatabaseId(), Integer.valueOf(nameToCount.get(pad.getNativeDatabaseId()).intValue() + 1));
+                nameToCount.put(pad.getNativeDatabaseId(), nameToCount.get(pad.getNativeDatabaseId()) + 1);
             } else {
-                nameToCount.put(pad.getNativeDatabaseId(), Integer.valueOf(1));
+                nameToCount.put(pad.getNativeDatabaseId(), 1);
             }
         }
         return getMostFrequentTerm(nameToCount);
@@ -491,12 +494,12 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
     public String getMajorityDisplayName() {
         StringBuilder sb = new StringBuilder(super.getDisplayName());
         sb.append(" (");
-        Map<String, Integer> nameToCount = new HashMap<String, Integer>();
+        Map<String, Integer> nameToCount = new HashMap<>();
         for (IPeakAnnotationDescriptor pad : getPeakAnnotationDescriptors()) {
             if (nameToCount.containsKey(pad.getDisplayName())) {
-                nameToCount.put(pad.getDisplayName(), Integer.valueOf(nameToCount.get(pad.getDisplayName()).intValue() + 1));
+                nameToCount.put(pad.getDisplayName(), nameToCount.get(pad.getDisplayName()) + 1);
             } else {
-                nameToCount.put(pad.getDisplayName(), Integer.valueOf(1));
+                nameToCount.put(pad.getDisplayName(), 1);
             }
         }
         return getMostFrequentTerm(nameToCount);
@@ -543,7 +546,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
         String mostFrequentName = "";
         float highestCount = 0;
         for (String key : nameToCount.keySet()) {
-            int count = nameToCount.get(key).intValue();
+            int count = nameToCount.get(key);
             if (count > highestCount) {
                 mostFrequentName = key;
                 highestCount = count;
@@ -563,7 +566,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public Set<IPeakAnnotationDescriptor> getPeaksForSampleGroup(ISampleGroupDescriptor group) {
-        Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<IPeakAnnotationDescriptor>();
+        Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<>();
         for (IPeakAnnotationDescriptor ipad : getPeakAnnotationDescriptors()) {
             ISampleGroupDescriptor sampleGroup = ipad.getChromatogramDescriptor().getSampleGroup();
             if (sampleGroup != null && sampleGroup.equals(group)) {
@@ -575,7 +578,7 @@ public class PeakGroupDescriptor extends ADescriptor implements IPeakGroupDescri
 
     @Override
     public Set<IPeakAnnotationDescriptor> getPeaksForTreatmentGroup(ITreatmentGroupDescriptor group) {
-        Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<IPeakAnnotationDescriptor>();
+        Set<IPeakAnnotationDescriptor> set = new LinkedHashSet<>();
         for (IPeakAnnotationDescriptor ipad : getPeakAnnotationDescriptors()) {
             ITreatmentGroupDescriptor treatmentGroup = ipad.getChromatogramDescriptor().getTreatmentGroup();
             if (treatmentGroup != null && treatmentGroup.equals(group)) {

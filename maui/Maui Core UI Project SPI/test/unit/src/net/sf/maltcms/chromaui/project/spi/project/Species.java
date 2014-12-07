@@ -36,18 +36,34 @@ public class Species {
     private String pubmedId = "12393";
     private String ontology = "Arafa adeno";
 
+    /**
+     *
+     * @return
+     */
     public String getPubmedId() {
         return pubmedId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getOntology() {
         return ontology;
     }
 
+    /**
+     *
+     * @param ontology
+     */
     public void setOntology(String ontology) {
         this.ontology = ontology;
     }
 
+    /**
+     *
+     * @param pubmedId
+     */
     public void setPubmedId(String pubmedId) {
         this.pubmedId = pubmedId;
     }

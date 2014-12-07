@@ -33,12 +33,20 @@ import java.util.LinkedList;
 import java.util.List;
 import org.openide.loaders.MultiDataObject;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class Heatmap3DOpenAction implements ActionListener {
 
     private final List<MultiDataObject> context;
 
+    /**
+     *
+     * @param context
+     */
     public Heatmap3DOpenAction(List<MultiDataObject> context) {
-        this.context = new LinkedList<MultiDataObject>(context);
+        this.context = new LinkedList<>(context);
     }
 
     @Override

@@ -38,10 +38,14 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 public class StandardGUIMain {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         String name = "MeltDB 3D Viewer";
         URL url = StandardGUIMain.class.getResource("/de/unibielefeld/cebitec/lstutz/pca/dataset/meltdb.xml");

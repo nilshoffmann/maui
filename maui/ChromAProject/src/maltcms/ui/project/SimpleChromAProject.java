@@ -58,17 +58,30 @@ public class SimpleChromAProject implements Project {
     private final ProjectState state;
     private Lookup lkp;
 
+    /**
+     *
+     * @param projectDir
+     * @param state
+     */
     public SimpleChromAProject(FileObject projectDir, ProjectState state) {
         this.projectDir = projectDir;
         this.state = state;
     }
 
+    /**
+     *
+     * @return
+     */
     public FileObject getWorkflowDir() {
         FileObject result
                 = projectDir.getFileObject(SimpleChromAProjectFactory.WORKFLOW_FILE).getParent();
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public FileObject getProjectDirectory() {
         return projectDir;
@@ -88,7 +101,12 @@ public class SimpleChromAProject implements Project {
     }
 
     //The project type's capabilities are registered in the project's lookup:
-    @Override
+
+    /**
+     *
+     * @return
+     */
+        @Override
     public Lookup getLookup() {
         if (lkp == null) {
             IChromAUIProject parentProject = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
@@ -133,31 +151,36 @@ public class SimpleChromAProject implements Project {
 
         @Override
         public boolean isActionEnabled(String command, Lookup lookup) throws IllegalArgumentException {
-            if ((command.equals(ActionProvider.COMMAND_DELETE))) {
-                return true;
-            } else if ((command.equals(ActionProvider.COMMAND_COPY))) {
-                return true;
-            } else {
-                throw new IllegalArgumentException(command);
+            switch (command) {
+                case ActionProvider.COMMAND_DELETE:
+                    return true;
+                case ActionProvider.COMMAND_COPY:
+                    return true;
+                default:
+                    throw new IllegalArgumentException(command);
             }
         }
     }
 
     private final class DemoDeleteOperation implements DeleteOperationImplementation {
 
+        @Override
         public void notifyDeleting() throws IOException {
         }
 
+        @Override
         public void notifyDeleted() throws IOException {
         }
 
+        @Override
         public List<FileObject> getMetadataFiles() {
-            List<FileObject> dataFiles = new ArrayList<FileObject>();
+            List<FileObject> dataFiles = new ArrayList<>();
             return dataFiles;
         }
 
+        @Override
         public List<FileObject> getDataFiles() {
-            List<FileObject> dataFiles = new ArrayList<FileObject>();
+            List<FileObject> dataFiles = new ArrayList<>();
             return dataFiles;
         }
     }
@@ -172,17 +195,21 @@ public class SimpleChromAProject implements Project {
             this.projectDir = project.getProjectDirectory();
         }
 
+        @Override
         public List<FileObject> getMetadataFiles() {
             return Collections.emptyList();
         }
 
+        @Override
         public List<FileObject> getDataFiles() {
             return Collections.emptyList();
         }
 
+        @Override
         public void notifyCopying() throws IOException {
         }
 
+        @Override
         public void notifyCopied(Project arg0, File arg1, String arg2) throws IOException {
         }
     }

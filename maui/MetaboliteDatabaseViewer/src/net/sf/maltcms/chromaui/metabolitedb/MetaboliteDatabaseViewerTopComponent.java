@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -47,6 +48,8 @@ import lombok.Data;
 import net.sf.maltcms.chromaui.db.api.CrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
+import net.sf.maltcms.chromaui.db.api.exceptions.ProviderNotFoundException;
 import net.sf.maltcms.chromaui.metabolitedb.api.nodes.MetaboliteNodeFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
@@ -179,7 +182,7 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
             NodeFactory nf = new NodeFactory(database);
             NodeFactory.createAndRun("Loading Database", nf);
         } else {
-            System.err.println("Can not set database descriptor while loading is still in progress!");
+            Logger.getLogger(getClass().getName()).warning("Can not set database descriptor while loading is still in progress!");
 
         }
     }
@@ -201,12 +204,12 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
                     final URL location = new File(
                             database.getResourceLocation()).toURI().toURL();
                     ICrudProvider activeProvider = CrudProvider.getProviderFor(location);
-                    System.out.println("Setting node factory");
+                    Logger.getLogger(getClass().getName()).info("Setting node factory");
                     activeSession = activeProvider.createSession();
                     activeSession.open();
                     final Node root = new AbstractNode(Children.create(new MetaboliteNodeFactory(location,
                             activeSession), true));
-                    System.out.println("Setting root context");
+                    Logger.getLogger(getClass().getName()).info("Setting root context");
                     manager.setRootContext(root);
                     Runnable r = new Runnable() {
                         @Override
@@ -222,7 +225,7 @@ public final class MetaboliteDatabaseViewerTopComponent extends TopComponent
                     Exceptions.printStackTrace(ex);
                 }
 
-            } catch (Exception e) {
+            } catch (AuthenticationException | ProviderNotFoundException e) {
                 Exceptions.printStackTrace(e);
             } finally {
                 progressHandle.finish();

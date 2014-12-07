@@ -35,6 +35,8 @@ import com.jogamp.newt.event.MouseEvent;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
@@ -135,6 +137,7 @@ public class LabeledMouseSelector<ITEM> extends NewtMousePickingController<BarCh
 //    public void clearLastSelection() {
 //
 //    }
+    @Override
     public void pick(final MouseEvent e) {
         if (e.isControlDown()) {
             Runnable r = new Runnable() {
@@ -174,6 +177,6 @@ public class LabeledMouseSelector<ITEM> extends NewtMousePickingController<BarCh
 
     @Override
     public void objectPicked(List<? extends Object> list, PickingSupport ps) {
-        System.out.println("Picked: " + list);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Picked: {0}", list);
     }
 }

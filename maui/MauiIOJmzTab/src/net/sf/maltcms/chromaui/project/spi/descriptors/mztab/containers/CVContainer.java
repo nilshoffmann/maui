@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.CVDescriptor;
 import uk.ac.ebi.pride.jmztab.model.CV;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class CVContainer extends BasicMzTabMetaDataContainer<CVDescriptor> {
+    private static final long serialVersionUID = 1134892165696925410L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static CVContainer create(Metadata metadata) {
         CVContainer c = new CVContainer();
         c.setLevel(2);

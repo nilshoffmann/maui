@@ -57,15 +57,27 @@ public class CentralLookup extends AbstractLookup implements LookupListener {
     private static CentralLookup def = new CentralLookup();
     private Map<Class, Result> results = new LinkedHashMap<>();
 
+    /**
+     *
+     * @param content
+     */
     public CentralLookup(InstanceContent content) {
         super(content);
         this.content = content;
     }
 
+    /**
+     *
+     */
     public CentralLookup() {
         this(new InstanceContent());
     }
 
+    /**
+     *
+     * @param <T>
+     * @param type
+     */
     public <T> void addActionsGlobalContextListener(Class<T> type) {
         if (!results.containsKey(type)) {
             Result<T> result = actionsGlobalContext().lookupResult(
@@ -76,18 +88,25 @@ public class CentralLookup extends AbstractLookup implements LookupListener {
 
     }
 
+    /**
+     *
+     * @param <T>
+     * @param type
+     */
     public <T> void removeActionsGlobalContextListener(Class<T> type) {
         results.remove(type);
     }
 
+    /**
+     *
+     * @param instance
+     */
     public void add(Object instance) {
-        getLogger(CentralLookup.class.getName()).log(Level.INFO,
-                "Adding object " + instance + " to central lookup!");
+        getLogger(CentralLookup.class.getName()).log(Level.INFO, "Adding object {0} to central lookup!", instance);
         if (lookup(instance.getClass()) != null) {
             Object instanceInLookup = lookup(instance.getClass());
             if (instance.equals(instanceInLookup)) {
-                getLogger(CentralLookup.class.getName()).log(Level.INFO,
-                        "Object " + instance + " already contained in central lookup!");
+                getLogger(CentralLookup.class.getName()).log(Level.INFO, "Object {0} already contained in central lookup!", instance);
             } else {
                 content.add(instance);
             }
@@ -96,14 +115,26 @@ public class CentralLookup extends AbstractLookup implements LookupListener {
         }
     }
 
+    /**
+     *
+     * @param instance
+     */
     public void remove(Object instance) {
         content.remove(instance);
     }
 
+    /**
+     *
+     * @return
+     */
     public static CentralLookup getDefault() {
         return def;
     }
 
+    /**
+     *
+     * @param ev
+     */
     @Override
     public void resultChanged(LookupEvent ev) {
         Lookup.Result l = (Lookup.Result) ev.getSource();

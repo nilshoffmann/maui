@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.normalization.spi;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
@@ -34,7 +36,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class CompoundPeakNormalizer implements IPeakNormalizer {
@@ -45,7 +47,7 @@ public class CompoundPeakNormalizer implements IPeakNormalizer {
     public double getNormalizationFactor(IPeakAnnotationDescriptor descriptor) {
         IPeakAnnotationDescriptor referencePeak = referenceGroup.getPeakForSample(descriptor.getChromatogramDescriptor());
         if (referencePeak == null) {
-            System.out.println("Reference peak " + referenceGroup.getMajorityName() + " not contained in chromatogram " + descriptor.getChromatogramDescriptor().getResourceLocation());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Reference peak {0} not contained in chromatogram {1}", new Object[]{referenceGroup.getMajorityName(), descriptor.getChromatogramDescriptor().getResourceLocation()});
             return 0.0d;
         }
         return 1.0d / referencePeak.getArea();

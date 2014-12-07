@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import java.util.List;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
@@ -88,7 +89,7 @@ public final class AnnotatePeaksOnProject implements ActionListener {
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             if (ddp.getSelectedDatabases().isEmpty()) {
-                System.out.println("No databases selected!");
+                Logger.getLogger(getClass().getName()).info("No databases selected!");
                 return;
             }
             databases = ddp.getSelectedDatabases();

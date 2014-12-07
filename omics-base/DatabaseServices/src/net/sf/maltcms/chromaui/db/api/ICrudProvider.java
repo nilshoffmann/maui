@@ -35,10 +35,23 @@ import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
  */
 public interface ICrudProvider {
 
+    /**
+     *
+     * @return
+     * @throws AuthenticationException
+     */
     ICrudSession createSession() throws AuthenticationException;
 
+    /**
+     *
+     * @throws AuthenticationException
+     */
     void open() throws AuthenticationException;
 
+    /**
+     *
+     * @throws AuthenticationException
+     */
     void close() throws AuthenticationException;
 
 }

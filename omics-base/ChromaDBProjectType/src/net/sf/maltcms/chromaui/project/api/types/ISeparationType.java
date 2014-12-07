@@ -33,8 +33,16 @@ package net.sf.maltcms.chromaui.project.api.types;
  */
 public interface ISeparationType {
 
+    /**
+     *
+     * @return
+     */
     public String getSeparationType();
 
+    /**
+     *
+     * @return
+     */
     public String getLongName();
 
     /**

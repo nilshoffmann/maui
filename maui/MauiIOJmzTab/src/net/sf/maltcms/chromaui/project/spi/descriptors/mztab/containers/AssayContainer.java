@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.AssayDescriptor;
 import uk.ac.ebi.pride.jmztab.model.Assay;
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class AssayContainer extends BasicMzTabMetaDataContainer<AssayDescriptor> {
+    private static final long serialVersionUID = -7058776893889924066L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static AssayContainer create(Metadata metadata) {
         AssayContainer c = new AssayContainer();
         c.setLevel(2);

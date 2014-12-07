@@ -35,4 +35,7 @@ import java.util.HashMap;
  */
 public class ProjectSettings extends HashMap<String, Object> {
 
+    public static final String KEY_UID = "project.uid";
+    public static final String KEY_OUTPUT_BASEDIR = "output.basedir";
+    
 }

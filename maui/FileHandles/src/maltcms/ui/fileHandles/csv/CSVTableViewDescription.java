@@ -46,39 +46,71 @@ public class CSVTableViewDescription implements MultiViewDescription, Serializab
     private JFCView chartTarget = null;
     private CSVTableView csvtv = null;
 
+    /**
+     *
+     * @param dtm
+     */
     public void setTableModel(TableModel dtm) {
         this.dtm = dtm;
     }
 
+    /**
+     *
+     * @param jtc
+     */
     public void setChartTarget(JFCView jtc) {
         this.chartTarget = jtc;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayName() {
         return "Table";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Image getIcon() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public HelpCtx getHelpCtx() {
         return HelpCtx.DEFAULT_HELP;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String preferredID() {
         return "TABLE_VIEW1";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public MultiViewElement createElement() {
         if (csvtv == null) {

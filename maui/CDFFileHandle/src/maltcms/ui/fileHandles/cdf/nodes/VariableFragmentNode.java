@@ -115,7 +115,7 @@ public class VariableFragmentNode extends BeanNode<IVariableFragment> {
     @Override
     public Action[] getActions(boolean context) {
         Action[] superActions = super.getActions(context);
-        ArrayList<Action> finalActions = new ArrayList<Action>();
+        ArrayList<Action> finalActions = new ArrayList<>();
         List<? extends Action> actions = Utilities.actionsForPath("Actions/VariableFragmentActions");
         finalActions.addAll(actions);
         finalActions.add(null);

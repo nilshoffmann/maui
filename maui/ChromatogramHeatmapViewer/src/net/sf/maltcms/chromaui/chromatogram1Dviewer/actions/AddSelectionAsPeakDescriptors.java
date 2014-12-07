@@ -85,9 +85,7 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
             if (obj instanceof SelectionOverlay) {
                 invokeAction(AddSelectionAsPeakDescriptors.class, (SelectionOverlay) obj);
             }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
@@ -186,8 +184,8 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
     }
 
     public static void invokeAction(Class<?> creatorClazz, SelectionOverlay so) throws NotImplementedException, IllegalArgumentException {
-        Map<IChromatogram, Set<IPeakAnnotationDescriptor>> sourceToSelection = new LinkedHashMap<IChromatogram, Set<IPeakAnnotationDescriptor>>();
-        Map<IChromatogram, IChromatogramDescriptor> chromToDescriptor = new LinkedHashMap<IChromatogram, IChromatogramDescriptor>();
+        Map<IChromatogram, Set<IPeakAnnotationDescriptor>> sourceToSelection = new LinkedHashMap<>();
+        Map<IChromatogram, IChromatogramDescriptor> chromToDescriptor = new LinkedHashMap<>();
 
         IChromAUIProject project = null;
         for (ISelection selection : so.getMouseClickSelection()) {
@@ -197,8 +195,8 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
     }
 
     public static void invokeHoverAction(Class<?> creatorClazz, ISelection selection) throws NotImplementedException, IllegalArgumentException {
-        Map<IChromatogram, Set<IPeakAnnotationDescriptor>> sourceToSelection = new LinkedHashMap<IChromatogram, Set<IPeakAnnotationDescriptor>>();
-        Map<IChromatogram, IChromatogramDescriptor> chromToDescriptor = new LinkedHashMap<IChromatogram, IChromatogramDescriptor>();
+        Map<IChromatogram, Set<IPeakAnnotationDescriptor>> sourceToSelection = new LinkedHashMap<>();
+        Map<IChromatogram, IChromatogramDescriptor> chromToDescriptor = new LinkedHashMap<>();
 
         IChromAUIProject project = null;
         if (selection != null) {
@@ -213,7 +211,7 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
         trd.setDisplayName(creatorClazz.getSimpleName());
         for (IChromatogram chrom : sourceToSelection.keySet()) {
             DescriptorFactory.addPeakAnnotations(project,
-                    chromToDescriptor.get(chrom), new ArrayList<IPeakAnnotationDescriptor>(sourceToSelection.get(chrom)), trd);
+                    chromToDescriptor.get(chrom), new ArrayList<>(sourceToSelection.get(chrom)), trd);
         }
     }
 
@@ -241,7 +239,7 @@ public final class AddSelectionAsPeakDescriptors implements ActionListener {
                         sourceToSelection.get(source).add(pad);
                     } else {
                         IPeakAnnotationDescriptor pad = createPeakAnnotationFor(project, descr, (XYSelection) selection, 0);
-                        LinkedHashSet<IPeakAnnotationDescriptor> lhs = new LinkedHashSet<IPeakAnnotationDescriptor>();
+                        LinkedHashSet<IPeakAnnotationDescriptor> lhs = new LinkedHashSet<>();
                         lhs.add(pad);
                         sourceToSelection.put(source, lhs);
                     }

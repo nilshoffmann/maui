@@ -30,10 +30,22 @@ package net.sf.maltcms.maui.peakTableViewer;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistry;
 import de.unibielefeld.gi.kotte.laborprogramm.topComponentRegistry.api.IRegistryFactory;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.ActionMap;
+import javax.swing.JTable;
+import net.sf.maltcms.chromaui.project.api.container.PeakGroupContainer;
+import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
+import net.sf.maltcms.chromaui.ui.support.api.jtable.JTableCustomizer;
+import net.sf.maltcms.chromaui.ui.support.api.outline.ColumnDescriptor;
+import net.sf.maltcms.chromaui.ui.support.api.outline.ColumnUtilities;
 import net.sf.maltcms.maui.peakTableViewer.spi.nodes.PeakGroupDescriptorChildFactory;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -81,11 +93,6 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
     public PeakTableViewerTopComponent() {
         initComponents();
-        view = new OutlineView("Peaks of Peak Group");
-        view.setTreeSortable(true);
-        view.setPropertyColumns("shortDescription", "Short Description", "area", "Area", "cas", "CAS", "formula", "Formula", "apexTime", "Retention Time", "retentionIndex", "Retention Index");
-        view.getOutline().setRootVisible(true);
-        add(view, BorderLayout.CENTER);
         setName(NbBundle.getMessage(PeakTableViewerTopComponent.class,
                 "CTL_PeakTableViewerTopComponent"));
         setToolTipText(NbBundle.getMessage(PeakTableViewerTopComponent.class,
@@ -101,7 +108,10 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
     @Override
     public boolean requestFocusInWindow() {
-        return view.requestFocusInWindow();
+        if(view!=null) {
+            return view.requestFocusInWindow();
+        }
+        return true;
     }
 
     /**
@@ -135,7 +145,7 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
 
     private void hideSamplesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideSamplesActionPerformed
         if (peakGroupDescriptor != null) {
-            setPeakGroupDescriptor(peakGroupDescriptor, hideSamples.isSelected());
+            createNodes(peakGroupDescriptor, hideSamples.isSelected());
         }
     }//GEN-LAST:event_hideSamplesActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -148,7 +158,9 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
     @Override
     protected void componentActivated() {
         ExplorerUtils.activateActions(manager, true);
-        view.requestFocusInWindow();
+        if(view!=null) {
+            view.requestFocusInWindow();
+        }
     }
 
     @Override
@@ -209,12 +221,37 @@ public final class PeakTableViewerTopComponent extends TopComponent implements
     protected void setPeakGroupDescriptor(IPeakGroupDescriptor newPeakGroupDescriptor, boolean hideChromatogramDescriptor) {
         peakGroupDescriptor = newPeakGroupDescriptor;
         setDisplayName("Peaks for " + newPeakGroupDescriptor.getProject().getLocation().getName() + " - " + peakGroupDescriptor.getName());
-        System.out.println("Setting node factory");
+        if (view != null) {
+            remove(view);
+        }
+        view = new OutlineView("Peaks of Peak Group");
+        view.setTreeSortable(true);
+        view.setHorizontalScrollBarPolicy(OutlineView.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        view.getOutline().setRootVisible(false);
+        view.getOutline().setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+        JTableCustomizer.fitAllColumnWidth(view.getOutline());
+        add(view, BorderLayout.CENTER);
+        if (peakGroupDescriptor != null && !peakGroupDescriptor.getPeakAnnotationDescriptors().isEmpty()) {
+            ColumnUtilities utils = new ColumnUtilities();
+            List<Class> typesForColumns = new ArrayList<>();
+            List<IPeakAnnotationDescriptor> peaks = peakGroupDescriptor.getPeakAnnotationDescriptors();
+            if (!peaks.isEmpty()) {
+                typesForColumns.add(peaks.get(0).getClass());
+            }
+            Collection<ColumnDescriptor> columns = utils.getColumnDescriptorsForClasses(typesForColumns);
+            utils.addPropertyColumns(view, columns);
+            createNodes(peakGroupDescriptor, hideChromatogramDescriptor);
+            view.requestFocusInWindow();
+        }
+    }
+
+    private void createNodes(IPeakGroupDescriptor newPeakGroupDescriptor, boolean hideChromatogramDescriptor) {
+        Logger.getLogger(getClass().getName()).info("Setting node factory");
         final Lookup lkp = new ProxyLookup(Lookups.fixed(peakGroupDescriptor), newPeakGroupDescriptor.getProject().getLookup());
         PeakGroupDescriptorChildFactory childFactory = new PeakGroupDescriptorChildFactory(new ProxyLookup(newPeakGroupDescriptor.getProject().getLookup()), peakGroupDescriptor, hideChromatogramDescriptor);
         Node dn = Lookup.getDefault().lookup(INodeFactory.class).createDescriptorNode(peakGroupDescriptor, lkp);
         Node rootNode = new FilterNode(dn, Children.create(childFactory, true), lkp);
-        System.out.println("Setting root context");
+        Logger.getLogger(getClass().getName()).info("Setting root context");
         manager.setRootContext(rootNode);
     }
 

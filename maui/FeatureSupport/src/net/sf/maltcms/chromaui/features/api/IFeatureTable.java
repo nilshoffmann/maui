@@ -35,19 +35,59 @@ import org.apache.commons.math.linear.RealMatrix;
  */
 public interface IFeatureTable {
 
+    /**
+     *
+     * @param factor
+     * @return
+     */
     String getFactorName(int factor);
 
+    /**
+     *
+     * @return
+     */
     RealMatrix getMatrix();
 
+    /**
+     *
+     * @param variable
+     * @param values
+     */
     void setColumn(int variable, double[] values);
 
+    /**
+     *
+     * @param factor
+     * @param variable
+     * @param value
+     */
     void setValue(int factor, int variable, double value);
 
+    /**
+     *
+     * @param factor
+     * @param name
+     */
     void setFactorName(int factor, String name);
 
+    /**
+     *
+     * @param variable
+     * @param name
+     */
     void setVariableName(int variable, String name);
 
+    /**
+     *
+     * @param variable
+     * @return
+     */
     String getVariableName(int variable);
 
+    /**
+     *
+     * @param factor
+     * @param values
+     */
     void setRow(int factor, double[] values);
 }

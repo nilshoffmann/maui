@@ -28,6 +28,8 @@
 package net.sf.maltcms.chromaui.project.spi.project;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.spi.DBProjectFactory;
 import org.netbeans.spi.project.ProjectFactory;
 import org.netbeans.spi.project.ProjectState;
@@ -54,7 +56,7 @@ public class ChromAUIProjectFactory implements ProjectFactory {
     public org.netbeans.api.project.Project loadProject(FileObject fo, ProjectState ps) throws IOException {
 
         if (isProject(fo)) {
-            System.out.println("Loading project from " + fo.getPath());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Loading project from {0}", fo.getPath());
             ChromAUIProject cp = new ChromAUIProject();
             cp.setState(ps);
             cp.activate(fo.getFileObject(DBProjectFactory.PROJECT_FILE).toURI().toURL());

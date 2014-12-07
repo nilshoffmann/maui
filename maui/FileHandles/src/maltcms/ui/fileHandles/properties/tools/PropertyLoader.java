@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.TableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -45,23 +47,34 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class PropertyLoader {
 
+    /**
+     *
+     */
     public static final String REQUIRED_VARS = "Required Variables";
+
+    /**
+     *
+     */
     public static final String OPTIONAL_VARS = "Optional Variables";
+
+    /**
+     *
+     */
     public static final String PROVIDED_VARS = "Provided Variables";
 
     /**
      * @param optionValues
      */
     public static String[] getListServiceProviders(String optionValue) {
-        List<String> ret = new ArrayList<String>();
+        List<String> ret = new ArrayList<>();
         Class<?> c;
         try {
             c = Class.forName(optionValue);
-            System.out.println("Loading service: " + c.getName());
+            Logger.getLogger(PropertyLoader.class.getName()).log(Level.INFO, "Loading service: {0}", c.getName());
             ServiceLoader<?> sl = ServiceLoader.load(c);
             for (Object o : sl) {
                 if (o != null) {
@@ -70,10 +83,8 @@ public class PropertyLoader {
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (Exception e) {
+        } catch (Exception | Error e) {
             e.printStackTrace();
-        } catch (Error err) {
-            err.printStackTrace();
         }
 
         if (ret.size() == 0) {
@@ -119,69 +130,82 @@ public class PropertyLoader {
     /**
      * @param optionValues
      */
-    public static Tuple2D<Configuration, Configuration> handleShowProperties(Object optionValues, Class loader) {
+    public static Tuple2D<Configuration, Configuration> handleShowProperties(Object optionValues, ClassLoader classLoader) {
+        Class<?> c = optionValues.getClass();
+        return loadPropertiesFromClass(c);
+    }
+    
+     public static Tuple2D<Configuration, Configuration> handleShowProperties(Object optionValues) {
+        Class<?> c = optionValues.getClass();
+        return loadPropertiesFromClass(c);
+    }
+
+    private static Tuple2D<Configuration, Configuration> loadPropertiesFromClass(Class<?> c) {
         PropertiesConfiguration ret = new PropertiesConfiguration();
         PropertiesConfiguration var = new PropertiesConfiguration();
-        Class<?> c;
         String requiredVariables = "";
         String optionalVariables = "";
         String providedVariables = "";
-        try {
-            c = loader.getClassLoader().loadClass((String) optionValues);
-            Collection<String> reqVars = AnnotationInspector.getRequiredVariables(c);
-            for (String rv : reqVars) {
-                requiredVariables += rv + ",";
-            }
-            if (requiredVariables.length() > 0) {
-                requiredVariables = requiredVariables.substring(0, requiredVariables.length() - 1);
-            }
-            var.setProperty(REQUIRED_VARS, requiredVariables);
+        Collection<String> reqVars = AnnotationInspector.getRequiredVariables(c);
+        for (String rv : reqVars) {
+            requiredVariables += rv + ",";
+        }
+        if (requiredVariables.length() > 0) {
+            requiredVariables = requiredVariables.substring(0, requiredVariables.length() - 1);
+        }
+        var.setProperty(REQUIRED_VARS, requiredVariables);
 
-            Collection<String> optVars = AnnotationInspector.getOptionalRequiredVariables(c);
-            for (String rv : optVars) {
-                optionalVariables += rv + ",";
-            }
-            if (optionalVariables.length() > 0) {
-                optionalVariables = optionalVariables.substring(0, optionalVariables.length() - 1);
-            }
-            var.setProperty(OPTIONAL_VARS, optionalVariables);
+        Collection<String> optVars = AnnotationInspector.getOptionalRequiredVariables(c);
+        for (String rv : optVars) {
+            optionalVariables += rv + ",";
+        }
+        if (optionalVariables.length() > 0) {
+            optionalVariables = optionalVariables.substring(0, optionalVariables.length() - 1);
+        }
+        var.setProperty(OPTIONAL_VARS, optionalVariables);
 
-            Collection<String> provVars = AnnotationInspector.getProvidedVariables(c);
-            for (String rv : provVars) {
-                providedVariables += rv + ",";
-            }
-            if (providedVariables.length() > 0) {
-                providedVariables = providedVariables.substring(0, providedVariables.length() - 1);
-            }
-            var.setProperty(PROVIDED_VARS, providedVariables);
+        Collection<String> provVars = AnnotationInspector.getProvidedVariables(c);
+        for (String rv : provVars) {
+            providedVariables += rv + ",";
+        }
+        if (providedVariables.length() > 0) {
+            providedVariables = providedVariables.substring(0, providedVariables.length() - 1);
+        }
+        var.setProperty(PROVIDED_VARS, providedVariables);
 
-            Collection<String> keys = AnnotationInspector.getRequiredConfigKeys(c);
-            if (!keys.isEmpty()) {
-                for (String key : keys) {
-                    ret.setProperty(key, AnnotationInspector.getDefaultValueFor(c, key));
-                }
+        Collection<String> keys = AnnotationInspector.getRequiredConfigKeys(c);
+        if (!keys.isEmpty()) {
+            for (String key : keys) {
+                ret.setProperty(key, AnnotationInspector.getDefaultValueFor(c, key));
             }
-        } catch (ClassNotFoundException ex) {
-            //Exceptions.printStackTrace(ex);
-            return null;
         }
         return new Tuple2D<Configuration, Configuration>(ret, var);
     }
 
+    /**
+     *
+     * @param filename
+     * @return
+     */
     public static Configuration getHash(String filename) {
         try {
 //            Maltcms m = Maltcms.getInstance();
-            System.out.println("Loading PIPELINE from: " + filename);
+            Logger.getLogger(PropertyLoader.class.getName()).log(Level.INFO, "Loading PIPELINE from: {0}", filename);
             return new PropertiesConfiguration(filename);
         } catch (ConfigurationException ex) {
             Exceptions.printStackTrace(ex);
         }
-        System.out.println("Returning empty configuration!");
+        Logger.getLogger(PropertyLoader.class.getName()).info("Returning empty configuration!");
         return new PropertiesConfiguration();
     }
 
+    /**
+     *
+     * @param cfg
+     * @return
+     */
     public static Map<String, Object> asHash(Configuration cfg) {
-        Map<String, Object> hash = new HashMap<String, Object>();
+        Map<String, Object> hash = new HashMap<>();
         Iterator i = cfg.getKeys();
         String key;
         while (i.hasNext()) {
@@ -192,17 +216,28 @@ public class PropertyLoader {
         return hash;
     }
 
+    /**
+     *
+     * @param filename
+     * @param c
+     * @return
+     */
     public static TableModel getModel(String filename, Class<?> c) {
-        System.out.println("Getting model for: " + filename);
-        Vector<String> header = new Vector<String>();
+        Logger.getLogger(PropertyLoader.class.getName()).log(Level.INFO, "Getting model for: {0}", filename);
+        Vector<String> header = new Vector<>();
         header.add("Key");
         header.add("Value");
         return new HashTableModel(header, PropertyLoader.asHash(PropertyLoader.getHash(filename)), c);
     }
 
+    /**
+     *
+     * @param filename
+     * @return
+     */
     public static TableModel getModel(String filename) {
-        System.out.println("Getting model for: " + filename);
-        Vector<String> header = new Vector<String>();
+        Logger.getLogger(PropertyLoader.class.getName()).log(Level.INFO, "Getting model for: {0}", filename);
+        Vector<String> header = new Vector<>();
         header.add("Key");
         header.add("Value");
         return new HashTableModel(header, PropertyLoader.asHash(PropertyLoader.getHash(filename)), null);

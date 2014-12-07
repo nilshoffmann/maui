@@ -68,7 +68,7 @@ public class Chromatogram2DViewerLoaderTask extends AProgressAwareRunnable {
         try {
             progressHandle.start();
             progressHandle.progress("Creating dataset");
-            List<INamedElementProvider<? extends IChromatogram2D, ? extends IScan2D>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram2D, ? extends IScan2D>>();
+            List<INamedElementProvider<? extends IChromatogram2D, ? extends IScan2D>> providers = new ArrayList<>();
             if (!(chromatogram.getChromatogram() instanceof IChromatogram2D)) {
                 throw new IllegalArgumentException("Action only of 2D chromatograms!");
             }

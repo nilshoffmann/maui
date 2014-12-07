@@ -135,11 +135,11 @@ public final class Chromatogram1DViewTopComponent extends TopComponent implement
                             ic.add(project);
                         }
                         dataset = ds;
-                        annotations = new ArrayList<XYAnnotation>(0);
+                        annotations = new ArrayList<>(0);
                         final DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
                         for (IChromatogramDescriptor descr : filename) {
                             ic.add(descr);
-                            List<ChartOverlay> overlays = new LinkedList<ChartOverlay>();
+                            List<ChartOverlay> overlays = new LinkedList<>();
                             if (project != null) {
                                 Collection<Peak1DContainer> peaks = project.getPeaks(descr);
                                 for (Peak1DContainer container : peaks) {

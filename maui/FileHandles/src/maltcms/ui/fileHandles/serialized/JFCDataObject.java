@@ -38,18 +38,37 @@ import org.openide.nodes.Node;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class JFCDataObject extends MultiDataObject {
 
+    /**
+     *
+     * @param pf
+     * @param loader
+     * @throws DataObjectExistsException
+     * @throws IOException
+     */
     public JFCDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
 
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected Node createNodeDelegate() {
         return new DataNode(this, Children.LEAF, getLookup());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return getCookieSet().getLookup();

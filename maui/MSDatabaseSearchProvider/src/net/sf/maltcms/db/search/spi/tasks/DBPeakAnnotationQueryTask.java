@@ -31,8 +31,10 @@ import com.db4o.query.Query;
 import cross.datastructures.tools.EvalTools;
 import net.sf.maltcms.db.search.api.QueryResultList;
 import cross.datastructures.tuple.Tuple2D;
+import cross.exception.ConstraintViolationException;
 import java.io.File;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +44,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import maltcms.datastructures.ms.IMetabolite;
@@ -49,6 +53,7 @@ import maltcms.datastructures.ms.IScan;
 import maltcms.datastructures.ms.Scan1D;
 import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
+import net.sf.maltcms.chromaui.db.api.exceptions.AuthenticationException;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
@@ -77,23 +82,23 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
 
     @Override
     public QueryResultList<IPeakAnnotationDescriptor> call() throws Exception {
-        Map<URL, ICrudProvider> dbMap = new HashMap<URL, ICrudProvider>();
+        Map<URL, ICrudProvider> dbMap = new HashMap<>();
         try {
             getProgressHandle().start(metaboliteDatabaseQueryInputs.size());
             int counter = 1;
-            QueryResultList<IPeakAnnotationDescriptor> result = new QueryResultList<IPeakAnnotationDescriptor>();
+            QueryResultList<IPeakAnnotationDescriptor> result = new QueryResultList<>();
             List<Double> maskedMasses = databaseDescriptor.getMaskedMasses();
             for (IQueryInput<IPeakAnnotationDescriptor> metaboliteDatabaseQueryInput : metaboliteDatabaseQueryInputs) {
                 //System.out.println("Processing query input "+counter+"/"+metaboliteDatabaseQueryInputs.size());
                 if (isCancel()) {
-                    return new QueryResultList<IPeakAnnotationDescriptor>();
+                    return new QueryResultList<>();
                 }
                 EvalTools.notNull(metaboliteDatabaseQueryInput, this);
                 EvalTools.notNull(metaboliteDatabaseQueryInput.getScan(), this);
                 EvalTools.notNull(metaboliteDatabaseQueryInput.getScan().getChromatogramDescriptor(), this);
                 IPeakAnnotationDescriptor descr = metaboliteDatabaseQueryInput.getScan();
                 String peakString = "Peak at " + String.format("%.2f", metaboliteDatabaseQueryInput.getScan().getApexTime()) + " child of " + descr.getChromatogramDescriptor().getDisplayName();
-                System.out.println(peakString);
+                Logger.getLogger(getClass().getName()).info(peakString);
                 getProgressHandle().progress(peakString, counter++);
                 //System.out.println("Processing peak "+descr.getDisplayName());
                 AMetabolitePredicate amp = predicate.copy();
@@ -111,9 +116,9 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
                 //use ri for query
                 if (ridb != null) {
                     ri = ridb.getTemperatureProgrammedKovatsIndex(scan.getScanAcquisitionTime());
-                    System.out.println("RI database given! Searching in RI window from " + (ri - riWindow) + " to " + (ri + riWindow));
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "RI database given! Searching in RI window from {0} to {1}", new Object[]{ri - riWindow, ri + riWindow});
                 } else {
-                    System.out.println("No RI database given!");
+                    Logger.getLogger(getClass().getName()).info("No RI database given!");
                 }
                 final double riValue = ri;
                 ICrudProvider oc = null;
@@ -133,18 +138,18 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
                     query.descend("ri").constrain(ri + riWindow).smaller().and(query.descend("ri").constrain(ri - riWindow).greater());
                     candidates = query.execute();
                 } else {
-                    System.out.println("Using complete query!");
+                    Logger.getLogger(getClass().getName()).info("Using complete query!");
                     candidates = session.retrieve(IMetabolite.class);
                 }
-                System.out.println("Received " + candidates.size() + " for query!");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Received {0} for query!", candidates.size());
                 for (IMetabolite met : candidates) {
                     if (isCancel()) {
-                        return new QueryResultList<IPeakAnnotationDescriptor>();
+                        return new QueryResultList<>();
                     }
                     queryPredicate.match(met);
                 }
-                Map<IMetabolite, Double> resultMap = new LinkedHashMap<IMetabolite, Double>();
-                List<Tuple2D<Double, IMetabolite>> c = new LinkedList<Tuple2D<Double, IMetabolite>>(queryPredicate.getMetabolites());
+                Map<IMetabolite, Double> resultMap = new LinkedHashMap<>();
+                List<Tuple2D<Double, IMetabolite>> c = new LinkedList<>(queryPredicate.getMetabolites());
                 if (!Double.isNaN(riValue)) {
                     Collections.sort(c, new Comparator<Tuple2D<Double, IMetabolite>>() {
                         @Override
@@ -162,16 +167,16 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
                 }
                 for (Tuple2D<Double, IMetabolite> tpl : c) {
                     if (isCancel()) {
-                        return new QueryResultList<IPeakAnnotationDescriptor>();
+                        return new QueryResultList<>();
                     }
 //                    if (tpl.getFirst() >= matchThreshold) {
                     resultMap.put(tpl.getSecond(), tpl.getFirst());
 //                    }
                 }
-                Map<IMetabolite, Double> riMap = new LinkedHashMap<IMetabolite, Double>();
+                Map<IMetabolite, Double> riMap = new LinkedHashMap<>();
                 for (Tuple2D<Double, IMetabolite> tpl : c) {
                     if (isCancel()) {
-                        return new QueryResultList<IPeakAnnotationDescriptor>();
+                        return new QueryResultList<>();
                     }
 //                    if (tpl.getFirst() >= matchThreshold) {
                     riMap.put(tpl.getSecond(), tpl.getSecond().
@@ -179,8 +184,8 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
 //                    }
 
                 }
-                System.out.println("Retaining " + resultMap.size() + " results with score of at least: " + matchThreshold);
-                result.add(new QueryResult<IPeakAnnotationDescriptor>(descr, ri,
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Retaining {0} results with score of at least: {1}", new Object[]{resultMap.size(), matchThreshold});
+                result.add(new QueryResult<>(descr, ri,
                         resultMap, riMap,
                         databaseDescriptor));
                 session.close();
@@ -188,7 +193,7 @@ public class DBPeakAnnotationQueryTask extends AProgressAwareCallable<QueryResul
             }
 
             return result;
-        } catch (Exception e) {
+        } catch (ConstraintViolationException | MalformedURLException | AuthenticationException e) {
             throw e;
         } finally {
             for (URL dbURL : dbMap.keySet()) {

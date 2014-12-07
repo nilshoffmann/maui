@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 import maltcms.datastructures.ms.IChromatogram1D;
@@ -59,7 +60,6 @@ import org.openide.util.lookup.InstanceContent;
 @ActionRegistration(displayName = "#CTL_RawChromatogram1DViewOpenAction")
 @ActionReferences({
     @ActionReference(path = "Loaders/application/x-cdf/Actions", position = 0),
-    @ActionReference(path = "Actions/ContainerNodeActions/ChromatogramNode/Open", position = 0)
 })
 @Messages("CTL_RawChromatogram1DViewOpenAction=Open Raw in Chromatogram Viewer")
 public final class RawChromatogram1DViewOpenAction implements ActionListener {
@@ -96,9 +96,9 @@ public final class RawChromatogram1DViewOpenAction implements ActionListener {
                 boolean is1D = true;
                 IChromAUIProject project = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
                 if (is1D) {
-                    System.out.println("Creating 1D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
-                    final List<IChromatogramDescriptor> chroms = new ArrayList<IChromatogramDescriptor>();
+                    Logger.getLogger(getClass().getName()).info("Creating 1D data providers and dataset.");
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
+                    final List<IChromatogramDescriptor> chroms = new ArrayList<>();
                     InstanceContent ic = new InstanceContent();
                     for (CDFDataObject chrom : chromatograms) {
                         IChromatogramDescriptor descr = DescriptorFactory.newChromatogramDescriptor();
@@ -125,9 +125,9 @@ public final class RawChromatogram1DViewOpenAction implements ActionListener {
                         }
                     });
                 } else {
-                    System.out.println("Creating 2D data providers and dataset.");
-                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>>(chromatograms.size());
-                    final List<IChromatogramDescriptor> chroms = new ArrayList<IChromatogramDescriptor>();
+                    Logger.getLogger(getClass().getName()).info("Creating 2D data providers and dataset.");
+                    List<INamedElementProvider<? extends IChromatogram1D, ? extends IScan>> providers = new ArrayList<>(chromatograms.size());
+                    final List<IChromatogramDescriptor> chroms = new ArrayList<>();
                     InstanceContent ic = new InstanceContent();
                     for (CDFDataObject chrom : chromatograms) {
                         IChromatogramDescriptor descr = DescriptorFactory.newChromatogramDescriptor();

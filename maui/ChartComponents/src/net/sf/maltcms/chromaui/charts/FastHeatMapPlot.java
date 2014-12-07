@@ -56,6 +56,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.jfree.chart.axis.AxisSpace;
@@ -189,6 +191,18 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         // setDataImage(bi,new Range(0,width),new Range(0,height));
     }
 
+    /**
+     *
+     * @param xyz
+     * @param sl
+     * @param spm
+     * @param xybr
+     * @param activeGraphics
+     * @param dataArea
+     * @param info
+     * @param crosshairState
+     * @return
+     */
     public BufferedImage prepareData(final XYZDataset xyz, final int sl,
             final int spm, final XYBlockRenderer xybr, Graphics2D activeGraphics, Rectangle2D dataArea,
             PlotRenderingInfo info, CrosshairState crosshairState) {
@@ -207,7 +221,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             ((GradientPaintScale) ps).setUpperBound(maxz);
             ((GradientPaintScale) ps).setLowerBound(minz);
         }
-        System.out.println("Finding min and max data took" + (System.currentTimeMillis() - start) + "ms");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Finding min and max data took{0}ms", (System.currentTimeMillis() - start));
 
 //        VolatileImage bi = null;
 //        if (bi == null) {
@@ -267,8 +281,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             }
         }
 
-        System.out.println("Creating image and drawing items took "
-                + (System.currentTimeMillis() - start) + "ms");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Creating image and drawing items took {0}ms", (System.currentTimeMillis() - start));
 
         return bi;
     }
@@ -322,6 +335,13 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
 
     }
 
+    /**
+     *
+     * @param width
+     * @param height
+     * @param transparency
+     * @return
+     */
     public BufferedImage createCompatibleImage(int width, int height, int transparency) {
         GraphicsConfiguration gc = getGraphicsConfiguration();
         gc.getImageCapabilities().isAccelerated();
@@ -329,20 +349,37 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
 
     }
 
+    /**
+     *
+     * @param width
+     * @param height
+     * @param transparency
+     * @return
+     */
     public VolatileImage createCompatibleVolatileImage(int width, int height, int transparency) {
         GraphicsConfiguration gc = getGraphicsConfiguration();
         VolatileImage img = gc.createCompatibleVolatileImage(width, height, transparency);
-        System.out.println("Using accelerated images: " + gc.getImageCapabilities().isAccelerated());
-        System.out.println("Using true volatile images: " + gc.getImageCapabilities().isTrueVolatile());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using accelerated images: {0}", gc.getImageCapabilities().isAccelerated());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Using true volatile images: {0}", gc.getImageCapabilities().isTrueVolatile());
         return img;
     }
 
+    /**
+     *
+     * @return
+     */
     public GraphicsConfiguration getGraphicsConfiguration() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gs = ge.getDefaultScreenDevice();
         return gs.getDefaultConfiguration();
     }
 
+    /**
+     *
+     * @param bi
+     * @param xrange
+     * @param yrange
+     */
     public void setDataImage(BufferedImage bi, Range xrange, Range yrange) {
         // AffineTransformOp at = new
         // AffineTransformOp(AffineTransform.getScaleInstance(1,
@@ -357,6 +394,9 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         fireChangeEvent();
     }
 
+    /**
+     *
+     */
     public void resetDataImage() {
         this.dataImage = null;
         this.offscreenBuffer = null;
@@ -381,7 +421,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         if (rangeAxis == null) {
             throw new IllegalArgumentException("Null 'rangeAxis' argument.");
         }
-        System.out.println("Setting up axes");
+        Logger.getLogger(getClass().getName()).info("Setting up axes");
         this.domainAxis = domainAxis;
         this.domainAxis.setPlot(this);
         this.domainAxis.addChangeListener(this);
@@ -424,6 +464,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         return super.getOrientation();
     }
 
+    /**
+     *
+     * @param or
+     */
     @Override
     public void setOrientation(PlotOrientation or) {
         super.setOrientation(or);
@@ -436,6 +480,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #setDomainAxis(ValueAxis)
      */
+    @Override
     public ValueAxis getDomainAxis() {
         return this.domainAxis;
     }
@@ -450,6 +495,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #getDomainAxis()
      */
+    @Override
     public void setDomainAxis(ValueAxis axis) {
         // if (axis == null) {
         // throw new IllegalArgumentException("Null 'axis' argument.");
@@ -465,6 +511,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #setRangeAxis(ValueAxis)
      */
+    @Override
     public ValueAxis getRangeAxis() {
         return this.rangeAxis;
     }
@@ -479,6 +526,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #getRangeAxis()
      */
+    @Override
     public void setRangeAxis(ValueAxis axis) {
         // if (axis == null) {
         // throw new IllegalArgumentException("Null 'axis' argument.");
@@ -523,6 +571,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @see #setDomainGridlinesVisible(boolean)
      * @see #setDomainGridlinePaint(Paint)
      */
+    @Override
     public boolean isDomainGridlinesVisible() {
         return this.domainGridlinesVisible;
     }
@@ -536,6 +585,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #getDomainGridlinePaint()
      */
+    @Override
     public void setDomainGridlinesVisible(boolean visible) {
         if (this.domainGridlinesVisible != visible) {
             this.domainGridlinesVisible = visible;
@@ -551,6 +601,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #setDomainGridlineStroke(Stroke)
      */
+    @Override
     public Stroke getDomainGridlineStroke() {
         return this.domainGridlineStroke;
     }
@@ -563,6 +614,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #getDomainGridlineStroke()
      */
+    @Override
     public void setDomainGridlineStroke(Stroke stroke) {
         if (stroke == null) {
             throw new IllegalArgumentException("Null 'stroke' argument.");
@@ -579,6 +631,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #setDomainGridlinePaint(Paint)
      */
+    @Override
     public Paint getDomainGridlinePaint() {
         return this.domainGridlinePaint;
     }
@@ -591,6 +644,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #getDomainGridlinePaint()
      */
+    @Override
     public void setDomainGridlinePaint(Paint paint) {
         if (paint == null) {
             throw new IllegalArgumentException("Null 'paint' argument.");
@@ -606,6 +660,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #setRangeGridlinesVisible(boolean)
      */
+    @Override
     public boolean isRangeGridlinesVisible() {
         return this.rangeGridlinesVisible;
     }
@@ -619,6 +674,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #isRangeGridlinesVisible()
      */
+    @Override
     public void setRangeGridlinesVisible(boolean visible) {
         if (this.rangeGridlinesVisible != visible) {
             this.rangeGridlinesVisible = visible;
@@ -634,6 +690,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #setRangeGridlineStroke(Stroke)
      */
+    @Override
     public Stroke getRangeGridlineStroke() {
         return this.rangeGridlineStroke;
     }
@@ -646,6 +703,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #getRangeGridlineStroke()
      */
+    @Override
     public void setRangeGridlineStroke(Stroke stroke) {
         if (stroke == null) {
             throw new IllegalArgumentException("Null 'stroke' argument.");
@@ -662,6 +720,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #setRangeGridlinePaint(Paint)
      */
+    @Override
     public Paint getRangeGridlinePaint() {
         return this.rangeGridlinePaint;
     }
@@ -674,6 +733,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @see #getRangeGridlinePaint()
      */
+    @Override
     public void setRangeGridlinePaint(Paint paint) {
         if (paint == null) {
             throw new IllegalArgumentException("Null 'paint' argument.");
@@ -694,6 +754,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @param info collects chart drawing information (<code>null</code>
      * permitted).
      */
+    @Override
     public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor,
             PlotState parentState, PlotRenderingInfo info) {
 
@@ -803,7 +864,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         // double rangeMin = this.rangeAxis.getLowerBound();
         // double rangeLength = this.rangeAxis.getUpperBound() - rangeMin;
         if (this.dataImage != null) {
-            System.out.println("Drawing data image");
+            Logger.getLogger(getClass().getName()).info("Drawing data image");
 
             //DATA SPACE
             // System.out.println("Domain axis lower bound: "+this.domainAxis.getLowerBound());
@@ -814,13 +875,13 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             double yub = this.rangeAxis.getUpperBound();
             //construct region of interest for data in view
             Rectangle2D.Double roi = new Rectangle2D.Double(xlb, ylb, xub - xlb + 1, yub - ylb + 1);
-            System.out.println("ROI: " + roi);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "ROI: {0}", roi);
             //construct bounding rectangle of data
             Rectangle2D.Double imgSpace = new Rectangle2D.Double(0, 0, this.dataImage.getWidth(), this.dataImage.getHeight());
-            System.out.println("IMG Space: " + imgSpace);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "IMG Space: {0}", imgSpace);
             //construct intersection of both, this is the area of the data, we need to render
             Rectangle2D sourceCoordinates = roi.createIntersection(imgSpace);
-            System.out.println("Projecting from: " + sourceCoordinates);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Projecting from: {0}", sourceCoordinates);
             //VIEW SPACE
             // define mapping coordinates from data domain to view domain
             double xlow = this.domainAxis.valueToJava2D(this.domainAxis.getLowerBound(), dataArea, RectangleEdge.BOTTOM);
@@ -892,6 +953,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @param dataArea the data area.
      * @param ticks the ticks.
      */
+    @Override
     protected void drawDomainGridlines(Graphics2D g2, Rectangle2D dataArea,
             List ticks) {
 
@@ -918,6 +980,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @param dataArea the data area.
      * @param ticks the ticks.
      */
+    @Override
     protected void drawRangeGridlines(Graphics2D g2, Rectangle2D dataArea,
             List ticks) {
 
@@ -946,6 +1009,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @return The range (possibly <code>null</code>).
      */
+    @Override
     public Range getDataRange(ValueAxis axis) {
         Range result = null;
         if (axis == this.domainAxis) {
@@ -1025,6 +1089,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @param info the plot rendering info.
      * @param source the source point.
      */
+    @Override
     public void zoomDomainAxes(double factor, PlotRenderingInfo info,
             Point2D source) {
         this.domainAxis.resizeRange(factor);
@@ -1042,6 +1107,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.7
      */
+    @Override
     public void zoomDomainAxes(double factor, PlotRenderingInfo info,
             Point2D source, boolean useAnchor) {
 
@@ -1066,6 +1132,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @param info the plot rendering info.
      * @param source the source point.
      */
+    @Override
     public void zoomDomainAxes(double lowerPercent, double upperPercent,
             PlotRenderingInfo info, Point2D source) {
         this.domainAxis.zoomRange(lowerPercent, upperPercent);
@@ -1078,6 +1145,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @param info the plot rendering info.
      * @param source the source point.
      */
+    @Override
     public void zoomRangeAxes(double factor, PlotRenderingInfo info,
             Point2D source) {
         this.rangeAxis.resizeRange(factor);
@@ -1095,6 +1163,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.7
      */
+    @Override
     public void zoomRangeAxes(double factor, PlotRenderingInfo info,
             Point2D source, boolean useAnchor) {
 
@@ -1119,6 +1188,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @param info the plot rendering info.
      * @param source the source point.
      */
+    @Override
     public void zoomRangeAxes(double lowerPercent, double upperPercent,
             PlotRenderingInfo info, Point2D source) {
         this.rangeAxis.zoomRange(lowerPercent, upperPercent);
@@ -1129,6 +1199,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @return A boolean.
      */
+    @Override
     public boolean isDomainZoomable() {
         return true;
     }
@@ -1138,6 +1209,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @return A boolean.
      */
+    @Override
     public boolean isRangeZoomable() {
         return true;
     }
@@ -1150,6 +1222,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.13
      */
+    @Override
     public boolean isDomainPannable() {
         return this.domainPannable;
     }
@@ -1162,6 +1235,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.13
      */
+    @Override
     public void setDomainPannable(boolean pannable) {
         this.domainPannable = pannable;
     }
@@ -1174,6 +1248,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.13
      */
+    @Override
     public boolean isRangePannable() {
         return this.rangePannable;
     }
@@ -1186,10 +1261,16 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.13
      */
+    @Override
     public void setRangePannable(boolean pannable) {
         this.rangePannable = pannable;
     }
 
+    /**
+     *
+     * @param event
+     */
+    @Override
     public void rendererChanged(RendererChangeEvent event) {
         super.rendererChanged(event);
         this.dataImage = null;
@@ -1205,6 +1286,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.13
      */
+    @Override
     public void panDomainAxes(double percent, PlotRenderingInfo info,
             Point2D source) {
         if (!isDomainPannable() || this.domainAxis == null) {
@@ -1228,6 +1310,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @since 1.0.13
      */
+    @Override
     public void panRangeAxes(double percent, PlotRenderingInfo info,
             Point2D source) {
         if (!isRangePannable() || this.rangeAxis == null) {
@@ -1251,6 +1334,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      *
      * @return A boolean.
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -1313,6 +1397,7 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
      * @throws CloneNotSupportedException if some component of the plot does not
      * support cloning.
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
         // FastHeatmapPlot clone = (FastHeatmapPlot) super.clone();
@@ -1381,6 +1466,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         this.dataImage = ImageIO.read(stream);
     }
 
+    /**
+     *
+     * @param t
+     */
     public void setThresholdCutOff(int t) {
         this.threshholdCutOff = t;
         if (getRenderer() instanceof XYBlockRenderer) {
@@ -1397,6 +1486,10 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getThresholdCutOff() {
         return this.threshholdCutOff;
     }

@@ -74,6 +74,9 @@ public final class DatabasePeakAdditionPanel extends javax.swing.JPanel {
         return riDbModel;
     }
 
+    /**
+     *
+     */
     public void updateView() {
         if (project != null) {
             if (listModel == null) {
@@ -91,6 +94,10 @@ public final class DatabasePeakAdditionPanel extends javax.swing.JPanel {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public IDatabaseDescriptor getSelectedDatabase() {
         Object descriptor = jList1.getSelectedValue();
         return (IDatabaseDescriptor) descriptor;

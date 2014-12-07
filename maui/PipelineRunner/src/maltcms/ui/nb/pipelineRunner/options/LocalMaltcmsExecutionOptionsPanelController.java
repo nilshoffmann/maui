@@ -75,7 +75,7 @@ public final class LocalMaltcmsExecutionOptionsPanelController extends OptionsPa
 
     @Override
     public HelpCtx getHelpCtx() {
-        return null; // new HelpCtx("...ID") if you have a help set
+        return new HelpCtx("maltcms.ui.nb.pipelineRunner.about");
     }
 
     @Override

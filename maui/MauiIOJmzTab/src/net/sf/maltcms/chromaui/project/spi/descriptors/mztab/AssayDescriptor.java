@@ -38,17 +38,33 @@ import uk.ac.ebi.pride.jmztab.model.MsRun;
 import uk.ac.ebi.pride.jmztab.model.Param;
 import uk.ac.ebi.pride.jmztab.model.Sample;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_ASSAY = "assay";
+    private static final long serialVersionUID = 4773404413883853123L;
 
     private Assay assay;
 
+    /**
+     *
+     * @return
+     */
     public Assay getAssay() {
         activate(ActivationPurpose.READ);
         return assay;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setAssay(Assay element) {
         activate(ActivationPurpose.WRITE);
         Assay old = this.assay;
@@ -59,54 +75,109 @@ public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescripto
         getPropertyChangeSupport().firePropertyChange(PROP_ASSAY, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getElementId() {
         return getAssay().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(Integer id) {
         getAssay().setId(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public Param getQuantificationReagent() {
         return getAssay().getQuantificationReagent();
     }
 
+    /**
+     *
+     * @return
+     */
     public Sample getSample() {
         return getAssay().getSample();
     }
 
+    /**
+     *
+     * @return
+     */
     public MsRun getMsRun() {
         return getAssay().getMsRun();
     }
 
+    /**
+     *
+     * @return
+     */
     public SortedMap<Integer, AssayQuantificationMod> getQuantificationModMap() {
         return getAssay().getQuantificationModMap();
     }
 
+    /**
+     *
+     * @param quantificationReagent
+     */
     public void setQuantificationReagent(Param quantificationReagent) {
         getAssay().setQuantificationReagent(quantificationReagent);
     }
 
+    /**
+     *
+     * @param sample
+     */
     public void setSample(Sample sample) {
         getAssay().setSample(sample);
     }
 
+    /**
+     *
+     * @param msRun
+     */
     public void setMsRun(MsRun msRun) {
         getAssay().setMsRun(msRun);
     }
 
+    /**
+     *
+     * @param mod
+     */
     public void addQuantificationMod(AssayQuantificationMod mod) {
         getAssay().addQuantificationMod(mod);
     }
 
+    /**
+     *
+     * @param id
+     * @param param
+     */
     public void addQuantificationModParam(Integer id, Param param) {
         getAssay().addQuantificationModParam(id, param);
     }
 
+    /**
+     *
+     * @param id
+     * @param site
+     */
     public void addQuantificationModSite(Integer id, String site) {
         getAssay().addQuantificationModSite(id, site);
     }
 
+    /**
+     *
+     * @param id
+     * @param position
+     */
     public void addQuantificationModPosition(Integer id, String position) {
         getAssay().addQuantificationModPosition(id, position);
     }
@@ -116,10 +187,18 @@ public class AssayDescriptor extends ABasicDescriptor implements IMzTabDescripto
         return getAssay().toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public MetadataElement getElement() {
         return getAssay().getElement();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getReference() {
         return getAssay().getReference();
     }

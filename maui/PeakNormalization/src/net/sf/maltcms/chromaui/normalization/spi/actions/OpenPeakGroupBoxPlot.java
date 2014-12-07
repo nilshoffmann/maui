@@ -34,6 +34,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -98,7 +99,7 @@ public final class OpenPeakGroupBoxPlot implements ActionListener {
             pgbpt.open();
             pgbpt.requestActive();
         } else {
-            System.err.println("No IChromAUI project is in lookup!");
+            Logger.getLogger(getClass().getName()).warning("No IChromAUI project is in lookup!");
         }
     }
 }

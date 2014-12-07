@@ -34,7 +34,15 @@ package net.sf.maltcms.chromaui.groovy.api;
  */
 public interface GroovyScript {
 
+    /**
+     *
+     * @return
+     */
     public String getName();
 
+    /**
+     *
+     * @return
+     */
     public String getCategory();
 }

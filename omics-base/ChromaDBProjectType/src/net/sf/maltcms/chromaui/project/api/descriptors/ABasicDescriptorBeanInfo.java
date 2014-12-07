@@ -60,12 +60,22 @@ public class ABasicDescriptorBeanInfo extends SimpleBeanInfo {
     
         try {
             properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor.class, "getDate", null ); // NOI18N
+            properties[PROPERTY_date].setDisplayName ( "Date" );
+            properties[PROPERTY_date].setShortDescription ( "The date when this descriptor was created" );
             properties[PROPERTY_date].setPropertyEditorClass ( net.sf.maltcms.chromaui.project.api.beans.DatePropertyEditor.class );
             properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
+            properties[PROPERTY_displayName].setDisplayName ( "Display Name" );
+            properties[PROPERTY_displayName].setShortDescription ( "The display name of this descriptor" );
             properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor.class, "getId", null ); // NOI18N
+            properties[PROPERTY_id].setDisplayName ( "Id" );
+            properties[PROPERTY_id].setShortDescription ( "The unique id of this descriptor" );
             properties[PROPERTY_id].setPropertyEditorClass ( net.sf.maltcms.chromaui.project.api.beans.UUIDPropertyEditor.class );
             properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_name].setDisplayName ( "Name" );
+            properties[PROPERTY_name].setShortDescription ( "The name of this descriptor" );
             properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.api.descriptors.ABasicDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
+            properties[PROPERTY_shortDescription].setDisplayName ( "Short Description" );
+            properties[PROPERTY_shortDescription].setShortDescription ( "The short description of this descriptor" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

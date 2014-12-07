@@ -35,6 +35,10 @@ import org.jfree.chart.renderer.PaintScale;
  */
 public interface PaintScaleTarget {
 
+    /**
+     *
+     * @param ps
+     */
     public void setPaintScale(PaintScale ps);
 
 }

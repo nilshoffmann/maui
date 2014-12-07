@@ -55,12 +55,12 @@ public class InstanceContentSelectionHandler implements ISelectionChangeListener
         /**
          *
          */
-        ON_CLICK,
+        ON_CLICK, 
 
         /**
          *
          */
-        ON_HOVER,
+        ON_HOVER, 
 
         /**
          *

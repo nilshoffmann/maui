@@ -40,17 +40,63 @@ import org.openide.util.Lookup;
  */
 public interface INodeFactory {
 
+    /**
+     *
+     * @param key
+     * @param children
+     * @param lookup
+     * @return
+     */
     Node createDescriptorNode(IBasicDescriptor key, Children children, Lookup lookup);
 
+    /**
+     *
+     * @param key
+     * @param lookup
+     * @return
+     */
     Node createDescriptorNode(IBasicDescriptor key, Lookup lookup);
 
+    /**
+     *
+     * @param key
+     * @param children
+     * @param lookup
+     * @return
+     */
     Node createContainerNode(IContainer key, Children children, Lookup lookup);
 
+    /**
+     *
+     * @param key
+     * @param lookup
+     * @return
+     */
     Node createContainerNode(IContainer key, Lookup lookup);
 
+    /**
+     *
+     * @param <T>
+     * @param key
+     * @param lookup
+     * @return
+     */
     <T extends IBasicDescriptor> Children createContainerChildren(IContainer<T> key, Lookup lookup);
 
+    /**
+     *
+     * @param name
+     * @param path
+     * @return
+     */
     Action createMenuItem(String name, String path);
 
+    /**
+     *
+     * @param name
+     * @param actions
+     * @return
+     */
     Action createMenuItem(String name, Action[] actions);
+    
 }

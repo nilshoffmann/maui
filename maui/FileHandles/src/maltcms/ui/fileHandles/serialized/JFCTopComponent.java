@@ -36,6 +36,10 @@ import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.openide.windows.CloneableTopComponent;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class JFCTopComponent extends CloneableTopComponent {
 
     private static JFCTopComponent instance;
@@ -46,6 +50,9 @@ public final class JFCTopComponent extends CloneableTopComponent {
     private static final String PREFERRED_ID = "JFCTopComponent";
     private JFCView chartPanel = null;
 
+    /**
+     *
+     */
     public JFCTopComponent() {
         this.chartPanel = new JFCView();
         initComponents();
@@ -56,6 +63,10 @@ public final class JFCTopComponent extends CloneableTopComponent {
 
     }
 
+    /**
+     *
+     * @param chart
+     */
     public void setChart(JFreeChart chart) {
         this.chartPanel.setChart(chart);
     }
@@ -105,16 +116,26 @@ public final class JFCTopComponent extends CloneableTopComponent {
         return getDefault();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
 
+    /**
+     *
+     */
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening
     }
 
+    /**
+     *
+     */
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
@@ -140,6 +161,10 @@ public final class JFCTopComponent extends CloneableTopComponent {
         // TODO read your settings according to their version
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String preferredID() {
         return PREFERRED_ID;

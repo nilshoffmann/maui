@@ -35,7 +35,7 @@ import org.netbeans.spi.wizard.WizardPage;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class PreprocessingPane extends WizardPage {
 

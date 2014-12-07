@@ -30,13 +30,18 @@ package net.sf.maltcms.chromaui.project.api.beans;
 import java.beans.PropertyEditorSupport;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = Date.class)
 public class DatePropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public DatePropertyEditor() {
     }
 
@@ -49,6 +54,5 @@ public class DatePropertyEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
         throw new IllegalArgumentException("Editing of Dates is not supported!");
-//        setValue(UUID.fromString(string));
     }
 }

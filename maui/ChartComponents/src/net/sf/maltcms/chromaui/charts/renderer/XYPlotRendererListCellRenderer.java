@@ -35,10 +35,13 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class XYPlotRendererListCellRenderer extends JLabel implements ListCellRenderer {
 
+    /**
+     *
+     */
     public XYPlotRendererListCellRenderer() {
         setOpaque(true);
     }

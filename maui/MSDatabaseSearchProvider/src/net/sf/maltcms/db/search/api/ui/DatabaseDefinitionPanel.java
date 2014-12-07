@@ -87,36 +87,52 @@ public final class DatabaseDefinitionPanel extends javax.swing.JPanel {
                 return o1.getDisplayName().compareTo(o2.getDisplayName());
             }
         });
-        DefaultComboBoxModel<Locale> d = new DefaultComboBoxModel<Locale>(locales);
+        DefaultComboBoxModel<Locale> d = new DefaultComboBoxModel<>(locales);
         return d;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<File> getDatabases() {
         Object[] descriptors = listModel.toArray();
-        List<File> list = new ArrayList<File>();
+        List<File> list = new ArrayList<>();
         for (Object obj : descriptors) {
             list.add((File) obj);
         }
         return list;
     }
 
+    /**
+     *
+     * @return
+     */
     public JTextField getDatabaseContainerName() {
         return databaseContainerName;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Double> getMaskedMasses() {
         String text = maskedMasses.getText();
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
         String[] values = text.split(",");
-        List<Double> list = new ArrayList<Double>();
+        List<Double> list = new ArrayList<>();
         for (String str : values) {
             list.add(Double.parseDouble(str));
         }
         return list;
     }
 
+    /**
+     *
+     * @return
+     */
     public DatabaseType getDatabaseType() {
         return (DatabaseType) jComboBox1.getSelectedItem();
     }
@@ -299,6 +315,10 @@ public final class DatabaseDefinitionPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_addDatabaseActionPerformed
 
+    /**
+     *
+     * @return
+     */
     public Locale getSelectedLocale() {
         Locale locale = (Locale) localeComboBox.getSelectedItem();
         if (locale == null) {
@@ -322,6 +342,10 @@ public final class DatabaseDefinitionPanel extends javax.swing.JPanel {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDatabaseContainerNameValue() {
         return this.databaseContainerName.getText();
     }

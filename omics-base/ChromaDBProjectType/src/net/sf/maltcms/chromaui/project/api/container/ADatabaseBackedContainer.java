@@ -47,6 +47,9 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
 
     private int level = 0;
 
+    /**
+     *
+     */
     public static final String PROP_LEVEL = "level";
 
     /**
@@ -79,10 +82,17 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
     private int precedence = 0;
     private List<T> members = new ActivatableArrayList<>();
 
+    /**
+     *
+     */
     public ADatabaseBackedContainer() {
         setName(getClass().getSimpleName());
     }
 
+    /**
+     *
+     * @param project
+     */
     @Override
     public void setProject(IChromAUIProject project) {
         super.setProject(project);
@@ -95,12 +105,20 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getPrecedence() {
         activate(ActivationPurpose.READ);
         return this.precedence;
     }
 
+    /**
+     *
+     * @param i
+     */
     @Override
     public void setPrecedence(int i) {
         activate(ActivationPurpose.WRITE);
@@ -133,12 +151,20 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Collection<T> getMembers() {
         activate(ActivationPurpose.READ);
         return members;
     }
 
+    /**
+     *
+     * @param members
+     */
     @Override
     public void setMembers(Collection<T> members) {
         activate(ActivationPurpose.WRITE);
@@ -154,6 +180,10 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
                 this.members);
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void setMembers(T... f) {
         activate(ActivationPurpose.WRITE);
@@ -165,6 +195,10 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
                 this.members);
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void addMembers(T... f) {
         activate(ActivationPurpose.WRITE);
@@ -176,6 +210,10 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
                 this.members);
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void removeMembers(T... f) {
         activate(ActivationPurpose.WRITE);
@@ -188,11 +226,6 @@ public abstract class ADatabaseBackedContainer<T extends IBasicDescriptor> exten
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getName() + ": " + getName() + "\n");
-        //for (T igd : this.members) {
-        //sb.append(igd.toString() + "\n");
-//            sb.append(igd.getType()+"\n");
-//            sb.append(igd.getLocation()+"\n");
-        //}
         return sb.toString();
     }
 

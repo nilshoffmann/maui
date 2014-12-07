@@ -46,6 +46,10 @@ public class ChartOverlayChildFactory extends ChildFactory<ChartOverlay> impleme
 
     private List<ChartOverlay> overlays;
 
+    /**
+     *
+     * @param overlays
+     */
     public ChartOverlayChildFactory(List<ChartOverlay> overlays) {
         this.overlays = overlays;
         for (ChartOverlay overlay : overlays) {
@@ -53,6 +57,11 @@ public class ChartOverlayChildFactory extends ChildFactory<ChartOverlay> impleme
         }
     }
 
+    /**
+     *
+     * @param list
+     * @return
+     */
     @Override
     protected boolean createKeys(List<ChartOverlay> list) {
         for (ChartOverlay overlay : overlays) {
@@ -61,6 +70,11 @@ public class ChartOverlayChildFactory extends ChildFactory<ChartOverlay> impleme
         return true;
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     @Override
     protected Node createNodeForKey(ChartOverlay key) {
         Node n = key.createNodeDelegate();
@@ -68,6 +82,10 @@ public class ChartOverlayChildFactory extends ChildFactory<ChartOverlay> impleme
         return n;
     }
 
+    /**
+     *
+     * @param oce
+     */
     @Override
     public void overlayChanged(OverlayChangeEvent oce) {
         refresh(true);

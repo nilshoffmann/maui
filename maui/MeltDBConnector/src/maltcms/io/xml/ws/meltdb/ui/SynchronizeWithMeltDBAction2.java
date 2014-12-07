@@ -42,6 +42,10 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 @ActionID(
         category = "File",
         id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction2")
@@ -53,6 +57,10 @@ public final class SynchronizeWithMeltDBAction2 implements ActionListener {
 
     private final IChromAUIProject context;
 
+    /**
+     *
+     * @param context
+     */
     public SynchronizeWithMeltDBAction2(IChromAUIProject context) {
         this.context = context;
     }

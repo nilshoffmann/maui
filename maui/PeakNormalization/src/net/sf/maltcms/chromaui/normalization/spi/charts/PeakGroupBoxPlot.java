@@ -35,6 +35,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.project.api.types.IPeakNormalizer;
@@ -53,7 +55,7 @@ import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class PeakGroupBoxPlot {
@@ -65,12 +67,12 @@ public class PeakGroupBoxPlot {
     private boolean ignoreNullAndNanValues;
 
     public List<JFreeChart> createChart() {
-        List<JFreeChart> charts = new ArrayList<JFreeChart>();
-        LinkedHashSet<ITreatmentGroupDescriptor> treatmentGroups = new LinkedHashSet<ITreatmentGroupDescriptor>(project.
+        List<JFreeChart> charts = new ArrayList<>();
+        LinkedHashSet<ITreatmentGroupDescriptor> treatmentGroups = new LinkedHashSet<>(project.
                 getTreatmentGroups());
-        List<CategoryPlot> plots = new LinkedList<CategoryPlot>();
+        List<CategoryPlot> plots = new LinkedList<>();
         for (IPeakGroupDescriptor pgd : pgdl) {
-            LinkedHashMap<ITreatmentGroupDescriptor, HashSet<IPeakAnnotationDescriptor>> map = new LinkedHashMap<ITreatmentGroupDescriptor, HashSet<IPeakAnnotationDescriptor>>();
+            LinkedHashMap<ITreatmentGroupDescriptor, HashSet<IPeakAnnotationDescriptor>> map = new LinkedHashMap<>();
             for (ITreatmentGroupDescriptor itgd : treatmentGroups) {
                 map.put(itgd, new LinkedHashSet<IPeakAnnotationDescriptor>());
             }
@@ -84,12 +86,12 @@ public class PeakGroupBoxPlot {
                 HashSet<IPeakAnnotationDescriptor> descr = map.get(
                         treatmentGroup);
                 if (descr == null) {
-                    descr = new HashSet<IPeakAnnotationDescriptor>();
+                    descr = new HashSet<>();
                     map.put(treatmentGroup, descr);
                 }
                 descr.add(ipad);
             }
-            List<Color> colors = new LinkedList<Color>();
+            List<Color> colors = new LinkedList<>();
             for (ITreatmentGroupDescriptor tgd : map.keySet()) {
                 String name = getPeakName(pgd);
                 baw.add(createBoxAndWhiskerItem(map.get(tgd)), tgd.getName() + " (" + map.get(tgd).size() + ")",
@@ -109,7 +111,7 @@ public class PeakGroupBoxPlot {
             CategoryPlot cp = new CategoryPlot(baw, new CategoryAxis(
                     "Treatment Groups"), new NumberAxis("Normalized Peak Area"),
                     renderer);
-            System.out.println("Setting " + colors.size() + " colors!");
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Setting {0} colors!", colors.size());
             ChartCustomizer.setSeriesColors(cp, 0.6f, colors);
 //            ChartCustomizer.setSeriesColors(cp, 0.9f,colors);
             plots.add(cp);
@@ -131,7 +133,7 @@ public class PeakGroupBoxPlot {
 
     protected String getPeakName(IPeakGroupDescriptor pgd) {
         String rt = "mean area: " + String.format("%.2f", pgd.getMeanArea(normalizer)) + "+/-" + String.format("%.2f", pgd.getAreaStdDev(normalizer)) + "; median area: " + String.format("%.2f", pgd.getMedianArea(normalizer)) + ": ";
-        LinkedHashMap<String, Integer> names = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String, Integer> names = new LinkedHashMap<>();
         if (!pgd.getDisplayName().equals(pgd.getName())) {
             return rt + pgd.getDisplayName();
         }
@@ -160,7 +162,7 @@ public class PeakGroupBoxPlot {
 
     protected BoxAndWhiskerItem createBoxAndWhiskerItem(
             Collection<IPeakAnnotationDescriptor> descriptors) {
-        List<Double> values = new LinkedList<Double>();
+        List<Double> values = new LinkedList<>();
         for (IPeakAnnotationDescriptor ipad : descriptors) {
             double factor = normalizer.getNormalizationFactor(ipad);
             if (showAreas) {

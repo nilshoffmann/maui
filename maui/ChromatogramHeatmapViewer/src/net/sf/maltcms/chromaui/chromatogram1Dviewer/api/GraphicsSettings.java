@@ -39,7 +39,7 @@ import lombok.Data;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class GraphicsSettings {
@@ -52,6 +52,16 @@ public class GraphicsSettings {
     private Shape clip;
     private Paint paint;
 
+    /**
+     *
+     * @param stroke
+     * @param composite
+     * @param transform
+     * @param color
+     * @param background
+     * @param font
+     * @param clip
+     */
     public GraphicsSettings(Stroke stroke, Composite composite,
             AffineTransform transform, Paint paint, Color background, Font font,
             Shape clip) {
@@ -64,6 +74,11 @@ public class GraphicsSettings {
         this.paint = paint;
     }
 
+    /**
+     *
+     * @param g2
+     * @return
+     */
     public static GraphicsSettings create(Graphics2D g2) {
         GraphicsSettings gs = new GraphicsSettings(g2.getStroke(), g2.
                 getComposite(), g2.getTransform(), g2.getPaint(), g2.
@@ -71,11 +86,20 @@ public class GraphicsSettings {
         return gs;
     }
 
+    /**
+     *
+     * @param gs
+     * @return
+     */
     public static GraphicsSettings clone(GraphicsSettings gs) {
         GraphicsSettings settings = new GraphicsSettings(gs.getStroke(), gs.getComposite(), gs.getTransform(), gs.getPaint(), gs.getBackground(), gs.getFont(), gs.getClip());
         return settings;
     }
 
+    /**
+     *
+     * @param g2
+     */
     public void apply(Graphics2D g2) {
         g2.setStroke(stroke);
         g2.setComposite(composite);

@@ -29,11 +29,13 @@ package net.sf.maltcms.chromaui.statistics.view.propertyEditors;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = {char[].class})
 public class CharArrayPropertyEditor extends PropertyEditorSupport {
 
     @Override

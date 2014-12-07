@@ -32,6 +32,8 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -56,37 +58,37 @@ public class DataSourceDialog {
         nd.setOptionType(NotifyDescriptor.OK_CANCEL_OPTION);
         Object result = DialogDisplayer.getDefault().notify(nd);
 
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         if (result.equals(NotifyDescriptor.OK_OPTION)) {
             String dataSource = nsp.getSelectedDataSource();
-            if (dataSource.equals(DataSourcePanel.ORIGINAL_FILES)) {
-                System.out.println("Using original input files!");
-                for (IChromatogramDescriptor cc : context.getChromatograms()) {
-                    files.add(new File(cc.getResourceLocation()));
-                }
-            } else if (dataSource.equals(DataSourcePanel.IMPORTED_FILES)) {
-                File importDir = new File(FileUtil.toFile(
-                        context.getLocation()), "import");
-                if (importDir.exists() && importDir.isDirectory()) {
-                    File baseDir = getUserSelection(importDir);
-                    if (baseDir != null) {
-                        File[] inputFiles = getFiles(baseDir);
-                        files.addAll(Arrays.asList(inputFiles));
-                        System.out.println("Using input files from import directory " + baseDir);
+            switch (dataSource) {
+                case DataSourcePanel.ORIGINAL_FILES:
+                    Logger.getLogger(DataSourceDialog.class.getName()).info("Using original input files!");
+                    for (IChromatogramDescriptor cc : context.getChromatograms()) {
+                        files.add(new File(cc.getResourceLocation()));
+                    }   break;
+                case DataSourcePanel.IMPORTED_FILES:
+                    File importDir = new File(FileUtil.toFile(
+                            context.getLocation()), "import");
+                    if (importDir.exists() && importDir.isDirectory()) {
+                        File baseDir = getUserSelection(importDir);
+                        if (baseDir != null) {
+                            File[] inputFiles = getFiles(baseDir);
+                            files.addAll(Arrays.asList(inputFiles));
+                            Logger.getLogger(DataSourceDialog.class.getName()).log(Level.INFO, "Using input files from import directory {0}", baseDir);
+                        }
+                    }   break;
+                case DataSourcePanel.MALTCMS_FILES:
+                    File maltcmsDir = new File(FileUtil.toFile(
+                            context.getLocation()), "output");
+                    if (maltcmsDir.exists() && maltcmsDir.isDirectory()) {
+                        File baseDir = getUserSelection(maltcmsDir);
+                        if (baseDir != null) {
+                            File[] inputFiles = getFiles(baseDir);
+                            files.addAll(Arrays.asList(inputFiles));
+                            Logger.getLogger(DataSourceDialog.class.getName()).log(Level.INFO, "Using input files from maltcms output directory {0}", baseDir);
                     }
-                }
-            } else if (dataSource.equals(DataSourcePanel.MALTCMS_FILES)) {
-                File maltcmsDir = new File(FileUtil.toFile(
-                        context.getLocation()), "output");
-                if (maltcmsDir.exists() && maltcmsDir.isDirectory()) {
-                    File baseDir = getUserSelection(maltcmsDir);
-                    if (baseDir != null) {
-                        File[] inputFiles = getFiles(baseDir);
-                        files.addAll(Arrays.asList(inputFiles));
-                        System.out.println("Using input files from maltcms output directory " + baseDir);
-                    }
-                }
-
+                }   break;
             }
         }
         return files;

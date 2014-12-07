@@ -31,6 +31,8 @@ import com.db4o.collections.ActivatableArrayList;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
 import net.sf.maltcms.chromaui.normalization.spi.DataTable;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
@@ -45,6 +47,7 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.util.Exceptions;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import ucar.ma2.Array;
@@ -56,7 +59,7 @@ import ucar.ma2.ArrayDouble;
  *
  * columns: observations (peak groups) rows: chromatograms
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
@@ -80,7 +83,7 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                 pcaDescriptor.setDisplayName("Principal Components Analysis");
 
                 File outputDir = project.getOutputLocation(this);
-                System.out.println("DataTable has " + dataTable.getGroupToValues().keySet().size() + " peak groups and " + dataTable.getRowNames().size() + " chromatograms!");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "DataTable has {0} peak groups and {1} chromatograms!", new Object[]{dataTable.getGroupToValues().keySet().size(), dataTable.getRowNames().size()});
                 c.assign(dataTable.getName(), dataTable.toDataFrame());
                 c.assign("rowNames", dataTable.getRowNamesREXP());
                 c.eval("row.names(" + dataTable.getName() + ") <- rowNames");
@@ -98,7 +101,7 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                 //return the projected input values
                 expression.append(")");
                 String rcall = expression.toString();
-                System.out.println("Expression: " + rcall);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Expression: {0}", rcall);
                 REXP rresult = c.parseAndEval(rcall);
                 String device = "png"; // device we'll call (this would work with pretty much any bitmap device)
                 //projected data
@@ -113,11 +116,11 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                 }
                 REXP rownames = c.parseAndEval("x.rownames <- row.names(x)");
                 String[] rownameStrings = rownames.asStrings();
-                List<IChromatogramDescriptor> chromatograms = new ArrayList<IChromatogramDescriptor>();
+                List<IChromatogramDescriptor> chromatograms = new ArrayList<>();
                 for (IChromatogramDescriptor descr : dataTable.getRowNames()) {
                     for (String str : rownameStrings) {
                         if (descr.getId().toString().equals(str)) {
-                            System.out.println("Adding matching row " + descr.getId());
+                            Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding matching row {0}", descr.getId());
                             chromatograms.add(descr);
                         }
                     }
@@ -144,13 +147,13 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                     }
 
                 }
-                List<IPeakGroupDescriptor> peakGroups = new ArrayList<IPeakGroupDescriptor>();
+                List<IPeakGroupDescriptor> peakGroups = new ArrayList<>();
                 REXP rotrownames = c.parseAndEval("rot.rownames <- row.names(rot)");
                 String[] rotRownameStrings = rotrownames.asStrings();
                 for (IPeakGroupDescriptor ipgd : dataTable.getVariables()) {
                     for (String str : rotRownameStrings) {
                         if (ipgd.getId().toString().equals(str)) {
-                            System.out.println("Adding matching peak group " + ipgd.getMajorityDisplayName());
+                            Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding matching peak group {0}", ipgd.getMajorityDisplayName());
                             peakGroups.add(ipgd);
                         }
                     }
@@ -160,7 +163,7 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
 
                 List<StatisticsContainer> statContainers = container.getStatisticsContainers();
                 if (statContainers == null) {
-                    statContainers = new ActivatableArrayList<StatisticsContainer>();
+                    statContainers = new ActivatableArrayList<>();
                 }
                 IPcaDescriptor pcadescr = DescriptorFactory.newPcaDescriptor();
                 pcadescr.setName(rcall);
@@ -178,17 +181,17 @@ public class PeakGroupPcaRunnable extends AProgressAwareRunnable {
                 project.updateContainer(container);
                 // close RConnection, we're done
                 //c.close();
-            } catch (RserveException rse) { // RserveException (transport layer - e.g. Rserve is not running)
+            } catch (RserveException | REXPMismatchException rse) { // RserveException (transport layer - e.g. Rserve is not running)
                 System.out.println(rse);
                 Exceptions.printStackTrace(rse);
-            } catch (REXPMismatchException mme) { // REXP mismatch exception (we got something we didn't think we getMembers)
-                System.out.println(mme);
-                Exceptions.printStackTrace(mme);
-            } catch (Exception e) { // something else
-                System.out.println("Something went wrong, but it's not the Rserve: "
-                        + e.getMessage());
+            } catch (REngineException e) { // something else
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Something went wrong, but it''s not the Rserve: {0}", e.getMessage());
                 Exceptions.printStackTrace(e);
             }
+//            } catch (RserveException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
+
 //            } catch (RserveException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }

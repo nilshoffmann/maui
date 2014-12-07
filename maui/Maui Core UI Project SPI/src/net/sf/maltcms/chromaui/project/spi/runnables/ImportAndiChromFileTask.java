@@ -62,7 +62,7 @@ public class ImportAndiChromFileTask extends AProgressAwareCallable<List<File>> 
 
     @Override
     public List<File> call() {
-        List<File> resultFiles = new LinkedList<File>();
+        List<File> resultFiles = new LinkedList<>();
         try {
             progressHandle.start(2);
             int peakReportsImported = 0;
@@ -88,21 +88,21 @@ public class ImportAndiChromFileTask extends AProgressAwareCallable<List<File>> 
         CommandPipeline cp = new CommandPipeline();
         cp.setCheckCommandDependencies(false);
         ANDIChromImporter aci = new ANDIChromImporter();
-        List<IFileFragment> fragments = new ArrayList<IFileFragment>();
+        List<IFileFragment> fragments = new ArrayList<>();
         for (File f : inputFiles) {
             fragments.add(new FileFragment(f));
         }
-        List<IFragmentCommand> commands = new ArrayList<IFragmentCommand>();
+        List<IFragmentCommand> commands = new ArrayList<>();
         commands.add(aci);
         cp.setCommands(commands);
-        cp.setInput(new TupleND<IFileFragment>(fragments));
+        cp.setInput(new TupleND<>(fragments));
         DefaultWorkflow dw = new DefaultWorkflow();
         dw.setStartupDate(new Date());
         dw.setName("andiChromImportWorkflow");
         dw.setCommandSequence(cp);
         dw.setExecuteLocal(true);
         dw.setOutputDirectory(outputDirectory);
-        List<File> outputFiles = new ArrayList<File>();
+        List<File> outputFiles = new ArrayList<>();
         try {
             TupleND<IFileFragment> results = dw.call();
             for (IFileFragment f : results) {

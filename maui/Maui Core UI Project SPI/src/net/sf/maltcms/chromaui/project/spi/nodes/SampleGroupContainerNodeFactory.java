@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.SampleGroupContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IBasicDescriptor;
@@ -103,7 +104,7 @@ public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends
     protected Node createNodeForKey(IBasicDescriptor key) {
         if (key instanceof IChromatogramDescriptor) {
             IChromatogramDescriptor cd = (IChromatogramDescriptor) key;
-            System.out.println(cd.getResourceLocation());
+            Logger.getLogger(getClass().getName()).info(cd.getResourceLocation());
 
             DataObject dobj;
             try {
@@ -121,9 +122,7 @@ public class SampleGroupContainerNodeFactory<T extends IBasicDescriptor> extends
                 cn.addPropertyChangeListener(WeakListeners.propertyChange(this, cn));
                 key.setProject(lkp.lookup(IChromAUIProject.class));
                 return cn;
-            } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IllegalArgumentException ex) {
+            } catch (DataObjectNotFoundException | IllegalArgumentException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }

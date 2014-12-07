@@ -47,30 +47,97 @@ import org.openide.loaders.DataObjectNotFoundException;
  */
 public interface IDescriptorFactory {
 
+    /**
+     *
+     * @param id
+     * @return
+     * @throws DataObjectNotFoundException
+     * @throws IOException
+     */
     public DataObject getDataObject(IResourceDescriptor id) throws DataObjectNotFoundException, IOException;
 
+    /**
+     *
+     * @param chromDescr
+     * @return
+     */
     public IChromatogram1D newChromatogram1D(IFileFragment chromDescr);
 
+    /**
+     *
+     * @param chromDescr
+     * @return
+     */
     public IChromatogram2D newChromatogram2D(IFileFragment chromDescr);
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public IPeakGroupDescriptor newPeakGroupDescriptor(String name);
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public ISampleGroupDescriptor newSampleGroupDescriptor(String name);
 
+    /**
+     *
+     * @return
+     */
     public IChromatogramDescriptor newChromatogramDescriptor();
 
+    /**
+     *
+     * @param name
+     * @param treatmentGroup
+     * @param sampleGroup
+     * @param normalization
+     * @return
+     */
     public IChromatogramDescriptor newChromatogramDescriptor(String name, ITreatmentGroupDescriptor treatmentGroup, ISampleGroupDescriptor sampleGroup, INormalizationDescriptor normalization);
 
+    /**
+     *
+     * @return
+     */
     public ITreatmentGroupDescriptor newTreatmentGroupDescriptor();
 
+    /**
+     *
+     * @return
+     */
     public IToolDescriptor newToolResultDescriptor();
 
+    /**
+     *
+     * @param location
+     * @param type
+     * @return
+     */
     public IDatabaseDescriptor newDatabaseDescriptor(String location,
             DatabaseType type);
 
+    /**
+     *
+     * @param peaks
+     * @param tool
+     * @return
+     */
     public IPeakGroupDescriptor newPeakGroupDescriptor(
             Collection<IPeakAnnotationDescriptor> peaks, IToolDescriptor tool);
 
+    /**
+     *
+     * @param location
+     * @param type
+     * @param separationType
+     * @param detectorType
+     * @return
+     */
     public IDatabaseDescriptor newDatabaseDescriptor(String location,
             DatabaseType type,
             ISeparationType separationType, IDetectorType detectorType);
@@ -83,6 +150,27 @@ public interface IDescriptorFactory {
      */
     public INormalizationDescriptor newNormalizationDescriptor();
 
+    /**
+     *
+     * @param chromatogram
+     * @param name
+     * @param uniqueMass
+     * @param quantMasses
+     * @param retentionIndex
+     * @param snr
+     * @param fwhh
+     * @param similarity
+     * @param library
+     * @param cas
+     * @param formula
+     * @param method
+     * @param startTime
+     * @param apexTime
+     * @param stopTime
+     * @param area
+     * @param intensity
+     * @return
+     */
     public IPeakAnnotationDescriptor newPeakAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
@@ -91,6 +179,29 @@ public interface IDescriptorFactory {
             String method, double startTime, double apexTime, double stopTime,
             double area, double intensity);
 
+    /**
+     *
+     * @param chromatogram
+     * @param name
+     * @param uniqueMass
+     * @param quantMasses
+     * @param retentionIndex
+     * @param snr
+     * @param fwhh
+     * @param similarity
+     * @param library
+     * @param cas
+     * @param formula
+     * @param method
+     * @param startTime
+     * @param apexTime
+     * @param stopTime
+     * @param area
+     * @param intensity
+     * @param rt1
+     * @param rt2
+     * @return
+     */
     public IPeak2DAnnotationDescriptor newPeak2DAnnotationDescriptor(
             IChromatogramDescriptor chromatogram, String name,
             double uniqueMass, double[] quantMasses, double retentionIndex,
@@ -99,15 +210,39 @@ public interface IDescriptorFactory {
             String method, double startTime, double apexTime, double stopTime,
             double area, double intensity, double rt1, double rt2);
 
+    /**
+     *
+     * @return
+     */
     public IAnovaDescriptor newAnovaDescriptor();
 
+    /**
+     *
+     * @return
+     */
     public IPcaDescriptor newPcaDescriptor();
 
+    /**
+     *
+     * @param project
+     * @param chromatogram
+     * @param peaks
+     * @param trd
+     */
     public void addPeakAnnotations(IChromAUIProject project,
             IChromatogramDescriptor chromatogram,
             List<IPeakAnnotationDescriptor> peaks, IToolDescriptor trd);
 
+    /**
+     *
+     * @param descriptor
+     * @return
+     */
     public Image getImage(IBasicDescriptor descriptor);
 
+    /**
+     *
+     * @return
+     */
     public IScanSelectionDescriptor newScanSelectionDescriptor();
 }

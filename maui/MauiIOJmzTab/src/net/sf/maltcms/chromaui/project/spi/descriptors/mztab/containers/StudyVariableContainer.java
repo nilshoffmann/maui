@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.StudyVariableDescri
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.StudyVariable;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class StudyVariableContainer extends BasicMzTabMetaDataContainer<StudyVariableDescriptor> {
+    private static final long serialVersionUID = -2682372649511301634L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static StudyVariableContainer create(Metadata metadata) {
         StudyVariableContainer c = new StudyVariableContainer();
         c.setLevel(2);

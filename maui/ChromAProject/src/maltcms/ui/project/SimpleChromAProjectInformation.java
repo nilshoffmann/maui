@@ -35,43 +35,74 @@ import org.openide.util.ImageUtilities;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class SimpleChromAProjectInformation implements ProjectInformation {
 
+    /**
+     *
+     */
     public static final String ICON = "maltcms/ui/project/resources/MaltcmsWorkflowResult.png";
     private Icon i = ImageUtilities.image2Icon(ImageUtilities.loadImage(ICON));
     private SimpleChromAProject project;
 
+    /**
+     *
+     * @param project
+     */
     public SimpleChromAProjectInformation(SimpleChromAProject project) {
         this.project = project;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Icon getIcon() {
         return this.i;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return project.getProjectDirectory().getName();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDisplayName() {
         return getName();
     }
 
+    /**
+     *
+     * @param pcl
+     */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         //do nothing, won't change
     }
 
+    /**
+     *
+     * @param pcl
+     */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         //do nothing, won't change
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Project getProject() {
         return this.project;

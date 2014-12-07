@@ -45,18 +45,17 @@ public interface ISelection {
         /**
          *
          */
-        CLE,
-        CLEAR,
+        CLEAR, 
 
         /**
          *
          */
-        KEYBOARD,
+        KEYBOARD, 
 
         /**
          *
          */
-        HOVER,
+        HOVER, 
 
         /**
          *

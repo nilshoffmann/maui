@@ -44,7 +44,7 @@ import org.openide.util.lookup.ProxyLookup;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 class ProjectContainerFactory extends ChildFactory<IContainer> implements
         PropertyChangeListener {
@@ -60,7 +60,12 @@ class ProjectContainerFactory extends ChildFactory<IContainer> implements
     @Override
     protected boolean createKeys(List<IContainer> list) {
         IChromAUIProject project = this.lookup.lookup(IChromAUIProject.class);
-        list.addAll(project.getContainer(IContainer.class));
+        for(IContainer container:project.getContainer(IContainer.class)) {
+            //only add top-level containers
+            if(container.getLevel()==0) {
+                list.add(container);
+            }
+        }
         Collections.sort(list);
         return true;
     }

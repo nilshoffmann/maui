@@ -37,12 +37,26 @@ import org.openide.util.Lookup;
  */
 public class CrudProvider {
 
+    /**
+     *
+     * @param databaseLocation
+     * @return
+     * @throws ProviderNotFoundException
+     */
     public static ICrudProvider getProviderFor(URL databaseLocation) throws ProviderNotFoundException {
         return getProviderFor(databaseLocation,
                 new NoAuthCredentials(), Lookup.getDefault().lookup(
                         ClassLoader.class));
     }
 
+    /**
+     *
+     * @param databaseLocation
+     * @param credentials
+     * @param classLoader
+     * @return
+     * @throws ProviderNotFoundException
+     */
     protected static ICrudProvider getProviderFor(URL databaseLocation,
             ICredentials credentials, ClassLoader classLoader) throws ProviderNotFoundException {
         for (ICrudProviderFactory factory : Lookup.getDefault().lookupAll(
@@ -60,11 +74,25 @@ public class CrudProvider {
                 "Could not find a provider for database at " + databaseLocation);
     }
 
+    /**
+     *
+     * @param databaseLocation
+     * @return
+     * @throws ProviderNotFoundException
+     */
     public static ICrudProvider getInMemoryProviderFor(URL databaseLocation) throws ProviderNotFoundException {
         return getInMemoryProviderFor(databaseLocation, new NoAuthCredentials(), Lookup.getDefault().lookup(
                 ClassLoader.class));
     }
 
+    /**
+     *
+     * @param databaseLocation
+     * @param credentials
+     * @param classLoader
+     * @return
+     * @throws ProviderNotFoundException
+     */
     protected static ICrudProvider getInMemoryProviderFor(URL databaseLocation, ICredentials credentials, ClassLoader classLoader) throws ProviderNotFoundException {
         for (ICrudProviderFactory factory : Lookup.getDefault().lookupAll(
                 ICrudProviderFactory.class)) {

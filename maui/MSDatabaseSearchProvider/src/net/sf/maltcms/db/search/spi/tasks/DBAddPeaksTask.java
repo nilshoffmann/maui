@@ -51,7 +51,7 @@ import ucar.ma2.MAMath;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 @Data
 public class DBAddPeaksTask extends AProgressAwareRunnable {
@@ -70,7 +70,7 @@ public class DBAddPeaksTask extends AProgressAwareRunnable {
             ICrudProvider provider = CrudProvider.getProviderFor(new File(databaseDescriptor.getResourceLocation()).toURI().toURL());
             try {
                 provider.open();
-                List<IMetabolite> metabolites = new ArrayList<IMetabolite>();
+                List<IMetabolite> metabolites = new ArrayList<>();
                 ICrudSession session = provider.createSession();
                 Collection<IMetabolite> known = session.retrieve(IMetabolite.class);
                 int databaseId = 1 + known.size();

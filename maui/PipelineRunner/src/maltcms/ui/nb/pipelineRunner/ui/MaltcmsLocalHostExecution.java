@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareCallable;
 import org.apache.commons.io.FileUtils;
@@ -50,10 +52,6 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 import org.openide.windows.*;
 
-/**
- *
- * @author nilshoffmann
- */
 public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
 
     private final File baseDir;
@@ -90,7 +88,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         return configurationFile.getName();
     }
 
-    private void checkMaltcmsPresence(File baseDir) throws IOException {
+    protected void checkMaltcmsPresence(File baseDir) throws IOException {
         if (baseDir.exists()) {
             maltcmsJarFileName = locateMaltcmsJar(baseDir);
 
@@ -99,13 +97,13 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         }
     }
 
-    private String locateMaltcmsJar(File baseDir) throws ConstraintViolationException {
-        System.out.println("Checking files in dir: " + baseDir.getAbsolutePath());
+    protected String locateMaltcmsJar(File baseDir) throws ConstraintViolationException {
+        Logger.getLogger(MaltcmsLocalHostExecution.class.getName()).log(Level.FINE, "Checking files in dir: {0}", baseDir.getAbsolutePath());
         File[] f = baseDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
                 if (file.getName().toLowerCase().endsWith("jar") && file.getName().toLowerCase().startsWith("maltcms")) {
-                    System.out.println("Found match: " + file.getName());
+                    Logger.getLogger(MaltcmsLocalHostExecution.class.getName()).log(Level.FINE, "Found match: {0}", file.getName());
                     return true;
                 }
                 return false;
@@ -126,7 +124,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         if (maltcmsJarFileName == null) {
             throw new ConstraintViolationException("Name for maltcms jar not set! Check maltcms installation location!");
         }
-        List<String> l = new ArrayList<String>();
+        List<String> l = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 //        File javaBinDir = new File(new File(System.getProperty("java.home")), "bin");
 //        File java = new File(javaBinDir, "java");
@@ -141,11 +139,11 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                 }
             }
         }
-		File jul = new File(baseDir,"cfg"+File.separator+"logging.properties");
-		File l4j = new File(baseDir,"cfg"+File.separator+"log4j.properties");
-		l.add("-Dlog4j.configuration="+l4j.toURI().toString());
-		l.add("-Djava.util.logging.config.file="+jul.getAbsolutePath());
-		l.add("-Dmaltcms.home="+baseDir.getAbsolutePath());
+        File jul = new File(baseDir, "cfg" + File.separator + "logging.properties");
+        File l4j = new File(baseDir, "cfg" + File.separator + "log4j.properties");
+        l.add("-Dlog4j.configuration=" + l4j.toURI().toString());
+        l.add("-Djava.util.logging.config.file=" + jul.getAbsolutePath());
+        l.add("-Dmaltcms.home=" + baseDir.getAbsolutePath());
         l.add("-DomitUserTimePrefix=true");
         l.add("-jar");
         l.add(maltcmsJarFileName);
@@ -155,7 +153,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         l.add(buildFileset());
         l.add("-c");
         l.add(configurationFile.getAbsolutePath());
-		String maltcmsOptions = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsOptions", "");
+        String maltcmsOptions = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsOptions", "");
         if (!maltcmsOptions.isEmpty()) {
             String[] splits = maltcmsOptions.split(" ");
             for (String option : splits) {
@@ -168,7 +166,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         return l.toArray(new String[l.size()]);
     }
 
-    private String escapeString(String name, String escapeString) {
+    protected String escapeString(String name, String escapeString) {
         StringBuilder sb = new StringBuilder();
         sb.append(escapeString);
         sb.append(name);
@@ -176,13 +174,13 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         return sb.toString();
     }
 
-    private String buildFileset() {
+    protected String buildFileset() {
         StringBuilder sb = new StringBuilder();
         sb.append("\"");
         int i = 0;
         for (File s : inputFiles) {
             sb.append(s.toURI().toString());
-            if (inputFiles.length > 1 && i<inputFiles.length-1) {
+            if (inputFiles.length > 1 && i < inputFiles.length - 1) {
                 sb.append(",");
             }
             i++;
@@ -198,7 +196,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
     public File call() throws Exception {
         getProgressHandle().setDisplayName("Running Maltcms...");
         getProgressHandle().start();
-        outputDir = new File(outputBaseDir, new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()));
+        outputDir = createOutputDirectory();
         final ProcessBuilder pb = new ProcessBuilder(buildCommandLine());
         String location = NbPreferences.forModule(PipelineRunnerTopComponent.class).get("maltcmsInstallationPath", "NA");
         if (location.equals("NA")) {
@@ -206,7 +204,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
         }
         File f = new File(location);
         pb.directory(f);
-        System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.directory());
+        Logger.getLogger(MaltcmsLocalHostExecution.class.getName()).log(Level.FINE, "Process: {0} workingDirectory: {1}", new Object[]{pb.command(), pb.directory()});
         pb.redirectErrorStream(true);
         InputOutput io = IOProvider.getDefault().getIO(
                 "Running Maltcms in " + outputDir.getName(), false);
@@ -223,7 +221,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                 writer.println(line);
             }
             int ecode = p.waitFor();
-            System.out.println("Maltcms exited with code: " + ecode);
+            Logger.getLogger(MaltcmsLocalHostExecution.class.getName()).log(Level.WARNING, "Maltcms exited with code: {0}", ecode);
             if (ecode == 0) {
 //                File workflow = new File(outputDir, "workflow.xml");
                 Collection<File> files = FileUtils.listFiles(outputDir, new String[]{"xml"}, true);
@@ -241,7 +239,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                         }
                     }
                     if (resultFile != null) {
-                        System.out.println("Found result file: " + resultFile);
+                        Logger.getLogger(MaltcmsLocalHostExecution.class.getName()).log(Level.FINE, "Found result file: {0}", resultFile);
                         final File resFile = resultFile;
                         Runnable r = new Runnable() {
                             @Override
@@ -254,9 +252,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                                         TopComponent projWindow = WindowManager.getDefault().findTopComponent("projectTabLogical_tc");
                                         projWindow.requestActive();
                                     }
-                                } catch (IOException ex) {
-                                    Exceptions.printStackTrace(ex);
-                                } catch (IllegalArgumentException ex) {
+                                } catch (IOException | IllegalArgumentException ex) {
                                     Exceptions.printStackTrace(ex);
                                 }
 
@@ -267,9 +263,7 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
                     }
                 }
             }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (InterruptedException ex) {
+        } catch (IOException | InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         } finally {
             if (getProgressHandle() != null) {
@@ -277,5 +271,9 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
             }
         }
         return null;
+    }
+
+    protected File createOutputDirectory() {
+        return new File(outputBaseDir, new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()));
     }
 }

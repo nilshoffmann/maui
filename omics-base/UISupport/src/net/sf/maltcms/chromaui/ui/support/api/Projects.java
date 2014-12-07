@@ -27,21 +27,32 @@
  */
 package net.sf.maltcms.chromaui.ui.support.api;
 
+import net.sf.maltcms.chromaui.ui.support.api.ui.OutlineViewDialogPanel;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
+import net.sf.maltcms.chromaui.*;
+import net.sf.maltcms.chromaui.ui.support.api.nodes.Nodes;
+import net.sf.maltcms.chromaui.ui.support.api.ui.ChoiceViewDialogPanel;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.explorer.view.CheckableNode;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -49,52 +60,173 @@ import org.openide.nodes.Node;
  */
 public class Projects {
 
+    private static class ProjectDialog<T extends Project> {
+
+        private Collection<? extends T> selectedProjects = Collections.emptyList();
+        private final Collection<? extends T> projects;
+        private final boolean singleSelection;
+        private final Class<? extends T> projectClazz;
+
+        public ProjectDialog(Collection<? extends T> projects, boolean singleSelection, Class<? extends T> descriptorClazz) {
+            this.projects = projects;
+            this.singleSelection = singleSelection;
+            this.projectClazz = descriptorClazz;
+        }
+
+        void showDialog(final String title, final String label) {
+            Runnable r = null;
+            if (singleSelection) {
+                r = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ChoiceViewDialogPanel dp = new ChoiceViewDialogPanel();
+                        dp.init(label, false);
+                        dp.getExplorerManager().setRootContext(new AbstractNode(Children.create(new ChildFactory<T>() {
+
+                            @Override
+                            protected boolean createKeys(List<T> list) {
+                                list.addAll(projects);
+                                return true;
+                            }
+
+                            @Override
+                            protected Node createNodeForKey(final T key) {
+                                return getNodeForProject(key);
+                            }
+                        }, true)));
+                        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
+                        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+                            Set<T> toolDescriptors = new LinkedHashSet<>();
+                            Node[] selectedNodes = dp.getExplorerManager().getSelectedNodes();
+                            if (selectedNodes.length == 0) {
+                                return;
+                            }
+                            Logger.getLogger(Projects.class.getName()).log(Level.INFO, "Adding single selection to descriptor list!");
+                            toolDescriptors.add(selectedNodes[0].getLookup().lookup(projectClazz));
+                            selectedProjects = toolDescriptors;
+                        }
+                    }
+                };
+            } else {
+                r = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        OutlineViewDialogPanel dp = new OutlineViewDialogPanel();
+                        dp.init(label, false);
+                        dp.getExplorerManager().setRootContext(new AbstractNode(Children.create(new ChildFactory<T>() {
+
+                            @Override
+                            protected boolean createKeys(List<T> list) {
+                                list.addAll(projects);
+                                return true;
+                            }
+
+                            @Override
+                            protected Node createNodeForKey(final T key) {
+                                return Nodes.checkable(getNodeForProject(key));
+                            }
+                        }, true)));
+                        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(dp, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
+                        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
+                            Set<T> toolDescriptors = new LinkedHashSet<>();
+                            Node[] selectedNodes = dp.getExplorerManager().getRootContext().getChildren().getNodes(true);
+                            for (Node n : selectedNodes) {
+                                CheckableNode cn = n.getLookup().lookup(CheckableNode.class);
+                                Logger.getLogger(Projects.class.getName()).log(Level.INFO, "Found checkable node in lookup!");
+                                if (cn != null && cn.isSelected()) {
+                                    Logger.getLogger(Projects.class.getName()).log(Level.INFO, "Adding checked node's descriptor to descriptor list!");
+                                    toolDescriptors.addAll(n.getLookup().lookupAll(projectClazz));
+                                }
+                            }
+                            selectedProjects = toolDescriptors;
+                        }
+                    }
+                };
+            }
+            try {
+                if (SwingUtilities.isEventDispatchThread()) {
+                    r.run();
+                } else {
+                    SwingUtilities.invokeAndWait(r);
+                }
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (InvocationTargetException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+
+        Collection<? extends T> getSelectedDescriptors() {
+            return selectedProjects;
+        }
+
+    }
+
+    /**
+     *
+     * @param nodes
+     * @return
+     */
+    public static Node[] getCheckableNodesFor(Node[] nodes) {
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i] = Nodes.checkable(nodes[i]);
+        }
+        return nodes;
+    }
+
+    public static Node getNodeForProject(Project project) {
+        return new FilterNode(project.getLookup().lookup(LogicalViewProvider.class).createLogicalView(), Children.LEAF);
+    }
+
+    /**
+     *
+     * @param projects
+     * @return
+     */
     public static Node[] getNodesFor(Collection<Project> projects) {
         Node[] projectNodes = new Node[projects.size()];
         int i = 0;
         for (Project p : projects) {
-            projectNodes[i++] = new FilterNode(p.getLookup().lookup(LogicalViewProvider.class).createLogicalView(), Children.LEAF);
+            projectNodes[i++] = getNodeForProject(p);
         }
         return projectNodes;
     }
 
-    public static <T extends Project> Collection<T> getSelectedOpenProject(Class<T> projectClass, String title, String comboBoxTitle) {
-        Collection<Project> openProjects = new ArrayList<>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
-        DialogPanel panel = new DialogPanel();
-        panel.init(comboBoxTitle, true);
-        Children.Array ca = new Children.Array();
-        ca.add(getNodesFor(openProjects));
-        panel.getExplorerManager().setRootContext(new AbstractNode(ca));
-        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(panel, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
-        // let's display the dialog now...
-        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            Node[] selectedNodes = panel.getExplorerManager().getSelectedNodes();
-            List<T> selectedProjects = new LinkedList<>();
-            for (Node n : selectedNodes) {
-                selectedProjects.addAll(n.getLookup().lookupAll(projectClass));
-            }
-            return Collections.singletonList(selectedProjects.get(0));
+    /**
+     *
+     * @param <T>
+     * @param projectClass
+     * @param title
+     * @param comboBoxTitle
+     * @return
+     */
+    public static <T extends Project> Collection<? extends T> getSelectedOpenProject(Class<? extends T> projectClass, String title, String comboBoxTitle) {
+        ArrayList<T> openProjects = new ArrayList<>();
+        for (Project p : OpenProjects.getDefault().getOpenProjects()) {
+            openProjects.add((T) p);
         }
-        return Collections.emptyList();
+        ProjectDialog<T> dialog = new ProjectDialog<>(openProjects, true, projectClass);
+        dialog.showDialog(title, comboBoxTitle);
+        return dialog.getSelectedDescriptors();
     }
 
-    public static <T extends Project> Collection<T> getSelectedOpenProjects(Class<T> projectClass, String title, String comboBoxTitle) {
-        Collection<Project> openProjects = new ArrayList<>(Arrays.asList(OpenProjects.getDefault().getOpenProjects()));
-        DialogPanel panel = new DialogPanel();
-        panel.init(comboBoxTitle, false);
-        Children.Array ca = new Children.Array();
-        ca.add(getNodesFor(openProjects));
-        panel.getExplorerManager().setRootContext(new AbstractNode(ca));
-        NotifyDescriptor.Confirmation nd = new NotifyDescriptor.Confirmation(panel, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.PLAIN_MESSAGE);
-        // let's display the dialog now...
-        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
-            Node[] selectedNodes = panel.getExplorerManager().getSelectedNodes();
-            List<T> selectedProjects = new LinkedList<>();
-            for (Node n : selectedNodes) {
-                selectedProjects.addAll(n.getLookup().lookupAll(projectClass));
-            }
-            return selectedProjects;
+    /**
+     *
+     * @param <T>
+     * @param projectClass
+     * @param title
+     * @param comboBoxTitle
+     * @return
+     */
+    public static <T extends Project> Collection<? extends T> getSelectedOpenProjects(Class<T> projectClass, String title, String comboBoxTitle) {
+        ArrayList<T> openProjects = new ArrayList<>();
+        for (Project p : OpenProjects.getDefault().getOpenProjects()) {
+            openProjects.add((T) p);
         }
-        return Collections.emptyList();
+        ProjectDialog<T> dialog = new ProjectDialog<>(openProjects, false, projectClass);
+        dialog.showDialog(title, comboBoxTitle);
+        return dialog.getSelectedDescriptors();
     }
 }

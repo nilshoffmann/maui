@@ -29,6 +29,8 @@ package net.sf.maltcms.chromaui.features.spi;
 
 import net.sf.maltcms.chromaui.features.api.IFeatureTable;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.stat.StatUtils;
@@ -88,8 +90,8 @@ public class FeatureTable implements IFeatureTable {
             double[] columnVector = sourceMatrix.getColumn(col);
             double mean = StatUtils.mean(columnVector);
             double stdev = Math.sqrt(StatUtils.variance(columnVector, mean));
-            System.out.println(
-                    "column " + col + ", mean=" + mean + " stdev=" + stdev);
+            Logger.getLogger(FeatureTable.class.getName()).log(
+                    Level.INFO, "column {0}, mean={1} stdev={2}", new Object[]{col, mean, stdev});
             for (int j = 0; j < columnVector.length; j++) {
                 normalized.setEntry(j, col,
                         (sourceMatrix.getEntry(j, col) - mean) / stdev);

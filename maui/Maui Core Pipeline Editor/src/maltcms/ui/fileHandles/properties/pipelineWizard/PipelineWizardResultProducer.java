@@ -29,21 +29,23 @@ package maltcms.ui.fileHandles.properties.pipelineWizard;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.spi.wizard.WizardException;
 import org.netbeans.spi.wizard.WizardPage;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 public class PipelineWizardResultProducer implements WizardPage.WizardResultProducer {
 
     @Override
     public Object finish(Map map) throws WizardException {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
         for (Object key : map.keySet()) {
             if (map.get(key) != null) {
-                System.out.println(key + " = " + map.get(key).toString());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "{0} = {1}", new Object[]{key, map.get(key).toString()});
                 properties.put((String) key, map.get(key).toString());
             }
         }

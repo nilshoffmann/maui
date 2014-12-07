@@ -30,6 +30,8 @@ package net.sf.maltcms.chromaui.project.spi.project;
 import java.io.File;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.IContainer;
@@ -41,6 +43,7 @@ import org.junit.Test;
 import org.netbeans.junit.NbModuleSuite;
 import org.netbeans.junit.NbModuleSuite.Configuration;
 import org.netbeans.junit.NbTestCase;
+import org.openide.util.Utilities;
 
 /**
  *
@@ -48,10 +51,18 @@ import org.netbeans.junit.NbTestCase;
  */
 public class ChromAUIProjectTest extends NbTestCase {
 
+    /**
+     *
+     * @param name
+     */
     public ChromAUIProjectTest(String name) {
         super(name);
     }
 
+    /**
+     *
+     * @return
+     */
     public static junit.framework.Test suite() {
         Configuration config = NbModuleSuite.createConfiguration(ChromAUIProjectTest.class);
         config.enableClasspathModules(true);
@@ -70,7 +81,7 @@ public class ChromAUIProjectTest extends NbTestCase {
      */
     @Test
     public void testAddContainer() throws Exception {
-        System.out.println("addContainer");
+        Logger.getLogger(getClass().getName()).info("addContainer");
         IChromAUIProject cap = null;
         try {
             File f;
@@ -83,9 +94,9 @@ public class ChromAUIProjectTest extends NbTestCase {
             f.getParentFile().deleteOnExit();
 
             cap = new ChromAUIProject();
-            cap.activate(f.toURI().toURL());
+            cap.activate(Utilities.toURI(f).toURL());
             cap.openSession();
-            cap.getCrudProvider();
+//            cap.getCrudProvider();
 //            ChromatogramContainer icc = new ChromatogramContainer();
             ChromatogramDescriptor gcd1 = new ChromatogramDescriptor();
             gcd1.setResourceLocation(new File("test/a/chrom1.cdf").getAbsolutePath());
@@ -131,11 +142,11 @@ public class ChromAUIProjectTest extends NbTestCase {
 //                }
 //            }
             Collection<TreatmentGroupContainer> itgc = cap.getContainer(TreatmentGroupContainer.class);
-            System.out.println("Query returned " + itgc.size() + " ITreatmentGroupContainer");
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Query returned {0} ITreatmentGroupContainer", itgc.size());
             for (TreatmentGroupContainer cont : itgc) {
-                System.out.println("TreatmentContainer has name: " + cont.getName());
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "TreatmentContainer has name: {0}", cont.getName());
                 for (IChromatogramDescriptor descr : cont.getMembers()) {
-                    System.out.println("TreatmentGroup has name: " + descr.getTreatmentGroup().getName());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "TreatmentGroup has name: {0}", descr.getTreatmentGroup().getName());
                     System.out.println(descr);
                 }
 //                for (IAnnotation sa:cont.getAnnotations(SpeciesAnnotation.class)) {

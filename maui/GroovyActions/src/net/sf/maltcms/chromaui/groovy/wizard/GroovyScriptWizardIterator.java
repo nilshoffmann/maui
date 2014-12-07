@@ -95,7 +95,7 @@ public final class GroovyScriptWizardIterator implements WizardDescriptor.Instan
 
     private List<WizardDescriptor.Panel<WizardDescriptor>> getPanels() {
         if (panels == null) {
-            panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+            panels = new ArrayList<>();
             panels.add(createTargetChooser(wizard));
             String[] steps = createSteps();
             for (int i = 0; i < panels.size(); i++) {
@@ -124,7 +124,7 @@ public final class GroovyScriptWizardIterator implements WizardDescriptor.Instan
         String n = Templates.getTargetName(wizard);
         DataFolder folder = DataFolder.findFolder(Templates.getTargetFolder(wizard));
         DataObject template = DataObject.find(Templates.getTemplate(wizard));
-        Map<String, Object> wizardProps = new HashMap<String, Object>();
+        Map<String, Object> wizardProps = new HashMap<>();
         for (Map.Entry<String, ? extends Object> entry : wizard.getProperties().entrySet()) {
             wizardProps.put("wizard." + entry.getKey(), entry.getValue()); // NOI18N
         }

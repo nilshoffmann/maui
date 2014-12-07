@@ -27,6 +27,8 @@
  */
 package net.sf.maltcms.chromaui.features.api;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.features.spi.NoOpFeatureMapper;
 import org.openide.util.Lookup;
 
@@ -36,6 +38,11 @@ import org.openide.util.Lookup;
  */
 public class FeatureMapperFactory {
 
+    /**
+     *
+     * @param targetType
+     * @return
+     */
     public static IFeatureMapper getMapperForType(Class<?> targetType) {
         IFeatureMapper targetMapper = null;
         for (IFeatureMapper featureMapper : Lookup.getDefault().lookupAll(IFeatureMapper.class)) {
@@ -47,7 +54,7 @@ public class FeatureMapperFactory {
             }
         }
         if (targetMapper == null) {
-            System.out.println("No specialized handler found for target type: " + targetType.getName() + "! Resorting to NoOpFeatureMapper!");
+            Logger.getLogger(FeatureMapperFactory.class.getName()).log(Level.INFO, "No specialized handler found for target type: {0}! Resorting to NoOpFeatureMapper!", targetType.getName());
             return Lookup.getDefault().lookup(NoOpFeatureMapper.class);
         }
         return targetMapper;

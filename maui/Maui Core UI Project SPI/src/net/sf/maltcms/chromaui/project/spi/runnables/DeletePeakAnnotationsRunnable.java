@@ -33,7 +33,7 @@ import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IToolDescriptor;
-import net.sf.maltcms.chromaui.project.spi.ui.Dialogs;
+import net.sf.maltcms.chromaui.project.api.ui.Dialogs;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.util.Exceptions;
 import org.openide.util.lookup.Lookups;
@@ -52,27 +52,26 @@ public class DeletePeakAnnotationsRunnable extends AProgressAwareRunnable {
         try {
             progressHandle.start(3);
             progressHandle.progress("Retrieving Tool Descriptors", 1);
-            final Set<IToolDescriptor> tools = new LinkedHashSet<IToolDescriptor>();
-            for (IChromatogramDescriptor chrom : project.getChromatograms()) {
-                for (Peak1DContainer container : project.getPeaks(chrom)) {
-                    tools.add(container.getTool());
-                }
-            }
-            Collection<? extends IToolDescriptor> selectedTools = Dialogs.showAndSelectToolDescriptors(tools, Lookups.singleton(project));
-            if (!selectedTools.isEmpty()) {
-                tools.clear();
-                tools.addAll(selectedTools);
 
-                progressHandle.progress("Retrieving Peak Containers for " + tools.size() + " Tools", 2);
-                List<Peak1DContainer> peakContainers = new ArrayList<Peak1DContainer>();
+            Collection<? extends IToolDescriptor> selectedTools = 
+                Dialogs.showAndSelectDescriptors(
+                    project.getToolsForPeakContainers(),
+                    Lookups.singleton(project),
+                    IToolDescriptor.class,
+                    "Delete Peak Tool Results",
+                    "Check Peak Tool Results to Delete"
+            );
+            if (!selectedTools.isEmpty()) {
+                progressHandle.progress("Retrieving Peak Containers for " + selectedTools.size() + " Tools", 2);
+                List<Peak1DContainer> peakContainers = new ArrayList<>();
                 for (IChromatogramDescriptor chrom : project.getChromatograms()) {
                     for (Peak1DContainer container : project.getPeaks(chrom)) {
-                        if (tools.contains(container.getTool())) {
+                        if (selectedTools.contains(container.getTool())) {
                             peakContainers.add(container);
                         }
                     }
                 }
-                progressHandle.progress("Removing Peak Containers for " + tools.size() + " Tools", 3);
+                progressHandle.progress("Removing Peak Containers for " + selectedTools.size() + " Tools", 3);
                 project.removeContainer(peakContainers.toArray(new Peak1DContainer[peakContainers.size()]));
                 project.removeDescriptor(selectedTools.toArray(new IToolDescriptor[selectedTools.size()]));
                 project.refresh();
@@ -84,4 +83,5 @@ public class DeletePeakAnnotationsRunnable extends AProgressAwareRunnable {
             progressHandle.finish();
         }
     }
+
 }

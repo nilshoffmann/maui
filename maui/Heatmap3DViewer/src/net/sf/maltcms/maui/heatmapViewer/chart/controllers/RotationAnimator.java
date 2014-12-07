@@ -64,6 +64,7 @@ public class RotationAnimator implements Runnable {
         this.step -= 0.005f;
     }
 
+    @Override
     public void run() {
         while (true) {
             if (isCancelled) {

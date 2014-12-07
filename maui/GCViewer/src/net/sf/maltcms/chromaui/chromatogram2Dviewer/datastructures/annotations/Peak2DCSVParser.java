@@ -38,8 +38,13 @@ import maltcms.datastructures.peak.Peak2D;
  */
 public class Peak2DCSVParser {
 
+    /**
+     *
+     * @param dtm
+     * @return
+     */
     public List<Peak2D> wrap(DefaultTableModel dtm) {
 
-        return new ArrayList<Peak2D>();
+        return new ArrayList<>();
     }
 }

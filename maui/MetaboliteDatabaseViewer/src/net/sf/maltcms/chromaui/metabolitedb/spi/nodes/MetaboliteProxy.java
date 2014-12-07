@@ -37,7 +37,7 @@ import ucar.ma2.ArrayInt;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class MetaboliteProxy implements IMetabolite {
 

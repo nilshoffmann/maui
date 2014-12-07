@@ -51,7 +51,6 @@ for details.
         <folder name="File">
             <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction.shadow_hidden"/>
             <file name="maltcms-io-xml-ws-meltdb-ui-SynchronizeWithMeltDBAction2.shadow_hidden"/>
-            <file name="net-sf-maltcms-chromaui-project-spi-actions-ExportProjectToXmlAction.shadow_hidden"/>
         </folder>
         <file name="GoTo_hidden"/>
         <folder name="Help">
@@ -144,14 +143,14 @@ for details.
             </file>
             <file name="net_sf_maltcms_chromaui_branding_update_center_2.instance">
                 <attr name="displayName" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#Services/AutoupdateType/net_sf_maltcms_chromaui_branding_update_center_2.instance"/>
-                <attr name="enabled" boolvalue="true"/>
+                <attr name="enabled" boolvalue="false"/>
                 <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
                 <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
                 <attr name="url" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#net_sf_maltcms_chromaui_branding_update_center_2"/>
             </file>
             <file name="net_sf_maltcms_chromaui_branding_update_center_3.instance">
                 <attr name="displayName" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#Services/AutoupdateType/net_sf_maltcms_chromaui_branding_update_center_3.instance"/>
-                <attr name="enabled" boolvalue="true"/>
+                <attr name="enabled" boolvalue="false"/>
                 <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
                 <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
                 <attr name="url" bundlevalue="net.sf.maltcms.chromaui.branding.Bundle#net_sf_maltcms_chromaui_branding_update_center_3"/>

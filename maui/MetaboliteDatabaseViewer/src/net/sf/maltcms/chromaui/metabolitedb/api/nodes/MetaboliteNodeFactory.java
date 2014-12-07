@@ -39,6 +39,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Action;
 import maltcms.datastructures.ms.IMetabolite;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
@@ -53,15 +55,24 @@ import org.openide.util.lookup.Lookups;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements PropertyChangeListener {
 
     private ICrudSession session;
     private BufferedImage image;
     private URL databaseLocation;
+
+    /**
+     *
+     */
     public final static String ACTION_PATH = "Actions/Maui/Metabolite";
 
+    /**
+     *
+     * @param databaseLocation
+     * @param session
+     */
     public MetaboliteNodeFactory(URL databaseLocation, ICrudSession session) {
         this.session = session;
         this.databaseLocation = databaseLocation;
@@ -72,6 +83,11 @@ public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements 
         g2.dispose();
     }
 
+    /**
+     *
+     * @param toPopulate
+     * @return
+     */
     @Override
     protected boolean createKeys(List<IMetabolite> toPopulate) {
         for (IMetabolite metabolite : this.session.retrieve(IMetabolite.class)) {
@@ -84,6 +100,11 @@ public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements 
         return true;
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     @Override
     protected Node createNodeForKey(IMetabolite key) {
         MetaboliteProxy proxy = new MetaboliteProxy(key);
@@ -96,7 +117,7 @@ public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements 
 
                 @Override
                 public Action[] getActions(boolean context) {
-                    List<Action> actionList = new LinkedList<Action>();
+                    List<Action> actionList = new LinkedList<>();
                     List<? extends Action> l = Utilities.actionsForPath(ACTION_PATH);
                     Action[] actions = super.getActions(context);
                     actionList.addAll(Arrays.asList(actions));
@@ -126,8 +147,8 @@ public class MetaboliteNodeFactory extends ChildFactory<IMetabolite> implements 
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        System.out.println("Retrieved property change from " + pce.getSource().getClass());
-        System.out.println("Updating metabolite " + ((MetaboliteProxy) pce.getSource()).getMetabolite());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Retrieved property change from {0}", pce.getSource().getClass());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Updating metabolite {0}", ((MetaboliteProxy) pce.getSource()).getMetabolite());
         session.update(((MetaboliteProxy) pce.getSource()).getMetabolite());
     }
 }

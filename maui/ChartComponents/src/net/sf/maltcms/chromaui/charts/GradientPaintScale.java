@@ -51,6 +51,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maltcms.io.csv.ColorRampReader;
 import maltcms.tools.ImageTools;
 import org.openide.util.Exceptions;
@@ -84,12 +86,30 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
     private int thresholdHighIndex = 0;
     private String label = "<NA>";
 
+    /**
+     *
+     * @param sampleTable
+     * @param breakPoints
+     * @param colorRampLocation
+     * @param min
+     * @param max
+     * @deprecated
+     */
     @Deprecated
     public GradientPaintScale(double[] sampleTable, double[] breakPoints,
             String colorRampLocation, double min, double max) {
         this(sampleTable, breakPoints, new ColorRampReader().readColorRamp(colorRampLocation), min, max);
     }
 
+    /**
+     *
+     * @param sampleTable
+     * @param breakPoints
+     * @param colorRamp
+     * @param min
+     * @param max
+     * @deprecated
+     */
     @Deprecated
     public GradientPaintScale(double[] sampleTable, double[] breakPoints,
             int[][] colorRamp, double min, double max) {
@@ -107,6 +127,14 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         this.lookupColors = createLookupColors();
     }
 
+    /**
+     *
+     * @param sampleTable
+     * @param breakPoints
+     * @param min
+     * @param max
+     * @deprecated
+     */
     @Deprecated
     public GradientPaintScale(double[] sampleTable, double[] breakPoints,
             double min, double max) {
@@ -114,6 +142,13 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
                 min, max);
     }
 
+    /**
+     *
+     * @param sampleTable
+     * @param min
+     * @param max
+     * @param colors
+     */
     public GradientPaintScale(double[] sampleTable, double min, double max,
             Color[] colors) {
         this.sampleTable = sampleTable;
@@ -127,10 +162,18 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         this.lookupColors = createLookupColors();
     }
 
+    /**
+     *
+     * @param label
+     */
     public void setLabel(String label) {
         this.label = label;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLabel() {
         return this.label;
     }
@@ -149,34 +192,63 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         this.lookupColors = createLookupColors();
     }
 
+    /**
+     *
+     * @param r
+     */
     public void setRamp(int[][] r) {
         this.ramp = r;
         this.colors = ImageTools.rampToColorArray(this.ramp);
         update();
     }
 
+    /**
+     *
+     * @return
+     */
     public int[][] getRamp() {
         return this.ramp;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getAlpha() {
         return this.alpha;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getBeta() {
         return this.beta;
     }
 
+    /**
+     *
+     * @param alpha
+     */
     public void setAlpha(double alpha) {
         this.alpha = alpha;
         update();
     }
 
+    /**
+     *
+     * @param beta
+     */
     public void setBeta(double beta) {
         this.beta = beta;
         update();
     }
 
+    /**
+     *
+     * @param alpha
+     * @param beta
+     */
     public void setAlphaBeta(double alpha, double beta) {
         this.alpha = alpha;
         this.beta = beta;
@@ -191,27 +263,52 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         return c;
     }
 
+    /**
+     *
+     * @param ub
+     */
     public void setUpperBound(double ub) {
         this.max = ub;
     }
 
+    /**
+     *
+     * @param lb
+     */
     public void setLowerBound(double lb) {
         this.min = lb;
     }
 
+    /**
+     *
+     * @param value
+     */
     public void setLowerBoundThreshold(double value) {
         this.thresholdLow = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     public void setUpperBoundThreshold(double value) {
         this.thresholdHigh = value;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getUpperBound() {
         return this.max;
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     public double getValueForIndex(int i) {
         if (i >= 0 && i < st.length) {
             double relativeIndex = (double) i / (double) st.length;
@@ -220,6 +317,11 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         return Double.NaN;
     }
 
+    /**
+     *
+     * @param arg0
+     * @return
+     */
     @Override
     public Paint getPaint(double arg0) {
         double relativeIndex = 0;
@@ -240,11 +342,19 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         return this.lookupColors[idx];
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getLowerBound() {
         return this.min;
     }
 
+    /**
+     *
+     * @return
+     */
     public BufferedImage getLookupImage() {
         return this.lookupImage;
     }
@@ -256,11 +366,21 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
      * cross.IConfigurable#configure(org.apache.commons.configuration.Configuration
      * )
      */
+
+    /**
+     *
+     * @param cfg
+     */
+    
     @Override
     public void configure(Configuration cfg) {
         // TODO Auto-generated method stub
     }
 
+    /**
+     *
+     * @param f
+     */
     public void saveGradientPaintScale(File f) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
             double lowerBound = getLowerBound();
@@ -286,9 +406,13 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
         return label;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         double[] st = ImageTools.createSampleTable(256);
-        System.out.println(Arrays.toString(st));
+        Logger.getLogger(GradientPaintScale.class.getName()).info(Arrays.toString(st));
         double min = 564.648;
         double max = 24334.234;
         GradientPaintScale gps = new GradientPaintScale(st, min, max,
@@ -296,15 +420,15 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
                     Color.yellow, Color.white});
         double val = min;
         double incr = (max - min) / (st.length - 1);
-        System.out.println("Increment: " + incr);
+        Logger.getLogger(GradientPaintScale.class.getName()).log(Level.INFO, "Increment: {0}", incr);
         for (int i = 0; i < st.length; i++) {
-            System.out.println("Value: " + val);
+            Logger.getLogger(GradientPaintScale.class.getName()).log(Level.INFO, "Value: {0}", val);
             gps.getPaint(val);
             val += incr;
         }
-        System.out.println("Printing min and max values");
-        System.out.println("Min: " + min + " gps min: " + gps.getPaint(min));
-        System.out.println("Max: " + max + " gps max: " + gps.getPaint(max));
+        Logger.getLogger(GradientPaintScale.class.getName()).info("Printing min and max values");
+        Logger.getLogger(GradientPaintScale.class.getName()).log(Level.INFO, "Min: {0} gps min: {1}", new Object[]{min, gps.getPaint(min)});
+        Logger.getLogger(GradientPaintScale.class.getName()).log(Level.INFO, "Max: {0} gps max: {1}", new Object[]{max, gps.getPaint(max)});
         JList jl = new JList();
         DefaultListModel dlm = new DefaultListModel();
         jl.setModel(dlm);
@@ -341,6 +465,10 @@ public class GradientPaintScale implements PaintScale, IConfigurable,
 
     }
 
+    /**
+     *
+     * @return
+     */
     public static Color[] getDefaultColorRamp() {
         Color[] c = new Color[]{Color.BLUE, Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW, Color.WHITE};
         return c;

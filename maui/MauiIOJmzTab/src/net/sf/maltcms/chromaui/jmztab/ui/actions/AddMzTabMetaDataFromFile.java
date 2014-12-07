@@ -27,22 +27,16 @@
  */
 package net.sf.maltcms.chromaui.jmztab.ui.actions;
 
-import com.db4o.constraints.ConstraintViolationException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Collection;
 import javax.swing.filechooser.FileFilter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.ContactDescriptor;
-import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.ContactContainer;
 import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabFileContainer;
-import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.containers.MzTabMetaDataContainer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileChooserBuilder;
 import org.openide.util.NbBundle.Messages;
-import uk.ac.ebi.pride.jmztab.model.Contact;
 
 @ActionID(
         category = "ChromAUIProjectLogicalView/MetaData",
@@ -67,7 +61,7 @@ public final class AddMzTabMetaDataFromFile implements ActionListener {
 
             @Override
             public boolean accept(File pathname) {
-                return pathname.getName().toLowerCase().endsWith("mztab") || pathname.getName().toLowerCase().endsWith("mzTab-xml.txt");
+                return pathname.isDirectory() || pathname.getName().toLowerCase().endsWith("mztab") || pathname.getName().toLowerCase().endsWith("mzTab-xml.txt");
             }
 
             @Override
@@ -76,6 +70,7 @@ public final class AddMzTabMetaDataFromFile implements ActionListener {
             }
         });
         fcb.setFileHiding(false);//AcceptAllFileFilterUsed(true);
+        fcb.setDirectoriesOnly(false);
         File f = fcb.showOpenDialog();
         if (f != null) {
             MzTabFileContainer fileContainer = MzTabFileContainer.fromMzTabFile(f);

@@ -54,6 +54,11 @@ import org.openide.util.Exceptions;
  */
 public class FragmentTools {
 
+    /**
+     *
+     * @param fragment
+     * @return
+     */
     public static List<IVariableFragment> getChildren(IFileFragment fragment) {
         IDataSourceFactory dsf = Factory.getInstance().getDataSourceFactory();
         try {
@@ -65,11 +70,16 @@ public class FragmentTools {
         return Collections.emptyList();
     }
 
+    /**
+     *
+     * @param fragment
+     * @return
+     */
     public static List<IVariableFragment> getAggregatedVariables(IFileFragment fragment) {
         IDataSourceFactory dsf = Factory.getInstance().getDataSourceFactory();
-        HashMap<String, IVariableFragment> names = new HashMap<String, IVariableFragment>();
-        List<IVariableFragment> allVars = new ArrayList<IVariableFragment>();
-        List<IFileFragment> parentsToExplore = new LinkedList<IFileFragment>();
+        HashMap<String, IVariableFragment> names = new HashMap<>();
+        List<IVariableFragment> allVars = new ArrayList<>();
+        List<IFileFragment> parentsToExplore = new LinkedList<>();
 //        System.out.println("Parent files " + parentsToExplore);
         parentsToExplore.add(fragment);
         while (!parentsToExplore.isEmpty()) {
@@ -79,7 +89,7 @@ public class FragmentTools {
                 if (sf != null && sf.getArray() != null) {
                     Collection<String> c = ArrayTools.getStringsFromArray(sf.getArray());
                     for (String s : c) {
-                        Logger.getLogger(FragmentTools.class.getName()).log(Level.INFO, "Processing file " + s);
+                        Logger.getLogger(FragmentTools.class.getName()).log(Level.INFO, "Processing file {0}", s);
                         URI uri = FileTools.resolveRelativeUri(parent.getUri(), URI.create(s));
                         File file = new File(uri);
                         if (file.isAbsolute()) {

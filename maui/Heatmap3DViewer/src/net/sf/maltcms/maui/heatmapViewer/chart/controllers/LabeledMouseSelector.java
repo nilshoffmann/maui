@@ -31,6 +31,8 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.controllers.mouse.selection.AWTAbstractMouseSelector;
 import org.jzy3d.demos.histogram.barchart.BarChartBar;
@@ -72,12 +74,12 @@ public class LabeledMouseSelector extends AWTAbstractMouseSelector implements Ke
                         > view.getCamera().getEye().distance(bb.getShape().getBounds().getCenter()))
                         && bb.getShape().isDisplayed()) {
                     bestMatch = bb;
-                    System.out.println(bb.getInfo());
+                    Logger.getLogger(getClass().getName()).info(bb.getInfo());
                 }
             }
         }
         if (bestMatch != null) {
-            System.out.println("Found BarChartBar: " + bestMatch.getItem());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Found BarChartBar: {0}", bestMatch.getItem());
             bestMatch.setSelected(true);
         }
     }

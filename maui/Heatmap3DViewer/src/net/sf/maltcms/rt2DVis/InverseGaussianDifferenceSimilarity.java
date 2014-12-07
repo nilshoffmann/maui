@@ -29,7 +29,7 @@ package net.sf.maltcms.rt2DVis;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class InverseGaussianDifferenceSimilarity implements
         IScalarSimilarity {

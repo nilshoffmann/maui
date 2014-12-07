@@ -37,10 +37,22 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
  */
 public interface IQuery<T> extends Callable<List<QueryResultList<T>>> {
 
+    /**
+     *
+     * @return
+     */
     public double getMatchThreshold();
 
+    /**
+     *
+     * @return
+     */
     public List<IDatabaseDescriptor> getDatabaseDescriptors();
 
+    /**
+     *
+     * @return
+     */
     public T[] getQueryScans();
 
 }

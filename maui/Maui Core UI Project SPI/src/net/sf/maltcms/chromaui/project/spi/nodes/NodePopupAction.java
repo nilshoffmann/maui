@@ -55,7 +55,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 public class NodePopupAction extends AbstractAction implements ContextAwareAction, ActionListener {
 
@@ -140,9 +140,9 @@ public class NodePopupAction extends AbstractAction implements ContextAwareActio
     public static JMenu actionsToMenu(String menuName, Action[] actions, Lookup context) {
         //code from Utilities.actionsToPopup
         // keeps actions for which was menu item created already (do not add them twice)
-        Set<Action> counted = new HashSet<Action>();
+        Set<Action> counted = new HashSet<>();
         // components to be added (separators are null)
-        List<Component> components = new ArrayList<Component>();
+        List<Component> components = new ArrayList<>();
         for (Action action : actions) {
             if (action != null && counted.add(action)) {
                 // switch to replacement action if there is some

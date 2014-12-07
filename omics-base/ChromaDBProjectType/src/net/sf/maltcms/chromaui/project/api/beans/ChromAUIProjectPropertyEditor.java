@@ -30,13 +30,20 @@ package net.sf.maltcms.chromaui.project.api.beans;
 import java.beans.PropertyEditorSupport;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import org.netbeans.api.project.ProjectUtils;
+import org.openide.explorer.propertysheet.ExPropertyEditor;
+import org.openide.explorer.propertysheet.PropertyEnv;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = IChromAUIProject.class)
 public class ChromAUIProjectPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public ChromAUIProjectPropertyEditor() {
     }
 
@@ -50,4 +57,5 @@ public class ChromAUIProjectPropertyEditor extends PropertyEditorSupport {
     public void setAsText(String string) throws IllegalArgumentException {
         throw new IllegalArgumentException("Editing of Project Name is not supported!");
     }
+    
 }

@@ -37,6 +37,10 @@ import org.openide.WizardDescriptor;
  */
 public class StandaloneWizard {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         DBProjectWizardIterator dbwa = new DBProjectWizardIterator();
         WizardDescriptor wd = new WizardDescriptor(dbwa);

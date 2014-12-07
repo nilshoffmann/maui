@@ -106,6 +106,10 @@ public class PvalueAdjustmentSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox pvalueAdjustmentMethod;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     *
+     * @return
+     */
     public PvalueAdjustment getPvalueAdjustment() {
         if (pvalueAdjustmentMethod.getSelectedItem() != null) {
             PvalueAdjustment adjustment = (PvalueAdjustment) pvalueAdjustmentMethod.getSelectedItem();

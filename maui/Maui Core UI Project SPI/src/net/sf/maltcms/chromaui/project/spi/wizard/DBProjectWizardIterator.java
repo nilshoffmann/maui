@@ -74,7 +74,7 @@ public class DBProjectWizardIterator implements WizardDescriptor.ProgressInstant
 
     @Override
     public Set<FileObject> instantiate(ProgressHandle handle) throws IOException {
-        Set<FileObject> resultSet = new LinkedHashSet<FileObject>();
+        Set<FileObject> resultSet = new LinkedHashSet<>();
         Map<String, Object> props = wiz.getProperties();
         System.out.println(props);
         File projdir = (File) props.get("projdir");
@@ -113,7 +113,7 @@ public class DBProjectWizardIterator implements WizardDescriptor.ProgressInstant
                 JComponent jc = (JComponent) c;
                 // Sets step number of a component
                 // TODO if using org.openide.dialogs >= 7.8, can use WizardDescriptor.PROP_*:
-                jc.putClientProperty("WizardPanel_contentSelectedIndex", new Integer(i));
+                jc.putClientProperty("WizardPanel_contentSelectedIndex", i);
                 // Sets steps names for a panel
                 jc.putClientProperty("WizardPanel_contentData", steps);
                 // Turn on subtitle creation on each step
@@ -136,7 +136,7 @@ public class DBProjectWizardIterator implements WizardDescriptor.ProgressInstant
     @Override
     public String name() {
         return MessageFormat.format("{0} of {1}",
-                new Object[]{new Integer(index + 1), new Integer(panels.length)});
+                new Object[]{index + 1, panels.length});
     }
 
     @Override

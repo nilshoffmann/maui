@@ -36,5 +36,9 @@ package net.sf.maltcms.chromaui.ui.support.api;
  */
 public interface ResultListener<R> {
 
+    /**
+     *
+     * @param r
+     */
     public void listen(R r);
 }

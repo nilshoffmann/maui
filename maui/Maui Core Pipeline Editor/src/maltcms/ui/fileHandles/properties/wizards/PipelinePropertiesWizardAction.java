@@ -32,8 +32,8 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import javax.swing.JComponent;
-import maltcms.ui.fileHandles.properties.graph.PipelineElementWidget;
-import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
@@ -110,7 +110,7 @@ public final class PipelinePropertiesWizardAction extends CallableSystemAction {
                 JComponent jc = (JComponent) c;
                 // Sets step number of a component
                 // TODO if using org.openide.dialogs >= 7.8, can use WizardDescriptor.PROP_*:
-                jc.putClientProperty("WizardPanel_contentSelectedIndex", new Integer(i));
+                jc.putClientProperty("WizardPanel_contentSelectedIndex", i);
                 // Sets steps names for a panel
                 jc.putClientProperty("WizardPanel_contentData", steps);
                 // Turn on subtitle creation on each step

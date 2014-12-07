@@ -36,5 +36,6 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IMetaDataDescriptor;
  * @param <T>
  */
 public class BasicMzTabMetaDataContainer<T extends IMetaDataDescriptor> extends MetaDataContainer<T> implements IMetaDataDescriptor {
+    private static final long serialVersionUID = -5203308741864176841L;
 
 }

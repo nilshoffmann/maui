@@ -42,7 +42,7 @@ import org.openide.windows.CloneableTopComponent;
 
 /**
  *
- * @author mw
+ * @author Mathias Wilhelm
  */
 class JFCOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
 
@@ -50,6 +50,7 @@ class JFCOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
         super(entry);
     }
 
+    @Override
     protected CloneableTopComponent createCloneableTopComponent() {
         final JFCDataObject dobj = (JFCDataObject) entry.getDataObject();
         final JFCTopComponent tc = new JFCTopComponent();
@@ -62,9 +63,7 @@ class JFCOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
         final Future<JFreeChart> f = es.submit(new JFCLoader(dobj.getPrimaryFile().getPath(), ph));
         try {
             tc.setChart(f.get());
-        } catch (InterruptedException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             Exceptions.printStackTrace(ex);
         } finally {
             ph.finish();

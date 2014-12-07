@@ -32,6 +32,8 @@ import cross.datastructures.fragments.IVariableFragment;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 import maltcms.datastructures.ms.IChromatogram;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
@@ -48,9 +50,15 @@ import ucar.ma2.Array;
  */
 public class CachingChromatogram1DTest {
 
+    /**
+     *
+     */
     @Rule
     public TemporaryFolder tf = new TemporaryFolder();
 
+    /**
+     *
+     */
     @Test
     public void testRTtoIndexAssignment() {
         try {
@@ -72,25 +80,31 @@ public class CachingChromatogram1DTest {
             IChromatogramDescriptor icd = DescriptorFactory.newChromatogramDescriptor();
             icd.setResourceLocation(f.getUri().toString());
             IChromatogram ic1d = icd.getChromatogram();
-            double[] searchTimes = new double[]{0.438, 0.477, 0.6, 1.21};
-            int[] expectedIndices = new int[]{1, 3, 4, 5};
+            double[] searchTimes = new double[]{0.438, 0.477, 0.6, 1.21, 1.35, 1.4};
+            int[] expectedIndices = new int[]{1, 3, 4, 5, sats.length-1, sats.length};
             for (int i = 0; i < expectedIndices.length; i++) {
-                System.out.println("Start Test " + (i + 1) + "/" + expectedIndices.length);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Start Test {0}/{1}", new Object[]{i + 1, expectedIndices.length});
                 double time = searchTimes[i];
                 int expectedIndex = expectedIndices[i];
                 Assert.assertEquals(expectedIndex, ic1d.getIndexFor(time));//getIndexForRt(time, sats));
-                System.out.println("End Test " + (i + 1) + "/" + expectedIndices.length);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "End Test {0}/{1}", new Object[]{i + 1, expectedIndices.length});
             }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
+    /**
+     *
+     * @param rt
+     * @param rts
+     * @return
+     */
     public int getIndexForRt(double rt, double[] rts) {
-        System.out.println("Query value: " + rt);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Query value: {0}", rt);
         int idx = Arrays.binarySearch(rts, rt);
         if (idx >= 0) {// exact hit
-            System.out.println("Value at index: " + idx + " = " + rts[idx]);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Value at index: {0} = {1}", new Object[]{idx, rts[idx]});
             return idx;
         } else {// imprecise hit, find closest element
             int insertionPosition = (-idx) - 1;
@@ -100,18 +114,18 @@ public class CachingChromatogram1DTest {
             if (insertionPosition >= rts.length) {
                 throw new IllegalArgumentException("Insertion index is out of bounds! " + insertionPosition + ">=" + rts.length);
             }
-            System.out.println("Would insert before " + insertionPosition);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Would insert before {0}", insertionPosition);
             double current = rts[Math.min(rts.length - 1, insertionPosition)];
-            System.out.println("Value at insertion position: " + current);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Value at insertion position: {0}", current);
             double previous = rts[Math.max(0, insertionPosition - 1)];
-            System.out.println("Value before insertion position: " + previous);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Value before insertion position: {0}", previous);
             if (Math.abs(rt - previous) <= Math.abs(
                     rt - current)) {
                 int index = Math.max(0, insertionPosition - 1);
-                System.out.println("Returning " + index);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Returning {0}", index);
                 return index;
             } else {
-                System.out.println("Returning " + insertionPosition);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Returning {0}", insertionPosition);
                 return insertionPosition;
             }
         }

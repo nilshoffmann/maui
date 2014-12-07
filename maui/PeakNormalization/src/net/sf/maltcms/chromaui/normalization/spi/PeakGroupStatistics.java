@@ -36,11 +36,11 @@ import net.sf.maltcms.chromaui.normalization.api.IStatisticalTest;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public class PeakGroupStatistics implements Map<String, IStatisticalTest> {
 
-    private HashMap<String, IStatisticalTest> map = new HashMap<String, IStatisticalTest>();
+    private HashMap<String, IStatisticalTest> map = new HashMap<>();
 
     @Override
     public String toString() {

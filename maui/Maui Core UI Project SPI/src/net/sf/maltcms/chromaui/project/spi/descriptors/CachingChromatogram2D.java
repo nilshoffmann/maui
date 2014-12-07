@@ -36,8 +36,10 @@ import cross.datastructures.fragments.IVariableFragment;
 import cross.datastructures.fragments.ImmutableVariableFragment2;
 import cross.datastructures.fragments.VariableFragment;
 import cross.datastructures.tuple.Tuple2D;
+import cross.exception.NotImplementedException;
 import cross.exception.ResourceNotAvailableException;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,8 +53,10 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
+import maltcms.datastructures.caches.IScanLine;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IExperiment2D;
 import maltcms.datastructures.ms.IScan2D;
@@ -68,26 +72,21 @@ import ucar.ma2.MAMath;
  *
  * Implementation of 2D chromatogram backed by a cache for mass spectra.
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
-@Slf4j
+@Log
 public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProvider<Integer, SerializableScan2D> {
 
     private IFileFragment parent;
     private final String scanAcquisitionTimeUnit = "seconds";
     @Configurable(name = "var.scan_acquisition_time")
     private String scan_acquisition_time_var = "scan_acquisition_time";
-//    private String first_column_elution_time_var = "first_column_elution_time";
-//    private String second_column_elution_time_var = "second_column_elution_time";
     private List<Array> massValues;
     private List<Array> intensityValues;
-//    private Array firstColumnElutionTimeArray;
-//    private Array secondColumnElutionTimeArray;
     private IVariableFragment scanAcquisitionTimeVariable;
     private ICacheDelegate<Integer, SerializableScan2D> whm;
     private int scans;
     private boolean initialized = false;
-//    private double satOffset = 0;
     private double modulationTime = -1;
     private double scanRate = 0.0;
     private RtProvider rtProvider = null;
@@ -95,7 +94,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     private int spm = -1;
     private int modulations = -1;
     private AtomicBoolean loading = new AtomicBoolean(false);
-    private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(2);
+    private static ExecutorService prefetchLoader = Executors.newFixedThreadPool(1);
     private SoftReference<double[]> satArrayReference;
     private SoftReference<Array> satReference;
     private Tuple2D<Double, Double> massRange;
@@ -131,13 +130,15 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
             iV.setIndex(index);
             activateCache(iV);
             intensityValues = iV.getIndexedArray();
-//            this.satOffset = parent.getChild("scan_acquisition_time").getArray().
-//                    getDouble(0);
-            modulationTime = parent.getChild("modulation_time").getArray().getDouble(0);
+            final String modulation_time = Factory.getInstance().getConfiguration().getString(
+                    "var.modulation_time", "modulation_time");
+            modulationTime = parent.getChild(modulation_time).getArray().getDouble(0);
             try {
-                scanRate = parent.getChild("scan_rate").getArray().getDouble(0);
+                final String scan_rate = Factory.getInstance().getConfiguration().getString(
+                        "var.scan_rate", "scan_rate");
+                scanRate = parent.getChild(scan_rate).getArray().getDouble(0);
                 if (scanRate == 0) {
-                    Array satA = this.parent.getChild("scan_acquisition_time").getArray();
+                    Array satA = this.parent.getChild(scan_acquisition_time_var).getArray();
                     double s0 = satA.getDouble(0);
                     double s1 = satA.getDouble(1);
                     scanRate = 1.0d / (s1 - s0);
@@ -146,17 +147,21 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
                 modulations = (int) (scans / spm);
             } catch (ResourceNotAvailableException rnae) {
             }
+            final String first_column_elution_time = Factory.getInstance().getConfiguration().getString(
+                    "var.first_column_elution_time", "first_column_elution_time");
+            final String second_column_elution_time = Factory.getInstance().getConfiguration().getString(
+                    "var.second_column_elution_time", "second_column_elution_time");
             scanAcquisitionTimeVariable = this.parent.getChild(scan_acquisition_time_var);
             try {
-                this.parent.getChild("first_column_elution_time");
-                this.parent.getChild("second_column_elution_time");
-                rtProvider = new ArbitraryModulationRtProvider("first_column_elution_time", "second_column_elution_time", parent);
+                this.parent.getChild(first_column_elution_time);
+                this.parent.getChild(second_column_elution_time);
+                rtProvider = new ArbitraryModulationRtProvider(first_column_elution_time, second_column_elution_time, parent);
             } catch (ResourceNotAvailableException rnae) {
-                rtProvider = new UniformModulationRtProvider("scan_acquisition_time", parent);
+                rtProvider = new UniformModulationRtProvider(scan_acquisition_time_var, parent);
                 //                IScanLine scanLine = ScanLineCacheFactory.getDefaultScanLineCache(parent);
-                System.out.println("Generating first and second column elution time!");
-                IVariableFragment fcmt = new VariableFragment(this.parent, "first_column_elution_time");
-                IVariableFragment scmt = new VariableFragment(this.parent, "second_column_elution_time");
+                Logger.getLogger(getClass().getName()).info("Generating first and second column elution time!");
+                IVariableFragment fcmt = new VariableFragment(this.parent, first_column_elution_time);
+                IVariableFragment scmt = new VariableFragment(this.parent, second_column_elution_time);
                 Array satA = scanAcquisitionTimeVariable.getArray();
                 Array fceta = Array.factory(satA.getElementType(), satA.getShape());
                 Array sceta = Array.factory(satA.getElementType(), satA.getShape());
@@ -169,13 +174,15 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
                 scmt.setArray(sceta);
             }
             try {
-                IVariableFragment msLevelVar = this.parent.getChild("ms_level");
+                final String ms_level = Factory.getInstance().getConfiguration().getString(
+                        "var.ms_level", "ms_level");
+                IVariableFragment msLevelVar = this.parent.getChild(ms_level);
                 msLevel = msLevelVar.getArray();
-                msScanMap = new TreeMap<Short, List<Integer>>();
+                msScanMap = new TreeMap<>();
                 for (int i = 0; i < msLevel.getShape()[0]; i++) {
                     Short msLevelValue = msLevel.getShort(i);
                     if (msLevelValue == 0) {
-                        System.out.println("Correcting msLevelValue of 0 to 1");
+                        Logger.getLogger(getClass().getName()).info("Correcting msLevelValue of 0 to 1");
                         msLevelValue = 1;
                         msLevel.setShort(i, msLevelValue);
                     }
@@ -183,16 +190,16 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
                         List<Integer> scanToScan = msScanMap.get(msLevelValue);
                         scanToScan.add(i);
                     } else {
-                        List<Integer> scanToScan = new ArrayList<Integer>();
+                        List<Integer> scanToScan = new ArrayList<>();
                         scanToScan.add(scanToScan.size(), i);
                         msScanMap.put(msLevelValue, scanToScan);
                     }
                 }
             } catch (ResourceNotAvailableException rnae) {
-                System.out.println("Chromatogram has no ms_level variable, assuming all scans are MS1!");
-                msScanMap = new TreeMap<Short, List<Integer>>();
+                Logger.getLogger(getClass().getName()).info("Chromatogram has no ms_level variable, assuming all scans are MS1!");
+                msScanMap = new TreeMap<>();
                 msLevel = new ArrayShort.D1(this.scans);
-                List<Integer> scanToScan = new ArrayList<Integer>();
+                List<Integer> scanToScan = new ArrayList<>();
                 for (int i = 0; i < this.scans; i++) {
                     scanToScan.add(i);
                     msLevel.setShort(i, (short) 1);
@@ -208,11 +215,11 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
             Logger.getLogger(CachingChromatogram1D.class.getName()).info("Not activating cached list on mzml file!");
         } else {
             if (ivf instanceof ImmutableVariableFragment2) {
-                System.out.println("Using cached access on variable: " + ivf);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Using cached access on variable: {0}", ivf);
                 ((ImmutableVariableFragment2) ivf).setUseCachedList(true);
             }
             if (ivf instanceof VariableFragment) {
-                System.out.println("Using cached access on variable: " + ivf);
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Using cached access on variable: {0}", ivf);
                 ((VariableFragment) ivf).setUseCachedList(true);
             }
         }
@@ -278,7 +285,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
             }
             return scan.getScan();
         } catch (java.lang.IndexOutOfBoundsException ex) {
-            System.err.println("Warning: Could not access scan at index " + i);
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Warning: Could not access scan at index {0}", i);
             return null;
         }
     }
@@ -300,7 +307,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
         init();
         if (timeRange == null) {
             MAMath.MinMax satMM = MAMath.getMinMax(getScanAcquisitionTime());
-            timeRange = new Tuple2D<Double, Double>(satMM.min, satMM.max);
+            timeRange = new Tuple2D<>(satMM.min, satMM.max);
         }
         return timeRange;
     }
@@ -342,7 +349,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     public List<Scan2D> getScans() {
         init();
-        ArrayList<Scan2D> al = new ArrayList<Scan2D>();
+        ArrayList<Scan2D> al = new ArrayList<>();
         for (int i = 0; i < getNumberOfScans(); i++) {
             al.add(buildScan(i));
         }
@@ -397,12 +404,12 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
         Array sat = null;
         if (satReference == null || satReference.get() == null) {
             sat = scanAcquisitionTimeVariable.getArray();
-            satReference = new SoftReference<Array>(sat);
+            satReference = new SoftReference<>(sat);
         } else {
             sat = satReference.get();
             if (sat == null) {
                 sat = scanAcquisitionTimeVariable.getArray();
-                satReference = new SoftReference<Array>(sat);
+                satReference = new SoftReference<>(sat);
             }
         }
         return sat;
@@ -425,7 +432,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
         if (satArrayReference == null || satArrayReference.get() == null) {
             satArray = (double[]) getScanAcquisitionTime().get1DJavaArray(
                     double.class);
-            satArrayReference = new SoftReference<double[]>(satArray);
+            satArrayReference = new SoftReference<>(satArray);
         } else {
             satArray = satArrayReference.get();
         }
@@ -438,29 +445,24 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
         double[] satArray = getSatArray();
         int idx = Arrays.binarySearch(satArray, scan_acquisition_time);
         if (idx >= 0) {// exact hit
-            log.info("sat {}, scan_index {}",
-                    scan_acquisition_time, idx);
+            log.log(Level.FINE, "sat {0}, scan_index {1}", new Object[]{
+                scan_acquisition_time, idx});
             return idx;
         } else {// imprecise hit, find closest element
             int insertionPosition = (-idx) - 1;
-            if (insertionPosition < 0) {
-                throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + "<" + 0);
+            if (insertionPosition <= 0) {
+                log.log(Level.WARNING, "Insertion position was {0}, setting to index 0", insertionPosition);
             }
-            if (insertionPosition >= getSatArray().length) {
-                throw new ArrayIndexOutOfBoundsException("Insertion index is out of bounds! " + insertionPosition + ">=" + satArray.length);
+            if (insertionPosition >= satArray.length) {
+                log.log(Level.WARNING, "Insertion position was {0}, setting to index {1}", new Object[]{insertionPosition, satArray.length - 1});
             }
-//			System.out.println("Would insert before "+insertionPosition);
             double current = satArray[Math.min(satArray.length - 1, insertionPosition)];
-//			System.out.println("Value at insertion position: "+current);
             double previous = satArray[Math.max(0, insertionPosition - 1)];
-//			System.out.println("Value before insertion position: "+previous);
             if (Math.abs(scan_acquisition_time - previous) <= Math.abs(
                     scan_acquisition_time - current)) {
                 int index = Math.max(0, insertionPosition - 1);
-//				System.out.println("Returning "+index);
                 return index;
             } else {
-//				System.out.println("Returning "+insertionPosition);
                 return insertionPosition;
             }
         }
@@ -500,11 +502,13 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
 
     @Override
     public int getNumberOfModulations() {
+        init();
         return modulations;
     }
 
     @Override
     public int getNumberOfScansPerModulation() {
+        init();
         return spm;
     }
 
@@ -543,6 +547,24 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public RtProvider getRtProvider() {
         init();
         return this.rtProvider;
+    }
+
+    @Override
+    public Rectangle2D getTimeRange2D() {
+        IScan2D startScan = getScanForMsLevel(0, (short)1);
+        IScan2D endScan = getScanForMsLevel(getNumberOfScansForMsLevel((short)1)-1, (short)1);
+        double[] startRts = getRtProvider().getRts(0);
+        double[] stopRts = getRtProvider().getRts(getNumberOfScans() - 1);
+        return new Rectangle2D.Double(
+            startScan.getFirstColumnScanAcquisitionTime(), 0,
+            endScan.getFirstColumnScanAcquisitionTime()-startScan.getFirstColumnScanAcquisitionTime(),
+            getModulationDuration()
+        );
+    }
+
+    @Override
+    public IScanLine getScanLineImpl() {
+        throw new NotImplementedException();
     }
 
     public abstract class RtProvider {
@@ -632,7 +654,7 @@ public class CachingChromatogram2D implements IChromatogram2D, ICacheElementProv
     public List<Integer> getIndicesOfScansForMsLevel(short level) {
         init();
         if (msScanMap.containsKey(level)) {
-            return Collections.unmodifiableList(msScanMap.get(Short.valueOf(level)));
+            return Collections.unmodifiableList(msScanMap.get(level));
         } else {
             throw new ResourceNotAvailableException("No mass spectra available for fragmentation level " + level + " in chromatogram " + getParent().getUri());
         }

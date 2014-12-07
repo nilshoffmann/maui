@@ -33,6 +33,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CSVParser {
 
@@ -92,7 +94,7 @@ public class CSVParser {
             e.printStackTrace();
             e.getMessage();
         }
-        System.out.println(data.size() + " Eintr�ge importiert...");
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "{0} Eintr\ufffdge importiert...", data.size());
         return data;
     }
 }

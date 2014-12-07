@@ -37,10 +37,25 @@ import org.jfree.chart.annotations.XYAnnotation;
  */
 public interface AnnotationProvider<T> {
 
+    /**
+     *
+     * @param f
+     * @return
+     */
     public List<XYAnnotation> load(File f);
 
+    /**
+     *
+     * @param l
+     * @param f
+     */
     public void store(List<XYAnnotation> l, File f);
 
+    /**
+     *
+     * @param t
+     * @return
+     */
     public XYAnnotation create(T t);
 
 }

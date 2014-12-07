@@ -34,17 +34,33 @@ import uk.ac.ebi.pride.jmztab.model.AssayQuantificationMod;
 import uk.ac.ebi.pride.jmztab.model.MetadataElement;
 import uk.ac.ebi.pride.jmztab.model.Param;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class AssayQuantificationModDescriptor extends ABasicDescriptor implements IMzTabDescriptor {
 
+    /**
+     *
+     */
     public final static String PROP_ASSAYQUANTIFICATIONMOD = "assayQuantificationMod";
+    private static final long serialVersionUID = -7806657069874756294L;
 
     private AssayQuantificationMod assayQuantificationMod;
 
+    /**
+     *
+     * @return
+     */
     public AssayQuantificationMod getAssayQuantificationMod() {
         activate(ActivationPurpose.READ);
         return assayQuantificationMod;
     }
 
+    /**
+     *
+     * @param element
+     */
     public void setAssayQuantificationMod(AssayQuantificationMod element) {
         activate(ActivationPurpose.WRITE);
         AssayQuantificationMod old = this.assayQuantificationMod;
@@ -55,14 +71,26 @@ public class AssayQuantificationModDescriptor extends ABasicDescriptor implement
         getPropertyChangeSupport().firePropertyChange(PROP_ASSAYQUANTIFICATIONMOD, old, element);
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getElementId() {
         return getAssayQuantificationMod().getId();
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setElementId(Integer id) {
         getAssayQuantificationMod().setId(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getReference() {
         return getAssayQuantificationMod().getReference();
     }
@@ -72,30 +100,58 @@ public class AssayQuantificationModDescriptor extends ABasicDescriptor implement
         return getAssayQuantificationMod().toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public Param getParam() {
         return getAssayQuantificationMod().getParam();
     }
 
+    /**
+     *
+     * @param param
+     */
     public void setParam(Param param) {
         getAssayQuantificationMod().setParam(param);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSite() {
         return getAssayQuantificationMod().getSite();
     }
 
+    /**
+     *
+     * @param site
+     */
     public void setSite(String site) {
         getAssayQuantificationMod().setSite(site);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPosition() {
         return getAssayQuantificationMod().getPosition();
     }
 
+    /**
+     *
+     * @param position
+     */
     public void setPosition(String position) {
         getAssayQuantificationMod().setPosition(position);
     }
 
+    /**
+     *
+     * @return
+     */
     public MetadataElement getElement() {
         return getAssayQuantificationMod().getElement();
     }

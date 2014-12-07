@@ -27,7 +27,7 @@
  */
 package maltcms.ui.fileHandles.properties.wizards;
 
-import maltcms.ui.fileHandles.properties.graph.PipelineGeneralConfigWidget;
+import maltcms.ui.fileHandles.properties.graph.widget.PipelineGeneralConfigWidget;
 import maltcms.ui.fileHandles.properties.tools.ModelBuilder;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;

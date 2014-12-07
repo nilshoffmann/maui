@@ -32,8 +32,18 @@ import net.sf.maltcms.chromaui.project.spi.descriptors.mztab.VariableModDescript
 import uk.ac.ebi.pride.jmztab.model.Metadata;
 import uk.ac.ebi.pride.jmztab.model.VariableMod;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class VariableModContainer extends BasicMzTabMetaDataContainer<VariableModDescriptor> {
+    private static final long serialVersionUID = 880272764580262155L;
 
+    /**
+     *
+     * @param metadata
+     * @return
+     */
     public static VariableModContainer create(Metadata metadata) {
         VariableModContainer c = new VariableModContainer();
         c.setLevel(2);

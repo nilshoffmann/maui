@@ -29,6 +29,7 @@ package net.sf.maltcms.chromaui.groovy.ui;
 
 import groovy.lang.GroovyClassLoader;
 import java.awt.Component;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
@@ -74,7 +75,7 @@ public class GroovyScriptSelectionForm<T extends GroovyScript> extends javax.swi
     public void updateModel() {
         GroovyClassLoader gcl = new GroovyClassLoader();
         List<FileObject> scriptFiles = Utils.getGroovyScripts(scriptDirectories);
-        List<T> groovyScripts = new ArrayList<T>();
+        List<T> groovyScripts = new ArrayList<>();
         for (FileObject child : scriptFiles) {
             T script = sl.loadScript(child, gcl);
             if (script != null) {
@@ -223,7 +224,7 @@ public class GroovyScriptSelectionForm<T extends GroovyScript> extends javax.swi
                         return a;
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException | ClassNotFoundException e) {
                 ErrorManager.getDefault().notify(ErrorManager.WARNING, e);
                 return null;
             }

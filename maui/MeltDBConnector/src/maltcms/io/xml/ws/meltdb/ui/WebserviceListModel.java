@@ -40,9 +40,13 @@ import maltcms.io.xml.ws.meltdb.MeltDBSession;
  */
 public abstract class WebserviceListModel<T> implements ListModel {
 
-    private List<ListDataListener> listeners = new LinkedList<ListDataListener>();
+    private List<ListDataListener> listeners = new LinkedList<>();
     private List<T> values = Collections.emptyList();
 
+    /**
+     *
+     * @param ms
+     */
     public abstract void initModel(MeltDBSession ms);
 
     @Override
@@ -55,6 +59,11 @@ public abstract class WebserviceListModel<T> implements ListModel {
         return getTypedElementAt(i);
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     public T getTypedElementAt(int i) {
         return values.get(i);
     }

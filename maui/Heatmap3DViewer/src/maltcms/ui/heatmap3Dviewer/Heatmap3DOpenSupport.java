@@ -44,6 +44,10 @@ public class Heatmap3DOpenSupport extends OpenSupport implements OpenCookie, Clo
 
     private URL u;
 
+    /**
+     *
+     * @param dob
+     */
     public Heatmap3DOpenSupport(MultiDataObject.Entry dob) {
         super(dob);
         try {
@@ -53,6 +57,10 @@ public class Heatmap3DOpenSupport extends OpenSupport implements OpenCookie, Clo
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
         Heatmap3DViewerTopComponent htc = new Heatmap3DViewerTopComponent();

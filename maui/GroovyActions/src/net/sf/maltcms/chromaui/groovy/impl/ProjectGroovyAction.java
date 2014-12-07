@@ -57,7 +57,7 @@ import org.openide.util.RequestProcessor;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 @ActionID(category = "Groovy",
         id = "net.sf.maltcms.chromaui.groovy.ProjectGroovyAction")
@@ -98,7 +98,7 @@ public final class ProjectGroovyAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (context != null) {
-            GroovyScriptSelectionForm<GroovyProjectScript> gssf = new GroovyScriptSelectionForm<GroovyProjectScript>(Utils.getScriptDirectories(context), new ProjectScriptLoader());
+            GroovyScriptSelectionForm<GroovyProjectScript> gssf = new GroovyScriptSelectionForm<>(Utils.getScriptDirectories(context), new ProjectScriptLoader());
             gssf.updateModel();
             DialogDescriptor dd = new DialogDescriptor(gssf,
                     "Please select a script for execution");

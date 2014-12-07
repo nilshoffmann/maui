@@ -49,6 +49,13 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = ICrudProviderFactory.class)
 public class DB4oCrudProviderFactory implements ICrudProviderFactory {
 
+    /**
+     *
+     * @param databaseLocation
+     * @param ic
+     * @param cl
+     * @return
+     */
     @Override
     public ICrudProvider getCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
         DB4oCrudProvider dbcp;
@@ -65,6 +72,13 @@ public class DB4oCrudProviderFactory implements ICrudProviderFactory {
         return null;
     }
 
+    /**
+     *
+     * @param databaseLocation
+     * @param ic
+     * @param cl
+     * @return
+     */
     @Override
     public ICrudProvider getInMemoryCrudProvider(URL databaseLocation, ICredentials ic, ClassLoader cl) {
         DB4oInMemoryCrudProvider dbcp;

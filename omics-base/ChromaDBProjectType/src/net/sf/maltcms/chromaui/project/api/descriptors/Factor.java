@@ -33,5 +33,23 @@ package net.sf.maltcms.chromaui.project.api.descriptors;
  */
 public enum Factor {
 
-    NOMINAL, ORDINAL, INTERVAL, RATIO;
+    /**
+     *
+     */
+    NOMINAL, 
+
+    /**
+     *
+     */
+    ORDINAL, 
+
+    /**
+     *
+     */
+    INTERVAL, 
+
+    /**
+     *
+     */
+    RATIO;
 }

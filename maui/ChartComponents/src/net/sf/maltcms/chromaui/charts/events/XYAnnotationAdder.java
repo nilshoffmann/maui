@@ -64,6 +64,10 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.ui.RectangleEdge;
 import ucar.ma2.ArrayDouble;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnnotationEventSource, XYItemEntityEventListener {
 
     private String name;
@@ -73,17 +77,29 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
     private final QuadTree<XYSelectableShapeAnnotation<Peak2D>> qt;
     private XYSelectableShapeAnnotation<Peak2D> activeInstance = null;
     private ExecutorService es = Executors.newCachedThreadPool();
-    private EventSource<XYAnnotation> esource = new EventSource<XYAnnotation>(1);
-    private final ArrayList<XYSelectableShapeAnnotation<Peak2D>> annotations = new ArrayList<XYSelectableShapeAnnotation<Peak2D>>();
+    private EventSource<XYAnnotation> esource = new EventSource<>(1);
+    private final ArrayList<XYSelectableShapeAnnotation<Peak2D>> annotations = new ArrayList<>();
     private final ChartPanel cp;
 
+    /**
+     *
+     * @param name
+     * @param visible
+     * @param min
+     * @param max
+     * @param cp
+     */
     public XYAnnotationAdder(String name, boolean visible, Point2D min, Point2D max, ChartPanel cp) {
-        this.qt = new QuadTree<XYSelectableShapeAnnotation<Peak2D>>(min.getX(), min.getY(), max.getX() - min.getX(), max.getY() - min.getY(), 3);
+        this.qt = new QuadTree<>(min.getX(), min.getY(), max.getX() - min.getX(), max.getY() - min.getY(), 3);
         this.cp = cp;
         this.name = name;
         this.visible = visible;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return this.name;
     }
@@ -98,6 +114,17 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         fireOverlayChanged();
     }
 
+    /**
+     *
+     * @param g
+     * @param xyp
+     * @param dataArea
+     * @param domainAxis
+     * @param rangeAxis
+     * @param domainEdge
+     * @param rangeEdge
+     * @param cp
+     */
     protected void paint(Graphics g, XYPlot xyp, Rectangle2D dataArea, ValueAxis domainAxis, ValueAxis rangeAxis, RectangleEdge domainEdge, RectangleEdge rangeEdge, ChartPanel cp) {
         //System.out.println("Painting " + this.xyaa.getPeakAnnotations().size() + " annotations");
         for (XYSelectableShapeAnnotation<Peak2D> xypa : getPeakAnnotations()) {
@@ -124,6 +151,11 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         }
     }
 
+    /**
+     *
+     * @param g2
+     * @param chartPanel
+     */
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
         if (visible) {
@@ -139,10 +171,18 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         }
     }
 
+    /**
+     *
+     * @param b
+     */
     public void setVisible(boolean b) {
         this.visible = b;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isVisible() {
         return this.visible;
     }
@@ -172,6 +212,11 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         throw new CloneNotSupportedException();
     }
 
+    /**
+     *
+     * @param p
+     * @return
+     */
     public XYSelectableShapeAnnotation<Peak2D> getAnnotation(Point2D p) {
         try {
             return this.qt.getClosestInRadius(p, 20.0).getSecond();
@@ -181,15 +226,23 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<XYSelectableShapeAnnotation<Peak2D>> getPeakAnnotations() {
         return this.annotations;
     }
 
+    /**
+     *
+     * @param point
+     */
     public void removeAnnotation(Point2D point) {
         final XYSelectableShapeAnnotation<Peak2D> xypa = getAnnotation(point);
         if (xypa != null) {
             this.qt.remove(point);
-            AEvent<XYAnnotation> e = new AEvent<XYAnnotation>(xypa, this, "XYANNOTATION_REMOVE");
+            AEvent<XYAnnotation> e = new AEvent<>(xypa, this, "XYANNOTATION_REMOVE");
             fireEvent(e);
             fireOverlayChanged();
 //            SwingUtilities.invokeLater(r);
@@ -197,6 +250,10 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         }
     }
 
+    /**
+     *
+     * @param xyie
+     */
     public void addAnnotation(final XYItemEntity xyie) {
         Shape s = xyie.getArea();
         Point2D center = getCenter(s);
@@ -205,6 +262,11 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         addXYPeakAnnotation(xd, yd, null, true);
     }
 
+    /**
+     *
+     * @param s
+     * @return
+     */
     public Point2D getCenter(Shape s) {
         Rectangle2D r2 = s.getBounds2D();
         Point2D.Double p = new Point2D.Double(r2.getCenterX(), r2.getCenterY());
@@ -232,7 +294,7 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
                 pa.setSeedPoint(s);
             }
         }
-        final XYSelectableShapeAnnotation<Peak2D> xypa = new XYSelectableShapeAnnotation<Peak2D>(xd, yd, getCrosshairShape(xd, yd, 5, 5), "Peak @" + xd + "," + yd + " idx: " + peak.getIndex(), TextAnchor.BOTTOM_LEFT, peak);
+        final XYSelectableShapeAnnotation<Peak2D> xypa = new XYSelectableShapeAnnotation<>(xd, yd, getCrosshairShape(xd, yd, 5, 5), "Peak @" + xd + "," + yd + " idx: " + peak.getIndex(), TextAnchor.BOTTOM_LEFT, peak);
         if (activeInstance != null) {
             activeInstance.setActive(false);
         }
@@ -240,7 +302,7 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         activeInstance = xypa;
         Point2D point = new Point2D.Double(xd, yd);
         qt.put(point, xypa);
-        AEvent<XYAnnotation> e = new AEvent<XYAnnotation>(xypa, this, "XYANNOTATION_ADD");
+        AEvent<XYAnnotation> e = new AEvent<>(xypa, this, "XYANNOTATION_ADD");
         fireEvent(e);
         fireOverlayChanged();
 //        SwingUtilities.invokeLater(r);
@@ -251,6 +313,12 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
     /* (non-Javadoc)
      * @see cross.event.IListener#listen(cross.event.IEvent)
      */
+
+    /**
+     *
+     * @param v
+     */
+    
     @Override
     public void listen(final IEvent<XYItemEntity> v) {
         if (v instanceof XYItemEntityAddedEvent) {
@@ -315,7 +383,7 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
         if (xypa != null) {
             xypa.setActive(true);
             activeInstance = xypa;
-            AEvent<XYAnnotation> e = new AEvent<XYAnnotation>(xypa, this, "XYANNOTATION_SELECT");
+            AEvent<XYAnnotation> e = new AEvent<>(xypa, this, "XYANNOTATION_SELECT");
             fireEvent(e);
             fireOverlayChanged();
 //            SwingUtilities.invokeLater(r);
@@ -334,7 +402,16 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
 //		        }
 //        	}
 //        }
-    public Shape getCrosshairShape(double x, double y, double w, double h) {
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @return
+     */
+        public Shape getCrosshairShape(double x, double y, double w, double h) {
         // draw GeneralPath (polyline)
         //we draw two lines, one from
         //x-5,y to x+5,y and one from
@@ -353,16 +430,28 @@ public class XYAnnotationAdder extends AbstractOverlay implements Overlay, XYAnn
 
     }
 
+    /**
+     *
+     * @param il
+     */
     @Override
     public void addListener(IListener<IEvent<XYAnnotation>> il) {
         this.esource.addListener(il);
     }
 
+    /**
+     *
+     * @param ievent
+     */
     @Override
     public void fireEvent(IEvent<XYAnnotation> ievent) {
         this.esource.fireEvent(ievent);
     }
 
+    /**
+     *
+     * @param il
+     */
     @Override
     public void removeListener(IListener<IEvent<XYAnnotation>> il) {
         this.esource.removeListener(il);

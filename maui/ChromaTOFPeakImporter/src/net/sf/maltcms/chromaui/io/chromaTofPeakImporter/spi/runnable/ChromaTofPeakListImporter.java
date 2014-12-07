@@ -32,7 +32,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Data;
+import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -42,6 +46,8 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.Utils.*;
+import static net.sf.maltcms.chromaui.project.api.utilities.Mapping.createChromatogramMap;
+import static net.sf.maltcms.chromaui.project.api.utilities.Mapping.mapReports;
 import org.openide.util.Exceptions;
 
 /**
@@ -54,14 +60,14 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
     private final IChromAUIProject project;
     private final File[] files;
     private final File importDir;
-    private Locale locale = Locale.US;
+    private final Locale locale;
 
     @Override
     public void run() {
         try {
             progressHandle.start(files.length);
             progressHandle.progress("Retrieving Chromatograms");
-            LinkedHashMap<String, IChromatogramDescriptor> chromatograms = createChromatogramMap(project);
+            Map<String, IChromatogramDescriptor> chromatograms = createChromatogramMap(project);
             progressHandle.progress("Matching Chromatograms");
             LinkedHashMap<String, File> reports = mapReports(chromatograms, files);
             if (reports.isEmpty()) {
@@ -69,27 +75,24 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
                         "Could not match reports to existing chromatograms!",
                         NotifyDescriptor.WARNING_MESSAGE);
                 DialogDisplayer.getDefault().notify(message);
+                return;
             }
             int peakReportsImported = 0;
             progressHandle.progress("Importing " + reports.keySet().size() + " Peak Lists");
             IToolDescriptor trd = DescriptorFactory.newToolResultDescriptor();
             trd.setName(getClass().getSimpleName());
             trd.setDisplayName(getClass().getSimpleName());
-            if (reports.keySet().isEmpty()) {
-                return;
-            }
-            Utils.defaultLocale = locale;
             for (String chromName : reports.keySet()) {
                 progressHandle.progress(
                         "Importing " + (peakReportsImported + 1) + "/" + files.length,
                         peakReportsImported);
-                System.out.println("Importing report " + chromName + ".");
+                Logger.getLogger(getClass().getName()).log(Level.INFO, "Importing report {0}.", chromName);
                 IChromatogramDescriptor chromatogram = chromatograms.get(
                         chromName);
-                System.out.println(
-                        "Using " + chromatogram.getResourceLocation() + " as chromatogram!");
-                List<IPeakAnnotationDescriptor> peaks = new ArrayList<IPeakAnnotationDescriptor>();
-                File created = importPeaks(importDir, peaks, reports, chromName, chromatogram);
+                Logger.getLogger(getClass().getName()).log(
+                        Level.INFO, "Using {0} as chromatogram!", chromatogram.getResourceLocation());
+                List<IPeakAnnotationDescriptor> peaks = new ArrayList<>();
+                File created = importPeaks(importDir, peaks, reports, chromName, chromatogram, locale);
                 //System.out.println("Adding peak annotations: " + peaks);
                 DescriptorFactory.addPeakAnnotations(project,
                         chromatogram,
@@ -98,8 +101,6 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
 //                progressHandle.progress(
 //                        "Imported " + (peakReportsImported + 1) + "/" + files.length);
             }
-            Utils.defaultLocale = Locale.getDefault();
-            //progressHandle.finish();
         } catch (Exception e) {
             Exceptions.printStackTrace(e);
             //progressHandle.finish();

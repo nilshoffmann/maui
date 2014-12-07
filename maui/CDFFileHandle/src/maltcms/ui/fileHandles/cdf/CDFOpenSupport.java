@@ -38,10 +38,18 @@ import org.openide.windows.CloneableTopComponent;
  */
 public class CDFOpenSupport extends OpenSupport implements OpenCookie, CloseCookie {
 
+    /**
+     *
+     * @param entry
+     */
     public CDFOpenSupport(CDFDataObject.Entry entry) {
         super(entry);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
 //        CDFDataObject dobj = (CDFDataObject) entry.getDataObject();

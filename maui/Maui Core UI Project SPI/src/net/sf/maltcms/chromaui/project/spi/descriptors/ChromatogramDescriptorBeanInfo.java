@@ -43,42 +43,44 @@ public class ChromatogramDescriptorBeanInfo extends SimpleBeanInfo {
          return beanDescriptor;     }//GEN-LAST:BeanDescriptor
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_chromatogram = 0;
-    private static final int PROPERTY_date = 1;
-    private static final int PROPERTY_detectorType = 2;
-    private static final int PROPERTY_displayName = 3;
-    private static final int PROPERTY_id = 4;
-    private static final int PROPERTY_name = 5;
-    private static final int PROPERTY_normalizationDescriptor = 6;
-    private static final int PROPERTY_peakAnnotations = 7;
-    private static final int PROPERTY_project = 8;
-    private static final int PROPERTY_resourceLocation = 9;
-    private static final int PROPERTY_sampleGroup = 10;
-    private static final int PROPERTY_separationType = 11;
-    private static final int PROPERTY_shortDescription = 12;
-    private static final int PROPERTY_tool = 13;
-    private static final int PROPERTY_treatmentGroup = 14;
+    private static final int PROPERTY_detectorType = 1;
+    private static final int PROPERTY_normalizationDescriptor = 2;
+    private static final int PROPERTY_peakAnnotations = 3;
+    private static final int PROPERTY_resourceLocation = 4;
+    private static final int PROPERTY_sampleGroup = 5;
+    private static final int PROPERTY_separationType = 6;
+    private static final int PROPERTY_treatmentGroup = 7;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[15];
+        PropertyDescriptor[] properties = new PropertyDescriptor[8];
     
         try {
             properties[PROPERTY_chromatogram] = new PropertyDescriptor ( "chromatogram", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getChromatogram", null ); // NOI18N
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getDate", null ); // NOI18N
+            properties[PROPERTY_chromatogram].setDisplayName ( "Chromatogram" );
+            properties[PROPERTY_chromatogram].setShortDescription ( "The associated chromatogram" );
             properties[PROPERTY_detectorType] = new PropertyDescriptor ( "detectorType", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getDetectorType", "setDetectorType" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getId", null ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_detectorType].setDisplayName ( "Detectory Type" );
+            properties[PROPERTY_detectorType].setShortDescription ( "The detector type used to acquire mass spectra" );
             properties[PROPERTY_normalizationDescriptor] = new PropertyDescriptor ( "normalizationDescriptor", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getNormalizationDescriptor", null ); // NOI18N
+            properties[PROPERTY_normalizationDescriptor].setDisplayName ( "Normalization" );
+            properties[PROPERTY_normalizationDescriptor].setShortDescription ( "The normalization to use" );
             properties[PROPERTY_peakAnnotations] = new PropertyDescriptor ( "peakAnnotations", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getPeakAnnotations", null ); // NOI18N
-            properties[PROPERTY_project] = new PropertyDescriptor ( "project", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getProject", null ); // NOI18N
+            properties[PROPERTY_peakAnnotations].setHidden ( true );
+            properties[PROPERTY_peakAnnotations].setDisplayName ( "Peak Annotations" );
             properties[PROPERTY_resourceLocation] = new PropertyDescriptor ( "resourceLocation", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getResourceLocation", null ); // NOI18N
+            properties[PROPERTY_resourceLocation].setDisplayName ( "Resource Location" );
+            properties[PROPERTY_resourceLocation].setShortDescription ( "The resource location of the original chromatogram" );
             properties[PROPERTY_sampleGroup] = new PropertyDescriptor ( "sampleGroup", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getSampleGroup", null ); // NOI18N
+            properties[PROPERTY_sampleGroup].setDisplayName ( "Sample Group" );
+            properties[PROPERTY_sampleGroup].setShortDescription ( "The sample group of this chromatogram" );
             properties[PROPERTY_separationType] = new PropertyDescriptor ( "separationType", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getSeparationType", "setSeparationType" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getTool", null ); // NOI18N
+            properties[PROPERTY_separationType].setDisplayName ( "Separation Type" );
+            properties[PROPERTY_separationType].setShortDescription ( "The separation type used for chromatographic separation" );
             properties[PROPERTY_treatmentGroup] = new PropertyDescriptor ( "treatmentGroup", net.sf.maltcms.chromaui.project.spi.descriptors.ChromatogramDescriptor.class, "getTreatmentGroup", null ); // NOI18N
+            properties[PROPERTY_treatmentGroup].setDisplayName ( "Treatment Group" );
+            properties[PROPERTY_treatmentGroup].setShortDescription ( "The treatment group of this chromatogram" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

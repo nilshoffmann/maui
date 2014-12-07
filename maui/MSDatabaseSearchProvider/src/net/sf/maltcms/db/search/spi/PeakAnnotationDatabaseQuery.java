@@ -57,13 +57,13 @@ public class PeakAnnotationDatabaseQuery implements IQuery<IPeakAnnotationDescri
 
     @Override
     public List<QueryResultList<IPeakAnnotationDescriptor>> call() throws Exception {
-        List<Future<QueryResultList<IPeakAnnotationDescriptor>>> l = new ArrayList<Future<QueryResultList<IPeakAnnotationDescriptor>>>();
+        List<Future<QueryResultList<IPeakAnnotationDescriptor>>> l = new ArrayList<>();
         for (IDatabaseDescriptor descr : databaseDescriptors) {
             DBPeakAnnotationQueryTask q = new DBPeakAnnotationQueryTask(descr, buildInput(queryScans, retentionIndexCalculator), predicate, matchThreshold, maxHits, riWindow);
             l.add(DBPeakAnnotationQueryTask.createAndRun("Querying DB " + descr.getDisplayName(), q));//, mcs);
         }
 
-        List<QueryResultList<IPeakAnnotationDescriptor>> results = new ArrayList<QueryResultList<IPeakAnnotationDescriptor>>();
+        List<QueryResultList<IPeakAnnotationDescriptor>> results = new ArrayList<>();
         for (Future<QueryResultList<IPeakAnnotationDescriptor>> f : l) {
             results.add(f.get());
         }
@@ -71,11 +71,11 @@ public class PeakAnnotationDatabaseQuery implements IQuery<IPeakAnnotationDescri
     }
 
     private List<IQueryInput<IPeakAnnotationDescriptor>> buildInput(IPeakAnnotationDescriptor[] queryScans, RetentionIndexCalculator retentionIndexCalculator) {
-        List<IQueryInput<IPeakAnnotationDescriptor>> input = new ArrayList<IQueryInput<IPeakAnnotationDescriptor>>(
+        List<IQueryInput<IPeakAnnotationDescriptor>> input = new ArrayList<>(
                 queryScans.length);
         for (IPeakAnnotationDescriptor scan : queryScans) {
             //FIXME add creation of IRetentionInfo
-            QueryInput<IPeakAnnotationDescriptor> queryInput = new QueryInput<IPeakAnnotationDescriptor>(
+            QueryInput<IPeakAnnotationDescriptor> queryInput = new QueryInput<>(
                     scan, retentionIndexCalculator);
             input.add(queryInput);
         }

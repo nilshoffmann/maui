@@ -35,9 +35,20 @@ import java.awt.Color;
  */
 public interface IColorizableDescriptor {
 
+    /**
+     *
+     */
     public static String PROP_COLOR = "color";
 
+    /**
+     *
+     * @return
+     */
     Color getColor();
 
+    /**
+     *
+     * @param color
+     */
     void setColor(Color color);
 }

@@ -43,13 +43,24 @@ public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescr
 
     private List<StatisticsContainer> statisticsContainers = new ActivatableArrayList<>();
 
+    /**
+     *
+     */
     public final String PROP_STATISTICSCONTAINERS = "statisticsContainers";
 
+    /**
+     *
+     * @return
+     */
     public List<StatisticsContainer> getStatisticsContainers() {
         activate(ActivationPurpose.READ);
         return statisticsContainers;
     }
 
+    /**
+     *
+     * @param statisticsContainers
+     */
     public void setStatisticsContainers(List<StatisticsContainer> statisticsContainers) {
         activate(ActivationPurpose.WRITE);
         List<StatisticsContainer> old = this.statisticsContainers;
@@ -60,12 +71,21 @@ public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescr
         firePropertyChange(PROP_STATISTICSCONTAINERS, old, this.statisticsContainers);
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/PeakGroup.png");
     }
 
+    /**
+     *
+     * @param members
+     */
     @Override
     public void setMembers(Collection<IPeakGroupDescriptor> members) {
         for (IPeakGroupDescriptor descr : members) {
@@ -74,6 +94,10 @@ public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescr
         super.setMembers(members);
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void setMembers(IPeakGroupDescriptor... f) {
         for (IPeakGroupDescriptor descr : f) {
@@ -82,6 +106,10 @@ public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescr
         super.setMembers(f);
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void addMembers(IPeakGroupDescriptor... f) {
         for (IPeakGroupDescriptor descr : f) {
@@ -90,6 +118,10 @@ public class PeakGroupContainer extends ADatabaseBackedContainer<IPeakGroupDescr
         super.addMembers(f);
     }
 
+    /**
+     *
+     * @param f
+     */
     @Override
     public void removeMembers(IPeakGroupDescriptor... f) {
         for (IPeakGroupDescriptor descr : f) {

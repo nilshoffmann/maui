@@ -83,7 +83,7 @@ public class DescriptorNode extends BeanNode<IBasicDescriptor> implements Proper
     public Action[] getActions(boolean context) {
         List<?> interfaces = ClassUtils.getAllInterfaces(getBean().getClass());
         List<?> superClasses = ClassUtils.getAllSuperclasses(getBean().getClass());
-        LinkedHashSet<Action> descriptorActions = new LinkedHashSet<Action>();
+        LinkedHashSet<Action> descriptorActions = new LinkedHashSet<>();
         for (Object o : interfaces) {
             Class<?> c = (Class) o;
             descriptorActions.addAll(Utilities.actionsForPath("Actions/DescriptorNodeActions/" + c.

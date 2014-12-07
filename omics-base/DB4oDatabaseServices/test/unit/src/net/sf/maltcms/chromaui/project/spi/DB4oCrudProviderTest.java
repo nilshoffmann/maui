@@ -33,7 +33,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.db.api.ICredentials;
+import net.sf.maltcms.chromaui.db.api.ICrudProvider;
 import net.sf.maltcms.chromaui.db.api.ICrudSession;
 import net.sf.maltcms.chromaui.db.api.NoAuthCredentials;
 import net.sf.maltcms.chromaui.db.spi.db4o.DB4oCrudProvider;
@@ -47,28 +50,52 @@ import org.netbeans.junit.NbTestCase;
  */
 public class DB4oCrudProviderTest extends NbTestCase {
 
+    /**
+     *
+     */
     public class IntStringTuple {
 
         private Integer first;
         private String second;
 
+        /**
+         *
+         * @param itg
+         * @param str
+         */
         public IntStringTuple(Integer itg, String str) {
             this.first = itg;
             this.second = str;
         }
 
+        /**
+         *
+         * @return
+         */
         public Integer getFirst() {
             return first;
         }
 
+        /**
+         *
+         * @param first
+         */
         public void setFirst(Integer first) {
             this.first = first;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getSecond() {
             return second;
         }
 
+        /**
+         *
+         * @param second
+         */
         public void setSecond(String second) {
             this.second = second;
         }
@@ -106,23 +133,32 @@ public class DB4oCrudProviderTest extends NbTestCase {
         }
     }
 
+    /**
+     *
+     * @param name
+     */
     public DB4oCrudProviderTest(String name) {
         super(name);
     }
 
 //    public DB4oCrudProviderTest() {
 //    }
-    public static junit.framework.Test suite() {
+
+    /**
+     *
+     * @return
+     */
+        public static junit.framework.Test suite() {
         return NbModuleSuite.create(NbModuleSuite.createConfiguration(DB4oCrudProviderTest.class));
     }
 
 //    public DB4oCrudProviderTest() {
 //    }
     /**
-     * Test of create method, of class DB4oCrudProvider.
+     * Test of db operations
      */
     @Test
-    public void testCreate() {
+    public void testDbOperations() {
 
         //BEGIN SETUP, DO NOT COPY
         IntStringTuple a = new IntStringTuple(1, "Have");
@@ -135,30 +171,30 @@ public class DB4oCrudProviderTest extends NbTestCase {
             f.delete();
         }
         //END SETUP
-        System.out.println("Testing project in " + f.getAbsolutePath());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Testing project in {0}", f.getAbsolutePath());
         //Credentials
         ICredentials ic = new NoAuthCredentials();
         //CrudProvider
-        DB4oCrudProvider instance = new DB4oCrudProvider(f, ic, this.getClass().
+        ICrudProvider instance = new DB4oCrudProvider(f, ic, this.getClass().
                 getClassLoader());
         try {
             //initialize and open database
             instance.open();
 
-            System.out.println("create");
+            Logger.getLogger(getClass().getName()).info("create");
             //Create a new session
             ICrudSession icr = instance.createSession();
             try {
                 //CREATE
                 icr.create(Arrays.asList(a, b, c));
-                System.out.println("retrieve");
+                Logger.getLogger(getClass().getName()).info("retrieve");
                 Collection<IntStringTuple> expResult = Arrays.asList(a, b, c);
                 //RETRIEVE
                 Collection<IntStringTuple> result = icr.retrieve(
                         IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result),
+                Collections.sort(new ArrayList<>(result),
                         new ComparatorImpl());
                 assertEquals(expResult, result);
                 //UPDATE
@@ -167,7 +203,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
                 result = icr.retrieve(IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result),
+                Collections.sort(new ArrayList<>(result),
                         new ComparatorImpl());
                 assertEquals(expResult, result);
 
@@ -177,7 +213,7 @@ public class DB4oCrudProviderTest extends NbTestCase {
                 result = icr.retrieve(IntStringTuple.class);
                 System.out.println(expResult);
                 System.out.println(result);
-                Collections.sort(new ArrayList<IntStringTuple>(result),
+                Collections.sort(new ArrayList<>(result),
                         new ComparatorImpl());
                 assertEquals(expResult, result);
             } finally {
@@ -188,43 +224,6 @@ public class DB4oCrudProviderTest extends NbTestCase {
             instance.close();
         }
 
-    }
-
-    /**
-     * Test of update method, of class DB4oCrudProvider.
-     */
-    @Test
-    public void testUpdate() {
-//        System.out.println("update");
-//        Collection<? extends Object> o = null;
-//        ICredentials ic = null;
-//        DB4oCrudProvider instance = null;
-//        instance.update(o, ic);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of delete method, of class DB4oCrudProvider.
-     */
-    @Test
-    public void testDelete() {
-//        System.out.println("delete");
-//        Collection<? extends Object> o = null;
-//        ICredentials ic = null;
-//        DB4oCrudProvider instance = null;
-//        instance.delete(o, ic);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of retrieve method, of class DB4oCrudProvider.
-     */
-    @Test
-    public void testRetrieve() {
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
 
     /**

@@ -37,26 +37,70 @@ import net.sf.maltcms.chromaui.project.api.types.ISeparationType;
  */
 public interface IChromatogramDescriptor extends IResourceDescriptor {
 
+    /**
+     *
+     * @return
+     */
     IChromatogram getChromatogram();
 
+    /**
+     *
+     * @param st
+     */
     void setSeparationType(ISeparationType st);
 
+    /**
+     *
+     * @param dt
+     */
     void setDetectorType(IDetectorType dt);
 
+    /**
+     *
+     * @return
+     */
     ISeparationType getSeparationType();
 
+    /**
+     *
+     * @return
+     */
     IDetectorType getDetectorType();
 
+    /**
+     *
+     * @return
+     */
     ITreatmentGroupDescriptor getTreatmentGroup();
 
+    /**
+     *
+     * @param name
+     */
     void setTreatmentGroup(ITreatmentGroupDescriptor name);
 
+    /**
+     *
+     * @return
+     */
     ISampleGroupDescriptor getSampleGroup();
 
+    /**
+     *
+     * @param sampleGroup
+     */
     void setSampleGroup(ISampleGroupDescriptor sampleGroup);
 
+    /**
+     *
+     * @return
+     */
     INormalizationDescriptor getNormalizationDescriptor();
 
+    /**
+     *
+     * @param normalizationDescriptor
+     */
     void setNormalizationDescriptor(INormalizationDescriptor normalizationDescriptor);
 
 }

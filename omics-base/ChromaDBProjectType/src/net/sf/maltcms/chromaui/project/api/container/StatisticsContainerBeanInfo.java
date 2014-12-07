@@ -49,29 +49,15 @@ public class StatisticsContainerBeanInfo extends SimpleBeanInfo {
         // Here you can add code for customizing the BeanDescriptor.
          return beanDescriptor;     }//GEN-LAST:BeanDescriptor
     // Property identifiers//GEN-FIRST:Properties
-    private static final int PROPERTY_date = 0;
-    private static final int PROPERTY_displayName = 1;
-    private static final int PROPERTY_id = 2;
-    private static final int PROPERTY_method = 3;
-    private static final int PROPERTY_name = 4;
-    private static final int PROPERTY_precedence = 5;
-    private static final int PROPERTY_shortDescription = 6;
-    private static final int PROPERTY_tool = 7;
+    private static final int PROPERTY_method = 0;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[8];
+        PropertyDescriptor[] properties = new PropertyDescriptor[1];
     
         try {
-            properties[PROPERTY_date] = new PropertyDescriptor ( "date", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getDate", "setDate" ); // NOI18N
-            properties[PROPERTY_displayName] = new PropertyDescriptor ( "displayName", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getDisplayName", "setDisplayName" ); // NOI18N
-            properties[PROPERTY_id] = new PropertyDescriptor ( "id", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getId", "setId" ); // NOI18N
             properties[PROPERTY_method] = new PropertyDescriptor ( "method", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getMethod", "setMethod" ); // NOI18N
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getName", "setName" ); // NOI18N
-            properties[PROPERTY_precedence] = new PropertyDescriptor ( "precedence", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getPrecedence", "setPrecedence" ); // NOI18N
-            properties[PROPERTY_shortDescription] = new PropertyDescriptor ( "shortDescription", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getShortDescription", "setShortDescription" ); // NOI18N
-            properties[PROPERTY_tool] = new PropertyDescriptor ( "tool", net.sf.maltcms.chromaui.project.api.container.StatisticsContainer.class, "getTool", "setTool" ); // NOI18N
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

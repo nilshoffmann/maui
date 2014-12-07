@@ -29,13 +29,18 @@ package net.sf.maltcms.chromaui.project.api.beans;
 
 import java.beans.PropertyEditorSupport;
 import java.util.UUID;
+import org.openide.nodes.PropertyEditorRegistration;
 
 /**
  *
  * @author Nils Hoffmann
  */
+@PropertyEditorRegistration(targetType = UUID.class)
 public class UUIDPropertyEditor extends PropertyEditorSupport {
 
+    /**
+     *
+     */
     public UUIDPropertyEditor() {
     }
 
@@ -48,6 +53,5 @@ public class UUIDPropertyEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String string) throws IllegalArgumentException {
         throw new IllegalArgumentException("Editing of UUIDs is not supported!");
-//        setValue(UUID.fromString(string));
     }
 }

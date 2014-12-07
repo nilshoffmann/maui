@@ -33,6 +33,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import maltcms.datastructures.peak.MaltcmsAnnotationFactory;
 import maltcms.datastructures.peak.Peak2D;
@@ -49,12 +50,17 @@ import org.jfree.ui.TextAnchor;
  */
 public class Peak2DXMLAnnotationProvider implements AnnotationProvider<Peak2D> {
 
+    /**
+     *
+     * @param f
+     * @return
+     */
     @Override
     public List<XYAnnotation> load(File f) {
         MaltcmsAnnotationFactory maf = new MaltcmsAnnotationFactory();
         MaltcmsAnnotation ma = maf.load(f);
         List<AnnotationsType> l = ma.getAnnotations();
-        List<XYAnnotation> list = new ArrayList<XYAnnotation>(l.size());
+        List<XYAnnotation> list = new ArrayList<>(l.size());
         for (AnnotationsType at : l) {
             String type = at.getType();
             if (type.equals(Peak2D.class.getName())) {
@@ -63,12 +69,17 @@ public class Peak2DXMLAnnotationProvider implements AnnotationProvider<Peak2D> {
                 }
 
             } else {
-                Logger.getLogger(this.getClass().getName()).warning("Do not know how to handle annotations of type " + type);
+                Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Do not know how to handle annotations of type {0}", type);
             }
         }
         return list;
     }
 
+    /**
+     *
+     * @param l
+     * @param f
+     */
     @Override
     public void store(List<XYAnnotation> l, File f) {
         MaltcmsAnnotationFactory maf = new MaltcmsAnnotationFactory();
@@ -85,6 +96,11 @@ public class Peak2DXMLAnnotationProvider implements AnnotationProvider<Peak2D> {
         maf.save(ma, f);
     }
 
+    /**
+     *
+     * @param t
+     * @return
+     */
     @Override
     public XYAnnotation create(Peak2D t) {
         Point seed = t.getPeakArea().getSeedPoint();
@@ -96,7 +112,7 @@ public class Peak2DXMLAnnotationProvider implements AnnotationProvider<Peak2D> {
         //List<Point> l = pa2D.getBoundaryPoints();
 
 //        }
-        XYSelectableShapeAnnotation<Peak2D> xypa = new XYSelectableShapeAnnotation<Peak2D>(seed.x, seed.y, s, t.getName(), TextAnchor.BASELINE_LEFT, t);
+        XYSelectableShapeAnnotation<Peak2D> xypa = new XYSelectableShapeAnnotation<>(seed.x, seed.y, s, t.getName(), TextAnchor.BASELINE_LEFT, t);
         return xypa;
     }
 }

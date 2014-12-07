@@ -27,16 +27,37 @@
  */
 package net.sf.maltcms.chromaui.project.api.descriptors;
 
+import java.util.List;
+
 /**
  *
  * @author Nils Hoffmann
  */
 public interface IHypothesisTestDescriptor {
 
+    /**
+     *
+     */
     String PROP_DEGREESOFFREEDOM = "degreesOfFreedom";
+
+    /**
+     *
+     */
     String PROP_FACTORS = "factors";
+
+    /**
+     *
+     */
     String PROP_PVALUES = "pvalues";
+
+    /**
+     *
+     */
     String PROP_PVALUEADJUSTMENTMETHOD = "pvalueAdjustmentMethod";
+
+    /**
+     *
+     */
     String PROP_GROUPSIZE = "groupSize";
 
     /**
@@ -47,6 +68,13 @@ public interface IHypothesisTestDescriptor {
     int[] getDegreesOfFreedom();
 
     /**
+     * Get the value of degreesOfFreedom
+     *
+     * @return the value of degreesOfFreedom
+     */
+    List<Integer> getDegreesOfFreedomList();
+
+    /**
      * Get the value of factors
      *
      * @return the value of factors
@@ -54,11 +82,25 @@ public interface IHypothesisTestDescriptor {
     String[] getFactors();
 
     /**
+     * Get the value of factors
+     *
+     * @return the value of factors
+     */
+    List<String> getFactorsList();
+
+    /**
      * Get the value of pValues
      *
      * @return the value of pValues
      */
     double[] getPvalues();
+
+    /**
+     * Get the value of pValues
+     *
+     * @return the value of pValues
+     */
+    List<Double> getPvaluesList();
 
     /**
      * Set the value of degreesOfFreedom
@@ -96,7 +138,15 @@ public interface IHypothesisTestDescriptor {
      */
     String getPvalueAdjustmentMethod();
 
+    /**
+     *
+     * @param size
+     */
     void setGroupSize(int size);
 
+    /**
+     *
+     * @return
+     */
     int getGroupSize();
 }

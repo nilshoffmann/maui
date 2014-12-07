@@ -56,9 +56,9 @@ public class Registry implements IRegistry {
         Map<Object, TopComponent> map = getTopComponentsForProject(project);
         TopComponent tc = map.get(object);
         if (tc == null) {
-            System.out.println("Creating new TopComponent instance for class: " + topComponentClass.
-                    getName() + "; active project: " + project.
-                    getProjectDirectory().getName());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Creating new TopComponent instance for class: {0}; active project: {1}", new Object[]{topComponentClass.
+                    getName(), project.
+                            getProjectDirectory().getName()});
             try {
                 tc = topComponentClass.newInstance();
                 map.put(object, tc);
@@ -83,7 +83,7 @@ public class Registry implements IRegistry {
                 public void run() {
                     TopComponent tc = map.remove(object);
                     if (tc != null) {
-                        Logger.getLogger(Registry.class.getName()).info("Closing TopComponent for Object: " + object.getClass().getName());
+                        Logger.getLogger(Registry.class.getName()).log(Level.INFO, "Closing TopComponent for Object: {0}", object.getClass().getName());
                         tc.close();
                         closedComponents.add(tc);
                     }
@@ -144,7 +144,7 @@ public class Registry implements IRegistry {
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    Logger.getLogger(Registry.class.getName()).info("Closing TopComponent for Object: " + obj.getClass().getName());
+                    Logger.getLogger(Registry.class.getName()).log(Level.INFO, "Closing TopComponent for Object: {0}", obj.getClass().getName());
                     TopComponent tc = map.get(obj);
                     tc.close();
                     closedComponents.add(tc);
@@ -162,12 +162,12 @@ public class Registry implements IRegistry {
         Map<Object, TopComponent> map = getTopComponentsForProject(project);
         TopComponent tc = map.get(object);
         if (tc == null) {
-            System.out.println("Adding TopComponent instance for class: " + topComponent.getClass().
-                    getName() + "; active project: " + project.
-                    getProjectDirectory().getName());
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Adding TopComponent instance for class: {0}; active project: {1}", new Object[]{topComponent.getClass().
+                    getName(), project.
+                            getProjectDirectory().getName()});
             map.put(object, topComponent);
         } else {
-            System.err.println("TopComponent " + topComponent + " already registered for object: " + object);
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "TopComponent {0} already registered for object: {1}", new Object[]{topComponent, object});
         }
     }
 
@@ -187,9 +187,9 @@ public class Registry implements IRegistry {
     @Override
     public void unregisterTopComponentFor(Project project, Object object, TopComponent topComponent) {
         Map<Object, TopComponent> map = getTopComponentsForProject(project);
-        System.out.println("Removing TopComponent instance for class: " + topComponent.getClass().
-                getName() + "; active project: " + project.
-                getProjectDirectory().getName());
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Removing TopComponent instance for class: {0}; active project: {1}", new Object[]{topComponent.getClass().
+                getName(), project.
+                        getProjectDirectory().getName()});
         map.remove(object);
     }
 }

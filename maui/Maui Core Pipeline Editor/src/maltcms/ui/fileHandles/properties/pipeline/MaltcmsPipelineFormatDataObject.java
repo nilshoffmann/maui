@@ -39,19 +39,38 @@ import org.openide.nodes.Children;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.Lookup;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public class MaltcmsPipelineFormatDataObject extends MultiDataObject {
 
+    /**
+     *
+     * @param pf
+     * @param loader
+     * @throws DataObjectExistsException
+     * @throws IOException
+     */
     public MaltcmsPipelineFormatDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         CookieSet cookies = getCookieSet();
         cookies.add((Node.Cookie) DataEditorSupport.create(this, getPrimaryEntry(), cookies));
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected Node createNodeDelegate() {
         return new DataNode(this, Children.LEAF, getLookup());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return getCookieSet().getLookup();

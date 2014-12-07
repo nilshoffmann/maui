@@ -44,6 +44,10 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 @ActionID(
         category = "File",
         id = "maltcms.io.xml.ws.meltdb.ui.SynchronizeWithMeltDBAction")
@@ -55,6 +59,10 @@ public final class SynchronizeWithMeltDBAction implements ActionListener {
 
     private final IChromAUIProject context;
 
+    /**
+     *
+     * @param context
+     */
     public SynchronizeWithMeltDBAction(IChromAUIProject context) {
         this.context = context;
     }
@@ -99,7 +107,7 @@ public final class SynchronizeWithMeltDBAction implements ActionListener {
                     JComponent jc = (JComponent) c;
                     // Sets step number of a component
                     // TODO if using org.openide.dialogs >= 7.8, can use WizardDescriptor.PROP_*:
-                    jc.putClientProperty("WizardPanel_contentSelectedIndex", new Integer(i));
+                    jc.putClientProperty("WizardPanel_contentSelectedIndex", i);
                     // Sets steps names for a panel
                     jc.putClientProperty("WizardPanel_contentData", steps);
                     // Turn on subtitle creation on each step

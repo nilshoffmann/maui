@@ -37,19 +37,28 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import net.sf.maltcms.chromaui.ui.PaintScalePanel;
 import org.jfree.chart.renderer.PaintScale;
+import org.openide.util.Lookup;
 
 /**
  *
  * @author nilshoffmann
  */
 public class PaintScaleDialogAction extends AbstractAction {
+    private static final long serialVersionUID = 695398043093737680L;
 
-    private List<PaintScaleTarget> targets = new LinkedList<PaintScaleTarget>();
+    private final List<PaintScaleTarget> targets = new LinkedList<>();
     private Component parent = null;
     private int alpha, beta;
     private PaintScale ps = null;
     private PaintScalePanel psp = null;
 
+    /**
+     *
+     * @param name
+     * @param alpha
+     * @param beta
+     * @param ps
+     */
     public PaintScaleDialogAction(String name, int alpha, int beta, PaintScale ps) {
         super(name);
         this.alpha = alpha;
@@ -57,10 +66,20 @@ public class PaintScaleDialogAction extends AbstractAction {
         this.ps = ps;
     }
 
+    /**
+     *
+     * @param name
+     * @param icon
+     */
     public PaintScaleDialogAction(String name, Icon icon) {
         super(name, icon);
+        IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
+        ips.setMin(0);
+        ips.setMax(1);
+        ps = ips.getPaintScales().get(0);
     }
 
+    @Override
     public void actionPerformed(ActionEvent ae) {
         Runnable r = new Runnable() {
 
@@ -75,14 +94,26 @@ public class PaintScaleDialogAction extends AbstractAction {
         SwingUtilities.invokeLater(r);
     }
 
+    /**
+     *
+     * @param c
+     */
     public void setParent(Component c) {
         this.parent = c;
     }
 
+    /**
+     *
+     * @param pst
+     */
     public void addPaintScaleTarget(PaintScaleTarget pst) {
         this.targets.add(pst);
     }
 
+    /**
+     *
+     * @return
+     */
     public PaintScale showPaintScaleDialog() {
         if (this.psp == null) {
             this.psp = new PaintScalePanel(this.ps, this.alpha, this.beta);

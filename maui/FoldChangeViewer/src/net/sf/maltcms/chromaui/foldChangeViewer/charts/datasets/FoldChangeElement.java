@@ -60,6 +60,7 @@ import org.openide.util.Lookup;
 @Setter
 @RequiredArgsConstructor
 public class FoldChangeElement implements IPeakGroupDescriptor {
+    private static final long serialVersionUID = 4432329081151462391L;
 
     private final IPeakGroupDescriptor peakGroup;
     private final ITreatmentGroupDescriptor numeratorGroup;

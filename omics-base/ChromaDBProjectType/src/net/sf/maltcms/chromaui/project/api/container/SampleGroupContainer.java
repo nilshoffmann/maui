@@ -46,13 +46,24 @@ public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogram
 
     private ISampleGroupDescriptor sampleGroup;
 
+    /**
+     *
+     */
     public static String PROP_SAMPLEGROUP = "sampleGroup";
 
+    /**
+     *
+     * @return
+     */
     public ISampleGroupDescriptor getSampleGroup() {
         activate(ActivationPurpose.READ);
         return this.sampleGroup;
     }
 
+    /**
+     *
+     * @param sampleGroup
+     */
     public void setSampleGroup(ISampleGroupDescriptor sampleGroup) {
         activate(ActivationPurpose.WRITE);
         ISampleGroupDescriptor old = this.sampleGroup;
@@ -62,27 +73,48 @@ public class SampleGroupContainer extends ADatabaseBackedContainer<IChromatogram
                 old, this.sampleGroup);
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     @Override
     public Image getIcon(int type) {
         return ImageUtilities.loadImage(
                 "net/sf/maltcms/chromaui/project/resources/Replicate.png");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getComment() {
         return getSampleGroup().getComment();
     }
 
+    /**
+     *
+     * @param comment
+     */
     @Override
     public void setComment(String comment) {
         getSampleGroup().setComment(comment);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Color getColor() {
         return getSampleGroup().getColor();
     }
 
+    /**
+     *
+     * @param color
+     */
     @Override
     public void setColor(Color color) {
         Color old = getSampleGroup().getColor();

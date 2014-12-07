@@ -40,10 +40,19 @@ import org.openide.util.actions.CallableSystemAction;
 
 // An example action demonstrating how the wizard could be called from within
 // your code. You can copy-paste the code below wherever you need.
+
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class PeakImportWizardAction extends CallableSystemAction {
 
     private WizardDescriptor.Panel[] panels;
 
+    /**
+     *
+     */
+    @Override
     public void performAction() {
         WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
         // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
@@ -82,7 +91,7 @@ public final class PeakImportWizardAction extends CallableSystemAction {
                     JComponent jc = (JComponent) c;
                     // Sets step number of a component
                     // TODO if using org.openide.dialogs >= 7.8, can use WizardDescriptor.PROP_*:
-                    jc.putClientProperty("WizardPanel_contentSelectedIndex", new Integer(i));
+                    jc.putClientProperty("WizardPanel_contentSelectedIndex", i);
                     // Sets steps names for a panel
                     jc.putClientProperty("WizardPanel_contentData", steps);
                     // Turn on subtitle creation on each step
@@ -97,19 +106,37 @@ public final class PeakImportWizardAction extends CallableSystemAction {
         return panels;
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public String getName() {
         return "Import peak data from MeltDB";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String iconResource() {
         return "maltcms/io/xml/ws/meltdb/meltdb-logo-16.png";
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public HelpCtx getHelpCtx() {
         return HelpCtx.DEFAULT_HELP;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected boolean asynchronous() {
         return true;

@@ -3,5 +3,5 @@ AutoUpdate-Show-In-Client: true
 OpenIDE-Module: net.sf.maltcms.chromaui.jmztab.ui
 OpenIDE-Module-Layer: net/sf/maltcms/chromaui/jmztab/ui/layer.xml
 OpenIDE-Module-Localizing-Bundle: net/sf/maltcms/chromaui/jmztab/ui/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
+OpenIDE-Module-Specification-Version: 1.0.1
 

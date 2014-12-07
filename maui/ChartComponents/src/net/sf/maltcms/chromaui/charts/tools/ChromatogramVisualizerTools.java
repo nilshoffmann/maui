@@ -41,11 +41,18 @@ import ucar.ma2.IndexIterator;
  */
 public class ChromatogramVisualizerTools {
 
+    /**
+     *
+     * @param scan
+     * @param prefix
+     * @param top
+     * @return
+     */
     public static MSSeries getMSSeries1D(IScan1D scan, String prefix, boolean top) {
         DecimalFormat rt1format = new DecimalFormat("#0.00");
         MSSeries s = new MSSeries(prefix + " @"
                 + rt1format.format(scan.getScanAcquisitionTime()));
-        Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(scan.getMasses(),
+        Tuple2D<Array, Array> ms = new Tuple2D<>(scan.getMasses(),
                 scan.getIntensities());
         IndexIterator mz = ms.getFirst().getIndexIterator();
         IndexIterator inten = ms.getSecond().getIndexIterator();
@@ -59,6 +66,13 @@ public class ChromatogramVisualizerTools {
         return s;
     }
 
+    /**
+     *
+     * @param s2
+     * @param prefix
+     * @param top
+     * @return
+     */
     public static MSSeries getMSSeries2D(IScan2D s2, String prefix, boolean top) {
         DecimalFormat rt1format = new DecimalFormat("#0");
         DecimalFormat rt2format = new DecimalFormat("#0.000");
@@ -67,7 +81,7 @@ public class ChromatogramVisualizerTools {
                 getFirstColumnScanAcquisitionTime()) + ", " + rt2format.format(s2.
                         getSecondColumnScanAcquisitionTime()));
 
-        Tuple2D<Array, Array> ms = new Tuple2D<Array, Array>(s2.getMasses(), s2.
+        Tuple2D<Array, Array> ms = new Tuple2D<>(s2.getMasses(), s2.
                 getIntensities());//scanlineCache.getSparseMassSpectra(imagePoint);
         IndexIterator mz = ms.getFirst().getIndexIterator();
         IndexIterator inten = ms.getSecond().getIndexIterator();

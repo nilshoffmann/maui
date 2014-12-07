@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.util.Properties;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import lombok.Data;
 import net.sf.maltcms.chromaui.charts.ChartCustomizer;
@@ -88,7 +89,7 @@ public class FoldChangeViewLoaderWorker implements Runnable {
                 @Override
                 protected Paint getPaint(XYDataset dataset, int series, int item) {
                     double x = dataset.getXValue(series, item);
-                    double y = dataset.getXValue(series, item);
+                    double y = dataset.getYValue(series, item);
                     if (Math.abs(x) < 1.0) {
                         Paint p = super.getPaint(dataset, series, item);
                         if (p instanceof Color) {
@@ -183,7 +184,7 @@ public class FoldChangeViewLoaderWorker implements Runnable {
                 plot.getDomainAxis().setRange(domainRange);
             }
             if (valueRange != null) {
-                System.out.println("Setting previous value range!");
+                Logger.getLogger(getClass().getName()).info("Setting previous value range!");
             }
             handle.progress("Adding plot to panel", 5);
             final XYPlot targetPlot = plot;
@@ -224,7 +225,7 @@ public class FoldChangeViewLoaderWorker implements Runnable {
         }
         rangeAxis.setAutoRange(true);
         rangeAxis.setAutoRangeIncludesZero(true);
-        System.out.println("Adding chart");
+        Logger.getLogger(getClass().getName()).info("Adding chart");
         plot.setBackgroundPaint(Color.WHITE);
         ChartCustomizer.setSeriesColors(plot, 0.8f);
     }

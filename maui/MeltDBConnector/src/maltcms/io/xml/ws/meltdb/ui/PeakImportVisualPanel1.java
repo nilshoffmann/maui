@@ -31,9 +31,20 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 public final class PeakImportVisualPanel1 extends JPanel implements DocumentListener {
 
+    /**
+     *
+     */
     public static final String PROP_USERNAME = "username";
+
+    /**
+     *
+     */
     public static final String PROP_PASSWORD = "password";
 
     /**
@@ -128,10 +139,18 @@ public final class PeakImportVisualPanel1 extends JPanel implements DocumentList
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     *
+     * @return
+     */
     public String getNameField() {
         return jTextField1.getText();
     }
 
+    /**
+     *
+     * @return
+     */
     public char[] getPasswordField() {
         return jPasswordField1.getPassword();
     }

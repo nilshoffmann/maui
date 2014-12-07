@@ -42,7 +42,7 @@ import org.openide.util.WeakListeners;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 class MetaDataContainerFactory extends ChildFactory<MetaDataContainer> implements
         PropertyChangeListener {
@@ -62,7 +62,12 @@ class MetaDataContainerFactory extends ChildFactory<MetaDataContainer> implement
         if (metaData.isEmpty()) {
             return true;
         } else {
-            list.addAll(metaData);
+            for(MetaDataContainer mdc:metaData) {
+                //only add top level metadata containers
+                if(mdc.getLevel()==0) {
+                    list.add(mdc);
+                }
+            } 
             Collections.sort(list);
             return true;
         }

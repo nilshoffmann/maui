@@ -29,7 +29,7 @@ package net.sf.maltcms.chromaui.normalization.spi;
 
 /**
  *
- * @author Nils.Hoffmann@cebitec.uni-bielefeld.de
+ * @author Nils Hoffmann
  */
 public enum PvalueAdjustment {
 

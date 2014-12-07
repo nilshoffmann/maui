@@ -45,6 +45,10 @@ import org.openide.text.DataEditorSupport;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 
+/**
+ *
+ * @author Nils Hoffmann
+ */
 @NbBundle.Messages({
     "LBL_CSV_LOADER=Files of CSV"
 })
@@ -115,6 +119,13 @@ import org.openide.util.NbBundle;
 })
 public class CSVDataObject extends MultiDataObject {
 
+    /**
+     *
+     * @param pf
+     * @param loader
+     * @throws DataObjectExistsException
+     * @throws IOException
+     */
     public CSVDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
 //        registerEditor("text/csv", true);
@@ -122,11 +133,19 @@ public class CSVDataObject extends MultiDataObject {
         cookies.add((Node.Cookie) DataEditorSupport.create(this, getPrimaryEntry(), cookies));
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected Node createNodeDelegate() {
         return new DataNode(this, Children.LEAF, getLookup());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Lookup getLookup() {
         return getCookieSet().getLookup();

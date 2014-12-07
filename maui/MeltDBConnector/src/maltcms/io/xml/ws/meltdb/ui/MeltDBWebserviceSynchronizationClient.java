@@ -73,15 +73,23 @@ public class MeltDBWebserviceSynchronizationClient {
     private JList chromList = null;
     private JList compList = null;
     private JList peaksList = null;
-    private List<Peak> userPeaks = new ArrayList<Peak>();
+    private List<Peak> userPeaks = new ArrayList<>();
     private final MeltDBSession ms;
     private ExecutorService es = Executors.newCachedThreadPool();
     private int activePeakID = -1;
 
+    /**
+     *
+     * @param ms
+     */
     public MeltDBWebserviceSynchronizationClient(MeltDBSession ms) {
         this.ms = ms;
     }
 
+    /**
+     *
+     * @return
+     */
     public JPanel getControlPanel() {
         if (this.controlpanel == null) {
             this.controlpanel = new JPanel();
@@ -89,6 +97,10 @@ public class MeltDBWebserviceSynchronizationClient {
         return this.controlpanel;
     }
 
+    /**
+     *
+     * @return
+     */
     public JPanel getPanel() {
         if (this.panel == null) {
             this.panel = new JPanel();
@@ -118,12 +130,16 @@ public class MeltDBWebserviceSynchronizationClient {
         return this.panel;
     }
 
+    /**
+     *
+     * @return
+     */
     public JPanel addPeakPanel() {
         JPanel jp = new JPanel();
         //BoxLayout bl = new BoxLayout(jp,BoxLayout.Y_AXIS);
         jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
         String[] labels = new String[]{"rt", "rt_min", "rt_max", "scan_index", "area", "intensity"};
-        SortedMap<String, JTextArea> sm = new TreeMap<String, JTextArea>();
+        SortedMap<String, JTextArea> sm = new TreeMap<>();
         for (String s : labels) {
             JTextArea jta = getLabeledTextArea(s);
             jp.add(jta);
@@ -142,14 +158,25 @@ public class MeltDBWebserviceSynchronizationClient {
         return jp;
     }
 
+    /**
+     *
+     * @param cp
+     */
     public void addUserPeak(Peak cp) {
         this.userPeaks.add(cp);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Peak> getUserPeaks() {
         return this.userPeaks;
     }
 
+    /**
+     *
+     */
     public class SubmitPeaksAction extends AbstractAction {
 
         /**
@@ -187,12 +214,12 @@ public class MeltDBWebserviceSynchronizationClient {
             boolean b = true;
             for (Peak cp : getUserPeaks()) {
                 try {
-                    System.out.println("Peak @" + cp.getRt());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Peak @{0}", cp.getRt());
                     int ids = ms.createPeak(ms.getActiveProject(), ms.getActiveChromatogram(), cp.getRt(), cp.getRt_min(), cp.getRt_max(), cp.getScan_index(), cp.getArea(), cp.getIntensity());
-                    System.out.println("Id: " + ids);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Id: {0}", ids);
                     if (ids <= 0) {
                         b = false;
-                        System.err.println("Problem occurred while adding userPeaks");
+                        Logger.getLogger(getClass().getName()).warning("Problem occurred while adding userPeaks");
                     }
                 } catch (RemoteException e1) {
                     // TODO Auto-generated catch block
@@ -206,6 +233,9 @@ public class MeltDBWebserviceSynchronizationClient {
         }
     }
 
+    /**
+     *
+     */
     public class PeakCreateAction extends AbstractAction {
 
         /**
@@ -213,7 +243,7 @@ public class MeltDBWebserviceSynchronizationClient {
          */
         private static final long serialVersionUID = -5584984611571026324L;
         private SortedMap<String, JTextArea> sm;
-        private List<Peak> peaks = new ArrayList<Peak>();
+        private List<Peak> peaks = new ArrayList<>();
         private MeltDBSession ms;
 
         /**
@@ -233,13 +263,24 @@ public class MeltDBWebserviceSynchronizationClient {
             // TODO Auto-generated constructor stub
         }
 
+        /**
+         *
+         */
         public PeakCreateAction() {
         }
 
+        /**
+         *
+         * @param mdbs
+         */
         public void setSession(MeltDBSession mdbs) {
             this.ms = mdbs;
         }
 
+        /**
+         *
+         * @param sm
+         */
         public void setMap(SortedMap<String, JTextArea> sm) {
             this.sm = sm;
         }
@@ -256,7 +297,7 @@ public class MeltDBWebserviceSynchronizationClient {
                 int scan_index = Integer.parseInt(this.sm.get("scan_index").getText());
                 float area = Float.parseFloat(this.sm.get("area").getText());
                 float intensity = Float.parseFloat(this.sm.get("intensity").getText());
-                System.out.println("Adding peak");
+                Logger.getLogger(getClass().getName()).info("Adding peak");
                 Peak p = createPeak(-1, rt, rt_min, rt_max, scan_index, area, intensity);
                 addUserPeak(p);
             }
@@ -282,6 +323,10 @@ public class MeltDBWebserviceSynchronizationClient {
         return jta;
     }
 
+    /**
+     *
+     * @return
+     */
     public JList getLabeledCompoundsList() {
         if (this.compList == null) {
             this.compList = new JList(new String[]{});
@@ -290,7 +335,7 @@ public class MeltDBWebserviceSynchronizationClient {
 
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
-                    System.out.println("Selected: " + ((JList) e.getSource()).getModel().getElementAt(e.getFirstIndex()));
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Selected: {0}", ((JList) e.getSource()).getModel().getElementAt(e.getFirstIndex()));
                 }
             };
             this.compList.addListSelectionListener(lsl);
@@ -298,6 +343,10 @@ public class MeltDBWebserviceSynchronizationClient {
         return this.compList;
     }
 
+    /**
+     *
+     * @return
+     */
     public JList getChromatogramsList() {
         if (this.chromList == null) {
             this.chromList = new JList(new String[]{});
@@ -307,7 +356,7 @@ public class MeltDBWebserviceSynchronizationClient {
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
                     ms.setActiveChromatogram((String) ((JList) e.getSource()).getSelectedValue());
-                    System.out.println("Active Chromatogram is: " + ms.getActiveChromatogram());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Active Chromatogram is: {0}", ms.getActiveChromatogram());
                     disableComponent(
                             getLabeledCompoundsList());
                     Runnable fetch = new Runnable() {
@@ -349,6 +398,10 @@ public class MeltDBWebserviceSynchronizationClient {
         return this.chromList;
     }
 
+    /**
+     *
+     * @return
+     */
     public JList getPeaksList() {
         if (this.peaksList == null) {
             this.peaksList = new JList(new String[]{});
@@ -370,9 +423,9 @@ public class MeltDBWebserviceSynchronizationClient {
                         @Override
                         public void run() {
                             try {
-                                System.out.println("Retrieving peaks for project: " + ms.getActiveProject() + " and chromatogram: " + ms.getActiveChromatogram());
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "Retrieving peaks for project: {0} and chromatogram: {1}", new Object[]{ms.getActiveProject(), ms.getActiveChromatogram()});
                                 final List<Integer> s = ms.getAvailablePeaks(ms.getActiveProject(), ms.getActiveChromatogram());
-                                System.out.println("Retrieved " + s.size() + " peaks!");
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "Retrieved {0} peaks!", s.size());
                                 Runnable update = new Runnable() {
 
                                     @Override
@@ -388,7 +441,7 @@ public class MeltDBWebserviceSynchronizationClient {
                                                     activePeakID = p.getId();
                                                     dlm.addElement("Peak at scan index: " + p.getScan_index() + " [ rt_min: " + p.getRt_min() + ", (rt_apex: " + p.getRt() + "), rt_max: " + p.getRt_max() + " area: " + p.getArea() + " apexIntensity: " + p.getIntensity());
                                                     //addUserPeak(p);
-                                                    System.out.println("Retrieved peak with id " + p.getId() + " " + p.getRt());
+                                                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Retrieved peak with id {0} {1}", new Object[]{p.getId(), p.getRt()});
                                                 }
                                             } catch (RemoteException ex) {
                                                 Logger.getLogger(WebServiceClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -469,6 +522,10 @@ public class MeltDBWebserviceSynchronizationClient {
         return this.peaksList;
     }
 
+    /**
+     *
+     * @return
+     */
     public JList getExperimentsList() {
         if (this.expList == null) {
             this.expList = new JList(new String[]{});
@@ -479,10 +536,10 @@ public class MeltDBWebserviceSynchronizationClient {
                 public void valueChanged(ListSelectionEvent e) {
                     ms.setActiveExperiment((String) ((JList) e.getSource()).getSelectedValue());
                     if (ms.getActiveExperiment() == null || ms.getActiveExperiment().isEmpty()) {
-                        System.out.println("Could not complete request, selection for active experiment is empty!");
+                        Logger.getLogger(getClass().getName()).info("Could not complete request, selection for active experiment is empty!");
                         return;
                     }
-                    System.out.println("Active Experiment is: " + ms.getActiveExperiment());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Active Experiment is: {0}", ms.getActiveExperiment());
                     disableComponent(
                             getChromatogramsList());
                     disableComponent(
@@ -527,10 +584,14 @@ public class MeltDBWebserviceSynchronizationClient {
     }
 
     private void handleRemoteException(RemoteException re) {
-        System.err.println("RemoteException occurred while trying to access webservice!");
-        System.err.println(re.getLocalizedMessage());
+        Logger.getLogger(getClass().getName()).warning("RemoteException occurred while trying to access webservice!");
+        Logger.getLogger(getClass().getName()).warning(re.getLocalizedMessage());
     }
 
+    /**
+     *
+     * @return
+     */
     public JList getProjectsList() {
         if (this.projectsList == null) {
             this.projectsList = new JList(new String[]{});
@@ -582,11 +643,11 @@ public class MeltDBWebserviceSynchronizationClient {
 
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
-                    System.out.println("Selected index: " + e.getFirstIndex());
-                    System.out.println("Source event occurred on: " + e.getSource().getClass().getName());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Selected index: {0}", e.getFirstIndex());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Source event occurred on: {0}", e.getSource().getClass().getName());
                     final String project = (String) ((JList) e.getSource()).getSelectedValue();
                     ms.setActiveProject(project);
-                    System.out.println("Active project: " + ms.getActiveProject());
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Active project: {0}", ms.getActiveProject());
                     disableComponent(
                             getExperimentsList());
                     disableComponent(
@@ -598,7 +659,7 @@ public class MeltDBWebserviceSynchronizationClient {
                         @Override
                         public void run() {
                             try {
-                                System.out.println("Active project: " + ms.getActiveProject());
+                                Logger.getLogger(getClass().getName()).log(Level.INFO, "Active project: {0}", ms.getActiveProject());
                                 final List<String> s = ms.getAvailableExperiments(ms.getActiveProject());
                                 Runnable update = new Runnable() {
 

@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor;
@@ -86,7 +87,7 @@ public final class AddPeakDescriptorsToDatabaseAction implements ActionListener 
         // let's display the dialog now...
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION) {
             if (ddp.getSelectedDatabase() == null) {
-                System.out.println("No database selected!");
+                Logger.getLogger(getClass().getName()).info("No database selected!");
                 return;
             }
             database = ddp.getSelectedDatabase();

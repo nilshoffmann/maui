@@ -34,7 +34,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
- * @author hoffmann
+ * @author Nils Hoffmann
  */
 @ServiceProvider(service = IStatisticsDescriptorComparator.class)
 public class PValueComparator implements
