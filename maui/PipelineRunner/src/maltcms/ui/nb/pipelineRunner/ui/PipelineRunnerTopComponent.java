@@ -29,6 +29,8 @@ package maltcms.ui.nb.pipelineRunner.ui;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +41,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
+import net.sf.maltcms.chromaui.project.api.extimport.IFileBasedToolResultDescriptor;
+import net.sf.maltcms.chromaui.project.api.extimport.IFileResultFinder;
+import net.sf.maltcms.chromaui.project.api.ui.Dialogs;
+import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -49,6 +56,9 @@ import org.openide.windows.WindowManager;
 //import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.RequestProcessor;
+import org.openide.util.lookup.Lookups;
 import org.openide.windows.CloneableTopComponent;
 import org.openide.windows.Mode;
 
@@ -163,137 +173,6 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
         super.open();
     }
 
-//    public void addUserConfiguration(File cfg) {
-//        this.cfg = cfg;
-//        if (this.cfg != null) {
-//            Logger.getLogger(PipelineRunnerTopComponent.class.getName()).info("Set configuration: Configuration: " + cfg.getAbsolutePath());
-//
-//            jButton1.setEnabled(true);
-//            jButton2.setEnabled(false);
-//        }
-//
-//    }
-    public void submitViaMpaxs() {
-        //Impaxs server = Lookup.getDefault().lookup(Impaxs.class);//new MpaxsImpl();
-        //server.startMasterServer();
-        //server.addJobEventListener(this);
-//        long partNumber = 30;
-//        BigInteger partSize = testUntil.divide(BigInteger.valueOf(partNumber));
-//        System.out.println("Number of Fragments: " + partNumber);
-//        System.out.println("Fragment Size: " + partSize.doubleValue());
-//        BigInteger from = BigInteger.valueOf(2);
-//        BigInteger to = partSize;
-//        for (int i = 0; i <= partNumber; i++) {
-//            Job job = new Job(new Part(from, to, toTest));
-//            server.submitJob(job);
-//            numberOfSubmittedJobs++;
-//            from = to;
-//            to = to.add(partSize);
-//        }
-    }
-
-//    public void submit() {
-//        if (inputDir == null) {
-//            JFileChooser jfc = new JFileChooser();
-//            jfc.setDialogTitle("Select Input Directory");
-//            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//            int result = jfc.showOpenDialog(this);
-//            if (result == JFileChooser.APPROVE_OPTION) {
-//                inputDir = jfc.getSelectedFile();
-//            } else {
-//                Exceptions.printStackTrace(new RuntimeException(
-//                        "No input directory defined, aborting!"));
-//                return;
-//            }
-//        }
-//        if (outputDir == null) {
-//            JFileChooser jfc = new JFileChooser();
-//            jfc.setDialogTitle("Select Output Base Directory");
-//            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//            int result = jfc.showOpenDialog(this);
-//            if (result == JFileChooser.APPROVE_OPTION) {
-//                outputDir = jfc.getSelectedFile();
-//            } else {
-//                Exceptions.printStackTrace(new RuntimeException(
-//                        "No output directory defined, aborting!"));
-//                return;
-//            }
-//        }
-//        try {
-//            MaltcmsLocalHostExecution mlhe = new MaltcmsLocalHostExecution(
-//                    workingDirectory, inputDir, outputDir, cfg, new String[]{
-//                        files});
-//            System.out.println("Java.home: " + System.getProperty("java.home"));
-//            File javaBinDir = new File(new File(System.getProperty("java.home")),
-//                    "bin");
-//            File java = new File(javaBinDir, "java");
-//            System.out.println("Executing java: " + java.getAbsolutePath());
-//            //final NbProcessDescriptor desc = new NbProcessDescriptor(java.getAbsolutePath(), mlhe.buildCommandLine());
-//            final ProcessBuilder pb = new ProcessBuilder(mlhe.buildCommandLine());
-//            pb.directory(workingDirectory);
-//            System.out.println("Process: " + pb.command() + " workingDirectory: " + pb.directory());
-//            pb.redirectErrorStream(true);
-//
-//
-////        final Callable<Process> cal = ies.getProcessCallable();
-//            Runnable r = new Runnable() {
-//
-//                @Override
-//                public void run() {
-//                    jButton1.setEnabled(false);
-//                    jButton2.setEnabled(true);
-//                    ProgressHandle ph = ProgressHandleFactory.createHandle(
-//                            "Executing Maltcms");
-//                    ph.start();
-//                    ph.switchToIndeterminate();
-//                    ph.setDisplayName("Running Maltcms...");
-//
-//                    InputOutput io = IOProvider.getDefault().getIO(
-//                            "Running Maltcms...", false);
-////                io.setOutputVisible(true);
-//                    io.select();
-//                    final OutputWriter writer = io.getOut();
-//
-//
-////                Future<Process> future = RequestProcessor.getDefault().submit(cal);
-//                    try {
-//                        Process p = pb.start();
-////                    Process p = desc.exec(null, null, workingDirectory);
-//
-//
-////                        addActiveProcess(p);
-//                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//                        String line = null;
-//                        while ((line = reader.readLine()) != null) {
-//                            writer.println(line);
-//                        }
-//                        int ecode = p.waitFor();
-////                    p.waitFor();
-////                    Process p = future.get();
-//
-//                        System.out.println("Maltcms exited with code: " + ecode);
-//                    } catch (IOException ex) {
-//                        Exceptions.printStackTrace(ex);
-//                    } catch (InterruptedException ex) {
-//                        Exceptions.printStackTrace(ex);
-//                    }
-//
-//                    jButton1.setEnabled(
-//                            true);
-//                    jButton2.setEnabled(
-//                            false);
-//                    ph.finish();
-//                }
-//            };
-//            ExecutorService es = Executors.newSingleThreadExecutor();
-//            es.submit(r);
-////        } catch (IOException ioex) {
-////            Exceptions.printStackTrace(ioex);
-//        } catch (ConstraintViolationException cve) {
-//            Exceptions.printStackTrace(cve);
-//        }
-////        IExecutionSupport ies = mlhe.createExecutionSupport();
-//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -399,14 +278,36 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
         if (mlhe != null) {
             final Future<File> f = MaltcmsLocalHostExecution.createAndRun(mlhe.getConfigurationFile().getName(), mlhe);
             setProcessRunning(mlhe);
+            final ExecutorService es = Executors.newSingleThreadExecutor();
             Runnable r = new Runnable() {
 
                 @Override
                 public void run() {
-                    File result;
+                    final File result;
                     try {
                         result = f.get();
                         if (result != null) {
+                            Runnable resultImporter = new Runnable() {
+                                @Override
+                                public void run() {
+                                    Collection<? extends IFileResultFinder> resultFinders = Lookup.getDefault().lookupAll(IFileResultFinder.class);
+                                    Collection<IFileBasedToolResultDescriptor> c = new ArrayList<>();
+                                    for (IFileResultFinder f : resultFinders) {
+                                        Logger.getLogger(PipelineRunnerTopComponent.class.getName()).log(Level.INFO, "Invoking fileResultFinder {0}", f.getClass().getName());
+                                        if(f.getResults(result.getParentFile()).length>0) {
+                                            c.add(f.createDescriptor((IChromAUIProject) mlhe.getProject(), result.getParentFile()));
+                                        }else{
+                                            Logger.getLogger(PipelineRunnerTopComponent.class.getName()).log(Level.INFO, "Skipping fileResultFinder {0}, no suitable results!", f.getClass().getName());
+                                        }
+                                    }
+                                    Logger.getLogger(PipelineRunnerTopComponent.class.getName()).log(Level.INFO, "Showing dialog for {0} descriptors", c.size());
+                                    Collection<? extends IFileBasedToolResultDescriptor> results = Dialogs.showAndSelectDescriptors(c, Lookups.fixed(mlhe.getProject()), IFileBasedToolResultDescriptor.class, "Select results to import", "Select tools to import results:");
+                                    for (IFileBasedToolResultDescriptor descr : results) {
+                                        AProgressAwareRunnable.createAndRun("Running " + descr.getDisplayName(), descr.getProgressAwareRunnable());
+                                    }
+                                }
+                            };
+                            RequestProcessor.getDefault().post(resultImporter);
                             Runnable updater = new Runnable() {
 
                                 @Override
@@ -421,7 +322,6 @@ public final class PipelineRunnerTopComponent extends CloneableTopComponent impl
                     }
                 }
             };
-            ExecutorService es = Executors.newSingleThreadExecutor();
             es.submit(r);
             es.shutdown();
         }

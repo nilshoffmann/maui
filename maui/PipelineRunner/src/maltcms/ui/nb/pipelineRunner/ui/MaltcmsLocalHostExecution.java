@@ -61,13 +61,15 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
     private final File[] inputFiles;
     private String maltcmsJarFileName = null;
     private Process p;
+    private Project project;
 
-    public MaltcmsLocalHostExecution(File baseDir, File outputBaseDir, File configurationFile, File[] inputFiles) throws IOException {
+    public MaltcmsLocalHostExecution(File baseDir, File outputBaseDir, File configurationFile, File[] inputFiles, Project project) throws IOException {
         checkMaltcmsPresence(baseDir);
         this.baseDir = baseDir;
         this.outputBaseDir = outputBaseDir;
         this.configurationFile = configurationFile;
         this.inputFiles = inputFiles;
+        this.project = project;
     }
 
     @Override
@@ -275,5 +277,9 @@ public class MaltcmsLocalHostExecution extends AProgressAwareCallable<File> {
 
     protected File createOutputDirectory() {
         return new File(outputBaseDir, new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()));
+    }
+    
+    public Project getProject() {
+        return project;
     }
 }

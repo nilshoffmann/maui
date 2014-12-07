@@ -31,23 +31,24 @@ import java.io.File;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 
 /**
- * Interface for implementation that provide any kind of data import capability
- * for external tools that store their data in the file system.
+ *
  * @author Nils Hoffmann
  */
-public interface IFileBasedToolResultImporter {
+public interface IFileResultFinder {
+
     /**
-     * Returns true if the result importer can read data within the given output directory
-     * @param outputDirectory the external tool's output directory
-     * @return true if the result can be read, false otherwise
+     * Return an array of files, representing processing results.
+     * @param outputDirectory the output directory, e.g. the Maltcms workflow output directory.
+     * @return an array of files. Can be empty.
      */
-    boolean appliesTo(File outputDirectory);
+    File[] getResults(File outputDirectory);
     
     /**
-     * Actually import the result data into the given project. 
-     * Should use a background task for execution.
-     * @param project the project to import data for
-     * @param outputDirectory  the external tool's output directory
+     * Return a descriptor for display in dialogs.
+     * @param project the IChromAUIProject associated to the results.
+     * @param outputDirectory the output directory to check for importable results.
+     * @return the IFileBasedToolResultDescriptor, providing a Runnable to execute on the results.
      */
-    void importWorkflowResults(IChromAUIProject project, File outputDirectory);
+    IFileBasedToolResultDescriptor createDescriptor(IChromAUIProject project, File outputDirectory);
+    
 }

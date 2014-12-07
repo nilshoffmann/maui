@@ -75,6 +75,9 @@ public class MultiplePeakAlignmentImporter extends AProgressAwareRunnable {
     public void run() {
         try {
             progressHandle.start();
+            if (alignmentFiles.length == 0) {
+                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message("Could not import multiple alignment! No results were found! ", NotifyDescriptor.WARNING_MESSAGE));
+            }
             for (File alignmentFile : alignmentFiles) {
                 progressHandle.progress("Importing alignment " + alignmentFile.getPath());
                 project.getCrudProvider();
@@ -226,7 +229,7 @@ public class MultiplePeakAlignmentImporter extends AProgressAwareRunnable {
         EvalTools.notNull(sourceChromatogram, this);
         EvalTools.notNull(sourceChrom, this);
         double alignedPeakRt = sat.getDouble(index);
-        
+
         for (Peak1DContainer p : c) {
             if (p.getTool().getId().equals(tool.getId())) {
                 //FIXME this is inefficient, should be done by querying for peaks as children of p within time range apexTime +/- delta
