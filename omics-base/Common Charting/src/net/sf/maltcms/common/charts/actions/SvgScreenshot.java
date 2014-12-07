@@ -28,6 +28,7 @@
 package net.sf.maltcms.common.charts.actions;
 
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import static java.awt.geom.AffineTransform.getTranslateInstance;
@@ -74,33 +75,80 @@ public final class SvgScreenshot implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         //retrieve the main window component
-        Frame f = getDefault().getMainWindow();
-        //set up the svg canvas and xml document
-        DOMImplementation impl
-                = getDOMImplementation();
-        String svgNS = "http://www.w3.org/2000/svg";
-        Document myFactory = impl.createDocument(svgNS, "svg", null);
-        SVGGeneratorContext ctx = createDefault(myFactory);
-        //embed fonts used to render the UI
-        ctx.setEmbeddedFontsOn(true);
-        //add image handler to embed images (not scale invariant)
-        GenericImageHandler ihandler = new CachedImageHandlerBase64Encoder();
-        ctx.setGenericImageHandler(ihandler);
-        SVGGraphics2D g2d = new SVGGraphics2D(ctx, true);
-        g2d.setTransform(getTranslateInstance(0, 0));//-f.getHeight()));
-        f.invalidate();
-        f.revalidate();
-        f.paint(g2d);
-        File outputDir = new File(getProperty("user.home"), "NetBeansScreenshots");
-        outputDir.mkdirs();
-        Date d = new Date();
-        File file = new File(outputDir, new SimpleDateFormat().format(d) + ".svg");
-        try (Writer out = new OutputStreamWriter(new FileOutputStream(file))) {
-            g2d.stream(out, true);
-            g2d.dispose();
-            Logger.getLogger(SvgScreenshot.class.getName()).log(Level.INFO, "Saving screenshot to {0}", file);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+//        Frame f = getDefault().getMainWindow();
+        Window[] windows = Window.getWindows();
+        for(int i = 0;i<windows.length; i++) {
+            //set up the svg canvas and xml document
+            DOMImplementation impl
+                    = getDOMImplementation();
+            String svgNS = "http://www.w3.org/2000/svg";
+            Document myFactory = impl.createDocument(svgNS, "svg", null);
+            SVGGeneratorContext ctx = createDefault(myFactory);
+            //embed fonts used to render the UI
+            ctx.setEmbeddedFontsOn(true);
+            //add image handler to embed images (not scale invariant)
+            GenericImageHandler ihandler = new CachedImageHandlerBase64Encoder();
+            ctx.setGenericImageHandler(ihandler);
+            SVGGraphics2D g2d = new SVGGraphics2D(ctx, true);
+            g2d.setTransform(getTranslateInstance(0, 0));//-f.getHeight()));
+            Window window = windows[i];
+            window.invalidate();
+            window.validate();
+            window.paint(g2d);
+            File outputDir = new File(getProperty("user.home"), "NetBeansScreenshots");
+            outputDir.mkdirs();
+            Date d = new Date();
+            String frameTitle = window.getName();
+            if (frameTitle == null || frameTitle.isEmpty()) {
+                frameTitle = "-window-" + i;
+            } else {
+                frameTitle = "-window-" + frameTitle;
+            }
+            File file = new File(outputDir, new SimpleDateFormat().format(d) + frameTitle + ".svg");
+            try (Writer out = new OutputStreamWriter(new FileOutputStream(file))) {
+                g2d.stream(out, true);
+                g2d.dispose();
+                Logger.getLogger(SvgScreenshot.class.getName()).log(Level.INFO, "Saving screenshot to {0}", file);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        Frame[] applicationFrames = Frame.getFrames();
+        for (int i = 0; i < applicationFrames.length; i++) {
+            //set up the svg canvas and xml document
+            DOMImplementation impl
+                    = getDOMImplementation();
+            String svgNS = "http://www.w3.org/2000/svg";
+            Document myFactory = impl.createDocument(svgNS, "svg", null);
+            SVGGeneratorContext ctx = createDefault(myFactory);
+            //embed fonts used to render the UI
+            ctx.setEmbeddedFontsOn(true);
+            //add image handler to embed images (not scale invariant)
+            GenericImageHandler ihandler = new CachedImageHandlerBase64Encoder();
+            ctx.setGenericImageHandler(ihandler);
+            SVGGraphics2D g2d = new SVGGraphics2D(ctx, true);
+            g2d.setTransform(getTranslateInstance(0, 0));//-f.getHeight()));
+            Frame f = applicationFrames[i];
+            f.invalidate();
+            f.revalidate();
+            f.paint(g2d);
+            File outputDir = new File(getProperty("user.home"), "NetBeansScreenshots");
+            outputDir.mkdirs();
+            Date d = new Date();
+            String frameTitle = f.getTitle();
+            if (frameTitle == null || frameTitle.isEmpty()) {
+                frameTitle = "-frame-" + i;
+            } else {
+                frameTitle = "-frame-" + frameTitle;
+            }
+            File file = new File(outputDir, new SimpleDateFormat().format(d) + frameTitle + ".svg");
+            try (Writer out = new OutputStreamWriter(new FileOutputStream(file))) {
+                g2d.stream(out, true);
+                g2d.dispose();
+                Logger.getLogger(SvgScreenshot.class.getName()).log(Level.INFO, "Saving screenshot to {0}", file);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
     }
 }
