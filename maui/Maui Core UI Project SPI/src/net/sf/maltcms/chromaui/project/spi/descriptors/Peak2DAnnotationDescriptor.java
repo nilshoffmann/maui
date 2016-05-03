@@ -30,6 +30,7 @@ package net.sf.maltcms.chromaui.project.spi.descriptors;
 import com.db4o.activation.ActivationPurpose;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
 import static net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor.PROP_SECONDCOLUMNRT;
 import net.sf.maltcms.chromaui.project.api.persistence.PersistentShape;
@@ -89,5 +90,23 @@ public class Peak2DAnnotationDescriptor extends PeakAnnotationDescriptor impleme
         Shape old = this.bounds;
         this.bounds = new PersistentShape(bounds);
         firePropertyChange(PROP_BOUNDS, old, this.bounds);
+    }
+
+    @Override
+    public String toString() {
+        IChromatogramDescriptor descriptor = getChromatogramDescriptor();
+        StringBuilder sb = new StringBuilder();
+        if (descriptor == null) {
+            sb.append("Peak @");
+        } else {
+            sb.append(getChromatogramDescriptor().getDisplayName()).append("@");
+
+        }
+        return sb.append(String.format("%.2f", getFirstColumnRt())).
+                append(";").append(String.format("%.2f", getSecondColumnRt())).
+                append(" sec (").append(String.format("%.2f", getFirstColumnRt() / 60.0d)).
+                append(" min;").append(String.format("%.2f", getFirstColumnRt())).
+                append(" sec) area=").append(getArea()).append(", inten=").
+                append(getApexIntensity()).toString();
     }
 }

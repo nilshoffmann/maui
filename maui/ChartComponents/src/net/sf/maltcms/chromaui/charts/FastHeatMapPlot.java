@@ -176,11 +176,16 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
 
     /**
      * Creates a new instance of <code>FastHeatmapPlot</code> with default axes.
+     * @param xyz
+     * @param width
+     * @param height
+     * @param domain
+     * @param range
+     * @param xybr
      */
     public FastHeatMapPlot(XYZDataset xyz, int width, int height,
             ValueAxis domain, ValueAxis range, XYBlockRenderer xybr) {
         this(domain, range);
-
         setDataset(xyz);
         setRenderer(xybr);
         // BufferedImage bi = prepareData(xyz,width,height,xybr);
@@ -237,17 +242,6 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
         Graphics2D g2 = (Graphics2D) bi.getGraphics();
         g2.setColor((Color) ps.getPaint(ps.getLowerBound()));
         g2.fillRect(0, 0, sl, spm);
-
-//        double threshold = 0.0d;
-//        int[][] ramp = ((GradientPaintScale) ps).getRamp();
-//        double delta = 10.0d;
-//        Color to = new Color(ramp[this.threshholdCutOff][0], ramp[this.threshholdCutOff][1], ramp[this.threshholdCutOff][2]);
-//        for (;; threshold += delta) {
-//            if (((Color) ps.getPaint(threshold)).equals(to)) {
-//                threshold -= delta;
-//                break;
-//            }
-//        }
         // System.out.println("Using Threshold: " + threshold);
         int height = bi.getHeight();
         //final WritableRaster wr = bi.getRaster();
@@ -322,13 +316,13 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             }
             int sx0, sx1, sy0, sy1, tx0, tx1, ty0, ty1;
             sx0 = sourceArea.x;
-            sx1 = sourceArea.x + sourceArea.width;
+//            sx1 = sourceArea.x + sourceArea.width;
             sy0 = sourceArea.y;
-            sy1 = sourceArea.y + sourceArea.height;
+//            sy1 = sourceArea.y + sourceArea.height;
             tx0 = targetArea.x;
-            tx1 = targetArea.x + targetArea.width;
+//            tx1 = targetArea.x + targetArea.width;
             ty0 = targetArea.y;
-            ty1 = targetArea.y + targetArea.height;
+//            ty1 = targetArea.y + targetArea.height;
 
             g.drawImage(offscreenBuffer.getSnapshot().getSubimage(sx0, sy0, sourceArea.width, sourceArea.height), tx0, ty0, targetArea.width, targetArea.height, null);
         } while (offscreenBuffer.contentsLost());
@@ -874,13 +868,13 @@ public class FastHeatMapPlot extends XYPlot implements ValueAxisPlot, Pannable,
             double xub = this.domainAxis.getUpperBound();
             double yub = this.rangeAxis.getUpperBound();
             //construct region of interest for data in view
-            Rectangle2D.Double roi = new Rectangle2D.Double(xlb, ylb, xub - xlb + 1, yub - ylb + 1);
+            Rectangle2D.Double roi = new Rectangle2D.Double(xlb, ylb, xub - xlb, yub - ylb);
             Logger.getLogger(getClass().getName()).log(Level.INFO, "ROI: {0}", roi);
             //construct bounding rectangle of data
             Rectangle2D.Double imgSpace = new Rectangle2D.Double(0, 0, this.dataImage.getWidth(), this.dataImage.getHeight());
             Logger.getLogger(getClass().getName()).log(Level.INFO, "IMG Space: {0}", imgSpace);
             //construct intersection of both, this is the area of the data, we need to render
-            Rectangle2D sourceCoordinates = roi.createIntersection(imgSpace);
+            Rectangle2D sourceCoordinates = imgSpace.createIntersection(roi);
             Logger.getLogger(getClass().getName()).log(Level.INFO, "Projecting from: {0}", sourceCoordinates);
             //VIEW SPACE
             // define mapping coordinates from data domain to view domain

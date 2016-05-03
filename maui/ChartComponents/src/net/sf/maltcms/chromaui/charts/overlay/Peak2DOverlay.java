@@ -28,12 +28,10 @@
 package net.sf.maltcms.chromaui.charts.overlay;
 
 import cross.datastructures.tuple.Tuple2D;
+import cross.exception.ConstraintViolationException;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
@@ -44,7 +42,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Level;
@@ -55,7 +52,6 @@ import maltcms.datastructures.quadTree.ElementNotFoundException;
 import maltcms.datastructures.quadTree.QuadTree;
 import net.sf.maltcms.chromaui.annotations.PeakAnnotationRenderer;
 import net.sf.maltcms.chromaui.annotations.VisualPeakAnnotation;
-import net.sf.maltcms.chromaui.charts.ChartCustomizer;
 import net.sf.maltcms.chromaui.charts.dataset.chromatograms.Chromatogram2DDataset;
 import net.sf.maltcms.chromaui.project.api.container.Peak1DContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -69,10 +65,8 @@ import net.sf.maltcms.common.charts.api.selection.ISelection;
 import net.sf.maltcms.common.charts.api.selection.SelectionChangeEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.RectangleEdge;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -126,11 +120,17 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
         this.descriptor = descriptor;
         this.peakAnnotations = peakAnnotations;
         IChromatogram2D chrom = (IChromatogram2D) descriptor.getChromatogram();
+        Logger.getLogger(Peak2DOverlay.class.getName()).log(Level.INFO, "Chromatogram range: {0}", new Object[]{chrom.getTimeRange2D()});
         quadTree = new QuadTree<>(chrom.getTimeRange2D());
         for (IPeakAnnotationDescriptor descr : this.peakAnnotations) {
             IPeak2DAnnotationDescriptor descr2D = (IPeak2DAnnotationDescriptor) descr;
-            quadTree.put(new Point2D.Float((float) descr2D.getFirstColumnRt(), (float) descr2D.getSecondColumnRt()), descr2D);
+            try {
+                quadTree.put(new Point2D.Float((float) descr2D.getFirstColumnRt(), (float) descr2D.getSecondColumnRt()), descr2D);
+            } catch (ConstraintViolationException cve) {
+                Logger.getLogger(Peak2DOverlay.class.getName()).log(Level.WARNING, "Peak {0} ignored, out of bounds: {1}", new Object[]{descr2D, chrom.getTimeRange2D()});
+            }
         }
+        Logger.getLogger(Peak2DOverlay.class.getName()).log(Level.INFO, "Added {0} peak descriptors", new Object[]{quadTree.size()});
         WeakListeners.propertyChange(this, peakAnnotations);
         padResult = Utilities.actionsGlobalContext().lookupResult(IPeak2DAnnotationDescriptor.class);
         padResult.addLookupListener(this);
@@ -167,7 +167,7 @@ public class Peak2DOverlay extends AbstractChartOverlay implements ChartOverlay,
             }
             Color fillColor = peakAnnotations.getColor();
             if (fillColor == null || fillColor.equals(Color.WHITE) || fillColor.equals(new Color(255, 255, 255, 0))) {
-                Logger.getLogger(getClass().getName()).info("Peak annotation color was null or white, using color from treatment group!");
+                Logger.getLogger(getClass().getName()).fine("Peak annotation color was null or white, using color from treatment group!");
                 fillColor = peakAnnotations.getChromatogram().getTreatmentGroup().getColor();
             }
             if (isVisible()) {

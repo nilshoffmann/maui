@@ -113,6 +113,7 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
     private XYPlot plot;
     private JFreeChart chart;
     private DomainMarkerKeyListener dmkl;
+    private Range dataRange;
     private final Lookup lookup;
 
     /**
@@ -134,6 +135,7 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
         jPanel2.add(chartPanel, BorderLayout.CENTER);
         content.add(chartPanel);
         addKeyListener(this);
+        dataRange = DatasetUtilities.findDomainBounds(ds);
     }
 
     public boolean isSyncViewport() {
@@ -388,21 +390,17 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1183, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, 1183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, 1183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addGap(0, 8, Short.MAX_VALUE)
-                    .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 8, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17))
         );
 
         jPanel1.add(jPanel3, java.awt.BorderLayout.PAGE_END);
@@ -742,7 +740,7 @@ public class Chromatogram1DHeatmapViewerPanel extends JPanel implements Lookup.P
         setViewPortAround((double) jSlider2.getValue());
         double rangeValue = chartPanel.getChart().getXYPlot().getDomainAxis().getAutoRangeMinimumSize();
         ((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setAutoRange(false);
-        chartPanel.getChart().getXYPlot().getDomainAxis().setFixedDimension(rangeValue / 10.0d);
+//        chartPanel.getChart().getXYPlot().getDomainAxis().setFixedDimension(rangeValue / 10.0d);
         ((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setAutoRangeIncludesZero(false);
         ((NumberAxis) chartPanel.getChart().getXYPlot().getDomainAxis()).setRangeType(RangeType.POSITIVE);
     }

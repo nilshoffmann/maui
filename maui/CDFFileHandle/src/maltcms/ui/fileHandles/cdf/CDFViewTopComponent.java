@@ -79,6 +79,8 @@ import ucar.nc2.Dimension;
  * Top component which displays hierarchical content of a cdf file. TODO:
  * convert to use ExplorerManager and BeanTreeView
  */
+@NavigatorPanel.Registration(mimeType = "application/x-cdf", displayName = "#LBL_CDF_FILE_NAVIGATOR")
+@NbBundle.Messages("LBL_CDF_FILE_NAVIGATOR=netCDF File Navigator")
 public final class CDFViewTopComponent extends JComponent implements ExplorerManager.Provider, NavigatorPanel, LookupListener {
 
     //private String file;
@@ -186,7 +188,6 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
      */
     protected void updateView(Collection<? extends IFileFragmentDataObject> files) {
         if (!files.isEmpty()) {
-//			selectionListener.deregister();
             HashSet<IFileFragmentDataObject> hs = new LinkedHashSet<>(files);
             List<Node> l = new ArrayList<>();
             for (IFileFragmentDataObject f : hs) {
@@ -201,14 +202,9 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
                 }
 
             }
-//			System.out.println("Nodes: " + l);
-            Children.Array ca = new Children.Array();//new FilterNode.Children.Array();
-
+            Children.Array ca = new Children.Array();
             ca.add(l.toArray(new Node[l.size()]));
-//			System.out.println(ca);
             this.em.setRootContext(new AbstractNode(ca));
-            //this.beanTreeView.setRootVisible(false);
-//			selectionListener.register(Utilities.actionsGlobalContext());
         } else {
             this.em.setRootContext(Node.EMPTY);
         }
@@ -276,7 +272,6 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
         updateView(new ArrayList<IFileFragmentDataObject>(0));
         result.removeLookupListener(this);
         result = null;
-//        this.lookup = null;
     }
 
     /**

@@ -63,6 +63,7 @@ import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.panel.Overlay;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.EntityAwareSamplingXYLineRenderer;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -220,6 +221,9 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
             ((XYLineAndShapeRenderer) r).setBaseShapesFilled(true);
         } else if (r instanceof XYAreaRenderer) {
             ((XYAreaRenderer) r).setOutline(true);
+            ((XYAreaRenderer) r).setBaseCreateEntities(true, false);
+        } else if (r instanceof EntityAwareSamplingXYLineRenderer) {
+            ((EntityAwareSamplingXYLineRenderer)r).setBaseCreateEntities(true, false);
         }
         ChartCustomizer.setSeriesColors(this.plot, 0.8f);
         ChartCustomizer.setSeriesStrokes(this.plot, 2.0f);

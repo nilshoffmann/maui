@@ -34,12 +34,14 @@ import java.io.IOException;
 import org.netbeans.spi.navigator.NavigatorLookupHint;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataNode;
+import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.Node;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
@@ -48,6 +50,8 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author Nils Hoffmann
  */
+@DataObject.Registration(iconBase = "maltcms/ui/fileHandles/cdf/resources/cdflogo.png", displayName = "#LBL_CDF_File_Name", mimeType = "application/x-cdf")
+@NbBundle.Messages("LBL_CDF_File_Name=CDF File")
 public class CDFDataObject extends MultiDataObject implements
         IFileFragmentDataObject {
 

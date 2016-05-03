@@ -234,7 +234,7 @@ public class PeakAnnotationRenderer {
             //transform from model scale to view scale
             double scaleX = viewW / entityBounds.getWidth();
             double scaleY = viewH / entityBounds.getHeight();
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "Scale x: {0} Scale y: {1}", new Object[]{scaleX, scaleY});
+            Logger.getLogger(getClass().getName()).log(Level.FINE, "Scale x: {0} Scale y: {1}", new Object[]{scaleX, scaleY});
             AffineTransform toViewScale = AffineTransform.getScaleInstance(scaleX, scaleY);
             AffineTransform toViewLocation = AffineTransform.getTranslateInstance(viewX, viewY);
             AffineTransform flipTransform = AffineTransform.getScaleInstance(1.0f, -1.0f);

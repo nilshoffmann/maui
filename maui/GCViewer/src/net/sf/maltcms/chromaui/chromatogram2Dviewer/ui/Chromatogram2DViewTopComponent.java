@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import maltcms.datastructures.ms.IChromatogram2D;
 import maltcms.datastructures.ms.IScan2D;
+import net.sf.maltcms.chromaui.charts.FastHeatMapPlot;
 import net.sf.maltcms.chromaui.charts.overlay.ChartOverlayChildFactory;
 import net.sf.maltcms.chromaui.charts.overlay.ChromatogramDescriptorOverlay;
 import net.sf.maltcms.chromaui.charts.overlay.Peak2DOverlay;
@@ -58,12 +59,10 @@ import net.sf.maltcms.chromaui.ui.paintScales.IPaintScaleProvider;
 import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.dataset.ADataset2D;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ContextAwareChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYZToolTipGenerator;
-import org.jfree.chart.panel.Overlay;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.ui.RectangleAnchor;
@@ -86,18 +85,18 @@ import org.openide.windows.WindowManager;
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @TopComponent.Description(persistenceType = TopComponent.PERSISTENCE_NEVER, preferredID = "ChromatogramViewTopComponent")
 public final class Chromatogram2DViewTopComponent extends TopComponent implements LookupListener {
-
+    
     private static final long serialVersionUID = 2061376786775174386L;
     private IChromAUIProject project = null;
     private InstanceContent content = new InstanceContent();
     private Chromatogram2DViewerPanel hmp;
     private Lookup.Result<Chromatogram2DViewViewport> result;
-
+    
     public Chromatogram2DViewTopComponent(DataObject filename, ADataset2D<IChromatogram2D, IScan2D> ds) {
         associateLookup(new AbstractLookup(content));
         init(filename, ds);
     }
-
+    
     private void init(DataObject dobj, ADataset2D<IChromatogram2D, IScan2D> ds) {
         content.add(ds);
         IChromAUIProject icp = Utilities.actionsGlobalContext().lookup(IChromAUIProject.class);
@@ -139,7 +138,8 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
         setEnabled(false);
         //project may be null
         this.hmp = createPanel(descriptor, ds, overlays);
-        add(new JScrollPane(this.hmp, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+//        add(new JScrollPane(this.hmp, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+        add(this.hmp, BorderLayout.CENTER);
         setEnabled(true);
         /*
          * Virtual overlay that groups all related overlays
@@ -157,7 +157,7 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
 //                                }
 //                            }
     }
-
+    
     private Chromatogram2DViewerPanel createPanel(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds, List<ChartOverlay> overlays) {
         IPaintScaleProvider ips = Lookup.getDefault().lookup(IPaintScaleProvider.class);
         ips.setMin(ds.getMinZ());
@@ -193,12 +193,12 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
                 overlays.add(overlay);
             }
         }
-
+        
         panel.setChartPanel(cp);
         panel.setPlot(p);
         return panel;
     }
-
+    
     private XYPlot createPlot(IChromatogramDescriptor chromatogram, ADataset2D<IChromatogram2D, IScan2D> ds, PaintScale ps) {
         XYNoBlockRenderer xybr = new XYNoBlockRenderer();
         xybr.setPaintScale(ps);
@@ -251,7 +251,7 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
-
+    
     @Override
     public void componentOpened() {
         if (result != null) {
@@ -267,26 +267,26 @@ public final class Chromatogram2DViewTopComponent extends TopComponent implement
             tc.requestAttention(true);
         }
     }
-
+    
     @Override
     protected void componentActivated() {
         super.componentActivated();
         requestFocusInWindow();
         hmp.requestFocusInWindow();
     }
-
+    
     @Override
     protected void componentDeactivated() {
         super.componentDeactivated();
     }
-
+    
     @Override
     public void componentClosed() {
         if (result != null) {
             result.removeLookupListener(this);
         }
     }
-
+    
     @Override
     public void resultChanged(LookupEvent le) {
         //do not react to ourself

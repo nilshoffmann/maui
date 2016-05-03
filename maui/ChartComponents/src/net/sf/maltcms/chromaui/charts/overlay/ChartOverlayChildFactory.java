@@ -30,7 +30,6 @@ package net.sf.maltcms.chromaui.charts.overlay;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import net.sf.maltcms.common.charts.api.Charts;
 import net.sf.maltcms.common.charts.api.overlay.ChartOverlay;
 import org.jfree.chart.event.OverlayChangeEvent;
 import org.jfree.chart.event.OverlayChangeListener;

@@ -36,9 +36,7 @@ import net.sf.maltcms.chromaui.project.api.descriptors.IPeakAnnotationDescriptor
 import net.sf.maltcms.chromaui.project.api.nodes.INodeFactory;
 import org.jfree.chart.event.OverlayChangeEvent;
 import org.jfree.chart.event.OverlayChangeListener;
-import org.openide.explorer.view.CheckableNode;
 import org.openide.nodes.ChildFactory;
-import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
