@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Data;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
@@ -93,17 +92,13 @@ public class ChromaTofPeakListImporter extends AProgressAwareRunnable {
                         Level.INFO, "Using {0} as chromatogram!", chromatogram.getResourceLocation());
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<>();
                 File created = importPeaks(importDir, peaks, reports, chromName, chromatogram, locale);
-                //System.out.println("Adding peak annotations: " + peaks);
                 DescriptorFactory.addPeakAnnotations(project,
                         chromatogram,
                         peaks, trd);
                 peakReportsImported++;
-//                progressHandle.progress(
-//                        "Imported " + (peakReportsImported + 1) + "/" + files.length);
             }
         } catch (Exception e) {
             Exceptions.printStackTrace(e);
-            //progressHandle.finish();
         } finally {
             progressHandle.finish();
         }

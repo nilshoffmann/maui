@@ -1,4 +1,4 @@
-/* 
+/*
  * Maui, Maltcms User Interface. 
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
@@ -25,14 +25,29 @@
  * FOR A PARTICULAR PURPOSE. Please consult the relevant license documentation
  * for details.
  */
-package net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser;
+package net.sf.maltcms.chromaui.project.spi.wizard;
 
-import java.util.LinkedHashMap;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import org.junit.Test;
 
 /**
  *
  * @author Nils Hoffmann
  */
-public class TableRow extends LinkedHashMap<String, String> {
-
+public class UncPathException {
+    
+    @Test
+    public void testUncPathException() throws URISyntaxException, MalformedURLException {
+        File projdir = new File("\\\\Server\\C$\\path\\to\\share");
+        URL projectFileUrl = new File(projdir, "project.db4o").toURI().toURL();
+        File projdir1 = new File("\\\\user@Server:234\\path\\to\\share");
+        URL projectFileUrl1 = new File(projdir1, "project.db4o").toURI().toURL();
+        File projdir2 = new File("Z:\\Server\\path\\to\\share");
+        URL projectFileUrl2 = new File(projdir2, "project.db4o").toURI().toURL();
+        File projdir3 = new File("Z:\\user@Server\\path\\to\\share");
+        URL projectFileUrl3 = new File(projdir3, "project.db4o").toURI().toURL();
+    }
 }

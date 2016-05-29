@@ -33,12 +33,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Data;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
 import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import static net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.runnable.Utils.*;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
@@ -68,7 +65,6 @@ public class ChromaTofPeakListConverter extends AProgressAwareRunnable {
             for (File chrom : files) {
                 reports.put(StringTools.removeFileExt(chrom.getName()), chrom);
             }
-//            Map<String,Set<String>> whitelists = parseWhiteList(whiteListFile);
             for (String chromName : reports.keySet()) {
                 File chrom = reports.get(chromName);
                 progressHandle.progress(
@@ -79,15 +75,10 @@ public class ChromaTofPeakListConverter extends AProgressAwareRunnable {
                 chromatogram.setName(chromName);
                 List<IPeakAnnotationDescriptor> peaks = new ArrayList<>();
                 File created = convertPeaks(importDir, peaks, reports, chromName, chromatogram, false, locale);
-                //System.out.println("Adding peak annotations: " + peaks);
                 peakReportsImported++;
-//                progressHandle.progress(
-//                        "Converted " + (peakReportsImported + 1) + "/" + files.length);
             }
-            //progressHandle.finish();
         } catch (Exception e) {
             Exceptions.printStackTrace(e);
-            //progressHandle.finish();
         } finally {
             progressHandle.finish();
         }

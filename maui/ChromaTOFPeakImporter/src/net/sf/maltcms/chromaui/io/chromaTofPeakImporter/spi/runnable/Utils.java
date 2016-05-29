@@ -50,8 +50,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import maltcms.datastructures.ms.IChromatogram;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.ChromaTOFParser;
-import net.sf.maltcms.chromaui.io.chromaTofPeakImporter.spi.parser.TableRow;
+import maltcms.io.csv.ParserUtilities;
+import maltcms.io.csv.chromatof.ChromaTOFParser;
+import maltcms.io.csv.chromatof.TableRow;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeak2DAnnotationDescriptor;
@@ -208,6 +209,7 @@ public class Utils {
         for (int i = 0; i < quoteColumn.length; i++) {
             quoteColumn[i] = true;
         }
+        ParserUtilities parserUtilities = new ParserUtilities();
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(output));
@@ -220,12 +222,12 @@ public class Utils {
             for (TableRow tr : report.getSecond()) {
                 String[] targetRow = new String[newHeader.size()];
                 //set things that were not within our report
-                targetRow[parser.getIndexOfHeaderColumn(newHeader, "CAS")] = "0-0-0";
-                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Purity")] = "";
-                targetRow[parser.getIndexOfHeaderColumn(newHeader, "UniqueMass")] = "NaN";
-                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Concerns")] = "NaN";
+                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "CAS")] = "0-0-0";
+                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "Purity")] = "";
+                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "UniqueMass")] = "NaN";
+                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "Concerns")] = "NaN";
                 for (String headerColumn : header) {
-                    int sourceIndex = parser.getIndexOfHeaderColumn(header,
+                    int sourceIndex = parserUtilities.getIndexOfHeaderColumn(header,
                             headerColumn);
                     String sourceValue = null;
                     if (sourceIndex >= 0 && sourceIndex < header.size()) {//found column name
@@ -233,7 +235,7 @@ public class Utils {
                     } else {//did not find column name
                         sourceValue = "NaN";
                     }
-                    int targetIndex = parser.getIndexOfHeaderColumn(newHeader, headerColumn);
+                    int targetIndex = parserUtilities.getIndexOfHeaderColumn(newHeader, headerColumn);
                     if (targetIndex >= 0 && targetIndex < newHeader.size()) {//found column name
                         if (sourceValue == null) {
                             sourceValue = "NaN";
@@ -251,23 +253,23 @@ public class Utils {
                     } else { //did not find column name
                         switch (headerColumn) {
                             case "R.T. (s)":
-                                int targetIndex1 = parser.getIndexOfHeaderColumn(newHeader, "1st Dimension Time (s)");
-                                int targetIndex2 = parser.getIndexOfHeaderColumn(newHeader, "2nd Dimension Time (s)");
+                                int targetIndex1 = parserUtilities.getIndexOfHeaderColumn(newHeader, "1st Dimension Time (s)");
+                                int targetIndex2 = parserUtilities.getIndexOfHeaderColumn(newHeader, "2nd Dimension Time (s)");
                                 String[] rts = sourceValue.split(",");
                                 targetRow[targetIndex1] = rts[0].trim();
                                 targetRow[targetIndex2] = rts[1].trim();
                                 break;
                             case "Hit 1 Similarity":
-                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Similarity")] = sourceValue;
+                                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "Similarity")] = sourceValue;
                                 break;
                             case "Hit 1 Reverse":
-                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Reverse")] = sourceValue;
+                                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "Reverse")] = sourceValue;
                                 break;
                             case "Hit 1 Probability":
-                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "Probability")] = sourceValue;
+                                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "Probability")] = sourceValue;
                                 break;
                             case "Quant S/N":
-                                targetRow[parser.getIndexOfHeaderColumn(newHeader, "S/N")] = sourceValue;
+                                targetRow[parserUtilities.getIndexOfHeaderColumn(newHeader, "S/N")] = sourceValue;
                                 break;
                             default:
                                 Logger.getLogger(Utils.class.getName()).log(Level.INFO, "Skipping non-mappable field: {0}", headerColumn);
