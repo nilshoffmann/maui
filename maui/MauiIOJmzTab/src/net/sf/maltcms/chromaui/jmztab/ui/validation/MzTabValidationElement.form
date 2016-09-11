@@ -92,6 +92,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox1ActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;MZTabErrorType.Level&gt;"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

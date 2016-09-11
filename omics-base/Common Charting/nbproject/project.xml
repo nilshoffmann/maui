@@ -131,6 +131,7 @@
                 <package>net.sf.maltcms.common.charts.api.selection.xy</package>
                 <package>net.sf.maltcms.common.charts.api.themes</package>
                 <package>org.jfree.chart</package>
+                <package>org.jfree.chart.renderer.xy</package>
             </public-packages>
         </data>
     </configuration>

@@ -179,37 +179,6 @@ public class MzTabDataObject extends MultiDataObject implements FileChangeListen
     protected Node createNodeDelegate() {
         MzTabDataNode mzt = new MzTabDataNode(this, Children.LEAF);
         return mzt;
-//        try {
-//            final MZTabFileParser parser = new MZTabFileParser(FileUtil.toFile(getPrimaryFile()), System.out);
-//            MZTabFile file = parser.getMZTabFile();
-//            if (parser.getErrorList().isEmpty()) {
-//                MzTabFileToModelBuilder mfmb = new MzTabFileToModelBuilder();
-//                MzTabFileContainer container = mfmb.createFromFile(file);
-//                Children c = Lookup.getDefault().lookup(INodeFactory.class).createContainerChildren(container, Lookup.EMPTY);
-//                MzTabDataNode dataNode = new MzTabDataNode(this, c);
-//                return dataNode;
-//            } else {
-//                //TODO change to display parsing errors in IDE Log directly
-//                Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Errors encountered while parsing file: {0}", getPrimaryFile().getPath());
-//                for (int i = 0; i < parser.getErrorList().size(); i++) {
-//                    Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Error {0}:{1}", new Object[]{i, parser.getErrorList().getError(i)});
-//                }
-//                MzTabDataNode mzt = new MzTabDataNode(this, Children.LEAF);
-//                mzt.setDisplayName("Error parsing file " + getPrimaryFile().getNameExt());
-//                FilterNode fn = new FilterNode(mzt) {
-//
-//                    @Override
-//                    public Image getIcon(int type) {
-//                        return ImageUtilities.createDisabledImage(super.getIcon(type));
-//                    }
-//
-//                };
-//                return fn;
-//            }
-//        } catch (IOException ex) {
-//            Logger.getLogger(MzTabDataObject.class.getName()).log(Level.SEVERE, "Failed to parse file: " + getPrimaryFile().getPath(), ex);
-//            return Node.EMPTY;
-//        }
     }
 
     /**

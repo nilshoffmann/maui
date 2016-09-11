@@ -33,7 +33,7 @@ for details.
 "-//NetBeans//DTD annotation type 1.1//EN"
 "http://www.netbeans.org/dtds/annotation-type-1_1.dtd">
 
-<type name="net-sf-maltcms-chromaui-mztab-warningAnnotation"
+<type name="net-sf-maltcms-chromaui-jmztab-ui-validation-annotations-warningAnnotation"
       description_key="LBL_mztab-warningAnnotation"
       localizing_bundle="net.sf.maltcms.chromaui.jmztab.ui.validation.annotations.Bundle"
       visible="true" 

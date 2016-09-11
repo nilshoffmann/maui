@@ -30,7 +30,7 @@ for details.
 <filesystem>
     <folder name="Actions">
         <folder name="ChromAUIProjectLogicalView">
-            <file name="MetaData_hidden"/>
+            <file name="MetaData"/>
         </folder>
         <folder name="ContainerNodeActions">
             <folder name="ChromatogramNode">

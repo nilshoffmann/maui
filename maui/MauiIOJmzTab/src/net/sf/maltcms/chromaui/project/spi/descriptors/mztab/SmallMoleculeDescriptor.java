@@ -28,6 +28,7 @@
 package net.sf.maltcms.chromaui.project.spi.descriptors.mztab;
 
 import java.net.URI;
+import java.util.List;
 import uk.ac.ebi.pride.jmztab.model.Modification;
 import uk.ac.ebi.pride.jmztab.model.MsRun;
 import uk.ac.ebi.pride.jmztab.model.Param;

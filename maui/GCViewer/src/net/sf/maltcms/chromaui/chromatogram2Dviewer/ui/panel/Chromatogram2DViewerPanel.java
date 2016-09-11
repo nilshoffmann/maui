@@ -72,6 +72,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.general.DatasetUtilities;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -448,7 +449,7 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
             @Override
             public void run() {
 
-                if (ps!=null && ps instanceof GradientPaintScale) {
+                if (ps != null && ps instanceof GradientPaintScale) {
                     GradientPaintScale gps = (GradientPaintScale) ps;
                     double min = gps.getLowerBound();
                     double max = gps.getUpperBound();
@@ -666,6 +667,14 @@ public class Chromatogram2DViewerPanel extends JPanel implements Lookup.Provider
         //add selection overlay last
         chartPanel.removeOverlay(selectionOverlay);
         chartPanel.addOverlay(selectionOverlay);
+        if (range != null) {
+            range.setAutoRange(true);
+            range.setDefaultAutoRange(DatasetUtilities.findRangeBounds(dataset));
+        }
+        if (domain != null) {
+            domain.setAutoRange(true);
+            domain.setDefaultAutoRange(DatasetUtilities.findDomainBounds(dataset));
+        }
     }
 
     @Override

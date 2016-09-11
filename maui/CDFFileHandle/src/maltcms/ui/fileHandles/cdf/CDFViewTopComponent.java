@@ -76,8 +76,7 @@ import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 
 /**
- * Top component which displays hierarchical content of a cdf file. TODO:
- * convert to use ExplorerManager and BeanTreeView
+ * Top component which displays hierarchical content of a cdf file. 
  */
 @NavigatorPanel.Registration(mimeType = "application/x-cdf", displayName = "#LBL_CDF_FILE_NAVIGATOR")
 @NbBundle.Messages("LBL_CDF_FILE_NAVIGATOR=netCDF File Navigator")

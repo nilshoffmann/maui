@@ -67,6 +67,7 @@ import org.jfree.chart.renderer.xy.EntityAwareSamplingXYLineRenderer;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.general.DatasetUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.InstanceContent;
@@ -272,6 +273,14 @@ public class Chromatogram1DViewPanel extends javax.swing.JPanel implements
         //add selection overlay last
         chartPanel.removeOverlay(selectionOverlay);
         chartPanel.addOverlay(selectionOverlay);
+        if(range!=null) {
+            range.setAutoRange(true);
+            range.setDefaultAutoRange(DatasetUtilities.findRangeBounds(dataset));
+        }
+        if(domain!=null) {
+            domain.setAutoRange(true);
+            domain.setDefaultAutoRange(DatasetUtilities.findDomainBounds(dataset));
+        }
     }
 
     /**
