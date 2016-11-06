@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="platform-commons" default="download" basedir=".">
     <import file="preparation.xml"/>
-    <fileset dir="${nbplatform.nb721.netbeans.dest.dir}" id="platform.path"/>
-    <mkdir dir="${nbplatform.nb721.netbeans.dest.dir}"/>
+    <fileset dir="${nbplatform.nb82.netbeans.dest.dir}" id="platform.path"/>
+    <mkdir dir="${nbplatform.nb82.netbeans.dest.dir}"/>
     <pathconvert refid="platform.path"
                  property="platform.notempty"
                  setonempty="false"/>

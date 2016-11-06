@@ -29,8 +29,8 @@
               <entry key="autoupdate.catalog.url3" value="${autoupdate.catalog.url3}"/>
             <entry key="platform.base" value="${platform.base}"/>
             <entry key="nbplatform.active" value="${nbplatform.active}"/>
-            <entry key="nbplatform.721.netbeans.dest.dir" value="${nbplatform.nb721.netbeans.dest.dir}"/>
-            <entry key="nbplatform.721.harness.dir" value="${nbplatform.nb721.harness.dir}"/>
+            <entry key="nbplatform.82.netbeans.dest.dir" value="${nbplatform.nb82.netbeans.dest.dir}"/>
+            <entry key="nbplatform.82.harness.dir" value="${nbplatform.nb721.harness.dir}"/>
         </propertyfile>
         <echo message="Platform location: ${nbplatform.active.dir}"/>
         <echo message="NBplatform active: ${nbplatform.active}"/>
