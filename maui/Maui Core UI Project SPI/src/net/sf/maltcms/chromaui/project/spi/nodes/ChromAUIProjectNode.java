@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -80,7 +80,8 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
     public Action[] getActions(boolean arg0) {
         Set<Action> nodeActions = new LinkedHashSet<>();
         INodeFactory f = Lookup.getDefault().lookup(INodeFactory.class);
-        List<IProjectMenuProvider> providers = new ArrayList<>(Lookup.getDefault().lookupAll(IProjectMenuProvider.class));
+        List<IProjectMenuProvider> providers = new ArrayList<>();
+        providers.addAll(Lookup.getDefault().lookupAll(IProjectMenuProvider.class));
         Collections.sort(providers, new Comparator<IProjectMenuProvider>() {
 
             @Override
@@ -152,7 +153,7 @@ public class ChromAUIProjectNode extends BeanNode<IChromAUIProject> implements P
 //        try{
 //            firePropertyChange(pce.getPropertyName(), pce.getOldValue(), pce.getNewValue());
 //        }catch(IllegalStateException ise) {
-//            
+//
 //        }
         //getLookup().lookup(IChromAUIProject.class).refresh();
     }

@@ -39,10 +39,13 @@ import org.netbeans.api.progress.ProgressHandleFactory;
  *
  * @author Nils Hoffmann
  */
-@Data
 public class PCAOpenActionRunnable extends AProgressAwareRunnable {
 
     private final IPcaDescriptor pcaDescriptor;
+    
+    public PCAOpenActionRunnable(IPcaDescriptor pcaDescriptor) {
+        this.pcaDescriptor = pcaDescriptor;
+    }
 
     @Override
     public void run() {

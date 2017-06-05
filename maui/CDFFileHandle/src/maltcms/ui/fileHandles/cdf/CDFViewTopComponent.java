@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -39,7 +39,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,7 +75,7 @@ import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 
 /**
- * Top component which displays hierarchical content of a cdf file. 
+ * Top component which displays hierarchical content of a cdf file.
  */
 @NavigatorPanel.Registration(mimeType = "application/x-cdf", displayName = "#LBL_CDF_FILE_NAVIGATOR")
 @NbBundle.Messages("LBL_CDF_FILE_NAVIGATOR=netCDF File Navigator")
@@ -187,7 +186,7 @@ public final class CDFViewTopComponent extends JComponent implements ExplorerMan
      */
     protected void updateView(Collection<? extends IFileFragmentDataObject> files) {
         if (!files.isEmpty()) {
-            HashSet<IFileFragmentDataObject> hs = new LinkedHashSet<>(files);
+            LinkedHashSet<? extends IFileFragmentDataObject> hs = new LinkedHashSet<>(files);
             List<Node> l = new ArrayList<>();
             for (IFileFragmentDataObject f : hs) {
                 Logger.getLogger(getClass().getName()).log(Level.INFO, "File: {0}", f.getFragment());

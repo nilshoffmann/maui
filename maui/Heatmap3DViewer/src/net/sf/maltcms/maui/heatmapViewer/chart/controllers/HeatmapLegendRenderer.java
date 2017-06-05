@@ -32,7 +32,7 @@ import java.awt.Image;
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
 import org.jzy3d.colors.colormaps.IColorMap;
-import org.jzy3d.plot2d.primitive.ColorbarImageGenerator;
+import org.jzy3d.plot2d.primitive.AWTColorbarImageGenerator;
 import org.jzy3d.plot3d.primitives.axes.layout.providers.SmartTickProvider;
 import org.jzy3d.plot3d.primitives.axes.layout.renderers.DefaultDecimalTickRenderer;
 import org.jzy3d.plot3d.rendering.canvas.ICanvas;
@@ -58,7 +58,7 @@ public class HeatmapLegendRenderer implements Renderer2d {
     }
 
     public Image toImage(int width, int height) {
-        ColorbarImageGenerator bar = new ColorbarImageGenerator(
+        AWTColorbarImageGenerator bar = new AWTColorbarImageGenerator(
                 this.icm,
                 new SmartTickProvider(),
                 new DefaultDecimalTickRenderer());

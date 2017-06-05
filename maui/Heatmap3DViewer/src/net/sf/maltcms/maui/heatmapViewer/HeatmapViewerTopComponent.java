@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -45,13 +45,10 @@ import net.sf.maltcms.chromaui.ui.support.api.AProgressAwareRunnable;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.SurfaceFactory;
 import net.sf.maltcms.maui.heatmapViewer.plot3d.builder.concrete.ViewportMapper;
 import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.controllers.ControllerType;
 import org.jzy3d.chart.controllers.mouse.camera.NewtCameraMouseController;
 import org.jzy3d.chart.factories.AWTChartComponentFactory;
 import org.jzy3d.chart.factories.IChartComponentFactory;
 import org.jzy3d.colors.Color;
-import org.jzy3d.events.ControllerEvent;
-import org.jzy3d.events.ControllerEventListener;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Rectangle;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
@@ -72,7 +69,7 @@ import org.openide.windows.TopComponent;
 @ConvertAsProperties(dtd = "-//net.sf.maltcms.maui.heatmapViewer//HeatmapViewer//EN",
         autostore = false)
 @TopComponent.Description(preferredID = "HeatmapViewerTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        //iconBase="SET/PATH/TO/ICON/HERE",
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "net.sf.maltcms.maui.heatmapViewer.HeatmapViewerTopComponent")
@@ -316,7 +313,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
                             fillColor = peaks.getChromatogram().getTreatmentGroup().getColor();
                         }
                         float[] colors = fillColor.getColorComponents(null);
-                        for (IPeakAnnotationDescriptor descr : peaks) {
+                        for (IPeakAnnotationDescriptor descr : peaks.getMembers()) {
                             if (descr instanceof IPeak2DAnnotationDescriptor) {
                                 IPeak2DAnnotationDescriptor peak2d = (IPeak2DAnnotationDescriptor) descr;
                                 Tube tube = new Tube();
@@ -378,7 +375,7 @@ public final class HeatmapViewerTopComponent extends TopComponent {
 
 //                }
 //
-//                    
+//
 //                }
 
 //            };

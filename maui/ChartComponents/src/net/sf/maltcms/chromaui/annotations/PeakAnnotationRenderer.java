@@ -1,5 +1,5 @@
 /*
- * Maui, Maltcms User Interface. 
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -77,6 +77,30 @@ public class PeakAnnotationRenderer {
     private boolean drawShapes = true;
     private boolean drawLines = true;
     private boolean drawOutlines = false;
+
+    public boolean isDrawShapes() {
+        return drawShapes;
+    }
+
+    public void setDrawShapes(boolean drawShapes) {
+        this.drawShapes = drawShapes;
+    }
+
+    public boolean isDrawLines() {
+        return drawLines;
+    }
+
+    public void setDrawLines(boolean drawLines) {
+        this.drawLines = drawLines;
+    }
+
+    public boolean isDrawOutlines() {
+        return drawOutlines;
+    }
+
+    public void setDrawOutlines(boolean drawOutlines) {
+        this.drawOutlines = drawOutlines;
+    }
 
     public void draw(Graphics2D g2, ChartPanel chartPanel, XYPlot plot, Color fillColor, Collection<? extends VisualPeakAnnotation> shapes, Collection<? extends VisualPeakAnnotation> selectedShapes) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -242,7 +266,7 @@ public class PeakAnnotationRenderer {
             modelToView.preConcatenate(flipTransform);
             modelToView.preConcatenate(toViewScale);
             modelToView.preConcatenate(toViewLocation);
-//            
+//
 //            if (orientation == PlotOrientation.HORIZONTAL) {
 //                entity = ShapeUtilities.createTranslatedShape(entity, viewY,
 //                        viewX);

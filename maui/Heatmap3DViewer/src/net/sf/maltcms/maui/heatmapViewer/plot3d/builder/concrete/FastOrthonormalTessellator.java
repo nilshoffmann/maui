@@ -32,20 +32,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.media.opengl.GL;
 
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
-import org.jzy3d.io.IGLLoader;
 import org.jzy3d.maths.Array;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.builder.Tessellator;
 import org.jzy3d.plot3d.primitives.AbstractComposite;
-import org.jzy3d.plot3d.primitives.LineStripInterpolated;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Shape;
-import org.jzy3d.plot3d.primitives.vbo.DrawableVBO;
 
 /**
  * The {@link OrthonormalTesselator} checks that coordinates are lying on an

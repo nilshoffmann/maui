@@ -35,7 +35,7 @@ import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.vecmath.Color3f;
+import org.jogamp.vecmath.Color3f;
 
 public class InfoPanel extends JPanel {
 

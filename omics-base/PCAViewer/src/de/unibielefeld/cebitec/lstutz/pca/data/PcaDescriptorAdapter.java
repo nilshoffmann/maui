@@ -29,7 +29,7 @@ package de.unibielefeld.cebitec.lstutz.pca.data;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import javax.vecmath.Color3f;
+import org.jogamp.vecmath.Color3f;
 import net.sf.maltcms.chromaui.project.api.descriptors.IChromatogramDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPeakGroupDescriptor;

@@ -27,14 +27,14 @@
  */
 package de.unibielefeld.cebitec.lstutz.pca.visual;
 
-import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
-import com.sun.j3d.utils.geometry.Box;
-import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.geometry.Sphere;
-import com.sun.j3d.utils.picking.PickCanvas;
-import com.sun.j3d.utils.picking.PickResult;
-import com.sun.j3d.utils.picking.PickTool;
-import com.sun.j3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.behaviors.vp.OrbitBehavior;
+import org.jogamp.java3d.utils.geometry.Box;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.java3d.utils.picking.PickCanvas;
+import org.jogamp.java3d.utils.picking.PickResult;
+import org.jogamp.java3d.utils.picking.PickTool;
+import org.jogamp.java3d.utils.universe.SimpleUniverse;
 import de.unibielefeld.cebitec.lstutz.pca.data.DataModel;
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
@@ -58,36 +58,36 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
-import javax.media.j3d.AmbientLight;
-import javax.media.j3d.Appearance;
-import javax.media.j3d.Background;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.Geometry;
-import javax.media.j3d.GraphicsContext3D;
-import javax.media.j3d.Group;
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.LineArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.Node;
-import javax.media.j3d.Raster;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Switch;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
+import org.jogamp.java3d.AmbientLight;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.Background;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.DirectionalLight;
+import org.jogamp.java3d.Geometry;
+import org.jogamp.java3d.GraphicsContext3D;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.ImageComponent;
+import org.jogamp.java3d.ImageComponent2D;
+import org.jogamp.java3d.LineArray;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Raster;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Switch;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 import org.openide.util.lookup.InstanceContent;
 
 public class StandardGUI extends JPanel implements MouseListener, ActionListener, ItemListener, ClipboardOwner {
@@ -489,7 +489,7 @@ public class StandardGUI extends JPanel implements MouseListener, ActionListener
                 Geometry g = (Geometry) e.nextElement();
                 g.setCapability(g.ALLOW_INTERSECT);
             }
-        } catch (ClassCastException | javax.media.j3d.RestrictedAccessException e) {
+        } catch (ClassCastException | org.jogamp.java3d.RestrictedAccessException e) {
             // not a Shape3D node ignore exception
         }
     }

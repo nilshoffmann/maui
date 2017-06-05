@@ -97,7 +97,7 @@ public class SmallMoleculeDescriptor extends AMzTabRecordDescriptor<SmallMolecul
      *
      * @return
      */
-    public String getSmiles() {
+    public SplitList<String> getSmiles() {
         return getRecord().getSmiles();
     }
 
@@ -113,7 +113,7 @@ public class SmallMoleculeDescriptor extends AMzTabRecordDescriptor<SmallMolecul
      *
      * @return
      */
-    public String getInchiKey() {
+    public SplitList<String> getInchiKey() {
         return getRecord().getInchiKey();
     }
 

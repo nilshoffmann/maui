@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -29,19 +29,17 @@ package net.sf.maltcms.chromaui.statistics.pcaViewer;
 
 import de.unibielefeld.cebitec.lstutz.pca.data.ParserUtilities;
 import de.unibielefeld.cebitec.lstutz.pca.data.PcaDescriptorAdapter;
+import de.unibielefeld.cebitec.lstutz.pca.data.PrincipalComponent;
 import de.unibielefeld.cebitec.lstutz.pca.visual.StandardGUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JColorChooser;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import net.sf.maltcms.chromaui.project.api.descriptors.IPcaDescriptor;
 import net.sf.maltcms.chromaui.ui.support.api.CancellableRunnable;
 import net.sf.maltcms.chromaui.ui.support.api.ResultListener;
@@ -178,23 +176,6 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
     public void componentHidden(ComponentEvent e) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         revalidate();
-    }
-
-    @RequiredArgsConstructor
-    @EqualsAndHashCode(exclude = {"stdev"})
-    private class PrincipalComponent {
-
-        @Getter
-        private final int index;
-        @Getter
-        private final double stdev;
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("PC ").append(index).append(" (Stdev. ").append(String.format("%.4f", stdev)).append(")");
-            return sb.toString();
-        }
     }
 
     /**
@@ -335,13 +316,73 @@ public final class PCAViewerTopComponent extends TopComponent implements Compone
         }
     }//GEN-LAST:event_zButtonActionPerformed
 
-    @Value
-    private static class StandardGUIParameters {
+    private static final class StandardGUIParameters {
 
         private final StandardGUI gui;
         private final int componentIdx0;
         private final int componentIdx1;
         private final int componentIdx2;
+
+        public StandardGUIParameters(StandardGUI gui, int componentIdx0, int componentIdx1, int componentIdx2) {
+            this.gui = gui;
+            this.componentIdx0 = componentIdx0;
+            this.componentIdx1 = componentIdx1;
+            this.componentIdx2 = componentIdx2;
+        }
+
+        public StandardGUI getGui() {
+            return gui;
+        }
+
+        public int getComponentIdx0() {
+            return componentIdx0;
+        }
+
+        public int getComponentIdx1() {
+            return componentIdx1;
+        }
+
+        public int getComponentIdx2() {
+            return componentIdx2;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 97 * hash + Objects.hashCode(this.gui);
+            hash = 97 * hash + this.componentIdx0;
+            hash = 97 * hash + this.componentIdx1;
+            hash = 97 * hash + this.componentIdx2;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final StandardGUIParameters other = (StandardGUIParameters) obj;
+            if (this.componentIdx0 != other.componentIdx0) {
+                return false;
+            }
+            if (this.componentIdx1 != other.componentIdx1) {
+                return false;
+            }
+            if (this.componentIdx2 != other.componentIdx2) {
+                return false;
+            }
+            if (!Objects.equals(this.gui, other.gui)) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
     private void updateView(final StandardGUI oldGui, final int component0, final int component1, final int component2) {

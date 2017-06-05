@@ -16,6 +16,28 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>il.ac.idc.jdt</package>
+                <package>org.apache.log4j</package>
+                <package>org.apache.log4j.chainsaw</package>
+                <package>org.apache.log4j.config</package>
+                <package>org.apache.log4j.helpers</package>
+                <package>org.apache.log4j.jdbc</package>
+                <package>org.apache.log4j.jmx</package>
+                <package>org.apache.log4j.lf5</package>
+                <package>org.apache.log4j.lf5.util</package>
+                <package>org.apache.log4j.lf5.viewer</package>
+                <package>org.apache.log4j.lf5.viewer.categoryexplorer</package>
+                <package>org.apache.log4j.lf5.viewer.configure</package>
+                <package>org.apache.log4j.net</package>
+                <package>org.apache.log4j.nt</package>
+                <package>org.apache.log4j.or</package>
+                <package>org.apache.log4j.or.jms</package>
+                <package>org.apache.log4j.or.sax</package>
+                <package>org.apache.log4j.pattern</package>
+                <package>org.apache.log4j.rewrite</package>
+                <package>org.apache.log4j.spi</package>
+                <package>org.apache.log4j.varia</package>
+                <package>org.apache.log4j.xml</package>
                 <package>org.jzy3d.analysis</package>
                 <package>org.jzy3d.bridge</package>
                 <package>org.jzy3d.bridge.awt</package>
@@ -37,15 +59,15 @@
                 <package>org.jzy3d.chart.controllers.thread.camera</package>
                 <package>org.jzy3d.chart.factories</package>
                 <package>org.jzy3d.chart.graphs</package>
+                <package>org.jzy3d.chart2d</package>
                 <package>org.jzy3d.colors</package>
                 <package>org.jzy3d.colors.colormaps</package>
                 <package>org.jzy3d.contour</package>
                 <package>org.jzy3d.events</package>
                 <package>org.jzy3d.io</package>
+                <package>org.jzy3d.io.matlab</package>
                 <package>org.jzy3d.io.obj</package>
-                <package>org.jzy3d.junit</package>
-                <package>org.jzy3d.junit.replay</package>
-                <package>org.jzy3d.junit.replay.events</package>
+                <package>org.jzy3d.io.ply</package>
                 <package>org.jzy3d.maths</package>
                 <package>org.jzy3d.maths.algorithms</package>
                 <package>org.jzy3d.maths.algorithms.convexhull</package>
@@ -57,6 +79,7 @@
                 <package>org.jzy3d.maths.parameq</package>
                 <package>org.jzy3d.picking</package>
                 <package>org.jzy3d.plot2d.primitive</package>
+                <package>org.jzy3d.plot2d.primitives</package>
                 <package>org.jzy3d.plot2d.rendering</package>
                 <package>org.jzy3d.plot3d.builder</package>
                 <package>org.jzy3d.plot3d.builder.concrete</package>
@@ -73,11 +96,14 @@
                 <package>org.jzy3d.plot3d.primitives.graphs.impl</package>
                 <package>org.jzy3d.plot3d.primitives.graphs.layout</package>
                 <package>org.jzy3d.plot3d.primitives.interactive.tools</package>
+                <package>org.jzy3d.plot3d.primitives.log</package>
                 <package>org.jzy3d.plot3d.primitives.parameq</package>
                 <package>org.jzy3d.plot3d.primitives.pickable</package>
                 <package>org.jzy3d.plot3d.primitives.selectable</package>
                 <package>org.jzy3d.plot3d.primitives.textured</package>
-                <package>org.jzy3d.plot3d.primitives.vbo</package>
+                <package>org.jzy3d.plot3d.primitives.vbo.buffers</package>
+                <package>org.jzy3d.plot3d.primitives.vbo.builders</package>
+                <package>org.jzy3d.plot3d.primitives.vbo.drawable</package>
                 <package>org.jzy3d.plot3d.rendering.canvas</package>
                 <package>org.jzy3d.plot3d.rendering.compat</package>
                 <package>org.jzy3d.plot3d.rendering.image</package>
@@ -101,14 +127,27 @@
                 <package>org.jzy3d.plot3d.text.renderers</package>
                 <package>org.jzy3d.plot3d.text.renderers.jogl</package>
                 <package>org.jzy3d.plot3d.transform</package>
+                <package>org.jzy3d.plot3d.transform.space</package>
                 <package>org.jzy3d.ui</package>
                 <package>org.jzy3d.ui.editors</package>
                 <package>org.jzy3d.ui.views</package>
                 <package>org.jzy3d.utils</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/jzy3d-api-0.9.2-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jzy3d-api-0.9.2-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/jzy3d-api-1.0.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jzy3d-api-1.0.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/log4j-1.2.17.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/log4j-1.2.17.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jzy3d-api-1.0.0-maths-io.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jzy3d-api-1.0.0-maths-io.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jzy3d-jdt-core-1.0.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jzy3d-jdt-core-1.0.0.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

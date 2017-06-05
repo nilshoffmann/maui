@@ -32,16 +32,24 @@
                 <package>uk.ac.ebi.pride.jmztab.utils.parser</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/jmztab-modular-model-3.0.3-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmztab-modular-model-3.0.3-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/jmztab-modular-converters-3.0.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-converters-3.0.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jmztab-modular-converters-3.0.3-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmztab-modular-converters-3.0.3-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/logback-core-1.1.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/logback-core-1.1.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jmztab-modular-util-3.0.3-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jmztab-modular-util-3.0.3-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/jmztab-modular-util-3.0.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-util-3.0.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jmztab-modular-model-3.0.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jmztab-modular-model-3.0.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/logback-classic-1.1.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/logback-classic-1.1.2.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

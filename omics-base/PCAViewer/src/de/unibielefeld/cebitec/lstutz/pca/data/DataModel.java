@@ -28,7 +28,7 @@
 package de.unibielefeld.cebitec.lstutz.pca.data;
 
 import java.util.ArrayList;
-import javax.vecmath.Color3f;
+import org.jogamp.vecmath.Color3f;
 
 public class DataModel {
 

@@ -86,8 +86,8 @@ public class SurfaceFactory {
     public CompileableComposite createSurface(final Rectangle2D r, final Mapper m, boolean fast, int stepsx, int stepsy) {
         final int columns = (int) (r.getWidth() - 1);
         final int rows = (int) (r.getHeight() - 1);
-        Range rangex = new Range(r.getX(), r.getX() + columns);
-        Range rangey = new Range(r.getY(), r.getY() + rows);
+        Range rangex = new Range((float) r.getX(), (float) r.getX() + columns);
+        Range rangey = new Range((float) r.getY(), (float) r.getY() + rows);
         Logger.getLogger(getClass().getName()).log(Level.INFO, "Building surface for rect: {0}", r.toString());
         final int sx = stepsx == -1 ? columns : stepsx;
         final int sy = stepsy == -1 ? rows : stepsy;
@@ -138,7 +138,7 @@ public class SurfaceFactory {
 
         long start = System.nanoTime();
         Tessellator tesselator = new FastOrthonormalTessellator();
-        OrthonormalGrid grid = new OrthonormalGrid(new Range(roi.getMinX(), roi.getMaxX()), stepsx, new Range(roi.getMinY(), roi.getMaxY()), stepsy);
+        OrthonormalGrid grid = new OrthonormalGrid(new Range((float) roi.getMinX(), (float) roi.getMaxX()), stepsx, new Range((float) roi.getMinY(), (float) roi.getMaxY()), stepsy);
         List<Coord3d> l = grid.apply(m);
         Shape s1 = (Shape) tesselator.build(l);
         Logger.getLogger(getClass().getName()).log(Level.INFO, "Fast tesselation completed in {0} s", ((float) (System.nanoTime() - start)) / (1000.0f * 1000.0f * 1000.0f));

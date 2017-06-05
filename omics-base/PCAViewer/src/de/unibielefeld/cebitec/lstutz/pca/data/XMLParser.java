@@ -33,7 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import javax.vecmath.Color3f;
+import org.jogamp.vecmath.Color3f;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;

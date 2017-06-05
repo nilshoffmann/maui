@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -32,14 +32,15 @@ package org.jzy3d.demos.histogram.barchart;
  * and open the template in the editor.
  */
 import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLContext;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLContext;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.controllers.mouse.picking.NewtMousePickingController;
 import org.jzy3d.maths.IntegerCoord2d;
@@ -52,14 +53,19 @@ import org.jzy3d.plot3d.rendering.view.View;
  *
  * @author ao
  */
-public class LabeledMouseSelector<ITEM> extends NewtMousePickingController<BarChartBar, ITEM> implements IObjectPickedListener {
+public class LabeledMouseSelector<CONTENTTYPE, ITEM extends ISelectableItem<CONTENTTYPE>> extends NewtMousePickingController implements IObjectPickedListener {
 
     private ExecutorService es = Executors.newSingleThreadExecutor();
+    private List<BarChartBar> lastPick = new LinkedList<>();
+//    private Class<CONTENTTYPE> contentType;
+//    private Class<ITEM> itemType;
 
-    public LabeledMouseSelector(Chart target, PickingSupport pickingSupport) {
+    public LabeledMouseSelector(Class<ITEM> itemType, Class<CONTENTTYPE> contentType, Chart target, PickingSupport pickingSupport) {
         super(target);
         setPickingSupport(pickingSupport);
         pickingSupport.addObjectPickedListener(this);
+//        this.contentType = contentType;
+//        this.itemType = itemType;
     }
 
 //    @Override
@@ -177,6 +183,22 @@ public class LabeledMouseSelector<ITEM> extends NewtMousePickingController<BarCh
 
     @Override
     public void objectPicked(List<? extends Object> list, PickingSupport ps) {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "Picked: {0}", list);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Picked: {0} with {1} items", new Object[]{list, list.size()});
+        clearSelected();
+
+        for (Object obj : list) {
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Item: {0} with class: {1}", new Object[]{obj, obj.getClass()});
+            BarChartBar item = (BarChartBar)obj;
+            lastPick.add(item);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Selected: {0}", item);
+            item.setSelected(true);
+        }
+    }
+
+    private void clearSelected() {
+        for (BarChartBar obj : this.lastPick) {
+            obj.setSelected(false);
+        }
+        this.lastPick.clear();
     }
 }

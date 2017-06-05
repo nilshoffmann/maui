@@ -68,7 +68,7 @@ public class Rt2DVis {
         @Override
         public void actionPerformed(ActionEvent e) {
             final ProductSimilarity ps = ssp.getParameterizedSimilarity();
-            CompileableComposite cc = Builder.buildOrthonormalBig(new OrthonormalGrid(new Range(ssp.getMinX(), ssp.getMaxX()), 500, new Range(ssp.getMinY(), ssp.getMaxY()), 50), new Mapper() {
+            CompileableComposite cc = Builder.buildOrthonormalBig(new OrthonormalGrid(new Range((float)ssp.getMinX(), (float)ssp.getMaxX()), 500, new Range((float)ssp.getMinY(), (float)ssp.getMaxY()), 50), new Mapper() {
 //			CompileableComposite cc = Builder.buildOrthonormalBig(new OrthonormalGrid(new Range(-200, 200), 500, new Range(-2.5,2.5), 50), new Mapper() {
                 @Override
                 public double f(double x, double y) {
@@ -106,7 +106,7 @@ public class Rt2DVis {
                     }
                 }
             });
-            IScreenshotKeyController screenshotController = chart.addScreenshotKeyController();
+            IScreenshotKeyController screenshotController = chart.addKeyboardScreenshotController();
             //SurfaceViewerPanel svp1 = new SurfaceViewerPanel(chart);
             ChartLauncher.openChart(chart, new Rectangle(800, 600),
                     "BiPACE 2D Retention Time Similarities");

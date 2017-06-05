@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -33,14 +33,16 @@ import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jzy3d.bridge.awt.FrameAWT;
-import org.jzy3d.bridge.swing.FrameSwing;
+import org.jzy3d.bridge.newt.controllers.keyboard.AWTToNewtKeyListener;
 import org.jzy3d.chart.Chart;
+import org.jzy3d.chart.factories.NewtChartComponentFactory;
 import org.jzy3d.colors.Color;
 import org.jzy3d.demos.AbstractDemo;
 import org.jzy3d.maths.Rectangle;
 import org.jzy3d.picking.PickingSupport;
+import org.jzy3d.plot3d.primitives.axes.layout.providers.StaticTickProvider;
 import org.jzy3d.plot3d.primitives.axes.layout.renderers.ITickRenderer;
-import org.jzy3d.plot3d.rendering.canvas.CanvasSwing;
+import org.jzy3d.plot3d.primitives.axes.layout.renderers.ScientificNotationTickRenderer;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.scene.Scene;
 import org.jzy3d.plot3d.rendering.view.Renderer2d;
@@ -51,22 +53,21 @@ public class BarChartDemo extends AbstractDemo {
     private final String TITLE = "Feature complexity view";
 
     public static void main(String[] args) throws Exception {
-        new BarChartDemo();
+        BarChartDemo demo = new BarChartDemo();
     }
-    private LabeledMouseSelector mouseSelection;
+    private LabeledMouseSelector<String, BarChartBar<String>> mouseSelection;
     private CustomMouseControl mouseCamera;
     private Frame fr;
 
     public BarChartDemo() {
 //        Settings.getInstance().setHardwareAccelerated(true);
-        chart = new Chart(Quality.Intermediate, "awt");
+        chart = NewtChartComponentFactory.chart(Quality.Intermediate, "newt");
         setupTitle();
         setupAxes();
 //        cab.setAxe(chart.getView().getBounds());
         PickingSupport pickingSupport = new PickingSupport();
         setupMouseNavigation();
-        setupKeyboardNavigation();
-        setupKeyboardSave();
+
         setupMouseSelection(pickingSupport);
         setupLegend();
 
@@ -83,11 +84,11 @@ public class BarChartDemo extends AbstractDemo {
             for (int y = 0; y < 5; y++) {
                 float height = (float) Math.random() * (5f / (x + 1) + 7.f / (y + 1));
                 Logger.getLogger(getClass().getName()).log(Level.INFO, "Height: {0}", height);
-                BarChartBar bar = addBar(x, y, BarChartBar.BAR_RADIUS, BarChartBar.BAR_RADIUS, height);
+                BarChartBar<String> bar = addBar(x, y, BarChartBar.BAR_RADIUS, BarChartBar.BAR_RADIUS, height);
                 Logger.getLogger(getClass().getName()).log(Level.INFO, "Bar har height: {0}", bar.getHeight());
 //                bar.getShape().getBounds().getZRange();
                 scene.add(bar);
-                pickingSupport.registerDrawableObject(bar, bar.getItem());
+                pickingSupport.registerDrawableObject(bar, bar);
             }
         }
 
@@ -97,15 +98,13 @@ public class BarChartDemo extends AbstractDemo {
 //        cab.setTextRenderer(chart.getCanvas());
 //        chart.getView().setAxe(cab);
 //        cab.setView(chart.getView());
-        if (chart.getCanvas() instanceof CanvasSwing) {
-            fr = new FrameSwing(chart, new Rectangle(0, 0, 400, 400), "Feature complexity view 3d");
-        } else {
-            fr = new FrameAWT(chart, new Rectangle(0, 0, 400, 400), "Feature complexity view 3d");
-        }
+        fr = new FrameAWT(chart, new Rectangle(0, 0, 400, 400), "Feature complexity view 3d");
+        setupKeyboardNavigation();
+        setupKeyboardSave();
     }
 
     private void setupMouseSelection(PickingSupport pickingSupport) {
-        mouseSelection = new LabeledMouseSelector(chart, pickingSupport);
+        mouseSelection = new LabeledMouseSelector<>(BarChartBar.class, String.class, chart, pickingSupport);
         mouseSelection.register(chart);
     }
 
@@ -145,15 +144,15 @@ public class BarChartDemo extends AbstractDemo {
         });
         chart.getAxeLayout().setYTickProvider(new DiscreteTickProvider());
         chart.getAxeLayout().setZAxeLabel("Tangling");
-//        chart.getAxeLayout().setZTickRenderer( new ScientificNotationTickRenderer(2) );
-//                float[] ticks = {0f, 0.5f, 1f};
-//                chart.getAxeLayout().setZTickProvider(new StaticTickProvider(ticks));
+        chart.getAxeLayout().setZTickRenderer( new ScientificNotationTickRenderer(2) );
+                float[] ticks = {0f, 0.5f, 1f};
+                chart.getAxeLayout().setZTickProvider(new StaticTickProvider(ticks));
 
         chart.getView().setViewPositionMode(ViewPositionMode.FREE);
 //        chart.getView().setAxeSquared(false);
     }
 
-    public BarChartBar addBar(int compUnit, int feature, double wx, double wy, double height) {
+    public final BarChartBar<String> addBar(int compUnit, int feature, double wx, double wy, double height) {
         // compUnit, feature numbered form 0!
         Color color = Color.random();
 //        color.a = 0.3f;
@@ -163,7 +162,7 @@ public class BarChartDemo extends AbstractDemo {
         sb.append(",c");
         sb.append(compUnit);
         String featureString = sb.toString();
-        BarChartBar bar = new BarChartBar(chart, featureString, featureString);
+        BarChartBar<String> bar = new BarChartBar<>(chart, featureString, featureString);
 
         bar.setData(compUnit, feature, (float) wx, (float) wy, (float) height, color);
 //        if (!a) {
@@ -187,10 +186,10 @@ public class BarChartDemo extends AbstractDemo {
     }
 
     private void setupKeyboardNavigation() {
-        chart.getCanvas().addKeyController(new CustomKeyboardControl(chart));
+        chart.getCanvas().addKeyController(new AWTToNewtKeyListener(fr, new CustomKeyboardControl(chart)));
     }
 
     private void setupKeyboardSave() {
-        chart.getCanvas().addKeyController(new SVGKeyboardSaver(chart));
+        chart.getCanvas().addKeyController(new AWTToNewtKeyListener(fr, new SVGKeyboardSaver(chart)));
     }
 }

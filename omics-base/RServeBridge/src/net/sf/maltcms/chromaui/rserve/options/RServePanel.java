@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -33,7 +33,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
 import net.sf.maltcms.chromaui.rserve.api.RserveConnectionFactory;
 import org.netbeans.api.keyring.Keyring;
 import org.netbeans.api.progress.ProgressHandle;
@@ -41,7 +40,6 @@ import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileChooserBuilder;
-import org.openide.filesystems.FileChooserBuilder.SelectionApprover;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
@@ -304,7 +302,7 @@ final class RServePanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void localRserveSettingsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localRserveSettingsFieldActionPerformed
-        
+
     }//GEN-LAST:event_localRserveSettingsFieldActionPerformed
 
     private void useLocalInstanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useLocalInstanceActionPerformed
@@ -312,7 +310,7 @@ final class RServePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_useLocalInstanceActionPerformed
 
     private void userNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userNameFieldActionPerformed
-        
+
     }//GEN-LAST:event_userNameFieldActionPerformed
 
     public boolean testRserve() {
@@ -380,11 +378,11 @@ final class RServePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_testButtonActionPerformed
 
     private void remoteHostPortFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remoteHostPortFieldActionPerformed
-        
+
     }//GEN-LAST:event_remoteHostPortFieldActionPerformed
 
     private void debugModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugModeActionPerformed
-        
+
     }//GEN-LAST:event_debugModeActionPerformed
 
     private void rbinaryLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbinaryLocationButtonActionPerformed

@@ -33,10 +33,9 @@ package org.jzy3d.demos.histogram.barchart;
  */
 import java.awt.Graphics;
 import java.awt.Image;
-import org.jzy3d.chart.Chart;
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
-import org.jzy3d.plot2d.primitive.ColorbarImageGenerator;
+import org.jzy3d.plot2d.primitive.AWTColorbarImageGenerator;
 import org.jzy3d.plot3d.primitives.axes.layout.providers.AbstractTickProvider;
 import org.jzy3d.plot3d.primitives.axes.layout.renderers.ITickRenderer;
 import org.jzy3d.plot3d.rendering.canvas.ICanvas;
@@ -60,7 +59,7 @@ public class CustomLegendRenderer implements Renderer2d {
     }
 
     public Image toImage(int width, int height) {
-        ColorbarImageGenerator bar = new ColorbarImageGenerator(
+        AWTColorbarImageGenerator bar = new AWTColorbarImageGenerator(
                 new ColorMapper(new org.jzy3d.demos.histogram.barchart.AffinityColorGen(), 0f, 2f),
                 new AbstractTickProvider() {
 

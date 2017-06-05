@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -31,7 +31,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.IntrospectionException;
-import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import maltcms.ui.fileHandles.properties.graph.widget.PipelineElementWidget;
@@ -39,16 +38,10 @@ import maltcms.ui.fileHandles.properties.wizards.PipelinePropertiesWizardAction;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.DialogDisplayer;
-import org.openide.NotifyDescriptor;
-import org.openide.actions.PropertiesAction;
-import org.openide.explorer.propertysheet.PropertySheet;
 import org.openide.nodes.BeanNode;
-import org.openide.nodes.Node;
 import org.openide.nodes.NodeOperation;
 import org.openide.util.Exceptions;
 import org.openide.util.actions.CallableSystemAction;
-import org.openide.util.actions.SystemAction;
 
 /**
  *

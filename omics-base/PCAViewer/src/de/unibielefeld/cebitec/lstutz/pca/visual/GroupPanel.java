@@ -39,7 +39,7 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.vecmath.Color3f;
+import org.jogamp.vecmath.Color3f;
 
 public class GroupPanel extends JPanel {
 

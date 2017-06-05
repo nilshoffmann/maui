@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -31,11 +31,13 @@ package org.jzy3d.demos.histogram.barchart;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.glu.GLU;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.BoundingBox3d;
@@ -47,14 +49,13 @@ import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Quad;
 import org.jzy3d.plot3d.primitives.Shape;
-import org.jzy3d.plot3d.primitives.pickable.Pickable;
 import org.jzy3d.plot3d.rendering.view.Camera;
 
 /**
  *
  * @author ao
  */
-public class BarChartBar<ITEM> extends HistogramBar implements Pickable {
+public class BarChartBar<ITEM> extends HistogramBar implements ISelectableItem<ITEM> {
 
     public static float BAR_RADIUS = 5;
     public static float BAR_RADIUS_Y = 5;
@@ -80,10 +81,12 @@ public class BarChartBar<ITEM> extends HistogramBar implements Pickable {
         this(c, item.toString(), item);
     }
 
+    @Override
     public ITEM getItem() {
         return item;
     }
 
+    @Override
     public String getInfo() {
         return info;
     }
@@ -252,18 +255,18 @@ public class BarChartBar<ITEM> extends HistogramBar implements Pickable {
         };
     }
 
+    @Override
     public void setSelected(boolean selected) {
-//        if (tr == null) {
-//            tr = new ToggleTextTooltipRenderer(info, this);
-////            chart.getScene().getGraph().addTooltip(tr);
-//        }
-//        if (selected) {
-//            setWireframeWidth(3);
-//            tr.setVisible(true);
-//        } else {
-//            setWireframeWidth(1);
-//            tr.setVisible(false);
-//        }
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Selected: {0}", selected);
+        if (selected) {
+            setWireframeDisplayed(true);
+            setWireframeWidth(3);
+            setWireframeColor(Color.GRAY);
+        } else {
+            setWireframeDisplayed(false);
+            setWireframeWidth(1);
+            setWireframeColor(Color.BLACK);
+        }
     }
 
     @Override

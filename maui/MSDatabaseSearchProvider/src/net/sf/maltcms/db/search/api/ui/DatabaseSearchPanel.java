@@ -1,5 +1,5 @@
-/* 
- * Maui, Maltcms User Interface. 
+/*
+ * Maui, Maltcms User Interface.
  * Copyright (C) 2008-2014, The authors of Maui. All rights reserved.
  *
  * Project website: http://maltcms.sf.net
@@ -14,10 +14,10 @@
  * Eclipse Public License (EPL)
  * http://www.eclipse.org/org/documents/epl-v10.php
  *
- * As a user/recipient of Maui, you may choose which license to receive the code 
- * under. Certain files or entire directories may not be covered by this 
+ * As a user/recipient of Maui, you may choose which license to receive the code
+ * under. Certain files or entire directories may not be covered by this
  * dual license, but are subject to licenses compatible to both LGPL and EPL.
- * License exceptions are explicitly declared in all relevant files or in a 
+ * License exceptions are explicitly declared in all relevant files or in a
  * LICENSE file in the relevant directories.
  *
  * Maui is distributed in the hope that it will be useful, but WITHOUT
@@ -36,14 +36,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import net.sf.maltcms.chromaui.project.api.IChromAUIProject;
-import net.sf.maltcms.chromaui.project.api.container.ADatabaseBackedContainer;
+import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
 import net.sf.maltcms.chromaui.project.api.descriptors.DescriptorFactory;
 import net.sf.maltcms.chromaui.project.api.descriptors.IDatabaseDescriptor;
 import net.sf.maltcms.chromaui.project.api.types.DatabaseType;
-import net.sf.maltcms.chromaui.project.api.container.DatabaseContainer;
-import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
 import net.sf.maltcms.db.search.api.ri.RetentionIndexCalculator;
 import net.sf.maltcms.db.search.api.ri.RetentionIndexDatabase;
+import net.sf.maltcms.db.search.api.similarities.AMetabolitePredicate;
 import org.openide.NotifyDescriptor;
 import org.openide.util.Lookup;
 
@@ -120,7 +119,7 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
      * @return
      */
     protected DefaultComboBoxModel getScoreFunctions() {
-        List<AMetabolitePredicate> predicates = new ArrayList<>(Lookup.getDefault().
+        List<? extends AMetabolitePredicate> predicates = new ArrayList<>(Lookup.getDefault().
                 lookupAll(AMetabolitePredicate.class));
         List<AMetabolitePredicate> whiteListed = new ArrayList<>();
         for (AMetabolitePredicate p : predicates) {
@@ -456,7 +455,7 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
             File[] selectedDatabases = jfc.getSelectedFiles();
 //            databaseFiles.addAll(Arrays.asList(selectedDatabases));
 //            DefaultListModel dlm = new DefaultListModel();
-            ADatabaseBackedContainer<IDatabaseDescriptor> dbContainer = new DatabaseContainer();
+            DatabaseContainer dbContainer = new DatabaseContainer();
             for (File file : selectedDatabases) {
                 IDatabaseDescriptor descriptor = DescriptorFactory.
                         newDatabaseDescriptor(
@@ -466,7 +465,7 @@ public final class DatabaseSearchPanel extends javax.swing.JPanel {
                 }
                 dbContainer.addMembers(descriptor);
             }
-//          
+//
             if (project != null) {
                 project.addContainer(dbContainer);
             } else {
